@@ -20,10 +20,10 @@
 ### sqlmap.modules.credit
 
 # 3、scf-dubbo-provider.xml配置
-### dubbo:annotation package="com.betterjr.modules.{module name}",多个module用逗号","隔开
+### dubbo:annotation package="com.betterjr.modules.{module name}",多个{module name}用逗号","隔开
 
 ## 4、spring-context-scf-dubbo-provider.xml配置
 
-### context:component-scan base-package="com.betterjr.modules.{module name}",多个module用分号";"隔开
+### context:component-scan base-package="com.betterjr.modules.{module name}",多个{module name}用分号";"隔开
 
 # end
