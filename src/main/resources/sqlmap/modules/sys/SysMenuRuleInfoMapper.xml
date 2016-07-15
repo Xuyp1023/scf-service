@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.sys.dao.SysMenuRuleInfoMapper">
+	<resultMap id="BaseResultMap"
+		type="com.betterjr.modules.sys.entity.SysMenuRuleInfo">
+		<!-- WARNING - @mbggenerated -->
+		<result column="ID" property="id" jdbcType="INTEGER" />
+		<result column="N_RULE_ID" property="ruleId" jdbcType="INTEGER" />
+		<result column="C_RULE_NAME" property="ruleName" jdbcType="VARCHAR" />
+		<result column="N_MENU_ID" property="menuId" jdbcType="INTEGER" />
+		<result column="C_MENU_NAME" property="menuName" jdbcType="VARCHAR" />
+		<result column="C_STATUS" property="status" jdbcType="VARCHAR" />
+	</resultMap>
+</mapper>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.sys.dao.CustContactInfoMapper">
+	<resultMap id="BaseResultMap"
+		type="com.betterjr.modules.account.entity.CustContactInfo">
+		<!-- WARNING - @mbggenerated -->
+		<id column="L_CUSTNO" property="custNo" jdbcType="INTEGER" />
+		<result column="C_ZIPCODE" property="zipCode" jdbcType="VARCHAR" />
+		<result column="C_CITYNO" property="cityNo" jdbcType="VARCHAR" />
+		<result column="C_ADDRESS" property="address" jdbcType="VARCHAR" />
+		<result column="C_PHONE" property="phone" jdbcType="VARCHAR" />
+		<result column="C_FAXNO" property="faxNo" jdbcType="VARCHAR" />
+		<result column="C_MOBILENO" property="mobileNo" jdbcType="VARCHAR" />
+		<result column="C_EMAIL" property="email" jdbcType="VARCHAR" />
+		<result column="C_WEIXIN" property="weiXin" jdbcType="VARCHAR" />
+		<result column="C_QQ" property="qq" jdbcType="VARCHAR" />
+		<result column="C_WEBADDR" property="webAddr" jdbcType="VARCHAR" />
+		<result column="D_MODIDATE" property="modiDate" jdbcType="VARCHAR" />
+		<result column="C_HOME_PHONE" property="homePhone" jdbcType="VARCHAR" />
+		<result column="C_OFFICE_PHONE" property="officePhone"
+			jdbcType="VARCHAR" />
+		<result column="C_CORPNAME" property="corpName" jdbcType="VARCHAR" />
+		<result column="C_COUNTY" property="county" jdbcType="VARCHAR" />
+	</resultMap>
+</mapper>

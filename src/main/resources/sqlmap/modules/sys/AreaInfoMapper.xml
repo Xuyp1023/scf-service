@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.sys.dao.AreaInfoMapper">
+	<resultMap id="BaseResultMap" type="com.betterjr.modules.sys.entity.AreaInfo">
+		<!-- WARNING - @mbggenerated -->
+		<id column="C_CODE" property="areaCode" jdbcType="VARCHAR" />
+		<result column="C_NAME" property="areaName" jdbcType="VARCHAR" />
+		<result column="C_PROVINCE_CODE" property="provCode" jdbcType="VARCHAR" />
+		<result column="C_STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="D_REGDATE" property="regDate" jdbcType="VARCHAR" />
+		<result column="D_MODIDATE" property="modiDate" jdbcType="VARCHAR" />
+		<result column="C_SIGNSTATUS" property="signStatus" jdbcType="VARCHAR" />
+	</resultMap>
+</mapper>

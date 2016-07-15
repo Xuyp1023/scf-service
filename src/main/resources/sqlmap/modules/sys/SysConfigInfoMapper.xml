@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.sys.dao.SysConfigInfoMapper">
+	<resultMap id="BaseResultMap" type="com.betterjr.modules.sys.entity.SysConfigInfo">
+		<!-- WARNING - @mbggenerated -->
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="C_SYS" property="sysName" jdbcType="VARCHAR" />
+		<result column="N_GROUPNO" property="groupNo" jdbcType="INTEGER" />
+		<result column="C_NAME" property="itemName" jdbcType="VARCHAR" />
+		<result column="C_DATA_TYPE" property="dataType" jdbcType="VARCHAR" />
+		<result column="N_DATA_LEN" property="dataLen" jdbcType="INTEGER" />
+		<result column="N_DATA_SCALE" property="dataScale" jdbcType="INTEGER" />
+		<result column="C_CHARSET" property="dataScope" jdbcType="VARCHAR" />
+		<result column="C_MODE" property="workMode" jdbcType="VARCHAR" />
+		<result column="C_CTRLTYPE" property="itemType" jdbcType="VARCHAR" />
+		<result column="N_WIDTH" property="disWidth" jdbcType="INTEGER" />
+		<result column="N_DICTITEM" property="dictItem" jdbcType="INTEGER" />
+		<result column="C_VALUELIST" property="valuesList" jdbcType="VARCHAR" />
+		<result column="C_VALUE" property="itemValue" jdbcType="VARCHAR" />
+		<result column="N_SORT" property="configOrder" jdbcType="INTEGER" />
+		<result column="C_STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="D_REGDATE" property="regDate" jdbcType="VARCHAR" />
+		<result column="D_MODIDATE" property="modiDate" jdbcType="VARCHAR" />
+		<result column="C_DESCRIPTION" property="description" jdbcType="VARCHAR" />
+		<result column="C_MODIFY" property="dataModify" jdbcType="VARCHAR" />
+		<result column="C_SPLIT" property="split" jdbcType="VARCHAR" />
+	</resultMap>
+</mapper>

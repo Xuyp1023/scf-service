@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.sys.dao.PersonCustBaseInfoMapper">
+	<resultMap id="BaseResultMap"
+		type="com.betterjr.modules.account.entity.PersonCustBaseInfo">
+		<!-- WARNING - @mbggenerated -->
+		<id column="L_CUSTNO" property="custNo" jdbcType="INTEGER" />
+		<result column="D_BIRTHDAY" property="birthDay" jdbcType="VARCHAR" />
+		<result column="C_SEX" property="sex" jdbcType="VARCHAR" />
+		<result column="C_VOCATION" property="vocation" jdbcType="VARCHAR" />
+		<result column="C_EDUCATION" property="education" jdbcType="VARCHAR" />
+		<result column="C_NATION_CODE" property="nationCode" jdbcType="VARCHAR" />
+		<result column="C_INCOME" property="incoming" jdbcType="VARCHAR" />
+		<result column="D_MODIDATE" property="modiDate" jdbcType="VARCHAR" />
+	</resultMap>
+</mapper>

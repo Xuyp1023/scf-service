@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betterjr.modules.sys.dao.CustOperatorInfoMapper">
+	<resultMap id="BaseResultMap"
+		type="com.betterjr.modules.account.entity.CustOperatorInfo">
+		<!-- WARNING - @mbggenerated -->
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="C_NAME" property="name" jdbcType="VARCHAR" />
+		<result column="C_IDENTTYPE" property="identType" jdbcType="VARCHAR" />
+		<result column="C_IDENTNO" property="identNo" jdbcType="VARCHAR" />
+		<result column="D_VAILDDATE" property="validDate" jdbcType="VARCHAR" />
+		<result column="C_SEX" property="sex" jdbcType="VARCHAR" />
+		<result column="C_ZIPCODE" property="zipCode" jdbcType="VARCHAR" />
+		<result column="C_ADDRESS" property="address" jdbcType="VARCHAR" />
+		<result column="C_PHONE" property="phone" jdbcType="VARCHAR" />
+		<result column="C_FAXNO" property="faxNo" jdbcType="VARCHAR" />
+		<result column="C_MOBILENO" property="mobileNo" jdbcType="VARCHAR" />
+		<result column="C_EMAIL" property="email" jdbcType="VARCHAR" />
+		<result column="C_IDENT_CLASS" property="identClass" jdbcType="VARCHAR" />
+		<result column="C_TRANS_BUSIN" property="transBusin" jdbcType="VARCHAR" />
+		<result column="C_REVOKE_BUSIN" property="revokeBusin"
+			jdbcType="VARCHAR" />
+		<result column="C_DEFAULT" property="defOper" jdbcType="VARCHAR" />
+		<result column="C_STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="C_LAST_STATUS" property="lastStatus" jdbcType="VARCHAR" />
+		<result column="D_REGDATE" property="regDate" jdbcType="VARCHAR" />
+		<result column="D_MODIDATE" property="modiDate" jdbcType="VARCHAR" />
+		<result column="C_CODE" property="operCode" jdbcType="VARCHAR" />
+		<result column="C_OPERORG" property="operOrg" jdbcType="VARCHAR" />
+	</resultMap>
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans        
+    http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+    http://www.springframework.org/schema/context        
+    http://www.springframework.org/schema/context/spring-context-4.1.xsd        
+    http://code.alibabatech.com/schema/dubbo        
+    http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+	<!-- 扫描dubbo注解 -->
+	<dubbo:annotation
+		package="com.betterjr.modules.test,com.betterjr.modules.account.dubbo,com.betterjr.dubbo.extend.filter" />
+	<!-- 提供方应用信息，用于计算依赖关系 -->
+	<dubbo:application name="scf-dubbo-provider" />
+
+	<!-- 用dubbo协议在20880端口暴露服务 -->
+	<dubbo:protocol name="dubbo" port="20880" serialization="fst" />
+	<!-- 声明所有服务接口的默认设置 -->
+	<dubbo:provider timeout="50000" retries="0" loadbalance="random"
+		accesslog="d:\\logs\\dubbo-provider-access.log" version="1.2" />
+
+	<!-- 设定只有一个集群的注册中心， address="N/A" 表示不启用注册中心 -->
+	<dubbo:registry id="reg" address="zookeeper://192.168.2.43:2181"
+		file="d:\\dubbo-registry\\192.168.2.43.cache.provider" />
+
+
+</beans>

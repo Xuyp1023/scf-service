@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.rule.dao.RuleValidatorMapper">
+	<resultMap id="BaseResultMap"
+		type="com.betterjr.modules.rule.entity.RuleValidator">
+		<!-- WARNING - @mbggenerated -->
+		<id column="C_VALID_NAME" property="validName" jdbcType="VARCHAR" />
+		<result column="C_SYS" property="sysNo" jdbcType="VARCHAR" />
+		<result column="C_SHOW_NAME" property="showName" jdbcType="VARCHAR" />
+		<result column="C_NAME" property="fieldName" jdbcType="VARCHAR" />
+		<result column="C_MUSTITEM" property="mustItem" jdbcType="VARCHAR" />
+		<result column="C_DATA_TYPE" property="dataType" jdbcType="VARCHAR" />
+		<result column="N_DATA_LEN" property="dataLen" jdbcType="INTEGER" />
+		<result column="N_DATA_SCALE" property="dataScale" jdbcType="INTEGER" />
+		<result column="F_MAX" property="maxValues" jdbcType="DOUBLE" />
+		<result column="F_MIN" property="minValue" jdbcType="DOUBLE" />
+		<result column="C_VALIDATOR" property="validator" jdbcType="VARCHAR" />
+		<result column="C_PATTERN" property="workPattern" jdbcType="VARCHAR" />
+		<result column="D_REGDATE" property="regDate" jdbcType="VARCHAR" />
+		<result column="D_MODIDATE" property="modiDate" jdbcType="VARCHAR" />
+		<result column="C_DESCRIPTION" property="description" jdbcType="VARCHAR" />
+	</resultMap>
+</mapper>

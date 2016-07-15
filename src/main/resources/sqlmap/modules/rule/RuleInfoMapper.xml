@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.rule.dao.RuleInfoMapper">
+	<resultMap id="BaseResultMap" type="com.betterjr.modules.rule.entity.RuleInfo">
+		<!-- WARNING - @mbggenerated -->
+		<id column="C_RULE_NO" property="ruleNo" jdbcType="VARCHAR" />
+		<result column="C_RULE_NAME" property="ruleName" jdbcType="VARCHAR" />
+		<result column="C_GROUP_TYPE" property="groupType" jdbcType="VARCHAR" />
+		<result column="C_GROUP_NAME" property="groupName" jdbcType="VARCHAR" />
+		<result column="C_MATCH_CONDITION" property="matchCond"
+			jdbcType="VARCHAR" />
+		<result column="C_EXECUTE_CONTENT" property="execContent"
+			jdbcType="VARCHAR" />
+		<result column="D_EFFECTIVE" property="effectDate" jdbcType="VARCHAR" />
+		<result column="D_EXPIRES" property="validDate" jdbcType="VARCHAR" />
+		<result column="C_DIALECT" property="ruleDialect" jdbcType="VARCHAR" />
+		<result column="D_REGDATE" property="regDate" jdbcType="VARCHAR" />
+		<result column="D_MODIDATE" property="modiDate" jdbcType="VARCHAR" />
+		<result column="C_DESCRIPTION" property="description" jdbcType="VARCHAR" />
+		<result column="C_MODE" property="workMode" jdbcType="VARCHAR" />
+		<result column="C_CTRLTYPE" property="itemType" jdbcType="VARCHAR" />
+	</resultMap>
+</mapper>

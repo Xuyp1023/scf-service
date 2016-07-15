@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.sys.dao.DictInfoMapper">
+	<resultMap id="BaseResultMap" type="com.betterjr.modules.sys.entity.DictInfo">
+		<!-- WARNING - @mbggenerated -->
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="C_SYS" property="sysNo" jdbcType="VARCHAR" />
+		<result column="C_NAME" property="dictName" jdbcType="VARCHAR" />
+		<result column="C_GROUP" property="groupNo" jdbcType="VARCHAR" />
+		<result column="C_MODIFY" property="dataModify" jdbcType="VARCHAR" />
+		<result column="C_DESCRIPTION" property="description" jdbcType="VARCHAR" />
+		<result column="C_OWNER" property="owner" jdbcType="VARCHAR" />
+		<result column="D_MODIDATE" property="modiDate" jdbcType="VARCHAR" />
+		<result column="C_SCRIPT" property="outScipt" jdbcType="VARCHAR" />
+		<result column="C_CODE" property="dictCode" jdbcType="VARCHAR" />
+	</resultMap>
+</mapper>

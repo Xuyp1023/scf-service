@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betterjr.modules.sys.dao.CustPassProtectedInfoMapper">
+	<resultMap id="BaseResultMap"
+		type="com.betterjr.modules.account.entity.CustPassProtectedInfo">
+		<!-- WARNING - @mbggenerated -->
+		<id column="L_CUSTNO" property="custNo" jdbcType="INTEGER" />
+		<result column="C_QUESTION" property="question" jdbcType="INTEGER" />
+		<result column="C_ANSWER" property="answer" jdbcType="VARCHAR" />
+		<result column="D_OPERDATE" property="operDate" jdbcType="VARCHAR" />
+		<result column="T_OPERTIME" property="operTime" jdbcType="VARCHAR" />
+		<result column="C_IPADDR" property="ipaddr" jdbcType="VARCHAR" />
+	</resultMap>
+</mapper>

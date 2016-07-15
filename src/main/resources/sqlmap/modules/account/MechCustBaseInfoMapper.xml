@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.sys.dao.MechCustBaseInfoMapper">
+	<resultMap id="BaseResultMap"
+		type="com.betterjr.modules.account.entity.MechCustBaseInfo">
+		<!-- WARNING - @mbggenerated -->
+		<id column="L_CUSTNO" property="custNo" jdbcType="INTEGER" />
+		<result column="C_ENG" property="engName" jdbcType="VARCHAR" />
+		<result column="C_CLASS" property="category" jdbcType="VARCHAR" />
+		<result column="C_NATION_TYPE" property="nationType" jdbcType="VARCHAR" />
+		<result column="C_CAPITAL" property="capital" jdbcType="VARCHAR" />
+		<result column="C_LAWTYPE" property="lawIdentType" jdbcType="VARCHAR" />
+		<result column="C_LAWNO" property="lawIdentNo" jdbcType="VARCHAR" />
+		<result column="C_LAWNAME" property="lawName" jdbcType="VARCHAR" />
+		<result column="D_LAWCERT_VALIDDATE" property="lawIdentValidDate"
+			jdbcType="VARCHAR" />
+		<result column="C_REGADDR" property="regAddr" jdbcType="VARCHAR" />
+		<result column="C_LAW_PHONE" property="lawPhone" jdbcType="VARCHAR" />
+		<result column="C_CORPVOCATE" property="corpVocate" jdbcType="VARCHAR" />
+		<result column="C_CORPROPERTIY" property="corpProperty"
+			jdbcType="VARCHAR" />
+		<result column="C_REGCAPITAL" property="regCapital" jdbcType="VARCHAR" />
+		<result column="C_INVEST" property="investType" jdbcType="VARCHAR" />
+		<result column="D_MODIDATE" property="modiDate" jdbcType="VARCHAR" />
+		<result column="C_INSTTYPE" property="instType" jdbcType="VARCHAR" />
+		<result column="C_CUSTCLASS" property="custClass" jdbcType="VARCHAR" />
+	</resultMap>
+</mapper>

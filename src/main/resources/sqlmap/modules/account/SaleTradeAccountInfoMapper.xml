@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.sale.dao.SaleTradeAccountInfoMapper">
+	<resultMap id="BaseResultMap"
+		type="com.betterjr.modules.account.entity.SaleTradeAccountInfo">
+		<!-- WARNING - @mbggenerated -->
+		<id column="C_TRADEACCO" property="tradeAccount" jdbcType="VARCHAR" />
+		<result column="L_CUSTNO" property="custNo" jdbcType="INTEGER" />
+		<result column="C_NETNO" property="netNo" jdbcType="VARCHAR" />
+		<result column="C_MAIN" property="mainAccount" jdbcType="VARCHAR" />
+		<result column="C_REGCODE" property="regCode" jdbcType="VARCHAR" />
+		<result column="D_REGDATE" property="regDate" jdbcType="VARCHAR" />
+		<result column="D_MODIDATE" property="modiDate" jdbcType="VARCHAR" />
+		<result column="C_STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="C_LAST_STATUS" property="lastStatus" jdbcType="VARCHAR" />
+		<result column="C_CLEAR_STATUS" property="clearStatus"
+			jdbcType="VARCHAR" />
+		<result column="C_SPECIALFLAG" property="specialFlag" jdbcType="VARCHAR" />
+		<result column="C_COUNTER" property="conter" jdbcType="VARCHAR" />
+		<result column="C_ACCEPT" property="acceptMode" jdbcType="VARCHAR" />
+	</resultMap>
+</mapper>

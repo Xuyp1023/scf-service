@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.sys.dao.DictItemInfoMapper">
+	<resultMap id="BaseResultMap" type="com.betterjr.modules.sys.entity.DictItemInfo">
+		<!-- WARNING - @mbggenerated -->
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="L_ITEMNO" property="itemNo" jdbcType="INTEGER" />
+		<result column="C_VALUE" property="itemValue" jdbcType="VARCHAR" />
+		<result column="C_CODE" property="itemCode" jdbcType="VARCHAR" />
+		<result column="C_NAME" property="itemName" jdbcType="VARCHAR" />
+		<result column="C_SUBJECT" property="subject" jdbcType="VARCHAR" />
+		<result column="L_SORT" property="itemOrder" jdbcType="INTEGER" />
+		<result column="C_STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="C_DEFAULT" property="defItem" jdbcType="VARCHAR" />
+		<result column="C_DESCRIPTION" property="description" jdbcType="VARCHAR" />
+		<result column="C_OUT" property="exportOut" jdbcType="VARCHAR" />
+	</resultMap>
+</mapper>

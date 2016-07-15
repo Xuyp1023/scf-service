@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betterjr.modules.sys.dao.SnoGeneralInfoMapper">
+	<resultMap id="BaseResultMap"
+		type="com.betterjr.modules.sys.entity.SnoGeneralInfo">
+		<!-- WARNING - @mbggenerated -->
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="C_OPERTYPE" property="operType" jdbcType="VARCHAR" />
+		<result column="L_LASTNO" property="lastNo" jdbcType="INTEGER" />
+		<result column="D_LASTDATE" property="workDate" jdbcType="VARCHAR" />
+		<result column="C_SYSNO" property="sysNo" jdbcType="VARCHAR" />
+		<result column="C_TYPE" property="oneDay" jdbcType="VARCHAR" />
+		<result column="C_MSG" property="msg" jdbcType="VARCHAR" />
+		<result column="L_DATA_LEN" property="dataLen" jdbcType="INTEGER" />
+	</resultMap>
+</mapper>

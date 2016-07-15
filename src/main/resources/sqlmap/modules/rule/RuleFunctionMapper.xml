@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.rule.dao.RuleFunctionMapper">
+	<resultMap id="BaseResultMap" type="com.betterjr.modules.rule.entity.RuleFunction">
+		<!-- WARNING - @mbggenerated -->
+		<id column="C_NAME" property="featureName" jdbcType="VARCHAR" />
+		<result column="C_TYPE" property="fundType" jdbcType="VARCHAR" />
+		<result column="C_CLASS" property="className" jdbcType="VARCHAR" />
+		<result column="C_FUNCNAME" property="funcName" jdbcType="VARCHAR" />
+		<result column="C_PARAMS" property="paramList" jdbcType="VARCHAR" />
+		<result column="C_GROUP" property="groupName" jdbcType="VARCHAR" />
+		<result column="C_ERRORINFO" property="errorInfo" jdbcType="VARCHAR" />
+		<result column="C_STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="D_REGDATE" property="regDate" jdbcType="VARCHAR" />
+		<result column="D_MODIDATE" property="modiDate" jdbcType="VARCHAR" />
+		<result column="C_DESCRIPTION" property="description" jdbcType="VARCHAR" />
+	</resultMap>
+</mapper>

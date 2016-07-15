@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betterjr.modules.sys.dao.CustStatusInfoMapper">
+	<resultMap id="BaseResultMap"
+		type="com.betterjr.modules.account.entity.CustStatusInfo">
+		<!-- WARNING - @mbggenerated -->
+		<id column="L_CUSTNO" property="custNo" jdbcType="INTEGER" />
+		<result column="C_CUSTTYPE" property="custType" jdbcType="VARCHAR" />
+		<result column="C_MOBILE_FLAG" property="mobile" jdbcType="VARCHAR" />
+		<result column="C_EMAIL_FLAG" property="email" jdbcType="VARCHAR" />
+		<result column="C_SALE_FLAG" property="sale" jdbcType="VARCHAR" />
+		<result column="C_MONEY_FLAG" property="money" jdbcType="VARCHAR" />
+		<result column="C_CARD_FLAG" property="bankCard" jdbcType="VARCHAR" />
+		<result column="N_COUNT" property="count" jdbcType="INTEGER" />
+		<result column="C_IPADDR" property="ipaddr" jdbcType="VARCHAR" />
+		<result column="T_FIRSTTIME" property="firstTime" jdbcType="VARCHAR" />
+		<result column="T_LASTTIME" property="lastTime" jdbcType="VARCHAR" />
+		<result column="C_TOKEN" property="token" jdbcType="VARCHAR" />
+		<result column="C_WEIXIN_FLAG" property="weiXin" jdbcType="VARCHAR" />
+		<result column="C_QQ_FLAG" property="qq" jdbcType="VARCHAR" />
+		<result column="C_WEIBO_FLAG" property="weiBo" jdbcType="VARCHAR" />
+		<result column="C_BILL" property="bill" jdbcType="VARCHAR" />
+		<result column="C_INSURE" property="insure" jdbcType="VARCHAR" />
+		<result column="C_SPECIFICATION" property="specification"
+			jdbcType="VARCHAR" />
+		<result column="C_IDENT" property="identContent" jdbcType="VARCHAR" />
+	</resultMap>
+</mapper>

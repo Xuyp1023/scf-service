@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.sale.dao.SaleAccoRequestInfoMapper">
+	<resultMap id="BaseResultMap"
+		type="com.betterjr.modules.account.entity.SaleAccoRequestInfo">
+		<!-- WARNING - @mbggenerated -->
+		<id column="C_REQUESTNO" property="requestNo" jdbcType="VARCHAR" />
+		<result column="L_CUSTNO" property="custNo" jdbcType="INTEGER" />
+		<result column="C_TANO" property="tano" jdbcType="VARCHAR" />
+		<result column="C_TRADEACCO" property="tradeAccount" jdbcType="VARCHAR" />
+		<result column="C_FUNDACCO" property="fundAccount" jdbcType="VARCHAR" />
+		<result column="C_AGENCYNO" property="agencyNo" jdbcType="VARCHAR" />
+		<result column="C_PAYCENTER" property="payCenterNo" jdbcType="VARCHAR" />
+		<result column="C_NETNO" property="netNo" jdbcType="VARCHAR" />
+		<result column="C_BUSINFLAG" property="businFlag" jdbcType="VARCHAR" />
+		<result column="C_CUSTTYPE" property="custType" jdbcType="VARCHAR" />
+		<result column="C_CUSTNAME" property="custName" jdbcType="VARCHAR" />
+		<result column="C_NICKNAME" property="nickName" jdbcType="VARCHAR" />
+		<result column="C_SHORTNAME" property="shortName" jdbcType="VARCHAR" />
+		<result column="C_IDENTTYPE" property="identType" jdbcType="VARCHAR" />
+		<result column="C_IDENTNO" property="identNo" jdbcType="VARCHAR" />
+		<result column="C_ZIPCODE" property="zipCode" jdbcType="VARCHAR" />
+		<result column="C_ADDRESS" property="address" jdbcType="VARCHAR" />
+		<result column="C_PHONE" property="phone" jdbcType="VARCHAR" />
+		<result column="C_HOME_PHONE" property="homePhone" jdbcType="VARCHAR" />
+		<result column="C_OFFICE_PHONE" property="officePhone"
+			jdbcType="VARCHAR" />
+		<result column="C_FAXNO" property="faxNo" jdbcType="VARCHAR" />
+		<result column="C_MOBILENO" property="mobileNo" jdbcType="VARCHAR" />
+		<result column="C_EMAIL" property="email" jdbcType="VARCHAR" />
+		<result column="C_WEIXIN" property="weiXin" jdbcType="VARCHAR" />
+		<result column="C_WEIBO" property="weibo" jdbcType="VARCHAR" />
+		<result column="C_QQ" property="qq" jdbcType="VARCHAR" />
+		<result column="C_SEX" property="custSex" jdbcType="VARCHAR" />
+		<result column="C_CITYNO" property="cityNo" jdbcType="VARCHAR" />
+		<result column="C_COUNTY" property="county" jdbcType="VARCHAR" />
+		<result column="C_BANKNO" property="bankNo" jdbcType="VARCHAR" />
+		<result column="C_BANKACCO" property="bankAccount" jdbcType="VARCHAR" />
+		<result column="C_BANKNAME" property="bankName" jdbcType="VARCHAR" />
+		<result column="C_BANKACCONAME" property="bankAcountName"
+			jdbcType="VARCHAR" />
+		<result column="C_PRESTATUS" property="preStatus" jdbcType="VARCHAR" />
+		<result column="C_STATUS" property="tradeStatus" jdbcType="VARCHAR" />
+		<result column="C_LAST_STATUS" property="lastTradeStatus"
+			jdbcType="VARCHAR" />
+		<result column="D_BIRTHDAY" property="birthDay" jdbcType="VARCHAR" />
+		<result column="C_VOCATION" property="vocation" jdbcType="VARCHAR" />
+		<result column="C_EDUCATION" property="education" jdbcType="VARCHAR" />
+		<result column="C_INCOME" property="incoming" jdbcType="VARCHAR" />
+		<result column="C_CORPVOCATE" property="corpVocate" jdbcType="VARCHAR" />
+		<result column="C_CORPROPERTY" property="corpProperty"
+			jdbcType="VARCHAR" />
+		<result column="C_REGCAPITAL" property="regCapital" jdbcType="VARCHAR" />
+		<result column="C_NATIONAL" property="national" jdbcType="VARCHAR" />
+		<result column="C_INVEST" property="investType" jdbcType="VARCHAR" />
+		<result column="C_SZACCO" property="szAccount" jdbcType="VARCHAR" />
+		<result column="C_SHACCO" property="shAccount" jdbcType="VARCHAR" />
+		<result column="D_DATE" property="tradeDate" jdbcType="VARCHAR" />
+		<result column="T_TIME" property="tradeTime" jdbcType="VARCHAR" />
+		<result column="D_OPERDATE" property="operDate" jdbcType="VARCHAR" />
+		<result column="T_OPERTIME" property="operTime" jdbcType="VARCHAR" />
+		<result column="C_VOUCHERNO" property="voucherNo" jdbcType="VARCHAR" />
+		<result column="C_CIPHERTEXT" property="cipherText" jdbcType="VARCHAR" />
+		<result column="C_IPADDR" property="ipaddr" jdbcType="VARCHAR" />
+		<result column="C_OPERNO" property="operNo" jdbcType="VARCHAR" />
+		<result column="C_CHECKNO" property="checkerNo" jdbcType="VARCHAR" />
+		<result column="C_LAWNAME" property="lawName" jdbcType="VARCHAR" />
+		<result column="C_LAWTYPE" property="lawIdentType" jdbcType="VARCHAR" />
+		<result column="C_LAWNO" property="lawIdentNo" jdbcType="VARCHAR" />
+		<result column="C_CONTACT_IDENT_TYPE" property="contIdentifyType"
+			jdbcType="VARCHAR" />
+		<result column="C_CONTACT" property="contName" jdbcType="VARCHAR" />
+		<result column="C_CONTYPE" property="contIdentType" jdbcType="VARCHAR" />
+		<result column="C_CONTNO" property="contIdentNo" jdbcType="VARCHAR" />
+		<result column="C_CONTPHONE" property="contPhone" jdbcType="VARCHAR" />
+		<result column="C_INSTTYPE" property="instType" jdbcType="VARCHAR" />
+		<result column="C_PROMOTION" property="promotion" jdbcType="VARCHAR" />
+		<result column="C_CUSTGROUP" property="custGroup" jdbcType="VARCHAR" />
+		<result column="C_BRANCHBANK" property="branchBank" jdbcType="VARCHAR" />
+		<result column="C_DELIVERWAY" property="deliverWay" jdbcType="VARCHAR" />
+		<result column="C_DELIVERTYPE" property="deliverType" jdbcType="VARCHAR" />
+		<result column="C_TRADING" property="tradeMethod" jdbcType="VARCHAR" />
+		<result column="C_MULTIACCO" property="muiltAcco" jdbcType="VARCHAR" />
+		<result column="C_CANCELFLAG" property="canceled" jdbcType="VARCHAR" />
+		<result column="C_ORDER_FLAG" property="orderWay" jdbcType="VARCHAR" />
+		<result column="C_SIGNSTATUS" property="signStatus" jdbcType="VARCHAR" />
+		<result column="C_OPERORG" property="operOrg" jdbcType="VARCHAR" />
+		<result column="C_CUSTCLASS" property="custClass" jdbcType="VARCHAR" />
+		<result column="C_MINOR_FLAG" property="minor" jdbcType="VARCHAR" />
+		<result column="C_MINORID" property="minorId" jdbcType="VARCHAR" />
+		<result column="C_BROKER" property="broker" jdbcType="VARCHAR" />
+		<result column="C_CUSTMANAGER" property="custManager" jdbcType="VARCHAR" />
+		<result column="C_REFERRAL" property="referral" jdbcType="VARCHAR" />
+		<result column="C_REFERRALMOBILE" property="referralMobile"
+			jdbcType="VARCHAR" />
+		<result column="C_ACCEPT" property="acceptMode" jdbcType="VARCHAR" />
+		<result column="C_CONTMOBILE" property="contMobileNo" jdbcType="VARCHAR" />
+		<result column="D_CERTVALIDDATE" property="certValidDate"
+			jdbcType="VARCHAR" />
+		<result column="D_CONTCERT_VALIDDATE" property="contCertValidDate"
+			jdbcType="VARCHAR" />
+		<result column="D_LAWCERT_VALIDDATE" property="lawCertValidDate"
+			jdbcType="VARCHAR" />
+		<result column="C_CORPNAME" property="corpName" jdbcType="VARCHAR" />
+		<result column="C_RISKNO" property="riskNo" jdbcType="VARCHAR" />
+		<result column="C_SOURCE_KEY" property="sourceKey" jdbcType="VARCHAR" />
+		<result column="C_OPERWAY" property="operWay" jdbcType="VARCHAR" />
+		<result column="L_MONEYACCOUNT" property="moneyAccount"
+			jdbcType="INTEGER" />
+		<result column="D_CDATE" property="confirmDate" jdbcType="VARCHAR" />
+		<result column="C_ERRCODE" property="errCode" jdbcType="VARCHAR" />
+		<result column="C_ERRDETAIL" property="errDetail" jdbcType="VARCHAR" />
+		<result column="C_CAUSE" property="confirmCause" jdbcType="VARCHAR" />
+		<result column="C_CSERIALNO" property="confirmSerialno"
+			jdbcType="VARCHAR" />
+		<result column="C_TAGET_TRADEACCO" property="tagetTradeAccount"
+			jdbcType="VARCHAR" />
+		<result column="C_ACCOUNTCARDNO" property="accountCardNo"
+			jdbcType="VARCHAR" />
+		<result column="C_SPECIFICATION" property="specification"
+			jdbcType="VARCHAR" />
+		<result column="D_FROZENENDLINE" property="frozenEndLine"
+			jdbcType="VARCHAR" />
+		<result column="C_FROZENCAUSE" property="frozenCause" jdbcType="VARCHAR" />
+		<result column="C_OLD_CSERIALNO" property="originConfirmNo"
+			jdbcType="VARCHAR" />
+		<result column="C_OLD_REQUESTNO" property="originRequestNo"
+			jdbcType="VARCHAR" />
+		<result column="D_OLD_CDATE" property="originConfirmDate"
+			jdbcType="VARCHAR" />
+		<result column="C_CHECKER" property="checker" jdbcType="VARCHAR" />
+		<result column="C_SALE_CUSTNO" property="saleCustNo" jdbcType="VARCHAR" />
+		<result column="C_SALE_REQUESTNO" property="saleRequestNo"
+			jdbcType="VARCHAR" />
+		<result column="L_CONTACTOR" property="contactor" jdbcType="INTEGER" />
+	</resultMap>
+</mapper>

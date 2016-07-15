@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betterjr.modules.sys.dao.CustPassInfoMapper">
+	<resultMap id="BaseResultMap"
+		type="com.betterjr.modules.account.entity.CustPassInfo">
+		<!-- WARNING - @mbggenerated -->
+		<id column="L_CUSTNO" property="custNo" jdbcType="INTEGER" />
+		<result column="N_ERRCOUNT" property="errCount" jdbcType="INTEGER" />
+		<result column="C_TYPE" property="passType" jdbcType="VARCHAR" />
+		<result column="C_PASSWD" property="passwd" jdbcType="VARCHAR" />
+		<result column="C_SALT" property="passSalt" jdbcType="VARCHAR" />
+		<result column="C_LOCK" property="lockStatus" jdbcType="VARCHAR" />
+		<result column="D_OPERWAY" property="operWay" jdbcType="VARCHAR" />
+		<result column="D_LOCKDATE" property="lockDate" jdbcType="VARCHAR" />
+		<result column="T_LOCKTIME" property="lockTime" jdbcType="VARCHAR" />
+		<result column="D_ENDDATE" property="endDate" jdbcType="VARCHAR" />
+		<result column="D_MODIDATE" property="modiDate" jdbcType="VARCHAR" />
+	</resultMap>
+</mapper>

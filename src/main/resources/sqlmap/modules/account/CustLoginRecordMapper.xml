@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.account.dao.CustLoginRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.betterjr.modules.account.entity.CustLoginRecord" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="N_VERSION" property="version" jdbcType="INTEGER" />
+    <result column="C_TYPE" property="type" jdbcType="CHAR" />
+    <result column="T_TIME" property="loginTime" jdbcType="VARCHAR" />
+    <result column="C_CLASS" property="loginClass" jdbcType="VARCHAR" />
+    <result column="C_IPADDR" property="ipaddr" jdbcType="VARCHAR" />
+    <result column="C_SYSNAME" property="sysName" jdbcType="VARCHAR" />
+    <result column="C_ACCESS_TYPE" property="accessType" jdbcType="VARCHAR" />
+    <result column="C_MARK" property="mark" jdbcType="VARCHAR" />
+    <result column="D_DATE" property="loginDate" jdbcType="VARCHAR" />
+    <result column="C_RESULT" property="result" jdbcType="VARCHAR" />
+    <result column="L_OPER_ID" property="operId" jdbcType="INTEGER" />
+    <result column="C_OPER_NAME" property="operName" jdbcType="VARCHAR" />
+    <result column="L_REG_OPERID" property="regOperId" jdbcType="INTEGER" />
+    <result column="C_REG_OPERNAME" property="regOperName" jdbcType="VARCHAR" />
+    <result column="D_REG_DATE" property="regDate" jdbcType="VARCHAR" />
+    <result column="T_REG_TIME" property="regTime" jdbcType="VARCHAR" />
+    <result column="L_MODI_OPERID" property="modiOperId" jdbcType="INTEGER" />
+    <result column="C_MODI_OPERNAME" property="modiOperName" jdbcType="VARCHAR" />
+    <result column="D_MODI_DATE" property="modiDate" jdbcType="VARCHAR" />
+    <result column="T_MODI_TIME" property="modiTime" jdbcType="VARCHAR" />
+    <result column="C_OPERORG" property="operOrg" jdbcType="VARCHAR" />
+    <result column="C_BUSIN_STATUS" property="businStatus" jdbcType="CHAR" />
+    <result column="C_LAST_STATUS" property="lastStatus" jdbcType="CHAR" />
+    <result column="L_CUSTNO" property="custNo" jdbcType="INTEGER" />
+  </resultMap>
+</mapper>

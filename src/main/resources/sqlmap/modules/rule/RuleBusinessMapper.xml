@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.rule.dao.RuleBusinessMapper">
+	<resultMap id="BaseResultMap" type="com.betterjr.modules.rule.entity.RuleBusiness">
+		<!-- WARNING - @mbggenerated -->
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="C_NAME" property="businName" jdbcType="VARCHAR" />
+		<result column="C_FUNC" property="enterFunc" jdbcType="VARCHAR" />
+		<result column="C_TYPE" property="businType" jdbcType="VARCHAR" />
+		<result column="C_EXECUTE_CONTENT" property="execContent"
+			jdbcType="VARCHAR" />
+		<result column="C_DESCRIPTION" property="description" jdbcType="VARCHAR" />
+		<result column="C_GROUP" property="businGroup" jdbcType="VARCHAR" />
+		<result column="C_ERRORINFO" property="errorInfo" jdbcType="VARCHAR" />
+		<result column="C_STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="D_REGDATE" property="regDate" jdbcType="VARCHAR" />
+		<result column="D_MODIDATE" property="modiDate" jdbcType="VARCHAR" />
+		<result column="C_VERSION" property="businVersion" jdbcType="VARCHAR" />
+	</resultMap>
+</mapper>

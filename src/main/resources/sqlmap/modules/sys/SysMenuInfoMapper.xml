@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betterjr.modules.sys.dao.SysMenuInfoMapper">
+	<resultMap id="BaseResultMap" type="com.betterjr.modules.sys.entity.SysMenuInfo">
+		<!-- WARNING - @mbggenerated -->
+		<id column="ID" jdbcType="INTEGER" property="id" />
+		<result column="C_SYS" jdbcType="VARCHAR" property="sysNo" />
+		<result column="C_NAME" jdbcType="VARCHAR" property="menuName" />
+		<result column="C_TITLE" jdbcType="VARCHAR" property="menuTitle" />
+		<result column="C_URL" jdbcType="VARCHAR" property="menuUrl" />
+		<result column="C_TARGET" jdbcType="VARCHAR" property="workTarget" />
+		<result column="N_PARENT_ID" jdbcType="INTEGER" property="parentId" />
+		<result column="N_ORDER" jdbcType="INTEGER" property="menuOrder" />
+		<result column="C_DESCRIPTION" jdbcType="VARCHAR" property="description" />
+		<result column="C_STATUS" jdbcType="VARCHAR" property="status" />
+		<result column="D_REGDATE" jdbcType="VARCHAR" property="regDate" />
+		<result column="D_MODIDATE" jdbcType="VARCHAR" property="modiDate" />
+		<result column="C_OPENMODE" jdbcType="VARCHAR" property="workOpenMode" />
+		<result column="C_ENDNODE" jdbcType="VARCHAR" property="endNode" />
+	</resultMap>
+</mapper>

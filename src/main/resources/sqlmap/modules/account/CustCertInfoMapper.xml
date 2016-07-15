@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betterjr.modules.sys.dao.CustCertInfoMapper">
+	<resultMap id="BaseResultMap"
+		type="com.betterjr.modules.account.entity.CustCertInfo">
+		<!-- WARNING - @mbggenerated -->
+		<id column="C_SUBJECT" property="subject" jdbcType="VARCHAR" />
+		<result column="C_SERIALNO" property="serialNo" jdbcType="VARCHAR" />
+		<result column="L_CUSTNO" property="custNo" jdbcType="INTEGER" />
+		<result column="C_IDENTNO" property="identNo" jdbcType="VARCHAR" />
+		<result column="C_CUSTNAME" property="custName" jdbcType="VARCHAR" />
+		<result column="C_CONTACT" property="contName" jdbcType="VARCHAR" />
+		<result column="C_CONTYPE" property="contIdentType" jdbcType="VARCHAR" />
+		<result column="C_CONTNO" property="contIdentNo" jdbcType="VARCHAR" />
+		<result column="C_CONTPHONE" property="contPhone" jdbcType="VARCHAR" />
+		<result column="C_STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="C_VERSIONUID" property="versionUid" jdbcType="VARCHAR" />
+		<result column="C_OPERNO" property="operNo" jdbcType="VARCHAR" />
+		<result column="C_CERTINFO" property="certInfo" jdbcType="VARCHAR" />
+		<result column="D_VALIDDATE" property="validDate" jdbcType="VARCHAR" />
+		<result column="D_CREATEDATE" property="createDate" jdbcType="VARCHAR" />
+		<result column="C_TOKEN" property="token" jdbcType="VARCHAR" />
+	</resultMap>
+</mapper>
