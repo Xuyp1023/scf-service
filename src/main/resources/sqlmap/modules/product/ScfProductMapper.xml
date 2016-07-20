@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.product.dao.ScfProductMapper" >
+  <resultMap id="BaseResultMap" type="com.betterjr.modules.product.entity.ScfProduct" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="L_CORE_CUSTNO" property="coreCustNo" jdbcType="INTEGER" />
+    <result column="C_FACTORNO" property="factorNo" jdbcType="INTEGER" />
+    <result column="C_FACTORCORP" property="factorCorp" jdbcType="VARCHAR" />
+    <result column="C_PRODUCT_CODE" property="productCode" jdbcType="VARCHAR" />
+    <result column="C_PRODUCT_NAME" property="productName" jdbcType="VARCHAR" />
+    <result column="C_FEATURE" property="features" jdbcType="VARCHAR" />
+    <result column="C_FIT_CROWD" property="fitCrowd" jdbcType="VARCHAR" />
+    <result column="F_STARTMONEY" property="minFactorAmmount" jdbcType="DOUBLE" />
+    <result column="F_ENDMONEY" property="maxFactorAmmount" jdbcType="DOUBLE" />
+    <result column="C_FINANCTYPE" property="financeType" jdbcType="VARCHAR" />
+    <result column="F_RATIO" property="ratio" jdbcType="DOUBLE" />
+    <result column="N_MINDAYS" property="minLoanDays" jdbcType="INTEGER" />
+    <result column="N_MAXDAYS" property="maxLoanDays" jdbcType="INTEGER" />
+    <result column="C_FACTORTYPE" property="factorType" jdbcType="VARCHAR" />
+    <result column="C_BUSIN_STATUS" property="businStatus" jdbcType="VARCHAR" />
+    <result column="L_REG_OPERID" property="regOperId" jdbcType="INTEGER" />
+    <result column="C_REG_OPERNAME" property="regOperName" jdbcType="VARCHAR" />
+    <result column="D_REG_DATE" property="regDate" jdbcType="VARCHAR" />
+    <result column="T_REG_TIME" property="regTime" jdbcType="VARCHAR" />
+    <result column="L_MODI_OPERID" property="modiOperId" jdbcType="INTEGER" />
+    <result column="C_MODI_OPERNAME" property="modiOperName" jdbcType="VARCHAR" />
+    <result column="D_MODI_DATE" property="modiDate" jdbcType="VARCHAR" />
+    <result column="T_MODI_TIME" property="modiTime" jdbcType="VARCHAR" />
+    <result column="L_SHELVES_OPERID" property="shelvesOperId" jdbcType="INTEGER" />
+    <result column="C_SHELVES_OPERNAME" property="shelvesOperName" jdbcType="VARCHAR" />
+    <result column="C_SHELVES_DATE" property="shelvesDate" jdbcType="VARCHAR" />
+    <result column="T_SHELVES_TIME" property="shelvesTime" jdbcType="VARCHAR" />
+    <result column="L_OFFLINE_OPERID" property="offLineOperId" jdbcType="INTEGER" />
+    <result column="C_OFFLINE_OPERNAME" property="offLineOperName" jdbcType="VARCHAR" />
+    <result column="D_OFFLINE_DATE" property="offLineDate" jdbcType="VARCHAR" />
+    <result column="T_OFFLINE_TIME" property="offLineTime" jdbcType="VARCHAR" />
+    <result column="C_OPERORG" property="operOrg" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>
