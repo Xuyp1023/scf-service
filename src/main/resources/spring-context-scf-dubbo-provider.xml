@@ -16,7 +16,7 @@
 	<bean class="com.betterjr.common.service.SpringContextHolder" />
 	<!-- 扫描spring注解 -->
 	<context:component-scan
-		base-package="com.betterjr.modules.test;com.betterjr.modules.account.service;com.betterjr.modules.rule;com.betterjr.modules.sys;com.betterjr.common" />
+		base-package="com.betterjr.modules.test;com.betterjr.modules.product;com.betterjr.modules.account.service;com.betterjr.modules.rule;com.betterjr.modules.sys;com.betterjr.common" />
 	<!-- <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" 
 		p:host-name="192.168.2.49" p:port="6379" /> <bean id="stringRedisSerializer" 
 		class="org.springframework.data.redis.serializer.StringRedisSerializer"/> 
