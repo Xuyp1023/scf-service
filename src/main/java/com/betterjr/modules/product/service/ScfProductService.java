@@ -12,6 +12,7 @@ import com.betterjr.common.data.SimpleDataEntity;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
+import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.account.service.CustAndOperatorRelaService;
 import com.betterjr.modules.product.dao.ScfProductMapper;
@@ -25,6 +26,28 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
 
     @Autowired
     private CustAccountService custAccountService;
+
+    /**
+     * 融资产品信息分页查询
+     * 
+     * @param anMap
+     * @param anFlag
+     * @param anPageNum
+     * @param anPageSize
+     * @return
+     */
+    public Page<ScfProduct> queryProduct(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+        // 操作员只能查询所属机构的融资产品信息
+        anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+
+        Page<ScfProduct> anProductList = this.selectPropertyByPage(ScfProduct.class, anMap, anPageNum, anPageSize, "1".equals(anFlag));
+        for (ScfProduct anProduct : anProductList) {
+            anProduct.setCoreName(custAccountService.queryCustName(anProduct.getCoreCustNo()));
+            anProduct.setFactorName(custAccountService.queryCustName(anProduct.getFactorNo()));
+        }
+
+        return anProductList;
+    }
 
     /**
      * 融资产品下拉列表查询
@@ -66,6 +89,7 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
 
         // 操作员所属机构
         String anOperOrg = UserUtils.getOperatorInfo().getOperOrg();
+
         // 设置操作员所属保理公司客户号
         Long anFactorNo = Collections3.getFirst(custAndOperatorRelaService.findCustNoList(UserUtils.getOperatorInfo().getId(), anOperOrg));
         anProduct.setFactorNo(anFactorNo);
