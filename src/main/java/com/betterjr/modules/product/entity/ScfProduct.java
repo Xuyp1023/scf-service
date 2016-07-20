@@ -687,4 +687,23 @@ public class ScfProduct implements BetterjrEntity {
         this.businStatus = "0";
     }
 
+    public void initModifyValue(ScfProduct anProduct) {
+        this.id = anProduct.getId();
+        this.businStatus = anProduct.getBusinStatus();
+        this.operOrg = anProduct.getOperOrg();
+
+        this.factorNo = anProduct.getFactorNo();
+        this.factorCorp = anProduct.getFactorCorp();
+
+        this.regOperId = anProduct.getRegOperId();
+        this.regOperName = anProduct.getRegOperName();
+        this.regDate = anProduct.getRegDate();
+        this.regTime = anProduct.getRegTime();
+
+        this.modiOperId = UserUtils.getOperatorInfo().getId();
+        this.modiOperName = UserUtils.getOperatorInfo().getName();
+        this.modiDate = BetterDateUtils.getNumDate();
+        this.modiTime = BetterDateUtils.getNumTime();
+    }
+
 }

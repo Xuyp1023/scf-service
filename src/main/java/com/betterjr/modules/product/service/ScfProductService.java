@@ -9,10 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.data.SimpleDataEntity;
+import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
+import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.account.service.CustAndOperatorRelaService;
 import com.betterjr.modules.product.dao.ScfProductMapper;
@@ -101,6 +104,44 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         this.insert(anProduct);
 
         return anProduct;
+    }
+
+    public ScfProduct saveModifyProduct(ScfProduct anModiProduct) {
+        logger.info("Begin to modify Product");
+
+        ScfProduct anProduct = this.selectByPrimaryKey(anModiProduct.getId());
+        if (null == anProduct) {
+            logger.info("无法获取融资产品信息");
+            throw new BytterTradeException(40001, "无法获取融资产品信息");
+        }
+
+        // 检查当前操作员是否能修改该融资产品
+        CustOperatorInfo operator = UserUtils.getOperatorInfo();
+        if (BetterStringUtils.equals(operator.getOperOrg(), anProduct.getOperOrg()) == false) {
+            logger.info("当前操作员不能修改该融资产品");
+            throw new BytterTradeException(40001, "当前操作员不能修改该融资产品");
+        }
+
+        // 不允许修改已上架(businStatus:1)的融资产品
+        String status = anProduct.getBusinStatus();
+        if (BetterStringUtils.equals("1", status) == true) {
+            logger.info("当前融资产品已上架,不允许修改");
+            throw new BytterTradeException(40001, "当前融资产品已上架,不允许修改");
+        }
+
+        // 不允许修改已下架(businStatus:2)的融资产品
+        if (BetterStringUtils.equals("2", status) == true) {
+            logger.info("当前融资产品已下架,不允许修改");
+            throw new BytterTradeException(40001, "当前融资产品已下架,不允许修改");
+        }
+
+        // 设置修改信息
+        anModiProduct.initModifyValue(anProduct);
+
+        // 数据存盘
+        this.updateByPrimaryKey(anModiProduct);
+
+        return anModiProduct;
     }
 
 }
