@@ -5,15 +5,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.data.SimpleDataEntity;
 import com.betterjr.common.service.BaseService;
+import com.betterjr.common.utils.Collections3;
+import com.betterjr.common.utils.UserUtils;
+import com.betterjr.modules.account.service.CustAccountService;
+import com.betterjr.modules.account.service.CustAndOperatorRelaService;
 import com.betterjr.modules.product.dao.ScfProductMapper;
 import com.betterjr.modules.product.entity.ScfProduct;
 
 @Service
 public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct> {
+
+    @Autowired
+    private CustAndOperatorRelaService custAndOperatorRelaService;
+
+    @Autowired
+    private CustAccountService custAccountService;
 
     /**
      * 融资产品下拉列表查询
@@ -39,6 +50,33 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         }
 
         return result;
+    }
+
+    /**
+     * 融资产品录入
+     * 
+     * @param anMap
+     * @return
+     */
+    public ScfProduct addProduct(ScfProduct anProduct) {
+        logger.info("Begin to add Product");
+
+        // 初始化信息
+        anProduct.initAddValue();
+
+        // 操作员所属机构
+        String anOperOrg = UserUtils.getOperatorInfo().getOperOrg();
+        // 设置操作员所属保理公司客户号
+        Long anFactorNo = Collections3.getFirst(custAndOperatorRelaService.findCustNoList(UserUtils.getOperatorInfo().getId(), anOperOrg));
+        anProduct.setFactorNo(anFactorNo);
+
+        // 设置操作员所属保理公司简称
+        anProduct.setFactorCorp(Collections3.getFirst(custAccountService.selectByProperty("custNo", anFactorNo)).getShortName());
+
+        // 数据存盘
+        this.insert(anProduct);
+
+        return anProduct;
     }
 
 }

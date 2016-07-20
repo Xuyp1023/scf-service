@@ -12,6 +12,9 @@ import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.selectkey.SerialGenerator;
+import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.UserUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Access(AccessType.FIELD)
@@ -672,6 +675,16 @@ public class ScfProduct implements BetterjrEntity {
         result = prime * result + ((getOffLineTime() == null) ? 0 : getOffLineTime().hashCode());
         result = prime * result + ((getOperOrg() == null) ? 0 : getOperOrg().hashCode());
         return result;
+    }
+
+    public void initAddValue() {
+        this.id = SerialGenerator.getLongValue("ScfProduct.id");
+        this.regOperId = UserUtils.getOperatorInfo().getId();
+        this.regOperName = UserUtils.getOperatorInfo().getName();
+        this.regDate = BetterDateUtils.getNumDate();
+        this.regTime = BetterDateUtils.getNumTime();
+        this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
+        this.businStatus = "0";
     }
 
 }
