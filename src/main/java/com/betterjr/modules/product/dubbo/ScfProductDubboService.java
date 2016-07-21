@@ -59,4 +59,10 @@ public class ScfProductDubboService implements IScfProductService {
         return AjaxObject.newOk("融资产品上架成功", scfProductService.saveShelvesProduct(anId)).toJson();
     }
 
+    @Override
+    public String webSaveOfflineProduct(Long anId) {
+
+        return AjaxObject.newOk("融资产品下架成功", scfProductService.saveOfflineProduct(anId)).toJson();
+    }
+
 }

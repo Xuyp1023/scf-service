@@ -106,6 +106,12 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         return anProduct;
     }
 
+    /**
+     * 融资产品修改
+     * 
+     * @param anModiProduct
+     * @return
+     */
     public ScfProduct saveModifyProduct(ScfProduct anModiProduct) {
         logger.info("Begin to modify Product");
 
@@ -144,6 +150,12 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         return anModiProduct;
     }
 
+    /**
+     * 融资产品删除
+     * 
+     * @param anId
+     * @return
+     */
     public int saveDeleteProduct(Long anId) {
         logger.info("Begin to Delete Product");
 
@@ -170,6 +182,12 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         return this.deleteByPrimaryKey(anId);
     }
 
+    /**
+     * 融资产品上架
+     * 
+     * @param anId
+     * @return
+     */
     public ScfProduct saveShelvesProduct(Long anId) {
         logger.info("Begin to Shelves Product");
 
@@ -201,6 +219,50 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
 
         // 设置上架信息
         anProduct.initShelvesValue();
+
+        // 数据存盘
+        this.updateByPrimaryKey(anProduct);
+
+        return anProduct;
+    }
+
+    /**
+     * 融资产品下架
+     * 
+     * @param anId
+     * @return
+     */
+    public ScfProduct saveOfflineProduct(Long anId) {
+        logger.info("Begin to Offline Product");
+
+        ScfProduct anProduct = this.selectByPrimaryKey(anId);
+        if (null == anProduct) {
+            logger.error("无法获取融资产品信息");
+            throw new BytterTradeException(40001, "无法获取融资产品信息");
+        }
+
+        // 检查当前操作员是否能下架该融资产品
+        CustOperatorInfo operator = UserUtils.getOperatorInfo();
+        if (BetterStringUtils.equals(operator.getOperOrg(), anProduct.getOperOrg()) == false) {
+            logger.warn("当前操作员不能对该融资产品进行下架操作");
+            throw new BytterTradeException(40001, "当前操作员不能对该融资产品进行下架操作");
+        }
+
+        // 未上架(businStatus:0)的融资产品不需要执行此操作
+        String status = anProduct.getBusinStatus();
+        if (BetterStringUtils.equals(status, "0") == true) {
+            logger.warn("当前融资产品未上架");
+            throw new BytterTradeException(40001, "当前融资产品未上架");
+        }
+
+        // 已下架(businStatus:2)的融资产品不需要执行此操作
+        if (BetterStringUtils.equals(status, "2") == true) {
+            logger.warn("当前融资产品已下架");
+            throw new BytterTradeException(40001, "当前融资产品已下架");
+        }
+
+        // 设置下架信息
+        anProduct.initOfflineValue();
 
         // 数据存盘
         this.updateByPrimaryKey(anProduct);

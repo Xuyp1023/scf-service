@@ -714,4 +714,12 @@ public class ScfProduct implements BetterjrEntity {
         this.shelvesTime = BetterDateUtils.getNumTime();
     }
 
+    public void initOfflineValue() {
+        this.businStatus = "2";
+        this.offLineOperId = UserUtils.getOperatorInfo().getId();
+        this.offLineOperName = UserUtils.getOperatorInfo().getName();
+        this.offLineDate = BetterDateUtils.getNumDate();
+        this.offLineTime = BetterDateUtils.getNumTime();
+    }
+
 }
