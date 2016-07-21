@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 import com.betterjr.common.data.SimpleDataEntity;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
+import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
-import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.account.service.CustAndOperatorRelaService;
 import com.betterjr.modules.product.dao.ScfProductMapper;
@@ -25,10 +25,10 @@ import com.betterjr.modules.product.entity.ScfProduct;
 public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct> {
 
     @Autowired
-    private CustAndOperatorRelaService custAndOperatorRelaService;
+    private CustAccountService custAccountService;
 
     @Autowired
-    private CustAccountService custAccountService;
+    private CustAndOperatorRelaService custAndOperatorRelaService;
 
     /**
      * 融资产品信息分页查询
@@ -62,7 +62,6 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
     public List<SimpleDataEntity> queryProductKeyAndValue(Long coreCustNo, Long anFactorNo) {
         List<SimpleDataEntity> result = new ArrayList<SimpleDataEntity>();
         if (null == coreCustNo || null == anFactorNo) {
-
             return result;
         }
 
@@ -90,11 +89,9 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         // 初始化信息
         anProduct.initAddValue();
 
-        // 操作员所属机构
-        String anOperOrg = UserUtils.getOperatorInfo().getOperOrg();
-
         // 设置操作员所属保理公司客户号
-        Long anFactorNo = Collections3.getFirst(custAndOperatorRelaService.findCustNoList(UserUtils.getOperatorInfo().getId(), anOperOrg));
+        Long anFactorNo = Collections3
+                .getFirst(custAndOperatorRelaService.findCustNoList(UserUtils.getOperatorInfo().getId(), anProduct.getOperOrg()));
         anProduct.setFactorNo(anFactorNo);
 
         // 设置操作员所属保理公司简称
@@ -117,30 +114,17 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         logger.info("Begin to modify Product");
 
         ScfProduct anProduct = this.selectByPrimaryKey(anId);
-        if (null == anProduct) {
-            logger.error("无法获取融资产品信息");
-            throw new BytterTradeException(40001, "无法获取融资产品信息");
-        }
+        BTAssert.notNull(anProduct, "无法获取融资产品信息");
 
         // 检查当前操作员是否能修改该融资产品
-        CustOperatorInfo operator = UserUtils.getOperatorInfo();
-        if (BetterStringUtils.equals(operator.getOperOrg(), anProduct.getOperOrg()) == false) {
-            logger.warn("当前操作员不能修改该融资产品");
-            throw new BytterTradeException(40001, "当前操作员不能修改该融资产品");
-        }
+        checkOperator(anProduct.getOperOrg(), "当前操作员不能修改该融资产品");
 
         // 不允许修改已上架(businStatus:1)的融资产品
-        String status = anProduct.getBusinStatus();
-        if (BetterStringUtils.equals(status, "1") == true) {
-            logger.warn("当前融资产品已上架,不允许修改");
-            throw new BytterTradeException(40001, "当前融资产品已上架,不允许修改");
-        }
+        String businStatus = anProduct.getBusinStatus();
+        checkStatus(businStatus, "1", true, "当前融资产品已上架,不允许修改");
 
         // 不允许修改已下架(businStatus:2)的融资产品
-        if (BetterStringUtils.equals(status, "2") == true) {
-            logger.warn("当前融资产品已下架,不允许修改");
-            throw new BytterTradeException(40001, "当前融资产品已下架,不允许修改");
-        }
+        checkStatus(businStatus, "2", true, "当前融资产品已下架,不允许修改");
 
         // 设置修改信息
         anModiProduct.initModifyValue(anProduct);
@@ -161,23 +145,17 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         logger.info("Begin to Delete Product");
 
         ScfProduct anProduct = this.selectByPrimaryKey(anId);
-        if (null == anProduct) {
-            logger.error("无法获取融资产品信息");
-            throw new BytterTradeException(40001, "无法获取融资产品信息");
-        }
+        BTAssert.notNull(anProduct, "无法获取融资产品信息");
+
+        // 检查当前操作员是否能删除该融资产品
+        checkOperator(anProduct.getOperOrg(), "当前操作员不能删除该融资产品");
 
         // 不允许删除已上架(businStatus:1)的融资产品
-        String status = anProduct.getBusinStatus();
-        if (BetterStringUtils.equals(status, "1") == true) {
-            logger.warn("当前融资产品已上架,不允许删除");
-            throw new BytterTradeException(40001, "当前融资产品已上架,不允许删除");
-        }
+        String businStatus = anProduct.getBusinStatus();
+        checkStatus(businStatus, "1", true, "当前融资产品已上架,不允许删除");
 
         // 不允许删除已下架(businStatus:2)的融资产品
-        if (BetterStringUtils.equals(status, "2") == true) {
-            logger.warn("当前融资产品已下架,不允许删除");
-            throw new BytterTradeException(40001, "当前融资产品已下架,不允许删除");
-        }
+        checkStatus(businStatus, "2", true, "当前融资产品已下架,不允许删除");
 
         // 数据存盘
         return this.deleteByPrimaryKey(anId);
@@ -193,30 +171,17 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         logger.info("Begin to Shelves Product");
 
         ScfProduct anProduct = this.selectByPrimaryKey(anId);
-        if (null == anProduct) {
-            logger.error("无法获取融资产品信息");
-            throw new BytterTradeException(40001, "无法获取融资产品信息");
-        }
+        BTAssert.notNull(anProduct, "无法获取融资产品信息");
 
         // 检查当前操作员是否能上架该融资产品
-        CustOperatorInfo operator = UserUtils.getOperatorInfo();
-        if (BetterStringUtils.equals(operator.getOperOrg(), anProduct.getOperOrg()) == false) {
-            logger.warn("当前操作员不能对该融资产品进行上架操作");
-            throw new BytterTradeException(40001, "当前操作员不能对该融资产品进行上架操作");
-        }
+        checkOperator(anProduct.getOperOrg(), "当前操作员不能对该融资产品进行上架操作");
 
         // 已上架(businStatus:1)的融资产品不需要执行此操作
-        String status = anProduct.getBusinStatus();
-        if (BetterStringUtils.equals(status, "1") == true) {
-            logger.warn("当前融资产品已上架");
-            throw new BytterTradeException(40001, "当前融资产品已上架");
-        }
+        String anBusinStatus = anProduct.getBusinStatus();
+        checkStatus(anBusinStatus, "1", true, "当前融资产品已上架");
 
         // 已下架(businStatus:2)的融资产品不需要执行此操作
-        if (BetterStringUtils.equals(status, "2") == true) {
-            logger.warn("当前融资产品已下架");
-            throw new BytterTradeException(40001, "当前融资产品已下架");
-        }
+        checkStatus(anBusinStatus, "2", true, "当前融资产品已下架");
 
         // 设置上架信息
         anProduct.initShelvesValue();
@@ -237,30 +202,17 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         logger.info("Begin to Offline Product");
 
         ScfProduct anProduct = this.selectByPrimaryKey(anId);
-        if (null == anProduct) {
-            logger.error("无法获取融资产品信息");
-            throw new BytterTradeException(40001, "无法获取融资产品信息");
-        }
+        BTAssert.notNull(anProduct, "无法获取融资产品信息");
 
         // 检查当前操作员是否能下架该融资产品
-        CustOperatorInfo operator = UserUtils.getOperatorInfo();
-        if (BetterStringUtils.equals(operator.getOperOrg(), anProduct.getOperOrg()) == false) {
-            logger.warn("当前操作员不能对该融资产品进行下架操作");
-            throw new BytterTradeException(40001, "当前操作员不能对该融资产品进行下架操作");
-        }
+        checkOperator(anProduct.getOperOrg(), "当前操作员不能对该融资产品进行下架操作");
 
         // 未上架(businStatus:0)的融资产品不需要执行此操作
-        String status = anProduct.getBusinStatus();
-        if (BetterStringUtils.equals(status, "0") == true) {
-            logger.warn("当前融资产品未上架");
-            throw new BytterTradeException(40001, "当前融资产品未上架");
-        }
+        String businStatus = anProduct.getBusinStatus();
+        checkStatus(businStatus, "0", true, "当前融资产品未上架");
 
         // 已下架(businStatus:2)的融资产品不需要执行此操作
-        if (BetterStringUtils.equals(status, "2") == true) {
-            logger.warn("当前融资产品已下架");
-            throw new BytterTradeException(40001, "当前融资产品已下架");
-        }
+        checkStatus(businStatus, "2", true, "当前融资产品已下架");
 
         // 设置下架信息
         anProduct.initOfflineValue();
@@ -269,6 +221,20 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         this.updateByPrimaryKey(anProduct);
 
         return anProduct;
+    }
+
+    private void checkOperator(String anOperOrg, String anMessage) {
+        if (BetterStringUtils.equals(UserUtils.getOperatorInfo().getOperOrg(), anOperOrg) == false) {
+            logger.warn(anMessage);
+            throw new BytterTradeException(40001, anMessage);
+        }
+    }
+
+    private void checkStatus(String anBusinStatus, String anTargetStatus, boolean anFlag, String anMessage) {
+        if (BetterStringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
+            logger.warn(anMessage);
+            throw new BytterTradeException(40001, anMessage);
+        }
     }
 
 }
