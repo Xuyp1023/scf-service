@@ -706,4 +706,12 @@ public class ScfProduct implements BetterjrEntity {
         this.modiTime = BetterDateUtils.getNumTime();
     }
 
+    public void initShelvesValue() {
+        this.businStatus = "1";
+        this.shelvesOperId = UserUtils.getOperatorInfo().getId();
+        this.shelvesOperName = UserUtils.getOperatorInfo().getName();
+        this.shelvesDate = BetterDateUtils.getNumDate();
+        this.shelvesTime = BetterDateUtils.getNumTime();
+    }
+
 }
