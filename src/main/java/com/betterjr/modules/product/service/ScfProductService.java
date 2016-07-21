@@ -170,4 +170,42 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         return this.deleteByPrimaryKey(anId);
     }
 
+    public ScfProduct saveShelvesProduct(Long anId) {
+        logger.info("Begin to Shelves Product");
+
+        ScfProduct anProduct = this.selectByPrimaryKey(anId);
+        if (null == anProduct) {
+            logger.error("无法获取融资产品信息");
+            throw new BytterTradeException(40001, "无法获取融资产品信息");
+        }
+
+        // 检查当前操作员是否能上架该融资产品
+        CustOperatorInfo operator = UserUtils.getOperatorInfo();
+        if (BetterStringUtils.equals(operator.getOperOrg(), anProduct.getOperOrg()) == false) {
+            logger.warn("当前操作员不能对该融资产品进行上架操作");
+            throw new BytterTradeException(40001, "当前操作员不能对该融资产品进行上架操作");
+        }
+
+        // 已上架(businStatus:1)的融资产品不需要执行此操作
+        String status = anProduct.getBusinStatus();
+        if (BetterStringUtils.equals(status, "1") == true) {
+            logger.warn("当前融资产品已上架");
+            throw new BytterTradeException(40001, "当前融资产品已上架");
+        }
+
+        // 已下架(businStatus:2)的融资产品不需要执行此操作
+        if (BetterStringUtils.equals(status, "2") == true) {
+            logger.warn("当前融资产品已下架");
+            throw new BytterTradeException(40001, "当前融资产品已下架");
+        }
+
+        // 设置上架信息
+        anProduct.initShelvesValue();
+
+        // 数据存盘
+        this.updateByPrimaryKey(anProduct);
+
+        return anProduct;
+    }
+
 }
