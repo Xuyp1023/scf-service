@@ -10,7 +10,13 @@
     http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 	<!-- 扫描dubbo注解 -->
 	<dubbo:annotation
-		package="com.betterjr.modules.test,com.betterjr.modules.account.dubbo,com.betterjr.dubbo.extend.filter" />
+		package="com.betterjr.modules.notice,
+		com.betterjr.modules.param,
+		com.betterjr.modules.enquiry,
+		com.betterjr.modules.test,
+		com.betterjr.modules.sys.dubbo,
+		com.betterjr.modules.account.dubbo,
+		com.betterjr.dubbo.extend.filter" />
 	<!-- 提供方应用信息，用于计算依赖关系 -->
 	<dubbo:application name="scf-dubbo-provider" />
 
