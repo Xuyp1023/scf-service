@@ -111,27 +111,27 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
 
         ScfProduct anProduct = this.selectByPrimaryKey(anModiProduct.getId());
         if (null == anProduct) {
-            logger.info("无法获取融资产品信息");
+            logger.error("无法获取融资产品信息");
             throw new BytterTradeException(40001, "无法获取融资产品信息");
         }
 
         // 检查当前操作员是否能修改该融资产品
         CustOperatorInfo operator = UserUtils.getOperatorInfo();
         if (BetterStringUtils.equals(operator.getOperOrg(), anProduct.getOperOrg()) == false) {
-            logger.info("当前操作员不能修改该融资产品");
+            logger.warn("当前操作员不能修改该融资产品");
             throw new BytterTradeException(40001, "当前操作员不能修改该融资产品");
         }
 
         // 不允许修改已上架(businStatus:1)的融资产品
         String status = anProduct.getBusinStatus();
-        if (BetterStringUtils.equals("1", status) == true) {
-            logger.info("当前融资产品已上架,不允许修改");
+        if (BetterStringUtils.equals(status, "1") == true) {
+            logger.warn("当前融资产品已上架,不允许修改");
             throw new BytterTradeException(40001, "当前融资产品已上架,不允许修改");
         }
 
         // 不允许修改已下架(businStatus:2)的融资产品
-        if (BetterStringUtils.equals("2", status) == true) {
-            logger.info("当前融资产品已下架,不允许修改");
+        if (BetterStringUtils.equals(status, "2") == true) {
+            logger.warn("当前融资产品已下架,不允许修改");
             throw new BytterTradeException(40001, "当前融资产品已下架,不允许修改");
         }
 
@@ -142,6 +142,32 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         this.updateByPrimaryKey(anModiProduct);
 
         return anModiProduct;
+    }
+
+    public int saveDeleteProduct(Long anId) {
+        logger.info("Begin to Delete Product");
+
+        ScfProduct anProduct = this.selectByPrimaryKey(anId);
+        if (null == anProduct) {
+            logger.error("无法获取融资产品信息");
+            throw new BytterTradeException(40001, "无法获取融资产品信息");
+        }
+
+        // 不允许删除已上架(businStatus:1)的融资产品
+        String status = anProduct.getBusinStatus();
+        if (BetterStringUtils.equals(status, "1") == true) {
+            logger.warn("当前融资产品已上架,不允许删除");
+            throw new BytterTradeException(40001, "当前融资产品已上架,不允许删除");
+        }
+
+        // 不允许删除已下架(businStatus:2)的融资产品
+        if (BetterStringUtils.equals(status, "2") == true) {
+            logger.warn("当前融资产品已下架,不允许删除");
+            throw new BytterTradeException(40001, "当前融资产品已下架,不允许删除");
+        }
+
+        // 数据存盘
+        return this.deleteByPrimaryKey(anId);
     }
 
 }
