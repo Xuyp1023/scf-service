@@ -40,11 +40,11 @@ public class ScfProductDubboService implements IScfProductService {
     }
 
     @Override
-    public String webSaveModifyProduct(Map<String, Object> anMap) {
+    public String webSaveModifyProduct(Map<String, Object> anMap, Long anId) {
 
         ScfProduct anProduct = (ScfProduct) RuleServiceDubboFilterInvoker.getInputObj();
 
-        return AjaxObject.newOk("融资产品信息修改成功", scfProductService.saveModifyProduct(anProduct)).toJson();
+        return AjaxObject.newOk("融资产品信息修改成功", scfProductService.saveModifyProduct(anProduct, anId)).toJson();
     }
 
     @Override

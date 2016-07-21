@@ -110,12 +110,13 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
      * 融资产品修改
      * 
      * @param anModiProduct
+     * @param anId
      * @return
      */
-    public ScfProduct saveModifyProduct(ScfProduct anModiProduct) {
+    public ScfProduct saveModifyProduct(ScfProduct anModiProduct, Long anId) {
         logger.info("Begin to modify Product");
 
-        ScfProduct anProduct = this.selectByPrimaryKey(anModiProduct.getId());
+        ScfProduct anProduct = this.selectByPrimaryKey(anId);
         if (null == anProduct) {
             logger.error("无法获取融资产品信息");
             throw new BytterTradeException(40001, "无法获取融资产品信息");
