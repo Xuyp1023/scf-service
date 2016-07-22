@@ -287,19 +287,25 @@ public class ScfCreditDetail implements BetterjrEntity {
         this.occupyTime = BetterDateUtils.getNumTime();
     }
 
-    private void initAddBaseValue(ScfCredit anCredit) {
-        this.custNo = anCredit.getCustNo();
-        this.balance = anCredit.getCreditLimit();
+    public void initAddValue(Long anCustNo, BigDecimal anCreditLimit, Long anCreditId) {
+        init();
+        this.custNo = anCustNo;
+        this.balance = anCreditLimit;
         this.businFlag = "";
         this.businId = 0l;
         this.businStatus = "0";// 状态(0:已完成;1:冻结中;)
-        this.creditId = anCredit.getId();
-    }
-
-    public void initAddValue(ScfCredit anCredit) {
-        init();
-        initAddBaseValue(anCredit);
+        this.creditId = anCreditId;
         this.description = "授信初始录入";
+    }
+    
+    public void initModifyValue(Long anCustNo, Long anCreditId) {
+        init();
+        this.custNo = anCustNo;
+        this.businFlag = "";
+        this.businId = 0l;
+        this.businStatus = "0";// 状态(0:已完成;1:冻结中;)
+        this.creditId = anCreditId;
+        this.description = "授信额度调整";
     }
 
 }
