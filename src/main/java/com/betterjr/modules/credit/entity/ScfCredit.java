@@ -697,5 +697,13 @@ public class ScfCredit implements BetterjrEntity {
         this.activateTime = BetterDateUtils.getNumTime();
         this.businStatus = "1";// 授信状态:0-未生效;1-已生效;2-已过期;
     }
+    
+    public void initTerminatValue() {
+        this.terminatOperId = UserUtils.getOperatorInfo().getId();
+        this.terminatOperName = UserUtils.getOperatorInfo().getName();
+        this.terminatDate = BetterDateUtils.getNumDate();
+        this.terminatTime = BetterDateUtils.getNumTime();
+        this.businStatus = "2";// 授信状态:0-未生效;1-已生效;2-已过期;
+    }
 
 }
