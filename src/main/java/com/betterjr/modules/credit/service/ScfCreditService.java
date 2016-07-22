@@ -70,12 +70,16 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
 
         // 初始化参数
         anCredit.initAddValue();
+
         // 设置操作员所属保理公司客户号
         anCredit.setFactorNo(Collections3.getFirst(custAndOperatorRelaService.findCustNoList(anCredit.getRegOperId(), anCredit.getOperOrg())));
+
         // 检查是否已授信
         checkCreditExists(anCredit);
+
         // 数据存盘-授信额度
         this.insert(anCredit);
+
         // 数据存盘-授信额度变动
         ScfCreditDetail anCreditDetail = new ScfCreditDetail();
         anCreditDetail.initAddValue(anCredit.getCustNo(), anCredit.getCreditLimit(), anCredit.getId());
@@ -112,18 +116,25 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         // 获取授信记录
         ScfCredit anCredit = this.selectByPrimaryKey(anId);
         BTAssert.notNull(anCredit, "无法获取授信记录");
+
         // 检查当前操作员是否能修改该授信记录
         checkOperator(anCredit.getOperOrg(), "当前操作员不能修改该授信记录");
+
         // 检查授信状态,不允许修改已生效的授信记录
         checkStatus(anCredit.getBusinStatus(), "1", true, "授信记录已生效,不允许修改");
+
         // 检查授信状态,不允许修改已过期的授信记录
         checkStatus(anCredit.getBusinStatus(), "2", true, "授信记录已过期,不允许修改");
+
         // 设置修改信息
         anModiCredit.initModifyValue(anCredit);
+
         // 数据存盘-授信额度修改
         this.updateByPrimaryKeySelective(anModiCredit);
+
         // 检查授信额度是否调整
         BigDecimal balance = MathExtend.subtract(anCredit.getCreditLimit(), anModiCredit.getCreditLimit());
+
         // 授信额度发生改变
         if (balance.longValue() != 0) {
             ScfCreditDetail anCreditDetail = new ScfCreditDetail();
@@ -143,6 +154,40 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         }
 
         return anModiCredit;
+    }
+
+    /**
+     * 授信额度激活
+     * 
+     * @param anId
+     * @return
+     */
+    public ScfCredit saveActivateCredit(Long anId) {
+        logger.info("Begin to activate Credit");
+
+        // 获取授信记录
+        ScfCredit anCredit = this.selectByPrimaryKey(anId);
+        BTAssert.notNull(anCredit, "无法获取授信记录");
+
+        // 检查当前操作员是否能激活该授信记录
+        checkOperator(anCredit.getOperOrg(), "当前操作员不能激活该授信记录");
+
+        // 检查授信状态,不允许激活已生效的授信记录
+        checkStatus(anCredit.getBusinStatus(), "1", true, "授信记录已生效");
+
+        // 检查授信状态,不允许激活已过期的授信记录
+        checkStatus(anCredit.getBusinStatus(), "2", true, "授信记录已过期");
+
+        // 检查授信合同是否存在
+        BTAssert.notNull(anCredit.getAgreeId(), "未关联授信合同,不能激活授信记录");
+
+        // 设置激活信息
+        anCredit.initActivateValue();
+
+        // 数据存盘
+        this.updateByPrimaryKey(anCredit);
+
+        return anCredit;
     }
 
     private void checkOperator(String anOperOrg, String anMessage) {
