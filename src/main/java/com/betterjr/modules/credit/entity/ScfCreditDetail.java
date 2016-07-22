@@ -297,7 +297,7 @@ public class ScfCreditDetail implements BetterjrEntity {
         this.creditId = anCreditId;
         this.description = "授信初始录入";
     }
-    
+
     public void initModifyValue(Long anCustNo, Long anCreditId) {
         init();
         this.custNo = anCustNo;
