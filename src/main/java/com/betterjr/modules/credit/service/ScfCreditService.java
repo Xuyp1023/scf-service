@@ -190,6 +190,37 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         return anCredit;
     }
 
+    /**
+     * 授信终止
+     * 
+     * @param anId
+     * @return
+     */
+    public ScfCredit saveTerminatCredit(Long anId) {
+        logger.info("Begin to terminat Credit");
+
+        // 获取授信记录
+        ScfCredit anCredit = this.selectByPrimaryKey(anId);
+        BTAssert.notNull(anCredit, "无法获取授信记录");
+
+        // 检查当前操作员是否能终止该授信记录
+        checkOperator(anCredit.getOperOrg(), "当前操作员不能终止该授信记录");
+
+        // 检查授信状态,不允许终止未生效的授信记录
+        checkStatus(anCredit.getBusinStatus(), "0", true, "授信记录未生效");
+
+        // 检查授信状态,不允许终止已过期的授信记录
+        checkStatus(anCredit.getBusinStatus(), "2", true, "授信记录已过期");
+
+        // 设置授信终止信息
+        anCredit.initTerminatValue();
+
+        // 数据存盘
+        this.updateByPrimaryKey(anCredit);
+
+        return anCredit;
+    }
+
     private void checkOperator(String anOperOrg, String anMessage) {
         if (BetterStringUtils.equals(UserUtils.getOperatorInfo().getOperOrg(), anOperOrg) == false) {
             logger.warn(anMessage);

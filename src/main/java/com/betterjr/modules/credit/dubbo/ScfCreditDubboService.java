@@ -47,4 +47,10 @@ public class ScfCreditDubboService implements IScfCreditService {
         return AjaxObject.newOk("授信额度激活成功", scfCreditService.saveActivateCredit(anId)).toJson();
     }
 
+    @Override
+    public String webTerminatCredit(Long anId) {
+
+        return AjaxObject.newOk("授信终止成功", scfCreditService.saveTerminatCredit(anId)).toJson();
+    }
+
 }
