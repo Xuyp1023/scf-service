@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.credit.dao.ScfCreditMapper" >
+  <resultMap id="BaseResultMap" type="com.betterjr.modules.credit.entity.ScfCredit" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="L_CORE_CUSTNO" property="coreCustNo" jdbcType="INTEGER" />
+    <result column="L_FACTORNO" property="factorNo" jdbcType="INTEGER" />
+    <result column="C_CREDIT_TYPE" property="creditType" jdbcType="VARCHAR" />
+    <result column="L_CUSTNO" property="custNo" jdbcType="INTEGER" />
+    <result column="F_CREDIT_LIMIT" property="creditLimit" jdbcType="DOUBLE" />
+    <result column="F_CREDIT_USED" property="creditUsed" jdbcType="DOUBLE" />
+    <result column="F_CREDIT_BALANCE" property="creditBalance" jdbcType="DOUBLE" />
+    <result column="D_START_DATE" property="startDate" jdbcType="VARCHAR" />
+    <result column="D_END_DATE" property="endDate" jdbcType="VARCHAR" />
+    <result column="C_CREDIT_MODE" property="creditMode" jdbcType="VARCHAR" />
+    <result column="L_AGREEID" property="agreeId" jdbcType="INTEGER" />
+    <result column="L_REG_OPERID" property="regOperId" jdbcType="INTEGER" />
+    <result column="C_REG_OPERNAME" property="regOperName" jdbcType="VARCHAR" />
+    <result column="D_REG_DATE" property="regDate" jdbcType="VARCHAR" />
+    <result column="T_REG_TIME" property="regTime" jdbcType="VARCHAR" />
+    <result column="L_MODI_OPERID" property="modiOperId" jdbcType="INTEGER" />
+    <result column="C_MODI_OPERNAME" property="modiOperName" jdbcType="VARCHAR" />
+    <result column="D_MODI_DATE" property="modiDate" jdbcType="VARCHAR" />
+    <result column="T_MODI_TIME" property="modiTime" jdbcType="VARCHAR" />
+    <result column="L_ACTIVATE_OPERID" property="activateOperId" jdbcType="INTEGER" />
+    <result column="L_ACTIVATE_OPERNAME" property="activateOperName" jdbcType="VARCHAR" />
+    <result column="D_ACTIVATE_DATE" property="activateDate" jdbcType="VARCHAR" />
+    <result column="T_ACTIVATE_TIME" property="activateTime" jdbcType="VARCHAR" />
+    <result column="L_TERMINAT_OPERID" property="terminatOperId" jdbcType="INTEGER" />
+    <result column="C_TERMINAT_OPERNAME" property="terminatOperName" jdbcType="VARCHAR" />
+    <result column="D_TERMINAT_DATE" property="terminatDate" jdbcType="VARCHAR" />
+    <result column="T_TERMINAT_TIME" property="terminatTime" jdbcType="VARCHAR" />
+    <result column="C_BUSIN_STATUS" property="businStatus" jdbcType="VARCHAR" />
+    <result column="C_OPERORG" property="operOrg" jdbcType="VARCHAR" />
+    <result column="C_DESCRIPTION" property="description" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>

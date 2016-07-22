@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.credit.dao.ScfCreditDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.betterjr.modules.credit.entity.ScfCreditDetail" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="L_CUSTNO" property="custNo" jdbcType="INTEGER" />
+    <result column="D_OCCUPY_DATE" property="occupyDate" jdbcType="VARCHAR" />
+    <result column="T_OCCUPY_TIME" property="occupyTime" jdbcType="VARCHAR" />
+    <result column="F_BALANCE" property="balance" jdbcType="DOUBLE" />
+    <result column="C_DIRECTION" property="direction" jdbcType="VARCHAR" />
+    <result column="C_BUSIN_FLAG" property="businFlag" jdbcType="VARCHAR" />
+    <result column="L_BUSINID" property="businId" jdbcType="INTEGER" />
+    <result column="C_REQUESTNO" property="requestNo" jdbcType="VARCHAR" />
+    <result column="C_BUSIN_STATUS" property="businStatus" jdbcType="VARCHAR" />
+    <result column="L_CREDITID" property="creditId" jdbcType="INTEGER" />
+    <result column="C_DESCRIPTION" property="description" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>
