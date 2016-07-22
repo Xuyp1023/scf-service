@@ -19,6 +19,9 @@
 		base-package="com.betterjr.modules.test;
 		com.betterjr.modules.product;
 		com.betterjr.modules.credit;
+		com.betterjr.modules.param;
+		com.betterjr.modules.enquiry;
+		com.betterjr.modules.test;
 		com.betterjr.modules.account.service;
 		com.betterjr.modules.rule.service;
 		com.betterjr.modules.rule.validator;
@@ -140,6 +143,13 @@
 		<property name="maxTotal" value="60000" />
 		<property name="testOnBorrow" value="true" />
 	</bean>
+	
+	<bean id="jedisPool" class="redis.clients.jedis.JedisPool">
+		<constructor-arg name="host" value="192.168.2.49" />
+		<constructor-arg name="port" value="6379" />
+		<constructor-arg name="timeout" value="0" />
+		<constructor-arg name="poolConfig" ref="jedisPoolConfig" />
+	</bean>
 
 	<bean id="jedisPool" class="redis.clients.jedis.JedisPool">
 		<constructor-arg name="host" value="192.168.2.49" />
@@ -151,6 +161,7 @@
 	<bean id="shiroRedisManager" class="com.betterjr.common.security.shiro.cache.RedisManager">
 		<property name="jedisPool" ref="jedisPool" />
 	</bean>
+
 
 	<!-- 自定义Session存储容器 -->
 	<bean id="redisSessionDAO"
