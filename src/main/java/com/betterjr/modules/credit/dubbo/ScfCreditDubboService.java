@@ -8,6 +8,7 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.modules.credit.IScfCreditService;
 import com.betterjr.modules.credit.entity.ScfCredit;
+import com.betterjr.modules.credit.entity.ScfCreditInfo;
 import com.betterjr.modules.credit.service.ScfCreditDetailService;
 import com.betterjr.modules.credit.service.ScfCreditService;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
@@ -33,9 +34,9 @@ public class ScfCreditDubboService implements IScfCreditService {
     public String webQueryCreditDetail(Map<String, Object> anMap, Long anCreditId, String anFlag, int anPageNum, int anPageSize) {
 
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
-        
-        return AjaxObject.newOkWithPage("授信额度变动信息查询成功", scfCreditDetailService.queryCreditDetail(anQueryConditionMap, anCreditId, anFlag, anPageNum, anPageSize))
-                .toJson();
+
+        return AjaxObject.newOkWithPage("授信额度变动信息查询成功",
+                scfCreditDetailService.queryCreditDetail(anQueryConditionMap, anCreditId, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     @Override
@@ -64,6 +65,11 @@ public class ScfCreditDubboService implements IScfCreditService {
     public String webTerminatCredit(Long anId) {
 
         return AjaxObject.newOk("授信终止成功", scfCreditService.saveTerminatCredit(anId)).toJson();
+    }
+
+    public int saveOccupyCredit(ScfCreditInfo anOccupyCredit) {
+
+        return scfCreditDetailService.saveOccupyCredit(anOccupyCredit);
     }
 
 }

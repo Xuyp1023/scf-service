@@ -671,25 +671,25 @@ public class ScfCredit implements BetterjrEntity {
         this.businStatus = "0";// 授信状态:0-未生效;1-已生效;2-已过期;
         this.creditUsed = BigDecimal.ZERO;
     }
-    
-    public void initModifyValue(ScfCredit request) {
-        calculate();
-        this.id = request.getId();
 
-        this.regOperId = request.getRegOperId();
-        this.regOperName = request.getRegOperName();
-        this.regDate = request.getRegDate();
-        this.regTime = request.getRegTime();
+    public void initModifyValue(ScfCredit anCredit) {
+        calculate();
+        this.id = anCredit.getId();
+
+        this.regOperId = anCredit.getRegOperId();
+        this.regOperName = anCredit.getRegOperName();
+        this.regDate = anCredit.getRegDate();
+        this.regTime = anCredit.getRegTime();
 
         this.modiOperId = UserUtils.getOperatorInfo().getId();
         this.modiOperName = UserUtils.getOperatorInfo().getName();
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
 
-        this.businStatus = request.getBusinStatus();
-        this.operOrg = request.getOperOrg();
+        this.businStatus = anCredit.getBusinStatus();
+        this.operOrg = anCredit.getOperOrg();
     }
-    
+
     public void initActivateValue() {
         this.activateOperId = UserUtils.getOperatorInfo().getId();
         this.activateOperName = UserUtils.getOperatorInfo().getName();
@@ -697,13 +697,20 @@ public class ScfCredit implements BetterjrEntity {
         this.activateTime = BetterDateUtils.getNumTime();
         this.businStatus = "1";// 授信状态:0-未生效;1-已生效;2-已过期;
     }
-    
+
     public void initTerminatValue() {
         this.terminatOperId = UserUtils.getOperatorInfo().getId();
         this.terminatOperName = UserUtils.getOperatorInfo().getName();
         this.terminatDate = BetterDateUtils.getNumDate();
         this.terminatTime = BetterDateUtils.getNumTime();
         this.businStatus = "2";// 授信状态:0-未生效;1-已生效;2-已过期;
+    }
+
+    public void occupyCreditBalance(BigDecimal anCreditUsed, BigDecimal anCreditBalance, BigDecimal anOccupyBalance) {
+        // 更新客户授信额度累计使用
+        this.creditUsed = MathExtend.add(anCreditUsed, anOccupyBalance);
+        // 更新客户授信余额
+        this.creditBalance = MathExtend.subtract(anCreditBalance, anOccupyBalance);
     }
 
 }

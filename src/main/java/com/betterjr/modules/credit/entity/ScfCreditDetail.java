@@ -308,4 +308,17 @@ public class ScfCreditDetail implements BetterjrEntity {
         this.description = "授信额度调整";
     }
 
+    public void initOccupyValue(ScfCreditInfo anCreditInfo, Long anCreditId) {
+        init();
+        this.custNo = anCreditInfo.getCustNo();
+        this.balance = anCreditInfo.getBalance();
+        this.direction = "1";// 方向：0-收;1-支;
+        this.businFlag = anCreditInfo.getBusinFlag();
+        this.businId = anCreditInfo.getBusinId();
+        this.requestNo = anCreditInfo.getRequestNo();
+        this.businStatus = "0";// 状态(0:已完成;1:冻结中;)
+        this.creditId = anCreditId;
+        this.description = anCreditInfo.getDescription();
+    }
+
 }
