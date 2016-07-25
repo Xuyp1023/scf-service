@@ -10,6 +10,7 @@ import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.MathExtend;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.service.CustAccountService;
@@ -108,9 +109,67 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         return 1;
     }
 
+    /**
+     * 授信额度释放,供融资还款业务调用,一次性授信不释放额度
+     * 
+     * @param anCreditInfo
+     */
+    public int saveReleaseCredit(ScfCreditInfo anCreditInfo) {
+        logger.info("Begin to Release Credit");
+        try {
+            // 检查入参
+            checkValue(anCreditInfo);
+
+            // 客户当前释放的授信额度
+            BigDecimal anReleaseBalance = anCreditInfo.getBalance();
+
+            // 获取客户授信记录
+            ScfCredit anCustCredit = scfCreditService.findCredit(anCreditInfo.getCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),
+                    anCreditInfo.getCreditMode());
+            BTAssert.notNull(anCustCredit, "无法获取客户授信记录");
+
+            // 获取核心企业授信记录
+            ScfCredit anCoreCredit = scfCreditService.findCredit(anCreditInfo.getCoreCustNo(), anCreditInfo.getCoreCustNo(),
+                    anCreditInfo.getFactorNo(), anCreditInfo.getCreditMode());
+            BTAssert.notNull(anCoreCredit, "无法获取核心企业授信记录");
+
+            // 数据存盘,客户授信额度变动
+            saveReleaseData(anCreditInfo, anCustCredit.getId());
+
+            // 数据存盘,核心企业授信额度变动
+            saveReleaseData(anCreditInfo, anCoreCredit.getId());
+
+            // 一次性授信不释放额度,授信方式(1:信用授信(循环);2:信用授信(一次性);3:担保信用(循环);4:担保授信(一次性);)
+            if (BetterStringUtils.equals(anCreditInfo.getCreditMode(), "1") == true
+                    || BetterStringUtils.equals(anCreditInfo.getCreditMode(), "3") == true) {
+                // 更新客户授信额度累计使用,授信余额
+                anCustCredit.releaseCreditBalance(anCustCredit.getCreditUsed(), anCustCredit.getCreditBalance(), anReleaseBalance);
+
+                // 更新核心企业授信额度累计使用,授信余额
+                anCoreCredit.releaseCreditBalance(anCoreCredit.getCreditUsed(), anCoreCredit.getCreditBalance(), anReleaseBalance);
+
+                // 数据存盘-回写客户授信余额
+                scfCreditService.updateByPrimaryKeySelective(anCustCredit);
+
+                // 数据存盘-回写核心企业授信余额
+                scfCreditService.updateByPrimaryKeySelective(anCoreCredit);
+            }
+        }
+        catch (Exception e) {
+            return -1;
+        }
+        return 1;
+    }
+
     private void saveOccupyData(ScfCreditInfo anCreditInfo, Long anCreditId) {
         ScfCreditDetail anCreditDetail = new ScfCreditDetail();
         anCreditDetail.initOccupyValue(anCreditInfo, anCreditId);
+        this.insert(anCreditDetail);
+    }
+
+    private void saveReleaseData(ScfCreditInfo anCreditInfo, Long anCreditId) {
+        ScfCreditDetail anCreditDetail = new ScfCreditDetail();
+        anCreditDetail.initReleaseValue(anCreditInfo, anCreditId);
         this.insert(anCreditDetail);
     }
 

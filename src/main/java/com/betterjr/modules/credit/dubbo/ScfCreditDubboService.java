@@ -72,4 +72,9 @@ public class ScfCreditDubboService implements IScfCreditService {
         return scfCreditDetailService.saveOccupyCredit(anOccupyCredit);
     }
 
+    public int saveReleaseCredit(ScfCreditInfo anOccupyCredit) {
+
+        return scfCreditDetailService.saveReleaseCredit(anOccupyCredit);
+    }
+
 }
