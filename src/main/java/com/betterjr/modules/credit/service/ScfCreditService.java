@@ -44,11 +44,9 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
      * @return
      */
     public Page<ScfCredit> queryCredit(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
-        // 授信对象(1:供应商;2:经销商;3:核心企业;)
-        Object anCreditType = anMap.get("creditType");
-        if (null == anCreditType || anCreditType.toString().isEmpty()) {
-            anMap.put("creditType", new String[] { "1", "2", "3" });
-        }
+        //
+        checkCreditCondition(anMap);
+
         // 查询授信记录
         Page<ScfCredit> anCreditList = this.selectPropertyByPage(ScfCredit.class, anMap, anPageNum, anPageSize, "1".equals(anFlag));
 
@@ -69,6 +67,25 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         }
 
         return anCreditList;
+    }
+
+    private void checkCreditCondition(Map<String, Object> anMap) {
+        // 检查是否为保理操作员,保理操作员必须使用operOrg进行数据过滤,且需要处理入参:授信对象(1:供应商;2:经销商;3:核心企业;)
+        // anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+        Object anCreditType = anMap.get("creditType");
+        if (null == anCreditType || anCreditType.toString().isEmpty()) {
+            anMap.put("creditType", new String[] { "1", "2", "3" });
+        }
+
+        // 客户(核心企业、供应商、经销商)查询时,客户编号必填,核心企业和保理商为非比填项
+        //BTAssert.notNull(anMap.get("custNo"), "客户编号不能为空");
+        String[] sFilterKey = new String[] { "coreCustNo", "factorNo" };
+        for (String anTempKey : sFilterKey) {
+            Object anTempValue = anMap.get(anTempKey);
+            if (null == anTempValue || anTempValue.toString().isEmpty()) {
+                anMap.remove(anTempKey);
+            }
+        }
     }
 
     /**
