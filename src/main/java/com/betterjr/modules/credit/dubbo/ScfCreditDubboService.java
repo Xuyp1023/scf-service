@@ -31,6 +31,14 @@ public class ScfCreditDubboService implements IScfCreditService {
     }
 
     @Override
+    public String webQueryCustCredit(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+
+        Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+
+        return AjaxObject.newOkWithPage("授信余额信息查询成功", scfCreditService.queryCredit(anQueryConditionMap, anFlag, anPageNum, anPageSize)).toJson();
+    }
+
+    @Override
     public String webQueryCreditDetail(Map<String, Object> anMap, Long anCreditId, String anFlag, int anPageNum, int anPageSize) {
 
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
