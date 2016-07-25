@@ -14,12 +14,12 @@ public class DeliveryNoticeService extends BaseService<ScfDeliveryNoticeMapper, 
 
     /**
      * 保存修改改
-     * @param notice
+     * @param anNotice
      * @return
      */
-    public int saveModifyEnquiry(ScfDeliveryNotice notice) {
-        notice.setUpdateBaseInfo();
-        return this.updateByPrimaryKeySelective(notice);
+    public int saveModifyEnquiry(ScfDeliveryNotice anNotice) {
+        anNotice.setUpdateBaseInfo();
+        return this.updateByPrimaryKeySelective(anNotice);
     }
     
     /**
@@ -36,12 +36,12 @@ public class DeliveryNoticeService extends BaseService<ScfDeliveryNoticeMapper, 
 
     /**
      * 新增通知单
-     * @param notice
+     * @param anNotice
      * @return
      */
-     public int addDeliveryNotice(ScfDeliveryNotice notice) {
-         notice.init();
-         return this.insert(notice);
+     public int addDeliveryNotice(ScfDeliveryNotice anNotice) {
+         anNotice.init();
+         return this.insert(anNotice);
 
      }
 
