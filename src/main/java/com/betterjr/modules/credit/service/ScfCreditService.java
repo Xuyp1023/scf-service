@@ -244,6 +244,24 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         return Collections3.getFirst(this.selectByProperty(anMap));
     }
 
+    public Map<String, Object> findCreditSumByCustNo(Long anCustNo) {
+        BTAssert.notNull(anCustNo, "客户编号不能为空");
+        Map<String, Object> anMap = new HashMap<String, Object>();
+        anMap.put("custNo", anCustNo);
+        anMap.put("businStatus", "1");// 授信状态:0-未生效;1-已生效;2-已过期;
+        // 授信额度总和 + 累计已使用额度 + 授信余额总和
+        String[] anSumFields = new String[] { "creditLimit", "creditUsed", "creditBalance", };
+        return findCreditSum(anMap, anSumFields);
+    }
+
+    private Map<String, Object> findCreditSum(Map<String, Object> anConditionMap, String[] anSumFields) {
+        Map<String, Object> anMap = new HashMap<String, Object>();
+        for (String anSumField : anSumFields) {
+            anMap.put(anSumField, this.selectSumByProperty(anConditionMap, anSumField));
+        }
+        return anMap;
+    }
+
     private void checkOperator(String anOperOrg, String anMessage) {
         if (BetterStringUtils.equals(UserUtils.getOperatorInfo().getOperOrg(), anOperOrg) == false) {
             logger.warn(anMessage);
