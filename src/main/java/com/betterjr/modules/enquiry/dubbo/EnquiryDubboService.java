@@ -102,9 +102,4 @@ public class EnquiryDubboService implements IScfEnquiryService {
         return AjaxObject.newOk(offerService.saveModifyOffer(offer)).toJson();
     }
     
-    public String getSelectedOrders(Map<String, Object> anMap){
-        
-        return null;
-    }
-
 }

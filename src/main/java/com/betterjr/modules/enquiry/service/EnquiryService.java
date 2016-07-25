@@ -13,7 +13,6 @@ import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.enquiry.dao.ScfEnquiryMapper;
 import com.betterjr.modules.enquiry.entity.ScfEnquiry;
 import com.betterjr.modules.enquiry.entity.ScfOffer;
-import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 
 @Service
 public class EnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry> {
@@ -68,7 +67,7 @@ public class EnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry> {
     }
 
     public int saveModifyEnquiry(ScfEnquiry anEnquiry) {
-        anEnquiry.setUpdateBaseInfo();
-        return this.updateByPrimaryKey(anEnquiry);
+        anEnquiry.setModiBaseInfo();
+        return this.updateByPrimaryKeySelective(anEnquiry);
     }
 }

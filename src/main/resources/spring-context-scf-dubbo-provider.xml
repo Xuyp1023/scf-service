@@ -16,7 +16,7 @@
 	<bean class="com.betterjr.common.service.SpringContextHolder" />
 	<!-- 扫描spring注解 -->
 	<context:component-scan
-		base-package="com.betterjr.modules.notice;
+		base-package="com.betterjr.modules.repayment;
 		com.betterjr.modules.param;
 		com.betterjr.modules.enquiry;
 		com.betterjr.modules.test;

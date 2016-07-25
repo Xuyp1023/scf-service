@@ -10,7 +10,7 @@
     http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 	<!-- 扫描dubbo注解 -->
 	<dubbo:annotation
-		package="com.betterjr.modules.notice,
+		package="com.betterjr.modules.repayment,
 		com.betterjr.modules.param,
 		com.betterjr.modules.enquiry,
 		com.betterjr.modules.test,
