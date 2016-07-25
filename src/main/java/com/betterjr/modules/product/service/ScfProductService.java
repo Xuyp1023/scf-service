@@ -40,6 +40,11 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
      * @return
      */
     public Page<ScfProduct> queryProduct(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+        // 状态(0:登记;1:上架;2:下架;)
+        Object businStatus = anMap.get("businStatus");
+        if (null == businStatus || businStatus.toString().isEmpty()) {
+            anMap.put("businStatus", new String[] { "0", "1", "2" });
+        }
         // 操作员只能查询所属机构的融资产品信息
         anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
 
