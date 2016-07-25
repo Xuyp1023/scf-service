@@ -35,7 +35,6 @@ public class OfferService extends BaseService<ScfOfferMapper, ScfOffer> {
      * @return
      */
     public int addOffer(ScfOffer offer) {
-        //TODO 生成询价编号
         offer.init();
         return this.insert(offer);
 
@@ -61,7 +60,7 @@ public class OfferService extends BaseService<ScfOfferMapper, ScfOffer> {
 
     public int saveModifyOffer(ScfOffer offer) {
         offer.setUpdateBaseInfo();
-        return this.updateByPrimaryKey(offer);
+        return this.updateByPrimaryKeySelective(offer);
     }
     
 }

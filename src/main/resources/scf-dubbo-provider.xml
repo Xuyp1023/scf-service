@@ -13,9 +13,9 @@
 		package="com.betterjr.modules.test,
 		com.betterjr.modules.product,
 		com.betterjr.modules.credit,
+		com.betterjr.modules.repayment,
 		com.betterjr.modules.param,
 		com.betterjr.modules.enquiry,
-		com.betterjr.modules.test,
 		com.betterjr.modules.sys.dubbo,
 		com.betterjr.modules.account.dubbo,
 		com.betterjr.dubbo.extend.filter" />
