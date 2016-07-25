@@ -43,6 +43,11 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
      * @return
      */
     public Page<ScfCredit> queryCredit(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+        // 授信对象(1:供应商;2:经销商;3:核心企业;)
+        Object anCreditType = anMap.get("creditType");
+        if (null == anCreditType || anCreditType.toString().isEmpty()) {
+            anMap.put("creditType", new String[] { "1", "2", "3" });
+        }
         // 查询授信记录
         Page<ScfCredit> anCreditList = this.selectPropertyByPage(ScfCredit.class, anMap, anPageNum, anPageSize, "1".equals(anFlag));
 

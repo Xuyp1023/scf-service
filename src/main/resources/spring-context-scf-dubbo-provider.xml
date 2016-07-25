@@ -151,13 +151,6 @@
 		<constructor-arg name="poolConfig" ref="jedisPoolConfig" />
 	</bean>
 
-	<bean id="jedisPool" class="redis.clients.jedis.JedisPool">
-		<constructor-arg name="host" value="192.168.2.49" />
-		<constructor-arg name="port" value="6379" />
-		<constructor-arg name="timeout" value="0" />
-		<constructor-arg name="poolConfig" ref="jedisPoolConfig" />
-	</bean>
-
 	<bean id="shiroRedisManager" class="com.betterjr.common.security.shiro.cache.RedisManager">
 		<property name="jedisPool" ref="jedisPool" />
 	</bean>
