@@ -12,6 +12,7 @@ import com.betterjr.common.data.SimpleDataEntity;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
@@ -52,6 +53,10 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         for (ScfProduct anProduct : anProductList) {
             anProduct.setCoreName(custAccountService.queryCustName(anProduct.getCoreCustNo()));
             anProduct.setFactorName(custAccountService.queryCustName(anProduct.getFactorNo()));
+            anProduct.setRegDate(BetterDateUtils.formatDispDate(anProduct.getRegDate()));
+            anProduct.setModiDate(BetterDateUtils.formatDispDate(anProduct.getModiDate()));
+            anProduct.setShelvesDate(BetterDateUtils.formatDispDate(anProduct.getShelvesDate()));
+            anProduct.setOffLineDate(BetterDateUtils.formatDispDate(anProduct.getOffLineDate()));
         }
 
         return anProductList;
