@@ -310,13 +310,23 @@ public class ScfCreditDetail implements BetterjrEntity {
 
     public void initOccupyValue(ScfCreditInfo anCreditInfo, Long anCreditId) {
         init();
+        initOccupyAndReleaseValue(anCreditInfo, anCreditId);
+        this.direction = "1";// 方向：0-收;1-支;
+    }
+
+    public void initReleaseValue(ScfCreditInfo anCreditInfo, Long anCreditId) {
+        init();
+        initOccupyAndReleaseValue(anCreditInfo, anCreditId);
+        this.direction = "0";// 方向：0-收;1-支;
+    }
+
+    private void initOccupyAndReleaseValue(ScfCreditInfo anCreditInfo, Long anCreditId) {
+        this.businStatus = "0";// 状态(0:已完成;1:冻结中;)
         this.custNo = anCreditInfo.getCustNo();
         this.balance = anCreditInfo.getBalance();
-        this.direction = "1";// 方向：0-收;1-支;
         this.businFlag = anCreditInfo.getBusinFlag();
         this.businId = anCreditInfo.getBusinId();
         this.requestNo = anCreditInfo.getRequestNo();
-        this.businStatus = "0";// 状态(0:已完成;1:冻结中;)
         this.creditId = anCreditId;
         this.description = anCreditInfo.getDescription();
     }
