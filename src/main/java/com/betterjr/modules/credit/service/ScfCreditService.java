@@ -221,6 +221,17 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         return anCredit;
     }
 
+    public ScfCredit findCredit(Long anCustNo, Long anCoreNo, Long anFactorNo, String anCreditMode) {
+        Map<String, Object> anMap = new HashMap<String, Object>();
+        anMap.put("custNo", anCustNo);
+        anMap.put("coreCustNo", anCoreNo);
+        anMap.put("factorNo", anFactorNo);
+        anMap.put("creditMode", anCreditMode);
+        anMap.put("businStatus", "1");// 授信状态:0-未生效;1-已生效;2-已过期;
+
+        return Collections3.getFirst(this.selectByProperty(anMap));
+    }
+
     private void checkOperator(String anOperOrg, String anMessage) {
         if (BetterStringUtils.equals(UserUtils.getOperatorInfo().getOperOrg(), anOperOrg) == false) {
             logger.warn(anMessage);
