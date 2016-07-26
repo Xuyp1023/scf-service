@@ -16,7 +16,7 @@ public class ScfTransportService extends BaseService<ScfTransportMapper, ScfTran
     /**
      * 订单运输单据录入
      */
-    public ScfTransport addTransport(ScfTransport anTransport) {
+    public ScfTransport addTransport(ScfTransport anTransport, String anFileList) {
         logger.info("Begin to add Product");
         //初始化系统信息
         anTransport.initAddValue();
