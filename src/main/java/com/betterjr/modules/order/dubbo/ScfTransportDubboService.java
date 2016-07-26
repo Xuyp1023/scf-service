@@ -25,7 +25,8 @@ public class ScfTransportDubboService implements IScfTransportService{
 
     @Override
     public String webQueryTransportList(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
-        return null;
+        Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOkWithPage("订单运输单据查询成功", scfTransportService.queryTransport(anQueryConditionMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
 }
