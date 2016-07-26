@@ -21,6 +21,7 @@
 		com.betterjr.modules.credit;
 		com.betterjr.modules.param;
 		com.betterjr.modules.enquiry;
+		com.betterjr.modules.order;
 		com.betterjr.modules.test;
 		com.betterjr.modules.account.service;
 		com.betterjr.modules.rule.service;
