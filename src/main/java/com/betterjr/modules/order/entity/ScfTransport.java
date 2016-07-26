@@ -13,6 +13,7 @@ import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
@@ -60,6 +61,7 @@ public class ScfTransport implements BetterjrEntity {
      */
     @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
     @MetaData( value="操作机构", comments = "操作机构")
+    @JsonIgnore
     private String operOrg;
 
     /**
@@ -67,6 +69,7 @@ public class ScfTransport implements BetterjrEntity {
      */
     @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="创建日期", comments = "创建日期")
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
 
     /**
@@ -95,6 +98,7 @@ public class ScfTransport implements BetterjrEntity {
      */
     @Column(name = "D_MODI_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="编辑日期", comments = "编辑日期")
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String modiDate;
 
     /**
@@ -210,7 +214,6 @@ public class ScfTransport implements BetterjrEntity {
         this.operOrg = operOrg == null ? null : operOrg.trim();
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getRegDate() {
         return regDate;
     }
@@ -243,7 +246,6 @@ public class ScfTransport implements BetterjrEntity {
         this.modiOperName = modiOperName == null ? null : modiOperName.trim();
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getModiDate() {
         return modiDate;
     }
