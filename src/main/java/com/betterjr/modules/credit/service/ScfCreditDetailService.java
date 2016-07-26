@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
-import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.MathExtend;
 import com.betterjr.mapper.pagehelper.Page;
@@ -47,7 +46,6 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         // 设置企业个名称
         for (ScfCreditDetail anCreditDetail : anCreditDetailList) {
             anCreditDetail.setCustName(custAccountService.queryCustName(anCreditDetail.getCustNo()));
-            anCreditDetail.setOccupyDate(BetterDateUtils.formatDispDate(anCreditDetail.getOccupyDate()));
         }
 
         return anCreditDetailList;

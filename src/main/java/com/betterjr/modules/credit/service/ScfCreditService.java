@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
-import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.MathExtend;
@@ -58,12 +57,6 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
             anCredit.setFactorName(custAccountService.queryCustName(anCredit.getFactorNo()));
             // 企业名称
             anCredit.setCustName(custAccountService.queryCustName(anCredit.getCustNo()));
-            anCredit.setStartDate(BetterDateUtils.formatDispDate(anCredit.getStartDate()));
-            anCredit.setEndDate(BetterDateUtils.formatDispDate(anCredit.getEndDate()));
-            anCredit.setRegDate(BetterDateUtils.formatDispDate(anCredit.getRegDate()));
-            anCredit.setModiDate(BetterDateUtils.formatDispDate(anCredit.getModiDate()));
-            anCredit.setActivateDate(BetterDateUtils.formatDispDate(anCredit.getActivateDate()));
-            anCredit.setTerminatDate(BetterDateUtils.formatDispDate(anCredit.getTerminatDate()));
         }
 
         return anCreditList;
