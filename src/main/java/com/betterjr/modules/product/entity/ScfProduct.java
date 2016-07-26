@@ -12,10 +12,12 @@ import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -143,6 +145,7 @@ public class ScfProduct implements BetterjrEntity {
     /**
      * 产品录入操作员ID号
      */
+    @JsonIgnore
     @Column(name = "L_REG_OPERID", columnDefinition = "INTEGER")
     @MetaData(value = "产品录入操作员ID号", comments = "产品录入操作员ID号")
     private Long regOperId;
@@ -150,6 +153,7 @@ public class ScfProduct implements BetterjrEntity {
     /**
      * 产品录入操作员姓名
      */
+    @JsonIgnore
     @Column(name = "C_REG_OPERNAME", columnDefinition = "VARCHAR")
     @MetaData(value = "产品录入操作员姓名", comments = "产品录入操作员姓名")
     private String regOperName;
@@ -157,6 +161,7 @@ public class ScfProduct implements BetterjrEntity {
     /**
      * 产品录入日期
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
     @MetaData(value = "产品录入日期", comments = "产品录入日期")
     private String regDate;
@@ -171,6 +176,7 @@ public class ScfProduct implements BetterjrEntity {
     /**
      * 产品修改操作员ID号
      */
+    @JsonIgnore
     @Column(name = "L_MODI_OPERID", columnDefinition = "INTEGER")
     @MetaData(value = "产品修改操作员ID号", comments = "产品修改操作员ID号")
     private Long modiOperId;
@@ -178,6 +184,7 @@ public class ScfProduct implements BetterjrEntity {
     /**
      * 产品修改操作员姓名
      */
+    @JsonIgnore
     @Column(name = "C_MODI_OPERNAME", columnDefinition = "VARCHAR")
     @MetaData(value = "产品修改操作员姓名", comments = "产品修改操作员姓名")
     private String modiOperName;
@@ -185,6 +192,7 @@ public class ScfProduct implements BetterjrEntity {
     /**
      * 产品修改日期
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_MODI_DATE", columnDefinition = "VARCHAR")
     @MetaData(value = "产品修改日期", comments = "产品修改日期")
     private String modiDate;
@@ -199,6 +207,7 @@ public class ScfProduct implements BetterjrEntity {
     /**
      * 产品上架操作员ID号
      */
+    @JsonIgnore
     @Column(name = "L_SHELVES_OPERID", columnDefinition = "INTEGER")
     @MetaData(value = "产品上架操作员ID号", comments = "产品上架操作员ID号")
     private Long shelvesOperId;
@@ -206,6 +215,7 @@ public class ScfProduct implements BetterjrEntity {
     /**
      * 产品上架操作员姓名
      */
+    @JsonIgnore
     @Column(name = "C_SHELVES_OPERNAME", columnDefinition = "VARCHAR")
     @MetaData(value = "产品上架操作员姓名", comments = "产品上架操作员姓名")
     private String shelvesOperName;
@@ -213,6 +223,7 @@ public class ScfProduct implements BetterjrEntity {
     /**
      * 产品上架日期
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "C_SHELVES_DATE", columnDefinition = "VARCHAR")
     @MetaData(value = "产品上架日期", comments = "产品上架日期")
     private String shelvesDate;
@@ -227,6 +238,7 @@ public class ScfProduct implements BetterjrEntity {
     /**
      * 产品下架操作员ID号
      */
+    @JsonIgnore
     @Column(name = "L_OFFLINE_OPERID", columnDefinition = "INTEGER")
     @MetaData(value = "产品下架操作员ID号", comments = "产品下架操作员ID号")
     private Long offLineOperId;
@@ -234,6 +246,7 @@ public class ScfProduct implements BetterjrEntity {
     /**
      * 产品下架操作员姓名
      */
+    @JsonIgnore
     @Column(name = "C_OFFLINE_OPERNAME", columnDefinition = "VARCHAR")
     @MetaData(value = "产品下架操作员姓名", comments = "产品下架操作员姓名")
     private String offLineOperName;
@@ -241,6 +254,7 @@ public class ScfProduct implements BetterjrEntity {
     /**
      * 产品下架日期
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_OFFLINE_DATE", columnDefinition = "VARCHAR")
     @MetaData(value = "产品下架日期", comments = "产品下架日期")
     private String offLineDate;

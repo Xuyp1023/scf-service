@@ -12,11 +12,13 @@ import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.MathExtend;
 import com.betterjr.common.utils.UserUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -91,6 +93,7 @@ public class ScfCredit implements BetterjrEntity {
     /**
      * 开始日期
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_START_DATE", columnDefinition = "VARCHAR")
     @MetaData(value = "开始日期", comments = "开始日期")
     private String startDate;
@@ -98,6 +101,7 @@ public class ScfCredit implements BetterjrEntity {
     /**
      * 有效期至
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_END_DATE", columnDefinition = "VARCHAR")
     @MetaData(value = "有效期至", comments = "有效期至")
     private String endDate;
@@ -119,6 +123,7 @@ public class ScfCredit implements BetterjrEntity {
     /**
      * 授信录入操作员ID号
      */
+    @JsonIgnore
     @Column(name = "L_REG_OPERID", columnDefinition = "INTEGER")
     @MetaData(value = "授信录入操作员ID号", comments = "授信录入操作员ID号")
     private Long regOperId;
@@ -126,6 +131,7 @@ public class ScfCredit implements BetterjrEntity {
     /**
      * 授信录入操作员姓名
      */
+    @JsonIgnore
     @Column(name = "C_REG_OPERNAME", columnDefinition = "VARCHAR")
     @MetaData(value = "授信录入操作员姓名", comments = "授信录入操作员姓名")
     private String regOperName;
@@ -133,6 +139,7 @@ public class ScfCredit implements BetterjrEntity {
     /**
      * 授信录入日期
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
     @MetaData(value = "授信录入日期", comments = "授信录入日期")
     private String regDate;
@@ -147,6 +154,7 @@ public class ScfCredit implements BetterjrEntity {
     /**
      * 授信修改操作员ID号
      */
+    @JsonIgnore
     @Column(name = "L_MODI_OPERID", columnDefinition = "INTEGER")
     @MetaData(value = "授信修改操作员ID号", comments = "授信修改操作员ID号")
     private Long modiOperId;
@@ -154,6 +162,7 @@ public class ScfCredit implements BetterjrEntity {
     /**
      * 授信修改操作员姓名
      */
+    @JsonIgnore
     @Column(name = "C_MODI_OPERNAME", columnDefinition = "VARCHAR")
     @MetaData(value = "授信修改操作员姓名", comments = "授信修改操作员姓名")
     private String modiOperName;
@@ -161,6 +170,7 @@ public class ScfCredit implements BetterjrEntity {
     /**
      * 授信修改日期
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_MODI_DATE", columnDefinition = "VARCHAR")
     @MetaData(value = "授信修改日期", comments = "授信修改日期")
     private String modiDate;
@@ -175,6 +185,7 @@ public class ScfCredit implements BetterjrEntity {
     /**
      * 授信激活操作员ID号
      */
+    @JsonIgnore
     @Column(name = "L_ACTIVATE_OPERID", columnDefinition = "INTEGER")
     @MetaData(value = "授信激活操作员ID号", comments = "授信激活操作员ID号")
     private Long activateOperId;
@@ -182,6 +193,7 @@ public class ScfCredit implements BetterjrEntity {
     /**
      * 授信激活操作员姓名
      */
+    @JsonIgnore
     @Column(name = "C_ACTIVATE_OPERNAME", columnDefinition = "VARCHAR")
     @MetaData(value = "授信激活操作员姓名", comments = "授信激活操作员姓名")
     private String activateOperName;
@@ -189,6 +201,7 @@ public class ScfCredit implements BetterjrEntity {
     /**
      * 授信激活日期
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_ACTIVATE_DATE", columnDefinition = "VARCHAR")
     @MetaData(value = "授信激活日期", comments = "授信激活日期")
     private String activateDate;
@@ -203,6 +216,7 @@ public class ScfCredit implements BetterjrEntity {
     /**
      * 授信终止操作员ID号
      */
+    @JsonIgnore
     @Column(name = "L_TERMINAT_OPERID", columnDefinition = "INTEGER")
     @MetaData(value = "授信终止操作员ID号", comments = "授信终止操作员ID号")
     private Long terminatOperId;
@@ -210,6 +224,7 @@ public class ScfCredit implements BetterjrEntity {
     /**
      * 授信终止操作员姓名
      */
+    @JsonIgnore
     @Column(name = "C_TERMINAT_OPERNAME", columnDefinition = "VARCHAR")
     @MetaData(value = "授信终止操作员姓名", comments = "授信终止操作员姓名")
     private String terminatOperName;
@@ -217,6 +232,7 @@ public class ScfCredit implements BetterjrEntity {
     /**
      * 授信终止日期
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_TERMINAT_DATE", columnDefinition = "VARCHAR")
     @MetaData(value = "授信终止日期", comments = "授信终止日期")
     private String terminatDate;

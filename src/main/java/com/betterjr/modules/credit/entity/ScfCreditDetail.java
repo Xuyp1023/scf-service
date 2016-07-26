@@ -12,8 +12,10 @@ import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -40,6 +42,7 @@ public class ScfCreditDetail implements BetterjrEntity {
     /**
      * 变动日期
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_OCCUPY_DATE", columnDefinition = "VARCHAR")
     @MetaData(value = "变动日期", comments = "变动日期")
     private String occupyDate;
