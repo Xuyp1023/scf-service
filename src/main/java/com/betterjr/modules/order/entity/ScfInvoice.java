@@ -183,10 +183,10 @@ public class ScfInvoice implements BetterjrEntity {
     private Long batchNo;
 
     /**
-     * 发票状态，0失效，1正常，2作废，3过期 4冻结
+     * 发票状态，0失效，1正常，2过期，3冻结
      */
     @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="发票状态", comments = "发票状态，0失效，1正常，2作废，3过期 4冻结")
+    @MetaData( value="发票状态", comments = "发票状态，0失效，1正常，2过期，3冻结")
     private String businStatus;
 
     /**

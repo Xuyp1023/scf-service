@@ -22,5 +22,14 @@ public class ScfInvoiceDubboService implements IScfInvoiceService {
         ScfInvoice anInvoice = (ScfInvoice) RuleServiceDubboFilterInvoker.getInputObj();
         return AjaxObject.newOk("订单发票信息录入成功", scfInvoiceService.addInvoice(anInvoice, anFileList)).toJson();
     }
+    
+    @Override
+    public String webQueryInvoiceList(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+        Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        
+        return AjaxObject.newOkWithPage("订单发票信息查询成功", scfInvoiceService.queryInvoice(anQueryConditionMap, anFlag, anPageNum, anPageSize)).toJson();
+    }
+    
+    
 
 }
