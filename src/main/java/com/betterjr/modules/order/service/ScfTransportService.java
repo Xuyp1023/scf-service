@@ -19,4 +19,16 @@ public class ScfTransportService extends BaseService<ScfTransportMapper, ScfTran
         this.insert(anTransport);
         return anTransport;
     }
+
+    /**
+     * 订单运输单据分页查询
+     */
+    public Page<ScfTransport> queryTransport(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+        //操作员只能查询本机构数据
+        anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+        
+        Page<ScfTransport> anTransportList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
+        
+        return anTransportList;
+    }
 }
