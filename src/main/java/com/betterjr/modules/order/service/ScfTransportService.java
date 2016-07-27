@@ -27,7 +27,7 @@ public class ScfTransportService extends BaseService<ScfTransportMapper, ScfTran
     /**
      * 订单运输单据分页查询
      */
-    public Page queryTransport(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfTransport> queryTransport(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
         //操作员只能查询本机构数据
         anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
         
