@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.alibaba.dubbo.config.annotation.Service;
+import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.modules.enquiry.IScfEnquiryService;
 import com.betterjr.modules.enquiry.entity.ScfEnquiry;
@@ -36,9 +37,6 @@ public class EnquiryDubboService implements IScfEnquiryService {
     public String webAddEnquiry(Map<String, Object> anMap) {
         logger.debug("新增询价,入参："+ anMap);
         ScfEnquiry enquiry = (ScfEnquiry) RuleServiceDubboFilterInvoker.getInputObj();
-        if(null == enquiry){
-            AjaxObject.newError("addEnquiry service failed enquiry=null");
-        }
         return AjaxObject.newOk(enquiryService.addEnquiry(enquiry)).toJson();
     }
 
@@ -55,11 +53,7 @@ public class EnquiryDubboService implements IScfEnquiryService {
 
     public String webAddOffer(Map<String, Object> anMap) {
         logger.debug("新增报价,入参："+ anMap);
-        ScfOffer offer = (ScfOffer) RuleServiceDubboFilterInvoker.getInputObj();
-        if(null == offer){
-            return AjaxObject.newError("webAddOffer service failed offer =null").toJson();
-        }
-        return AjaxObject.newOk(offerService.addOffer(offer)).toJson();
+        return AjaxObject.newOk(offerService.addOffer((ScfOffer) RuleServiceDubboFilterInvoker.getInputObj())).toJson();
     }
 
     public String webFindOfferDetail(Long anId) {
@@ -72,9 +66,7 @@ public class EnquiryDubboService implements IScfEnquiryService {
         logger.debug("修改询价,入参：anId："+ anId + "/n" + anMap);
         
         ScfEnquiry enquiry = (ScfEnquiry) RuleServiceDubboFilterInvoker.getInputObj();
-        if(null == enquiry){
-            return AjaxObject.newError("webUpdateEnquiry service failed Enquiry =null").toJson();
-        }
+        BTAssert.notNull(enquiry, "webUpdateEnquiry service failed Enquiry =null");
         
         //检查该数据据是否合法
         Map<String, Object> anPropValue = new HashMap<String, Object>();
@@ -92,14 +84,14 @@ public class EnquiryDubboService implements IScfEnquiryService {
     @Override
     public String webSaveModifyOffer(Map<String, Object> anMap, Long anId) {
         logger.debug("修改报价,入参：anId："+ anId + "/n" + anMap);
-        
-        ScfOffer offer = (ScfOffer) RuleServiceDubboFilterInvoker.getInputObj();
-        if(null == offer){
-            return AjaxObject.newError("webUpdateOffer service failed offer =null").toJson();
-        }
-        
-        offer.setId(anId);
-        return AjaxObject.newOk(offerService.saveModifyOffer(offer)).toJson();
+        return AjaxObject.newOk(offerService.saveModifyOffer((ScfOffer) RuleServiceDubboFilterInvoker.getInputObj(), anId)).toJson();
+    }
+    
+    @Override
+    public String webQueryEnquiryByfactorNo(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
+        anMap = (Map) RuleServiceDubboFilterInvoker.getInputObj();
+        logger.debug("查询保理公司收到的询价,入参： " + anMap);
+        return AjaxObject.newOk(enquiryService.queryEnquiryByfactorNo(anMap, anFlag, anPageNum, anPageSize)).toJson();
     }
     
 }

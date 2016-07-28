@@ -21,7 +21,7 @@ public class FactorParamDubboService implements IScfFactorParamService{
         
         FactorParam param = (FactorParam) RuleServiceDubboFilterInvoker.getInputObj();
         DictUtils.saveObject("FactorParam", param.getCustNo()+"", "保理公司参数", param);
-        return AjaxObject.newOk("保理公司参数保存成功").toJson();
+        return  AjaxObject.newOk("理公司参数查询成功", param).toJson();
     }
     
     public String webLoadFactorParam(String custNo){

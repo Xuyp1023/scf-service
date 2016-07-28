@@ -1,4 +1,4 @@
-package com.betterjr.modules.repayment.entity;
+package com.betterjr.modules.loan.entity;
 
 import java.math.BigDecimal;
 
@@ -398,7 +398,7 @@ public class ScfDeliveryNotice implements BetterjrEntity {
         this.regTime = BetterDateUtils.getNumTime();
     }
 
-    public void setUpdateBaseInfo() {
+    public void initModify() {
         this.modiOperId = UserUtils.getOperatorInfo().getId();
         this.modiOperName = UserUtils.getUserName();
         this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
