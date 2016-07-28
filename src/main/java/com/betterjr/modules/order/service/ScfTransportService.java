@@ -1,8 +1,12 @@
 package com.betterjr.modules.order.service;
 
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.service.BaseService;
+import com.betterjr.common.utils.UserUtils;
+import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.order.dao.ScfTransportMapper;
 import com.betterjr.modules.order.entity.ScfTransport;
 
@@ -12,7 +16,7 @@ public class ScfTransportService extends BaseService<ScfTransportMapper, ScfTran
     /**
      * 订单运输单据录入
      */
-    public ScfTransport addTransport(ScfTransport anTransport) {
+    public ScfTransport addTransport(ScfTransport anTransport, String anFileList) {
         logger.info("Begin to add Product");
         //初始化系统信息
         anTransport.initAddValue();
