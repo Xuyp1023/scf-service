@@ -23,6 +23,8 @@
 		com.betterjr.modules.param;
 		com.betterjr.modules.enquiry;
 		com.betterjr.modules.order;
+		com.betterjr.modules.receivable;
+		com.betterjr.modules.acceptbill;
 		com.betterjr.modules.account.service;
 		com.betterjr.modules.rule.service;
 		com.betterjr.modules.rule.validator;

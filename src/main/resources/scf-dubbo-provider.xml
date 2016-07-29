@@ -17,6 +17,8 @@
 		com.betterjr.modules.param,
 		com.betterjr.modules.enquiry,
 		com.betterjr.modules.order,
+		com.betterjr.modules.receivable,
+		com.betterjr.modules.acceptbill,
 		com.betterjr.modules.sys.dubbo,
 		com.betterjr.modules.account.dubbo,
 		com.betterjr.dubbo.extend.filter" />

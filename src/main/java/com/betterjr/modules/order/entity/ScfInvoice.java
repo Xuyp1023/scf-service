@@ -49,7 +49,6 @@ public class ScfInvoice implements BetterjrEntity {
      */
     @Column(name = "L_CUSTNO",  columnDefinition="INTEGER" )
     @MetaData( value="客户编号", comments = "客户编号")
-    @JsonIgnore
     private Long custNo;
 
     /**

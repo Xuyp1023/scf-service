@@ -2,11 +2,13 @@ package com.betterjr.modules.order.service;
 
 import java.util.Map;
 
+import org.apache.xmlbeans.impl.xb.xmlconfig.Usertypeconfig;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
@@ -46,17 +48,27 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
 
     /**
      * 变更发票状态
+     * 发票状态，0失效，1正常，2过期，3冻结
      */
     private ScfInvoice saveInvoiceStatus(Long anId, String anStatus) {
         ScfInvoice anInvoice = this.selectByPrimaryKey(anId);
         BTAssert.notNull(anInvoice, "无法获取发票信息");
+        //检查用户权限
+        checkOperator(anInvoice.getOperOrg(), "当前操作员无权限变更发票状态");
+        //变更相关状态
         anInvoice.setBusinStatus(anStatus);
+        anInvoice.setModiOperId(UserUtils.getOperatorInfo().getId());
+        anInvoice.setModiOperName(UserUtils.getOperatorInfo().getName());
+        anInvoice.setModiDate(BetterDateUtils.getNumDate());
+        anInvoice.setModiTime(BetterDateUtils.getNumTime());
+        //数据存盘
         this.updateByPrimaryKeySelective(anInvoice);
         return anInvoice;
     }
 
     /**
      * 变更发票状态-失效
+     * 发票状态，0失效，1正常，2过期，3冻结
      */
     public ScfInvoice saveInvalidInvoice(Long anId) {
         return this.saveInvoiceStatus(anId, "0");
@@ -64,6 +76,7 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
 
     /**
      * 变更发票状态-正常
+     * 发票状态，0失效，1正常，2过期，3冻结
      */
     public ScfInvoice saveNormalInvoice(Long anId) {
         return this.saveInvoiceStatus(anId, "1");
@@ -71,6 +84,7 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
 
     /**
      * 变更发票状态-过期
+     * 发票状态，0失效，1正常，2过期，3冻结
      */
     public ScfInvoice saveExpireInvoice(Long anId) {
         return this.saveInvoiceStatus(anId, "2");
@@ -78,8 +92,19 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
     
     /**
      * 变更发票状态-冻结
+     * 发票状态，0失效，1正常，2过期，3冻结
      */
     public ScfInvoice saveForzenInvoice(Long anId) {
         return this.saveInvoiceStatus(anId, "3");
+    }
+    
+    /*
+     * 检查用户是否有权限操作数据
+     */
+    private void checkOperator(String anOperOrg, String anMessage) {
+        if (BetterStringUtils.equals(UserUtils.getOperatorInfo().getOperOrg(), anOperOrg) == false) {
+            logger.warn(anMessage);
+            throw new BytterTradeException(40001, anMessage);
+        }
     }
 }
