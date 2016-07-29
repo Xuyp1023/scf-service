@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.loan.dao.ScfDeliveryNoticeMapper;
 import com.betterjr.modules.loan.entity.ScfDeliveryNotice;
@@ -43,6 +44,9 @@ public class DeliveryNoticeService extends BaseService<ScfDeliveryNoticeMapper, 
      * @return
      */
     public Page<ScfDeliveryNotice> queryDeliveryNoticeList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
+        if(BetterStringUtils.isEmpty(anMap.get("businStatus").toString())){
+            anMap.put("businStatus", new String[]{"1","0"});
+        }
         return this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1==anFlag);
      }
 
@@ -56,7 +60,6 @@ public class DeliveryNoticeService extends BaseService<ScfDeliveryNoticeMapper, 
          anNotice.init();
          this.insert(anNotice);
          return anNotice;
-
      }
 
 }

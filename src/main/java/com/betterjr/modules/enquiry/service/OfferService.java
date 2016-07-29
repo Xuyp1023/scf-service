@@ -1,5 +1,6 @@
 package com.betterjr.modules.enquiry.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterStringUtils;
+import com.betterjr.common.utils.Collections3;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.enquiry.dao.ScfOfferMapper;
@@ -27,8 +30,11 @@ public class OfferService extends BaseService<ScfOfferMapper, ScfOffer> {
      * @return
      */
     public Page<ScfOffer> queryOfferList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
-       boolean flag = 1==anFlag;
-       Page<ScfOffer> offerList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, flag);
+       if(BetterStringUtils.isEmpty(anMap.get("businStatus").toString())){
+           anMap.put("businStatus", "1");
+       }
+        
+       Page<ScfOffer> offerList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1==anFlag);
        //设置保理公司名称
        for (ScfOffer offer : offerList) {
            offer.setFactorName(custAccountService.queryCustName(offer.getFactorNo()));
@@ -51,14 +57,24 @@ public class OfferService extends BaseService<ScfOfferMapper, ScfOffer> {
 
     /**
      * 查询报价详情
-     * @param anId
+     * @param factorNo
+     * @param enquiryNo
      * @return
      */
-    public ScfOffer findOfferDetail(Long anId) {
-        ScfOffer offer = this.selectByPrimaryKey(anId);
-        offer.setCustName(custAccountService.queryCustName(offer.getCustNo()));
+    public ScfOffer findOfferDetail(Long factorNo, String enquiryNo) {
+        Map<String, Object> anMap = new HashMap<String, Object>();
+        anMap.put("factorNo", factorNo);
+        anMap.put("enquiryNo", enquiryNo);
+        anMap.put("businStatus", "1");
+        List<ScfOffer> offerList =  this.selectByProperty(anMap);
+        if(Collections3.isEmpty(offerList) || offerList.size() == 0){
+            new ScfOffer();
+        }
+        
+        ScfOffer offer = Collections3.getFirst(offerList);
+        offer .setCustName(custAccountService.queryCustName(offer.getCustNo()));
         offer.setFactorName(custAccountService.queryCustName(offer.getFactorNo()));
-        return this.selectByPrimaryKey(anId);
+        return offer;
     }
     
     /**
@@ -67,6 +83,7 @@ public class OfferService extends BaseService<ScfOfferMapper, ScfOffer> {
      * @return
      */
     public List<ScfOffer> findOfferList(Map<String, Object> anMap) {
+        anMap.put("businStatus", "1");
         List<ScfOffer> offerList = this.selectByClassProperty(ScfOffer.class, anMap);
         
         //设置保理公司名称

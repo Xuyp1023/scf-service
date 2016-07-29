@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
@@ -16,6 +17,7 @@ import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.enquiry.dao.ScfEnquiryMapper;
 import com.betterjr.modules.enquiry.entity.ScfEnquiry;
 import com.betterjr.modules.enquiry.entity.ScfEnquiryObject;
+import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 
 @Service
 public class EnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry> {
@@ -96,10 +98,23 @@ public class EnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry> {
      * @param anEnquiry
      * @return
      */
-    public ScfEnquiry saveModifyEnquiry(ScfEnquiry anEnquiry) {
-        anEnquiry.setModiBaseInfo();
-        this.updateByPrimaryKeySelective(anEnquiry);
-        return anEnquiry;
+    public ScfEnquiry saveModifyEnquiry(Map<String, Object> anMap, Long anId) {
+        ScfEnquiry enquiry = (ScfEnquiry) RuleServiceDubboFilterInvoker.getInputObj();
+        BTAssert.notNull(enquiry, "saveModifyEnquiry service failed Enquiry =null");
+        
+        //检查该数据据是否合法
+        Map<String, Object> anPropValue = new HashMap<String, Object>();
+        anPropValue.put("custNo", enquiry.getCustNo());
+        anPropValue.put("id", anId);
+        List<ScfEnquiry> list = selectByClassProperty(ScfEnquiry.class, anPropValue);
+        if(CollectionUtils.isEmpty(list) || list.size() == 0){
+            new ScfEnquiry();
+        }
+        
+        enquiry.setId(anId);
+        enquiry.setModiBaseInfo();
+        this.updateByPrimaryKeySelective(enquiry);
+        return enquiry;
     }
 
     /**

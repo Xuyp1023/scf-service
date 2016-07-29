@@ -56,29 +56,15 @@ public class EnquiryDubboService implements IScfEnquiryService {
         return AjaxObject.newOk(offerService.addOffer((ScfOffer) RuleServiceDubboFilterInvoker.getInputObj())).toJson();
     }
 
-    public String webFindOfferDetail(Long anId) {
-        logger.debug("查询报价详情,入参：id："+ anId);
-        return AjaxObject.newOk(offerService.findOfferDetail(anId)).toJson();
+    public String webFindOfferDetail(Long factorNo, String enquiryNo) {
+        logger.debug("查询报价详情,入参：factorNo："+ factorNo + "  factorNo:" + enquiryNo);
+        return AjaxObject.newOk(offerService.findOfferDetail(factorNo, enquiryNo)).toJson();
     }
 
     @Override
     public String webSaveModifyEnquiry(Map<String, Object> anMap, Long anId) {
         logger.debug("修改询价,入参：anId："+ anId + "/n" + anMap);
-        
-        ScfEnquiry enquiry = (ScfEnquiry) RuleServiceDubboFilterInvoker.getInputObj();
-        BTAssert.notNull(enquiry, "webUpdateEnquiry service failed Enquiry =null");
-        
-        //检查该数据据是否合法
-        Map<String, Object> anPropValue = new HashMap<String, Object>();
-        anPropValue.put("custNo", enquiry.getCustNo());
-        anPropValue.put("id", anId);
-        List list = enquiryService.selectByClassProperty(ScfEnquiry.class, anPropValue);
-        if(CollectionUtils.isEmpty(list)){
-            return AjaxObject.newError("webSaveModifyEnquiry service failed Enquiry error").toJson();
-        }
-        
-        enquiry.setId(anId);
-        return AjaxObject.newOk(enquiryService.saveModifyEnquiry(enquiry)).toJson();
+        return AjaxObject.newOk(enquiryService.saveModifyEnquiry(anMap, anId)).toJson();
     }
 
     @Override

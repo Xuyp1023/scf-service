@@ -131,6 +131,10 @@ public class ScfDeliveryNotice implements BetterjrEntity {
     @Column(name = "N_VERSION", columnDefinition = "BIGINT")
     @MetaData(value = "", comments = "")
     private Long version;
+    
+    @Column(name = "C_BATCHNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "附件ID", comments = "附件")
+    private String batchNo;
 
     private static final long serialVersionUID = 1469179477358L;
 
@@ -296,6 +300,14 @@ public class ScfDeliveryNotice implements BetterjrEntity {
         this.version = version;
     }
 
+    public String getBatchNo() {
+        return batchNo;
+    }
+
+    public void setBatchNo(String batchNo) {
+        this.batchNo = batchNo;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -322,6 +334,7 @@ public class ScfDeliveryNotice implements BetterjrEntity {
         sb.append(", modiDate=").append(modiDate);
         sb.append(", modiTime=").append(modiTime);
         sb.append(", version=").append(version);
+        sb.append(", batchNo=").append(batchNo);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -358,7 +371,8 @@ public class ScfDeliveryNotice implements BetterjrEntity {
                 && (this.getModiOperName() == null ? other.getModiOperName() == null : this.getModiOperName().equals(other.getModiOperName()))
                 && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
                 && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()))
-                && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
+                && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()))
+                && (this.getBatchNo() == null ? other.getBatchNo() == null : this.getBatchNo().equals(other.getBatchNo()));
     }
 
     @Override
@@ -385,6 +399,7 @@ public class ScfDeliveryNotice implements BetterjrEntity {
         result = prime * result + ((getModiDate() == null) ? 0 : getModiDate().hashCode());
         result = prime * result + ((getModiTime() == null) ? 0 : getModiTime().hashCode());
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
+        result = prime * result + ((getBatchNo() == null) ? 0 : getBatchNo().hashCode());
         return result;
     }
 
