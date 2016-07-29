@@ -1,6 +1,6 @@
-package com.betterjr.modules.enquiry.entity;
+package com.betterjr.modules.loan.entity;
 
-import java.util.List;
+import java.math.BigDecimal;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -8,85 +8,70 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
-import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
-import com.betterjr.modules.sys.entity.WorkUserInfo;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
-@Table(name = "t_scf_enquiry")
-public class ScfEnquiry implements BetterjrEntity {
-   
-    /**
-     * 流水号
-     */
+@Table(name = "t_scf_pay_record_detail")
+public class ScfPayRecordDetail implements BetterjrEntity {
     @Id
     @Column(name = "ID",  columnDefinition="BIGINT" )
-    @MetaData( value="流水号", comments = "流水号")
+    @MetaData( value="", comments = "")
     private Long id;
 
     /**
-     * 询价公司编号
+     * 保理公司编号
+     */
+    @Column(name = "L_FACTORNO",  columnDefinition="BIGINT" )
+    @MetaData( value="保理公司编号", comments = "保理公司编号")
+    private Long factorNo;
+
+    /**
+     * 客户编号
      */
     @Column(name = "L_CUSTNO",  columnDefinition="BIGINT" )
-    @MetaData( value="询价公司编号", comments = "询价公司编号")
+    @MetaData( value="客户编号", comments = "客户编号")
     private Long custNo;
 
     /**
-     * 发布日期
+     * 核心企业编号
      */
-    @Column(name = "D_ACTUAL_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="发布日期", comments = "发布日期")
-    private String actualDate;
+    @Column(name = "L_CORE_CUSTNO",  columnDefinition="BIGINT" )
+    @MetaData( value="核心企业编号", comments = "核心企业编号")
+    private Long coreCustNo;
 
     /**
-     * 询价编号
+     * 还款记录ID
      */
-    @Column(name = "C_ENQUIRYNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="询价编号", comments = "询价编号")
-    private String enquiryNo;
+    @Column(name = "L_PAY_RECORD_ID",  columnDefinition="BIGINT" )
+    @MetaData( value="还款记录ID", comments = "还款记录ID")
+    private Long payRecordId;
 
     /**
-     * 截止日期
+     * 还款类型,1:本金，2：利息，3：管理费，4：罚息，5：滞纳金，6：其它费用，7：提前还款手续费，8：放款手续费
      */
-    @Column(name = "D_END_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="截止日期", comments = "截止日期")
-    private String endDate;
+    @Column(name = "C_PAY_TYPE",  columnDefinition="VARCHAR" )
+    @MetaData( value="还款类型,1:本金", comments = "还款类型,1:本金，2：利息，3：管理费，4：罚息，5：滞纳金，6：其它费用，7：提前还款手续费，8：放款手续费")
+    private String payType;
 
     /**
-     * 相关订单,多个以“，”隔开
+     * 还款金额
      */
-    @Column(name = "C_ORDERS",  columnDefinition="VARCHAR" )
-    @MetaData( value="相关订单,多个以“", comments = "相关订单,多个以“，”隔开")
-    private String orders;
+    @Column(name = "F_PAY_BALANCE",  columnDefinition="DOUBLE" )
+    @MetaData( value="还款金额", comments = "还款金额")
+    private BigDecimal payBalance;
 
     /**
-     * 意向企业编号多个以“，”隔开
+     * 还款日期
      */
-    @Column(name = "C_FACTORS",  columnDefinition="VARCHAR" )
-    @MetaData( value="意向企业编号多个以“", comments = "意向企业编号多个以“，”隔开")
-    private String factors;
-
-    /**
-     * 备注
-     */
-    @Column(name = "C_DESCRIPTION",  columnDefinition="VARCHAR" )
-    @MetaData( value="备注", comments = "备注")
-    private String description;
-
-    /**
-     * 1:票据;2:应收款;3:经销商
-     */
-    @Column(name = "C_REQUEST_TYPE",  columnDefinition="VARCHAR" )
-    @MetaData( value="1:票据;2:应收款;3:经销商", comments = "1:票据;2:应收款;3:经销商")
-    private String requestType;
+    @Column(name = "D_PAY_DATE",  columnDefinition="VARCHAR" )
+    @MetaData( value="还款日期", comments = "还款日期")
+    private String payDate;
 
     /**
      * 操作机构
@@ -131,7 +116,7 @@ public class ScfEnquiry implements BetterjrEntity {
     @MetaData( value="", comments = "")
     private Long version;
 
-    private static final long serialVersionUID = 1469691347566L;
+    private static final long serialVersionUID = 1469504768793L;
 
     public Long getId() {
         return id;
@@ -139,6 +124,14 @@ public class ScfEnquiry implements BetterjrEntity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getFactorNo() {
+        return factorNo;
+    }
+
+    public void setFactorNo(Long factorNo) {
+        this.factorNo = factorNo;
     }
 
     public Long getCustNo() {
@@ -149,62 +142,44 @@ public class ScfEnquiry implements BetterjrEntity {
         this.custNo = custNo;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
-    public String getActualDate() {
-        return actualDate;
+    public Long getCoreCustNo() {
+        return coreCustNo;
     }
 
-    public void setActualDate(String actualDate) {
-        this.actualDate = actualDate;
+    public void setCoreCustNo(Long coreCustNo) {
+        this.coreCustNo = coreCustNo;
     }
 
-    public String getEnquiryNo() {
-        return enquiryNo;
+    public Long getPayRecordId() {
+        return payRecordId;
     }
 
-    public void setEnquiryNo(String enquiryNo) {
-        this.enquiryNo = enquiryNo;
+    public void setPayRecordId(Long payRecordId) {
+        this.payRecordId = payRecordId;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
-    public String getEndDate() {
-        return endDate;
+    public String getPayType() {
+        return payType;
     }
 
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
+    public void setPayType(String payType) {
+        this.payType = payType;
     }
 
-    public String getOrders() {
-        return orders;
+    public BigDecimal getPayBalance() {
+        return payBalance;
     }
 
-    public void setOrders(String orders) {
-        this.orders = orders;
+    public void setPayBalance(BigDecimal payBalance) {
+        this.payBalance = payBalance;
     }
 
-    public String getFactors() {
-        return factors;
+    public String getPayDate() {
+        return payDate;
     }
 
-    public void setFactors(String factors) {
-        this.factors = factors;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getRequestType() {
-        return requestType;
-    }
-
-    public void setRequestType(String requestType) {
-        this.requestType = requestType;
+    public void setPayDate(String payDate) {
+        this.payDate = payDate;
     }
 
     public String getOperOrg() {
@@ -231,7 +206,6 @@ public class ScfEnquiry implements BetterjrEntity {
         this.regOperName = regOperName;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getRegDate() {
         return regDate;
     }
@@ -264,7 +238,6 @@ public class ScfEnquiry implements BetterjrEntity {
         this.modiOperName = modiOperName;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getModiDate() {
         return modiDate;
     }
@@ -296,14 +269,13 @@ public class ScfEnquiry implements BetterjrEntity {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
+        sb.append(", factorNo=").append(factorNo);
         sb.append(", custNo=").append(custNo);
-        sb.append(", actualDate=").append(actualDate);
-        sb.append(", enquiryNo=").append(enquiryNo);
-        sb.append(", endDate=").append(endDate);
-        sb.append(", orders=").append(orders);
-        sb.append(", factors=").append(factors);
-        sb.append(", description=").append(description);
-        sb.append(", requestType=").append(requestType);
+        sb.append(", coreCustNo=").append(coreCustNo);
+        sb.append(", payRecordId=").append(payRecordId);
+        sb.append(", payType=").append(payType);
+        sb.append(", payBalance=").append(payBalance);
+        sb.append(", payDate=").append(payDate);
         sb.append(", operOrg=").append(operOrg);
         sb.append(", regOperId=").append(regOperId);
         sb.append(", regOperName=").append(regOperName);
@@ -330,16 +302,15 @@ public class ScfEnquiry implements BetterjrEntity {
         if (getClass() != that.getClass()) {
             return false;
         }
-        ScfEnquiry other = (ScfEnquiry) that;
+        ScfPayRecordDetail other = (ScfPayRecordDetail) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
+            && (this.getFactorNo() == null ? other.getFactorNo() == null : this.getFactorNo().equals(other.getFactorNo()))
             && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-            && (this.getActualDate() == null ? other.getActualDate() == null : this.getActualDate().equals(other.getActualDate()))
-            && (this.getEnquiryNo() == null ? other.getEnquiryNo() == null : this.getEnquiryNo().equals(other.getEnquiryNo()))
-            && (this.getEndDate() == null ? other.getEndDate() == null : this.getEndDate().equals(other.getEndDate()))
-            && (this.getOrders() == null ? other.getOrders() == null : this.getOrders().equals(other.getOrders()))
-            && (this.getFactors() == null ? other.getFactors() == null : this.getFactors().equals(other.getFactors()))
-            && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()))
-            && (this.getRequestType() == null ? other.getRequestType() == null : this.getRequestType().equals(other.getRequestType()))
+            && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
+            && (this.getPayRecordId() == null ? other.getPayRecordId() == null : this.getPayRecordId().equals(other.getPayRecordId()))
+            && (this.getPayType() == null ? other.getPayType() == null : this.getPayType().equals(other.getPayType()))
+            && (this.getPayBalance() == null ? other.getPayBalance() == null : this.getPayBalance().equals(other.getPayBalance()))
+            && (this.getPayDate() == null ? other.getPayDate() == null : this.getPayDate().equals(other.getPayDate()))
             && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
             && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
             && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
@@ -357,14 +328,13 @@ public class ScfEnquiry implements BetterjrEntity {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+        result = prime * result + ((getFactorNo() == null) ? 0 : getFactorNo().hashCode());
         result = prime * result + ((getCustNo() == null) ? 0 : getCustNo().hashCode());
-        result = prime * result + ((getActualDate() == null) ? 0 : getActualDate().hashCode());
-        result = prime * result + ((getEnquiryNo() == null) ? 0 : getEnquiryNo().hashCode());
-        result = prime * result + ((getEndDate() == null) ? 0 : getEndDate().hashCode());
-        result = prime * result + ((getOrders() == null) ? 0 : getOrders().hashCode());
-        result = prime * result + ((getFactors() == null) ? 0 : getFactors().hashCode());
-        result = prime * result + ((getDescription() == null) ? 0 : getDescription().hashCode());
-        result = prime * result + ((getRequestType() == null) ? 0 : getRequestType().hashCode());
+        result = prime * result + ((getCoreCustNo() == null) ? 0 : getCoreCustNo().hashCode());
+        result = prime * result + ((getPayRecordId() == null) ? 0 : getPayRecordId().hashCode());
+        result = prime * result + ((getPayType() == null) ? 0 : getPayType().hashCode());
+        result = prime * result + ((getPayBalance() == null) ? 0 : getPayBalance().hashCode());
+        result = prime * result + ((getPayDate() == null) ? 0 : getPayDate().hashCode());
         result = prime * result + ((getOperOrg() == null) ? 0 : getOperOrg().hashCode());
         result = prime * result + ((getRegOperId() == null) ? 0 : getRegOperId().hashCode());
         result = prime * result + ((getRegOperName() == null) ? 0 : getRegOperName().hashCode());
@@ -378,53 +348,8 @@ public class ScfEnquiry implements BetterjrEntity {
         return result;
     }
     
-    @Transient
-    private List<ScfOffer> offerList;
-    @Transient
-    private int OfferCount;
-    
-    @Transient
-    private String custName;
-    
-    @Transient
-    private String factorName;
-
-    public List<ScfOffer> getOfferList() {
-        return offerList;
-    }
-
-    public void setOfferList(List<ScfOffer> offerList) {
-        this.offerList = offerList;
-    }
-
-    public int getOfferCount() {
-        return OfferCount;
-    }
-
-    public void setOfferCount(int offerCount) {
-        OfferCount = offerCount;
-    }
-    
-    public String getCustName() {
-        return custName;
-    }
-
-    public void setCustName(String custName) {
-        this.custName = custName;
-    }
-
-    public String getFactorName() {
-        return factorName;
-    }
-
-    public void setFactorName(String factorName) {
-        this.factorName = factorName;
-    }
-
     public void init() {
-        this.id=SerialGenerator.getLongValue("ScfEnquiry.id");
-        this.enquiryNo=this.id + "";
-        this.actualDate = BetterDateUtils.getNumDate();
+        this.id = SerialGenerator.getLongValue("ScfPayRecordDetail.id");
         this.regOperName = UserUtils.getUserName();
         this.regOperId = UserUtils.getOperatorInfo().getId();
         this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
@@ -432,12 +357,11 @@ public class ScfEnquiry implements BetterjrEntity {
         this.regTime = BetterDateUtils.getNumTime();
     }
 
-    public void setModiBaseInfo() {
-        WorkUserInfo user = UserUtils.getUser();
-        this.modiOperId = user.getId();
+    public void initModify() {
+        this.modiOperId = UserUtils.getOperatorInfo().getId();
         this.modiOperName = UserUtils.getUserName();
+        this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
     }
-
 }

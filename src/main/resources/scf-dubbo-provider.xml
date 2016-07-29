@@ -13,7 +13,7 @@
 		package="com.betterjr.modules.test,
 		com.betterjr.modules.product,
 		com.betterjr.modules.credit,
-		com.betterjr.modules.repayment,
+		com.betterjr.modules.loan,
 		com.betterjr.modules.param,
 		com.betterjr.modules.enquiry,
 		com.betterjr.modules.order,
