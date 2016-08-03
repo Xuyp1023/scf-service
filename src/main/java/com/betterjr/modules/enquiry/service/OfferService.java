@@ -30,7 +30,7 @@ public class OfferService extends BaseService<ScfOfferMapper, ScfOffer> {
      * @return
      */
     public Page<ScfOffer> queryOfferList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
-       if(BetterStringUtils.isEmpty(anMap.get("businStatus").toString())){
+       if(anMap.get("businStatus") == null || BetterStringUtils.isEmpty(anMap.get("businStatus").toString())){
            anMap.put("businStatus", "1");
        }
         

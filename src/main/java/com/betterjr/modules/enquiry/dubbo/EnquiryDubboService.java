@@ -1,16 +1,12 @@
 package com.betterjr.modules.enquiry.dubbo;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.alibaba.dubbo.config.annotation.Service;
-import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.modules.enquiry.IScfEnquiryService;
 import com.betterjr.modules.enquiry.entity.ScfEnquiry;
@@ -77,7 +73,7 @@ public class EnquiryDubboService implements IScfEnquiryService {
     public String webQueryEnquiryByfactorNo(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
         anMap = (Map) RuleServiceDubboFilterInvoker.getInputObj();
         logger.debug("查询保理公司收到的询价,入参： " + anMap);
-        return AjaxObject.newOk(enquiryService.queryEnquiryByfactorNo(anMap, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject.newOkWithPage("查询成功", enquiryService.queryEnquiryByfactorNo(anMap, anFlag, anPageNum, anPageSize)).toJson();
     }
     
 }

@@ -7,6 +7,7 @@ import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -25,6 +26,7 @@ public class ScfRequest implements BetterjrEntity {
     @Id
     @Column(name = "C_REQUESTNO",  columnDefinition="VARCHAR" )
     @MetaData( value="", comments = "")
+    @OrderBy("desc")
     private String requestNo;
 
     /**
@@ -321,7 +323,7 @@ public class ScfRequest implements BetterjrEntity {
     @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
     @MetaData( value="", comments = "")
     private String regTime;
-
+    
     /**
      * 关联订单编号
      */
@@ -996,6 +998,7 @@ public class ScfRequest implements BetterjrEntity {
     public void init() {
         this.requestNo = SerialGenerator.getLongValue("ScfRequest.id")+"";
         this.tradeStatus = "0";
+        this.aduit = "0";
         this.regOperName = UserUtils.getUserName();
         this.regOperId = UserUtils.getOperatorInfo().getId();
         this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
