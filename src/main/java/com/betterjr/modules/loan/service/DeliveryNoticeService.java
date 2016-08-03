@@ -1,6 +1,7 @@
 package com.betterjr.modules.loan.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
+import com.betterjr.common.utils.Collections3;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.loan.dao.ScfDeliveryNoticeMapper;
 import com.betterjr.modules.loan.entity.ScfDeliveryNotice;
@@ -27,7 +29,10 @@ public class DeliveryNoticeService extends BaseService<ScfDeliveryNoticeMapper, 
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("custNo", anNotice.getCustNo());
         map.put("id", anId);
-        BTAssert.notNull(selectByClassProperty(ScfDeliveryNotice.class, map), "找不到源数据");
+        List<ScfDeliveryNotice> list = selectByClassProperty(ScfDeliveryNotice.class, map);
+        if(Collections3.isEmpty(list) || list.size() == 0){
+            throw new IllegalArgumentException("修改询价失败，找不到源数据id:"+anId);
+        }
         
         anNotice.initModify();
         anNotice.setId(anId);
