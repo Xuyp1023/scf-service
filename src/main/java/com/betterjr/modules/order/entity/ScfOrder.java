@@ -12,6 +12,8 @@ import javax.persistence.Table;
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
+import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.UserUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -529,5 +531,24 @@ public class ScfOrder implements BetterjrEntity {
         result = prime * result + ((getBalanceUsed() == null) ? 0 : getBalanceUsed().hashCode());
         result = prime * result + ((getBalanceRest() == null) ? 0 : getBalanceRest().hashCode());
         return result;
+    }
+    
+    /**
+     * 订单信息编辑数据保存
+     */
+    public void initModifyValue(ScfOrder anModiOrder) {
+        this.orderNo = anModiOrder.getOrderNo();
+        this.goodsName = anModiOrder.getGoodsName();
+        this.orderDate = anModiOrder.getOrderDate();
+        this.unit = anModiOrder.getUnit();
+        this.amount = anModiOrder.getAmount();
+        this.balance = anModiOrder.getBalance();
+        this.coreCustNo = anModiOrder.getCoreCustNo();
+        this.settlement = anModiOrder.getSettlement();
+       
+        this.modiDate = BetterDateUtils.getNumDate();
+        this.modiOperId = UserUtils.getOperatorInfo().getId();
+        this.modiOperName = UserUtils.getOperatorInfo().getName();
+        this.modiTime = BetterDateUtils.getNumTime();
     }
 }

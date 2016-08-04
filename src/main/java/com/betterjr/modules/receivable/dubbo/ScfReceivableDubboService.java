@@ -18,10 +18,10 @@ public class ScfReceivableDubboService implements IScfReceivableService {
     private ScfReceivableService scfReceivableService;
 
     @Override
-    public String webSaveModifyReceivable(Map<String, Object> anMap, Long anId) {
+    public String webSaveModifyReceivable(Map<String, Object> anMap, Long anId, String anFileList) {
         ScfReceivable anReceivable = (ScfReceivable) RuleServiceDubboFilterInvoker.getInputObj();
         
-        return AjaxObject.newOk("应收账款信息编辑成功", scfReceivableService.saveModifyReceivable(anReceivable, anId)).toJson();
+        return AjaxObject.newOk("应收账款信息编辑成功", scfReceivableService.saveModifyReceivable(anReceivable, anId, anFileList)).toJson();
     }
 
     @Override

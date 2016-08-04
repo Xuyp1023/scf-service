@@ -445,15 +445,16 @@ public class ScfReceivable implements BetterjrEntity {
     /**
      * 应收账款信息变更迁移初始化
      */
-    public void initModifyValue(ScfReceivable anReceivable) {
-        this.id = anReceivable.getId();
-        this.btNo = anReceivable.getBtNo();
-        this.businStatus = anReceivable.getBusinStatus();
-        this.regDate = anReceivable.getRegDate();
-        this.custNo = anReceivable.getCustNo();
-        this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
-        
-        this.coreCustNo = anReceivable.getCoreCustNo();
+    public void initModifyValue(ScfReceivable anModiReceivable) {
+        this.receivableNo = anModiReceivable.getReceivableNo();
+        this.debtor = anModiReceivable.getDebtor();
+        this.creditor = anModiReceivable.getCreditor();
+        this.unit = anModiReceivable.getUnit();
+        this.amount = anModiReceivable.getAmount();
+        this.goodsName = anModiReceivable.getGoodsName();
+        this.balance = anModiReceivable.getBalance();
+        this.endDate = anModiReceivable.getEndDate();
+
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiOperId = UserUtils.getOperatorInfo().getId();
         this.modiOperName = UserUtils.getOperatorInfo().getName();
