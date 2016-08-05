@@ -2,6 +2,9 @@ package com.betterjr.modules.order.entity;
 
 import com.betterjr.common.annotation.*;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.selectkey.SerialGenerator;
+import com.betterjr.common.utils.BetterDateUtils;
+
 import javax.persistence.*;
 
 @Access(AccessType.FIELD)
@@ -149,5 +152,10 @@ public class ScfOrderRelation implements BetterjrEntity {
         result = prime * result + ((getRegDate() == null) ? 0 : getRegDate().hashCode());
         result = prime * result + ((getModiDate() == null) ? 0 : getModiDate().hashCode());
         return result;
+    }
+    
+    public void initAddValue() {
+        this.id = SerialGenerator.getLongValue("ScfOrderRelation.id");
+        this.regDate = BetterDateUtils.getNumDate();
     }
 }

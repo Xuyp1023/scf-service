@@ -1,11 +1,15 @@
 package com.betterjr.modules.order.service;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BetterStringUtils;
+import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.order.dao.ScfTransportMapper;
@@ -48,5 +52,16 @@ public class ScfTransportService extends BaseService<ScfTransportMapper, ScfTran
         Page<ScfTransport> anTransportList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
 
         return anTransportList;
+    }
+    
+    public void checkTransportExist(Long anId, String anOperOrg) {
+        Map<String, Object> anMap = new HashMap<String, Object>();
+        anMap.put("id", anId);
+        anMap.put("operOrg", anOperOrg);
+        List<ScfTransport> transportList = this.selectByClassProperty(ScfTransport.class, anMap);
+        if(Collections3.isEmpty(transportList)) {
+            logger.warn("不存在相对应id,操作机构,业务状态的运输单据");
+            throw new BytterTradeException(40001, "不存在相对应id,操作机构,业务状态的运输单据");
+        }
     }
 }
