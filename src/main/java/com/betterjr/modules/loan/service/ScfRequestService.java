@@ -1,5 +1,6 @@
 package com.betterjr.modules.loan.service;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,12 +9,17 @@ import org.springframework.stereotype.Service;
 
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
+import com.betterjr.common.utils.Collections3;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.loan.dao.ScfRequestMapper;
+import com.betterjr.modules.loan.entity.ScfLoan;
+import com.betterjr.modules.loan.entity.ScfPayPlan;
 import com.betterjr.modules.loan.entity.ScfRequest;
-import com.betterjr.modules.loan.entity.ScfRequestApproved;
+import com.betterjr.modules.loan.entity.ScfRequestScheme;
+import com.betterjr.modules.loan.entity.ScfServiceFee;
 
 @Service
 public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest> {
@@ -23,7 +29,11 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     @Autowired
     private CustAccountService custAccountService;
     @Autowired
-    private ScfRequestApprovedService approvedService;
+    private ScfRequestSchemeService schemeService;
+    @Autowired
+    private ScfLoanService loanService;
+    @Autowired
+    private ScfServiceFeeService serviceFeeService;
 
     /**
      * 新增融资申请
@@ -35,6 +45,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         BTAssert.notNull(anRequest, "anRequest不能为空");
         anRequest.init();
         anRequest.setCustName(custAccountService.queryCustName(anRequest.getCustNo()));
+        anRequest.setRequestDate(BetterDateUtils.getDate("yyyyMMdd"));
         this.insert(anRequest);
         return anRequest;
     }
@@ -51,7 +62,9 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("custNo", anRequest.getCustNo());
         map.put("requestNo", anRequestNo);
-        BTAssert.notNull(selectByClassProperty(ScfRequest.class, map), "原始数据不存在");
+        if (Collections3.isEmpty(selectByClassProperty(ScfRequest.class, map))) {
+            throw new IllegalArgumentException("找不到原数据");
+        }
 
         anRequest.initModify();
         anRequest.setRequestNo(anRequestNo);
@@ -107,25 +120,13 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     }
 
     /**
-     * 资方-无业务审批
-     * 
-     * @param anMap
-     * @return
-     */
-    public ScfRequest nonBusiness(Map<String, Object> anMap) {
-        return null;
-    }
-
-    /**
      * 资方-出具融资方案
      * 
      * @param anMap
      * @return
      */
-    public ScfRequestApproved offerScheme(ScfRequestApproved anApproved) {
-        anApproved.setCustAduit("0");
-        approvedService.addApproved(anApproved);
-        return anApproved;
+    public ScfRequestScheme saveOfferScheme(ScfRequestScheme anScheme) {
+        return schemeService.addScheme(anScheme);
     }
 
     /**
@@ -134,40 +135,39 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
      * @param anMap
      * @return
      */
-    public ScfRequestApproved confirmScheme(String anRequestNo, String anAduit) {
-        ScfRequestApproved approved = approvedService.findApprovedDetail2(anRequestNo);
-        BTAssert.notNull(approved);
-        
-        //修改融资企业确认状态
-        approved.setCustAduit(anAduit);
-        approvedService.saveModifyApproved(approved);
-        return approved;
+    public ScfRequestScheme saveConfirmScheme(String anRequestNo, String anAduitStatus) {
+        ScfRequestScheme scheme = schemeService.findSchemeDetail2(anRequestNo);
+        BTAssert.notNull(scheme);
+
+        // 修改融资企业确认状态
+        scheme.setCustAduit(anAduitStatus);
+        return schemeService.saveModifyScheme(scheme);
     }
-   
+
     /**
      * 资方-发起贸易背景确认（发送转让协议通知书）
      * 
      * @param anMap
      * @return
      */
-    public ScfRequest webRequestTradingBackgrand(String anRequestNo) {
-        ScfRequest request =  this.selectByPrimaryKey(anRequestNo);
-       
-        //将核心企业的审批状态改为"需要确认0"
-        ScfRequestApproved approved = approvedService.findApprovedDetail2(anRequestNo);
+    public ScfRequest saveRequestTradingBackgrand(String anRequestNo) {
+        ScfRequest request = this.selectByPrimaryKey(anRequestNo);
+
+        // 将核心企业的审批状态改为"需要确认0"
+        ScfRequestScheme approved = schemeService.findSchemeDetail2(anRequestNo);
         BTAssert.notNull(approved, "无审批记录！");
         approved.setCoreCustAduit("0");
-        approvedService.saveModifyApproved(approved);
-        
+        schemeService.saveModifyScheme(approved);
+
         // 1:票据;2:应收款;3:经销商
         if (BetterStringUtils.equals("3", request.getRequestType())) {
-            //TODO 发送《三方协议》
+            // TODO 发送《三方协议》
 
-        }else{
-            //TODO 发送《应收账款转让确认书》 
         }
-        
-        
+        else {
+            // TODO 发送《应收账款转让确认书》
+        }
+
         return request;
     }
 
@@ -177,47 +177,96 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
      * @param anMap
      * @return
      */
-    public ScfRequest confirmTradingBackgrand(String anRequestNo, String anAduit) {
-        ScfRequestApproved approved = approvedService.findApprovedDetail2(anRequestNo);
+    public ScfRequest confirmTradingBackgrand(String anRequestNo, String anAduitStatus) {
+        ScfRequestScheme approved = schemeService.findSchemeDetail2(anRequestNo);
         BTAssert.notNull(approved);
-        
-        //修改核心企业确认状态
-        approved.setCoreCustAduit(anAduit);
-        approvedService.saveModifyApproved(approved);
-        
-        //修改融资申请中的核心企业确认状态
+
+        // 修改核心企业确认状态
+        approved.setCoreCustAduit(anAduitStatus);
+        schemeService.saveModifyScheme(approved);
+
+        // 修改融资申请中的核心企业确认状态
         ScfRequest request = new ScfRequest();
-        request.setAduit(anAduit);
+        request.setAduit(anAduitStatus);
         request = saveModifyRequest(request, anRequestNo);
-        
-        //企业确认状态，0未确认，1已确认，2否决
-        if(BetterStringUtils.equals("2", anAduit)){
+
+        // 企业确认状态，0未确认，1已确认，2否决
+        if (BetterStringUtils.equals("2", anAduitStatus)) {
             return findRequestDetail(anRequestNo);
         }
-        
-        //TODO 保存 应收账款转让协议 相关数据
-        
+
+        // TODO 保存 应收账款转让协议 相关数据
+
         return findRequestDetail(anRequestNo);
-    }
-    
-    /**
-     * 资方-放款（收取放款手续费）
-     * 
-     * @param anMap
-     * @return
-     */
-    public ScfRequest loan(Map<String, Object> anMap) {
-        return null;
     }
 
     /**
-     * 资方-确认放款（计算利息，生成还款计划）
+     * 资方-确认放款（收取放款手续费,计算利息，生成还款计划）
      * 
      * @param anMap
      * @return
      */
-    public ScfRequest confirmLoan(Map<String, Object> anMap) {
-        return null;
+    public ScfRequest saveConfirmLoan(ScfLoan anLoan) {
+        ScfRequest request = this.selectByPrimaryKey(anLoan.getRequestNo());
+        BTAssert.notNull(request, "找不到融资申请单");
+
+        ScfRequestScheme scheme = schemeService.findSchemeDetail2(request.getRequestNo());
+        BTAssert.notNull(scheme, "找不到融资方案");
+
+        // ---修申请表---------------------------------------------
+        request.setActualDate(anLoan.getLoanDate());
+        request.setEndDate(anLoan.getEndDate());
+        request.setConfirmBalance(anLoan.getLoanBalance());
+        this.updateByPrimaryKey(request);
+
+        // TODO 如果是经销商融资 放的金额是减掉了保证金吗？
+        // ---保存还款计划------------------------------------------
+        ScfPayPlan plan = new ScfPayPlan();
+        plan.setCustNo(request.getCustNo());
+        plan.setCoreCustNo(request.getCoreCustNo());
+        plan.setFactorNo(request.getFactorNo());
+        plan.setRequestNo(anLoan.getRequestNo());
+        plan.setPlanDate(anLoan.getEndDate());
+        plan.setShouldPrincipalBalance(anLoan.getLoanBalance());
+        if (null == anLoan.getInterestBalance()) {
+            plan.setShouldInterestBalance(payPlanService.calculatFee(anLoan.getRequestNo(), scheme.getApprovedBalance(), 3));
+            plan.setShouldManagementBalance(payPlanService.calculatFee(anLoan.getRequestNo(), scheme.getApprovedBalance(), 1));
+        }
+        else {
+            plan.setShouldInterestBalance(anLoan.getInterestBalance());
+            plan.setShouldManagementBalance(anLoan.getManagementBalance());
+        }
+        payPlanService.addPayPlan(plan);
+
+        // ---保存手续费----------------------------------------------
+        BigDecimal servicefeeBalance = new BigDecimal(0);
+        if (null != anLoan.getServicefeeBalance() || null != scheme.getServicefeeRatio()) {
+            ScfServiceFee serviceFee = new ScfServiceFee();
+            serviceFee.setCustNo(request.getCustNo());
+            serviceFee.setFactorNo(request.getFactorNo());
+            serviceFee.setRequestNo(anLoan.getRequestNo());
+            serviceFee.setPayDate(anLoan.getLoanDate());
+
+            if (null == anLoan.getServicefeeBalance()) {
+                // 计算手续费(按千分之收)
+                servicefeeBalance = scheme.getApprovedBalance().multiply(scheme.getServicefeeRatio()).divide(new BigDecimal(1000));
+            }
+            else {
+                servicefeeBalance = anLoan.getServicefeeBalance();
+            }
+            serviceFee.setBalance(servicefeeBalance);
+            serviceFeeService.addServiceFee(serviceFee);
+        }
+
+        // ---保存放款记录------------------------------------------
+        anLoan.setInterestBalance(plan.getShouldInterestBalance());
+        anLoan.setManagementBalance(plan.getShouldManagementBalance());
+        anLoan.setCustNo(request.getCustNo());
+        anLoan.setServicefeeBalance(servicefeeBalance);
+        anLoan.setFactorNo(request.getFactorNo());
+        loanService.addLoan(anLoan);
+
+        return request;
     }
 
 }

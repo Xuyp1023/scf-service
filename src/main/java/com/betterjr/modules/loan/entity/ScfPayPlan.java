@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
@@ -101,12 +102,6 @@ public class ScfPayPlan implements BetterjrEntity {
     @MetaData( value="应还滞纳金", comments = "应还滞纳金")
     private BigDecimal shouldLatefeeBalance;
 
-    /**
-     * 应还其它费用
-     */
-    @Column(name = "F_SHOULD_OTHER_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="应还其它费用", comments = "应还其它费用")
-    private BigDecimal shouldOtherBalance;
 
     /**
      * 应还总额
@@ -156,13 +151,6 @@ public class ScfPayPlan implements BetterjrEntity {
     @Column(name = "F_ALREADY_SERVICEFEE_BALANCE",  columnDefinition="DOUBLE" )
     @MetaData( value="已还手续费", comments = "已还手续费")
     private BigDecimal alreadyServicefeeBalance;
-
-    /**
-     * 已还其它费用
-     */
-    @Column(name = "F_ALREADY_OTHER_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="已还其它费用", comments = "已还其它费用")
-    private BigDecimal alreadyOtherBalance;
 
     /**
      * 已还合计
@@ -277,12 +265,6 @@ public class ScfPayPlan implements BetterjrEntity {
     @MetaData( value="未还手续费", comments = "未还手续费")
     private BigDecimal surplusServicefeeBalance;
 
-    /**
-     * 未还其它费用
-     */
-    @Column(name = "F_SURPLUS_OTHER_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="未还其它费用", comments = "未还其它费用")
-    private BigDecimal surplusOtherBalance;
 
     /**
      * 未还合计
@@ -389,14 +371,6 @@ public class ScfPayPlan implements BetterjrEntity {
         this.shouldLatefeeBalance = shouldLatefeeBalance;
     }
 
-    public BigDecimal getShouldOtherBalance() {
-        return shouldOtherBalance;
-    }
-
-    public void setShouldOtherBalance(BigDecimal shouldOtherBalance) {
-        this.shouldOtherBalance = shouldOtherBalance;
-    }
-
     public BigDecimal getShouldTotalBalance() {
         return shouldTotalBalance;
     }
@@ -451,14 +425,6 @@ public class ScfPayPlan implements BetterjrEntity {
 
     public void setAlreadyServicefeeBalance(BigDecimal alreadyServicefeeBalance) {
         this.alreadyServicefeeBalance = alreadyServicefeeBalance;
-    }
-
-    public BigDecimal getAlreadyOtherBalance() {
-        return alreadyOtherBalance;
-    }
-
-    public void setAlreadyOtherBalance(BigDecimal alreadyOtherBalance) {
-        this.alreadyOtherBalance = alreadyOtherBalance;
     }
 
     public BigDecimal getAlreadyTotalBalance() {
@@ -621,14 +587,6 @@ public class ScfPayPlan implements BetterjrEntity {
         this.surplusServicefeeBalance = surplusServicefeeBalance;
     }
 
-    public BigDecimal getSurplusOtherBalance() {
-        return surplusOtherBalance;
-    }
-
-    public void setSurplusOtherBalance(BigDecimal surplusOtherBalance) {
-        this.surplusOtherBalance = surplusOtherBalance;
-    }
-
     public BigDecimal getSurplusTotalBalance() {
         return surplusTotalBalance;
     }
@@ -655,7 +613,6 @@ public class ScfPayPlan implements BetterjrEntity {
         sb.append(", shouldManagementBalance=").append(shouldManagementBalance);
         sb.append(", shouldPenaltyBalance=").append(shouldPenaltyBalance);
         sb.append(", shouldLatefeeBalance=").append(shouldLatefeeBalance);
-        sb.append(", shouldOtherBalance=").append(shouldOtherBalance);
         sb.append(", shouldTotalBalance=").append(shouldTotalBalance);
         sb.append(", alreadyPrincipalBalance=").append(alreadyPrincipalBalance);
         sb.append(", alreadyInterestBalance=").append(alreadyInterestBalance);
@@ -663,7 +620,6 @@ public class ScfPayPlan implements BetterjrEntity {
         sb.append(", alreadyPenaltyBalance=").append(alreadyPenaltyBalance);
         sb.append(", alreadyLatefeeBalance=").append(alreadyLatefeeBalance);
         sb.append(", alreadyServicefeeBalance=").append(alreadyServicefeeBalance);
-        sb.append(", alreadyOtherBalance=").append(alreadyOtherBalance);
         sb.append(", alreadyTotalBalance=").append(alreadyTotalBalance);
         sb.append(", term=").append(term);
         sb.append(", businStatus=").append(businStatus);
@@ -684,7 +640,6 @@ public class ScfPayPlan implements BetterjrEntity {
         sb.append(", surplusPenaltyBalance=").append(surplusPenaltyBalance);
         sb.append(", surplusLatefeeBalance=").append(surplusLatefeeBalance);
         sb.append(", surplusServicefeeBalance=").append(surplusServicefeeBalance);
-        sb.append(", surplusOtherBalance=").append(surplusOtherBalance);
         sb.append(", surplusTotalBalance=").append(surplusTotalBalance);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
@@ -715,7 +670,6 @@ public class ScfPayPlan implements BetterjrEntity {
             && (this.getShouldManagementBalance() == null ? other.getShouldManagementBalance() == null : this.getShouldManagementBalance().equals(other.getShouldManagementBalance()))
             && (this.getShouldPenaltyBalance() == null ? other.getShouldPenaltyBalance() == null : this.getShouldPenaltyBalance().equals(other.getShouldPenaltyBalance()))
             && (this.getShouldLatefeeBalance() == null ? other.getShouldLatefeeBalance() == null : this.getShouldLatefeeBalance().equals(other.getShouldLatefeeBalance()))
-            && (this.getShouldOtherBalance() == null ? other.getShouldOtherBalance() == null : this.getShouldOtherBalance().equals(other.getShouldOtherBalance()))
             && (this.getShouldTotalBalance() == null ? other.getShouldTotalBalance() == null : this.getShouldTotalBalance().equals(other.getShouldTotalBalance()))
             && (this.getAlreadyPrincipalBalance() == null ? other.getAlreadyPrincipalBalance() == null : this.getAlreadyPrincipalBalance().equals(other.getAlreadyPrincipalBalance()))
             && (this.getAlreadyInterestBalance() == null ? other.getAlreadyInterestBalance() == null : this.getAlreadyInterestBalance().equals(other.getAlreadyInterestBalance()))
@@ -723,7 +677,6 @@ public class ScfPayPlan implements BetterjrEntity {
             && (this.getAlreadyPenaltyBalance() == null ? other.getAlreadyPenaltyBalance() == null : this.getAlreadyPenaltyBalance().equals(other.getAlreadyPenaltyBalance()))
             && (this.getAlreadyLatefeeBalance() == null ? other.getAlreadyLatefeeBalance() == null : this.getAlreadyLatefeeBalance().equals(other.getAlreadyLatefeeBalance()))
             && (this.getAlreadyServicefeeBalance() == null ? other.getAlreadyServicefeeBalance() == null : this.getAlreadyServicefeeBalance().equals(other.getAlreadyServicefeeBalance()))
-            && (this.getAlreadyOtherBalance() == null ? other.getAlreadyOtherBalance() == null : this.getAlreadyOtherBalance().equals(other.getAlreadyOtherBalance()))
             && (this.getAlreadyTotalBalance() == null ? other.getAlreadyTotalBalance() == null : this.getAlreadyTotalBalance().equals(other.getAlreadyTotalBalance()))
             && (this.getTerm() == null ? other.getTerm() == null : this.getTerm().equals(other.getTerm()))
             && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
@@ -744,7 +697,6 @@ public class ScfPayPlan implements BetterjrEntity {
             && (this.getSurplusPenaltyBalance() == null ? other.getSurplusPenaltyBalance() == null : this.getSurplusPenaltyBalance().equals(other.getSurplusPenaltyBalance()))
             && (this.getSurplusLatefeeBalance() == null ? other.getSurplusLatefeeBalance() == null : this.getSurplusLatefeeBalance().equals(other.getSurplusLatefeeBalance()))
             && (this.getSurplusServicefeeBalance() == null ? other.getSurplusServicefeeBalance() == null : this.getSurplusServicefeeBalance().equals(other.getSurplusServicefeeBalance()))
-            && (this.getSurplusOtherBalance() == null ? other.getSurplusOtherBalance() == null : this.getSurplusOtherBalance().equals(other.getSurplusOtherBalance()))
             && (this.getSurplusTotalBalance() == null ? other.getSurplusTotalBalance() == null : this.getSurplusTotalBalance().equals(other.getSurplusTotalBalance()));
     }
 
@@ -764,7 +716,6 @@ public class ScfPayPlan implements BetterjrEntity {
         result = prime * result + ((getShouldManagementBalance() == null) ? 0 : getShouldManagementBalance().hashCode());
         result = prime * result + ((getShouldPenaltyBalance() == null) ? 0 : getShouldPenaltyBalance().hashCode());
         result = prime * result + ((getShouldLatefeeBalance() == null) ? 0 : getShouldLatefeeBalance().hashCode());
-        result = prime * result + ((getShouldOtherBalance() == null) ? 0 : getShouldOtherBalance().hashCode());
         result = prime * result + ((getShouldTotalBalance() == null) ? 0 : getShouldTotalBalance().hashCode());
         result = prime * result + ((getAlreadyPrincipalBalance() == null) ? 0 : getAlreadyPrincipalBalance().hashCode());
         result = prime * result + ((getAlreadyInterestBalance() == null) ? 0 : getAlreadyInterestBalance().hashCode());
@@ -772,7 +723,6 @@ public class ScfPayPlan implements BetterjrEntity {
         result = prime * result + ((getAlreadyPenaltyBalance() == null) ? 0 : getAlreadyPenaltyBalance().hashCode());
         result = prime * result + ((getAlreadyLatefeeBalance() == null) ? 0 : getAlreadyLatefeeBalance().hashCode());
         result = prime * result + ((getAlreadyServicefeeBalance() == null) ? 0 : getAlreadyServicefeeBalance().hashCode());
-        result = prime * result + ((getAlreadyOtherBalance() == null) ? 0 : getAlreadyOtherBalance().hashCode());
         result = prime * result + ((getAlreadyTotalBalance() == null) ? 0 : getAlreadyTotalBalance().hashCode());
         result = prime * result + ((getTerm() == null) ? 0 : getTerm().hashCode());
         result = prime * result + ((getBusinStatus() == null) ? 0 : getBusinStatus().hashCode());
@@ -793,7 +743,6 @@ public class ScfPayPlan implements BetterjrEntity {
         result = prime * result + ((getSurplusPenaltyBalance() == null) ? 0 : getSurplusPenaltyBalance().hashCode());
         result = prime * result + ((getSurplusLatefeeBalance() == null) ? 0 : getSurplusLatefeeBalance().hashCode());
         result = prime * result + ((getSurplusServicefeeBalance() == null) ? 0 : getSurplusServicefeeBalance().hashCode());
-        result = prime * result + ((getSurplusOtherBalance() == null) ? 0 : getSurplusOtherBalance().hashCode());
         result = prime * result + ((getSurplusTotalBalance() == null) ? 0 : getSurplusTotalBalance().hashCode());
         return result;
     }
@@ -815,4 +764,26 @@ public class ScfPayPlan implements BetterjrEntity {
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
     }
+
+    @Transient
+    private String custName;
+    @Transient
+    private String factorName;
+
+    public String getCustName() {
+        return custName;
+    }
+
+    public void setCustName(String custName) {
+        this.custName = custName;
+    }
+
+    public String getFactorName() {
+        return factorName;
+    }
+
+    public void setFactorName(String factorName) {
+        this.factorName = factorName;
+    }
+    
 }

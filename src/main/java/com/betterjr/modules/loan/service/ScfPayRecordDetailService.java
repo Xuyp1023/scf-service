@@ -19,7 +19,7 @@ public class ScfPayRecordDetailService extends BaseService<ScfPayRecordDetailMap
      * @param anRecord
      * @return
      */
-    public int addPayPlan(ScfPayRecordDetail anRecord) {
+    public int addRecordDetail(ScfPayRecordDetail anRecord) {
         BTAssert.notNull(anRecord, "anRecord不能为空");
         anRecord.init();
         return this.insert(anRecord);
@@ -31,7 +31,7 @@ public class ScfPayRecordDetailService extends BaseService<ScfPayRecordDetailMap
      * @param anRecord
      * @return
      */
-    public int saveModifyPayPlan(ScfPayRecordDetail anRecord, Long anId) {
+    public int saveModifyRecordDetail(ScfPayRecordDetail anRecord, Long anId) {
         BTAssert.notNull(anRecord, "anRecord不能为空");
 
         Map<String, Object> map = new HashMap<String, Object>();
@@ -53,7 +53,7 @@ public class ScfPayRecordDetailService extends BaseService<ScfPayRecordDetailMap
      * @param anPageSize
      * @return
      */
-    public Page<ScfPayRecordDetail> queryPayPlanList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfPayRecordDetail> queryRecordDetailList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
         return this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
     }
 
@@ -63,7 +63,7 @@ public class ScfPayRecordDetailService extends BaseService<ScfPayRecordDetailMap
      * @param anId
      * @return
      */
-    public ScfPayRecordDetail findPayPlanDetail(Long anId) {
+    public ScfPayRecordDetail findRecordDetail(Long anId) {
         BTAssert.notNull(anId, "anId不能为空");
         return this.selectByPrimaryKey(anId);
     }

@@ -12,15 +12,15 @@ import com.betterjr.modules.loan.dao.ScfPayRecordMapper;
 import com.betterjr.modules.loan.entity.ScfPayRecord;
 
 @Service
-public class ScfPayDetailService extends BaseService<ScfPayRecordMapper, ScfPayRecord> {
+public class ScfPayRecordService extends BaseService<ScfPayRecordMapper, ScfPayRecord> {
 
     /**
      * 新增还款计划
      * @param anRecord
      * @return
      */
-    public int addPayPlan(ScfPayRecord anRecord) {
-        BTAssert.notNull(anRecord, "anPlan不能为空");
+    public int addPayRecord(ScfPayRecord anRecord) {
+        BTAssert.notNull(anRecord, "anRecord不能为空");
         anRecord.init();
         return this.insert(anRecord);
     }
@@ -31,7 +31,7 @@ public class ScfPayDetailService extends BaseService<ScfPayRecordMapper, ScfPayR
      * @param anRecord
      * @return
      */
-    public int saveModifyPayPlan(ScfPayRecord anRecord, Long anId) {
+    public int saveModifyPayRecord(ScfPayRecord anRecord, Long anId) {
         BTAssert.notNull(anRecord, "anRecord不能为空");
 
         Map<String, Object> map = new HashMap<String, Object>();
@@ -53,7 +53,7 @@ public class ScfPayDetailService extends BaseService<ScfPayRecordMapper, ScfPayR
      * @param anPageSize
      * @return
      */
-    public Page<ScfPayRecord> queryPayPlanList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfPayRecord> queryPayRecordList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
         return this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
     }
 
@@ -63,7 +63,7 @@ public class ScfPayDetailService extends BaseService<ScfPayRecordMapper, ScfPayR
      * @param anId
      * @return
      */
-    public ScfPayRecord findPayPlanDetail(Long anId) {
+    public ScfPayRecord findPayRecordDetail(Long anId) {
         BTAssert.notNull(anId, "anId不能为空");
         return this.selectByPrimaryKey(anId);
     }
