@@ -37,7 +37,15 @@
 		p:connection-factory-ref="jedisConnectionFactory"/> -->
 
 
-	<context:property-placeholder location="classpath:config.properties" />
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="fileEncoding" value="UTF-8" />
+		<property name="locations">
+			<list>
+				<value>classpath:config-dev.properties</value>
+			</list>
+			<!-- 请保持配置文件顺序 -->
+		</property>
+	</bean>
 
 	<bean class="com.betterjr.common.utils.PropertiesHolder">
 		<property name="properties" value="config.properties" />
