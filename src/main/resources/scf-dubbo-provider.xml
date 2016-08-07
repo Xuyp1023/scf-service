@@ -21,17 +21,17 @@
 		com.betterjr.modules.account.dubbo,
 		com.betterjr.dubbo.extend.filter" />
 	<!-- 提供方应用信息，用于计算依赖关系 -->
-	<dubbo:application name="scf-dubbo-provider" />
+	<dubbo:application name="${dubbo.application}" />
 
 	<!-- 用dubbo协议在20880端口暴露服务 -->
-	<dubbo:protocol name="dubbo" port="20880" serialization="fst" />
+	<dubbo:protocol name="dubbo" port="${dubbo.protocol.port}" serialization="${dubbo.protocol.serialization}" />
 	<!-- 声明所有服务接口的默认设置 -->
 	<dubbo:provider timeout="50000" retries="0" loadbalance="random"
-		accesslog="d:\\logs\\dubbo-provider-access.log" version="1.2" />
+		accesslog="${dubbo.provider.log}" version="${dubbo.provider.version}" />
 
 	<!-- 设定只有一个集群的注册中心， address="N/A" 表示不启用注册中心 -->
-	<dubbo:registry id="reg" address="zookeeper://192.168.2.43:2181"
-		file="d:\\dubbo-registry\\192.168.2.43.cache.provider" />
+	<dubbo:registry id="reg" address="${dubbo.registry.address}"
+		file="${dubbo.registry.file}" />
 
 
 </beans>
