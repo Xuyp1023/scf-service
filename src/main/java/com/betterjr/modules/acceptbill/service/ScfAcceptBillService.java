@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.data.PlatformBaseRuleType;
@@ -19,13 +20,25 @@ import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.dao.ScfAcceptBillMapper;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
+import com.betterjr.modules.order.entity.ScfOrder;
+import com.betterjr.modules.order.entity.ScfOrderRelation;
 import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
+import com.betterjr.modules.order.service.ScfInvoiceService;
+import com.betterjr.modules.order.service.ScfOrderRelationService;
+import com.betterjr.modules.order.service.ScfOrderService;
+import com.betterjr.modules.order.service.ScfTransportService;
+import com.betterjr.modules.receivable.service.ScfReceivableService;
 
 @Service
-public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAcceptBill> /*implements IScfOrderInfoCheckService*/ {
+public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAcceptBill> implements IScfOrderInfoCheckService {
 
     private static final Logger logger = LoggerFactory.getLogger(ScfAcceptBillService.class);
 
+    @Autowired
+    private ScfOrderRelationService orderRelationService;
+    @Autowired
+    private ScfOrderService orderService;
+    
     /**
      * 汇票信息分页查询
      */
@@ -44,8 +57,34 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         anMap.remove("custNo");
         
         Page<ScfAcceptBill> anAcceptBillList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
+        
+        //补全关联信息
+        for(ScfAcceptBill anAcceptBill : anAcceptBillList) {
+            Map<String, Object> acceptBillIdMap = new HashMap<String, Object>();
+            acceptBillIdMap.put("infoId", anAcceptBill.getId());
+            List<ScfOrderRelation> orderRelationList = orderRelationService.findOrderRelation(acceptBillIdMap);
+            fillAcceptBillInfo(anAcceptBill, orderRelationList);
+        }
 
         return anAcceptBillList;
+    }
+    
+    /**
+     * 根据订单关联关系补全汇票信息
+     */
+    public void fillAcceptBillInfo(ScfAcceptBill anAcceptBill, List<ScfOrderRelation> anOrderRelationList) {
+        for(ScfOrderRelation anOrderRelation : anOrderRelationList) {
+            Map<String, Object> queryMap = new HashMap<String, Object>();
+            queryMap.put("id", anOrderRelation.getOrderId());
+            List<ScfOrder> orderList = orderService.findOrder(queryMap);
+            for(ScfOrder anOrder : orderList) {
+                anAcceptBill.setInvoiceList(anOrder.getInvoiceList());
+                anAcceptBill.setTransportList(anOrder.getTransportList());
+                anAcceptBill.setReceivableList(anOrder.getReceivableList());
+                anOrder.chearRelationInfo();
+            }
+            anAcceptBill.setOrderList(orderList);
+        }
     }
 
     /**

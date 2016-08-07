@@ -17,7 +17,7 @@ import com.betterjr.modules.order.entity.ScfTransport;
 import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
 
 @Service
-public class ScfTransportService extends BaseService<ScfTransportMapper, ScfTransport> /*implements IScfOrderInfoCheckService*/ {
+public class ScfTransportService extends BaseService<ScfTransportMapper, ScfTransport> implements IScfOrderInfoCheckService {
 
     /**
      * 订单运输单据录入

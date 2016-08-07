@@ -20,7 +20,7 @@ import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
 
 @Service
-public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>/* implements IScfOrderInfoCheckService*/ {
+public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice> implements IScfOrderInfoCheckService {
 
     /**
      * 订单发票信息录入

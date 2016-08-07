@@ -1,7 +1,5 @@
 package com.betterjr.modules.order.helper;
 
-import org.springframework.stereotype.Service;
-
 public interface IScfOrderInfoCheckService {
 
     /**

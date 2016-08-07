@@ -1,6 +1,7 @@
 package com.betterjr.modules.receivable.entity;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -8,12 +9,17 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
+import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
+import com.betterjr.modules.order.entity.ScfInvoice;
+import com.betterjr.modules.order.entity.ScfOrder;
+import com.betterjr.modules.order.entity.ScfTransport;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -176,6 +182,18 @@ public class ScfReceivable implements BetterjrEntity {
     @Column(name = "C_DESCRIPTION",  columnDefinition="VARCHAR" )
     @MetaData( value="备注", comments = "备注")
     private String description;
+    
+    @Transient
+    private List<ScfOrder> orderList;
+    
+    @Transient
+    private List<ScfInvoice> invoiceList;
+    
+    @Transient
+    private List<ScfTransport> transportList;
+    
+    @Transient
+    private List<ScfAcceptBill> acceptBillList;
 
     private static final long serialVersionUID = 1469676107642L;
 
@@ -440,6 +458,38 @@ public class ScfReceivable implements BetterjrEntity {
         result = prime * result + ((getBatchNo() == null) ? 0 : getBatchNo().hashCode());
         result = prime * result + ((getDescription() == null) ? 0 : getDescription().hashCode());
         return result;
+    }
+
+    public List<ScfOrder> getOrderList() {
+        return this.orderList;
+    }
+
+    public void setOrderList(List<ScfOrder> anOrderList) {
+        this.orderList = anOrderList;
+    }
+
+    public List<ScfInvoice> getInvoiceList() {
+        return this.invoiceList;
+    }
+
+    public void setInvoiceList(List<ScfInvoice> anInvoiceList) {
+        this.invoiceList = anInvoiceList;
+    }
+
+    public List<ScfTransport> getTransportList() {
+        return this.transportList;
+    }
+
+    public void setTransportList(List<ScfTransport> anTransportList) {
+        this.transportList = anTransportList;
+    }
+
+    public List<ScfAcceptBill> getAcceptBillList() {
+        return this.acceptBillList;
+    }
+
+    public void setAcceptBillList(List<ScfAcceptBill> anAcceptBillList) {
+        this.acceptBillList = anAcceptBillList;
     }
 
     /**

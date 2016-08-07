@@ -1,6 +1,7 @@
 package com.betterjr.modules.acceptbill.entity;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -15,6 +16,10 @@ import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
+import com.betterjr.modules.order.entity.ScfInvoice;
+import com.betterjr.modules.order.entity.ScfOrder;
+import com.betterjr.modules.order.entity.ScfTransport;
+import com.betterjr.modules.receivable.entity.ScfReceivable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -292,6 +297,18 @@ public class ScfAcceptBill implements BetterjrEntity {
 
     @Transient
     private String coreName;
+    
+    @Transient
+    private List<ScfOrder> orderList;
+    
+    @Transient
+    private List<ScfInvoice> invoiceList;
+    
+    @Transient
+    private List<ScfTransport> transportList;
+    
+    @Transient
+    private List<ScfReceivable> receivableList;
 
     private static final long serialVersionUID = -8124643903288982684L;
 
@@ -605,6 +622,38 @@ public class ScfAcceptBill implements BetterjrEntity {
 
     public void setModiTime(String modiTime) {
         this.modiTime = modiTime;
+    }
+
+    public List<ScfOrder> getOrderList() {
+        return this.orderList;
+    }
+
+    public void setOrderList(List<ScfOrder> anOrderList) {
+        this.orderList = anOrderList;
+    }
+
+    public List<ScfInvoice> getInvoiceList() {
+        return this.invoiceList;
+    }
+
+    public void setInvoiceList(List<ScfInvoice> anInvoiceList) {
+        this.invoiceList = anInvoiceList;
+    }
+
+    public List<ScfTransport> getTransportList() {
+        return this.transportList;
+    }
+
+    public void setTransportList(List<ScfTransport> anTransportList) {
+        this.transportList = anTransportList;
+    }
+
+    public List<ScfReceivable> getReceivableList() {
+        return this.receivableList;
+    }
+
+    public void setReceivableList(List<ScfReceivable> anReceivableList) {
+        this.receivableList = anReceivableList;
     }
 
     @Override

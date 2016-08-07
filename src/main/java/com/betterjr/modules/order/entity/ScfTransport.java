@@ -47,6 +47,7 @@ public class ScfTransport implements BetterjrEntity {
      */
     @Column(name = "L_REG_OPERID",  columnDefinition="INTEGER" )
     @MetaData( value="操作员编码", comments = "操作员编码")
+    @JsonIgnore
     private Long regOperId ;
 
     /**

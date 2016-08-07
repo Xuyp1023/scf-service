@@ -56,6 +56,7 @@ public class ScfInvoice implements BetterjrEntity {
      */
     @Column(name = "L_REG_OPERID",  columnDefinition="INTEGER" )
     @MetaData( value="新增操作员编码", comments = "新增操作员编码")
+    @JsonIgnore
     private Long regOperId ;
 
     /**
@@ -93,6 +94,7 @@ public class ScfInvoice implements BetterjrEntity {
      */
     @Column(name = "L_MODI_OPERID",  columnDefinition="INTEGER" )
     @MetaData( value="编辑操作员编码", comments = "编辑操作员编码")
+    @JsonIgnore
     private Long modiOperId ;
 
     /**

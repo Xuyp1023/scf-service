@@ -1,5 +1,6 @@
 package com.betterjr.modules.order.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,18 +11,20 @@ import org.springframework.stereotype.Service;
 
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
-import com.betterjr.common.service.SpringContextHolder;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
 import com.betterjr.modules.order.dao.ScfOrderMapper;
+import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.entity.ScfOrderRelation;
-import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
+import com.betterjr.modules.order.entity.ScfTransport;
 import com.betterjr.modules.order.helper.ScfOrderRelationType;
+import com.betterjr.modules.receivable.entity.ScfReceivable;
 import com.betterjr.modules.receivable.service.ScfReceivableService;
 
 @Service
@@ -61,25 +64,43 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> {
      * 根据订单关联表补全
      */
     public void fillOrderInfo(ScfOrder anOrder, List<ScfOrderRelation> anOrderRelationList) {
+        anOrder.setAcceptBillList(new ArrayList<ScfAcceptBill>());
+        anOrder.setTransportList(new ArrayList<ScfTransport>());
+        anOrder.setInvoiceList(new ArrayList<ScfInvoice>());
+        anOrder.setReceivableList(new ArrayList<ScfReceivable>());
         for (ScfOrderRelation anOrderRealtion : anOrderRelationList) {
             Map<String, Object> queryMap = new HashMap<String, Object>();
             queryMap.put("id", anOrderRealtion.getInfoId());
             if (BetterStringUtils.equals(ScfOrderRelationType.AGGREMENT.getCode(), anOrderRealtion.getInfoType())) {
-                
+
             }
             else if (BetterStringUtils.equals(ScfOrderRelationType.ACCEPTBILL.getCode(), anOrderRealtion.getInfoType())) {
-            	anOrder.setAcceptBillList(acceptBillService.findAcceptBill(queryMap));
+                anOrder.getAcceptBillList().addAll(acceptBillService.findAcceptBill(queryMap));
             }
             else if (BetterStringUtils.equals(ScfOrderRelationType.INVOICE.getCode(), anOrderRealtion.getInfoType())) {
-            	anOrder.setInvoiceList(invoiceService.findInvoice(queryMap));
+                anOrder.getInvoiceList().addAll((invoiceService.findInvoice(queryMap)));
             }
             else if (BetterStringUtils.equals(ScfOrderRelationType.RECEIVABLE.getCode(), anOrderRealtion.getInfoType())) {
-            	anOrder.setReceivableList(receivableService.findReceivable(queryMap));
+                anOrder.getReceivableList().addAll(receivableService.findReceivable(queryMap));
             }
             else if (BetterStringUtils.equals(ScfOrderRelationType.TRANSPORT.getCode(), anOrderRealtion.getInfoType())) {
-            	anOrder.setTransportList(transportService.findTransport(queryMap));
+                anOrder.getTransportList().addAll(transportService.findTransport(queryMap));
             }
         }
+    }
+    
+    /**
+     * 查询订单信息，无分页,包含所有关联信息
+     */
+    public List<ScfOrder> findOrder(Map<String, Object> anMap) {
+        List<ScfOrder> orderList = this.selectByClassProperty(ScfOrder.class, anMap);
+        for (ScfOrder anOrder : orderList) {
+            Map<String, Object> orderIdMap = new HashMap<String, Object>();
+            orderIdMap.put("orderId", anOrder.getId());
+            List<ScfOrderRelation> orderRelationList = orderRelationService.findOrderRelation(orderIdMap);
+            fillOrderInfo(anOrder, orderRelationList);
+        }
+        return orderList;
     }
 
     /**

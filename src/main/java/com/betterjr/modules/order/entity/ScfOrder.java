@@ -613,4 +613,14 @@ public class ScfOrder implements BetterjrEntity {
         this.modiOperName = UserUtils.getOperatorInfo().getName();
         this.modiTime = BetterDateUtils.getNumTime();
     }
+    
+    /**
+     * 清空订单关联信息
+     */
+    public void chearRelationInfo(){
+        this.transportList = null;
+        this.invoiceList = null;
+        this.acceptBillList = null;
+        this.receivableList = null;
+    }
 }

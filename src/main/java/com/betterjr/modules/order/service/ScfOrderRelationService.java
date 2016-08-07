@@ -1,5 +1,6 @@
 package com.betterjr.modules.order.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,15 +24,21 @@ public class ScfOrderRelationService extends BaseService<ScfOrderRelationMapper,
     /**
      * 订单关联关系保存
      */
-    public ScfOrderRelation addOrderRelation(ScfOrderRelation anOrderRelation) {
+    public List<ScfOrderRelation> addOrderRelation(ScfOrderRelation anOrderRelation, String anInfoIdList) {
         logger.info("Begin to add OrderRelation");
+        List<ScfOrderRelation> orderRelationList = new ArrayList<ScfOrderRelation>();
         // 检查相应id是否存在
         scfOrderCheckService.checkInfoExist(anOrderRelation.getOrderId(), UserUtils.getOperatorInfo().getOperOrg());
-        IScfOrderInfoCheckService orderInfoCheckService = ScfOrderInfoCheckFactory.create(anOrderRelation.getInfoType());
-        orderInfoCheckService.checkInfoExist(anOrderRelation.getInfoId(), UserUtils.getOperatorInfo().getOperOrg());
-        anOrderRelation.initAddValue();
-        this.insert(anOrderRelation);
-        return anOrderRelation;
+        String[] infoIds = anInfoIdList.split(",");
+        for (String infoId : infoIds) {
+            anOrderRelation.setInfoId(Long.valueOf(infoId));
+            IScfOrderInfoCheckService orderInfoCheckService = ScfOrderInfoCheckFactory.create(anOrderRelation.getInfoType());
+            orderInfoCheckService.checkInfoExist(anOrderRelation.getInfoId(), UserUtils.getOperatorInfo().getOperOrg());
+            anOrderRelation.initAddValue();
+            this.insert(anOrderRelation);
+            orderRelationList.add(anOrderRelation);
+        }
+        return orderRelationList;
     }
     
     /**

@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.exception.BytterTradeException;
@@ -14,13 +15,22 @@ import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
+import com.betterjr.modules.order.entity.ScfOrder;
+import com.betterjr.modules.order.entity.ScfOrderRelation;
 import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
+import com.betterjr.modules.order.service.ScfOrderRelationService;
+import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.receivable.dao.ScfReceivableMapper;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
 
 @Service
-public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfReceivable> /*implements IScfOrderInfoCheckService */ {
+public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfReceivable> implements IScfOrderInfoCheckService  {
    
+    @Autowired
+    private ScfOrderRelationService orderRelationService;
+    @Autowired
+    private ScfOrderService orderService;
     
     /**
      * 应收账款编辑
@@ -52,7 +62,33 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
         
         Page<ScfReceivable> anReceivableList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
         
+        //补全关联信息
+        for(ScfReceivable anReceivable : anReceivableList) {
+            Map<String, Object> anReceivableIdMap = new HashMap<String, Object>();
+            anReceivableIdMap.put("infoId", anReceivable.getId());
+            List<ScfOrderRelation> orderRelationList = orderRelationService.findOrderRelation(anReceivableIdMap);
+            fillReceivableInfo(anReceivable, orderRelationList);
+        }
+        
         return anReceivableList;
+    }
+    
+    /**
+     * 根据订单关联关系补全汇票信息
+     */
+    public void fillReceivableInfo(ScfReceivable anReceivable, List<ScfOrderRelation> anOrderRelationList) {
+        for(ScfOrderRelation anOrderRelation : anOrderRelationList) {
+            Map<String, Object> queryMap = new HashMap<String, Object>();
+            queryMap.put("id", anOrderRelation.getOrderId());
+            List<ScfOrder> orderList = orderService.findOrder(queryMap);
+            for(ScfOrder anOrder : orderList) {
+                anReceivable.setInvoiceList(anOrder.getInvoiceList());
+                anReceivable.setTransportList(anOrder.getTransportList());
+                anReceivable.setAcceptBillList(anOrder.getAcceptBillList());
+                anOrder.chearRelationInfo();
+            }
+            anReceivable.setOrderList(orderList);
+        }
     }
     
     /**

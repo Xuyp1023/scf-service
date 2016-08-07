@@ -18,10 +18,10 @@ public class ScfOrderRelationDubboService implements IScfOrderRelationService{
     private ScfOrderRelationService scfOrderRelationService;
     
     @Override
-    public String webAddOrderRelation(Map<String, Object> anMap) {
+    public String webAddOrderRelation(Map<String, Object> anMap, String anInfoIdList) {
         ScfOrderRelation anOrderRelation = (ScfOrderRelation) RuleServiceDubboFilterInvoker.getInputObj();
         
-        return AjaxObject.newOk("订单关联关系保存成功", scfOrderRelationService.addOrderRelation(anOrderRelation)).toJson();
+        return AjaxObject.newOk("订单关联关系保存成功", scfOrderRelationService.addOrderRelation(anOrderRelation, anInfoIdList)).toJson();
     }
 
     @Override
