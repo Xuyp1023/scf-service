@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.xmlbeans.impl.xb.xmlconfig.Usertypeconfig;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.exception.BytterTradeException;
@@ -18,10 +17,10 @@ import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.order.dao.ScfInvoiceMapper;
 import com.betterjr.modules.order.entity.ScfInvoice;
-import com.betterjr.modules.order.entity.ScfOrder;
+import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
 
 @Service
-public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice> {
+public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>/* implements IScfOrderInfoCheckService*/ {
 
     /**
      * 订单发票信息录入
@@ -74,13 +73,12 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
     /**
      * 检查是否存在相应id、操作机构、业务状态的订单发票
      * @param anId  发票id
-     * @param anBusinStatuses 发票状态,当多个状态时以逗号分隔
      * @param anOperOrg 操作机构
      */
-    public void checkInvoiceExist(Long anId, String anBusinStatuses, String anOperOrg) {
+    public void checkInfoExist(Long anId,  String anOperOrg) {
         Map<String, Object> anMap = new HashMap<String, Object>();
         List<ScfInvoice> invoiceList = new LinkedList<ScfInvoice>();
-        String[] anBusinStatusList = anBusinStatuses.split(",");
+        String[] anBusinStatusList = {"1"};
         anMap.put("id", anId);
         anMap.put("operOrg", anOperOrg);
         //查询每个状态数据
@@ -93,6 +91,13 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
             logger.warn("不存在相对应id,操作机构,业务状态的发票");
             throw new BytterTradeException(40001, "不存在相对应id,操作机构,业务状态的发票");
         }
+    }
+    
+    /**
+     * 查询发票信息
+     */
+    public List<ScfInvoice> findInvoice(Map<String, Object> anMap) {
+    	return this.selectByClassProperty(ScfInvoice.class, anMap);
     }
 
     /**

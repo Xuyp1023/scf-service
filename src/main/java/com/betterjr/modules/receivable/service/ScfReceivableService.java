@@ -5,8 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.exception.BytterTradeException;
@@ -16,13 +14,12 @@ import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
-import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
-import com.betterjr.modules.order.entity.ScfInvoice;
+import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
 import com.betterjr.modules.receivable.dao.ScfReceivableMapper;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
 
 @Service
-public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfReceivable>{
+public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfReceivable> /*implements IScfOrderInfoCheckService */ {
    
     
     /**
@@ -59,15 +56,22 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
     }
     
     /**
+     * 查询应收账款
+     */
+    public List<ScfReceivable> findReceivable(Map<String, Object> anMap) {
+    	return this.selectByClassProperty(ScfReceivable.class, anMap);
+    }
+    
+    /**
      * 检查是否存在相应id、操作机构、业务状态的应收账款
      * @param anId  应收账款id
-     * @param anBusinStatuses 应收账款状态,当多个状态时以逗号分隔
      * @param anOperOrg 操作机构
      */
-    public void checkInvoiceExist(Long anId, String anBusinStatuses, String anOperOrg) {
+    public void checkInfoExist(Long anId, String anOperOrg) {
         Map<String, Object> anMap = new HashMap<String, Object>();
         List<ScfReceivable> receivableList = new LinkedList<ScfReceivable>();
-        String[] anBusinStatusList = anBusinStatuses.split(",");
+        //可编辑的业务状态
+        String[] anBusinStatusList = {"0"};
         anMap.put("id", anId);
         anMap.put("operOrg", anOperOrg);
         //查询每个状态数据

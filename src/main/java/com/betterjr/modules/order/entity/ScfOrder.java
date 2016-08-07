@@ -1,6 +1,7 @@
 package com.betterjr.modules.order.entity;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -8,12 +9,15 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
+import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
+import com.betterjr.modules.receivable.entity.ScfReceivable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -213,6 +217,32 @@ public class ScfOrder implements BetterjrEntity {
     @MetaData( value="剩余金额", comments = "剩余金额")
     private BigDecimal balanceRest;
 
+//  private List<Agreement>
+    
+    /**
+     * 发票列表
+     */
+    @Transient
+    private List<ScfInvoice> invoiceList;
+    /**
+     * 应收账款列表
+     */
+    @Transient
+    private List<ScfReceivable> receivableList;
+    
+    /**
+     * 运输单据列表
+     */
+    @Transient
+    private List<ScfTransport> transportList;
+    
+    /**
+     * 汇票信息列表
+     */
+    @Transient
+    private List<ScfAcceptBill> acceptBillList;
+    
+    
     private static final long serialVersionUID = 1469676107640L;
 
     public Long getId() {
@@ -423,7 +453,39 @@ public class ScfOrder implements BetterjrEntity {
         this.balanceRest = balanceRest;
     }
 
-    @Override
+    public List<ScfInvoice> getInvoiceList() {
+		return invoiceList;
+	}
+
+	public void setInvoiceList(List<ScfInvoice> invoiceList) {
+		this.invoiceList = invoiceList;
+	}
+
+	public List<ScfReceivable> getReceivableList() {
+		return receivableList;
+	}
+
+	public void setReceivableList(List<ScfReceivable> receivableList) {
+		this.receivableList = receivableList;
+	}
+
+	public List<ScfTransport> getTransportList() {
+		return transportList;
+	}
+
+	public void setTransportList(List<ScfTransport> transportList) {
+		this.transportList = transportList;
+	}
+
+	public List<ScfAcceptBill> getAcceptBillList() {
+		return acceptBillList;
+	}
+
+	public void setAcceptBillList(List<ScfAcceptBill> acceptBillList) {
+		this.acceptBillList = acceptBillList;
+	}
+
+	@Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());

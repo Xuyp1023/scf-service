@@ -19,10 +19,10 @@ import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.dao.ScfAcceptBillMapper;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
-import com.betterjr.modules.receivable.entity.ScfReceivable;
+import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
 
 @Service
-public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAcceptBill> {
+public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAcceptBill> /*implements IScfOrderInfoCheckService*/ {
 
     private static final Logger logger = LoggerFactory.getLogger(ScfAcceptBillService.class);
 
@@ -76,15 +76,21 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     }
     
     /**
+     * 查询汇票信息
+     */
+    public List<ScfAcceptBill> findAcceptBill(Map<String, Object> anMap) {
+    	return this.selectByClassProperty(ScfAcceptBill.class, anMap);
+    }
+    
+    /**
      * 检查是否存在相应id、操作机构、业务状态的汇票信息
      * @param anId  汇票信息id
-     * @param anBusinStatuses 汇票信息状态,当多个状态时以逗号分隔
      * @param anOperOrg 操作机构
      */
-    public void checkInvoiceExist(Long anId, String anBusinStatuses, String anOperOrg) {
+    public void checkInfoExist(Long anId, String anOperOrg) {
         Map<String, Object> anMap = new HashMap<String, Object>();
         List<ScfAcceptBill> acceptBillList = new LinkedList<ScfAcceptBill>();
-        String[] anBusinStatusList = anBusinStatuses.split(",");
+        String[] anBusinStatusList = {"0","1"};
         anMap.put("id", anId);
         anMap.put("operOrg", anOperOrg);
         //查询每个状态数据

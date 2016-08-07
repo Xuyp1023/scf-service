@@ -14,9 +14,10 @@ import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.order.dao.ScfTransportMapper;
 import com.betterjr.modules.order.entity.ScfTransport;
+import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
 
 @Service
-public class ScfTransportService extends BaseService<ScfTransportMapper, ScfTransport> {
+public class ScfTransportService extends BaseService<ScfTransportMapper, ScfTransport> /*implements IScfOrderInfoCheckService*/ {
 
     /**
      * 订单运输单据录入
@@ -53,8 +54,16 @@ public class ScfTransportService extends BaseService<ScfTransportMapper, ScfTran
 
         return anTransportList;
     }
+   
+    /**
+     * 查询运输单据
+     */
+    public List<ScfTransport> findTransport(Map<String, Object> anMap) {
+    	return this.selectByClassProperty(ScfTransport.class, anMap);
+    }
+   
     
-    public void checkTransportExist(Long anId, String anOperOrg) {
+    public void checkInfoExist(Long anId, String anOperOrg) {
         Map<String, Object> anMap = new HashMap<String, Object>();
         anMap.put("id", anId);
         anMap.put("operOrg", anOperOrg);
