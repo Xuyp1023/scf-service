@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.exception.BytterTradeException;
@@ -22,6 +23,10 @@ import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
 @Service
 public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice> implements IScfOrderInfoCheckService {
 
+    
+    @Autowired
+    private CustFileItemService custFileItemService;
+    
     /**
      * 订单发票信息录入
      */
@@ -34,6 +39,8 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
         anInvoice.initAddValue();
         // 发票初始状态为正常
         anInvoice.setBusinStatus("1");
+        //处理发票附件
+        anInvoice.setBatchNo(custFileItemServicepdateCustFileItemInfo(anFileList, anInvoice.getBatchNo()));
         this.insert(anInvoice);
         return anInvoice;
     }
