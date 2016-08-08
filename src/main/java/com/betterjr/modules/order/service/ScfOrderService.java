@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
@@ -168,5 +169,63 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> {
             logger.warn(anMessage);
             throw new BytterTradeException(40001, anMessage);
         }
+    }
+    
+    /**
+     * 变更订单状态  0:可用 1:过期 2:冻结
+     * @param anId  订单流水号
+     * @param anStatus 状态
+     * @param anCheckOperOrg 是否检查操作机构权限
+     * @return
+     */
+    private ScfOrder saveOrderStatus(Long anId, String anStatus, boolean anCheckOperOrg) {
+        ScfOrder anOrder = this.selectByPrimaryKey(anId);
+        BTAssert.notNull(anOrder, "无法获取订单信息");
+        //是否检查操作机构
+        if (anCheckOperOrg) {
+            checkOperator(anOrder.getOperOrg(), "当前操作员无法变更订单系信息");
+        }
+        //变更状态
+        anOrder.setBusinStatus(anStatus);
+        anOrder.setModiOperId(UserUtils.getOperatorInfo().getId());
+        anOrder.setModiOperName(UserUtils.getOperatorInfo().getName());
+        anOrder.setModiDate(BetterDateUtils.getNumDate());
+        anOrder.setModiTime(BetterDateUtils.getNumTime());
+        //数据存盘
+        this.updateByPrimaryKeySelective(anOrder);
+        return anOrder;
+    }
+    
+    /**
+     * 变更订单信息 -- 可用
+     * 0:可用 1:过期 2:冻结
+     * @param anId 订单流水号
+     * @param anCheckOperOrg 是否检查操作机构权限
+     * @return
+     */
+    public ScfOrder saveNormalOrder(Long anId, boolean anCheckOperOrg) {
+        return this.saveOrderStatus(anId, "0", anCheckOperOrg);
+    }
+    
+    /**
+     * 变更订单信息 -- 过期
+     * 0:可用 1:过期 2:冻结
+     * @param anId 订单流水号
+     * @param anCheckOperOrg 是否检查操作机构权限
+     * @return
+     */
+    public ScfOrder saveExpireOrder(Long anId, boolean anCheckOperOrg) {
+        return this.saveOrderStatus(anId, "1", anCheckOperOrg);
+    }
+    
+    /**
+     * 变更订单信息 -- 冻结
+     * 0:可用 1:过期 2:冻结
+     * @param anId 订单流水号
+     * @param anCheckOperOrg 是否检查操作机构权限
+     * @return
+     */
+    public ScfOrder saveForzenOrder(Long anId, boolean anCheckOperOrg) {
+        return this.saveOrderStatus(anId, "2", anCheckOperOrg);
     }
 }

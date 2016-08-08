@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
@@ -59,7 +60,6 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
     public Page<ScfReceivable> queryReceivable(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
         //操作员只能查询本机构数据
         anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
-        
         Page<ScfReceivable> anReceivableList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
         
         //补全关联信息
@@ -141,5 +141,58 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
             throw new BytterTradeException(40001, anMessage);
         }
     }
+    
+    /**
+     * 变更应收账款状态   0:可用 1:过期 2:冻结
+     * @param anId 应收账款流水号
+     * @param anStatus 状态
+     * @param anCheckOperOrg 是否检查操作机构权限
+     */
+    private ScfReceivable saveReceivableStatus(Long anId, String anStatus, boolean anCheckOperOrg) {
+        ScfReceivable anReceivable = this.selectByPrimaryKey(anId);
+        BTAssert.notNull(anReceivable, "无法获取应收账款信息");
+        //检查用户权限
+        if (anCheckOperOrg) {
+            checkOperator(anReceivable.getOperOrg(), "当前操作员无法变更应收账款信息");
+        }
+        //变更状态
+        anReceivable.setBusinStatus(anStatus);
+        anReceivable.setModiOperId(UserUtils.getOperatorInfo().getId());
+        anReceivable.setModiOperName(UserUtils.getOperatorInfo().getName());
+        anReceivable.setModiDate(BetterDateUtils.getNumDate());
+        anReceivable.setModiTime(BetterDateUtils.getNumTime());
+        //数据存盘
+        this.updateByPrimaryKeySelective(anReceivable);
+        return anReceivable;
+    }
 
+    /**
+     * 变更应收账款信息--可用
+     * 0:可用 1:过期 2:冻结
+     * @param anId 应收账款流水号
+     * @param anCheckOperOrg 是否检查操作机构权限
+     */
+    public ScfReceivable saveNormalReceivable(Long anId, boolean anCheckOperOrg) {
+        return this.saveReceivableStatus(anId, "0", anCheckOperOrg);
+    }
+    
+    /**
+     * 变更应收账款信息--过期
+     * 0:可用 1:过期 2:冻结
+     * @param anId 应收账款流水号
+     * @param anCheckOperOrg 是否检查操作机构权限
+     */
+    public ScfReceivable saveExpireReceivable(Long anId, boolean anCheckOperOrg) {
+        return this.saveReceivableStatus(anId, "1", anCheckOperOrg);
+    }
+    
+    /**
+     * 变更应收账款信息--冻结
+     * 0:可用 1:过期 2:冻结
+     * @param anId 应收账款流水号
+     * @param anCheckOperOrg 是否检查操作机构权限
+     */
+    public ScfReceivable saveForzenReceivable(Long anId, boolean anCheckOperOrg) {
+        return this.saveReceivableStatus(anId, "2", anCheckOperOrg);
+    }
 }

@@ -14,6 +14,7 @@ import com.betterjr.common.data.PlatformBaseRuleType;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
@@ -162,6 +163,63 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
             logger.warn(anMessage);
             throw new BytterTradeException(40001, anMessage);
         }
+    }
+    /**
+     * 变更汇票信息状态 0未处理，1完善资料，2已融资，3已过期
+     * @param anId 汇票流水号
+     * @param anStatus 状态
+     * @param anCheckOperOrg 是否检查操作机构权限
+     * @return
+     */
+    private ScfAcceptBill saveAcceptBillStatus(Long anId, String anStatus, boolean anCheckOperOrg) {
+        ScfAcceptBill anAcceptBill = this.selectByPrimaryKey(anId);
+        BTAssert.notNull(anAcceptBill, "无法获取汇票信息");
+        //检查用户权限
+        if (anCheckOperOrg) {
+            checkOperator(anAcceptBill.getOperOrg(), "当前操作员无法变更汇票信息");
+        }
+        //变更状态
+        anAcceptBill.setBusinStatus(anStatus);
+        anAcceptBill.setModiOperId(UserUtils.getOperatorInfo().getId());
+        anAcceptBill.setModiOperName(UserUtils.getOperatorInfo().getName());
+        anAcceptBill.setModiDate(BetterDateUtils.getNumDate());
+        anAcceptBill.setModiTime(BetterDateUtils.getNumTime());
+        //数据存盘
+        this.updateByPrimaryKeySelective(anAcceptBill);
+        return anAcceptBill;
+    }
+    
+    /**
+     * 变更汇票信息 -- 完善资料
+     * 0未处理，1完善资料，2已融资，3已过期
+     * @param anId
+     * @param anCheckOperOrg
+     * @return
+     */
+    public ScfAcceptBill saveNormalAcceptBill(Long anId, boolean anCheckOperOrg) {
+        return this.saveAcceptBillStatus(anId, "1", anCheckOperOrg);
+    }
+    
+    /**
+     * 变更汇票信息 -- 已融资
+     * 0未处理，1完善资料，2已融资，3已过期
+     * @param anId
+     * @param anCheckOperOrg
+     * @return
+     */
+    public ScfAcceptBill saveFinancedAcceptBill(Long anId, boolean anCheckOperOrg) {
+        return this.saveAcceptBillStatus(anId, "2", anCheckOperOrg);
+    }
+    
+    /**
+     * 变更汇票信息 -- 已过期
+     * 0未处理，1完善资料，2已融资，3已过期
+     * @param anId
+     * @param anCheckOperOrg
+     * @return
+     */
+    public ScfAcceptBill saveExpireAcceptBill(Long anId, boolean anCheckOperOrg) {
+        return this.saveAcceptBillStatus(anId, "3", anCheckOperOrg);
     }
 
 }
