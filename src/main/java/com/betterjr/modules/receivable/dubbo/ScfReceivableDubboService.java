@@ -4,8 +4,10 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.betterjr.common.web.AjaxObject;
+import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.receivable.IScfReceivableService;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
 import com.betterjr.modules.receivable.service.ScfReceivableService;
@@ -16,11 +18,16 @@ public class ScfReceivableDubboService implements IScfReceivableService {
 
     @Autowired
     private ScfReceivableService scfReceivableService;
+    
+    @Reference(interfaceClass = ICustFileService.class)
+    private ICustFileService custFileDubboService;
 
     @Override
     public String webSaveModifyReceivable(Map<String, Object> anMap, Long anId, String anFileList) {
         ScfReceivable anReceivable = (ScfReceivable) RuleServiceDubboFilterInvoker.getInputObj();
         
+        //保存附件信息
+        anReceivable.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anReceivable.getBatchNo()));
         return AjaxObject.newOk("应收账款信息编辑成功", scfReceivableService.saveModifyReceivable(anReceivable, anId, anFileList)).toJson();
     }
 

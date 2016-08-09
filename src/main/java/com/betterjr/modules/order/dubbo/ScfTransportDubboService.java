@@ -4,8 +4,10 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.betterjr.common.web.AjaxObject;
+import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.order.IScfTransportService;
 import com.betterjr.modules.order.entity.ScfTransport;
 import com.betterjr.modules.order.service.ScfTransportService;
@@ -17,9 +19,14 @@ public class ScfTransportDubboService implements IScfTransportService {
     @Autowired
     private ScfTransportService scfTransportService;
 
+    @Reference(interfaceClass = ICustFileService.class)
+    private ICustFileService custFileDubboService;
+    
     @Override
     public String webAddTransport(Map<String, Object> anMap, String anFileList) {
         ScfTransport anTransport = (ScfTransport) RuleServiceDubboFilterInvoker.getInputObj();
+        //保存附件信息
+        anTransport.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anTransport.getBatchNo()));
         return AjaxObject.newOk("订单运输单据录入成功", scfTransportService.addTransport(anTransport, anFileList)).toJson();
     }
 

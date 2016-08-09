@@ -30,6 +30,8 @@
 	<!-- 声明所有服务接口的默认设置 -->
 	<dubbo:provider timeout="50000" retries="0" loadbalance="random"
 		accesslog="d:\\logs\\dubbo-provider-access.log" version="1.2" />
+    <!-- 声明所有引用的默认设置 -->
+    <dubbo:consumer version="1.2" />
 
 	<!-- 设定只有一个集群的注册中心， address="N/A" 表示不启用注册中心 -->
 	<dubbo:registry id="reg" address="zookeeper://192.168.2.43:2181"
