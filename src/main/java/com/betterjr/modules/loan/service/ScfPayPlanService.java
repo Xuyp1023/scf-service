@@ -189,7 +189,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
      * @param anRequestNo
      * @return
      */
-    public ScfPayRecord queryRepaymentFee(String anRequestNo, String payType, String factorNo) {
+    public ScfPayRecord queryRepaymentFee(String anRequestNo, String anPayType, String anFactorNo) {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("requestNo", anRequestNo);
         List<ScfPayPlan> list = this.selectByClassProperty(ScfPayPlan.class, map);
@@ -207,16 +207,16 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         record.setPlanPayDate(plan.getPlanDate());
         
         //还款类型：1：正常还款，2：提前还款，3：逾期还款，4：豁免，5：逾期豁免, 6:经销商还款，
-        if("2".equals(payType)){
-            FactorParam param = DictUtils.loadObject("FactorParam", factorNo, FactorParam.class);
+        if("2".equals(anPayType)){
+            FactorParam param = DictUtils.loadObject("FactorParam", anFactorNo, FactorParam.class);
             BTAssert.notNull(param, "请设置系统参数");
             
             //本次还款本金 * 利息   / 100
             BigDecimal servicefee = plan.getSurplusPrincipalBalance().multiply(param.getAdvanceRepaymentRatio()).divide(new BigDecimal(100));
             record.setServicefeeBalance(servicefee);
         }
-        else if("3".equals(payType)){
-            setOverDueFee(plan, factorNo, record);
+        else if("3".equals(anPayType)){
+            setOverDueFee(plan, anFactorNo, record);
         }
         return record;
     }
@@ -257,59 +257,59 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
     /**
      * 计算还款方式-还款时，在选择还款日期后调用，用于填充还款方式
      * @param anRequestNo
-     * @param payDate
+     * @param anPayDate
      * @return
      */
-    public Map<String, String> calculatPayType(String anRequestNo, String payDate){
+    public Map<String, String> calculatPayType(String anRequestNo, String anPayDate){
         ScfRequest request = requestService.findRequestDetail(anRequestNo);
-        Map<String, String> type = new HashMap<String, String>();
+        Map<String, String> payType = new HashMap<String, String>();
        
         //融资方式 ：1,订单，2:票据;3:应收款;4:经销商
         if(BetterStringUtils.equals("4", request.getRequestType())){
             //经销商融资只能选经销商还款
-            type.put("4", "经销商还款");
+            payType.put("4", "经销商还款");
         }else{
             Map<String, Object> propValue = new HashMap<String, Object>();
             propValue.put("requestNo", anRequestNo);
             ScfPayPlan plan = findPayPlanByProperty(propValue);
             BTAssert.notNull(plan, "还款计划为空");
             
-            int overDays = getOverDueDays(plan.getPlanDate(), payDate, plan.getCustNo()+"");
+            int overDays = getOverDueDays(plan.getPlanDate(), anPayDate, plan.getCustNo()+"");
             if(overDays > 0){
                 //逾期可使用正常还款和逾期还款
-                type.put("3", "逾期还款");
+                payType.put("3", "逾期还款");
             }else{
                 //未到期可使用正常还款和提前还款
-                type.put("3", "提前还款");
+                payType.put("3", "提前还款");
             }
-            type.put("1", "正常还款");
+            payType.put("1", "正常还款");
         }
         
-        return type;
+        return payType;
     }
     
     /**
      * 设置逾期相关数据
      * 
-     * @param plan
-     * @param custNo
+     * @param anPlan
+     * @param anCustNo
      */
-    private void setOverDueFee(ScfPayPlan plan, String custNo, ScfPayRecord record) {
+    private void setOverDueFee(ScfPayPlan anPlan, String anCustNo, ScfPayRecord anRecord) {
         // 逾期天数
-        int overDays = getOverDueDays(plan.getPlanDate(), BetterDateUtils.getDate(), custNo);
+        int overDays = getOverDueDays(anPlan.getPlanDate(), BetterDateUtils.getDate(), anCustNo);
         if(overDays < 0){
             return;
         }
         
-        FactorParam param = DictUtils.loadObject("FactorParam", custNo, FactorParam.class);
+        FactorParam param = DictUtils.loadObject("FactorParam", anCustNo, FactorParam.class);
         BTAssert.notNull(param, "请设置系统参数");
-        record.setOverdueDays(overDays);
+        anRecord.setOverdueDays(overDays);
 
         // 本次还款本金 * 利息 * 天数 / 1000
-        BigDecimal latefee = plan.getSurplusPrincipalBalance().multiply(param.getLatefeeRatio()).multiply(new BigDecimal(overDays)).divide(new BigDecimal(1000));
-        record.setLatefeeBalance(latefee);
-        BigDecimal penaltyFee = plan.getSurplusPrincipalBalance().multiply(param.getPenaltyRatio()).multiply(new BigDecimal(overDays)).divide(new BigDecimal(1000));
-        record.setPenaltyBalance(penaltyFee);
+        BigDecimal latefee = anPlan.getSurplusPrincipalBalance().multiply(param.getLatefeeRatio()).multiply(new BigDecimal(overDays)).divide(new BigDecimal(1000));
+        anRecord.setLatefeeBalance(latefee);
+        BigDecimal penaltyFee = anPlan.getSurplusPrincipalBalance().multiply(param.getPenaltyRatio()).multiply(new BigDecimal(overDays)).divide(new BigDecimal(1000));
+        anRecord.setPenaltyBalance(penaltyFee);
     }
     
     private int getOverDueDays(String planDate, String payDate, String custNo){
