@@ -18,6 +18,12 @@ public class FactorParam {
     
     //滞纳金利率
     private BigDecimal latefeeRatio;
+    
+    //提前还款手续费利率
+    private BigDecimal advanceRepaymentRatio;
+    
+    //是否自动发布询价 1:是， 2:否
+    private BigDecimal autoEnquiry;
 
     public Long getCustNo() {
         return custNo;
@@ -59,7 +65,20 @@ public class FactorParam {
         this.latefeeRatio = latefeeRatio;
     }
 
+    public BigDecimal getAdvanceRepaymentRatio() {
+        return advanceRepaymentRatio;
+    }
 
-    
-    
+    public void setAdvanceRepaymentRatio(BigDecimal advanceRepaymentRatio) {
+        this.advanceRepaymentRatio = advanceRepaymentRatio;
+    }
+
+    public BigDecimal getAutoEnquiry() {
+        return autoEnquiry;
+    }
+
+    public void setAutoEnquiry(BigDecimal autoEnquiry) {
+        this.autoEnquiry = autoEnquiry;
+    }
+
 }

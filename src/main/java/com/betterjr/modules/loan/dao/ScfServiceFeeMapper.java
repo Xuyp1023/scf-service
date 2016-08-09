@@ -2,8 +2,8 @@ package com.betterjr.modules.loan.dao;
 
 import com.betterjr.common.annotation.BetterjrMapper;
 import com.betterjr.mapper.common.Mapper;
-import com.betterjr.modules.loan.entity.ScfRequestScheme;
+import com.betterjr.modules.loan.entity.ScfServiceFee;
 
 @BetterjrMapper
-public interface ScfRequestApprovedMapper extends Mapper<ScfRequestScheme> {
+public interface ScfServiceFeeMapper extends Mapper<ScfServiceFee> {
 }
