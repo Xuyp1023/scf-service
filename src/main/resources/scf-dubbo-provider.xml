@@ -11,6 +11,7 @@
 	<!-- 扫描dubbo注解 -->
 	<dubbo:annotation
 		package="com.betterjr.modules.test,
+		com.betterjr.modules.agreement,
 		com.betterjr.modules.product,
 		com.betterjr.modules.credit,
 		com.betterjr.modules.loan,
@@ -22,7 +23,7 @@
 		com.betterjr.dubbo.extend.filter" />
 	<!-- 提供方应用信息，用于计算依赖关系 -->
 	<dubbo:application name="${dubbo.application}" />
-
+	<dubbo:consumer version="1.2" />
 	<!-- 用dubbo协议在20880端口暴露服务 -->
 	<dubbo:protocol name="dubbo" port="${dubbo.protocol.port}" serialization="${dubbo.protocol.serialization}" />
 	<!-- 声明所有服务接口的默认设置 -->
