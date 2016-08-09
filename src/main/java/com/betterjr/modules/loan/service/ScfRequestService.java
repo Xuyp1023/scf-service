@@ -115,7 +115,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         return request;
     }
 
-    public ScfRequest approveRequest(Map<String, Object> anMap) {
+    public ScfRequest approveRequest(String anApprovalResult, String anReturnNode, String anDescription,String tradeStatus) {
         return null;
     }
 
@@ -227,15 +227,29 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         plan.setFactorNo(request.getFactorNo());
         plan.setRequestNo(anLoan.getRequestNo());
         plan.setPlanDate(anLoan.getEndDate());
+        plan.setRatio(scheme.getApprovedRatio());
+        plan.setManagementRatio(scheme.getApprovedManagementRatio());
+        
+        //计算应还未还
         plan.setShouldPrincipalBalance(anLoan.getLoanBalance());
+        plan.setSurplusPrincipalBalance(anLoan.getLoanBalance());
         if (null == anLoan.getInterestBalance()) {
             plan.setShouldInterestBalance(payPlanService.calculatFee(anLoan.getRequestNo(), scheme.getApprovedBalance(), 3));
             plan.setShouldManagementBalance(payPlanService.calculatFee(anLoan.getRequestNo(), scheme.getApprovedBalance(), 1));
+            plan.setSurplusInterestBalance(payPlanService.calculatFee(anLoan.getRequestNo(), scheme.getApprovedBalance(), 3));
+            plan.setSurplusManagementBalance(payPlanService.calculatFee(anLoan.getRequestNo(), scheme.getApprovedBalance(), 1));
         }
         else {
             plan.setShouldInterestBalance(anLoan.getInterestBalance());
             plan.setShouldManagementBalance(anLoan.getManagementBalance());
+            plan.setSurplusInterestBalance(anLoan.getInterestBalance());
+            plan.setSurplusManagementBalance(anLoan.getManagementBalance());
+            
         }
+        
+        //计算应还未还总额
+        plan.setShouldTotalBalance(anLoan.getLoanBalance().add(plan.getShouldInterestBalance()).add(plan.getShouldManagementBalance()));
+        plan.setSurplusTotalBalance(anLoan.getLoanBalance().add(plan.getSurplusInterestBalance()).add(plan.getSurplusManagementBalance()));
         payPlanService.addPayPlan(plan);
 
         // ---保存手续费----------------------------------------------

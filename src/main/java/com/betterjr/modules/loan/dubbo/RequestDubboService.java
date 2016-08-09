@@ -76,9 +76,11 @@ public class RequestDubboService implements IScfRequestService {
     }
 
     @Override
-    public String webApproveRequest(String anApprovalResult, String anReturnNode, String anDescription) {
+    public String webApproveRequest(String anRequestNo, String anApprovalResult, String anReturnNode, String anDescription,String tradeStatus) {
         logger.debug("一般审批，入参approvalResult：" + anApprovalResult + "-returnNode:" + anReturnNode + "-description:" + anDescription);
-
+        
+        ScfRequest request = requestService.findRequestDetail(anRequestNo);
+        request.setLastStatus(tradeStatus);
         if (BetterStringUtils.equals(anApprovalResult, "0") == true) {
             // TODO 调用流程 下一步
         }
@@ -88,6 +90,7 @@ public class RequestDubboService implements IScfRequestService {
         else {
             // 拒绝
         }
+        requestService.saveModifyRequest(request, anRequestNo);
         return "";
     }
 
@@ -95,9 +98,10 @@ public class RequestDubboService implements IScfRequestService {
     public String webOfferScheme(Map<String, Object> anMap, String anApprovalResult, String anReturnNode, String anDescription) {
         logger.debug("出具融资方案，入参：approvalResult：" + anApprovalResult + "-returnNode:" + anReturnNode + "-description:" + anDescription);
         logger.debug("出具融资方案，入参：" + anMap);
+        ScfRequestScheme scheme = new ScfRequestScheme();
         if (BetterStringUtils.equals(anApprovalResult, "0") == true) {
             // 下一步
-            return AjaxObject.newOk(requestService.saveOfferScheme((ScfRequestScheme) RuleServiceDubboFilterInvoker.getInputObj())).toJson();
+            scheme = requestService.saveOfferScheme((ScfRequestScheme) RuleServiceDubboFilterInvoker.getInputObj());
         }
         else if (BetterStringUtils.equals(anApprovalResult, "1") == true) {
             // TODO 调用流程 打回
@@ -105,7 +109,7 @@ public class RequestDubboService implements IScfRequestService {
         else {
             // 拒绝
         }
-        return AjaxObject.newOk(new ScfRequestScheme()).toJson();
+        return AjaxObject.newOk(scheme).toJson();
     }
 
     @Override
@@ -167,5 +171,6 @@ public class RequestDubboService implements IScfRequestService {
         anMap.put("managementBalance", payPlanService.calculatFee(anRequestNo, anLoanBalance, 1));
         return AjaxObject.newOk("操作成功", anMap).toJson();
     }
+    
 
 }

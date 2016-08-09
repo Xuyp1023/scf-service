@@ -54,7 +54,7 @@ public class ScfRequestSchemeService extends BaseService<ScfRequestApprovedMappe
         anScheme.init();
         this.insert(anScheme);
 
-        // 修改申请表的状态
+        // 修改申请表的
         request.setPeriod(anScheme.getPeriod());
         request.setPeriodUnit(anScheme.getPeriodUnit());
         request.setRatio(anScheme.getApprovedRatio());

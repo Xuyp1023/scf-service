@@ -1,6 +1,8 @@
 package com.betterjr.modules.loan.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,19 +13,34 @@ import org.springframework.stereotype.Service;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
+import com.betterjr.common.utils.DictUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.loan.dao.ScfPayPlanMapper;
 import com.betterjr.modules.loan.entity.ScfPayPlan;
+import com.betterjr.modules.loan.entity.ScfPayRecord;
+import com.betterjr.modules.loan.entity.ScfPayRecordDetail;
+import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
+import com.betterjr.modules.param.entity.FactorParam;
 
 @Service
 public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan> {
 
     @Autowired
+    private ScfPayRecordService payRecordService;
+    @Autowired
+
+    private ScfPayRecordDetailService payRecordDetailService;
+
+    @Autowired
+    private ScfRequestService requestService;
+
+    @Autowired
     private CustAccountService custAccountService;
-    
+
     @Autowired
     private ScfRequestSchemeService schemeService;
 
@@ -117,52 +134,308 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
 
     /**
      * 计算结束日期
+     * 
      * @param scheme
-     * @return 
+     * @return
      */
     public String calculatEndDate(String anRequestNo, String anLoanDate) {
         String endDate = "";
         ScfRequestScheme scheme = schemeService.findSchemeDetail2(anRequestNo);
-        if(null == scheme){
+        if (null == scheme) {
             return endDate;
         }
-        
-        //1：日，1：月，
-        if(1 == scheme.getPeriodUnit()){
+
+        // 1：日，1：月，
+        if (1 == scheme.getPeriodUnit()) {
             endDate = BetterDateUtils.addStrDays(anLoanDate, scheme.getPeriod());
         }
         else {
             endDate = BetterDateUtils.addStrMonths(anLoanDate, scheme.getPeriod());
         }
-        
-        //算头不算尾，所以减掉一天
+
+        // 算头不算尾，所以减掉一天
         return BetterDateUtils.addStrDays(endDate, -1);
     }
 
     /**
-     * 计算费用
+     * 计算利息（用于放款时 计息）
+     * 
      * @param anRequestNo 申请编号
      * @param anLoanBalance 申请金额
-     * @param anType        1：管理费，2：手续费，3：利息
+     * @param anType 1：管理费，2：手续费，3：利息
      * @return
      */
     public BigDecimal calculatFee(String anRequestNo, BigDecimal anLoanBalance, int anType) {
         ScfRequestScheme scheme = schemeService.findSchemeDetail2(anRequestNo);
         BigDecimal ratio = scheme.getApprovedRatio();
         BigDecimal scale = new BigDecimal(100);
-        if(1 == anType){
+        if (1 == anType) {
             ratio = scheme.getApprovedManagementRatio();
-        }else if(2 == anType){
+        }
+        else if (2 == anType) {
             ratio = scheme.getServicefeeRatio();
             scale = new BigDecimal(1000);
         }
-        
-        if(null == ratio){
+
+        if (null == ratio) {
             return new BigDecimal(0);
         }
-        
+
         return anLoanBalance.multiply(ratio).multiply(new BigDecimal(scheme.getPeriod())).divide(scale);
     }
-    
 
+    /**
+     * 进入还款界面后，填充还款数据
+     * @param anRequestNo
+     * @return
+     */
+    public ScfPayRecord queryRepaymentFee(String anRequestNo, String payType, String factorNo) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("requestNo", anRequestNo);
+        List<ScfPayPlan> list = this.selectByClassProperty(ScfPayPlan.class, map);
+        if (Collections3.isEmpty(list)) {
+            throw new IllegalArgumentException("找不到原数据");
+        }
+
+        ScfPayRecord record = new ScfPayRecord();
+        ScfPayPlan plan = Collections3.getFirst(list);
+        record.setPrincipalBalance(plan.getSurplusPrincipalBalance());
+        record.setInterestBalance(plan.getSurplusInterestBalance());
+        record.setManagementBalance(plan.getSurplusManagementBalance());
+        record.setPayPlanId(plan.getId());
+        record.setPayDate(BetterDateUtils.getDate());
+        record.setPlanPayDate(plan.getPlanDate());
+        
+        //还款类型：1：正常还款，2：提前还款，3：逾期还款，4：豁免，5：逾期豁免, 6:经销商还款，
+        if("2".equals(payType)){
+            FactorParam param = DictUtils.loadObject("FactorParam", factorNo, FactorParam.class);
+            BTAssert.notNull(param, "请设置系统参数");
+            
+            //本次还款本金 * 利息   / 100
+            BigDecimal servicefee = plan.getSurplusPrincipalBalance().multiply(param.getAdvanceRepaymentRatio()).divide(new BigDecimal(100));
+            record.setServicefeeBalance(servicefee);
+        }
+        else if("3".equals(payType)){
+            setOverDueFee(plan, factorNo, record);
+        }
+        return record;
+    }
+
+    
+    /**
+     * 经销商还款 -计算利息 -填入(本次还款额) 时  调用
+     * @param anRecord
+     * @return
+     */
+    public ScfPayRecord querySellerRepaymentFee(ScfPayRecord anRecord){
+        ScfPayPlan plan = this.findPayPlanDetail(anRecord.getPayPlanId());
+        BigDecimal zore = new BigDecimal(0);
+        if(anRecord.getTotalBalance().compareTo(plan.getSurplusManagementBalance()) <=0){
+            //还款金额小于其它费用
+            anRecord.setManagementBalance(anRecord.getTotalBalance());
+            anRecord.setInterestBalance(zore);
+            anRecord.setPrincipalBalance(zore);
+        }
+        
+        if(anRecord.getTotalBalance().compareTo(plan.getSurplusInterestBalance().add(plan.getSurplusManagementBalance())) <= 0){
+            //还款金额小于其它费用 + 利息
+            anRecord.setManagementBalance(plan.getSurplusManagementBalance());
+            anRecord.setInterestBalance(anRecord.getTotalBalance().subtract(plan.getSurplusManagementBalance()));
+            anRecord.setPrincipalBalance(zore);
+        }
+        else{
+            anRecord.setManagementBalance(plan.getSurplusManagementBalance());
+            anRecord.setInterestBalance(plan.getSurplusInterestBalance());
+            anRecord.setPrincipalBalance(anRecord.getTotalBalance()
+                    .subtract(plan.getSurplusManagementBalance())
+                    .subtract(plan.getSurplusInterestBalance()));
+        }
+        
+        return anRecord;
+    }
+    
+    /**
+     * 计算还款方式-还款时，在选择还款日期后调用，用于填充还款方式
+     * @param anRequestNo
+     * @param payDate
+     * @return
+     */
+    public Map<String, String> calculatPayType(String anRequestNo, String payDate){
+        ScfRequest request = requestService.findRequestDetail(anRequestNo);
+        Map<String, String> type = new HashMap<String, String>();
+       
+        //融资方式 ：1,订单，2:票据;3:应收款;4:经销商
+        if(BetterStringUtils.equals("4", request.getRequestType())){
+            //经销商融资只能选经销商还款
+            type.put("4", "经销商还款");
+        }else{
+            Map<String, Object> propValue = new HashMap<String, Object>();
+            propValue.put("requestNo", anRequestNo);
+            ScfPayPlan plan = findPayPlanByProperty(propValue);
+            BTAssert.notNull(plan, "还款计划为空");
+            
+            int overDays = getOverDueDays(plan.getPlanDate(), payDate, plan.getCustNo()+"");
+            if(overDays > 0){
+                //逾期可使用正常还款和逾期还款
+                type.put("3", "逾期还款");
+            }else{
+                //未到期可使用正常还款和提前还款
+                type.put("3", "提前还款");
+            }
+            type.put("1", "正常还款");
+        }
+        
+        return type;
+    }
+    
+    /**
+     * 设置逾期相关数据
+     * 
+     * @param plan
+     * @param custNo
+     */
+    private void setOverDueFee(ScfPayPlan plan, String custNo, ScfPayRecord record) {
+        // 逾期天数
+        int overDays = getOverDueDays(plan.getPlanDate(), BetterDateUtils.getDate(), custNo);
+        if(overDays < 0){
+            return;
+        }
+        
+        FactorParam param = DictUtils.loadObject("FactorParam", custNo, FactorParam.class);
+        BTAssert.notNull(param, "请设置系统参数");
+        record.setOverdueDays(overDays);
+
+        // 本次还款本金 * 利息 * 天数 / 1000
+        BigDecimal latefee = plan.getSurplusPrincipalBalance().multiply(param.getLatefeeRatio()).multiply(new BigDecimal(overDays)).divide(new BigDecimal(1000));
+        record.setLatefeeBalance(latefee);
+        BigDecimal penaltyFee = plan.getSurplusPrincipalBalance().multiply(param.getPenaltyRatio()).multiply(new BigDecimal(overDays)).divide(new BigDecimal(1000));
+        record.setPenaltyBalance(penaltyFee);
+    }
+    
+    private int getOverDueDays(String planDate, String payDate, String custNo){
+        Calendar planCalendar = Calendar.getInstance();
+        Calendar nowCalendar = Calendar.getInstance();
+        planCalendar.setTime(BetterDateUtils.parseDate(planDate));
+        nowCalendar.setTime(BetterDateUtils.parseDate(payDate));
+        //是滞逾期
+        if(nowCalendar.compareTo(planCalendar) >= 0 ){
+            //逾期天数
+            int overDays = BetterDateUtils.getDaysBetween(planCalendar , nowCalendar);
+            FactorParam param = DictUtils.loadObject("FactorParam", custNo, FactorParam.class);
+            BTAssert.notNull(param, "请设置系统参数");
+            
+            //是否大于宽限限
+            if(overDays > param.getGraceDays()){
+                return overDays;
+            }
+        }
+        return -1;
+    }
+    
+    public ScfPayPlan saveRepayment(ScfPayRecord anRecord) {
+        ScfPayPlan plan = findPayPlanDetail(anRecord.getPayPlanId());
+        BTAssert.notNull(plan, "找不到还款计划");
+        
+        //新增还款记录
+        anRecord.setCustNo(plan.getCustNo());
+        anRecord.setFactorNo(plan.getFactorNo());
+        anRecord.setPayCustNo(anRecord.getPayCustNo());
+        anRecord.init();
+        payRecordService.addPayRecord(anRecord);
+
+        //新增还款详情
+        saveRecordDetail(anRecord);
+        
+        //修改还款计划
+        updatePayPlan(anRecord, plan);
+
+        return plan;
+    }
+
+
+    /**
+     * 还款明细
+     * 
+     * @param anRecord
+     */
+    public void saveRecordDetail(ScfPayRecord anRecord) {
+        ScfPayRecordDetail recordDetail = new ScfPayRecordDetail();
+        recordDetail.setPayRecordId(anRecord.getId());
+        recordDetail.setCustNo(anRecord.getCustNo());
+        recordDetail.setFactorNo(anRecord.getFactorNo());
+        recordDetail.setPayDate(anRecord.getPayDate());
+        recordDetail.setPayType(anRecord.getPayType());
+        if (null != anRecord.getPrincipalBalance()) {
+            recordDetail.init();
+            recordDetail.setPayBalance(anRecord.getPrincipalBalance());
+            payRecordDetailService.addRecordDetail(recordDetail);
+        }
+        if (null != anRecord.getInterestBalance()) {
+            recordDetail.init();
+            recordDetail.setPayBalance(anRecord.getInterestBalance());
+            payRecordDetailService.addRecordDetail(recordDetail);
+        }
+        if (null != anRecord.getManagementBalance()) {
+            recordDetail.init();
+            recordDetail.setPayBalance(anRecord.getManagementBalance());
+            payRecordDetailService.addRecordDetail(recordDetail);
+        }
+        if (null != anRecord.getPenaltyBalance()) {
+            recordDetail.init();
+            recordDetail.setPayBalance(anRecord.getPenaltyBalance());
+            payRecordDetailService.addRecordDetail(recordDetail);
+        }
+        if (null != anRecord.getLatefeeBalance()) {
+            recordDetail.init();
+            recordDetail.setPayBalance(anRecord.getLatefeeBalance());
+            payRecordDetailService.addRecordDetail(recordDetail);
+        }
+        if (null != anRecord.getServicefeeBalance()) {
+            recordDetail.init();
+            recordDetail.setPayBalance(anRecord.getServicefeeBalance());
+            payRecordDetailService.addRecordDetail(recordDetail);
+        }
+
+    }
+
+    private void updatePayPlan(ScfPayRecord anRecord, ScfPayPlan anPlan) {
+        // 剩余金额
+        anPlan.setSurplusPrincipalBalance(minusCalculat(anPlan.getSurplusPrincipalBalance(), anRecord.getPrincipalBalance()));
+        anPlan.setSurplusInterestBalance(minusCalculat(anPlan.getSurplusInterestBalance(), anRecord.getInterestBalance()));
+        anPlan.setSurplusManagementBalance(minusCalculat(anPlan.getSurplusManagementBalance(), anRecord.getManagementBalance()));
+        anPlan.setSurplusPenaltyBalance(minusCalculat(anPlan.getSurplusPenaltyBalance(), anRecord.getPenaltyBalance()));
+        anPlan.setSurplusLatefeeBalance(minusCalculat(anPlan.getSurplusLatefeeBalance(), anRecord.getLatefeeBalance()));
+
+        // 已还金额
+        anPlan.setAlreadyPrincipalBalance(plusCalculat(anPlan.getAlreadyPrincipalBalance(), anRecord.getPrincipalBalance()));
+        anPlan.setAlreadyInterestBalance(plusCalculat(anPlan.getAlreadyInterestBalance(), anRecord.getInterestBalance()));
+        anPlan.setAlreadyManagementBalance(plusCalculat(anPlan.getAlreadyManagementBalance(), anRecord.getManagementBalance()));
+        anPlan.setAlreadyPenaltyBalance(plusCalculat(anPlan.getAlreadyPenaltyBalance(), anRecord.getPenaltyBalance()));
+        anPlan.setAlreadyLatefeeBalance(plusCalculat(anPlan.getAlreadyLatefeeBalance(), anRecord.getLatefeeBalance()));
+        saveModifyPayPlan(anPlan, anRecord.getPayPlanId());
+    }
+
+    private BigDecimal minusCalculat(BigDecimal anMeiosis, BigDecimal anMinuend) {
+        // 被减数为空或 小于等于0 直接返回减数
+        if (null == anMinuend || anMinuend.compareTo(new BigDecimal(0)) < 1) {
+            return anMeiosis;
+        }
+
+        return anMeiosis.subtract(anMinuend);
+    }
+
+    private BigDecimal plusCalculat(BigDecimal anBase, BigDecimal anPlus) {
+        // 被减数为空或 小于等于0 直接返回减数
+        if (null == anPlus || anPlus.compareTo(new BigDecimal(0)) < 1) {
+            return anBase;
+        }
+
+        if (null == anBase) {
+            return anPlus;
+        }
+
+        return anBase.add(anPlus);
+    }
+
+    
 }

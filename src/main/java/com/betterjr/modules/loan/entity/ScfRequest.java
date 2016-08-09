@@ -273,10 +273,10 @@ public class ScfRequest implements BetterjrEntity {
     private BigDecimal servicefeeRatio;
 
     /**
-     * 1:票据;2:应收款;3:经销商
+     * 1,订单，2:票据;3:应收款;4:经销商
      */
     @Column(name = "C_REQUEST_TYPE",  columnDefinition="VARCHAR" )
-    @MetaData( value="1:票据;2:应收款;3:经销商", comments = "1:票据;2:应收款;3:经销商")
+    @MetaData( value="1,订单，2:票据;3:应收款;4:经销商", comments = "1,订单，2:票据;3:应收款;4:经销商")
     private String requestType;
 
     /**
@@ -1009,7 +1009,7 @@ public class ScfRequest implements BetterjrEntity {
     public void init() {
         this.requestNo = SerialGenerator.getLongValue("ScfRequest.id")+"";
         this.tradeStatus = "0";
-        this.aduit = "0";
+        this.lastStatus = "0";
         this.regOperName = UserUtils.getUserName();
         this.regOperId = UserUtils.getOperatorInfo().getId();
         this.operOrg = UserUtils.getOperatorInfo().getOperOrg();

@@ -7,6 +7,7 @@ import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -23,6 +24,7 @@ public class ScfLoan implements BetterjrEntity {
     @Id
     @Column(name = "ID",  columnDefinition="BIGINT" )
     @MetaData( value="", comments = "")
+    @OrderBy("desc")
     private Long id;
 
     /**
