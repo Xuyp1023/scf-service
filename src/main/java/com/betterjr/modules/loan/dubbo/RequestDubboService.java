@@ -64,9 +64,10 @@ public class RequestDubboService implements IScfRequestService {
         FlowStatus search = new FlowStatus();
         search.setBusinessId(Long.parseLong(request.getRequestNo()));
         Page<FlowStatus> list = flowService.queryCurrentUserWorkTask(null, search);
-        
-        request.setTradeStatus(Collections3.getFirst(list).getCurrentTaskName()); 
-        request = requestService.saveModifyRequest(request, request.getRequestNo());
+        if(!Collections3.isEmpty(list)){
+            request.setTradeStatus(Collections3.getFirst(list).getCurrentTaskName()); 
+            request = requestService.saveModifyRequest(request, request.getRequestNo());
+        }
         
         return AjaxObject.newOk(request).toJson();
     }
@@ -303,11 +304,15 @@ public class RequestDubboService implements IScfRequestService {
         }
        
         flowService.exec(input);
-        
+
         //修改融资状态
         ScfRequest request= requestService.selectByPrimaryKey(anRequestNo);
-        //TODO 设置状态 等贺伟的接口  
-        //request.setTradeStatus(flowService.); 
-        requestService.saveModifyRequest(request, anRequestNo);
+        FlowStatus search = new FlowStatus();
+        search.setBusinessId(Long.parseLong(request.getRequestNo()));
+        Page<FlowStatus> list = flowService.queryCurrentUserWorkTask(null, search);
+        if(!Collections3.isEmpty(list)){
+            request.setTradeStatus(Collections3.getFirst(list).getCurrentTaskName()); 
+            request = requestService.saveModifyRequest(request, request.getRequestNo());
+        }
     }
 }
