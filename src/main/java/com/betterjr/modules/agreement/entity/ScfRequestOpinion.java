@@ -320,7 +320,7 @@ public class ScfRequestOpinion implements BetterjrEntity, BaseRemoteEntity  {
     public void fillInfo(ScfRequest anRequest){
         this.productCode = anRequest.getProductCode();
         this.buyerNo = anRequest.getBuyerNo()==null?0:Long.parseLong(anRequest.getBuyerNo());
-        this.supplierNo = anRequest.getSupplierNo();
+        this.supplierNo = anRequest.getCustNo();
         this.factorNo = anRequest.getFactorNo()==null?null:anRequest.getFactorNo().toString();
         this.opinionStatus ="0";
         this.regDate = BetterDateUtils.getNumDate();

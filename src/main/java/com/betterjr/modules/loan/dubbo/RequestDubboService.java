@@ -2,7 +2,6 @@ package com.betterjr.modules.loan.dubbo;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -16,6 +15,7 @@ import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.agreement.IScfElecAgreementService;
 import com.betterjr.modules.loan.IScfRequestService;
 import com.betterjr.modules.loan.entity.ScfLoan;
 import com.betterjr.modules.loan.entity.ScfRequest;
@@ -43,6 +43,9 @@ public class RequestDubboService implements IScfRequestService {
     
     @Reference(interfaceClass=IFlowService.class )
     private IFlowService flowService;
+    
+    @Reference(interfaceClass=IScfElecAgreementService.class )
+    private IScfElecAgreementService agreementService;
 
     @Override
     public String webAddRequest(Map<String, Object> anMap) {
@@ -58,7 +61,11 @@ public class RequestDubboService implements IScfRequestService {
         flowService.start(input );
         
         //修改融资状态
-        //TODO 设置状态 等贺伟的接口  request.setTradeStatus(tradeStatus); 
+        FlowStatus search = new FlowStatus();
+        search.setBusinessId(Long.parseLong(request.getRequestNo()));
+        Page<FlowStatus> list = flowService.queryCurrentUserWorkTask(null, search);
+        
+        request.setTradeStatus(Collections3.getFirst(list).getCurrentTaskName()); 
         request = requestService.saveModifyRequest(request, request.getRequestNo());
         
         return AjaxObject.newOk(request).toJson();
@@ -103,7 +110,7 @@ public class RequestDubboService implements IScfRequestService {
     }
 
     @Override
-    public String webApproveRequest(String anRequestNo, String anApprovalResult, String anReturnNode, String anDescription,String tradeStatus) {
+    public String webApproveRequest(String anRequestNo, String anApprovalResult, String anReturnNode, String anDescription) {
         logger.debug("一般审批，入参approvalResult：" + anApprovalResult + "-returnNode:" + anReturnNode + "-description:" + anDescription);
         
         //执行流程
@@ -145,16 +152,35 @@ public class RequestDubboService implements IScfRequestService {
     }
 
     @Override
-    public String webRequestTradingBackgrand(String anRequestNo, String anAduitStatus, String anReturnNode, String anDescription) {
+    public String webRequestTradingBackgrand(String anRequestNo, String anApprovalResult, String anReturnNode, String anDescription) {
         logger.debug("资方-发起贸易背景确认，入参：anRequestNo" + anRequestNo);
         
         ScfRequest request= new ScfRequest();
-        if(BetterStringUtils.equals(anAduitStatus, "0") == true){
+        if(BetterStringUtils.equals( "0", anApprovalResult) == true){
+            //保存发起状态
             request = requestService.saveRequestTradingBackgrand(anRequestNo);
+            
+            //发送转让通知书
+            request = requestService.findRequestDetail(anRequestNo);
+            Map<String, Object> anMap =new HashMap<String, Object>();
+            anMap.put("requestNo", anRequestNo);
+            //TODO 转让通知书编号 ,保理公司申请号, 合同名称、 银行账号， 保理公司详细地址
+            anMap.put("noticeNo", "AA11111111111");
+            anMap.put("buyer", request.getFactorName());
+            anMap.put("factorRequestNo", "保理公司申请号");
+            anMap.put("agreeName", "合同名称111111");
+            anMap.put("bankAccount", "6229887842567285");
+            anMap.put("factorAddr", "保理公司详细地址");
+            anMap.put("factorPost", "518100");
+            anMap.put("factorLinkMan", "保理公司联系人姓名");
+            if(agreementService.webTransNotice(anMap) == false){
+                logger.debug("转让通知书,发送失败！");
+                //TODO 失败了要怎么弄
+            }
         }
         
         //执行流程
-        execFllow(anRequestNo, request.getBalance(), anAduitStatus, "", "");
+        execFllow(anRequestNo, request.getBalance(), anApprovalResult, anReturnNode,  anDescription);
         
         return AjaxObject.newOk("操作成功").toJson();
     }
@@ -165,7 +191,22 @@ public class RequestDubboService implements IScfRequestService {
         
         ScfRequest request = new ScfRequest();
         if(BetterStringUtils.equals(anAduitStatus, "0") == true){
+            //保存确认状态
             request = requestService.confirmTradingBackgrand(anRequestNo, anAduitStatus);
+            
+            //发送转让通知书
+            request = requestService.findRequestDetail(anRequestNo);
+            Map<String, Object> anMap =new HashMap<String, Object>();
+            //TODO 转让通知书编号 还没有生成, 保理公司申请号， 确认书编号
+            anMap.put("requestNo", anRequestNo);
+            anMap.put("factorRequestNo", "保理公司申请号");
+            anMap.put("confirmNo", "确认书编号");
+            anMap.put("supplier", request.getCustName());
+            
+            if(agreementService.webTransOpinion(anMap) == false){
+                logger.debug("转让确认书,发送失败");
+                //TODO 失败了要怎么弄
+            }
         }
         
         //执行流程
@@ -215,17 +256,16 @@ public class RequestDubboService implements IScfRequestService {
         Page<FlowStatus> page = new Page<FlowStatus>(anPageNum, anPageSize, 1 == anFlag);
         if(BetterStringUtils.equals("1", type)){
             //待办
-            page = flowService.queryCurrentUserWorkTask(page);
+            page = flowService.queryCurrentUserWorkTask(page, null);
         }else{
             //已办
-            page = flowService.queryCurrentUserHistoryWorkTask(page);
+            page = flowService.queryCurrentUserHistoryWorkTask(page, null);
         }
         
         StringBuffer bufRequestNo = new StringBuffer();
         for (FlowStatus flowStatus : page) {
             bufRequestNo.append(",");
-            //TODO 等贺伟 的接口 目前没有getbussId
-            //requestNos.append(flowStatus.getbussId);
+            bufRequestNo.append(flowStatus.getBusinessId());
         }
         
         Map<String, Object> anMap = new HashMap<String, Object>();
@@ -266,7 +306,8 @@ public class RequestDubboService implements IScfRequestService {
         
         //修改融资状态
         ScfRequest request= requestService.selectByPrimaryKey(anRequestNo);
-        //TODO 设置状态 等贺伟的接口  request.setTradeStatus(tradeStatus); 
+        //TODO 设置状态 等贺伟的接口  
+        //request.setTradeStatus(flowService.); 
         requestService.saveModifyRequest(request, anRequestNo);
     }
 }
