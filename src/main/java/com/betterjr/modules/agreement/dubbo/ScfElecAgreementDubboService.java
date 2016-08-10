@@ -94,5 +94,15 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
         ScfRequestOpinion opinion=(ScfRequestOpinion)RuleServiceDubboFilterInvoker.getInputObj();
         return scfAgreementService.transOpinion(opinion);
     }
+    
+    /****
+     * 根据申请单号，类型查询合同
+     * @param anRequestNo
+     * @param anSignType
+     * @return
+     */
+    public String webFindOneElecAgreeByOrderNo(String anRequestNo, String anSignType){
+        return AjaxObject.newOk(scfElecAgreementService.findOneElecAgreeByOrderNo(anRequestNo, anSignType)).toJson();
+    }
 
 }
