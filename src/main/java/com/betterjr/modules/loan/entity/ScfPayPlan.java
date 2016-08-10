@@ -56,11 +56,25 @@ public class ScfPayPlan implements BetterjrEntity {
     private String requestNo;
 
     /**
+     * 计息开始日期
+     */
+    @Column(name = "D_START_DATE",  columnDefinition="VARCHAR" )
+    @MetaData( value="计息开始日期", comments = "计息开始日期")
+    private String startDate;
+
+    /**
      * 计划还款日期
      */
     @Column(name = "D_PLAN_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="计划还款日期", comments = "计划还款日期")
     private String planDate;
+
+    /**
+     * 实际还款日期
+     */
+    @Column(name = "D_PAY_DATE",  columnDefinition="VARCHAR" )
+    @MetaData( value="实际还款日期", comments = "实际还款日期")
+    private String payDate;
 
     /**
      * 应还本金
@@ -287,7 +301,7 @@ public class ScfPayPlan implements BetterjrEntity {
     @MetaData( value="未还合计", comments = "未还合计")
     private BigDecimal surplusTotalBalance;
 
-    private static final long serialVersionUID = 1470452785976L;
+    private static final long serialVersionUID = 1470816190368L;
 
     public Long getId() {
         return id;
@@ -329,12 +343,28 @@ public class ScfPayPlan implements BetterjrEntity {
         this.requestNo = requestNo;
     }
 
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
     public String getPlanDate() {
         return planDate;
     }
 
     public void setPlanDate(String planDate) {
         this.planDate = planDate;
+    }
+
+    public String getPayDate() {
+        return payDate;
+    }
+
+    public void setPayDate(String payDate) {
+        this.payDate = payDate;
     }
 
     public BigDecimal getShouldPrincipalBalance() {
@@ -636,7 +666,9 @@ public class ScfPayPlan implements BetterjrEntity {
         sb.append(", custNo=").append(custNo);
         sb.append(", coreCustNo=").append(coreCustNo);
         sb.append(", requestNo=").append(requestNo);
+        sb.append(", startDate=").append(startDate);
         sb.append(", planDate=").append(planDate);
+        sb.append(", payDate=").append(payDate);
         sb.append(", shouldPrincipalBalance=").append(shouldPrincipalBalance);
         sb.append(", shouldInterestBalance=").append(shouldInterestBalance);
         sb.append(", shouldServicefeeBalance=").append(shouldServicefeeBalance);
@@ -695,7 +727,9 @@ public class ScfPayPlan implements BetterjrEntity {
             && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
             && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
             && (this.getRequestNo() == null ? other.getRequestNo() == null : this.getRequestNo().equals(other.getRequestNo()))
+            && (this.getStartDate() == null ? other.getStartDate() == null : this.getStartDate().equals(other.getStartDate()))
             && (this.getPlanDate() == null ? other.getPlanDate() == null : this.getPlanDate().equals(other.getPlanDate()))
+            && (this.getPayDate() == null ? other.getPayDate() == null : this.getPayDate().equals(other.getPayDate()))
             && (this.getShouldPrincipalBalance() == null ? other.getShouldPrincipalBalance() == null : this.getShouldPrincipalBalance().equals(other.getShouldPrincipalBalance()))
             && (this.getShouldInterestBalance() == null ? other.getShouldInterestBalance() == null : this.getShouldInterestBalance().equals(other.getShouldInterestBalance()))
             && (this.getShouldServicefeeBalance() == null ? other.getShouldServicefeeBalance() == null : this.getShouldServicefeeBalance().equals(other.getShouldServicefeeBalance()))
@@ -743,7 +777,9 @@ public class ScfPayPlan implements BetterjrEntity {
         result = prime * result + ((getCustNo() == null) ? 0 : getCustNo().hashCode());
         result = prime * result + ((getCoreCustNo() == null) ? 0 : getCoreCustNo().hashCode());
         result = prime * result + ((getRequestNo() == null) ? 0 : getRequestNo().hashCode());
+        result = prime * result + ((getStartDate() == null) ? 0 : getStartDate().hashCode());
         result = prime * result + ((getPlanDate() == null) ? 0 : getPlanDate().hashCode());
+        result = prime * result + ((getPayDate() == null) ? 0 : getPayDate().hashCode());
         result = prime * result + ((getShouldPrincipalBalance() == null) ? 0 : getShouldPrincipalBalance().hashCode());
         result = prime * result + ((getShouldInterestBalance() == null) ? 0 : getShouldInterestBalance().hashCode());
         result = prime * result + ((getShouldServicefeeBalance() == null) ? 0 : getShouldServicefeeBalance().hashCode());

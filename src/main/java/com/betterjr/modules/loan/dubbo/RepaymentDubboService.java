@@ -36,11 +36,6 @@ public class RepaymentDubboService implements IScfRepaymentService {
     @Override
     public String webSaveRepayment(Map<String, Object> anMap) {
         ScfPayRecord record = (ScfPayRecord) RuleServiceDubboFilterInvoker.getInputObj();
-        if(null == anMap.get("payPlanId") || BetterStringUtils.isBlank(anMap.get("payPlanId").toString())){
-            AjaxObject.newError("payPlanId不能为空");
-        }
-        
-        record.setPayPlanId(Long.parseLong(anMap.get("payPlanId").toString()));
         return AjaxObject.newOk("操作成功", payPlanService.saveRepayment(record)).toJson();
     }
     
