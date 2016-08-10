@@ -118,7 +118,7 @@ public class ScfRequestScheme implements BetterjrEntity {
      * 期限单位： 1日，2月，3年
      */
     @Column(name = "N_PERIOD_UNIT",  columnDefinition="INT" )
-    @MetaData( value="期限单位： 1日", comments = "期限单位： 1日，2月，3年")
+    @MetaData( value="期限单位： 1日", comments = "期限单位： 1日，2月")
     private Integer periodUnit;
 
     /**

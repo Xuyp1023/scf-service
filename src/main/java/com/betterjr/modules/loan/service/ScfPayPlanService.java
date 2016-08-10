@@ -1,7 +1,6 @@
 package com.betterjr.modules.loan.service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +42,9 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
 
     @Autowired
     private ScfRequestSchemeService schemeService;
+    
+    @Autowired
+    private ScfLoanService loanService;
 
     /**
      * 新增还款计划
@@ -133,7 +135,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
     }
 
     /**
-     * 计算结束日期
+     * 计算结束日期（用于放款时  填入放款日期后调用）
      * 
      * @param scheme
      * @return
@@ -181,7 +183,9 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
             return new BigDecimal(0);
         }
 
-        return anLoanBalance.multiply(ratio).multiply(new BigDecimal(scheme.getPeriod())).divide(scale);
+        BigDecimal fee = anLoanBalance.multiply(ratio).multiply(new BigDecimal(scheme.getPeriod())).divide(scale);
+        logger.debug("本金："+ anLoanBalance + "--利率："+ ratio + "--天数："+ scheme.getPeriod() + "--scale:"+ scale + "--费用="+ fee);
+        return fee;
     }
 
     /**
@@ -229,28 +233,30 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
      */
     public ScfPayRecord querySellerRepaymentFee(ScfPayRecord anRecord){
         ScfPayPlan plan = this.findPayPlanDetail(anRecord.getPayPlanId());
-        BigDecimal zore = new BigDecimal(0);
-        if(anRecord.getTotalBalance().compareTo(plan.getSurplusManagementBalance()) <=0){
-            //还款金额小于其它费用
-            anRecord.setManagementBalance(anRecord.getTotalBalance());
-            anRecord.setInterestBalance(zore);
-            anRecord.setPrincipalBalance(zore);
+        ScfRequestScheme scheme = schemeService.findSchemeDetail2(plan.getRequestNo());
+        
+        //计算使用天数
+        Calendar startCalendar = Calendar.getInstance();
+        Calendar payCalendar = Calendar.getInstance();
+        startCalendar.setTime(BetterDateUtils.parseDate(plan.getStartDate()));
+        payCalendar.setTime(BetterDateUtils.parseDate(anRecord.getPayDate()));
+        int loanDays = BetterDateUtils.getDaysBetween(startCalendar, payCalendar);
+        
+        //计算利率(如果为月则换算成天=ratio*12/一年的天数)
+        BigDecimal ratio = plan.getRatio();
+        BigDecimal mgrRatio = plan.getManagementRatio();
+        if(BetterStringUtils.equals("2", scheme.getPeriodUnit().toString())){
+            FactorParam param = DictUtils.loadObject("FactorParam", plan.getFactorNo().toString(), FactorParam.class);
+            ratio = ratio.multiply(new BigDecimal(12)).divide(new BigDecimal(param.getCountDays())).setScale(2, BigDecimal.ROUND_HALF_UP);
+            mgrRatio = mgrRatio.multiply(new BigDecimal(12)).divide(new BigDecimal(param.getCountDays())).setScale(2, BigDecimal.ROUND_HALF_UP);
         }
         
-        if(anRecord.getTotalBalance().compareTo(plan.getSurplusInterestBalance().add(plan.getSurplusManagementBalance())) <= 0){
-            //还款金额小于其它费用 + 利息
-            anRecord.setManagementBalance(plan.getSurplusManagementBalance());
-            anRecord.setInterestBalance(anRecord.getTotalBalance().subtract(plan.getSurplusManagementBalance()));
-            anRecord.setPrincipalBalance(zore);
-        }
-        else{
-            anRecord.setManagementBalance(plan.getSurplusManagementBalance());
-            anRecord.setInterestBalance(plan.getSurplusInterestBalance());
-            anRecord.setPrincipalBalance(anRecord.getTotalBalance()
-                    .subtract(plan.getSurplusManagementBalance())
-                    .subtract(plan.getSurplusInterestBalance()));
-        }
+        //根据使用贷款天数-计算利息(本金*利息*使用期限/100)
+        BigDecimal interestBalance = anRecord.getPrincipalBalance().multiply(ratio).multiply(new BigDecimal(loanDays)).divide(new BigDecimal(100));
+        BigDecimal mgrBalance = anRecord.getPrincipalBalance().multiply(mgrRatio).multiply(new BigDecimal(loanDays)).divide(new BigDecimal(100));
         
+        anRecord.setManagementBalance(mgrBalance);
+        anRecord.setInterestBalance(interestBalance);
         return anRecord;
     }
     
@@ -346,12 +352,23 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         //新增还款详情
         saveRecordDetail(anRecord);
         
-        //修改还款计划
+        //---------修改还款计划
         updatePayPlan(anRecord, plan);
-
+        
+        if(BetterStringUtils.equals("6", anRecord.getPayType())){
+            //为经销商还款时
+            if(anRecord.getTotalBalance().compareTo(plan.getSurplusTotalBalance()) < 0){
+                //这一次没有还完（还款金额 小于 剩余金额） 则 根据 剩余本金 重新计算 剩余利息
+                
+                //设置 新的 开始计息日（今天的利息已经收了，从明天开始 所以要加一天）
+                BetterDateUtils.addStrDays(anRecord.getPayDate(), 1);
+                plan.setStartDate(anRecord.getPayDate());
+                //TODO 设置新的应还 未还
+            }
+        }
+        
         return plan;
     }
-
 
     /**
      * 还款明细
