@@ -18,12 +18,14 @@
 		com.betterjr.modules.param,
 		com.betterjr.modules.enquiry,
 		com.betterjr.modules.order,
+		com.betterjr.modules.receivable,
+		com.betterjr.modules.acceptbill,
 		com.betterjr.modules.sys.dubbo,
 		com.betterjr.modules.account.dubbo,
 		com.betterjr.dubbo.extend.filter" />
 	<!-- 提供方应用信息，用于计算依赖关系 -->
 	<dubbo:application name="${dubbo.application}" />
-	<dubbo:consumer version="1.2" />
+	<dubbo:consumer version="${dubbo.provider.version}" />
 	<!-- 用dubbo协议在20880端口暴露服务 -->
 	<dubbo:protocol name="dubbo" port="${dubbo.protocol.port}" serialization="${dubbo.protocol.serialization}" />
 	<!-- 声明所有服务接口的默认设置 -->

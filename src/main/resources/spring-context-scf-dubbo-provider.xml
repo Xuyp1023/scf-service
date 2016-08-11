@@ -24,6 +24,8 @@
 		com.betterjr.modules.param;
 		com.betterjr.modules.enquiry;
 		com.betterjr.modules.order;
+		com.betterjr.modules.receivable;
+		com.betterjr.modules.acceptbill;
 		com.betterjr.modules.account.service;
 		com.betterjr.modules.rule.service;
 		com.betterjr.modules.rule.validator;
@@ -183,7 +185,7 @@
 
 	<!-- 事务配置 -->
 	<!-- proxy-target-class默认为false，使用jdk动态代理织入增强，如果目标类没有声明接口,则自动使用CGLib动态代理。 -->
-	<aop:aspectj-autoproxy />
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
 	<aop:config>
 		<aop:pointcut id="appService"
 			expression="execution(* com.betterjr..service.*Service.*(..))" />

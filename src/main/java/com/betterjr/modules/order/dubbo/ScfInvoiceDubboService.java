@@ -4,8 +4,10 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.betterjr.common.web.AjaxObject;
+import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.order.IScfInvoiceService;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.service.ScfInvoiceService;
@@ -17,9 +19,14 @@ public class ScfInvoiceDubboService implements IScfInvoiceService {
     @Autowired
     private ScfInvoiceService scfInvoiceService;
     
+    @Reference(interfaceClass = ICustFileService.class)
+    private ICustFileService custFileDubboService;
+    
     @Override
     public String webAddInvoice(Map<String, Object> anMap, String anFileList) {
         ScfInvoice anInvoice = (ScfInvoice) RuleServiceDubboFilterInvoker.getInputObj();
+        //保存附件信息
+        anInvoice.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anInvoice.getBatchNo()));
         return AjaxObject.newOk("订单发票信息录入成功", scfInvoiceService.addInvoice(anInvoice, anFileList)).toJson();
     }
     

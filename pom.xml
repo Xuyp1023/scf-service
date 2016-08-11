@@ -32,12 +32,6 @@
          <version>1.0.0</version>
         </dependency>
 
-        <dependency>
-        	<groupId>com.betterjr</groupId>
-        	<artifactId>platform-service</artifactId>
-        	<version>1.0.0</version>
-        	<type>war</type>
-        </dependency>
 	</dependencies>
 
 	<packaging>war</packaging>
