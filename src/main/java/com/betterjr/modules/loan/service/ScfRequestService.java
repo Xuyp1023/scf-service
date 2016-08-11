@@ -304,5 +304,82 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         return null;
     }
     
+    /**
+     * 查询待批融资
+     */
+    public Page<ScfRequest> queryPendingRequest(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+        // 放款前的状态
+        String[] pendingStatus = { "0", "1", "2", "3", "4" };
+        Page<ScfRequest> page = new Page<ScfRequest>();
+        for (String tempStatus : pendingStatus) {
+            anMap.put("tradeStatus", tempStatus);
+            page.addAll(this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag)));
+        }
+        for (ScfRequest scfRequest : page) {
+            scfRequest.setCoreCustName(custAccountService.queryCustName(scfRequest.getCoreCustNo()));
+            scfRequest.setFactorName(custAccountService.queryCustName(scfRequest.getFactorNo()));
+        }
+        return page;
+    }
+
+    /**
+     * 查询还款融资
+     */
+    public Page<ScfRequest> queryRepaymentRequest(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+        // 放款后结束前的状态
+        String[] pendingStatus = { "6", "7", "8" };
+        Page<ScfRequest> page = new Page<ScfRequest>();
+        for (String tempStatus : pendingStatus) {
+            anMap.put("tradeStatus", tempStatus);
+            page.addAll(this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag)));
+        }
+        for (ScfRequest scfRequest : page) {
+            scfRequest.setCoreCustName(custAccountService.queryCustName(scfRequest.getCoreCustNo()));
+            scfRequest.setFactorName(custAccountService.queryCustName(scfRequest.getFactorNo()));
+        }
+        return page;
+    }
+
+    /**
+     * 查询历史融资
+     */
+    public Page<ScfRequest> queryCompletedRequest(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+        // 放款后结束前的状态
+        String[] pendingStatus = { "9" };
+        Page<ScfRequest> page = new Page<ScfRequest>();
+        for (String tempStatus : pendingStatus) {
+            anMap.put("tradeStatus", tempStatus);
+            page.addAll(this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag)));
+        }
+        for (ScfRequest scfRequest : page) {
+            scfRequest.setCoreCustName(custAccountService.queryCustName(scfRequest.getCoreCustNo()));
+            scfRequest.setFactorName(custAccountService.queryCustName(scfRequest.getFactorNo()));
+        }
+        return page;
+    }
+
+    /**
+     * 核心企业融资查询
+     */
+    public Page<ScfRequest> queryCoreEnterpriseRequest(Map<String, Object> anMap, String anRequestType, String anFlag, int anPageNum, int anPageSize) {
+        switch (anRequestType) {
+        case "1":
+            // 未还款
+            return this.queryPendingRequest(anMap, anFlag, anPageNum, anPageSize);
+        case "2":
+            // 还款中
+            return this.queryRepaymentRequest(anMap, anFlag, anPageNum, anPageSize);
+        case "3":
+            // 已还款
+            return this.queryCompletedRequest(anMap, anFlag, anPageNum, anPageSize);
+        default:
+            return new Page<ScfRequest>();
+        }
+    }
+    
+    public ScfRequest approveRequest(Map<String, Object> anMap) {
+        return null;
+    }
+    
 
 }
