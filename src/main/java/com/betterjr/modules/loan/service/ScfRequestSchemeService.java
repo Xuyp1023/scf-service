@@ -1,5 +1,6 @@
 package com.betterjr.modules.loan.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,23 +28,21 @@ public class ScfRequestSchemeService extends BaseService<ScfRequestApprovedMappe
     private CustAccountService custAccountService;
 
     /**
-     * 保存融资审批相关信息
+     * 保存贷款方案
      * 
      * @param anScheme
      * @return
      */
     public ScfRequestScheme addScheme(ScfRequestScheme anScheme) {
-        BTAssert.notNull(anScheme, "anScheme不能为空");
+        BTAssert.notNull(anScheme, "保存贷款方案失败-anScheme不能为空");
 
         // 将原有方案 设置为作废再 添加新的方案
-        List<ScfRequestScheme> oldSchemeList = this.selectAll();
-        if (Collections3.isEmpty(oldSchemeList) || oldSchemeList.size() > 0) {
-            for (ScfRequestScheme scheme : oldSchemeList) {
-                scheme.setCustAduit("3");
-                scheme.setCoreCustAduit("3");
-                scheme.initModify();
-                this.updateByPrimaryKeySelective(scheme);
-            }
+        List<ScfRequestScheme> oldSchemeList = this.selectByProperty("requestNo", anScheme.getRequestNo());
+        for (ScfRequestScheme scheme : oldSchemeList) {
+            scheme.setCustAduit("2");
+            scheme.setCoreCustAduit("2");
+            scheme.initModify();
+            this.updateByPrimaryKeySelective(scheme);
         }
 
         // 初始化相关企业编号
@@ -55,8 +54,8 @@ public class ScfRequestSchemeService extends BaseService<ScfRequestApprovedMappe
         this.insert(anScheme);
 
         // 修改申请表的
-        request.setPeriod(anScheme.getPeriod());
-        request.setPeriodUnit(anScheme.getPeriodUnit());
+        request.setPeriod(anScheme.getApprovedPeriod());
+        request.setPeriodUnit(anScheme.getApprovedPeriodUnit());
         request.setRatio(anScheme.getApprovedRatio());
         request.setManagementRatio(anScheme.getApprovedRatio());
         request.setServicefeeRatio(anScheme.getServicefeeRatio());
@@ -74,7 +73,7 @@ public class ScfRequestSchemeService extends BaseService<ScfRequestApprovedMappe
      */
     public ScfRequestScheme findSchemeDetail(String anRequestNo) {
         List<ScfRequestScheme> schemeList = this.selectByProperty("requestNo", anRequestNo);
-        if (Collections3.isEmpty(schemeList) || schemeList.size() == 0) {
+        if (Collections3.isEmpty(schemeList)) {
             logger.debug("无数据！");
             return new ScfRequestScheme();
         }
@@ -105,18 +104,18 @@ public class ScfRequestSchemeService extends BaseService<ScfRequestApprovedMappe
     }
 
     /**
-     * 修改融资审批
+     * 修改贷款方案
      * 
      * @param rquestNo
      * @param factorNo
      * @return
      */
     public ScfRequestScheme saveModifyScheme(ScfRequestScheme anScheme) {
-        BTAssert.notNull(anScheme, "anScheme不能为空");
+        BTAssert.notNull(anScheme, "修改贷款方案失败-anScheme不能为空");
 
         List<ScfRequestScheme> list = this.selectByProperty("requestNo", anScheme.getRequestNo());
         if (Collections3.isEmpty(list) || list.size() == 0) {
-            throw new IllegalArgumentException("修改失败，找不到源数据-requestNo:" + anScheme.getRequestNo());
+            throw new IllegalArgumentException("修改贷款方案失败，找不到源数据-requestNo:" + anScheme.getRequestNo());
         }
 
         // 修改最新的一条
@@ -138,7 +137,7 @@ public class ScfRequestSchemeService extends BaseService<ScfRequestApprovedMappe
         // 核心企业查询时
         if (UserUtils.coreUser() && (null == anMap.get("coreCustAduit") || BetterStringUtils.isEmpty(anMap.get("coreCustAduit").toString()))) {
             // 去除未到审批时的数据
-            anMap.put("coreCustAduit", new String[] { "0", "1", "2" });
+            anMap.put("coreCustAduit", new String[] { "0", "1" });
         }
 
         // 设置相关企业名

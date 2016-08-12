@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
-import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.modules.loan.IScfRepaymentService;
 import com.betterjr.modules.loan.entity.ScfPayPlan;

@@ -1,7 +1,9 @@
 package com.betterjr.modules.loan.dubbo;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
+import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
@@ -65,7 +68,7 @@ public class RequestDubboService implements IScfRequestService {
         search.setBusinessId(Long.parseLong(request.getRequestNo()));
         Page<FlowStatus> list = flowService.queryCurrentUserWorkTask(null, search);
         if(!Collections3.isEmpty(list)){
-            request.setTradeStatus(Collections3.getFirst(list).getCurrentTaskName()); 
+            request.setTradeStatus(Collections3.getFirst(list).getCurrentNodeId().toString()); 
             request = requestService.saveModifyRequest(request, request.getRequestNo());
         }
         
@@ -128,13 +131,13 @@ public class RequestDubboService implements IScfRequestService {
         ScfRequestScheme scheme = new ScfRequestScheme();
         if(BetterStringUtils.equals(anApprovalResult, "0") == true){
             scheme = (ScfRequestScheme) RuleServiceDubboFilterInvoker.getInputObj();
-            approvedService.addScheme(scheme);
+            scheme = approvedService.addScheme(scheme);
         }
         
         //执行流程
-        execFllow(scheme.getRequestNo(), scheme.getApprovedBalance(), anApprovalResult, anReturnNode, anDescription);
+        execFllow(anMap.get("requestNo").toString(), scheme.getApprovedBalance(), anApprovalResult, anReturnNode, anDescription);
         
-        return AjaxObject.newOk("操作成功").toJson();
+        return AjaxObject.newOk("操作成功", scheme).toJson();
     }
 
     @Override
@@ -144,6 +147,13 @@ public class RequestDubboService implements IScfRequestService {
         ScfRequestScheme scheme = new ScfRequestScheme();
         if(BetterStringUtils.equals(anAduitStatus, "0") == true){
             scheme = requestService.saveConfirmScheme(anRequestNo, anAduitStatus);
+            
+            //修改申请表中的信息
+            ScfRequest request = requestService.selectByPrimaryKey(anRequestNo);
+            request.setBalance(scheme.getApprovedBalance());
+            request.setRatio(scheme.getApprovedRatio());
+            request.setManagementRatio(scheme.getApprovedManagementRatio());
+            requestService.saveModifyRequest(request, anRequestNo);
         }
         
         //执行流程
@@ -159,25 +169,33 @@ public class RequestDubboService implements IScfRequestService {
         ScfRequest request= new ScfRequest();
         if(BetterStringUtils.equals( "0", anApprovalResult) == true){
             //保存发起状态
-            request = requestService.saveRequestTradingBackgrand(anRequestNo);
-            
-            //发送转让通知书
+            requestService.saveRequestTradingBackgrand(anRequestNo);
             request = requestService.findRequestDetail(anRequestNo);
-            Map<String, Object> anMap =new HashMap<String, Object>();
-            anMap.put("requestNo", anRequestNo);
-            //TODO 转让通知书编号 ,保理公司申请号, 合同名称、 银行账号， 保理公司详细地址
-            anMap.put("noticeNo", "AA11111111111");
-            anMap.put("buyer", request.getFactorName());
-            anMap.put("factorRequestNo", "保理公司申请号");
-            anMap.put("agreeName", "合同名称111111");
-            anMap.put("bankAccount", "6229887842567285");
-            anMap.put("factorAddr", "保理公司详细地址");
-            anMap.put("factorPost", "518100");
-            anMap.put("factorLinkMan", "保理公司联系人姓名");
-            if(agreementService.webTransNotice(anMap) == false){
-                logger.debug("转让通知书,发送失败！");
-                //TODO 失败了要怎么弄
+            
+            //1,订单，2:票据;3:应收款;4:经销商
+            if(BetterStringUtils.equals("4", request.getRequestType()) == true){
+                //三方协议
+                
+            }else{
+                //发送转让通知书
+                Map<String, Object> anMap =new HashMap<String, Object>();
+                anMap.put("requestNo", anRequestNo);
+                //TODO 合同名称、 银行账号， 保理公司详细地址
+                String noticeNo = BetterDateUtils.getDate("yyyyMMdd")+anRequestNo;
+                anMap.put("noticeNo", noticeNo);
+                anMap.put("buyer", request.getFactorName());
+                anMap.put("factorRequestNo", noticeNo);
+                anMap.put("agreeName", request.getCustName() + "应收账款转让申请书");
+                anMap.put("bankAccount", "6229887842567285");
+                anMap.put("factorAddr", "保理公司详细地址");
+                anMap.put("factorPost", "518100");
+                anMap.put("factorLinkMan", "保理公司联系人姓名");
+                if(agreementService.webTransNotice(anMap) == false){
+                    logger.debug("转让通知书,发送失败！");
+                    //TODO 失败了要怎么弄
+                }
             }
+            
         }
         
         //执行流程
@@ -195,18 +213,23 @@ public class RequestDubboService implements IScfRequestService {
             //保存确认状态
             request = requestService.confirmTradingBackgrand(anRequestNo, anAduitStatus);
             
-            //发送转让通知书
-            request = requestService.findRequestDetail(anRequestNo);
-            Map<String, Object> anMap =new HashMap<String, Object>();
-            //TODO 转让通知书编号 还没有生成, 保理公司申请号， 确认书编号
-            anMap.put("requestNo", anRequestNo);
-            anMap.put("factorRequestNo", "保理公司申请号");
-            anMap.put("confirmNo", "确认书编号");
-            anMap.put("supplier", request.getCustName());
-            
-            if(agreementService.webTransOpinion(anMap) == false){
-                logger.debug("转让确认书,发送失败");
-                //TODO 失败了要怎么弄
+            //1,订单，2:票据;3:应收款;4:经销商
+            if(BetterStringUtils.equals( "4", request.getRequestType()) == true){
+                //三方协议
+                
+            }else{
+                //转让意见确认书
+                Map<String, Object> anMap =new HashMap<String, Object>();
+                String noticeNo = BetterDateUtils.getDate("yyyyMMdd")+anRequestNo;
+                anMap.put("requestNo", anRequestNo);
+                anMap.put("factorRequestNo", noticeNo);
+                anMap.put("confirmNo", noticeNo);
+                anMap.put("supplier", request.getCustName());
+                
+                if(agreementService.webTransOpinion(anMap) == false){
+                    logger.debug("转让意见确认书,发送失败");
+                    //TODO 失败了要怎么弄
+                }
             }
         }
         
@@ -253,24 +276,27 @@ public class RequestDubboService implements IScfRequestService {
         return AjaxObject.newOk("操作成功", anMap).toJson();
     }
     
-    public String queryWorkTask(String type, int anFlag, int anPageNum, int anPageSize){
+    @Override
+    public String webQueryWorkTask(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize){
+        anMap = (Map) RuleServiceDubboFilterInvoker.getInputObj();
+        
+        //查询当前用户任务列表
         Page<FlowStatus> page = new Page<FlowStatus>(anPageNum, anPageSize, 1 == anFlag);
-        if(BetterStringUtils.equals("1", type)){
+        if(BetterStringUtils.equals("1", anMap.get("taskType").toString())){
             //待办
-            page = flowService.queryCurrentUserWorkTask(page, null);
+            page = flowService.queryCurrentUserWorkTask(null, null);
         }else{
             //已办
-            page = flowService.queryCurrentUserHistoryWorkTask(page, null);
+            page = flowService.queryCurrentUserHistoryWorkTask(null, null);
         }
         
-        StringBuffer bufRequestNo = new StringBuffer();
+        //获取任务中的requestNo
+        List<Long> requestNos = new ArrayList<Long>();
         for (FlowStatus flowStatus : page) {
-            bufRequestNo.append(",");
-            bufRequestNo.append(flowStatus.getBusinessId());
+            requestNos.add(flowStatus.getBusinessId());
         }
         
-        Map<String, Object> anMap = new HashMap<String, Object>();
-        anMap.put("requestNo", bufRequestNo.toString().replaceFirst(",", ""));
+        anMap.remove("taskType");
         return  AjaxObject.newOkWithPage("查询成功", requestService.queryRequestList(anMap , anFlag, anPageNum, anPageSize)).toJson();
     }
     
@@ -311,7 +337,7 @@ public class RequestDubboService implements IScfRequestService {
         search.setBusinessId(Long.parseLong(request.getRequestNo()));
         Page<FlowStatus> list = flowService.queryCurrentUserWorkTask(null, search);
         if(!Collections3.isEmpty(list)){
-            request.setTradeStatus(Collections3.getFirst(list).getCurrentTaskName()); 
+            request.setTradeStatus(Collections3.getFirst(list).getCurrentNodeId().toString()); 
             request = requestService.saveModifyRequest(request, request.getRequestNo());
         }
     }

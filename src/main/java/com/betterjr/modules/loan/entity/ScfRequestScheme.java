@@ -59,17 +59,17 @@ public class ScfRequestScheme implements BetterjrEntity {
     private Long coreCustNo;
 
     /**
-     * 申请企业确认状态，-1初始值 ，0未确认，1已确认，2否决
+     * 申请企业确认状态，-1初始值 ，0未确认，1已确认，2否决,3作废
      */
     @Column(name = "C_CUST_ADUIT",  columnDefinition="VARCHAR" )
-    @MetaData( value="申请企业确认状态", comments = "申请企业确认状态，-1初始值 ，0未确认，1已确认，2否决")
+    @MetaData( value="申请企业确认状态", comments = "申请企业确认状态，-1初始值 ，0确认，1否决，2作废")
     private String custAduit;
 
     /**
-     * 核心企业确认状态，-1初始值，0未确认，1已确认，2否决
+     * 核心企业确认状态，-1初始值，0未确认，1已确认，2否决,3作废
      */
     @Column(name = "C_CORECUST_ADUIT",  columnDefinition="VARCHAR" )
-    @MetaData( value="核心企业确认状态", comments = "核心企业确认状态，-1初始值，0未确认，1已确认，2否决")
+    @MetaData( value="核心企业确认状态", comments = "核心企业确认状态，-1初始值 ，0确认，1否决，2作废")
     private String coreCustAduit;
 
     /**
@@ -101,10 +101,10 @@ public class ScfRequestScheme implements BetterjrEntity {
     private BigDecimal approvedManagementRatio;
 
     /**
-     * 手续费
+     * 手续费率
      */
     @Column(name = "F_SERVICEFEE_RATIO",  columnDefinition="DOUBLE" )
-    @MetaData( value="手续费", comments = "手续费")
+    @MetaData( value="手续费率", comments = "手续费率")
     private BigDecimal servicefeeRatio;
 
     /**
@@ -115,18 +115,32 @@ public class ScfRequestScheme implements BetterjrEntity {
     private Integer period;
 
     /**
-     * 期限单位： 1日，2月，3年
+     * 期限单位： 1日，2月
      */
     @Column(name = "N_PERIOD_UNIT",  columnDefinition="INT" )
     @MetaData( value="期限单位： 1日", comments = "期限单位： 1日，2月")
     private Integer periodUnit;
 
     /**
+     * 审批期限
+     */
+    @Column(name = "N_APPROVED_PERIOD",  columnDefinition="INT" )
+    @MetaData( value="审批期限", comments = "审批期限")
+    private Integer approvedPeriod;
+
+    /**
+     * 审批期限单位： 1日，2月
+     */
+    @Column(name = "N_APPROVED_PERIOD_UNIT",  columnDefinition="INT" )
+    @MetaData( value="审批期限单位： 1日", comments = "审批期限单位： 1日，2月")
+    private Integer approvedPeriodUnit;
+
+    /**
      * 授信类型
      */
-    @Column(name = "C_CREDIT_MODE",  columnDefinition="DOUBLE" )
+    @Column(name = "C_CREDIT_MODE",  columnDefinition="VARCHAR" )
     @MetaData( value="授信类型", comments = "授信类型")
-    private BigDecimal creditMode;
+    private String creditMode;
 
     /**
      * 操作机构
@@ -171,7 +185,7 @@ public class ScfRequestScheme implements BetterjrEntity {
     @MetaData( value="", comments = "")
     private Long version;
 
-    private static final long serialVersionUID = 1470300619166L;
+    private static final long serialVersionUID = 1470898776193L;
 
     public Long getId() {
         return id;
@@ -285,11 +299,27 @@ public class ScfRequestScheme implements BetterjrEntity {
         this.periodUnit = periodUnit;
     }
 
-    public BigDecimal getCreditMode() {
+    public Integer getApprovedPeriod() {
+        return approvedPeriod;
+    }
+
+    public void setApprovedPeriod(Integer approvedPeriod) {
+        this.approvedPeriod = approvedPeriod;
+    }
+
+    public Integer getApprovedPeriodUnit() {
+        return approvedPeriodUnit;
+    }
+
+    public void setApprovedPeriodUnit(Integer approvedPeriodUnit) {
+        this.approvedPeriodUnit = approvedPeriodUnit;
+    }
+
+    public String getCreditMode() {
         return creditMode;
     }
 
-    public void setCreditMode(BigDecimal creditMode) {
+    public void setCreditMode(String creditMode) {
         this.creditMode = creditMode;
     }
 
@@ -393,6 +423,8 @@ public class ScfRequestScheme implements BetterjrEntity {
         sb.append(", servicefeeRatio=").append(servicefeeRatio);
         sb.append(", period=").append(period);
         sb.append(", periodUnit=").append(periodUnit);
+        sb.append(", approvedPeriod=").append(approvedPeriod);
+        sb.append(", approvedPeriodUnit=").append(approvedPeriodUnit);
         sb.append(", creditMode=").append(creditMode);
         sb.append(", operOrg=").append(operOrg);
         sb.append(", regOperId=").append(regOperId);
@@ -435,6 +467,8 @@ public class ScfRequestScheme implements BetterjrEntity {
             && (this.getServicefeeRatio() == null ? other.getServicefeeRatio() == null : this.getServicefeeRatio().equals(other.getServicefeeRatio()))
             && (this.getPeriod() == null ? other.getPeriod() == null : this.getPeriod().equals(other.getPeriod()))
             && (this.getPeriodUnit() == null ? other.getPeriodUnit() == null : this.getPeriodUnit().equals(other.getPeriodUnit()))
+            && (this.getApprovedPeriod() == null ? other.getApprovedPeriod() == null : this.getApprovedPeriod().equals(other.getApprovedPeriod()))
+            && (this.getApprovedPeriodUnit() == null ? other.getApprovedPeriodUnit() == null : this.getApprovedPeriodUnit().equals(other.getApprovedPeriodUnit()))
             && (this.getCreditMode() == null ? other.getCreditMode() == null : this.getCreditMode().equals(other.getCreditMode()))
             && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
             && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
@@ -466,6 +500,8 @@ public class ScfRequestScheme implements BetterjrEntity {
         result = prime * result + ((getServicefeeRatio() == null) ? 0 : getServicefeeRatio().hashCode());
         result = prime * result + ((getPeriod() == null) ? 0 : getPeriod().hashCode());
         result = prime * result + ((getPeriodUnit() == null) ? 0 : getPeriodUnit().hashCode());
+        result = prime * result + ((getApprovedPeriod() == null) ? 0 : getApprovedPeriod().hashCode());
+        result = prime * result + ((getApprovedPeriodUnit() == null) ? 0 : getApprovedPeriodUnit().hashCode());
         result = prime * result + ((getCreditMode() == null) ? 0 : getCreditMode().hashCode());
         result = prime * result + ((getOperOrg() == null) ? 0 : getOperOrg().hashCode());
         result = prime * result + ((getRegOperId() == null) ? 0 : getRegOperId().hashCode());
@@ -510,7 +546,7 @@ public class ScfRequestScheme implements BetterjrEntity {
     public void setFactorName(String factorName) {
         this.factorName = factorName;
     }
-
+    
     public void init() {
         this.id = SerialGenerator.getLongValue("ScfRequestApproved.id");
         this.custAduit = "0";

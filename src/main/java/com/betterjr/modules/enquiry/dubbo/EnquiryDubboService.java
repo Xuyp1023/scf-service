@@ -53,7 +53,7 @@ public class EnquiryDubboService implements IScfEnquiryService {
     }
 
     public String webFindOfferDetail(Long factorNo, String enquiryNo) {
-        logger.debug("查询报价详情,入参：factorNo："+ factorNo + "  factorNo:" + enquiryNo);
+        logger.debug("查询报价详情,入参：factorNo："+ factorNo + "  enquiryNo:" + enquiryNo);
         return AjaxObject.newOk(offerService.findOfferDetail(factorNo, enquiryNo)).toJson();
     }
 

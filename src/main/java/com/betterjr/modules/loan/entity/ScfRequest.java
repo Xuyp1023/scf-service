@@ -981,7 +981,15 @@ public class ScfRequest implements BetterjrEntity {
     private String factorName;
     @Transient
     private ScfPayPlan payPlan;
-   
+    @Transient
+    private BigDecimal approvedRatio;
+    @Transient
+    private Integer approvedPeriod;
+    @Transient
+    private Integer approvedPeriodUnit;
+    @Transient
+    private BigDecimal approvedBalance;
+    
     public String getCoreCustName() {
         return coreCustName;
     }
@@ -1006,6 +1014,38 @@ public class ScfRequest implements BetterjrEntity {
         this.payPlan = payPlan;
     }
     
+    public BigDecimal getApprovedRatio() {
+        return approvedRatio;
+    }
+
+    public void setApprovedRatio(BigDecimal approvedRatio) {
+        this.approvedRatio = approvedRatio;
+    }
+
+    public Integer getApprovedPeriod() {
+        return approvedPeriod;
+    }
+
+    public void setApprovedPeriod(Integer approvedPeriod) {
+        this.approvedPeriod = approvedPeriod;
+    }
+
+    public Integer getApprovedPeriodUnit() {
+        return approvedPeriodUnit;
+    }
+
+    public void setApprovedPeriodUnit(Integer approvedPeriodUnit) {
+        this.approvedPeriodUnit = approvedPeriodUnit;
+    }
+
+    public BigDecimal getApprovedBalance() {
+        return approvedBalance;
+    }
+
+    public void setApprovedBalance(BigDecimal approvedBalance) {
+        this.approvedBalance = approvedBalance;
+    }
+
     public void init() {
         this.requestNo = SerialGenerator.getLongValue("ScfRequest.id")+"";
         this.tradeStatus = "0";

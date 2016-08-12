@@ -3,8 +3,6 @@ package com.betterjr.modules.enquiry.service;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.service.BaseService;
@@ -47,8 +45,7 @@ public class EnquiryObjectService extends BaseService<ScfEnquiryObjectMapper, Sc
      * @return
      */
     public Page<ScfEnquiryObject> queryList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
-       boolean flag = 1==anFlag;
-       return this.selectPropertyByPage(anMap, anPageNum, anPageSize, flag);
+       return this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1==anFlag);
     }
 
     /**
