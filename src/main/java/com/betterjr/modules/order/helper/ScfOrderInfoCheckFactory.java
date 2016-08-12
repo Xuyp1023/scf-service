@@ -5,6 +5,7 @@ import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
 import com.betterjr.modules.order.service.ScfInvoiceService;
+import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.order.service.ScfTransportService;
 import com.betterjr.modules.receivable.service.ScfReceivableService;
 
@@ -32,6 +33,10 @@ public class ScfOrderInfoCheckFactory {
         else if (BetterStringUtils.equals(ScfOrderRelationType.TRANSPORT.getCode(), anInfoType)) {
             orderInfoCheckService=(IScfOrderInfoCheckService) SpringContextHolder.getBean(ScfTransportService.class);
         }
+        else if (BetterStringUtils.equals(ScfOrderRelationType.ORDER.getCode(), anInfoType)) {
+            orderInfoCheckService=(IScfOrderInfoCheckService) SpringContextHolder.getBean(ScfOrderService.class);
+        }
+        
         BTAssert.notNull(orderInfoCheckService, "获取订单关联资料服务类失败");
         return orderInfoCheckService;
 

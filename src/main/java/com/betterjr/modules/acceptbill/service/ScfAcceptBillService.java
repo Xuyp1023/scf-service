@@ -42,23 +42,26 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     
     /**
      * 汇票信息分页查询
+     * @param anIsOnlyNormal 是否过滤，仅查询正常未融资数据 1：未融资 0：查询所有
      */
-    public Page<ScfAcceptBill> queryAcceptBill(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfAcceptBill> queryAcceptBill(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize) {
        
         //操作员只能查询本机构数据
         anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
         //构造custNo查询条件
         //当用户为供应商
-        if(UserUtils.findInnerRules().contains( PlatformBaseRuleType.SUPPLIER_USER)) {
+        if(UserUtils.supplierUser()) {
             anMap.put("supplierNo", anMap.get("custNo"));
-            //当用户为经销商
-        }else if(UserUtils.findInnerRules().contains( PlatformBaseRuleType.SELLER_USER)) {
-            anMap.put("supplierNo", anMap.get("custNo"));
+         //当用户为经销商
+        }else if(UserUtils.sellerUser()) {
+            anMap.put("buyerNo", anMap.get("custNo"));
         }
         anMap.remove("custNo");
-        
+        //仅查询正常未融资数据
+        if(BetterStringUtils.equals(anIsOnlyNormal, "1")) {
+            anMap.put("businStatus", new String[]{"0", "1"});
+        }
         Page<ScfAcceptBill> anAcceptBillList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
-        
         //补全关联信息
         for(ScfAcceptBill anAcceptBill : anAcceptBillList) {
             Map<String, Object> acceptBillIdMap = new HashMap<String, Object>();
@@ -129,16 +132,12 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
      */
     public void checkInfoExist(Long anId, String anOperOrg) {
         Map<String, Object> anMap = new HashMap<String, Object>();
-        List<ScfAcceptBill> acceptBillList = new LinkedList<ScfAcceptBill>();
-        String[] anBusinStatusList = {"0","1"};
+        String[] anBusinStatusList = { "0", "1" };
         anMap.put("id", anId);
         anMap.put("operOrg", anOperOrg);
-        //查询每个状态数据
-        for(int i = 0; i < anBusinStatusList.length; i++) {
-            anMap.put("businStatus", anBusinStatusList[i]);
-            List<ScfAcceptBill> tempAcceptBillList = this.selectByClassProperty(ScfAcceptBill.class, anMap);
-            acceptBillList.addAll(tempAcceptBillList);
-        }
+        anMap.put("businStatus", anBusinStatusList);
+        // 查询每个状态数据
+        List<ScfAcceptBill> acceptBillList = this.selectByClassProperty(ScfAcceptBill.class, anMap);
         if (Collections3.isEmpty(acceptBillList)) {
             logger.warn("不存在相对应id,操作机构,业务状态的汇票信息");
             throw new BytterTradeException(40001, "不存在相对应id,操作机构,业务状态的汇票信息");
@@ -166,12 +165,13 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     }
     /**
      * 变更汇票信息状态 0未处理，1完善资料，2已融资，3已过期
+     * 融资标志，0未融资，1已融资，2收款，3已还款
      * @param anId 汇票流水号
      * @param anStatus 状态
      * @param anCheckOperOrg 是否检查操作机构权限
      * @return
      */
-    private ScfAcceptBill saveAcceptBillStatus(Long anId, String anStatus, boolean anCheckOperOrg) {
+    private ScfAcceptBill saveAcceptBillStatus(Long anId, String anStatus, String anFinanceFlag, boolean anCheckOperOrg) {
         ScfAcceptBill anAcceptBill = this.selectByPrimaryKey(anId);
         BTAssert.notNull(anAcceptBill, "无法获取汇票信息");
         //检查用户权限
@@ -180,6 +180,7 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         }
         //变更状态
         anAcceptBill.setBusinStatus(anStatus);
+        anAcceptBill.setFinanceFlag(anFinanceFlag);
         anAcceptBill.setModiOperId(UserUtils.getOperatorInfo().getId());
         anAcceptBill.setModiOperName(UserUtils.getOperatorInfo().getName());
         anAcceptBill.setModiDate(BetterDateUtils.getNumDate());
@@ -192,34 +193,37 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     /**
      * 变更汇票信息 -- 完善资料
      * 0未处理，1完善资料，2已融资，3已过期
+     * 融资标志，0未融资，1已融资，2收款，3已还款
      * @param anId
      * @param anCheckOperOrg
      * @return
      */
     public ScfAcceptBill saveNormalAcceptBill(Long anId, boolean anCheckOperOrg) {
-        return this.saveAcceptBillStatus(anId, "1", anCheckOperOrg);
+        return this.saveAcceptBillStatus(anId, "1", "0", anCheckOperOrg);
     }
     
     /**
      * 变更汇票信息 -- 已融资
      * 0未处理，1完善资料，2已融资，3已过期
+     * 融资标志，0未融资，1已融资，2收款，3已还款
      * @param anId
      * @param anCheckOperOrg
      * @return
      */
     public ScfAcceptBill saveFinancedAcceptBill(Long anId, boolean anCheckOperOrg) {
-        return this.saveAcceptBillStatus(anId, "2", anCheckOperOrg);
+        return this.saveAcceptBillStatus(anId, "2","1", anCheckOperOrg);
     }
     
     /**
      * 变更汇票信息 -- 已过期
      * 0未处理，1完善资料，2已融资，3已过期
+     * 融资标志，0未融资，1已融资，2收款，3已还款
      * @param anId
      * @param anCheckOperOrg
      * @return
      */
     public ScfAcceptBill saveExpireAcceptBill(Long anId, boolean anCheckOperOrg) {
-        return this.saveAcceptBillStatus(anId, "3", anCheckOperOrg);
+        return this.saveAcceptBillStatus(anId, "3","0", anCheckOperOrg);
     }
 
 }

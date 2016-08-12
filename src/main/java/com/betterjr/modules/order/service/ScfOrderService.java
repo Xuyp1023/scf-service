@@ -24,12 +24,13 @@ import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.entity.ScfOrderRelation;
 import com.betterjr.modules.order.entity.ScfTransport;
+import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
 import com.betterjr.modules.order.helper.ScfOrderRelationType;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
 import com.betterjr.modules.receivable.service.ScfReceivableService;
 
 @Service
-public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> {
+public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> implements IScfOrderInfoCheckService {
 
     @Autowired
     private ScfOrderRelationService orderRelationService;
@@ -44,10 +45,14 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> {
 
     /**
      * 订单信息分页查询
+     * @param anIsOnlyNormal 是否过滤，仅查询正常未融资数据 1：未融资 0：查询所有
      */
-    public Page<ScfOrder> queryOrder(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfOrder> queryOrder(Map<String, Object> anMap,String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize) {
         // 操作员只能查询本机构数据
         anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+        if(BetterStringUtils.equals(anIsOnlyNormal, "1")) {
+            anMap.put("businStatus", "0");
+        }
 
         Page<ScfOrder> anOrderList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
 
@@ -227,5 +232,124 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> {
      */
     public ScfOrder saveForzenOrder(Long anId, boolean anCheckOperOrg) {
         return this.saveOrderStatus(anId, "2", anCheckOperOrg);
+    }
+    
+    /**
+     * 由requestNo融资申请编号查询相关联信息
+     * anInfoType ScfOrderRelationType资料类型
+     */
+    public List findRelationInfo(String anRequestNo, ScfOrderRelationType anInfoType) {
+        Map<String, Object> anMap = new HashMap<String, Object>();
+        anMap.put("requestNo", anRequestNo);
+        List<ScfOrder> orderList = this.findOrder(anMap);
+        //查询订单信息时 直接返回订单
+        if(BetterStringUtils.equals(ScfOrderRelationType.ACCEPTBILL.getCode(), anInfoType.getCode())) {
+            return orderList;
+        }
+        List<Object> infoList = new ArrayList<Object>();
+        for (ScfOrder anOrder : orderList) {
+            if (BetterStringUtils.equals(ScfOrderRelationType.AGGREMENT.getCode(), anInfoType.getCode())) {
+            }
+            else if (BetterStringUtils.equals(ScfOrderRelationType.ACCEPTBILL.getCode(), anInfoType.getCode())) {
+                infoList.addAll(anOrder.getAcceptBillList());
+            }
+            else if (BetterStringUtils.equals(ScfOrderRelationType.INVOICE.getCode(), anInfoType.getCode())) {
+                infoList.addAll(anOrder.getInvoiceList());
+            }
+            else if (BetterStringUtils.equals(ScfOrderRelationType.RECEIVABLE.getCode(), anInfoType.getCode())) {
+                infoList.addAll(anOrder.getReceivableList());
+            }
+            else if (BetterStringUtils.equals(ScfOrderRelationType.TRANSPORT.getCode(), anInfoType.getCode())) {
+                infoList.addAll(anOrder.getTransportList());
+            }
+        }
+        return infoList;
+    }
+    
+    /**
+     * 
+     * 根据requestNo冻结订单及相关信息状态
+     */
+    public void forzenInfos(String anRequestNo, String anStatus) {
+        List<ScfOrder> anOrderList = this.findRelationInfo(anRequestNo, ScfOrderRelationType.ORDER);
+        for(ScfOrder anOrder : anOrderList) {
+            this.saveForzenOrder(anOrder.getId(), false);
+        }
+        List<ScfInvoice> anInvoiceList = this.findRelationInfo(anRequestNo, ScfOrderRelationType.INVOICE);
+        for(ScfInvoice anInvoice : anInvoiceList) {
+            invoiceService.saveForzenInvoice(anInvoice.getId());
+        }
+        List<ScfReceivable> anReceivableList = this.findRelationInfo(anRequestNo, ScfOrderRelationType.RECEIVABLE);
+        for(ScfReceivable anScfReceivable : anReceivableList) {
+            receivableService.saveForzenReceivable(anScfReceivable.getId(), false);
+        }
+        List<ScfAcceptBill> anAcceptBillList = this.findRelationInfo(anRequestNo, ScfOrderRelationType.ACCEPTBILL);
+        for(ScfAcceptBill anScfReceivable : anAcceptBillList) {
+            acceptBillService.saveFinancedAcceptBill(anScfReceivable.getId(), false);
+        }
+    }
+    
+    /**
+     * 根据订单id,填充rquestNo
+     */
+    public void saveOrderRequestNo(Long anOrderId, String anRequestNo) {
+        ScfOrder anOrder = this.selectByPrimaryKey(anOrderId);
+        anOrder.setRequestNo(anRequestNo);
+        this.updateByPrimaryKeySelective(anOrder);
+    }
+    
+    /**
+     * requestType 1:订单，2:票据;3:应收款;
+     */
+    public void saveInfoRequestNo(String anRequestType, String anRequestNo, String anIdList){
+        String[] anIds = anIdList.split(",");
+        // 订单
+        if (BetterStringUtils.equals(anRequestType, "1")) {
+            for (String anOrderId : anIds) {
+                this.saveOrderRequestNo(Long.valueOf(anOrderId), anRequestNo);
+            }
+        }
+        //非订单
+        else {
+            for (String anInfoId : anIds) {
+                Map<String, Object> anMap = new HashMap<String, Object>();
+                anMap.put("infoId", anInfoId);
+                // 票据
+                if (BetterStringUtils.equals(anRequestType, "2")) {
+                    anMap.put("infoType", ScfOrderRelationType.ACCEPTBILL.getCode());
+                }
+                // 应收
+                else if (BetterStringUtils.equals(anRequestType, "3")) {
+                    anMap.put("infoType", ScfOrderRelationType.RECEIVABLE.getCode());
+                }
+                List<ScfOrderRelation> anOrderRelationList = orderRelationService.findOrderRelation(anMap);
+                for (ScfOrderRelation anOrderRelation : anOrderRelationList) {
+                    this.saveOrderRequestNo(anOrderRelation.getOrderId(), anRequestNo);
+                }
+            }
+        }
+    }
+    
+    /**
+     * 
+     * 根据requestNo解冻订单及相关信息状态
+     */
+    public void unForzenInfoes(String anRequestNo, String anStatus) {
+        List<ScfOrder> anOrderList = this.findRelationInfo(anRequestNo, ScfOrderRelationType.ORDER);
+        for(ScfOrder anOrder : anOrderList) {
+            this.saveNormalOrder(anOrder.getId(), false);
+        }
+        List<ScfInvoice> anInvoiceList = this.findRelationInfo(anRequestNo, ScfOrderRelationType.INVOICE);
+        for(ScfInvoice anInvoice : anInvoiceList) {
+            invoiceService.saveNormalInvoice(anInvoice.getId());
+        }
+        List<ScfReceivable> anReceivableList = this.findRelationInfo(anRequestNo, ScfOrderRelationType.RECEIVABLE);
+        for(ScfReceivable anScfReceivable : anReceivableList) {
+            receivableService.saveNormalReceivable(anScfReceivable.getId(), false);
+        }
+        List<ScfAcceptBill> anAcceptBillList = this.findRelationInfo(anRequestNo, ScfOrderRelationType.ACCEPTBILL);
+        for(ScfAcceptBill anScfReceivable : anAcceptBillList) {
+            acceptBillService.saveNormalAcceptBill(anScfReceivable.getId(), false);
+        }
     }
 }

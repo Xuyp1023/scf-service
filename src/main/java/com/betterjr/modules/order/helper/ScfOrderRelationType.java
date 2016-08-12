@@ -1,6 +1,7 @@
 package com.betterjr.modules.order.helper;
 
 public enum ScfOrderRelationType {
+        ORDER("5", "订单"),
         AGGREMENT("0", "合同"), 
         INVOICE("1", "发票"), 
         TRANSPORT("2", "运输单据"), 
