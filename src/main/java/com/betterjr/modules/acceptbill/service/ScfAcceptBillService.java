@@ -42,8 +42,9 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     
     /**
      * 汇票信息分页查询
+     * @param anIsOnlyNormal 是否过滤，仅查询正常未融资数据 1：未融资 0：查询所有
      */
-    public Page<ScfAcceptBill> queryAcceptBill(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfAcceptBill> queryAcceptBill(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize) {
        
         //操作员只能查询本机构数据
         anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
@@ -56,9 +57,17 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
             anMap.put("supplierNo", anMap.get("custNo"));
         }
         anMap.remove("custNo");
-        
-        Page<ScfAcceptBill> anAcceptBillList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
-        
+        Page<ScfAcceptBill> anAcceptBillList = new Page<ScfAcceptBill>();
+        //仅查询正常未融资数据
+        if(BetterStringUtils.equals(anIsOnlyNormal, "1")) {
+            anMap.put("businStatus", "0");
+            anAcceptBillList.addAll(this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag)));
+            anMap.put("businStatus", "1");
+            anAcceptBillList.addAll(this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag)));
+        }
+        else {
+            anAcceptBillList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
+        }
         //补全关联信息
         for(ScfAcceptBill anAcceptBill : anAcceptBillList) {
             Map<String, Object> acceptBillIdMap = new HashMap<String, Object>();
@@ -166,12 +175,13 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     }
     /**
      * 变更汇票信息状态 0未处理，1完善资料，2已融资，3已过期
+     * 融资标志，0未融资，1已融资，2收款，3已还款
      * @param anId 汇票流水号
      * @param anStatus 状态
      * @param anCheckOperOrg 是否检查操作机构权限
      * @return
      */
-    private ScfAcceptBill saveAcceptBillStatus(Long anId, String anStatus, boolean anCheckOperOrg) {
+    private ScfAcceptBill saveAcceptBillStatus(Long anId, String anStatus, String anFinanceFlag, boolean anCheckOperOrg) {
         ScfAcceptBill anAcceptBill = this.selectByPrimaryKey(anId);
         BTAssert.notNull(anAcceptBill, "无法获取汇票信息");
         //检查用户权限
@@ -180,6 +190,7 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         }
         //变更状态
         anAcceptBill.setBusinStatus(anStatus);
+        anAcceptBill.setFinanceFlag(anFinanceFlag);
         anAcceptBill.setModiOperId(UserUtils.getOperatorInfo().getId());
         anAcceptBill.setModiOperName(UserUtils.getOperatorInfo().getName());
         anAcceptBill.setModiDate(BetterDateUtils.getNumDate());
@@ -192,34 +203,37 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     /**
      * 变更汇票信息 -- 完善资料
      * 0未处理，1完善资料，2已融资，3已过期
+     * 融资标志，0未融资，1已融资，2收款，3已还款
      * @param anId
      * @param anCheckOperOrg
      * @return
      */
     public ScfAcceptBill saveNormalAcceptBill(Long anId, boolean anCheckOperOrg) {
-        return this.saveAcceptBillStatus(anId, "1", anCheckOperOrg);
+        return this.saveAcceptBillStatus(anId, "1", "0", anCheckOperOrg);
     }
     
     /**
      * 变更汇票信息 -- 已融资
      * 0未处理，1完善资料，2已融资，3已过期
+     * 融资标志，0未融资，1已融资，2收款，3已还款
      * @param anId
      * @param anCheckOperOrg
      * @return
      */
     public ScfAcceptBill saveFinancedAcceptBill(Long anId, boolean anCheckOperOrg) {
-        return this.saveAcceptBillStatus(anId, "2", anCheckOperOrg);
+        return this.saveAcceptBillStatus(anId, "2","1", anCheckOperOrg);
     }
     
     /**
      * 变更汇票信息 -- 已过期
      * 0未处理，1完善资料，2已融资，3已过期
+     * 融资标志，0未融资，1已融资，2收款，3已还款
      * @param anId
      * @param anCheckOperOrg
      * @return
      */
     public ScfAcceptBill saveExpireAcceptBill(Long anId, boolean anCheckOperOrg) {
-        return this.saveAcceptBillStatus(anId, "3", anCheckOperOrg);
+        return this.saveAcceptBillStatus(anId, "3","0", anCheckOperOrg);
     }
 
 }

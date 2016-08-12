@@ -32,10 +32,10 @@ public class ScfReceivableDubboService implements IScfReceivableService {
     }
 
     @Override
-    public String webQueryReceivable(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public String webQueryReceivable(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize) {
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
         
-        return AjaxObject.newOkWithPage("应收账款查询成功", scfReceivableService.queryReceivable(anQueryConditionMap, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject.newOkWithPage("应收账款查询成功", scfReceivableService.queryReceivable(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize)).toJson();
     }
 
 }

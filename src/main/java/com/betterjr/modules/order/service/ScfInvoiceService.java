@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.exception.BytterTradeException;
@@ -46,6 +45,8 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
     public Page<ScfInvoice> queryInvoice(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
         // 限定操作员查询本机构数据
         anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+        //仅显示可用发票
+        anMap.put("businStatus", "0");
 
         Page<ScfInvoice> anInvoiceList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
 

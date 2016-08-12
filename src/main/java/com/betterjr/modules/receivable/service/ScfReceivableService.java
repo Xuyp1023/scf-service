@@ -56,10 +56,14 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
 
     /**
      * 应收账款分页查询
+     * anIsOnlyNormal 是否过滤，仅查询正常未融资数据 1：未融资 0：查询所有
      */
-    public Page<ScfReceivable> queryReceivable(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfReceivable> queryReceivable(Map<String, Object> anMap, String anIsOnlyNormal,  String anFlag, int anPageNum, int anPageSize) {
         //操作员只能查询本机构数据
         anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+        if(BetterStringUtils.equals(anIsOnlyNormal, "1")) {
+            anMap.put("businStatus", "0");
+        }
         Page<ScfReceivable> anReceivableList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
         
         //补全关联信息
