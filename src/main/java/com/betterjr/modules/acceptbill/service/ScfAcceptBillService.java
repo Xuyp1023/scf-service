@@ -50,24 +50,18 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
         //构造custNo查询条件
         //当用户为供应商
-        if(UserUtils.findInnerRules().contains( PlatformBaseRuleType.SUPPLIER_USER)) {
+        if(UserUtils.supplierUser()) {
             anMap.put("supplierNo", anMap.get("custNo"));
-            //当用户为经销商
-        }else if(UserUtils.findInnerRules().contains( PlatformBaseRuleType.SELLER_USER)) {
-            anMap.put("supplierNo", anMap.get("custNo"));
+         //当用户为经销商
+        }else if(UserUtils.sellerUser()) {
+            anMap.put("buyerNo", anMap.get("custNo"));
         }
         anMap.remove("custNo");
-        Page<ScfAcceptBill> anAcceptBillList = new Page<ScfAcceptBill>();
         //仅查询正常未融资数据
         if(BetterStringUtils.equals(anIsOnlyNormal, "1")) {
-            anMap.put("businStatus", "0");
-            anAcceptBillList.addAll(this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag)));
-            anMap.put("businStatus", "1");
-            anAcceptBillList.addAll(this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag)));
+            anMap.put("businStatus", new String[]{"0", "1"});
         }
-        else {
-            anAcceptBillList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
-        }
+        Page<ScfAcceptBill> anAcceptBillList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
         //补全关联信息
         for(ScfAcceptBill anAcceptBill : anAcceptBillList) {
             Map<String, Object> acceptBillIdMap = new HashMap<String, Object>();
