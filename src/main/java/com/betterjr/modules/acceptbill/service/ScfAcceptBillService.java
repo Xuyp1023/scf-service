@@ -132,16 +132,12 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
      */
     public void checkInfoExist(Long anId, String anOperOrg) {
         Map<String, Object> anMap = new HashMap<String, Object>();
-        List<ScfAcceptBill> acceptBillList = new LinkedList<ScfAcceptBill>();
-        String[] anBusinStatusList = {"0","1"};
+        String[] anBusinStatusList = { "0", "1" };
         anMap.put("id", anId);
         anMap.put("operOrg", anOperOrg);
-        //查询每个状态数据
-        for(int i = 0; i < anBusinStatusList.length; i++) {
-            anMap.put("businStatus", anBusinStatusList[i]);
-            List<ScfAcceptBill> tempAcceptBillList = this.selectByClassProperty(ScfAcceptBill.class, anMap);
-            acceptBillList.addAll(tempAcceptBillList);
-        }
+        anMap.put("businStatus", anBusinStatusList);
+        // 查询每个状态数据
+        List<ScfAcceptBill> acceptBillList = this.selectByClassProperty(ScfAcceptBill.class, anMap);
         if (Collections3.isEmpty(acceptBillList)) {
             logger.warn("不存在相对应id,操作机构,业务状态的汇票信息");
             throw new BytterTradeException(40001, "不存在相对应id,操作机构,业务状态的汇票信息");
