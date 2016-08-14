@@ -48,7 +48,7 @@ public class OfferService extends BaseService<ScfOfferMapper, ScfOffer> {
      * @return
      */
     public ScfOffer addOffer(ScfOffer anOffer) {
-        BTAssert.notNull(anOffer, "webAddOffer service failed offer =null");
+        BTAssert.notNull(anOffer, "增加报价失败webAddOffer service failed offer =null");
         anOffer.init();
         this.insert(anOffer);
         return anOffer;
@@ -72,7 +72,7 @@ public class OfferService extends BaseService<ScfOfferMapper, ScfOffer> {
         }
         
         ScfOffer offer = Collections3.getFirst(offerList);
-        offer .setCustName(custAccountService.queryCustName(offer.getCustNo()));
+        offer.setCustName(custAccountService.queryCustName(offer.getCustNo()));
         offer.setFactorName(custAccountService.queryCustName(offer.getFactorNo()));
         return offer;
     }

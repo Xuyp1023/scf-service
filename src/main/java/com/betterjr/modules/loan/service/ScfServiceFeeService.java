@@ -21,7 +21,7 @@ public class ScfServiceFeeService extends BaseService<ScfServiceFeeMapper, ScfSe
      * @return
      */
     public ScfServiceFee addServiceFee(ScfServiceFee anServiceFee) {
-        BTAssert.notNull(anServiceFee, "anServiceFee不能为空");
+        BTAssert.notNull(anServiceFee, "新增手续费记录失败-anServiceFee不能为空");
         anServiceFee.init();
         this.insert(anServiceFee);
         return findServiceFeeDetail(anServiceFee.getId());
@@ -34,13 +34,13 @@ public class ScfServiceFeeService extends BaseService<ScfServiceFeeMapper, ScfSe
      * @return
      */
     public ScfServiceFee saveModifyServiceFee(ScfServiceFee anServiceFee, Long anId) {
-        BTAssert.notNull(anServiceFee, "anServiceFee不能为空");
+        BTAssert.notNull(anServiceFee, "修改手续费记录失败-anServiceFee不能为空");
 
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("factorNo", anServiceFee.getFactorNo());
         map.put("id", anId);
         if(Collections3.isEmpty(selectByClassProperty(ScfServiceFee.class, map))){
-            throw new IllegalArgumentException("找不到原数据");
+            throw new IllegalArgumentException("修改手续费记录失败-找不到原数据");
         }
 
         anServiceFee.initModify();
@@ -69,7 +69,7 @@ public class ScfServiceFeeService extends BaseService<ScfServiceFeeMapper, ScfSe
      * @return
      */
     public ScfServiceFee findServiceFeeDetail(Long anId) {
-        BTAssert.notNull(anId, "anId不能为空");
+        BTAssert.notNull(anId, "查询手续费记录详情失败-anId不能为空");
         ScfServiceFee fee =  this.selectByPrimaryKey(anId);
         if(null == fee){
             return new ScfServiceFee();

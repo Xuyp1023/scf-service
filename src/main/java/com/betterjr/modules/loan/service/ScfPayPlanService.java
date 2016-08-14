@@ -43,8 +43,6 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
     @Autowired
     private ScfRequestSchemeService schemeService;
     
-    @Autowired
-    private ScfLoanService loanService;
 
     /**
      * 新增还款计划
@@ -53,7 +51,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
      * @return
      */
     public ScfPayPlan addPayPlan(ScfPayPlan anPlan) {
-        BTAssert.notNull(anPlan, "anPlan不能为空");
+        BTAssert.notNull(anPlan, "新增还款计划失败-anPlan不能为空");
 
         anPlan.init();
         this.insert(anPlan);
@@ -67,13 +65,13 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
      * @return
      */
     public ScfPayPlan saveModifyPayPlan(ScfPayPlan anPlan, Long anId) {
-        BTAssert.notNull(anPlan, "anPlan不能为空");
+        BTAssert.notNull(anPlan, "修改还款计划失败-anPlan不能为空");
 
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("factorNo", anPlan.getFactorNo());
         map.put("id", anId);
         if (Collections3.isEmpty(selectByClassProperty(ScfPayPlan.class, map))) {
-            throw new IllegalArgumentException("找不到原数据");
+            throw new IllegalArgumentException("修改还款计划失败-找不到原数据");
         }
 
         anPlan.initModify();
@@ -107,7 +105,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
      * @return
      */
     public ScfPayPlan findPayPlanDetail(Long anId) {
-        BTAssert.notNull(anId, "anId不能为空");
+        BTAssert.notNull(anId, "查询还款计划失败-anId不能为空");
 
         ScfPayPlan plan = this.selectByPrimaryKey(anId);
         if (null == plan) {
@@ -128,10 +126,10 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
     public ScfPayPlan findPayPlanByProperty(Map<String, Object> anPropValue) {
         @SuppressWarnings("unchecked")
         List<ScfPayPlan> list = this.selectByClassProperty(ScfPayPlan.class, anPropValue);
-        if (!Collections3.isEmpty(list)) {
-            return list.get(0);
+        if (Collections3.isEmpty(list)) {
+            return new ScfPayPlan();
         }
-        return new ScfPayPlan();
+        return Collections3.getFirst(list);
     }
 
     /**
@@ -148,11 +146,11 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         }
 
         // 1：日，1：月，
-        if (1 == scheme.getPeriodUnit()) {
-            endDate = BetterDateUtils.addStrDays(anLoanDate, scheme.getPeriod());
+        if (1 == scheme.getApprovedPeriod()) {
+            endDate = BetterDateUtils.addStrDays(anLoanDate, scheme.getApprovedPeriod());
         }
         else {
-            endDate = BetterDateUtils.addStrMonths(anLoanDate, scheme.getPeriod());
+            endDate = BetterDateUtils.addStrMonths(anLoanDate, scheme.getApprovedPeriod());
         }
 
         // 算头不算尾，所以减掉一天
@@ -183,8 +181,8 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
             return new BigDecimal(0);
         }
 
-        BigDecimal fee = anLoanBalance.multiply(ratio).multiply(new BigDecimal(scheme.getPeriod())).divide(scale);
-        logger.debug("本金："+ anLoanBalance + "--利率："+ ratio + "--天数："+ scheme.getPeriod() + "--scale:"+ scale + "--费用="+ fee);
+        BigDecimal fee = anLoanBalance.multiply(ratio).multiply(new BigDecimal(scheme.getApprovedPeriod())).divide(scale);
+        logger.debug("本金："+ anLoanBalance + "--利率："+ ratio + "--天数："+ scheme.getApprovedPeriod() + "--scale:"+ scale + "--费用="+ fee);
         return fee;
     }
 
@@ -198,7 +196,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         map.put("requestNo", anRequestNo);
         List<ScfPayPlan> list = this.selectByClassProperty(ScfPayPlan.class, map);
         if (Collections3.isEmpty(list)) {
-            throw new IllegalArgumentException("找不到原数据");
+            throw new IllegalArgumentException("查询还款费用失败-找不到还款计划");
         }
 
         ScfPayRecord record = new ScfPayRecord();
@@ -213,7 +211,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         //还款类型：1：正常还款，2：提前还款，3：逾期还款，4：豁免，5：逾期豁免, 6:经销商还款，
         if("2".equals(anPayType)){
             FactorParam param = DictUtils.loadObject("FactorParam", anFactorNo, FactorParam.class);
-            BTAssert.notNull(param, "请设置系统参数");
+            BTAssert.notNull(param, "查询还款费用失败-请先设置系统参数");
             
             //本次还款本金 * 利息   / 100
             BigDecimal servicefee = plan.getSurplusPrincipalBalance().multiply(param.getAdvanceRepaymentRatio()).divide(new BigDecimal(100));
@@ -245,7 +243,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         //计算利率(如果为月则换算成天=ratio*12/一年的天数)
         BigDecimal ratio = plan.getRatio();
         BigDecimal mgrRatio = plan.getManagementRatio();
-        if(BetterStringUtils.equals("2", scheme.getPeriodUnit().toString())){
+        if(BetterStringUtils.equals("2", scheme.getApprovedPeriodUnit().toString())){
             FactorParam param = DictUtils.loadObject("FactorParam", plan.getFactorNo().toString(), FactorParam.class);
             ratio = ratio.multiply(new BigDecimal(12)).divide(new BigDecimal(param.getCountDays())).setScale(2, BigDecimal.ROUND_HALF_UP);
             mgrRatio = mgrRatio.multiply(new BigDecimal(12)).divide(new BigDecimal(param.getCountDays())).setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -308,7 +306,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         }
         
         FactorParam param = DictUtils.loadObject("FactorParam", anCustNo, FactorParam.class);
-        BTAssert.notNull(param, "请设置系统参数");
+        BTAssert.notNull(param, "获取逾期费用失败，请先设置系统参数");
         anRecord.setOverdueDays(overDays);
 
         // 本次还款本金 * 利息 * 天数 / 1000
@@ -328,7 +326,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
             //逾期天数
             int overDays = BetterDateUtils.getDaysBetween(planCalendar , nowCalendar);
             FactorParam param = DictUtils.loadObject("FactorParam", custNo, FactorParam.class);
-            BTAssert.notNull(param, "请设置系统参数");
+            BTAssert.notNull(param, "获取逾期天数失败-请先设置系统参数");
             
             //是否大于宽限限
             if(overDays > param.getGraceDays()){
@@ -340,7 +338,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
     
     public ScfPayPlan saveRepayment(ScfPayRecord anRecord) {
         ScfPayPlan plan = findPayPlanDetail(anRecord.getPayPlanId());
-        BTAssert.notNull(plan, "找不到还款计划");
+        BTAssert.notNull(plan, "保存还款失败-找不到还款计划");
         
         //新增还款记录
         anRecord.setCustNo(plan.getCustNo());
@@ -360,10 +358,11 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
             if(anRecord.getTotalBalance().compareTo(plan.getSurplusTotalBalance()) < 0){
                 //这一次没有还完（还款金额 小于 剩余金额） 则 根据 剩余本金 重新计算 剩余利息
                 
-                //设置 新的 开始计息日（今天的利息已经收了，从明天开始 所以要加一天）
-                BetterDateUtils.addStrDays(anRecord.getPayDate(), 1);
-                plan.setStartDate(anRecord.getPayDate());
-                //TODO 设置新的应还 未还
+                //设置 新的 开始计息日（今天的利息已经收了，从明天开始 所以要往后推一天）
+                plan.setStartDate(BetterDateUtils.addStrDays(anRecord.getPayDate(), 1));
+                
+                //TODO 设置新的应还 未还plan.getPlanDate();
+                
             }
         }
         

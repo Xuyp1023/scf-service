@@ -1,7 +1,6 @@
 package com.betterjr.modules.loan.service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -23,15 +22,14 @@ public class DeliveryNoticeService extends BaseService<ScfDeliveryNoticeMapper, 
      * @return
      */
     public ScfDeliveryNotice saveModifyEnquiry(ScfDeliveryNotice anNotice, Long anId) {
-        BTAssert.notNull(anNotice, "anNotice不能为空");
+        BTAssert.notNull(anNotice, "修改通知单失败-anNotice不能为空");
         
         //检查该数据据是否合法
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("custNo", anNotice.getCustNo());
         map.put("id", anId);
-        List<ScfDeliveryNotice> list = selectByClassProperty(ScfDeliveryNotice.class, map);
-        if(Collections3.isEmpty(list) || list.size() == 0){
-            throw new IllegalArgumentException("修改询价失败，找不到源数据id:"+anId);
+        if(Collections3.isEmpty(selectByClassProperty(ScfDeliveryNotice.class, map))){
+            throw new IllegalArgumentException("修改通知单失败，找不到源数据id:"+anId);
         }
         
         anNotice.initModify();
@@ -61,7 +59,7 @@ public class DeliveryNoticeService extends BaseService<ScfDeliveryNoticeMapper, 
      * @return
      */
      public ScfDeliveryNotice addDeliveryNotice(ScfDeliveryNotice anNotice) {
-         BTAssert.notNull(anNotice, "anNotice不能为空");
+         BTAssert.notNull(anNotice, "新增通知单失败anNotice不能为空");
          anNotice.init();
          this.insert(anNotice);
          return anNotice;

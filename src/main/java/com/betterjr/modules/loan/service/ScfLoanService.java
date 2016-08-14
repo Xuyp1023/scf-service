@@ -26,7 +26,7 @@ public class ScfLoanService extends BaseService<ScfLoanMapper, ScfLoan> {
      * @return
      */
     public ScfLoan addLoan(ScfLoan anLoan) {
-        BTAssert.notNull(anLoan, "anLoan不能为空");
+        BTAssert.notNull(anLoan, "新增放款记录失败-anLoan不能为空");
         anLoan.init();
         this.insert(anLoan);
         return findLoanDetail(anLoan.getId());
@@ -39,7 +39,7 @@ public class ScfLoanService extends BaseService<ScfLoanMapper, ScfLoan> {
      * @return
      */
     public ScfLoan saveModifyLoan(ScfLoan anLoan, Long anId) {
-        BTAssert.notNull(anLoan, "anLoan不能为空");
+        BTAssert.notNull(anLoan, "修改放款记录失败-anLoan不能为空");
 
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("factorNo", anLoan.getFactorNo());
@@ -79,7 +79,7 @@ public class ScfLoanService extends BaseService<ScfLoanMapper, ScfLoan> {
      * @return
      */
     public ScfLoan findLoanDetail(Long anId) {
-        BTAssert.notNull(anId, "anId不能为空");
+        BTAssert.notNull(anId, "查询放款记录详情失败-anId不能为空");
         
         ScfLoan loan = this.selectByPrimaryKey(anId);
         if(null == loan){

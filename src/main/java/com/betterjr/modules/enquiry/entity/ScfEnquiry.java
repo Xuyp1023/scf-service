@@ -423,7 +423,7 @@ public class ScfEnquiry implements BetterjrEntity {
 
     public void init() {
         this.id=SerialGenerator.getLongValue("ScfEnquiry.id");
-        this.enquiryNo=this.id + "";
+        this.enquiryNo = getId().toString();
         this.actualDate = BetterDateUtils.getNumDate();
         this.regOperName = UserUtils.getUserName();
         this.regOperId = UserUtils.getOperatorInfo().getId();
