@@ -8,7 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
@@ -17,6 +16,7 @@ import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.MathExtend;
 import com.betterjr.common.utils.UserUtils;
+import com.betterjr.modules.credit.constant.CreditConstants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -39,7 +39,11 @@ public class ScfCredit implements BetterjrEntity {
     @MetaData(value = "核心企业", comments = "核心企业")
     private Long coreCustNo;
 
-    @Transient
+    /**
+     * 核心企业名称
+     */
+    @Column(name = "C_CORE_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "核心企业名称", comments = "核心企业名称")
     private String coreName;
 
     /**
@@ -49,7 +53,11 @@ public class ScfCredit implements BetterjrEntity {
     @MetaData(value = "保理公司", comments = "保理公司")
     private Long factorNo;
 
-    @Transient
+    /**
+     * 保理公司名称
+     */
+    @Column(name = "C_FACTORNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "保理公司名称", comments = "保理公司名称")
     private String factorName;
 
     /**
@@ -66,7 +74,11 @@ public class ScfCredit implements BetterjrEntity {
     @MetaData(value = "客户编号", comments = "客户编号")
     private Long custNo;
 
-    @Transient
+    /**
+     * 客户名称
+     */
+    @Column(name = "C_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "客户名称", comments = "客户名称")
     private String custName;
 
     /**
@@ -245,10 +257,10 @@ public class ScfCredit implements BetterjrEntity {
     private String terminatTime;
 
     /**
-     * 状态(0:未生效;1:已生效;3:已过期;)
+     * 状态(0:未生效;1:已生效;2:已失效;)
      */
     @Column(name = "C_BUSIN_STATUS", columnDefinition = "VARCHAR")
-    @MetaData(value = "状态(0:未生效;1:已生效;3:已过期;)", comments = "状态(0:未生效;1:已生效;3:已过期;)")
+    @MetaData(value = "状态(0:未生效;1:已生效;2:已失效;)", comments = "状态(0:未生效;1:已生效;2:已失效;)")
     private String businStatus;
 
     /**
@@ -548,7 +560,9 @@ public class ScfCredit implements BetterjrEntity {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", coreCustNo=").append(coreCustNo);
+        sb.append(", coreName=").append(coreName);
         sb.append(", factorNo=").append(factorNo);
+        sb.append(", factorName=").append(factorName);
         sb.append(", creditType=").append(creditType);
         sb.append(", custNo=").append(custNo);
         sb.append(", creditLimit=").append(creditLimit);
@@ -596,9 +610,12 @@ public class ScfCredit implements BetterjrEntity {
         ScfCredit other = (ScfCredit) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
                 && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
+                && (this.getCoreName() == null ? other.getCoreName() == null : this.getCoreName().equals(other.getCoreName()))
                 && (this.getFactorNo() == null ? other.getFactorNo() == null : this.getFactorNo().equals(other.getFactorNo()))
+                && (this.getFactorName() == null ? other.getFactorName() == null : this.getFactorName().equals(other.getFactorName()))
                 && (this.getCreditType() == null ? other.getCreditType() == null : this.getCreditType().equals(other.getCreditType()))
                 && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
+                && (this.getCustName() == null ? other.getCustName() == null : this.getCustName().equals(other.getCustName()))
                 && (this.getCreditLimit() == null ? other.getCreditLimit() == null : this.getCreditLimit().equals(other.getCreditLimit()))
                 && (this.getCreditUsed() == null ? other.getCreditUsed() == null : this.getCreditUsed().equals(other.getCreditUsed()))
                 && (this.getCreditBalance() == null ? other.getCreditBalance() == null : this.getCreditBalance().equals(other.getCreditBalance()))
@@ -635,9 +652,12 @@ public class ScfCredit implements BetterjrEntity {
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         result = prime * result + ((getCoreCustNo() == null) ? 0 : getCoreCustNo().hashCode());
+        result = prime * result + ((getCoreName() == null) ? 0 : getCoreName().hashCode());
         result = prime * result + ((getFactorNo() == null) ? 0 : getFactorNo().hashCode());
+        result = prime * result + ((getFactorName() == null) ? 0 : getFactorName().hashCode());
         result = prime * result + ((getCreditType() == null) ? 0 : getCreditType().hashCode());
         result = prime * result + ((getCustNo() == null) ? 0 : getCustNo().hashCode());
+        result = prime * result + ((getCustName() == null) ? 0 : getCustName().hashCode());
         result = prime * result + ((getCreditLimit() == null) ? 0 : getCreditLimit().hashCode());
         result = prime * result + ((getCreditUsed() == null) ? 0 : getCreditUsed().hashCode());
         result = prime * result + ((getCreditBalance() == null) ? 0 : getCreditBalance().hashCode());
@@ -683,9 +703,9 @@ public class ScfCredit implements BetterjrEntity {
 
     public void initAddValue() {
         init();
-        calculate();
-        this.businStatus = "0";// 授信状态:0-未生效;1-已生效;2-已过期;
         this.creditUsed = BigDecimal.ZERO;
+        calculate();
+        this.businStatus = CreditConstants.CREDIT_STATUS_INEFFECTIVE;// 授信状态:0-未生效;1-已生效;2-已失效;
     }
 
     public void initModifyValue(ScfCredit anCredit) {
@@ -711,7 +731,7 @@ public class ScfCredit implements BetterjrEntity {
         this.activateOperName = UserUtils.getOperatorInfo().getName();
         this.activateDate = BetterDateUtils.getNumDate();
         this.activateTime = BetterDateUtils.getNumTime();
-        this.businStatus = "1";// 授信状态:0-未生效;1-已生效;2-已过期;
+        this.businStatus = CreditConstants.CREDIT_STATUS_EFFECTIVE;// 授信状态:0-未生效;1-已生效;2-已失效;
     }
 
     public void initTerminatValue() {
@@ -719,7 +739,7 @@ public class ScfCredit implements BetterjrEntity {
         this.terminatOperName = UserUtils.getOperatorInfo().getName();
         this.terminatDate = BetterDateUtils.getNumDate();
         this.terminatTime = BetterDateUtils.getNumTime();
-        this.businStatus = "2";// 授信状态:0-未生效;1-已生效;2-已过期;
+        this.businStatus = CreditConstants.CREDIT_STATUS_INVALID;// 授信状态:0-未生效;1-已生效;2-已失效;
     }
 
     public void occupyCreditBalance(BigDecimal anCreditUsed, BigDecimal anCreditBalance, BigDecimal anOccupyBalance) {

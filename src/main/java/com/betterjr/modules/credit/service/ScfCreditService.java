@@ -17,6 +17,7 @@ import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.account.service.CustAndOperatorRelaService;
+import com.betterjr.modules.credit.constant.CreditConstants;
 import com.betterjr.modules.credit.dao.ScfCreditMapper;
 import com.betterjr.modules.credit.entity.ScfCredit;
 import com.betterjr.modules.credit.entity.ScfCreditDetail;
@@ -43,42 +44,37 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
      * @return
      */
     public Page<ScfCredit> queryCredit(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
-        //
+        // 入参检查
         checkCreditCondition(anMap);
 
         // 查询授信记录
-        Page<ScfCredit> anCreditList = this.selectPropertyByPage(ScfCredit.class, anMap, anPageNum, anPageSize, "1".equals(anFlag));
-
-        // 设置企业名称
-        for (ScfCredit anCredit : anCreditList) {
-            // 核心企业名称
-            anCredit.setCoreName(custAccountService.queryCustName(anCredit.getCoreCustNo()));
-            // 保理商名称
-            anCredit.setFactorName(custAccountService.queryCustName(anCredit.getFactorNo()));
-            // 企业名称
-            anCredit.setCustName(custAccountService.queryCustName(anCredit.getCustNo()));
-        }
-
-        return anCreditList;
+        return this.selectPropertyByPage(ScfCredit.class, anMap, anPageNum, anPageSize, "1".equals(anFlag));
     }
 
     private void checkCreditCondition(Map<String, Object> anMap) {
-        // 检查是否为保理操作员,保理操作员必须使用operOrg进行数据过滤,且需要处理入参:授信对象(1:供应商;2:经销商;3:核心企业;)
-        // anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
-        Object anCreditType = anMap.get("creditType");
-        if (null == anCreditType || anCreditType.toString().isEmpty()) {
-            anMap.put("creditType", new String[] { "1", "2", "3" });
-        }
-
-        // 客户(核心企业、供应商、经销商)查询时,客户编号必填,核心企业和保理商为非比填项
-        //BTAssert.notNull(anMap.get("custNo"), "客户编号不能为空");
-        String[] sFilterKey = new String[] { "coreCustNo", "factorNo" };
-        for (String anTempKey : sFilterKey) {
-            Object anTempValue = anMap.get(anTempKey);
-            if (null == anTempValue || anTempValue.toString().isEmpty()) {
-                anMap.remove(anTempKey);
+        // 保理机构查询
+        if (UserUtils.factorUser()) {
+            // 使用operOrg过滤数据
+            anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+            // 授信对象(1:供应商;2:经销商;3:核心企业;)
+            Object anCreditType = anMap.get("creditType");
+            if (null == anCreditType || anCreditType.toString().isEmpty()) {
+                anMap.put("creditType",
+                        new String[] { CreditConstants.CREDIT_TYPE_SUPPLIER, CreditConstants.CREDIT_TYPE_SELLER, CreditConstants.CREDIT_TYPE_CORE });
             }
         }
+        else {
+            BTAssert.notNull(anMap.get("custNo"), "客户编号不能为空");
+            // 客户(核心企业、供应商、经销商)查询时,客户编号必填,核心企业和保理商为非比填项
+            String[] sFilterKey = new String[] { "coreCustNo", "factorNo" };
+            for (String anTempKey : sFilterKey) {
+                Object anTempValue = anMap.get(anTempKey);
+                if (null == anTempValue || anTempValue.toString().isEmpty()) {
+                    anMap.remove(anTempKey);
+                }
+            }
+        }
+
     }
 
     /**
@@ -93,8 +89,8 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         // 初始化参数
         anCredit.initAddValue();
 
-        // 设置操作员所属保理公司客户号
-        anCredit.setFactorNo(Collections3.getFirst(custAndOperatorRelaService.findCustNoList(anCredit.getRegOperId(), anCredit.getOperOrg())));
+        // 设置企业名称
+        initName(anCredit);
 
         // 检查是否已授信
         checkCreditExists(anCredit);
@@ -105,20 +101,32 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         // 数据存盘-授信额度变动
         ScfCreditDetail anCreditDetail = new ScfCreditDetail();
         anCreditDetail.initAddValue(anCredit.getCustNo(), anCredit.getCreditLimit(), anCredit.getId());
-        anCreditDetail.setDirection("0");// 方向：0-收;1-支;
+        anCreditDetail.setCustName(custAccountService.queryCustName(anCredit.getCustNo()));
+        anCreditDetail.setDirection(CreditConstants.CREDIT_DIRECTION_INCOME);// 方向：0-收;1-支;
         scfCreditDetailService.insert(anCreditDetail);
 
         return anCredit;
     }
 
+    private void initName(ScfCredit anCredit) {
+        // 设置操作员所属保理公司客户号
+        Long anFactorNo = Collections3.getFirst(custAndOperatorRelaService.findCustNoList(anCredit.getRegOperId(), anCredit.getOperOrg()));
+        anCredit.setFactorNo(anFactorNo);
+        anCredit.setFactorName(custAccountService.queryCustName(anCredit.getFactorNo()));
+        // 设置核心企业名称
+        anCredit.setCoreName(custAccountService.queryCustName(anCredit.getCoreCustNo()));
+        // 设置客户名称
+        anCredit.setCustName(custAccountService.queryCustName(anCredit.getCustNo()));
+    }
+
     private void checkCreditExists(ScfCredit anCredit) {
-        // 授信额度入参
         Map<String, Object> anMap = new HashMap<String, Object>();
         anMap.put("custNo", anCredit.getCustNo());
         anMap.put("factorNo", anCredit.getFactorNo());
+        anMap.put("coreCustNo", anCredit.getCoreCustNo());
         anMap.put("creditMode", anCredit.getCreditMode());
-        anMap.put("businStatus", new String[] { "0", "1" });// 授信状态:0-未生效;1-已生效;2-已过期;
-        // 查询结果
+        // 授信状态:0-未生效;1-已生效;2-已失效;
+        anMap.put("businStatus", new String[] { CreditConstants.CREDIT_STATUS_INEFFECTIVE, CreditConstants.CREDIT_STATUS_EFFECTIVE });
         if (Collections3.isEmpty(this.selectByProperty(anMap)) == false) {
             logger.info("当前客户已存在该授信类型的记录,不允许重复授信");
             throw new BytterTradeException(40001, "当前客户已存在该授信类型的记录,不允许重复授信");
@@ -143,10 +151,10 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         checkOperator(anCredit.getOperOrg(), "当前操作员不能修改该授信记录");
 
         // 检查授信状态,不允许修改已生效的授信记录
-        checkStatus(anCredit.getBusinStatus(), "1", true, "授信记录已生效,不允许修改");
+        checkStatus(anCredit.getBusinStatus(), CreditConstants.CREDIT_STATUS_EFFECTIVE, true, "授信记录已生效,不允许修改");
 
-        // 检查授信状态,不允许修改已过期的授信记录
-        checkStatus(anCredit.getBusinStatus(), "2", true, "授信记录已过期,不允许修改");
+        // 检查授信状态,不允许修改已失效的授信记录
+        checkStatus(anCredit.getBusinStatus(), CreditConstants.CREDIT_STATUS_INVALID, true, "授信记录已失效,不允许修改");
 
         // 设置修改信息
         anModiCredit.initModifyValue(anCredit);
@@ -160,17 +168,14 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         // 授信额度发生改变
         if (balance.longValue() != 0) {
             ScfCreditDetail anCreditDetail = new ScfCreditDetail();
-            anCreditDetail.initModifyValue(anCredit.getCustNo(), anCredit.getId());
-            // 授信额度增加
-            if (balance.longValue() < 0) {
-                anCreditDetail.setDirection("0");// 方向：0-收;1-支;
+            anCreditDetail.initModifyValue(anCredit.getCustNo(), anCredit.getCustName(), anCredit.getId());
+            if (balance.longValue() < 0) {// 授信额度增加
+                anCreditDetail.setDirection(CreditConstants.CREDIT_DIRECTION_INCOME);// 方向：0-收;1-支;
             }
-            // 授信额度减少
-            if (balance.longValue() > 0) {
-                anCreditDetail.setDirection("1");// 方向：0-收;1-支;
+            if (balance.longValue() > 0) {// 授信额度减少
+                anCreditDetail.setDirection(CreditConstants.CREDIT_DIRECTION_EXPEND);// 方向：0-收;1-支;
             }
-            // 变动额度
-            anCreditDetail.setBalance(balance.abs());
+            anCreditDetail.setBalance(balance.abs());// 变动额度
             // 数据存盘-授信额度调整明细
             scfCreditDetailService.insert(anCreditDetail);
         }
@@ -195,13 +200,13 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         checkOperator(anCredit.getOperOrg(), "当前操作员不能激活该授信记录");
 
         // 检查授信状态,不允许激活已生效的授信记录
-        checkStatus(anCredit.getBusinStatus(), "1", true, "授信记录已生效");
+        checkStatus(anCredit.getBusinStatus(), CreditConstants.CREDIT_STATUS_EFFECTIVE, true, "授信记录已生效");
 
-        // 检查授信状态,不允许激活已过期的授信记录
-        checkStatus(anCredit.getBusinStatus(), "2", true, "授信记录已过期");
+        // 检查授信状态,不允许激活已失效的授信记录
+        checkStatus(anCredit.getBusinStatus(), CreditConstants.CREDIT_STATUS_INVALID, true, "授信记录已失效");
 
         // 检查授信合同是否存在
-        BTAssert.notNull(anCredit.getAgreeId(), "未关联授信合同,不能激活授信记录");
+        BTAssert.notNull(anCredit.getAgreeId(), "请选择保理授信合同,不能激活授信记录");
 
         // 设置激活信息
         anCredit.initActivateValue();
@@ -229,10 +234,10 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         checkOperator(anCredit.getOperOrg(), "当前操作员不能终止该授信记录");
 
         // 检查授信状态,不允许终止未生效的授信记录
-        checkStatus(anCredit.getBusinStatus(), "0", true, "授信记录未生效");
+        checkStatus(anCredit.getBusinStatus(), CreditConstants.CREDIT_STATUS_INEFFECTIVE, true, "授信记录未生效");
 
-        // 检查授信状态,不允许终止已过期的授信记录
-        checkStatus(anCredit.getBusinStatus(), "2", true, "授信记录已过期");
+        // 检查授信状态,不允许终止已失效的授信记录
+        checkStatus(anCredit.getBusinStatus(), CreditConstants.CREDIT_STATUS_INVALID, true, "授信记录已失效");
 
         // 设置授信终止信息
         anCredit.initTerminatValue();
@@ -249,7 +254,7 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         anMap.put("coreCustNo", anCoreNo);
         anMap.put("factorNo", anFactorNo);
         anMap.put("creditMode", anCreditMode);
-        anMap.put("businStatus", "1");// 授信状态:0-未生效;1-已生效;2-已过期;
+        anMap.put("businStatus", CreditConstants.CREDIT_STATUS_EFFECTIVE);// 授信状态:0-未生效;1-已生效;2-已失效;
 
         return Collections3.getFirst(this.selectByProperty(anMap));
     }
@@ -258,7 +263,7 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         BTAssert.notNull(anCustNo, "客户编号不能为空");
         Map<String, Object> anMap = new HashMap<String, Object>();
         anMap.put("custNo", anCustNo);
-        anMap.put("businStatus", "1");// 授信状态:0-未生效;1-已生效;2-已过期;
+        anMap.put("businStatus", CreditConstants.CREDIT_STATUS_EFFECTIVE);// 授信状态:0-未生效;1-已生效;2-已失效;
         // 授信额度总和 + 累计已使用额度 + 授信余额总和
         String[] anSumFields = new String[] { "creditLimit", "creditUsed", "creditBalance", };
         return findCreditSum(anMap, anSumFields);

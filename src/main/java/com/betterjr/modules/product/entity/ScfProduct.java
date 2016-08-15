@@ -38,7 +38,11 @@ public class ScfProduct implements BetterjrEntity {
     @MetaData(value = "核心企业", comments = "核心企业")
     private Long coreCustNo;
 
-    @Transient
+    /**
+     * 核心企业名称
+     */
+    @Column(name = "C_CORE_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "核心企业名称", comments = "核心企业名称")
     private String coreName;
 
     /**
@@ -48,7 +52,11 @@ public class ScfProduct implements BetterjrEntity {
     @MetaData(value = "保理公司编号", comments = "保理公司编号")
     private Long factorNo;
 
-    @Transient
+    /**
+     * 保理公司名称
+     */
+    @Column(name = "C_FACTORNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "保理公司名称", comments = "保理公司名称")
     private String factorName;
 
     /**
@@ -564,7 +572,9 @@ public class ScfProduct implements BetterjrEntity {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", coreCustNo=").append(coreCustNo);
+        sb.append(", coreName=").append(coreName);
         sb.append(", factorNo=").append(factorNo);
+        sb.append(", factorName=").append(factorName);
         sb.append(", factorCorp=").append(factorCorp);
         sb.append(", productCode=").append(productCode);
         sb.append(", productName=").append(productName);
@@ -614,6 +624,8 @@ public class ScfProduct implements BetterjrEntity {
         ScfProduct other = (ScfProduct) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
                 && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
+                && (this.getCoreName() == null ? other.getCoreName() == null : this.getCoreName().equals(other.getCoreName()))
+                && (this.getFactorName() == null ? other.getFactorName() == null : this.getFactorName().equals(other.getFactorName()))
                 && (this.getFactorNo() == null ? other.getFactorNo() == null : this.getFactorNo().equals(other.getFactorNo()))
                 && (this.getFactorCorp() == null ? other.getFactorCorp() == null : this.getFactorCorp().equals(other.getFactorCorp()))
                 && (this.getProductCode() == null ? other.getProductCode() == null : this.getProductCode().equals(other.getProductCode()))
@@ -657,7 +669,9 @@ public class ScfProduct implements BetterjrEntity {
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         result = prime * result + ((getCoreCustNo() == null) ? 0 : getCoreCustNo().hashCode());
+        result = prime * result + ((getCoreName() == null) ? 0 : getCoreName().hashCode());
         result = prime * result + ((getFactorNo() == null) ? 0 : getFactorNo().hashCode());
+        result = prime * result + ((getFactorName() == null) ? 0 : getFactorName().hashCode());
         result = prime * result + ((getFactorCorp() == null) ? 0 : getFactorCorp().hashCode());
         result = prime * result + ((getProductCode() == null) ? 0 : getProductCode().hashCode());
         result = prime * result + ((getProductName() == null) ? 0 : getProductName().hashCode());

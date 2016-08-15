@@ -8,13 +8,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.modules.credit.constant.CreditConstants;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
@@ -36,7 +36,11 @@ public class ScfCreditDetail implements BetterjrEntity {
     @MetaData(value = "客户编号", comments = "客户编号")
     private Long custNo;
 
-    @Transient
+    /**
+     * 客户名称
+     */
+    @Column(name = "C_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "客户名称", comments = "客户名称")
     private String custName;
 
     /**
@@ -224,6 +228,7 @@ public class ScfCreditDetail implements BetterjrEntity {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", custNo=").append(custNo);
+        sb.append(", custName=").append(custName);
         sb.append(", occupyDate=").append(occupyDate);
         sb.append(", occupyTime=").append(occupyTime);
         sb.append(", balance=").append(balance);
@@ -253,6 +258,7 @@ public class ScfCreditDetail implements BetterjrEntity {
         ScfCreditDetail other = (ScfCreditDetail) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
                 && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
+                && (this.getCustName() == null ? other.getCustName() == null : this.getCustName().equals(other.getCustName()))
                 && (this.getOccupyDate() == null ? other.getOccupyDate() == null : this.getOccupyDate().equals(other.getOccupyDate()))
                 && (this.getOccupyTime() == null ? other.getOccupyTime() == null : this.getOccupyTime().equals(other.getOccupyTime()))
                 && (this.getBalance() == null ? other.getBalance() == null : this.getBalance().equals(other.getBalance()))
@@ -271,6 +277,7 @@ public class ScfCreditDetail implements BetterjrEntity {
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         result = prime * result + ((getCustNo() == null) ? 0 : getCustNo().hashCode());
+        result = prime * result + ((getCustName() == null) ? 0 : getCustName().hashCode());
         result = prime * result + ((getOccupyDate() == null) ? 0 : getOccupyDate().hashCode());
         result = prime * result + ((getOccupyTime() == null) ? 0 : getOccupyTime().hashCode());
         result = prime * result + ((getBalance() == null) ? 0 : getBalance().hashCode());
@@ -296,17 +303,18 @@ public class ScfCreditDetail implements BetterjrEntity {
         this.balance = anCreditLimit;
         this.businFlag = "";
         this.businId = 0l;
-        this.businStatus = "0";// 状态(0:已完成;1:冻结中;)
+        this.businStatus = CreditConstants.CREDIT_CHANGE_STATUS_DONE;// 状态(0:已完成;1:冻结中;)
         this.creditId = anCreditId;
         this.description = "授信初始录入";
     }
 
-    public void initModifyValue(Long anCustNo, Long anCreditId) {
+    public void initModifyValue(Long anCustNo, String anCustName, Long anCreditId) {
         init();
         this.custNo = anCustNo;
+        this.custName = anCustName;
         this.businFlag = "";
         this.businId = 0l;
-        this.businStatus = "0";// 状态(0:已完成;1:冻结中;)
+        this.businStatus = CreditConstants.CREDIT_CHANGE_STATUS_DONE;// 状态(0:已完成;1:冻结中;)
         this.creditId = anCreditId;
         this.description = "授信额度调整";
     }
@@ -314,17 +322,17 @@ public class ScfCreditDetail implements BetterjrEntity {
     public void initOccupyValue(ScfCreditInfo anCreditInfo, Long anCreditId) {
         init();
         initOccupyAndReleaseValue(anCreditInfo, anCreditId);
-        this.direction = "1";// 方向：0-收;1-支;
+        this.direction = CreditConstants.CREDIT_DIRECTION_EXPEND;// 方向：0-收;1-支;
     }
 
     public void initReleaseValue(ScfCreditInfo anCreditInfo, Long anCreditId) {
         init();
         initOccupyAndReleaseValue(anCreditInfo, anCreditId);
-        this.direction = "0";// 方向：0-收;1-支;
+        this.direction = CreditConstants.CREDIT_DIRECTION_INCOME;// 方向：0-收;1-支;
     }
 
     private void initOccupyAndReleaseValue(ScfCreditInfo anCreditInfo, Long anCreditId) {
-        this.businStatus = "0";// 状态(0:已完成;1:冻结中;)
+        this.businStatus = CreditConstants.CREDIT_CHANGE_STATUS_DONE;// 状态(0:已完成;1:冻结中;)
         this.custNo = anCreditInfo.getCustNo();
         this.balance = anCreditInfo.getBalance();
         this.businFlag = anCreditInfo.getBusinFlag();

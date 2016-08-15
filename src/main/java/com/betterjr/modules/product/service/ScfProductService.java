@@ -18,6 +18,7 @@ import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.account.service.CustAndOperatorRelaService;
+import com.betterjr.modules.product.constant.ProductConstants;
 import com.betterjr.modules.product.dao.ScfProductMapper;
 import com.betterjr.modules.product.entity.ScfProduct;
 
@@ -43,18 +44,13 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         // 状态(0:登记;1:上架;2:下架;)
         Object businStatus = anMap.get("businStatus");
         if (null == businStatus || businStatus.toString().isEmpty()) {
-            anMap.put("businStatus", new String[] { "0", "1", "2" });
+            anMap.put("businStatus",
+                    new String[] { ProductConstants.PRO_STATUS_REG, ProductConstants.PRO_STATUS_SHELVES, ProductConstants.PRO_STATUS_OFFLINE });
         }
         // 操作员只能查询所属机构的融资产品信息
         anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
 
-        Page<ScfProduct> anProductList = this.selectPropertyByPage(ScfProduct.class, anMap, anPageNum, anPageSize, "1".equals(anFlag));
-        for (ScfProduct anProduct : anProductList) {
-            anProduct.setCoreName(custAccountService.queryCustName(anProduct.getCoreCustNo()));
-            anProduct.setFactorName(custAccountService.queryCustName(anProduct.getFactorNo()));
-        }
-
-        return anProductList;
+        return this.selectPropertyByPage(ScfProduct.class, anMap, anPageNum, anPageSize, "1".equals(anFlag));
     }
 
     /**
@@ -69,11 +65,10 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         if (null == coreCustNo || null == anFactorNo) {
             return result;
         }
-
         Map<String, Object> anMap = new HashMap<String, Object>();
         anMap.put("coreCustNo", coreCustNo);
         anMap.put("factorNo", anFactorNo);
-        anMap.put("businStatus", "1");// 状态(0:登记;1:上架;2:下架;)
+        anMap.put("businStatus", ProductConstants.PRO_STATUS_SHELVES);// 状态(0:登记;1:上架;2:下架;)
 
         for (ScfProduct product : this.selectByProperty(anMap)) {
             result.add(new SimpleDataEntity(product.getProductName(), String.valueOf(product.getId())));
@@ -94,18 +89,23 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         // 初始化信息
         anProduct.initAddValue();
 
-        // 设置操作员所属保理公司客户号
-        Long anFactorNo = Collections3
-                .getFirst(custAndOperatorRelaService.findCustNoList(UserUtils.getOperatorInfo().getId(), anProduct.getOperOrg()));
-        anProduct.setFactorNo(anFactorNo);
-
-        // 设置操作员所属保理公司简称
-        anProduct.setFactorCorp(Collections3.getFirst(custAccountService.selectByProperty("custNo", anFactorNo)).getShortName());
+        // 设置企业名称
+        initName(anProduct);
 
         // 数据存盘
         this.insert(anProduct);
 
         return anProduct;
+    }
+
+    private void initName(ScfProduct anProduct) {
+        // 设置操作员所属保理公司客户号
+        Long anFactorNo = Collections3.getFirst(custAndOperatorRelaService.findCustNoList(anProduct.getRegOperId(), anProduct.getOperOrg()));
+        anProduct.setFactorNo(anFactorNo);
+        anProduct.setFactorName(custAccountService.queryCustName(anProduct.getFactorNo()));
+        anProduct.setFactorCorp(Collections3.getFirst(custAccountService.selectByProperty("custNo", anFactorNo)).getShortName());
+        // 设置核心企业名称
+        anProduct.setCoreName(custAccountService.queryCustName(anProduct.getCoreCustNo()));
     }
 
     /**
@@ -126,10 +126,10 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
 
         // 不允许修改已上架(businStatus:1)的融资产品
         String businStatus = anProduct.getBusinStatus();
-        checkStatus(businStatus, "1", true, "当前融资产品已上架,不允许修改");
+        checkStatus(businStatus, ProductConstants.PRO_STATUS_SHELVES, true, "当前融资产品已上架,不允许修改");
 
         // 不允许修改已下架(businStatus:2)的融资产品
-        checkStatus(businStatus, "2", true, "当前融资产品已下架,不允许修改");
+        checkStatus(businStatus, ProductConstants.PRO_STATUS_OFFLINE, true, "当前融资产品已下架,不允许修改");
 
         // 设置修改信息
         anModiProduct.initModifyValue(anProduct);
@@ -157,10 +157,10 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
 
         // 不允许删除已上架(businStatus:1)的融资产品
         String businStatus = anProduct.getBusinStatus();
-        checkStatus(businStatus, "1", true, "当前融资产品已上架,不允许删除");
+        checkStatus(businStatus, ProductConstants.PRO_STATUS_SHELVES, true, "当前融资产品已上架,不允许删除");
 
         // 不允许删除已下架(businStatus:2)的融资产品
-        checkStatus(businStatus, "2", true, "当前融资产品已下架,不允许删除");
+        checkStatus(businStatus, ProductConstants.PRO_STATUS_OFFLINE, true, "当前融资产品已下架,不允许删除");
 
         // 数据存盘
         return this.deleteByPrimaryKey(anId);
@@ -183,10 +183,10 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
 
         // 已上架(businStatus:1)的融资产品不需要执行此操作
         String anBusinStatus = anProduct.getBusinStatus();
-        checkStatus(anBusinStatus, "1", true, "当前融资产品已上架");
+        checkStatus(anBusinStatus, ProductConstants.PRO_STATUS_SHELVES, true, "当前融资产品已上架");
 
         // 已下架(businStatus:2)的融资产品不需要执行此操作
-        checkStatus(anBusinStatus, "2", true, "当前融资产品已下架");
+        checkStatus(anBusinStatus, ProductConstants.PRO_STATUS_OFFLINE, true, "当前融资产品已下架");
 
         // 设置上架信息
         anProduct.initShelvesValue();
@@ -214,10 +214,10 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
 
         // 未上架(businStatus:0)的融资产品不需要执行此操作
         String businStatus = anProduct.getBusinStatus();
-        checkStatus(businStatus, "0", true, "当前融资产品未上架");
+        checkStatus(businStatus, ProductConstants.PRO_STATUS_REG, true, "当前融资产品未上架");
 
         // 已下架(businStatus:2)的融资产品不需要执行此操作
-        checkStatus(businStatus, "2", true, "当前融资产品已下架");
+        checkStatus(businStatus, ProductConstants.PRO_STATUS_OFFLINE, true, "当前融资产品已下架");
 
         // 设置下架信息
         anProduct.initOfflineValue();
