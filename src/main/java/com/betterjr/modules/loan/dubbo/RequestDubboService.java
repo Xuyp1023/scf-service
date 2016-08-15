@@ -26,6 +26,7 @@ import com.betterjr.modules.loan.entity.ScfRequestScheme;
 import com.betterjr.modules.loan.service.ScfPayPlanService;
 import com.betterjr.modules.loan.service.ScfRequestSchemeService;
 import com.betterjr.modules.loan.service.ScfRequestService;
+import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 import com.betterjr.modules.workflow.IFlowService;
 import com.betterjr.modules.workflow.data.FlowCommand;
@@ -43,6 +44,9 @@ public class RequestDubboService implements IScfRequestService {
     private ScfRequestSchemeService approvedService;
     @Autowired
     private ScfPayPlanService payPlanService;
+    
+    @Autowired
+    private ScfOrderService orderService;
     
     @Reference(interfaceClass=IFlowService.class )
     private IFlowService flowService;
@@ -63,10 +67,15 @@ public class RequestDubboService implements IScfRequestService {
         input.setType(FlowType.Trade);
         flowService.start(input );
         
+        //关联订单
+        orderService.saveInfoRequestNo(request.getRequestType(),request.getRequestNo(), request.getOrders());
+        //冻结订单
+        orderService.forzenInfos(request.getRequestNo(), null);
+        
         //修改融资状态
         FlowStatus search = new FlowStatus();
         search.setBusinessId(Long.parseLong(request.getRequestNo()));
-        Page<FlowStatus> list = flowService.queryCurrentUserWorkTask(null, search);
+        Page<FlowStatus> list = flowService.queryCurrentWorkTask(null, search);
         if(!Collections3.isEmpty(list)){
             request.setTradeStatus(Collections3.getFirst(list).getCurrentNodeId().toString()); 
             request = requestService.saveModifyRequest(request, request.getRequestNo());
@@ -327,6 +336,9 @@ public class RequestDubboService implements IScfRequestService {
         else {
             // 拒绝
             input.setCommand(FlowCommand.Exit);
+            
+            //解除订单关联
+            orderService.unForzenInfoes(anRequestNo, null);
         }
        
         flowService.exec(input);
@@ -335,7 +347,7 @@ public class RequestDubboService implements IScfRequestService {
         ScfRequest request= requestService.selectByPrimaryKey(anRequestNo);
         FlowStatus search = new FlowStatus();
         search.setBusinessId(Long.parseLong(request.getRequestNo()));
-        Page<FlowStatus> list = flowService.queryCurrentUserWorkTask(null, search);
+        Page<FlowStatus> list = flowService.queryCurrentWorkTask(null, search);
         if(!Collections3.isEmpty(list)){
             request.setTradeStatus(Collections3.getFirst(list).getCurrentNodeId().toString()); 
             request = requestService.saveModifyRequest(request, request.getRequestNo());
