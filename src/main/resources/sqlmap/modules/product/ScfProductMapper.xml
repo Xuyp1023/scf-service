@@ -7,7 +7,9 @@
     -->
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="L_CORE_CUSTNO" property="coreCustNo" jdbcType="INTEGER" />
+    <result column="C_CORE_CUSTNAME" property="coreName" jdbcType="VARCHAR" />
     <result column="C_FACTORNO" property="factorNo" jdbcType="INTEGER" />
+    <result column="C_FACTORNAME" property="factorName" jdbcType="VARCHAR" />
     <result column="C_FACTORCORP" property="factorCorp" jdbcType="VARCHAR" />
     <result column="C_PRODUCT_CODE" property="productCode" jdbcType="VARCHAR" />
     <result column="C_PRODUCT_NAME" property="productName" jdbcType="VARCHAR" />

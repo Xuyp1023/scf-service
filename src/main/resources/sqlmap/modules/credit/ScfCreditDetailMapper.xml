@@ -7,6 +7,7 @@
     -->
     <id column="ID" property="id" jdbcType="INTEGER" />
     <result column="L_CUSTNO" property="custNo" jdbcType="INTEGER" />
+    <result column="C_CUSTNAME" property="custName" jdbcType="VARCHAR" />
     <result column="D_OCCUPY_DATE" property="occupyDate" jdbcType="VARCHAR" />
     <result column="T_OCCUPY_TIME" property="occupyTime" jdbcType="VARCHAR" />
     <result column="F_BALANCE" property="balance" jdbcType="DOUBLE" />

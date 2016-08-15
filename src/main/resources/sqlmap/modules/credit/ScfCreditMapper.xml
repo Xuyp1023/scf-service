@@ -7,9 +7,12 @@
     -->
     <id column="ID" property="id" jdbcType="INTEGER" />
     <result column="L_CORE_CUSTNO" property="coreCustNo" jdbcType="INTEGER" />
+    <result column="C_CORE_CUSTNAME" property="coreName" jdbcType="VARCHAR" />
     <result column="L_FACTORNO" property="factorNo" jdbcType="INTEGER" />
+    <result column="C_FACTORNAME" property="factorName" jdbcType="VARCHAR" />
     <result column="C_CREDIT_TYPE" property="creditType" jdbcType="VARCHAR" />
     <result column="L_CUSTNO" property="custNo" jdbcType="INTEGER" />
+    <result column="C_CUSTNAME" property="custName" jdbcType="VARCHAR" />
     <result column="F_CREDIT_LIMIT" property="creditLimit" jdbcType="DOUBLE" />
     <result column="F_CREDIT_USED" property="creditUsed" jdbcType="DOUBLE" />
     <result column="F_CREDIT_BALANCE" property="creditBalance" jdbcType="DOUBLE" />

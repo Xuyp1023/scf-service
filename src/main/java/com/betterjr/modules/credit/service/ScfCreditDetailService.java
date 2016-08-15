@@ -12,7 +12,7 @@ import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.MathExtend;
 import com.betterjr.mapper.pagehelper.Page;
-import com.betterjr.modules.account.service.CustAccountService;
+import com.betterjr.modules.credit.constant.CreditConstants;
 import com.betterjr.modules.credit.dao.ScfCreditDetailMapper;
 import com.betterjr.modules.credit.entity.ScfCredit;
 import com.betterjr.modules.credit.entity.ScfCreditDetail;
@@ -23,9 +23,6 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
 
     @Autowired
     private ScfCreditService scfCreditService;
-
-    @Autowired
-    private CustAccountService custAccountService;
 
     /**
      * 授信额度变动信息查询
@@ -41,14 +38,7 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         anMap.put("creditId", anCreditId);
 
         // 获取查询结果
-        Page<ScfCreditDetail> anCreditDetailList = this.selectPropertyByPage(ScfCreditDetail.class, anMap, anPageNum, anPageSize, "1".equals(anFlag));
-
-        // 设置企业个名称
-        for (ScfCreditDetail anCreditDetail : anCreditDetailList) {
-            anCreditDetail.setCustName(custAccountService.queryCustName(anCreditDetail.getCustNo()));
-        }
-
-        return anCreditDetailList;
+        return this.selectPropertyByPage(ScfCreditDetail.class, anMap, anPageNum, anPageSize, "1".equals(anFlag));
     }
 
     /**
@@ -138,8 +128,8 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
             saveReleaseData(anCreditInfo, anCoreCredit.getId());
 
             // 一次性授信不释放额度,授信方式(1:信用授信(循环);2:信用授信(一次性);3:担保信用(循环);4:担保授信(一次性);)
-            if (BetterStringUtils.equals(anCreditInfo.getCreditMode(), "1") == true
-                    || BetterStringUtils.equals(anCreditInfo.getCreditMode(), "3") == true) {
+            if (BetterStringUtils.equals(anCreditInfo.getCreditMode(), CreditConstants.CREDIT_MODE_CYCLE_GENERAL) == true
+                    || BetterStringUtils.equals(anCreditInfo.getCreditMode(), CreditConstants.CREDIT_MODE_CYCLE_GUARANTEE) == true) {
                 // 更新客户授信额度累计使用,授信余额
                 anCustCredit.releaseCreditBalance(anCustCredit.getCreditUsed(), anCustCredit.getCreditBalance(), anReleaseBalance);
 
