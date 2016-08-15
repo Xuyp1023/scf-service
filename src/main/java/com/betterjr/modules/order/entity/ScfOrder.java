@@ -17,6 +17,7 @@ import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
+import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -217,7 +218,11 @@ public class ScfOrder implements BetterjrEntity {
     @MetaData( value="剩余金额", comments = "剩余金额")
     private BigDecimal balanceRest;
 
-//  private List<Agreement>
+    /**
+     * 合同列表
+     */
+    @Transient
+    private List<CustAgreement> agreementList;
     
     /**
      * 发票列表
@@ -485,7 +490,15 @@ public class ScfOrder implements BetterjrEntity {
 		this.acceptBillList = acceptBillList;
 	}
 
-	@Override
+	public List<CustAgreement> getAgreementList() {
+        return this.agreementList;
+    }
+
+    public void setAgreementList(List<CustAgreement> anAgreementList) {
+        this.agreementList = anAgreementList;
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());

@@ -294,6 +294,10 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         for (ScfRequest scfRequest : page) {
             scfRequest.setCoreCustName(custAccountService.queryCustName(scfRequest.getCoreCustNo()));
             scfRequest.setFactorName(custAccountService.queryCustName(scfRequest.getFactorNo()));
+            // 设置还款计划
+            Map<String, Object> propValue = new HashMap<String, Object>();
+            propValue.put("requestNo", scfRequest.getRequestNo());
+            scfRequest.setPayPlan(payPlanService.findPayPlanByProperty(propValue));
         }
         return page;
     }
@@ -312,6 +316,10 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         for (ScfRequest scfRequest : page) {
             scfRequest.setCoreCustName(custAccountService.queryCustName(scfRequest.getCoreCustNo()));
             scfRequest.setFactorName(custAccountService.queryCustName(scfRequest.getFactorNo()));
+            // 设置还款计划
+            Map<String, Object> propValue = new HashMap<String, Object>();
+            propValue.put("requestNo", scfRequest.getRequestNo());
+            scfRequest.setPayPlan(payPlanService.findPayPlanByProperty(propValue));
         }
         return page;
     }
@@ -330,6 +338,10 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         for (ScfRequest scfRequest : page) {
             scfRequest.setCoreCustName(custAccountService.queryCustName(scfRequest.getCoreCustNo()));
             scfRequest.setFactorName(custAccountService.queryCustName(scfRequest.getFactorNo()));
+            // 设置还款计划
+            Map<String, Object> propValue = new HashMap<String, Object>();
+            propValue.put("requestNo", scfRequest.getRequestNo());
+            scfRequest.setPayPlan(payPlanService.findPayPlanByProperty(propValue));
         }
         return page;
     }

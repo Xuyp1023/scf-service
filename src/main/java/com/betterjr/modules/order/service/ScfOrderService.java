@@ -19,6 +19,8 @@ import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
+import com.betterjr.modules.agreement.entity.CustAgreement;
+import com.betterjr.modules.agreement.service.ScfCustAgreementService;
 import com.betterjr.modules.order.dao.ScfOrderMapper;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
@@ -34,6 +36,8 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
 
     @Autowired
     private ScfOrderRelationService orderRelationService;
+    @Autowired
+    private ScfCustAgreementService custAgreementService;
     @Autowired
     private ScfTransportService transportService;
     @Autowired
@@ -70,6 +74,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
      * 根据订单关联表补全
      */
     public void fillOrderInfo(ScfOrder anOrder, List<ScfOrderRelation> anOrderRelationList) {
+        anOrder.setAgreementList(new ArrayList<CustAgreement>());
         anOrder.setAcceptBillList(new ArrayList<ScfAcceptBill>());
         anOrder.setTransportList(new ArrayList<ScfTransport>());
         anOrder.setInvoiceList(new ArrayList<ScfInvoice>());
@@ -78,7 +83,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
             Map<String, Object> queryMap = new HashMap<String, Object>();
             queryMap.put("id", anOrderRealtion.getInfoId());
             if (BetterStringUtils.equals(ScfOrderRelationType.AGGREMENT.getCode(), anOrderRealtion.getInfoType())) {
-
+                anOrder.getAgreementList().add(custAgreementService.findCustAgreementDetail(anOrderRealtion.getInfoId()));
             }
             else if (BetterStringUtils.equals(ScfOrderRelationType.ACCEPTBILL.getCode(), anOrderRealtion.getInfoType())) {
                 anOrder.getAcceptBillList().addAll(acceptBillService.findAcceptBill(queryMap));
@@ -94,6 +99,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
             }
         }
     }
+    
     
     /**
      * 查询订单信息，无分页,包含所有关联信息
@@ -249,6 +255,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         List<Object> infoList = new ArrayList<Object>();
         for (ScfOrder anOrder : orderList) {
             if (BetterStringUtils.equals(ScfOrderRelationType.AGGREMENT.getCode(), anInfoType.getCode())) {
+                infoList.addAll(anOrder.getAgreementList());
             }
             else if (BetterStringUtils.equals(ScfOrderRelationType.ACCEPTBILL.getCode(), anInfoType.getCode())) {
                 infoList.addAll(anOrder.getAcceptBillList());
