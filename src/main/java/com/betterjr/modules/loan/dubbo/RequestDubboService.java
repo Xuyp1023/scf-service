@@ -346,27 +346,27 @@ public class RequestDubboService implements IScfRequestService {
     public String webQueryPendingRequest(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
         logger.debug("分页查询待批融资，入参：" + anMap);
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk(requestService.queryPendingRequest(anQueryConditionMap, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject.newOkWithPage("查询待批融资成功", requestService.queryPendingRequest(anQueryConditionMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     @Override
     public String webQueryRepaymentRequest(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
         logger.debug("分页查询还款融资，入参：" + anMap);
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk(requestService.queryRepaymentRequest(anQueryConditionMap, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject.newOkWithPage("查询还款融资成功", requestService.queryRepaymentRequest(anQueryConditionMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     @Override
     public String webQueryCompletedRequest(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
         logger.debug("分页查询历史融资，入参：" + anMap);
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk(requestService.queryCompletedRequest(anQueryConditionMap, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject.newOkWithPage("查询历史融资成功", requestService.queryCompletedRequest(anQueryConditionMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     @Override
     public String webQueryCoreEnterpriseRequest(Map<String, Object> anMap, String anRequestType, String anFlag, int anPageNum, int anPageSize) {
         logger.debug("分页核心企业查询融资，入参：" + anMap);
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk(requestService.queryCoreEnterpriseRequest(anQueryConditionMap, anRequestType, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject.newOkWithPage("核心企业查询融资成功", requestService.queryCoreEnterpriseRequest(anQueryConditionMap, anRequestType, anFlag, anPageNum, anPageSize)).toJson();
     }
 }
