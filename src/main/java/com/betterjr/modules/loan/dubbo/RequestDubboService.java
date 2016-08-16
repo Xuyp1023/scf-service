@@ -372,6 +372,7 @@ public class RequestDubboService implements IScfRequestService {
         node.setId(new Long(180));
         list.add(node);
         
+        node = new CustFlowNode();
         node.setNodeCustomName("还款完成");
         node.setSysNodeName("还款完成");
         node.setSysNodeId(new Long(190));

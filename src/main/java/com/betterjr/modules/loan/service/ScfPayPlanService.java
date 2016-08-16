@@ -268,7 +268,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
                 payType.put("3", "逾期还款");
             }else{
                 //未到期可使用正常还款和提前还款
-                payType.put("3", "提前还款");
+                payType.put("2", "提前还款");
             }
             payType.put("1", "正常还款");
         }
