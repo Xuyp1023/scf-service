@@ -281,16 +281,19 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     }
     
     /**
-     * 查询待批融资
+     * 查询待批融资   <=150
+     * 出具保理方案 - 110
+     * 融资方确认方案 - 120
+     * 发起融资背景确认 - 130
+     * 核心企业确认背景 - 140
+     * 放款确认 - 150
+     * 完成融资 - 160
+     * 放款完成 - 170
      */
     public Page<ScfRequest> queryPendingRequest(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
         // 放款前的状态
-        String[] pendingStatus = { "0", "1", "2", "3", "4" };
-        Page<ScfRequest> page = new Page<ScfRequest>();
-        for (String tempStatus : pendingStatus) {
-            anMap.put("tradeStatus", tempStatus);
-            page.addAll(this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag)));
-        }
+        anMap.put("LTEtradeStatus", "150");
+        Page<ScfRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
         for (ScfRequest scfRequest : page) {
             scfRequest.setCoreCustName(custAccountService.queryCustName(scfRequest.getCoreCustNo()));
             scfRequest.setFactorName(custAccountService.queryCustName(scfRequest.getFactorNo()));
@@ -303,16 +306,20 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     }
 
     /**
-     * 查询还款融资
+     * 查询还款融资      >150  <190
+     * 出具保理方案 - 110
+     * 融资方确认方案 - 120
+     * 发起融资背景确认 - 130
+     * 核心企业确认背景 - 140
+     * 放款确认 - 150
+     * 完成融资 - 160
+     * 放款完成 - 170
      */
     public Page<ScfRequest> queryRepaymentRequest(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
         // 放款后结束前的状态
-        String[] pendingStatus = { "6", "7", "8" };
-        Page<ScfRequest> page = new Page<ScfRequest>();
-        for (String tempStatus : pendingStatus) {
-            anMap.put("tradeStatus", tempStatus);
-            page.addAll(this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag)));
-        }
+        anMap.put("GTtradeStatus", "150");
+        anMap.put("LTtradeStatus", "190");
+        Page<ScfRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
         for (ScfRequest scfRequest : page) {
             scfRequest.setCoreCustName(custAccountService.queryCustName(scfRequest.getCoreCustNo()));
             scfRequest.setFactorName(custAccountService.queryCustName(scfRequest.getFactorNo()));
@@ -325,16 +332,19 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     }
 
     /**
-     * 查询历史融资
+     * 查询历史融资  >=190
+     * 出具保理方案 - 110
+     * 融资方确认方案 - 120
+     * 发起融资背景确认 - 130
+     * 核心企业确认背景 - 140
+     * 放款确认 - 150
+     * 完成融资 - 160
+     * 放款完成 - 170
      */
     public Page<ScfRequest> queryCompletedRequest(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
         // 放款后结束前的状态
-        String[] pendingStatus = { "9" };
-        Page<ScfRequest> page = new Page<ScfRequest>();
-        for (String tempStatus : pendingStatus) {
-            anMap.put("tradeStatus", tempStatus);
-            page.addAll(this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag)));
-        }
+        anMap.put("GTEtradeStatus", "190");
+        Page<ScfRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
         for (ScfRequest scfRequest : page) {
             scfRequest.setCoreCustName(custAccountService.queryCustName(scfRequest.getCoreCustNo()));
             scfRequest.setFactorName(custAccountService.queryCustName(scfRequest.getFactorNo()));
@@ -348,6 +358,13 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
 
     /**
      * 核心企业融资查询
+     * 出具保理方案 - 110
+     * 融资方确认方案 - 120
+     * 发起融资背景确认 - 130
+     * 核心企业确认背景 - 140
+     * 放款确认 - 150
+     * 完成融资 - 160
+     * 放款完成 - 170
      */
     public Page<ScfRequest> queryCoreEnterpriseRequest(Map<String, Object> anMap, String anRequestType, String anFlag, int anPageNum, int anPageSize) {
         switch (anRequestType) {
