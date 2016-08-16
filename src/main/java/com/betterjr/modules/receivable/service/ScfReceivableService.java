@@ -16,7 +16,6 @@ import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
-import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.entity.ScfOrderRelation;
 import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
@@ -75,6 +74,19 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
         }
         
         return anReceivableList;
+    }
+    
+    /**
+     * 应收账款分页查询
+     * anIsOnlyNormal 是否过滤，仅查询正常未融资数据 1：未融资 0：查询所有
+     */
+    public List<ScfReceivable> findReceivableList(String anCustNo, String anIsOnlyNormal) {
+        Map<String, Object> anMap = new HashMap<String, Object>();
+        anMap.put("custNo", anCustNo);
+        if(BetterStringUtils.equals(anIsOnlyNormal, "1")) {
+            anMap.put("businStatus", "0");
+        }
+        return this.findReceivable(anMap);
     }
     
     /**

@@ -25,8 +25,8 @@ public class ScfOrderRelationDubboService implements IScfOrderRelationService{
     }
 
     @Override
-    public String webSaveDeleteOrderRelation(Long anId) {
-        return AjaxObject.newOk("订单关系删除成功", scfOrderRelationService.saveDeleteOrderRelation(anId)).toJson();
+    public String webSaveDeleteOrderRelation(String anEnterType, Long anEnterId, String anInfoType, Long anInfoId) {
+        return AjaxObject.newOk("订单关系删除成功", scfOrderRelationService.saveDeleteOrderRelation(anEnterType, anEnterId, anInfoType, anInfoId)).toJson();
     }
 
 }

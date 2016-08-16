@@ -28,6 +28,12 @@ public class ScfAcceptBillDubboService implements IScfAcceptBillService {
         Map<String, Object> anQueryConditionMap =  (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
         return AjaxObject.newOkWithPage("汇票信息查询成功", scfAcceptBillService.queryAcceptBill(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize)).toJson();
     }
+    
+    @Override
+    public String webFindAcceptBillList(String anCustNo, String anIsOnlyNormal) {
+        
+        return AjaxObject.newOk("汇票信息查询成功", scfAcceptBillService.findAcceptBillList(anCustNo, anIsOnlyNormal)).toJson();
+    }
 
     @Override
     public String webSaveModifyAcceptBill(Map<String, Object> anMap, Long anId, String anFileList) {
