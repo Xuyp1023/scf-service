@@ -372,8 +372,8 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         //新的剩余
         plan.setSurplusInterestBalance(interestBalance);
         plan.setSurplusManagementBalance(mgrBalance);
-       
-        return saveModifyPayPlan(plan, anRecord.getPayPlanId());
+        
+        return addPayPlan(plan);
     }
 
     /**

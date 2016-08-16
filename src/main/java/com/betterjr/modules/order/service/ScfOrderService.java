@@ -249,7 +249,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         anMap.put("requestNo", anRequestNo);
         List<ScfOrder> orderList = this.findOrder(anMap);
         //查询订单信息时 直接返回订单
-        if(BetterStringUtils.equals(ScfOrderRelationType.ACCEPTBILL.getCode(), anInfoType.getCode())) {
+        if(BetterStringUtils.equals(ScfOrderRelationType.ORDER.getCode(), anInfoType.getCode())) {
             return orderList;
         }
         List<Object> infoList = new ArrayList<Object>();
@@ -291,8 +291,8 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
             receivableService.saveForzenReceivable(anScfReceivable.getId(), false);
         }
         List<ScfAcceptBill> anAcceptBillList = this.findRelationInfo(anRequestNo, ScfOrderRelationType.ACCEPTBILL);
-        for(ScfAcceptBill anScfReceivable : anAcceptBillList) {
-            acceptBillService.saveFinancedAcceptBill(anScfReceivable.getId(), false);
+        for(ScfAcceptBill anScfAcceptBill : anAcceptBillList) {
+            acceptBillService.saveFinancedAcceptBill(anScfAcceptBill.getId(), false);
         }
     }
     

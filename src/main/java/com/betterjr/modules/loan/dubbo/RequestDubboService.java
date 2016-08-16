@@ -33,6 +33,7 @@ import com.betterjr.modules.workflow.data.FlowCommand;
 import com.betterjr.modules.workflow.data.FlowInput;
 import com.betterjr.modules.workflow.data.FlowStatus;
 import com.betterjr.modules.workflow.data.FlowType;
+import com.betterjr.modules.workflow.entity.CustFlowNode;
 
 @Service(interfaceClass = IScfRequestService.class)
 public class RequestDubboService implements IScfRequestService {
@@ -200,8 +201,9 @@ public class RequestDubboService implements IScfRequestService {
                 anMap.put("factorPost", "518100");
                 anMap.put("factorLinkMan", "保理公司联系人姓名");
                 if(agreementService.webTransNotice(anMap) == false){
-                    logger.debug("转让通知书,发送失败！");
-                    //TODO 失败了要怎么弄
+                    
+                    logger.debug("转让通知书,生成失败！");
+                    //TODO 加入转让明细   失败了要怎么弄
                 }
             }
             
@@ -224,7 +226,7 @@ public class RequestDubboService implements IScfRequestService {
             
             //1,订单，2:票据;3:应收款;4:经销商
             if(BetterStringUtils.equals( "4", request.getRequestType()) == true){
-                //三方协议
+                //TODO 加入三方协议
                 
             }else{
                 //转让意见确认书
@@ -234,10 +236,8 @@ public class RequestDubboService implements IScfRequestService {
                 anMap.put("factorRequestNo", noticeNo);
                 anMap.put("confirmNo", noticeNo);
                 anMap.put("supplier", request.getCustName());
-                
-                if(agreementService.webTransOpinion(anMap) == false){
-                    logger.debug("转让意见确认书,发送失败");
-                    //TODO 失败了要怎么弄
+                if(agreementService.webTransOpinion(anMap)){
+                    logger.debug("转让确认意见确认书,生成失败！");
                 }
             }
         }
@@ -352,6 +352,33 @@ public class RequestDubboService implements IScfRequestService {
             request.setTradeStatus(Collections3.getFirst(list).getCurrentNodeId().toString()); 
             request = requestService.saveModifyRequest(request, request.getRequestNo());
         }
+    }
+    
+    public String getTradeStatus(){
+        List<CustFlowNode> list = flowService.findFlowNodesByType("Trade");
+        CustFlowNode node = new CustFlowNode();
+        
+        node = new CustFlowNode();
+        node.setNodeCustomName("逾期");
+        node.setSysNodeName("逾期");
+        node.setSysNodeId(new Long(170));
+        node.setId(new Long(170));
+        list.add(node);
+        
+        node = new CustFlowNode();
+        node.setNodeCustomName("展期");
+        node.setSysNodeName("展期");
+        node.setSysNodeId(new Long(180));
+        node.setId(new Long(180));
+        list.add(node);
+        
+        node.setNodeCustomName("还款完成");
+        node.setSysNodeName("还款完成");
+        node.setSysNodeId(new Long(190));
+        node.setId(new Long(190));
+        list.add(node);
+        
+        return AjaxObject.newOk("查询成功", list).toJson();
     }
     
     @Override
