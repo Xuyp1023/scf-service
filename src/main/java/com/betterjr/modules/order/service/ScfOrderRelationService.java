@@ -92,15 +92,51 @@ public class ScfOrderRelationService extends BaseService<ScfOrderRelationMapper,
     /**
      * 订单关系删除
      */
-    public int saveDeleteOrderRelation(Long anId) {
+    public int saveDeleteOrderRelation(String anEnterType, Long anEnterId, String anInfoType, Long anInfoId) {
         logger.info("Begin to Delete OrderRelation");
         
-        ScfOrderRelation anOrderRelation = this.selectByPrimaryKey(anId);
-        BTAssert.notNull(anOrderRelation, "无法获取订单关联信息");
-        //检查当前操作员是否有权限删除
-        scfOrderCheckService.checkInfoExist(anOrderRelation.getOrderId(), UserUtils.getOperatorInfo().getOperOrg());
-        //数据存盘
-        return this.deleteByPrimaryKey(anId);
+        //检查相应id内容是否存在
+        IScfOrderInfoCheckService enterCheck = ScfOrderInfoCheckFactory.create(anEnterType);
+        enterCheck.checkInfoExist(anEnterId, UserUtils.getOperatorInfo().getOperOrg());
+        IScfOrderInfoCheckService infoCheck = ScfOrderInfoCheckFactory.create(anInfoType);
+        infoCheck.checkInfoExist(Long.valueOf(anInfoId), UserUtils.getOperatorInfo().getOperOrg());
+        Map<String, Object> anMap = new HashMap<String, Object>();
+        int count = 0;
+        //订单管理进入
+        if(ScfOrderRelationType.ORDER.getCode().equals(anEnterType)) {
+            anMap.put("orderId", anEnterId);
+            anMap.put("infoType", anInfoType);
+            anMap.put("infoId", anInfoId);
+            return this.deleteByExample(anMap);
+        }
+        //非订单管理，保存订单的关联关系
+        else if(ScfOrderRelationType.ORDER.getCode().equals(anInfoType)) {
+            anMap.put("orderId", anInfoId);
+            anMap.put("infoType", anEnterType);
+            anMap.put("infoId", anEnterId);
+            return this.deleteByExample(anMap);
+        }
+        //非订单管理，保存非订单关联关系
+        else {
+            Map<String, Object> anEnterMap = new HashMap<String, Object>();
+            Map<String, Object> anInfoMap = new HashMap<String, Object>();
+            anEnterMap.put("infoId", anEnterId);
+            anEnterMap.put("infoType", anEnterType);
+            anInfoMap.put("infoId", anInfoId);
+            anInfoMap.put("infoType", anInfoType);
+            //删除记录
+            List<ScfOrderRelation> anEnterRelationList = this.selectByProperty(anEnterMap); 
+            List<ScfOrderRelation> anInfoRelationList = this.selectByProperty(anInfoMap); 
+            for(ScfOrderRelation anEnterRelation : anEnterRelationList) {
+                for(ScfOrderRelation anInfoRelation : anInfoRelationList) {
+                    if(anEnterRelation.getOrderId() == anInfoRelation.getOrderId()) {
+                        this.delete(anInfoRelation);
+                        count ++;
+                    }
+                }
+            }
+            return count;
+        }
     }
     
     /**

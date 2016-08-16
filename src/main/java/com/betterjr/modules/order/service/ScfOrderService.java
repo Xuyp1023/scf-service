@@ -100,9 +100,42 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         }
     }
     
+    /**
+     * 查询订单信息，无分页，前台调用
+     * @param anIsOnlyNormal 是否过滤，仅查询正常未融资数据 1：未融资 0：查询所有
+     */
+    public List<ScfOrder> findOrderList(String anCustNo, String anIsOnlyNormal) {
+        Map<String, Object> anMap = new HashMap<String, Object>();
+        anMap.put("custNo", anCustNo);
+        if(BetterStringUtils.equals(anIsOnlyNormal, "1")) {
+            anMap.put("businStatus", "0");
+        }
+        return this.selectByProperty(anMap);
+    }
     
     /**
-     * 查询订单信息，无分页,包含所有关联信息
+     * 通过融资申请信息,查询融资基本信息，无分页。
+     * @param anRequestNo   融资申请编号 1：订单，2:票据;3:应收款;4:经销商
+     * @param anRequestType
+     */
+    public List<Object> findInfoListByRequest(String anRequestNo, String anRequestType) {
+        ScfOrderRelationType orderRealtionType = null;
+        // 订单融资
+        if ("1".equals(anRequestType) || "4".equals(anRequestType)) {
+            orderRealtionType = ScfOrderRelationType.ORDER;
+        }
+        else if ("2".equals(anRequestType)) {
+            orderRealtionType = ScfOrderRelationType.ACCEPTBILL;
+        }
+        else if ("3".equals(anRequestType)) {
+            orderRealtionType = ScfOrderRelationType.RECEIVABLE;
+        }
+        return this.findRelationInfo(anRequestNo, orderRealtionType);
+    }
+    
+    
+    /**
+     * 查询订单信息，无分页,包含所有关联信息，供后台调用
      */
     public List<ScfOrder> findOrder(Map<String, Object> anMap) {
         List<ScfOrder> orderList = this.selectByClassProperty(ScfOrder.class, anMap);
@@ -249,7 +282,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         anMap.put("requestNo", anRequestNo);
         List<ScfOrder> orderList = this.findOrder(anMap);
         //查询订单信息时 直接返回订单
-        if(BetterStringUtils.equals(ScfOrderRelationType.ACCEPTBILL.getCode(), anInfoType.getCode())) {
+        if(BetterStringUtils.equals(ScfOrderRelationType.ORDER.getCode(), anInfoType.getCode())) {
             return orderList;
         }
         List<Object> infoList = new ArrayList<Object>();
@@ -291,8 +324,8 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
             receivableService.saveForzenReceivable(anScfReceivable.getId(), false);
         }
         List<ScfAcceptBill> anAcceptBillList = this.findRelationInfo(anRequestNo, ScfOrderRelationType.ACCEPTBILL);
-        for(ScfAcceptBill anScfReceivable : anAcceptBillList) {
-            acceptBillService.saveFinancedAcceptBill(anScfReceivable.getId(), false);
+        for(ScfAcceptBill anAcceptBill : anAcceptBillList) {
+            acceptBillService.saveFinancedAcceptBill(anAcceptBill.getId(), false);
         }
     }
     

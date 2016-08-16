@@ -1,7 +1,6 @@
 package com.betterjr.modules.acceptbill.service;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -10,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.betterjr.common.data.PlatformBaseRuleType;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
@@ -24,11 +22,8 @@ import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.entity.ScfOrderRelation;
 import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
-import com.betterjr.modules.order.service.ScfInvoiceService;
 import com.betterjr.modules.order.service.ScfOrderRelationService;
 import com.betterjr.modules.order.service.ScfOrderService;
-import com.betterjr.modules.order.service.ScfTransportService;
-import com.betterjr.modules.receivable.service.ScfReceivableService;
 
 @Service
 public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAcceptBill> implements IScfOrderInfoCheckService {
@@ -71,6 +66,27 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         }
 
         return anAcceptBillList;
+    }
+    
+    /**
+     * 汇票信息无分页查询
+     * @param anIsOnlyNormal 是否过滤，仅查询正常未融资数据 1：未融资 0：查询所有
+     */
+    public List<ScfAcceptBill> findAcceptBillList(String anCustNo, String anIsOnlyNormal) {
+        Map<String, Object> anMap = new HashMap<String, Object>();
+        //构造custNo查询条件
+        //当用户为供应商
+        if(UserUtils.supplierUser()) {
+            anMap.put("supplierNo", anCustNo);
+         //当用户为经销商
+        }else if(UserUtils.sellerUser()) {
+            anMap.put("buyerNo", anCustNo);
+        }
+        //仅查询正常未融资数据
+        if(BetterStringUtils.equals(anIsOnlyNormal, "1")) {
+            anMap.put("businStatus", new String[]{"0", "1"});
+        }
+        return this.findAcceptBill(anMap);
     }
     
     /**
