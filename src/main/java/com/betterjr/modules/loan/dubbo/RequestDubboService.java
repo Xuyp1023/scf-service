@@ -354,7 +354,7 @@ public class RequestDubboService implements IScfRequestService {
         }
     }
     
-    public String getTradeStatus(){
+    public String webQueryTradeStatus(){
         List<CustFlowNode> list = flowService.findFlowNodesByType("Trade");
         CustFlowNode node = new CustFlowNode();
         
