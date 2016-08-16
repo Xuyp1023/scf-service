@@ -75,7 +75,7 @@ public class ScfOrderRelationService extends BaseService<ScfOrderRelationMapper,
                 throw new BytterTradeException(40001, "请先选择订单进行关联");
             }
             //从enterId 来上溯到orderId
-            Long anOrderId = Collections3.getFirst(orderRelationList).getId();
+            Long anOrderId = Collections3.getFirst(orderRelationList).getOrderId();
             for(String anInfoId : anInfoIds) {
                 ScfOrderRelation anOrderRelation = new ScfOrderRelation();
                 anOrderRelation.initAddValue();

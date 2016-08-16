@@ -1,7 +1,6 @@
 package com.betterjr.modules.order.service;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -80,16 +79,11 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
      */
     public void checkInfoExist(Long anId,  String anOperOrg) {
         Map<String, Object> anMap = new HashMap<String, Object>();
-        List<ScfInvoice> invoiceList = new LinkedList<ScfInvoice>();
         String[] anBusinStatusList = {"1"};
         anMap.put("id", anId);
         anMap.put("operOrg", anOperOrg);
-        //查询每个状态数据
-        for(int i = 0; i < anBusinStatusList.length; i++) {
-            anMap.put("businStatus", anBusinStatusList[i]);
-            List<ScfInvoice> tempInvoiceList = this.selectByClassProperty(ScfInvoice.class, anMap);
-            invoiceList.addAll(tempInvoiceList);
-        }
+        anMap.put("businStatus", anBusinStatusList);
+        List<ScfInvoice> invoiceList = this.selectByClassProperty(ScfInvoice.class, anMap);
         if (Collections3.isEmpty(invoiceList)) {
             logger.warn("不存在相对应id,操作机构,业务状态的发票");
             throw new BytterTradeException(40001, "不存在相对应id,操作机构,业务状态的发票");

@@ -179,16 +179,12 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
      */
     public void checkInfoExist(Long anId, String anOperOrg) {
         Map<String, Object> anMap = new HashMap<String, Object>();
-        List<ScfOrder> orderList = new LinkedList<ScfOrder>();
         String[] anBusinStatusList = { "0" };
         anMap.put("id", anId);
         anMap.put("operOrg", anOperOrg);
+        anMap.put("businStatus", anBusinStatusList);
         // 查询每个状态数据
-        for (int i = 0; i < anBusinStatusList.length; i++) {
-            anMap.put("businStatus", anBusinStatusList[i]);
-            List<ScfOrder> tempOrderList = this.selectByClassProperty(ScfOrder.class, anMap);
-            orderList.addAll(tempOrderList);
-        }
+        List<ScfOrder> orderList = this.selectByClassProperty(ScfOrder.class, anMap);
         if (Collections3.isEmpty(orderList)) {
             logger.warn("不存在相对应id,操作机构,业务状态的订单");
             throw new BytterTradeException(40001, "不存在相对应id,操作机构,业务状态的订单");

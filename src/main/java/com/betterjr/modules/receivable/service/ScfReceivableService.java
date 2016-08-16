@@ -121,17 +121,12 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
      */
     public void checkInfoExist(Long anId, String anOperOrg) {
         Map<String, Object> anMap = new HashMap<String, Object>();
-        List<ScfReceivable> receivableList = new LinkedList<ScfReceivable>();
         //可编辑的业务状态
-        String[] anBusinStatusList = {"0"};
+        String[] anBusinStatusList = { "0" };
         anMap.put("id", anId);
         anMap.put("operOrg", anOperOrg);
-        //查询每个状态数据
-        for(int i = 0; i < anBusinStatusList.length; i++) {
-            anMap.put("businStatus", anBusinStatusList[i]);
-            List<ScfReceivable> tempReceivableList = this.selectByClassProperty(ScfReceivable.class, anMap);
-            receivableList.addAll(tempReceivableList);
-        }
+        anMap.put("businStatus", anBusinStatusList);
+        List<ScfReceivable> receivableList = this.selectByClassProperty(ScfReceivable.class, anMap);
         if (Collections3.isEmpty(receivableList)) {
             logger.warn("不存在相对应id,操作机构,业务状态的应收账款");
             throw new BytterTradeException(40001, "不存在相对应id,操作机构,业务状态的应收账款");
