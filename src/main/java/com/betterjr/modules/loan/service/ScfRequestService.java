@@ -155,8 +155,10 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
      * @return
      */
     public ScfRequest saveRequestTradingBackgrand(String anRequestNo) {
+        ScfRequestScheme scheme = schemeService.findSchemeDetail2(anRequestNo);
         ScfRequest request = this.selectByPrimaryKey(anRequestNo);
-
+        scheme.setCoreCustAduit("0");
+        schemeService.saveModifyScheme(scheme);
         return request;
     }
 
@@ -237,7 +239,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
 
     private ScfPayPlan createPayPlan(ScfLoan anLoan, ScfRequest request, ScfRequestScheme scheme) {
         ScfPayPlan plan = new ScfPayPlan();
-        plan.init();
+        plan.setTerm(1);
         plan.setCustNo(request.getCustNo());
         plan.setCoreCustNo(request.getCoreCustNo());
         plan.setFactorNo(request.getFactorNo());

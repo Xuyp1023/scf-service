@@ -83,6 +83,13 @@ public class ScfPayRecord implements BetterjrEntity {
     private String planPayDate;
 
     /**
+     * 计算开始日期
+     */
+    @Column(name = "D_START_DATE",  columnDefinition="VARCHAR" )
+    @MetaData( value="计算开始日期", comments = "计算开始日期")
+    private String dStartDate;
+
+    /**
      * 还款本金
      */
     @Column(name = "F_PRINCIPAL_BALANCE",  columnDefinition="DOUBLE" )
@@ -164,7 +171,14 @@ public class ScfPayRecord implements BetterjrEntity {
      */
     @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
     @MetaData( value="状态：1：未还", comments = "状态：1：未还，2：结清，3：逾期，4：提前还款，5：展期，6：坏账")
-    private String businStatus;
+    private String cBusinStatus;
+
+    /**
+     * 发货通知单id,多个以逗号隔开
+     */
+    @Column(name = "C_DELIVERYS",  columnDefinition="VARCHAR" )
+    @MetaData( value="发货通知单id,多个以逗号隔开", comments = "发货通知单id,多个以逗号隔开")
+    private String deliverys;
 
     /**
      * 操作机构
@@ -209,7 +223,7 @@ public class ScfPayRecord implements BetterjrEntity {
     @MetaData( value="", comments = "")
     private Long version;
 
-    private static final long serialVersionUID = 1470730148589L;
+    private static final long serialVersionUID = 1471350583041L;
 
     public Long getId() {
         return id;
@@ -281,6 +295,14 @@ public class ScfPayRecord implements BetterjrEntity {
 
     public void setPlanPayDate(String planPayDate) {
         this.planPayDate = planPayDate;
+    }
+
+    public String getdStartDate() {
+        return dStartDate;
+    }
+
+    public void setdStartDate(String dStartDate) {
+        this.dStartDate = dStartDate == null ? null : dStartDate.trim();
     }
 
     public BigDecimal getPrincipalBalance() {
@@ -371,12 +393,20 @@ public class ScfPayRecord implements BetterjrEntity {
         this.payType = payType;
     }
 
-    public String getBusinStatus() {
-        return businStatus;
+    public String getcBusinStatus() {
+        return cBusinStatus;
     }
 
-    public void setBusinStatus(String businStatus) {
-        this.businStatus = businStatus;
+    public void setcBusinStatus(String cBusinStatus) {
+        this.cBusinStatus = cBusinStatus == null ? null : cBusinStatus.trim();
+    }
+
+    public String getDeliverys() {
+        return deliverys;
+    }
+
+    public void setDeliverys(String deliverys) {
+        this.deliverys = deliverys;
     }
 
     public String getOperOrg() {
@@ -474,6 +504,7 @@ public class ScfPayRecord implements BetterjrEntity {
         sb.append(", payPlanId=").append(payPlanId);
         sb.append(", payDate=").append(payDate);
         sb.append(", planPayDate=").append(planPayDate);
+        sb.append(", dStartDate=").append(dStartDate);
         sb.append(", principalBalance=").append(principalBalance);
         sb.append(", interestBalance=").append(interestBalance);
         sb.append(", overdueDays=").append(overdueDays);
@@ -485,7 +516,8 @@ public class ScfPayRecord implements BetterjrEntity {
         sb.append(", ratio=").append(ratio);
         sb.append(", managementRatio=").append(managementRatio);
         sb.append(", payType=").append(payType);
-        sb.append(", businStatus=").append(businStatus);
+        sb.append(", cBusinStatus=").append(cBusinStatus);
+        sb.append(", deliverys=").append(deliverys);
         sb.append(", operOrg=").append(operOrg);
         sb.append(", regOperId=").append(regOperId);
         sb.append(", regOperName=").append(regOperName);
@@ -522,6 +554,7 @@ public class ScfPayRecord implements BetterjrEntity {
             && (this.getPayPlanId() == null ? other.getPayPlanId() == null : this.getPayPlanId().equals(other.getPayPlanId()))
             && (this.getPayDate() == null ? other.getPayDate() == null : this.getPayDate().equals(other.getPayDate()))
             && (this.getPlanPayDate() == null ? other.getPlanPayDate() == null : this.getPlanPayDate().equals(other.getPlanPayDate()))
+            && (this.getdStartDate() == null ? other.getdStartDate() == null : this.getdStartDate().equals(other.getdStartDate()))
             && (this.getPrincipalBalance() == null ? other.getPrincipalBalance() == null : this.getPrincipalBalance().equals(other.getPrincipalBalance()))
             && (this.getInterestBalance() == null ? other.getInterestBalance() == null : this.getInterestBalance().equals(other.getInterestBalance()))
             && (this.getOverdueDays() == null ? other.getOverdueDays() == null : this.getOverdueDays().equals(other.getOverdueDays()))
@@ -533,7 +566,8 @@ public class ScfPayRecord implements BetterjrEntity {
             && (this.getRatio() == null ? other.getRatio() == null : this.getRatio().equals(other.getRatio()))
             && (this.getManagementRatio() == null ? other.getManagementRatio() == null : this.getManagementRatio().equals(other.getManagementRatio()))
             && (this.getPayType() == null ? other.getPayType() == null : this.getPayType().equals(other.getPayType()))
-            && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
+            && (this.getcBusinStatus() == null ? other.getcBusinStatus() == null : this.getcBusinStatus().equals(other.getcBusinStatus()))
+            && (this.getDeliverys() == null ? other.getDeliverys() == null : this.getDeliverys().equals(other.getDeliverys()))
             && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
             && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
             && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
@@ -559,6 +593,7 @@ public class ScfPayRecord implements BetterjrEntity {
         result = prime * result + ((getPayPlanId() == null) ? 0 : getPayPlanId().hashCode());
         result = prime * result + ((getPayDate() == null) ? 0 : getPayDate().hashCode());
         result = prime * result + ((getPlanPayDate() == null) ? 0 : getPlanPayDate().hashCode());
+        result = prime * result + ((getdStartDate() == null) ? 0 : getdStartDate().hashCode());
         result = prime * result + ((getPrincipalBalance() == null) ? 0 : getPrincipalBalance().hashCode());
         result = prime * result + ((getInterestBalance() == null) ? 0 : getInterestBalance().hashCode());
         result = prime * result + ((getOverdueDays() == null) ? 0 : getOverdueDays().hashCode());
@@ -570,7 +605,8 @@ public class ScfPayRecord implements BetterjrEntity {
         result = prime * result + ((getRatio() == null) ? 0 : getRatio().hashCode());
         result = prime * result + ((getManagementRatio() == null) ? 0 : getManagementRatio().hashCode());
         result = prime * result + ((getPayType() == null) ? 0 : getPayType().hashCode());
-        result = prime * result + ((getBusinStatus() == null) ? 0 : getBusinStatus().hashCode());
+        result = prime * result + ((getcBusinStatus() == null) ? 0 : getcBusinStatus().hashCode());
+        result = prime * result + ((getDeliverys() == null) ? 0 : getDeliverys().hashCode());
         result = prime * result + ((getOperOrg() == null) ? 0 : getOperOrg().hashCode());
         result = prime * result + ((getRegOperId() == null) ? 0 : getRegOperId().hashCode());
         result = prime * result + ((getRegOperName() == null) ? 0 : getRegOperName().hashCode());
