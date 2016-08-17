@@ -13,9 +13,11 @@ import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -65,6 +67,7 @@ public class ScfRequest implements BetterjrEntity {
      */
     @Column(name = "D_REQUEST_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="实际申请日期", comments = "实际申请日期")
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String requestDate;
 
     /**
@@ -86,6 +89,7 @@ public class ScfRequest implements BetterjrEntity {
      */
     @Column(name = "D_OPERDATE",  columnDefinition="VARCHAR" )
     @MetaData( value="下单日期", comments = "下单日期")
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String operDate;
 
     /**
@@ -154,6 +158,7 @@ public class ScfRequest implements BetterjrEntity {
      */
     @Column(name = "D_ACTUAL_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="实际放款日期", comments = "实际放款日期")
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String actualDate;
 
     /**
@@ -161,6 +166,7 @@ public class ScfRequest implements BetterjrEntity {
      */
     @Column(name = "D_END_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="还款截止日期", comments = "还款截止日期")
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String endDate;
 
     /**
@@ -168,6 +174,7 @@ public class ScfRequest implements BetterjrEntity {
      */
     @Column(name = "D_CLEAN_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="结清日期", comments = "结清日期")
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String cleanDate;
 
     /**
@@ -307,6 +314,7 @@ public class ScfRequest implements BetterjrEntity {
 
     @Column(name = "D_MODI_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="", comments = "")
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String modiDate;
 
     @Column(name = "T_MODI_TIME",  columnDefinition="VARCHAR" )
@@ -323,6 +331,7 @@ public class ScfRequest implements BetterjrEntity {
 
     @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="", comments = "")
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
 
     @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
