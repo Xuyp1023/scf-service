@@ -23,6 +23,7 @@ import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.agreement.utils.SupplyChainUtil;
 import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.document.entity.CustFileItem;
+import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
 
 /***
  * 
@@ -30,7 +31,7 @@ import com.betterjr.modules.document.entity.CustFileItem;
  *
  */
 @Service
-public class ScfCustAgreementService extends BaseService<CustAgreementMapper, CustAgreement> {
+public class ScfCustAgreementService extends BaseService<CustAgreementMapper, CustAgreement> implements IScfOrderInfoCheckService {
 
     @Autowired
     private CustAccountService custAccoService;
@@ -283,6 +284,18 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
         }
 
         return "";
+    }
+
+    @Override
+    public void checkInfoExist(Long anId, String anOperOrg) {
+        Map<String,Object> anMap=new HashMap<String, Object>();
+        anMap.put("id", anId);
+        anMap.put("operOrg", anOperOrg);
+        List<CustAgreement> custAgreementList=this.selectByProperty(anMap);
+        if (Collections3.isEmpty(custAgreementList)) {
+            logger.error("不存在相对应合同编号,操作机构的合同");
+            throw new BytterTradeException(40001, "不存在相对应合同编号,操作机构的合同");
+        }
     }
     
 }
