@@ -49,7 +49,7 @@ public class ScfRequestSchemeService extends BaseService<ScfRequestApprovedMappe
         ScfRequest request = requestService.findRequestDetail(anScheme.getRequestNo());
         anScheme.setFactorNo(request.getFactorNo());
         anScheme.setCoreCustNo(request.getCoreCustNo());
-        anScheme.setCustNo(request.getCoreCustNo());
+        anScheme.setCustNo(request.getCustNo());
         anScheme.init();
         this.insert(anScheme);
 

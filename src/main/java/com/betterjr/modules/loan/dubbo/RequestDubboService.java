@@ -12,13 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
-import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.mapper.pagehelper.Page;
-import com.betterjr.modules.agreement.IScfElecAgreementService;
+import com.betterjr.modules.agreement.entity.ScfRequestNotice;
+import com.betterjr.modules.agreement.service.ScfAgreementService;
+import com.betterjr.modules.agreement.service.ScfRequestNoticeService;
 import com.betterjr.modules.loan.IScfRequestService;
 import com.betterjr.modules.loan.entity.ScfLoan;
 import com.betterjr.modules.loan.entity.ScfRequest;
@@ -49,12 +50,12 @@ public class RequestDubboService implements IScfRequestService {
     @Autowired
     private ScfOrderService orderService;
     
+    @Autowired
+    private ScfAgreementService agreementService;
+    
     @Reference(interfaceClass=IFlowService.class )
     private IFlowService flowService;
     
-    @Reference(interfaceClass=IScfElecAgreementService.class )
-    private IScfElecAgreementService agreementService;
-
     @Override
     public String webAddRequest(Map<String, Object> anMap) {
         logger.debug("新增融资申请，入参：" + anMap);
@@ -151,12 +152,12 @@ public class RequestDubboService implements IScfRequestService {
     }
 
     @Override
-    public String webConfirmScheme(String anRequestNo, String anAduitStatus) {
-        logger.debug("申请企业-确认融资方案，入参：anRequestNo" + anRequestNo + "-  anAduitStatus:" + anAduitStatus);
+    public String webConfirmScheme(String anRequestNo, String anApprovalResult) {
+        logger.debug("申请企业-确认融资方案，入参：anRequestNo" + anRequestNo + "-  anApprovalResult:" + anApprovalResult);
         
         ScfRequestScheme scheme = new ScfRequestScheme();
-        if(BetterStringUtils.equals(anAduitStatus, "0") == true){
-            scheme = requestService.saveConfirmScheme(anRequestNo, anAduitStatus);
+        if(BetterStringUtils.equals(anApprovalResult, "0") == true){
+            scheme = requestService.saveConfirmScheme(anRequestNo, "1");
             
             //修改申请表中的信息
             ScfRequest request = requestService.selectByPrimaryKey(anRequestNo);
@@ -167,7 +168,7 @@ public class RequestDubboService implements IScfRequestService {
         }
         
         //执行流程
-        execFllow(anRequestNo, scheme.getApprovedBalance(), anAduitStatus, "", "");
+        execFllow(anRequestNo, scheme.getApprovedBalance(), anApprovalResult, "", "");
         
         return AjaxObject.newOk("操作成功").toJson();
     }
@@ -183,29 +184,14 @@ public class RequestDubboService implements IScfRequestService {
             request = requestService.findRequestDetail(anRequestNo);
             
             //1,订单，2:票据;3:应收款;4:经销商
-            if(BetterStringUtils.equals("4", request.getRequestType()) == true){
-                //三方协议
-                
-            }else{
+            if(BetterStringUtils.equals("4", request.getRequestType()) == false){
                 //发送转让通知书
-                Map<String, Object> anMap =new HashMap<String, Object>();
-                anMap.put("requestNo", anRequestNo);
-                //TODO 合同名称、 银行账号， 保理公司详细地址
-                String noticeNo = BetterDateUtils.getDate("yyyyMMdd")+anRequestNo;
-                anMap.put("noticeNo", noticeNo);
-                anMap.put("buyer", request.getFactorName());
-                anMap.put("factorRequestNo", noticeNo);
-                anMap.put("agreeName", request.getCustName() + "应收账款转让申请书");
-                anMap.put("bankAccount", "6229887842567285");
-                anMap.put("factorAddr", "保理公司详细地址");
-                anMap.put("factorPost", "518100");
-                anMap.put("factorLinkMan", "保理公司联系人姓名");
-                if(agreementService.webTransNotice(anMap) == false){
-                    logger.debug("转让通知书,生成失败！");
-                    //TODO 加入转让明细   失败了要怎么弄
-                }
+                ScfRequestNotice noticeRequest = requestService.getNotice(request);
+                agreementService.transNotice(noticeRequest);
+                
+                //添加转让明细（因为在转让申请时就添加了 转让明细，如果核心企业不同意，那明细需要删除，但目前没有做删除这步）
+                agreementService.transCredit(requestService.getCreditList(request));
             }
-            
         }
         
         //执行流程
@@ -215,37 +201,31 @@ public class RequestDubboService implements IScfRequestService {
     }
 
     @Override
-    public String webConfirmTradingBackgrand(String anRequestNo, String anAduitStatus) {
-        logger.debug("核心企业-确认贸易背景，入参：anRequestNo" + anRequestNo + "-  anAduitStatus:" + anAduitStatus);
+    public String webConfirmTradingBackgrand(String anRequestNo, String anApprovalResult) {
+        logger.debug("核心企业-确认贸易背景，入参：anRequestNo" + anRequestNo + "-  anApprovalResult:" + anApprovalResult);
         
         ScfRequest request = new ScfRequest();
-        if(BetterStringUtils.equals(anAduitStatus, "0") == true){
-            //保存确认状态
-            request = requestService.confirmTradingBackgrand(anRequestNo, anAduitStatus);
+        if(BetterStringUtils.equals(anApprovalResult, "0") == true){
+            //保存确认贸易背景确认状态
+            request = requestService.confirmTradingBackgrand(anRequestNo, "1");
             
             //1,订单，2:票据;3:应收款;4:经销商
-            if(BetterStringUtils.equals( "4", request.getRequestType()) == true){
-                //TODO 加入三方协议
-                
+            if(BetterStringUtils.equals("4", request.getRequestType()) == true){
+                //三方协议
+                agreementService.transProtacal(requestService.getProtacal(request));
             }else{
                 //转让意见确认书
-                Map<String, Object> anMap =new HashMap<String, Object>();
-                String noticeNo = BetterDateUtils.getDate("yyyyMMdd")+anRequestNo;
-                anMap.put("requestNo", anRequestNo);
-                anMap.put("factorRequestNo", noticeNo);
-                anMap.put("confirmNo", noticeNo);
-                anMap.put("supplier", request.getCustName());
-                if(agreementService.webTransOpinion(anMap)){
-                    logger.debug("转让确认意见确认书,生成失败！");
-                }
+                agreementService.transOpinion(requestService.getOption(request));
             }
         }
         
         //执行流程
-        execFllow(anRequestNo, request.getBalance(), anAduitStatus, "", "");
+        execFllow(anRequestNo, request.getBalance(), anApprovalResult, "", "");
        
         return AjaxObject.newOk("操作成功").toJson();
     }
+
+  
 
     @Override
     public String webConfirmLoan(Map<String, Object> anMap, String anApprovalResult, String anReturnNode, String anDescription) {
@@ -355,32 +335,10 @@ public class RequestDubboService implements IScfRequestService {
     
     public String webQueryTradeStatus(){
         List<CustFlowNode> list = flowService.findFlowNodesByType("Trade");
-        CustFlowNode node = new CustFlowNode();
-        
-        node = new CustFlowNode();
-        node.setNodeCustomName("逾期");
-        node.setSysNodeName("逾期");
-        node.setSysNodeId(new Long(170));
-        node.setId(new Long(170));
-        list.add(node);
-        
-        node = new CustFlowNode();
-        node.setNodeCustomName("展期");
-        node.setSysNodeName("展期");
-        node.setSysNodeId(new Long(180));
-        node.setId(new Long(180));
-        list.add(node);
-        
-        node = new CustFlowNode();
-        node.setNodeCustomName("还款完成");
-        node.setSysNodeName("还款完成");
-        node.setSysNodeId(new Long(190));
-        node.setId(new Long(190));
-        list.add(node);
-        
+        requestService.getDefaultNode(list);
         return AjaxObject.newOk("查询成功", list).toJson();
     }
-    
+
     @Override
     public String webQueryPendingRequest(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
         logger.debug("分页查询待批融资，入参：" + anMap);

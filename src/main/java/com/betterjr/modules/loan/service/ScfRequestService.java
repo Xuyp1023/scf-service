@@ -1,6 +1,7 @@
 package com.betterjr.modules.loan.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,13 +15,27 @@ import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.account.service.CustAccountService;
+import com.betterjr.modules.agreement.entity.CustAgreement;
+import com.betterjr.modules.agreement.entity.ScfRequestCredit;
+import com.betterjr.modules.agreement.entity.ScfRequestNotice;
+import com.betterjr.modules.agreement.entity.ScfRequestOpinion;
+import com.betterjr.modules.agreement.entity.ScfRequestProtacal;
+import com.betterjr.modules.agreement.service.ScfAgreementService;
+import com.betterjr.modules.agreement.service.ScfRequestNoticeService;
 import com.betterjr.modules.loan.dao.ScfRequestMapper;
 import com.betterjr.modules.loan.entity.ScfLoan;
 import com.betterjr.modules.loan.entity.ScfPayPlan;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
 import com.betterjr.modules.loan.entity.ScfServiceFee;
+import com.betterjr.modules.order.entity.ScfInvoice;
+import com.betterjr.modules.order.entity.ScfOrder;
+import com.betterjr.modules.order.helper.ScfOrderRelationType;
+import com.betterjr.modules.order.service.ScfOrderService;
+import com.betterjr.modules.receivable.entity.ScfReceivable;
+import com.betterjr.modules.workflow.entity.CustFlowNode;
 
 @Service
 public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest> {
@@ -35,7 +50,8 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     private ScfLoanService loanService;
     @Autowired
     private ScfServiceFeeService serviceFeeService;
-
+    @Autowired
+    private ScfOrderService orderService;
     /**
      * 新增融资申请
      * 
@@ -387,6 +403,144 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     public ScfRequest approveRequest(Map<String, Object> anMap) {
         return null;
     }
+
+    public List<ScfRequestCredit> getCreditList(ScfRequest request){
+        List<CustAgreement> agreementList = (List)orderService.findInfoListByRequest(request.getRequestNo(), ScfOrderRelationType.AGGREMENT.getCode());
+        CustAgreement agreement = Collections3.getFirst(agreementList);
+        
+        String type = request.getRequestType();
+        List<ScfRequestCredit> creditList = new ArrayList<ScfRequestCredit>();
+        
+        if(BetterStringUtils.equals(ScfOrderRelationType.ORDER.getCode(), type)){
+            List<ScfOrder> list = (List)orderService.findInfoListByRequest(request.getRequestNo(), ScfOrderRelationType.ORDER.getCode());
+            for (ScfOrder order : list) {
+                creditList = setInvoice(request, order.getInvoiceList(), order.getBalance(), order.getOrderNo(),agreement);
+            }
+        }else if(BetterStringUtils.equals(ScfOrderRelationType.RECEIVABLE.getCode(), type)){
+            List<ScfReceivable> list = (List)orderService.findInfoListByRequest(request.getRequestNo(), ScfOrderRelationType.ORDER.getCode());
+            for (ScfReceivable receivable : list) {
+                creditList = setInvoice(request, receivable.getInvoiceList(), receivable.getBalance(), receivable.getReceivableNo() ,agreement);
+            }
+        }else if(BetterStringUtils.equals(ScfOrderRelationType.ACCEPTBILL.getCode(), type)){
+            List<ScfAcceptBill> list = (List)orderService.findInfoListByRequest(request.getRequestNo(), ScfOrderRelationType.ORDER.getCode());
+            for (ScfAcceptBill bill : list) {
+                creditList = setInvoice(request, bill.getInvoiceList(), bill.getBalance(), bill.getBtBillNo(),agreement);
+            }
+        }
+        return creditList;
+    }
     
+    /**
+     * 设置转主明细相关信息
+     * @param request
+     * @param invoiceList
+     * @param balance
+     * @param ObjectNo
+     * @param agreement
+     * @return
+     */
+    private List<ScfRequestCredit> setInvoice(ScfRequest request, List<ScfInvoice> invoiceList, BigDecimal balance, String ObjectNo, CustAgreement agreement){
+        List<ScfRequestCredit> creditList = new ArrayList<ScfRequestCredit>();
+        for (ScfInvoice invoice : invoiceList) {
+            ScfRequestCredit credit = new ScfRequestCredit();
+            credit.setTransNo(ObjectNo);
+            credit.setRequestNo(request.getRequestNo());
+            credit.setBalance(balance);
+            credit.setInvoiceNo(invoice.getInvoiceNo());
+            credit.setInvoiceBalance(invoice.getBalance());
+            credit.setEndDate(invoice.getInvoiceDate());
+            creditList.add(credit);
+        }
+        return creditList;
+    }
+    
+    /**
+     * 设置转让通知书相关信息
+     * @param anRequestNo
+     * @param request
+     * @return
+     */
+    public ScfRequestNotice getNotice(ScfRequest request) {
+        //TODO 合同名称、 银行账号， 保理公司详细地址
+        String noticeNo = BetterDateUtils.getDate("yyyyMMdd") + request.getRequestNo();
+        ScfRequestNotice noticeRequest = new ScfRequestNotice();
+        noticeRequest.setAgreeName(request.getCustName() + "应收账款转让申请书");
+        noticeRequest.setNoticeNo(noticeNo);
+        noticeRequest.setBuyer(request.getFactorName());
+        noticeRequest.setFactorRequestNo(noticeNo);
+        noticeRequest.setBankAccount("6229887842567285");
+        noticeRequest.setFactorAddr("保理公司详细地址");
+        noticeRequest.setFactorPost("518100");
+        noticeRequest.setFactorLinkMan("保理公司联系人姓名");
+        return noticeRequest;
+    }
+
+    /**
+     * 设置三方协议相关信息
+     * @return
+     */
+    public ScfRequestProtacal getProtacal(ScfRequest request) {
+        ScfRequestProtacal protacal = new ScfRequestProtacal();
+        protacal.setFirstAddress("地址目前还没有");
+        protacal.setFirstFax("fax目前还没有");
+        protacal.setFirstName("甲方名称目前没有");
+        protacal.setFirstJob("职务目前没有");
+        protacal.setFirstPhone("电话目前没有");
+        protacal.setFirstLegal("负责人目前没有");
+        
+        protacal.setSecondAddress("地址目前还没有");
+        protacal.setSecondFax("fax目前还没有");
+        protacal.setSecondName("甲方名称目前没有");
+        protacal.setSecondJob("职务目前没有");
+        protacal.setSecondPhone("电话目前没有");
+        protacal.setSecondLegal("负责人目前没有");
+        
+        protacal.setThreeAddress("地址目前还没有");
+        protacal.setThreeFax("fax目前还没有");
+        protacal.setThreeName("甲方名称目前没有");
+        protacal.setThreeJob("职务目前没有");
+        protacal.setThreePhone("电话目前没有");
+        protacal.setThreeLegal("负责人目前没有");
+        return protacal;
+    }
+
+    /**
+     * 设置转让意见确认书相关信息
+     * @param request
+     * @return
+     */
+    public ScfRequestOpinion getOption(ScfRequest request) {
+        String noticeNo = BetterDateUtils.getDate("yyyyMMdd") + request.getRequestNo();
+        ScfRequestOpinion opinion = new ScfRequestOpinion();
+        opinion.setRequestNo(request.getRequestNo());
+        opinion.setFactorRequestNo(noticeNo);
+        opinion.setConfirmNo(noticeNo);
+        opinion.setSupplier(request.getCustName());
+        return opinion;
+    }
+
+    public void getDefaultNode(List<CustFlowNode> list) {
+        CustFlowNode node = new CustFlowNode();
+        node = new CustFlowNode();
+        node.setNodeCustomName("逾期");
+        node.setSysNodeName("逾期");
+        node.setSysNodeId(new Long(170));
+        node.setId(new Long(170));
+        list.add(node);
+        
+        node = new CustFlowNode();
+        node.setNodeCustomName("展期");
+        node.setSysNodeName("展期");
+        node.setSysNodeId(new Long(180));
+        node.setId(new Long(180));
+        list.add(node);
+        
+        node = new CustFlowNode();
+        node.setNodeCustomName("还款完成");
+        node.setSysNodeName("还款完成");
+        node.setSysNodeId(new Long(190));
+        node.setId(new Long(190));
+        list.add(node);
+    }
 
 }
