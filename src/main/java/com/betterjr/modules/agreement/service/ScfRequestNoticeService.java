@@ -83,5 +83,14 @@ public class ScfRequestNoticeService extends BaseService<ScfRequestNoticeMapper,
 
         return "0".equals(requestNotice.getTransStatus());
     }
+    
+    /***
+     * 根据申请单号查询转让通知书
+     * @param requestNo
+     * @return
+     */
+    public ScfRequestNotice findTransNotice(String requestNo){
+        return this.selectByPrimaryKey(requestNo);
+    }
 
 }

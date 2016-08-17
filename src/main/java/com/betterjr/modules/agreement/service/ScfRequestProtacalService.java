@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.betterjr.common.exception.BytterException;
+import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.modules.agreement.dao.ScfRequestProtacalMapper;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
@@ -34,7 +34,7 @@ public class ScfRequestProtacalService extends BaseService<ScfRequestProtacalMap
         }else if("0".equals(tmpProtacal.getBusinStatus())){
             this.updateByPrimaryKey(protacal);
         }else{
-            throw new BytterException("此申请单协议已签署");
+            throw new BytterTradeException("此申请单协议已签署");
         }
         ScfElecAgreement elecAgreement = ScfElecAgreement.createByProtacal(protacal.getAgreeName(), protacal.getProtocalNo(),BigDecimal.ZERO);
         elecAgreement.setRequestNo(protacal.getRequestNo());
