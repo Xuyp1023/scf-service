@@ -1,7 +1,8 @@
 package com.betterjr.modules.agreement.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.betterjr.common.exception.BytterException;
 import com.betterjr.common.utils.BTAssert;
-import com.betterjr.common.utils.BetterStringUtils;
+import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.modules.agreement.entity.ScfRequestCredit;
 import com.betterjr.modules.agreement.entity.ScfRequestNotice;
@@ -94,14 +95,13 @@ public class ScfAgreementService {
      */
     public boolean transCredit(List<ScfRequestCredit> list){
         logger.info("应收账款转让书："+list);
-        String requestNo = null;
-        for(int i=0;i<list.size();i++){
-            ScfRequestCredit credit=list.get(i);
-            requestNo=credit.getRequestNo();
-            break;
-        }
+        ScfRequestCredit credit=Collections3.getFirst(list);
+        String requestNo=credit.getRequestNo();
         ScfRequest request = requestService.findRequestDetail(requestNo);
-        if (requestNoticeService.allowUpdate(requestNo) && requestCreditService.updateCreditList(request, list)) {
+        // 根据申请单号查询对应的转让书编号
+        ScfRequestNotice notice=requestNoticeService.findTransNotice(requestNo);
+        BTAssert.notNull(notice,"申请单："+requestNo+"的转让通知书不存在");
+        if (requestNoticeService.allowUpdate(requestNo) && requestCreditService.updateCreditList(request,notice.getNoticeNo(), list)) {
             return true;
         }
         return false;
@@ -114,7 +114,7 @@ public class ScfAgreementService {
     public boolean transProtacal(ScfRequestProtacal protacal){
         logger.info("三方协议书："+protacal);
         ScfRequest request = requestService.findRequestDetail(protacal.getRequestNo());
-        BTAssert.notNull(request.getRequestNo(), "三方协议申请单不存在");
+        BTAssert.notNull(request, "三方协议申请单不存在");
         return requestProtacalService.updateProtacalInfo(protacal);
     }
 }
