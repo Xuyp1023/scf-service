@@ -448,6 +448,21 @@ public class ScfElecAgreement implements BetterjrEntity,BaseRemoteEntity {
         return elecAgreement; 
     }
     
+
+    /**
+     * 添加三方协议
+     * @param anRequest 申请单
+     * @param anAgreeName 电子合同名称
+     * @param anAgreeNo 电子合同编号
+     * @param anBalance 电子合同金额
+     */
+    public static ScfElecAgreement createByProtacal(String anAgreeName, String anAgreeNo,  BigDecimal anBalance) {
+        ScfElecAgreement elecAgreement = new ScfElecAgreement();
+        elecAgreement.fillBaseInfo(anAgreeName, anAgreeNo, "2", anBalance);
+        
+        return elecAgreement; 
+    }
+    
     private void fillBaseInfo(String anAgreeName, String anAgreeNo, String anAgreeType, BigDecimal anBalance){
         this.appNo = BetterDateUtils.getNumDate().concat(Long.toHexString(SerialGenerator.getLongValue("ScfElecAgreement.id")));
         this.regDate = BetterDateUtils.getNumDate();

@@ -111,17 +111,13 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
      *            电子合同类型
      * @return
      */
-    public ScfElecAgreement findOneElecAgreeByOrderNo(String anRequestNo, String anSignType) {
+    public List<ScfElecAgreement> findElecAgreeByOrderNo(String anRequestNo, String anSignType) {
         Map workCondition = new HashMap();
-        workCondition.put("agreeType", anSignType);
-        workCondition.put("requestNo", anRequestNo);
-        List<ScfElecAgreement> elecAgreeList = this.selectByProperty(workCondition);
-        ScfElecAgreement tmpElecAgree = null;
-        if (Collections3.isEmpty(elecAgreeList) == false) {
-            tmpElecAgree = Collections3.getFirst(elecAgreeList);
+        if(BetterStringUtils.isNotBlank(anSignType)){
+            workCondition.put("agreeType", anSignType);
         }
-
-        return tmpElecAgree;
+        workCondition.put("requestNo", anRequestNo);
+        return this.selectByProperty(workCondition);
     }
     
     public boolean saveSignFileInfo(String anAppNo, CustFileItem anFileItem, boolean anSignedFile) {
@@ -307,6 +303,33 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         }
         else {
             throw new BytterWebServiceException(WebServiceErrorCode.E1008);
+        }
+    }
+    
+
+    /**
+     * 增加电子合同信息
+     * 
+     * @param anElecAgree
+     *            电子合同信息
+     * @param anCustList
+     *            电子合同的签约方信息
+     */
+    public void addElecAgreementInfo(ScfElecAgreement anElecAgree) {
+        Map workCondition = new HashMap();
+        workCondition.put("agreeType", anElecAgree.getAgreeType());
+        workCondition.put("requestNo", anElecAgree.getRequestNo());
+        List<ScfElecAgreement> elecAgreeList = this.selectByProperty(workCondition);
+        if (Collections3.isEmpty(elecAgreeList)) {
+            this.insert(anElecAgree);
+        }
+        else {
+            ScfElecAgreement tmpElecAgree = Collections3.getFirst(elecAgreeList);
+            // 只能更新未处理的合同协议
+            if ("0".equals(tmpElecAgree.getSignStatus())) {
+                tmpElecAgree.updateInfo(anElecAgree);
+                this.updateByPrimaryKey(tmpElecAgree);
+            }
         }
     }
 
