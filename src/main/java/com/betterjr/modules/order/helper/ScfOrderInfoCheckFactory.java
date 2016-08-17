@@ -4,6 +4,7 @@ import com.betterjr.common.service.SpringContextHolder;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
+import com.betterjr.modules.agreement.service.ScfCustAgreementService;
 import com.betterjr.modules.order.service.ScfInvoiceService;
 import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.order.service.ScfTransportService;
@@ -19,7 +20,7 @@ public class ScfOrderInfoCheckFactory {
         IScfOrderInfoCheckService orderInfoCheckService = null;
 
         if (BetterStringUtils.equals(ScfOrderRelationType.AGGREMENT.getCode(), anInfoType)) {
-            
+            orderInfoCheckService= (IScfOrderInfoCheckService) SpringContextHolder.getBean(ScfCustAgreementService.class); 
         }
         else if (BetterStringUtils.equals(ScfOrderRelationType.ACCEPTBILL.getCode(), anInfoType)) {
             orderInfoCheckService= (IScfOrderInfoCheckService) SpringContextHolder.getBean(ScfAcceptBillService.class);

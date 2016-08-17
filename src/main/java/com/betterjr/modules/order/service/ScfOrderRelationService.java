@@ -5,12 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
-import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
@@ -22,9 +20,6 @@ import com.betterjr.modules.order.helper.ScfOrderRelationType;
 
 @Service
 public class ScfOrderRelationService extends BaseService<ScfOrderRelationMapper, ScfOrderRelation> {
-
-    @Autowired
-    private ScfOrderService scfOrderCheckService;
 
     /**
      * 订单关联关系保存
