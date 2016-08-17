@@ -201,7 +201,6 @@ public class RequestDubboService implements IScfRequestService {
                 anMap.put("factorPost", "518100");
                 anMap.put("factorLinkMan", "保理公司联系人姓名");
                 if(agreementService.webTransNotice(anMap) == false){
-                    
                     logger.debug("转让通知书,生成失败！");
                     //TODO 加入转让明细   失败了要怎么弄
                 }

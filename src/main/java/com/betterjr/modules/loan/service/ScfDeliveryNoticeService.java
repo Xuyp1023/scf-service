@@ -1,10 +1,12 @@
 package com.betterjr.modules.loan.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.betterjr.common.exception.BytterException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
@@ -14,7 +16,7 @@ import com.betterjr.modules.loan.dao.ScfDeliveryNoticeMapper;
 import com.betterjr.modules.loan.entity.ScfDeliveryNotice;
 
 @Service
-public class DeliveryNoticeService extends BaseService<ScfDeliveryNoticeMapper, ScfDeliveryNotice> {
+public class ScfDeliveryNoticeService extends BaseService<ScfDeliveryNoticeMapper, ScfDeliveryNotice> {
 
     /**
      * 保存修改改
@@ -63,6 +65,21 @@ public class DeliveryNoticeService extends BaseService<ScfDeliveryNoticeMapper, 
          anNotice.init();
          this.insert(anNotice);
          return anNotice;
+     }
+     
+     public void saveRelationRequest(String anRequestNo, String anIds){
+         anIds.split(",");
+         List<String> list = BetterStringUtils.splitTrim(anIds);
+         for (String id : list) {
+             ScfDeliveryNotice delivery = selectByPrimaryKey(id);
+             if(BetterStringUtils.equals("1", delivery.getBusinStatus())){
+                 throw new BytterException("通知单已使用NoticeNo:-"+delivery.getNoticeNo());
+             }
+             
+             delivery.setRequestNo(anRequestNo);
+             delivery.setBusinStatus("1");
+             saveModifyEnquiry(delivery, Long.parseLong(id));
+        }
      }
 
 }

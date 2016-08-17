@@ -10,7 +10,7 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.modules.loan.IScfDeliveryNoticeService;
 import com.betterjr.modules.loan.entity.ScfDeliveryNotice;
-import com.betterjr.modules.loan.service.DeliveryNoticeService;
+import com.betterjr.modules.loan.service.ScfDeliveryNoticeService;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 
 @Service(interfaceClass = IScfDeliveryNoticeService.class)
@@ -18,7 +18,7 @@ public class DeliveryNoticeDubboService implements IScfDeliveryNoticeService {
     protected final Logger logger = LoggerFactory.getLogger(DeliveryNoticeDubboService.class);
     
     @Autowired
-    private DeliveryNoticeService deliveryNoticeService;
+    private ScfDeliveryNoticeService deliveryNoticeService;
     
     @Override
     public String webQueryDeliveryNoticeList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {

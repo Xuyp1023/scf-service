@@ -18,6 +18,7 @@ import com.betterjr.common.utils.DictUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.loan.dao.ScfPayPlanMapper;
+import com.betterjr.modules.loan.entity.ScfDeliveryNotice;
 import com.betterjr.modules.loan.entity.ScfPayPlan;
 import com.betterjr.modules.loan.entity.ScfPayRecord;
 import com.betterjr.modules.loan.entity.ScfPayRecordDetail;
@@ -42,6 +43,9 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
 
     @Autowired
     private ScfRequestSchemeService schemeService;
+    
+    @Autowired
+    private ScfDeliveryNoticeService deliveryNotice;
     
 
     /**
@@ -109,7 +113,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
 
         ScfPayPlan plan = this.selectByPrimaryKey(anId);
         if (null == plan) {
-            new ScfPayPlan();
+           return new ScfPayPlan();
         }
 
         plan.setCustName(custAccountService.queryCustName(plan.getCustNo()));
@@ -322,7 +326,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
     
     public ScfPayPlan saveRepayment(ScfPayRecord anRecord) {
         ScfPayPlan plan = findPayPlanDetail(anRecord.getPayPlanId());
-        BTAssert.notNull(plan, "保存还款失败-找不到还款计划");
+        BTAssert.notNull(plan, "保存还款失败-找不到对应还款计划");
         
         //新增还款记录
         anRecord.setCustNo(plan.getCustNo());
@@ -342,6 +346,9 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         
         //设置还款计划相关参数
         setPayPlanFee(anRecord, plan);
+        
+        //状态改为结清
+        plan.setBusinStatus("2");
         plan = saveModifyPayPlan(plan, anRecord.getPayPlanId());
         
         //不是经销商还款 
@@ -349,31 +356,44 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
             return plan;
         }
         
+        //关联放款通知单
+        deliveryNotice.saveRelationRequest(plan.getRequestNo(),  anRecord.getDeliverys());
+        
         //是经销商，但本次已还款完成
         if(anRecord.getTotalBalance().compareTo(map.get("totalBalance")) < 0 == false){
             return plan;
         }
         
+        ScfPayPlan newPlan = new ScfPayPlan();
+        newPlan.setRequestNo(plan.getRequestNo());
         // 如果经销商还款 一次没有还款，则默认把还计算方式 改为按天计算
         // 这一次没有还完（还款金额 小于 剩余金额） 则 根据 剩余本金 重新计算 剩余利息
             
         //设置 新的 开始计息日（今天的利息已经收了，从明天开始 所以要往后推一天）
-        plan.setStartDate(BetterDateUtils.addStrDays(anRecord.getPayDate(), 1));
-        plan.setSurplusPrincipalBalance(plan.getSurplusPrincipalBalance().subtract(anRecord.getPrincipalBalance()));
+        newPlan.setStartDate(BetterDateUtils.addStrDays(anRecord.getPayDate(), 1));
+        newPlan.setPlanDate(plan.getPayDate());
+        newPlan.setRatio(anRecord.getRatio());
+        newPlan.setManagementRatio(anRecord.getManagementRatio());
+        newPlan.setCustNo(plan.getCustNo());
+        newPlan.setCoreCustNo(plan.getCoreCustNo());
+        newPlan.setFactorNo(plan.getFactorNo());
+        //在原来的期数上加1
+        newPlan.setTerm(plan.getTerm() +1);
+        newPlan.setSurplusPrincipalBalance(plan.getSurplusPrincipalBalance().subtract(anRecord.getPrincipalBalance()));
         
         map = getSellerPayPlanFee(anRecord, plan.getStartDate());
         BigDecimal interestBalance = map.get("interestBalance");
         BigDecimal mgrBalance = map.get("mgrBalance");
         
         //新的应还
-        plan.setShouldInterestBalance(plan.getAlreadyInterestBalance().add(interestBalance));
-        plan.setShouldManagementBalance(plan.getAlreadyManagementBalance().add(mgrBalance));
+        newPlan.setShouldInterestBalance(plan.getAlreadyInterestBalance().add(interestBalance));
+        newPlan.setShouldManagementBalance(plan.getAlreadyManagementBalance().add(mgrBalance));
         
         //新的剩余
-        plan.setSurplusInterestBalance(interestBalance);
-        plan.setSurplusManagementBalance(mgrBalance);
+        newPlan.setSurplusInterestBalance(interestBalance);
+        newPlan.setSurplusManagementBalance(mgrBalance);
         
-        return addPayPlan(plan);
+        return addPayPlan(newPlan);
     }
 
     /**
