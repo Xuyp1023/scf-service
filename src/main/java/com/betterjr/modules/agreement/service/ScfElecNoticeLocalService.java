@@ -12,7 +12,10 @@ import org.springframework.stereotype.Service;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.SpringContextHolder;
 import com.betterjr.common.utils.Collections3;
+import com.betterjr.modules.agreement.entity.ScfRequestCredit;
 import com.betterjr.modules.agreement.entity.ScfRequestNotice;
+import com.betterjr.modules.loan.entity.ScfRequest;
+import com.betterjr.modules.loan.service.ScfRequestService;
 
 /**
  * 融资合同的转让协议书管理
@@ -25,9 +28,12 @@ import com.betterjr.modules.agreement.entity.ScfRequestNotice;
 public class ScfElecNoticeLocalService extends ScfElecAgreeLocalService {
     private static final Logger logger = LoggerFactory.getLogger(ScfElecNoticeLocalService.class);
     private ScfRequestNoticeService requestNoticeService = null;
+    private ScfRequestService requestService = null;
+    private ScfRequestCreditService requestCreditService;
 
     protected void subInit() {
         this.requestNoticeService = SpringContextHolder.getBean(ScfRequestNoticeService.class);
+        this.requestService = SpringContextHolder.getBean(ScfRequestService.class);
     }
 
     @Override
@@ -40,9 +46,8 @@ public class ScfElecNoticeLocalService extends ScfElecAgreeLocalService {
             throw new BytterTradeException(40001, "无法获取通知书信息");
         }
         result.put("noticeInfo", noticeInfo);
-//        List<ScfRequestCredit> reqCredits = requestCreditService.findByRequestNo(requestNo);
+        List<ScfRequestCredit> reqCredits = requestCreditService.findByRequestNo(requestNo);
         // 获取应收账款信息
-        List<Object> reqCredits=null;
         if (Collections3.isEmpty(reqCredits)) {
             logger.error("Can't get credit information with request no:" + requestNo);
             throw new BytterTradeException(40001, "无法获取通知书中的应收账款信息");
@@ -63,16 +68,16 @@ public class ScfElecNoticeLocalService extends ScfElecAgreeLocalService {
     public boolean cancelElecAgreement() {
         logger.info("will cancel appNo is " + this.elecAgree.getAppNo());
         if (elecAgreeService.checkCancelElecAgreement(this.elecAgree.getAppNo())) {
-//            ScfRequest tmpReq = this.requestService.selectByPrimaryKey(elecAgree.getRequestNo());
+            ScfRequest tmpReq = this.requestService.selectByPrimaryKey(elecAgree.getRequestNo());
 //            tmpReq.cancelRequestValue("供应商取消转让协议！", "6");
 //            tmpReq = this.remoteHelper.sendRequestStatus(tmpReq);
-//            if ("6".equalsIgnoreCase(tmpReq.getOutStatus())) {
-//                this.requestService.saveRequestStatus(tmpReq);
+            if ("6".equalsIgnoreCase(tmpReq.getTradeStatus())) {
+                this.requestService.addRequest(tmpReq);
                 return this.elecAgreeService.saveAndCancelElecAgreement(this.elecAgree.getAppNo());
-//            }
-//            else {
-//                return false;
-//            }
+            }
+            else {
+                return false;
+            }
         }
         return false;
     }

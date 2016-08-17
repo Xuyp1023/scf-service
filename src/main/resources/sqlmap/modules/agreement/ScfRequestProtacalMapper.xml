@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.agreement.dao.ScfRequestProtacalMapper" >
+  <resultMap id="BaseResultMap" type="com.betterjr.modules.agreement.entity.ScfRequestProtacal" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <result column="C_REQUESTNO" property="requestNo" jdbcType="VARCHAR" />
+    <result column="D_BEGIN_DATE" property="beginDate" jdbcType="VARCHAR" />
+    <result column="D_END_DATE" property="endDate" jdbcType="VARCHAR" />
+    <result column="D_REGDATE" property="regDate" jdbcType="VARCHAR" />
+    <result column="C_PROTOCALNO" property="protocalNo" jdbcType="VARCHAR" />
+    <result column="C_BUSIN_STATUS" property="businStatus" jdbcType="VARCHAR" />
+    <result column="C_PAYMENT" property="payment" jdbcType="VARCHAR" />
+    <result column="C_FIRST_NAME" property="firstName" jdbcType="VARCHAR" />
+    <result column="C_FIRST_ADDRESS" property="firstAddress" jdbcType="VARCHAR" />
+    <result column="C_FIRST_PHONE" property="firstPhone" jdbcType="VARCHAR" />
+    <result column="C_FIRST_FAX" property="firstFax" jdbcType="VARCHAR" />
+    <result column="C_FIRST_JOB" property="firstJob" jdbcType="VARCHAR" />
+    <result column="C_FIRST_LEGAL" property="firstLegal" jdbcType="VARCHAR" />
+    <result column="C_SECOND_NAME" property="secondName" jdbcType="VARCHAR" />
+    <result column="C_SECOND_ADDRESS" property="secondAddress" jdbcType="VARCHAR" />
+    <result column="C_SECOND_PHONE" property="secondPhone" jdbcType="VARCHAR" />
+    <result column="C_SECOND_FAX" property="secondFax" jdbcType="VARCHAR" />
+    <result column="C_SECOND_JOB" property="secondJob" jdbcType="VARCHAR" />
+    <result column="C_SECOND_LEGAL" property="secondLegal" jdbcType="VARCHAR" />
+    <result column="C_THREE_NAME" property="threeName" jdbcType="VARCHAR" />
+    <result column="C_THREE_ADDRESS" property="threeAddress" jdbcType="VARCHAR" />
+    <result column="C_THREE_PHONE" property="threePhone" jdbcType="VARCHAR" />
+    <result column="C_THREE_FAX" property="threeFax" jdbcType="VARCHAR" />
+    <result column="C_THREE_JOB" property="threeJob" jdbcType="VARCHAR" />
+    <result column="C_THREE_LEGAL" property="threeLegal" jdbcType="VARCHAR" />
+    <result column="C_AGREENAME" property="agreeName" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>

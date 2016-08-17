@@ -10,25 +10,25 @@ import org.springframework.stereotype.Service;
 
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.SpringContextHolder;
-import com.betterjr.modules.agreement.entity.ScfRequestOpinion;
+import com.betterjr.modules.agreement.entity.ScfRequestProtacal;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.service.ScfRequestService;
 
-/**
- * 融资合同管理之核心企业确认书管理
- * @author zhoucy
+/***
+ * 三方协议书
+ * @author hubl
  *
  */
-@Service("scfElecOpinionLocalService")
+@Service("scfElecProtacalLocalService")
 @Scope("singleton")
-public class ScfElecOpinionLocalService  extends ScfElecAgreeLocalService {
-    private static final Logger logger = LoggerFactory.getLogger(ScfElecOpinionLocalService.class);
+public class ScfElecProtacalLocalService  extends ScfElecAgreeLocalService {
+    private static final Logger logger = LoggerFactory.getLogger(ScfElecProtacalLocalService.class);
 
-    private ScfRequestOpinionService requestOpinionService = null;
+    private ScfRequestProtacalService requestProtacalService = null;
     private ScfRequestService requestService  = null;
 
     protected void subInit(){
-       this.requestOpinionService = SpringContextHolder.getBean(ScfRequestOpinionService.class);
+       this.requestProtacalService = SpringContextHolder.getBean(ScfRequestProtacalService.class);
        this.requestService = SpringContextHolder.getBean(ScfRequestService.class);
     }
 
@@ -36,13 +36,12 @@ public class ScfElecOpinionLocalService  extends ScfElecAgreeLocalService {
     protected Map<String, Object> findViewModeData() {
         Map<String, Object> result = new HashMap();
         String requestNo = this.elecAgree.getRequestNo();
-        ScfRequestOpinion opinionInfo = requestOpinionService.selectByPrimaryKey(requestNo);
-        if(null == opinionInfo) {
-            logger.error("Can't get opinion information with request no:"+requestNo);
-            throw new BytterTradeException(40001, "无法获取确认书信息");
+        ScfRequestProtacal protacalInfo = requestProtacalService.selectByPrimaryKey(requestNo);
+        if(null == protacalInfo) {
+            logger.error("Can't get protacal information with request no:"+requestNo);
+            throw new BytterTradeException(40001, "无法获取三方协议信息");
         }
-        result.put("opinionInfo", opinionInfo);
- 
+        result.put("protacalInfo", protacalInfo);
         //取当前服务器日期作为签署日期
         result.put("signDate", findSignDate());
 
@@ -52,7 +51,7 @@ public class ScfElecOpinionLocalService  extends ScfElecAgreeLocalService {
     @Override
     protected String getViewModeFile() {
 
-        return "buyerConfirm";
+        return "protacal";
     }
 
     @Override

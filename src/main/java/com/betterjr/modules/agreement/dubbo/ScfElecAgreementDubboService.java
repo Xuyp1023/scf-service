@@ -11,6 +11,7 @@ import com.betterjr.modules.agreement.IScfElecAgreementService;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.agreement.entity.ScfRequestNotice;
 import com.betterjr.modules.agreement.entity.ScfRequestOpinion;
+import com.betterjr.modules.agreement.entity.ScfRequestProtacal;
 import com.betterjr.modules.agreement.service.ScfAgreementService;
 import com.betterjr.modules.agreement.service.ScfElecAgreementService;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
@@ -84,6 +85,14 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
         return scfAgreementService.transNotice(noticeRequest);
     }
     
+    
+    public boolean webTransProtacal(Map<String, Object> anMap){
+        ScfRequestProtacal protacal=new ScfRequestProtacal();
+        protacal.initProtacal(anMap);
+        return scfAgreementService.transProtacal(protacal);
+    }
+    
+    
     /***
      * 确认意见书
      * @param anRequestNo 申请单号
@@ -101,8 +110,8 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
      * @param anSignType
      * @return
      */
-    public String webFindOneElecAgreeByOrderNo(String anRequestNo, String anSignType){
-        return AjaxObject.newOk(scfElecAgreementService.findOneElecAgreeByOrderNo(anRequestNo, anSignType)).toJson();
+    public String webFindElecAgreeByOrderNo(String anRequestNo, String anSignType){
+        return AjaxObject.newOk(scfElecAgreementService.findElecAgreeByOrderNo(anRequestNo, anSignType)).toJson();
     }
 
 }
