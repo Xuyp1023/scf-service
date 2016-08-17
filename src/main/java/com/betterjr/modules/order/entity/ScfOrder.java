@@ -63,6 +63,9 @@ public class ScfOrder implements BetterjrEntity {
     @Column(name = "L_CUSTNO",  columnDefinition="INTEGER" )
     @MetaData( value="客户号", comments = "客户号")
     private Long custNo;
+    
+    @Transient
+    private String custName;
 
     /**
      * 订单类型  0:供应商订单 1:经销商订单
@@ -129,6 +132,9 @@ public class ScfOrder implements BetterjrEntity {
     @Column(name = "L_CORE_CUSTNO",  columnDefinition="INTEGER" )
     @MetaData( value="核心企业编号", comments = "核心企业编号")
     private Long coreCustNo;
+    
+    @Transient
+    private String coreCustName;
 
     /**
      * 编辑操作员编码
@@ -496,6 +502,22 @@ public class ScfOrder implements BetterjrEntity {
 
     public void setAgreementList(List<CustAgreement> anAgreementList) {
         this.agreementList = anAgreementList;
+    }
+
+    public String getCustName() {
+        return this.custName;
+    }
+
+    public void setCustName(String anCustName) {
+        this.custName = anCustName;
+    }
+
+    public String getCoreCustName() {
+        return this.coreCustName;
+    }
+
+    public void setCoreCustName(String anCoreCustName) {
+        this.coreCustName = anCoreCustName;
     }
 
     @Override

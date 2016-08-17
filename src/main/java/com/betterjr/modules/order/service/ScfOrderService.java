@@ -2,7 +2,6 @@ package com.betterjr.modules.order.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +18,7 @@ import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
+import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.agreement.service.ScfCustAgreementService;
 import com.betterjr.modules.order.dao.ScfOrderMapper;
@@ -46,6 +46,9 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
     private ScfAcceptBillService acceptBillService;
     @Autowired
     private ScfReceivableService receivableService;
+    
+    @Autowired
+    private CustAccountService custAccountService;
 
     /**
      * 订单信息分页查询
@@ -61,6 +64,8 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         Page<ScfOrder> anOrderList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
 
         for (ScfOrder anOrder : anOrderList) {
+            anOrder.setCustName(custAccountService.queryCustName(anOrder.getCustNo()));
+            anOrder.setCoreCustName(custAccountService.queryCustName(anOrder.getCoreCustNo()));
             Map<String, Object> orderIdMap = new HashMap<String, Object>();
             orderIdMap.put("orderId", anOrder.getId());
             List<ScfOrderRelation> orderRelationList = orderRelationService.findOrderRelation(orderIdMap);
@@ -110,7 +115,12 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         if(BetterStringUtils.equals(anIsOnlyNormal, "1")) {
             anMap.put("businStatus", "0");
         }
-        return this.selectByProperty(anMap);
+        List<ScfOrder> orderList = this.selectByProperty(anMap);
+        for(ScfOrder anOrder : orderList) {
+            anOrder.setCustName(custAccountService.queryCustName(anOrder.getCustNo()));
+            anOrder.setCoreCustName(custAccountService.queryCustName(anOrder.getCoreCustNo()));
+        }
+        return orderList;
     }
     
     /**
@@ -140,6 +150,8 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
     public List<ScfOrder> findOrder(Map<String, Object> anMap) {
         List<ScfOrder> orderList = this.selectByClassProperty(ScfOrder.class, anMap);
         for (ScfOrder anOrder : orderList) {
+            anOrder.setCustName(custAccountService.queryCustName(anOrder.getCustNo()));
+            anOrder.setCoreCustName(custAccountService.queryCustName(anOrder.getCoreCustNo()));
             Map<String, Object> orderIdMap = new HashMap<String, Object>();
             orderIdMap.put("orderId", anOrder.getId());
             List<ScfOrderRelation> orderRelationList = orderRelationService.findOrderRelation(orderIdMap);
