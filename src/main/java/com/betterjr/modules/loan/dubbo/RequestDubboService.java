@@ -17,6 +17,8 @@ import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.agreement.entity.ScfRequestNotice;
+import com.betterjr.modules.agreement.service.ScfAgreementService;
 import com.betterjr.modules.loan.IScfRequestService;
 import com.betterjr.modules.loan.entity.ScfLoan;
 import com.betterjr.modules.loan.entity.ScfRequest;
@@ -47,6 +49,9 @@ public class RequestDubboService implements IScfRequestService {
     @Autowired
     private ScfOrderService orderService;
     
+    @Autowired
+    private ScfAgreementService agreementService;
+    
     @Reference(interfaceClass=IFlowService.class )
     private IFlowService flowService;
     
@@ -64,9 +69,9 @@ public class RequestDubboService implements IScfRequestService {
         flowService.start(input );
         
         //关联订单
-        //orderService.saveInfoRequestNo(request.getRequestType(),request.getRequestNo(), request.getOrders());
+        orderService.saveInfoRequestNo(request.getRequestType(),request.getRequestNo(), request.getOrders());
         //冻结订单
-        //orderService.forzenInfos(request.getRequestNo(), null);
+        orderService.forzenInfos(request.getRequestNo(), null);
         
         //修改融资状态
         FlowStatus search = new FlowStatus();
@@ -181,11 +186,11 @@ public class RequestDubboService implements IScfRequestService {
             //1,订单，2:票据;3:应收款;4:经销商
             if(BetterStringUtils.equals("4", request.getRequestType()) == false){
                 //发送转让通知书
-                //ScfRequestNotice noticeRequest = requestService.getNotice(request);
-                //agreementService.transNotice(noticeRequest);
+                ScfRequestNotice noticeRequest = requestService.getNotice(request);
+                agreementService.transNotice(noticeRequest);
                 
                 //添加转让明细（因为在转让申请时就添加了 转让明细，如果核心企业不同意，那明细需要删除，但目前没有做删除这步）
-                //agreementService.transCredit(requestService.getCreditList(request));
+                agreementService.transCredit(requestService.getCreditList(request));
             }
         }
         
@@ -207,10 +212,10 @@ public class RequestDubboService implements IScfRequestService {
             //1,订单，2:票据;3:应收款;4:经销商
             if(BetterStringUtils.equals("4", request.getRequestType()) == true){
                 //三方协议
-                //agreementService.transProtacal(requestService.getProtacal(request));
+                agreementService.transProtacal(requestService.getProtacal(request));
             }else{
                 //转让意见确认书
-                //agreementService.transOpinion(requestService.getOption(request));
+                agreementService.transOpinion(requestService.getOption(request));
             }
         }
         
