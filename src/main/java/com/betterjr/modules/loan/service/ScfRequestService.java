@@ -405,7 +405,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     }
 
     public List<ScfRequestCredit> getCreditList(ScfRequest request){
-        List<CustAgreement> agreementList = (List)orderService.findInfoListByRequest(request.getRequestNo(), ScfOrderRelationType.AGGREMENT.getCode());
+        List<CustAgreement> agreementList = (List)orderService.findRelationInfo(request.getRequestNo(), ScfOrderRelationType.AGGREMENT);
         CustAgreement agreement = Collections3.getFirst(agreementList);
         
         String type = request.getRequestType();
@@ -464,6 +464,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         //TODO 合同名称、 银行账号， 保理公司详细地址
         String noticeNo = BetterDateUtils.getDate("yyyyMMdd") + request.getRequestNo();
         ScfRequestNotice noticeRequest = new ScfRequestNotice();
+        noticeRequest.setRequestNo(request.getRequestNo());
         noticeRequest.setAgreeName(request.getCustName() + "应收账款转让申请书");
         noticeRequest.setNoticeNo(noticeNo);
         noticeRequest.setBuyer(request.getFactorName());
