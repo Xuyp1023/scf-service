@@ -378,7 +378,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
             // 已还款
             return this.queryCompletedRequest(anMap, anFlag, anPageNum, anPageSize);
         default:
-            return new Page<ScfRequest>();
+            return (Page<ScfRequest>) Collections3.union(queryPendingRequest(anMap, anFlag, anPageNum, anPageSize), Collections3.union(queryRepaymentRequest(anMap, anFlag, anPageNum, anPageSize),queryCompletedRequest(anMap, anFlag, anPageNum, anPageSize)));
         }
     }
     
