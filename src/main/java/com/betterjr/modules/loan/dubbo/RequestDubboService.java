@@ -29,11 +29,11 @@ import com.betterjr.modules.loan.service.ScfRequestService;
 import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 import com.betterjr.modules.workflow.IFlowService;
+import com.betterjr.modules.workflow.data.CustFlowNodeData;
 import com.betterjr.modules.workflow.data.FlowCommand;
 import com.betterjr.modules.workflow.data.FlowInput;
 import com.betterjr.modules.workflow.data.FlowStatus;
 import com.betterjr.modules.workflow.data.FlowType;
-import com.betterjr.modules.workflow.entity.CustFlowNode;
 
 @Service(interfaceClass = IScfRequestService.class)
 public class RequestDubboService implements IScfRequestService {
@@ -358,7 +358,7 @@ public class RequestDubboService implements IScfRequestService {
     }
     
     public String webQueryTradeStatus(){
-        List<CustFlowNode> list = flowService.findFlowNodesByType("Trade");
+        List<CustFlowNodeData> list = flowService.findFlowNodesByType("Trade");
         requestService.getDefaultNode(list);
         return AjaxObject.newOk("查询成功", list).toJson();
     }
