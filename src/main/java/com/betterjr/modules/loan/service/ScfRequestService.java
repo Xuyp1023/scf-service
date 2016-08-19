@@ -406,21 +406,22 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     public List<ScfRequestCredit> getCreditList(ScfRequest request){
         List<CustAgreement> agreementList = (List)orderService.findRelationInfo(request.getRequestNo(), ScfOrderRelationType.AGGREMENT);
         CustAgreement agreement = Collections3.getFirst(agreementList);
+        BTAssert.notNull(agreement, "发起融资背景确认失败：没有找到贸易合同！");
         
         String type = request.getRequestType();
         List<ScfRequestCredit> creditList = new ArrayList<ScfRequestCredit>();
         
-        if(BetterStringUtils.equals(ScfOrderRelationType.ORDER.getCode(), type)){
+        if(BetterStringUtils.equals("1", type) || BetterStringUtils.equals("4", type)){
             List<ScfOrder> list = (List)orderService.findInfoListByRequest(request.getRequestNo(), ScfOrderRelationType.ORDER.getCode());
             for (ScfOrder order : list) {
                 creditList = setInvoice(request, order.getInvoiceList(), order.getBalance(), order.getOrderNo(),agreement);
             }
-        }else if(BetterStringUtils.equals(ScfOrderRelationType.RECEIVABLE.getCode(), type)){
+        }else if(BetterStringUtils.equals("2", type)){
             List<ScfReceivable> list = (List)orderService.findInfoListByRequest(request.getRequestNo(), ScfOrderRelationType.ORDER.getCode());
             for (ScfReceivable receivable : list) {
                 creditList = setInvoice(request, receivable.getInvoiceList(), receivable.getBalance(), receivable.getReceivableNo() ,agreement);
             }
-        }else if(BetterStringUtils.equals(ScfOrderRelationType.ACCEPTBILL.getCode(), type)){
+        }else if(BetterStringUtils.equals("3", type)){
             List<ScfAcceptBill> list = (List)orderService.findInfoListByRequest(request.getRequestNo(), ScfOrderRelationType.ORDER.getCode());
             for (ScfAcceptBill bill : list) {
                 creditList = setInvoice(request, bill.getInvoiceList(), bill.getBalance(), bill.getBtBillNo(),agreement);
