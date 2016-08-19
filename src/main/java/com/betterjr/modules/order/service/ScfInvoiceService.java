@@ -60,7 +60,7 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
         ScfInvoice anInvoice = this.selectByPrimaryKey(anId);
         BTAssert.notNull(anInvoice, "无法获取发票信息");
         //检查用户权限
-        checkOperator(anInvoice.getOperOrg(), "当前操作员无权限变更发票状态");
+//        checkOperator(anInvoice.getOperOrg(), "当前操作员无权限变更发票状态");
         //变更相关状态
         anInvoice.setBusinStatus(anStatus);
         anInvoice.setModiOperId(UserUtils.getOperatorInfo().getId());

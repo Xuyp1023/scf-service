@@ -18,7 +18,6 @@ import com.betterjr.common.utils.DictUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.loan.dao.ScfPayPlanMapper;
-import com.betterjr.modules.loan.entity.ScfDeliveryNotice;
 import com.betterjr.modules.loan.entity.ScfPayPlan;
 import com.betterjr.modules.loan.entity.ScfPayRecord;
 import com.betterjr.modules.loan.entity.ScfPayRecordDetail;

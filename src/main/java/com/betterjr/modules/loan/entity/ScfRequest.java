@@ -13,11 +13,9 @@ import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
-import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -67,7 +65,6 @@ public class ScfRequest implements BetterjrEntity {
      */
     @Column(name = "D_REQUEST_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="实际申请日期", comments = "实际申请日期")
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String requestDate;
 
     /**
@@ -89,7 +86,6 @@ public class ScfRequest implements BetterjrEntity {
      */
     @Column(name = "D_OPERDATE",  columnDefinition="VARCHAR" )
     @MetaData( value="下单日期", comments = "下单日期")
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String operDate;
 
     /**
@@ -158,7 +154,6 @@ public class ScfRequest implements BetterjrEntity {
      */
     @Column(name = "D_ACTUAL_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="实际放款日期", comments = "实际放款日期")
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String actualDate;
 
     /**
@@ -166,7 +161,6 @@ public class ScfRequest implements BetterjrEntity {
      */
     @Column(name = "D_END_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="还款截止日期", comments = "还款截止日期")
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String endDate;
 
     /**
@@ -174,7 +168,6 @@ public class ScfRequest implements BetterjrEntity {
      */
     @Column(name = "D_CLEAN_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="结清日期", comments = "结清日期")
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String cleanDate;
 
     /**
@@ -238,10 +231,10 @@ public class ScfRequest implements BetterjrEntity {
     private Integer period;
 
     /**
-     * 期限单位：1：日，2月，3日
+     * 期限单位：1：日，2月
      */
     @Column(name = "N_PERIOD_UNIT",  columnDefinition="INT" )
-    @MetaData( value="期限单位：1：日，2月，3日", comments = "期限单位：1：日，2月，3日")
+    @MetaData( value="期限单位：1：日", comments = "期限单位：1：日，2月")
     private Integer periodUnit;
 
     /**
@@ -280,10 +273,10 @@ public class ScfRequest implements BetterjrEntity {
     private BigDecimal servicefeeRatio;
 
     /**
-     * 1,订单，2:票据;3:应收款;4:经销商
+     * 1,s订单，2:票据;3:应收款;4:经销商
      */
     @Column(name = "C_REQUEST_TYPE",  columnDefinition="VARCHAR" )
-    @MetaData( value="1,订单，2:票据;3:应收款;4:经销商", comments = "1,订单，2:票据;3:应收款;4:经销商")
+    @MetaData( value="1,s订单", comments = "1,s订单，2:票据;3:应收款;4:经销商")
     private String requestType;
 
     /**
@@ -300,6 +293,13 @@ public class ScfRequest implements BetterjrEntity {
     @MetaData( value="授信方式(1:信用授信(循环);2:信用授信(一次性);3:担保信用(循环);4:担保授信(一次性);)", comments = "授信方式(1:信用授信(循环);2:信用授信(一次性);3:担保信用(循环);4:担保授信(一次性);)")
     private String creditMode;
 
+    /**
+     * 申请流程状态：1：进行中，2：中止，3：结束
+     */
+    @Column(name = "C_FLOW_STATUS",  columnDefinition="VARCHAR" )
+    @MetaData( value="申请流程状态：1：进行中", comments = "申请流程状态：1：进行中，2：中止，3：结束")
+    private String flowStatus;
+
     @Column(name = "L_REG_OPERID",  columnDefinition="VARCHAR" )
     @MetaData( value="", comments = "")
     private Long regOperId;
@@ -314,7 +314,6 @@ public class ScfRequest implements BetterjrEntity {
 
     @Column(name = "D_MODI_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="", comments = "")
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String modiDate;
 
     @Column(name = "T_MODI_TIME",  columnDefinition="VARCHAR" )
@@ -331,7 +330,6 @@ public class ScfRequest implements BetterjrEntity {
 
     @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="", comments = "")
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
 
     @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
@@ -345,7 +343,7 @@ public class ScfRequest implements BetterjrEntity {
     @MetaData( value="关联订单编号", comments = "关联订单编号")
     private String orders;
 
-    private static final long serialVersionUID = 1470300619165L;
+    private static final long serialVersionUID = 1471502531685L;
 
     public String getRequestNo() {
         return requestNo;
@@ -707,6 +705,14 @@ public class ScfRequest implements BetterjrEntity {
         this.creditMode = creditMode;
     }
 
+    public String getFlowStatus() {
+        return flowStatus;
+    }
+
+    public void setFlowStatus(String flowStatus) {
+        this.flowStatus = flowStatus;
+    }
+
     public Long getRegOperId() {
         return regOperId;
     }
@@ -838,6 +844,7 @@ public class ScfRequest implements BetterjrEntity {
         sb.append(", requestType=").append(requestType);
         sb.append(", bondBalance=").append(bondBalance);
         sb.append(", creditMode=").append(creditMode);
+        sb.append(", flowStatus=").append(flowStatus);
         sb.append(", regOperId=").append(regOperId);
         sb.append(", modiOperId=").append(modiOperId);
         sb.append(", modiOperName=").append(modiOperName);
@@ -910,6 +917,7 @@ public class ScfRequest implements BetterjrEntity {
             && (this.getRequestType() == null ? other.getRequestType() == null : this.getRequestType().equals(other.getRequestType()))
             && (this.getBondBalance() == null ? other.getBondBalance() == null : this.getBondBalance().equals(other.getBondBalance()))
             && (this.getCreditMode() == null ? other.getCreditMode() == null : this.getCreditMode().equals(other.getCreditMode()))
+            && (this.getFlowStatus() == null ? other.getFlowStatus() == null : this.getFlowStatus().equals(other.getFlowStatus()))
             && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
             && (this.getModiOperId() == null ? other.getModiOperId() == null : this.getModiOperId().equals(other.getModiOperId()))
             && (this.getModiOperName() == null ? other.getModiOperName() == null : this.getModiOperName().equals(other.getModiOperName()))
@@ -971,6 +979,7 @@ public class ScfRequest implements BetterjrEntity {
         result = prime * result + ((getRequestType() == null) ? 0 : getRequestType().hashCode());
         result = prime * result + ((getBondBalance() == null) ? 0 : getBondBalance().hashCode());
         result = prime * result + ((getCreditMode() == null) ? 0 : getCreditMode().hashCode());
+        result = prime * result + ((getFlowStatus() == null) ? 0 : getFlowStatus().hashCode());
         result = prime * result + ((getRegOperId() == null) ? 0 : getRegOperId().hashCode());
         result = prime * result + ((getModiOperId() == null) ? 0 : getModiOperId().hashCode());
         result = prime * result + ((getModiOperName() == null) ? 0 : getModiOperName().hashCode());
@@ -999,6 +1008,7 @@ public class ScfRequest implements BetterjrEntity {
     @Transient
     private BigDecimal approvedBalance;
     
+
     public String getCoreCustName() {
         return coreCustName;
     }

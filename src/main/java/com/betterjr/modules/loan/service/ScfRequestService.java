@@ -22,8 +22,6 @@ import com.betterjr.modules.agreement.entity.ScfRequestCredit;
 import com.betterjr.modules.agreement.entity.ScfRequestNotice;
 import com.betterjr.modules.agreement.entity.ScfRequestOpinion;
 import com.betterjr.modules.agreement.entity.ScfRequestProtacal;
-import com.betterjr.modules.agreement.service.ScfAgreementService;
-import com.betterjr.modules.agreement.service.ScfRequestNoticeService;
 import com.betterjr.modules.loan.dao.ScfRequestMapper;
 import com.betterjr.modules.loan.entity.ScfLoan;
 import com.betterjr.modules.loan.entity.ScfPayPlan;
@@ -35,6 +33,7 @@ import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.helper.ScfOrderRelationType;
 import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
+import com.betterjr.modules.workflow.data.CustFlowNodeData;
 import com.betterjr.modules.workflow.entity.CustFlowNode;
 
 @Service
@@ -405,23 +404,24 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     }
 
     public List<ScfRequestCredit> getCreditList(ScfRequest request){
-        List<CustAgreement> agreementList = (List)orderService.findInfoListByRequest(request.getRequestNo(), ScfOrderRelationType.AGGREMENT.getCode());
+        List<CustAgreement> agreementList = (List)orderService.findRelationInfo(request.getRequestNo(), ScfOrderRelationType.AGGREMENT);
         CustAgreement agreement = Collections3.getFirst(agreementList);
+        BTAssert.notNull(agreement, "发起融资背景确认失败：没有找到贸易合同！");
         
         String type = request.getRequestType();
         List<ScfRequestCredit> creditList = new ArrayList<ScfRequestCredit>();
         
-        if(BetterStringUtils.equals(ScfOrderRelationType.ORDER.getCode(), type)){
+        if(BetterStringUtils.equals("1", type) || BetterStringUtils.equals("4", type)){
             List<ScfOrder> list = (List)orderService.findInfoListByRequest(request.getRequestNo(), ScfOrderRelationType.ORDER.getCode());
             for (ScfOrder order : list) {
                 creditList = setInvoice(request, order.getInvoiceList(), order.getBalance(), order.getOrderNo(),agreement);
             }
-        }else if(BetterStringUtils.equals(ScfOrderRelationType.RECEIVABLE.getCode(), type)){
+        }else if(BetterStringUtils.equals("2", type)){
             List<ScfReceivable> list = (List)orderService.findInfoListByRequest(request.getRequestNo(), ScfOrderRelationType.ORDER.getCode());
             for (ScfReceivable receivable : list) {
                 creditList = setInvoice(request, receivable.getInvoiceList(), receivable.getBalance(), receivable.getReceivableNo() ,agreement);
             }
-        }else if(BetterStringUtils.equals(ScfOrderRelationType.ACCEPTBILL.getCode(), type)){
+        }else if(BetterStringUtils.equals("3", type)){
             List<ScfAcceptBill> list = (List)orderService.findInfoListByRequest(request.getRequestNo(), ScfOrderRelationType.ORDER.getCode());
             for (ScfAcceptBill bill : list) {
                 creditList = setInvoice(request, bill.getInvoiceList(), bill.getBalance(), bill.getBtBillNo(),agreement);
@@ -464,6 +464,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         //TODO 合同名称、 银行账号， 保理公司详细地址
         String noticeNo = BetterDateUtils.getDate("yyyyMMdd") + request.getRequestNo();
         ScfRequestNotice noticeRequest = new ScfRequestNotice();
+        noticeRequest.setRequestNo(request.getRequestNo());
         noticeRequest.setAgreeName(request.getCustName() + "应收账款转让申请书");
         noticeRequest.setNoticeNo(noticeNo);
         noticeRequest.setBuyer(request.getFactorName());
@@ -519,23 +520,23 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         return opinion;
     }
 
-    public void getDefaultNode(List<CustFlowNode> list) {
-        CustFlowNode node = new CustFlowNode();
-        node = new CustFlowNode();
+    public void getDefaultNode(List<CustFlowNodeData> list) {
+        CustFlowNodeData node = new CustFlowNodeData();
+        node = new CustFlowNodeData();
         node.setNodeCustomName("逾期");
         node.setSysNodeName("逾期");
         node.setSysNodeId(new Long(170));
         node.setId(new Long(170));
         list.add(node);
         
-        node = new CustFlowNode();
+        node = new CustFlowNodeData();
         node.setNodeCustomName("展期");
         node.setSysNodeName("展期");
         node.setSysNodeId(new Long(180));
         node.setId(new Long(180));
         list.add(node);
         
-        node = new CustFlowNode();
+        node = new CustFlowNodeData();
         node.setNodeCustomName("还款完成");
         node.setSysNodeName("还款完成");
         node.setSysNodeId(new Long(190));

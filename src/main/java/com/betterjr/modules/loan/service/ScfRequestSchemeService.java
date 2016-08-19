@@ -1,6 +1,5 @@
 package com.betterjr.modules.loan.service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,15 +44,17 @@ public class ScfRequestSchemeService extends BaseService<ScfRequestApprovedMappe
             this.updateByPrimaryKeySelective(scheme);
         }
 
+        // 初始化新方案
+        anScheme.init();
+        
         // 初始化相关企业编号
         ScfRequest request = requestService.findRequestDetail(anScheme.getRequestNo());
         anScheme.setFactorNo(request.getFactorNo());
         anScheme.setCoreCustNo(request.getCoreCustNo());
         anScheme.setCustNo(request.getCustNo());
-        anScheme.init();
         this.insert(anScheme);
 
-        // 修改申请表的
+        // 修改申请表中的相关信息
         request.setPeriod(anScheme.getApprovedPeriod());
         request.setPeriodUnit(anScheme.getApprovedPeriodUnit());
         request.setRatio(anScheme.getApprovedRatio());
@@ -137,7 +138,7 @@ public class ScfRequestSchemeService extends BaseService<ScfRequestApprovedMappe
         // 核心企业查询时
         if (UserUtils.coreUser() && (null == anMap.get("coreCustAduit") || BetterStringUtils.isEmpty(anMap.get("coreCustAduit").toString()))) {
             // 去除未到审批时的数据
-            anMap.put("coreCustAduit", new String[] { "0", "1" });
+            anMap.put("coreCustAduit", new String[] { "0", "1"});
         }
 
         // 设置相关企业名

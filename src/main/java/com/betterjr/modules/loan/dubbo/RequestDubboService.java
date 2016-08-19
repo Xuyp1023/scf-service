@@ -19,7 +19,6 @@ import com.betterjr.common.web.AjaxObject;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.agreement.entity.ScfRequestNotice;
 import com.betterjr.modules.agreement.service.ScfAgreementService;
-import com.betterjr.modules.agreement.service.ScfRequestNoticeService;
 import com.betterjr.modules.loan.IScfRequestService;
 import com.betterjr.modules.loan.entity.ScfLoan;
 import com.betterjr.modules.loan.entity.ScfRequest;
@@ -30,11 +29,11 @@ import com.betterjr.modules.loan.service.ScfRequestService;
 import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 import com.betterjr.modules.workflow.IFlowService;
+import com.betterjr.modules.workflow.data.CustFlowNodeData;
 import com.betterjr.modules.workflow.data.FlowCommand;
 import com.betterjr.modules.workflow.data.FlowInput;
 import com.betterjr.modules.workflow.data.FlowStatus;
 import com.betterjr.modules.workflow.data.FlowType;
-import com.betterjr.modules.workflow.entity.CustFlowNode;
 
 @Service(interfaceClass = IScfRequestService.class)
 public class RequestDubboService implements IScfRequestService {
@@ -59,7 +58,7 @@ public class RequestDubboService implements IScfRequestService {
     @Override
     public String webAddRequest(Map<String, Object> anMap) {
         logger.debug("新增融资申请，入参：" + anMap);
-        ScfRequest request = requestService.addRequest((ScfRequest) RuleServiceDubboFilterInvoker.getInputObj());
+       ScfRequest request = requestService.addRequest((ScfRequest) RuleServiceDubboFilterInvoker.getInputObj());
         
         //启动流程
         FlowInput input = new FlowInput();
@@ -126,10 +125,11 @@ public class RequestDubboService implements IScfRequestService {
 
     @Override
     public String webApproveRequest(String anRequestNo, String anApprovalResult, String anReturnNode, String anDescription) {
-        logger.debug("一般审批，入参approvalResult：" + anApprovalResult + "-returnNode:" + anReturnNode + "-description:" + anDescription);
+        logger.debug("一般审批，入参anRequestNo:"+ anRequestNo +"approvalResult：" + anApprovalResult + "-returnNode:" + anReturnNode + "-description:" + anDescription);
+        
+        ScfRequest request = requestService.findRequestDetail(anRequestNo);
         
         //执行流程
-        ScfRequest request = requestService.findRequestDetail(anRequestNo);
         execFllow(anRequestNo, request.getBalance(), anApprovalResult, anReturnNode, anDescription);
         
         return AjaxObject.newOk("操作成功").toJson();
@@ -137,7 +137,7 @@ public class RequestDubboService implements IScfRequestService {
 
     @Override
     public String webOfferScheme(Map<String, Object> anMap, String anApprovalResult, String anReturnNode, String anDescription) {
-        logger.debug("出具融资方案，入参：" + anMap);
+        logger.debug("保理公司-出具融资方案，入参：" + anMap);
         
         ScfRequestScheme scheme = new ScfRequestScheme();
         if(BetterStringUtils.equals(anApprovalResult, "0") == true){
@@ -175,7 +175,7 @@ public class RequestDubboService implements IScfRequestService {
 
     @Override
     public String webRequestTradingBackgrand(String anRequestNo, String anApprovalResult, String anReturnNode, String anDescription) {
-        logger.debug("资方-发起贸易背景确认，入参：anRequestNo" + anRequestNo);
+        logger.debug("保理公司-发起贸易背景确认，入参：anRequestNo" + anRequestNo);
         
         ScfRequest request= new ScfRequest();
         if(BetterStringUtils.equals( "0", anApprovalResult) == true){
@@ -259,7 +259,7 @@ public class RequestDubboService implements IScfRequestService {
     @Override
     public String webCalculatInsterest(String anRequestNo, BigDecimal anLoanBalance) {
         Map<String, Object> anMap = new HashMap<String, Object>();
-        anMap.put("insterestBalance", payPlanService.calculatFee(anRequestNo, anLoanBalance, 3));
+        anMap.put("interestBalance", payPlanService.calculatFee(anRequestNo, anLoanBalance, 3));
         anMap.put("managementBalance", payPlanService.calculatFee(anRequestNo, anLoanBalance, 1));
         return AjaxObject.newOk("操作成功", anMap).toJson();
     }
@@ -278,6 +278,11 @@ public class RequestDubboService implements IScfRequestService {
             page = flowService.queryCurrentUserHistoryWorkTask(null, null);
         }
         
+        //无数据
+        if(0 == page.size()){
+           return AjaxObject.newOkWithPage("分页查询用户任务列表，无数据", new Page<ScfRequest>()).toJson();
+        }
+        
         //获取任务中的requestNo
         List<Long> requestNos = new ArrayList<Long>();
         for (FlowStatus flowStatus : page) {
@@ -285,6 +290,7 @@ public class RequestDubboService implements IScfRequestService {
         }
         
         anMap.remove("taskType");
+        anMap.put("requestNo", requestNos);
         return  AjaxObject.newOkWithPage("查询成功", requestService.queryRequestList(anMap , anFlag, anPageNum, anPageSize)).toJson();
     }
     
@@ -319,22 +325,40 @@ public class RequestDubboService implements IScfRequestService {
             //解除订单关联
             orderService.unForzenInfoes(anRequestNo, null);
         }
-       
+        
+        //当前融资申请单
+        ScfRequest request = requestService.selectByPrimaryKey(anRequestNo);
+        
+        //执行流程
         flowService.exec(input);
 
-        //修改融资状态
-        ScfRequest request= requestService.selectByPrimaryKey(anRequestNo);
+        //查询-当前流程所在节点
         FlowStatus search = new FlowStatus();
         search.setBusinessId(Long.parseLong(request.getRequestNo()));
         Page<FlowStatus> list = flowService.queryCurrentWorkTask(null, search);
+       
+        //设置申请表中的-融资审批状态-为当前流程所在节点
         if(!Collections3.isEmpty(list)){
-            request.setTradeStatus(Collections3.getFirst(list).getCurrentNodeId().toString()); 
-            request = requestService.saveModifyRequest(request, request.getRequestNo());
+            request.setTradeStatus(Collections3.getFirst(list).getCurrentNodeId().toString());
+            
+            if(BetterStringUtils.equals(anApprovalResult, "2") == true){
+                //流程-中止
+                request.setFlowStatus("2");
+            }else{
+                //流程-进行中
+                request.setFlowStatus("1");
+            }
+        }else{
+            //流程-结束
+            request.setFlowStatus("3"); 
         }
+        
+        //修改-当前融资申请单（融资审批状态，流程状态）
+        request = requestService.saveModifyRequest(request, request.getRequestNo());
     }
     
     public String webQueryTradeStatus(){
-        List<CustFlowNode> list = flowService.findFlowNodesByType("Trade");
+        List<CustFlowNodeData> list = flowService.findFlowNodesByType("Trade");
         requestService.getDefaultNode(list);
         return AjaxObject.newOk("查询成功", list).toJson();
     }
