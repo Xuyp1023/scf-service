@@ -34,6 +34,7 @@ public class ScfElecNoticeLocalService extends ScfElecAgreeLocalService {
     protected void subInit() {
         this.requestNoticeService = SpringContextHolder.getBean(ScfRequestNoticeService.class);
         this.requestService = SpringContextHolder.getBean(ScfRequestService.class);
+        this.requestCreditService = SpringContextHolder.getBean(ScfRequestCreditService.class);
     }
 
     @Override

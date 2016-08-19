@@ -1,15 +1,10 @@
 package com.betterjr.modules.agreement.service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.betterjr.common.exception.BytterException;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.web.AjaxObject;
@@ -96,6 +91,7 @@ public class ScfAgreementService {
     public boolean transCredit(List<ScfRequestCredit> list){
         logger.info("应收账款转让书："+list);
         ScfRequestCredit credit=Collections3.getFirst(list);
+        BTAssert.notNull(credit,"应收账款明细不能为空");
         String requestNo=credit.getRequestNo();
         ScfRequest request = requestService.findRequestDetail(requestNo);
         // 根据申请单号查询对应的转让书编号
