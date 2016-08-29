@@ -17,6 +17,8 @@ import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.account.entity.CustInfo;
+import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.agreement.entity.ScfRequestNotice;
 import com.betterjr.modules.agreement.service.ScfAgreementService;
 import com.betterjr.modules.loan.IScfRequestService;
@@ -52,6 +54,9 @@ public class RequestDubboService implements IScfRequestService {
     @Autowired
     private ScfAgreementService agreementService;
     
+    @Autowired
+    private CustAccountService custAccountService;
+    
     @Reference(interfaceClass=IFlowService.class )
     private IFlowService flowService;
     
@@ -65,7 +70,11 @@ public class RequestDubboService implements IScfRequestService {
         input.setBusinessId(Long.parseLong(request.getRequestNo()));
         input.setMoney(request.getBalance());
         input.setOperator(UserUtils.getPrincipal().getId().toString());
+        input.setFinancerOperOrg(UserUtils.getOperatorInfo().getOperOrg());
         input.setType(FlowType.Trade);
+        
+        CustInfo coreCustInfo = custAccountService.selectByPrimaryKey(request.getCoreCustNo());
+        input.setCoreOperOrg(coreCustInfo.getOperOrg());
         flowService.start(input );
         
         //关联订单
