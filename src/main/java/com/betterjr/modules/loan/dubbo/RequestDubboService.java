@@ -252,7 +252,8 @@ public class RequestDubboService implements IScfRequestService {
     @Override
     public String webCalculatEndDate(String anRequestNo, String anStartDate) {
         Map<String, Object> anMap = new HashMap<String, Object>();
-        anMap.put("endDate", payPlanService.calculatEndDate(anRequestNo, anStartDate));
+        ScfRequestScheme scheme = approvedService.findSchemeDetail2(anRequestNo);
+        anMap.put("endDate", payPlanService.calculatEndDate(anStartDate, scheme.getApprovedPeriod(), scheme.getApprovedPeriodUnit()));
         return AjaxObject.newOk("操作成功", anMap).toJson();
     }
     
@@ -362,7 +363,7 @@ public class RequestDubboService implements IScfRequestService {
         requestService.getDefaultNode(list);
         return AjaxObject.newOk("查询成功", list).toJson();
     }
-
+    
     @Override
     public String webQueryPendingRequest(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
         logger.debug("分页查询待批融资，入参：" + anMap);
@@ -389,5 +390,12 @@ public class RequestDubboService implements IScfRequestService {
         logger.debug("分页核心企业查询融资，入参：" + anMap);
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
         return AjaxObject.newOkWithPage("核心企业查询融资成功", requestService.queryCoreEnterpriseRequest(anQueryConditionMap, anRequestType, anFlag, anPageNum, anPageSize)).toJson();
+    }
+    
+    @Override
+    public String webFindPayPlan(Map<String, Object> anMap){
+        logger.debug("分页核心企业查询融资，入参：" + anMap);
+        Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOk("核心企业查询融资成功", payPlanService.findPayPlanByProperty(anQueryConditionMap)).toJson();
     }
 }

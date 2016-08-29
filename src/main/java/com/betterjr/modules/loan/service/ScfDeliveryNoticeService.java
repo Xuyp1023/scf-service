@@ -54,6 +54,19 @@ public class ScfDeliveryNoticeService extends BaseService<ScfDeliveryNoticeMappe
         }
         return this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1==anFlag);
      }
+    
+    /**
+     * 查询通知单列表
+     * @param anMap
+     * @param anFlag
+     * @param anPageNum
+     * @param anPageSize
+     * @return
+     */
+    public List<ScfDeliveryNotice> findDeliveryNoticeList(Map<String, Object> anMap) {
+        anMap.put("businStatus", "0");
+        return this.selectByProperty(anMap);
+     }
 
     /**
      * 新增通知单
@@ -68,7 +81,6 @@ public class ScfDeliveryNoticeService extends BaseService<ScfDeliveryNoticeMappe
      }
      
      public void saveRelationRequest(String anRequestNo, String anIds){
-         anIds.split(",");
          List<String> list = BetterStringUtils.splitTrim(anIds);
          for (String id : list) {
              ScfDeliveryNotice delivery = selectByPrimaryKey(id);
@@ -81,5 +93,6 @@ public class ScfDeliveryNoticeService extends BaseService<ScfDeliveryNoticeMappe
              saveModifyEnquiry(delivery, Long.parseLong(id));
         }
      }
+     
 
 }

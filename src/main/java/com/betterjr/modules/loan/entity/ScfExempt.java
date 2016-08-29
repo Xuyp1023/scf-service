@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
@@ -20,8 +21,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
-@Table(name = "t_scf_servicefee")
-public class ScfServiceFee implements BetterjrEntity {
+@Table(name = "t_scf_exempt")
+public class ScfExempt implements BetterjrEntity {
     @Id
     @Column(name = "ID",  columnDefinition="BIGINT" )
     @MetaData( value="", comments = "")
@@ -43,25 +44,81 @@ public class ScfServiceFee implements BetterjrEntity {
     private Long custNo;
 
     /**
-     * 申请单编号
+     * 申请编号
      */
     @Column(name = "C_REQUESTNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="申请单编号", comments = "申请单编号")
+    @MetaData( value="申请编号", comments = "申请编号")
     private String requestNo;
 
     /**
-     * 金额
+     * 还款计划ID
      */
-    @Column(name = "F_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="金额", comments = "金额")
-    private BigDecimal balance;
+    @Column(name = "L_PAY_PLAN_ID",  columnDefinition="BIGINT" )
+    @MetaData( value="还款计划ID", comments = "还款计划ID")
+    private Long payPlanId;
 
     /**
-     * 支付日期
+     * 豁免时间
      */
-    @Column(name = "D_PAY_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="支付日期", comments = "支付日期")
-    private String payDate;
+    @Column(name = "EXEMPT_DATE",  columnDefinition="VARCHAR" )
+    @MetaData( value="豁免时间", comments = "豁免时间")
+    private String exemptDate;
+
+    /**
+     * 本金
+     */
+    @Column(name = "F_PRINCIPAL_BALANCE",  columnDefinition="DOUBLE" )
+    @MetaData( value="本金", comments = "本金")
+    private BigDecimal principalBalance;
+
+    /**
+     * 利息
+     */
+    @Column(name = "F_INTEREST_BALANCE",  columnDefinition="DOUBLE" )
+    @MetaData( value="利息", comments = "利息")
+    private BigDecimal interestBalance;
+
+    /**
+     * 管理费
+     */
+    @Column(name = "F_MANAGEMENT_BALANCE",  columnDefinition="DOUBLE" )
+    @MetaData( value="管理费", comments = "管理费")
+    private BigDecimal managementBalance;
+
+    /**
+     * 罚息
+     */
+    @Column(name = "F_PENALTY_BALANCE",  columnDefinition="DOUBLE" )
+    @MetaData( value="罚息", comments = "罚息")
+    private BigDecimal penaltyBalance;
+
+    /**
+     * 滞纳金
+     */
+    @Column(name = "F_LATEFEE_BALANCE",  columnDefinition="DOUBLE" )
+    @MetaData( value="滞纳金", comments = "滞纳金")
+    private BigDecimal latefeeBalance;
+
+    /**
+     * 手续费
+     */
+    @Column(name = "F_SERVICEFEE_BALANCE",  columnDefinition="DOUBLE" )
+    @MetaData( value="手续费", comments = "手续费")
+    private BigDecimal servicefeeBalance;
+
+    /**
+     * 合计
+     */
+    @Column(name = "F_TOTAL_BALANCE",  columnDefinition="DOUBLE" )
+    @MetaData( value="合计", comments = "合计")
+    private BigDecimal totalBalance;
+
+    /**
+     * 备注
+     */
+    @Column(name = "C_DESCRIPTION",  columnDefinition="VARCHAR" )
+    @MetaData( value="备注", comments = "备注")
+    private String description;
 
     /**
      * 操作机构
@@ -106,7 +163,7 @@ public class ScfServiceFee implements BetterjrEntity {
     @MetaData( value="", comments = "")
     private Long version;
 
-    private static final long serialVersionUID = 1470190664760L;
+    private static final long serialVersionUID = 1471942242070L;
 
     public Long getId() {
         return id;
@@ -140,21 +197,85 @@ public class ScfServiceFee implements BetterjrEntity {
         this.requestNo = requestNo;
     }
 
-    public BigDecimal getBalance() {
-        return balance;
+    public Long getPayPlanId() {
+        return payPlanId;
     }
 
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
+    public void setPayPlanId(Long payPlanId) {
+        this.payPlanId = payPlanId;
     }
 
     @JsonSerialize(using = CustDateJsonSerializer.class)
-    public String getPayDate() {
-        return payDate;
+    public String getExemptDate() {
+        return exemptDate;
     }
 
-    public void setPayDate(String payDate) {
-        this.payDate = payDate;
+    public void setExemptDate(String exemptDate) {
+        this.exemptDate = exemptDate == null ? null : exemptDate.trim();
+    }
+
+    public BigDecimal getPrincipalBalance() {
+        return principalBalance;
+    }
+
+    public void setPrincipalBalance(BigDecimal principalBalance) {
+        this.principalBalance = principalBalance;
+    }
+
+    public BigDecimal getInterestBalance() {
+        return interestBalance;
+    }
+
+    public void setInterestBalance(BigDecimal interestBalance) {
+        this.interestBalance = interestBalance;
+    }
+
+    public BigDecimal getManagementBalance() {
+        return managementBalance;
+    }
+
+    public void setManagementBalance(BigDecimal managementBalance) {
+        this.managementBalance = managementBalance;
+    }
+
+    public BigDecimal getPenaltyBalance() {
+        return penaltyBalance;
+    }
+
+    public void setPenaltyBalance(BigDecimal penaltyBalance) {
+        this.penaltyBalance = penaltyBalance;
+    }
+
+    public BigDecimal getLatefeeBalance() {
+        return latefeeBalance;
+    }
+
+    public void setLatefeeBalance(BigDecimal latefeeBalance) {
+        this.latefeeBalance = latefeeBalance;
+    }
+
+    public BigDecimal getServicefeeBalance() {
+        return servicefeeBalance;
+    }
+
+    public void setServicefeeBalance(BigDecimal servicefeeBalance) {
+        this.servicefeeBalance = servicefeeBalance;
+    }
+
+    public BigDecimal getTotalBalance() {
+        return totalBalance;
+    }
+
+    public void setTotalBalance(BigDecimal totalBalance) {
+        this.totalBalance = totalBalance;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getOperOrg() {
@@ -249,8 +370,16 @@ public class ScfServiceFee implements BetterjrEntity {
         sb.append(", factorNo=").append(factorNo);
         sb.append(", custNo=").append(custNo);
         sb.append(", requestNo=").append(requestNo);
-        sb.append(", balance=").append(balance);
-        sb.append(", payDate=").append(payDate);
+        sb.append(", payPlanId=").append(payPlanId);
+        sb.append(", exemptDate=").append(exemptDate);
+        sb.append(", principalBalance=").append(principalBalance);
+        sb.append(", interestBalance=").append(interestBalance);
+        sb.append(", managementBalance=").append(managementBalance);
+        sb.append(", penaltyBalance=").append(penaltyBalance);
+        sb.append(", latefeeBalance=").append(latefeeBalance);
+        sb.append(", servicefeeBalance=").append(servicefeeBalance);
+        sb.append(", totalBalance=").append(totalBalance);
+        sb.append(", description=").append(description);
         sb.append(", operOrg=").append(operOrg);
         sb.append(", regOperId=").append(regOperId);
         sb.append(", regOperName=").append(regOperName);
@@ -277,13 +406,21 @@ public class ScfServiceFee implements BetterjrEntity {
         if (getClass() != that.getClass()) {
             return false;
         }
-        ScfServiceFee other = (ScfServiceFee) that;
+        ScfExempt other = (ScfExempt) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getFactorNo() == null ? other.getFactorNo() == null : this.getFactorNo().equals(other.getFactorNo()))
             && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
             && (this.getRequestNo() == null ? other.getRequestNo() == null : this.getRequestNo().equals(other.getRequestNo()))
-            && (this.getBalance() == null ? other.getBalance() == null : this.getBalance().equals(other.getBalance()))
-            && (this.getPayDate() == null ? other.getPayDate() == null : this.getPayDate().equals(other.getPayDate()))
+            && (this.getPayPlanId() == null ? other.getPayPlanId() == null : this.getPayPlanId().equals(other.getPayPlanId()))
+            && (this.getExemptDate() == null ? other.getExemptDate() == null : this.getExemptDate().equals(other.getExemptDate()))
+            && (this.getPrincipalBalance() == null ? other.getPrincipalBalance() == null : this.getPrincipalBalance().equals(other.getPrincipalBalance()))
+            && (this.getInterestBalance() == null ? other.getInterestBalance() == null : this.getInterestBalance().equals(other.getInterestBalance()))
+            && (this.getManagementBalance() == null ? other.getManagementBalance() == null : this.getManagementBalance().equals(other.getManagementBalance()))
+            && (this.getPenaltyBalance() == null ? other.getPenaltyBalance() == null : this.getPenaltyBalance().equals(other.getPenaltyBalance()))
+            && (this.getLatefeeBalance() == null ? other.getLatefeeBalance() == null : this.getLatefeeBalance().equals(other.getLatefeeBalance()))
+            && (this.getServicefeeBalance() == null ? other.getServicefeeBalance() == null : this.getServicefeeBalance().equals(other.getServicefeeBalance()))
+            && (this.getTotalBalance() == null ? other.getTotalBalance() == null : this.getTotalBalance().equals(other.getTotalBalance()))
+            && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()))
             && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
             && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
             && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
@@ -304,8 +441,16 @@ public class ScfServiceFee implements BetterjrEntity {
         result = prime * result + ((getFactorNo() == null) ? 0 : getFactorNo().hashCode());
         result = prime * result + ((getCustNo() == null) ? 0 : getCustNo().hashCode());
         result = prime * result + ((getRequestNo() == null) ? 0 : getRequestNo().hashCode());
-        result = prime * result + ((getBalance() == null) ? 0 : getBalance().hashCode());
-        result = prime * result + ((getPayDate() == null) ? 0 : getPayDate().hashCode());
+        result = prime * result + ((getPayPlanId() == null) ? 0 : getPayPlanId().hashCode());
+        result = prime * result + ((getExemptDate() == null) ? 0 : getExemptDate().hashCode());
+        result = prime * result + ((getPrincipalBalance() == null) ? 0 : getPrincipalBalance().hashCode());
+        result = prime * result + ((getInterestBalance() == null) ? 0 : getInterestBalance().hashCode());
+        result = prime * result + ((getManagementBalance() == null) ? 0 : getManagementBalance().hashCode());
+        result = prime * result + ((getPenaltyBalance() == null) ? 0 : getPenaltyBalance().hashCode());
+        result = prime * result + ((getLatefeeBalance() == null) ? 0 : getLatefeeBalance().hashCode());
+        result = prime * result + ((getServicefeeBalance() == null) ? 0 : getServicefeeBalance().hashCode());
+        result = prime * result + ((getTotalBalance() == null) ? 0 : getTotalBalance().hashCode());
+        result = prime * result + ((getDescription() == null) ? 0 : getDescription().hashCode());
         result = prime * result + ((getOperOrg() == null) ? 0 : getOperOrg().hashCode());
         result = prime * result + ((getRegOperId() == null) ? 0 : getRegOperId().hashCode());
         result = prime * result + ((getRegOperName() == null) ? 0 : getRegOperName().hashCode());
@@ -318,7 +463,27 @@ public class ScfServiceFee implements BetterjrEntity {
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
         return result;
     }
-    
+
+    @Transient
+    public String factorName;
+    @Transient
+    private String custName;
+    public String getFactorName() {
+        return factorName;
+    }
+
+    public void setFactorName(String factorName) {
+        this.factorName = factorName;
+    }
+
+    public String getCustName() {
+        return custName;
+    }
+
+    public void setCustName(String custName) {
+        this.custName = custName;
+    }
+
     public void init() {
         this.id = SerialGenerator.getLongValue("ScfServiceFee.id");
         this.regOperName = UserUtils.getUserName();

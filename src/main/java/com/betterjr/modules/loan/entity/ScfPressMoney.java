@@ -7,25 +7,21 @@ import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
-import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
-@Table(name = "t_scf_servicefee")
-public class ScfServiceFee implements BetterjrEntity {
+@Table(name = "t_scf_press_money")
+public class ScfPressMoney implements BetterjrEntity {
     @Id
     @Column(name = "ID",  columnDefinition="BIGINT" )
     @MetaData( value="", comments = "")
-    @OrderBy("desc")
     private Long id;
 
     /**
@@ -36,10 +32,10 @@ public class ScfServiceFee implements BetterjrEntity {
     private Long factorNo;
 
     /**
-     * 客户编号
+     * 催收对象编号
      */
     @Column(name = "L_CUSTNO",  columnDefinition="BIGINT" )
-    @MetaData( value="客户编号", comments = "客户编号")
+    @MetaData( value="催收对象编号", comments = "催收对象编号")
     private Long custNo;
 
     /**
@@ -50,18 +46,39 @@ public class ScfServiceFee implements BetterjrEntity {
     private String requestNo;
 
     /**
-     * 金额
+     * 催收方式
+     */
+    @Column(name = "C_PRESS_TYPE",  columnDefinition="VARCHAR" )
+    @MetaData( value="催收方式", comments = "催收方式")
+    private String pressType;
+
+    /**
+     * 催收时间
+     */
+    @Column(name = "D_ACTUAL_DATE",  columnDefinition="VARCHAR" )
+    @MetaData( value="催收时间", comments = "催收时间")
+    private String actualDate;
+
+    /**
+     * 催收金额
      */
     @Column(name = "F_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="金额", comments = "金额")
+    @MetaData( value="催收金额", comments = "催收金额")
     private BigDecimal balance;
 
     /**
-     * 支付日期
+     * 经办人
      */
-    @Column(name = "D_PAY_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="支付日期", comments = "支付日期")
-    private String payDate;
+    @Column(name = "C_AGENT",  columnDefinition="VARCHAR" )
+    @MetaData( value="经办人", comments = "经办人")
+    private String agent;
+
+    /**
+     * 备注
+     */
+    @Column(name = "C_DESCRIPTION",  columnDefinition="VARCHAR" )
+    @MetaData( value="备注", comments = "备注")
+    private String description;
 
     /**
      * 操作机构
@@ -106,7 +123,7 @@ public class ScfServiceFee implements BetterjrEntity {
     @MetaData( value="", comments = "")
     private Long version;
 
-    private static final long serialVersionUID = 1470190664760L;
+    private static final long serialVersionUID = 1471502531681L;
 
     public Long getId() {
         return id;
@@ -140,6 +157,22 @@ public class ScfServiceFee implements BetterjrEntity {
         this.requestNo = requestNo;
     }
 
+    public String getPressType() {
+        return pressType;
+    }
+
+    public void setPressType(String pressType) {
+        this.pressType = pressType;
+    }
+
+    public String getActualDate() {
+        return actualDate;
+    }
+
+    public void setActualDate(String actualDate) {
+        this.actualDate = actualDate;
+    }
+
     public BigDecimal getBalance() {
         return balance;
     }
@@ -148,13 +181,20 @@ public class ScfServiceFee implements BetterjrEntity {
         this.balance = balance;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
-    public String getPayDate() {
-        return payDate;
+    public String getAgent() {
+        return agent;
     }
 
-    public void setPayDate(String payDate) {
-        this.payDate = payDate;
+    public void setAgent(String agent) {
+        this.agent = agent;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getOperOrg() {
@@ -181,7 +221,6 @@ public class ScfServiceFee implements BetterjrEntity {
         this.regOperName = regOperName;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getRegDate() {
         return regDate;
     }
@@ -214,7 +253,6 @@ public class ScfServiceFee implements BetterjrEntity {
         this.modiOperName = modiOperName;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getModiDate() {
         return modiDate;
     }
@@ -249,8 +287,11 @@ public class ScfServiceFee implements BetterjrEntity {
         sb.append(", factorNo=").append(factorNo);
         sb.append(", custNo=").append(custNo);
         sb.append(", requestNo=").append(requestNo);
+        sb.append(", pressType=").append(pressType);
+        sb.append(", actualDate=").append(actualDate);
         sb.append(", balance=").append(balance);
-        sb.append(", payDate=").append(payDate);
+        sb.append(", agent=").append(agent);
+        sb.append(", description=").append(description);
         sb.append(", operOrg=").append(operOrg);
         sb.append(", regOperId=").append(regOperId);
         sb.append(", regOperName=").append(regOperName);
@@ -277,13 +318,16 @@ public class ScfServiceFee implements BetterjrEntity {
         if (getClass() != that.getClass()) {
             return false;
         }
-        ScfServiceFee other = (ScfServiceFee) that;
+        ScfPressMoney other = (ScfPressMoney) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getFactorNo() == null ? other.getFactorNo() == null : this.getFactorNo().equals(other.getFactorNo()))
             && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
             && (this.getRequestNo() == null ? other.getRequestNo() == null : this.getRequestNo().equals(other.getRequestNo()))
+            && (this.getPressType() == null ? other.getPressType() == null : this.getPressType().equals(other.getPressType()))
+            && (this.getActualDate() == null ? other.getActualDate() == null : this.getActualDate().equals(other.getActualDate()))
             && (this.getBalance() == null ? other.getBalance() == null : this.getBalance().equals(other.getBalance()))
-            && (this.getPayDate() == null ? other.getPayDate() == null : this.getPayDate().equals(other.getPayDate()))
+            && (this.getAgent() == null ? other.getAgent() == null : this.getAgent().equals(other.getAgent()))
+            && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()))
             && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
             && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
             && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
@@ -304,8 +348,11 @@ public class ScfServiceFee implements BetterjrEntity {
         result = prime * result + ((getFactorNo() == null) ? 0 : getFactorNo().hashCode());
         result = prime * result + ((getCustNo() == null) ? 0 : getCustNo().hashCode());
         result = prime * result + ((getRequestNo() == null) ? 0 : getRequestNo().hashCode());
+        result = prime * result + ((getPressType() == null) ? 0 : getPressType().hashCode());
+        result = prime * result + ((getActualDate() == null) ? 0 : getActualDate().hashCode());
         result = prime * result + ((getBalance() == null) ? 0 : getBalance().hashCode());
-        result = prime * result + ((getPayDate() == null) ? 0 : getPayDate().hashCode());
+        result = prime * result + ((getAgent() == null) ? 0 : getAgent().hashCode());
+        result = prime * result + ((getDescription() == null) ? 0 : getDescription().hashCode());
         result = prime * result + ((getOperOrg() == null) ? 0 : getOperOrg().hashCode());
         result = prime * result + ((getRegOperId() == null) ? 0 : getRegOperId().hashCode());
         result = prime * result + ((getRegOperName() == null) ? 0 : getRegOperName().hashCode());

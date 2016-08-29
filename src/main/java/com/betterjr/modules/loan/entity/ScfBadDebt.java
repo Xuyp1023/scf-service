@@ -7,26 +7,24 @@ import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
-import com.betterjr.common.mapper.CustDateJsonSerializer;
-import com.betterjr.common.selectkey.SerialGenerator;
-import com.betterjr.common.utils.BetterDateUtils;
-import com.betterjr.common.utils.UserUtils;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
-@Table(name = "t_scf_servicefee")
-public class ScfServiceFee implements BetterjrEntity {
+@Table(name = "t_scf_bad_debt")
+public class ScfBadDebt implements BetterjrEntity {
     @Id
-    @Column(name = "ID",  columnDefinition="BIGINT" )
-    @MetaData( value="", comments = "")
-    @OrderBy("desc")
     private Long id;
+
+    /**
+     * 申请单号
+     */
+    @Column(name = "C_REQUESTNO",  columnDefinition="VARCHAR" )
+    @MetaData( value="申请单号", comments = "申请单号")
+    private String requestNo;
 
     /**
      * 保理公司编号
@@ -38,30 +36,65 @@ public class ScfServiceFee implements BetterjrEntity {
     /**
      * 客户编号
      */
-    @Column(name = "L_CUSTNO",  columnDefinition="BIGINT" )
+    @Column(name = "L_CUSTNO",  columnDefinition="VARCHAR" )
     @MetaData( value="客户编号", comments = "客户编号")
     private Long custNo;
 
     /**
-     * 申请单编号
+     * 剩余本金
      */
-    @Column(name = "C_REQUESTNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="申请单编号", comments = "申请单编号")
-    private String requestNo;
+    @Column(name = "F_PRINCIPAL_BALANCE",  columnDefinition="DOUBLE" )
+    @MetaData( value="剩余本金", comments = "剩余本金")
+    private BigDecimal principalBalance;
 
     /**
-     * 金额
+     * 剩余利息
      */
-    @Column(name = "F_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="金额", comments = "金额")
-    private BigDecimal balance;
+    @Column(name = "F_INTEREST_BALANCE",  columnDefinition="DOUBLE" )
+    @MetaData( value="剩余利息", comments = "剩余利息")
+    private BigDecimal interestBalance;
 
     /**
-     * 支付日期
+     * 剩余管理费
      */
-    @Column(name = "D_PAY_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="支付日期", comments = "支付日期")
-    private String payDate;
+    @Column(name = "F_MANAGEMENT_BALANCE",  columnDefinition="DOUBLE" )
+    @MetaData( value="剩余管理费", comments = "剩余管理费")
+    private BigDecimal managementBalance;
+
+    /**
+     * 滞纳金
+     */
+    @Column(name = "F_LATEFEE_BALANCE",  columnDefinition="DOUBLE" )
+    @MetaData( value="滞纳金", comments = "滞纳金")
+    private BigDecimal lateFeeBalance;
+
+    /**
+     * 手续费
+     */
+    @Column(name = "F_SERVICEFEE_BALANCE",  columnDefinition="DOUBLE" )
+    @MetaData( value="手续费", comments = "手续费")
+    private BigDecimal servicefeeBalance;
+
+    /**
+     * 剩余其它费用
+     */
+    @Column(name = "F_OTHER_BALANCE",  columnDefinition="DOUBLE" )
+    @MetaData( value="剩余其它费用", comments = "剩余其它费用")
+    private BigDecimal otherBalance;
+
+    /**
+     * 合计
+     */
+    @Column(name = "F_TOTAL_BALANCE",  columnDefinition="DOUBLE" )
+    @MetaData( value="合计", comments = "合计")
+    private BigDecimal totalBalance;
+
+    /**
+     * 销核日期
+     */
+    @Column(name = "D_CONFIRM_DATE",  columnDefinition="VARCHAR" )
+    @MetaData( value="销核日期", comments = "销核日期")
+    private String confirmDate;
 
     /**
      * 操作机构
@@ -106,7 +139,7 @@ public class ScfServiceFee implements BetterjrEntity {
     @MetaData( value="", comments = "")
     private Long version;
 
-    private static final long serialVersionUID = 1470190664760L;
+    private static final long serialVersionUID = 5434051810014303919L;
 
     public Long getId() {
         return id;
@@ -114,6 +147,14 @@ public class ScfServiceFee implements BetterjrEntity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getRequestNo() {
+        return requestNo;
+    }
+
+    public void setRequestNo(String requestNo) {
+        this.requestNo = requestNo == null ? null : requestNo.trim();
     }
 
     public Long getFactorNo() {
@@ -132,29 +173,68 @@ public class ScfServiceFee implements BetterjrEntity {
         this.custNo = custNo;
     }
 
-    public String getRequestNo() {
-        return requestNo;
+    public BigDecimal getPrincipalBalance() {
+        return principalBalance;
     }
 
-    public void setRequestNo(String requestNo) {
-        this.requestNo = requestNo;
+    public void setPrincipalBalance(BigDecimal principalBalance) {
+        this.principalBalance = principalBalance;
     }
 
-    public BigDecimal getBalance() {
-        return balance;
+    public BigDecimal getInterestBalance() {
+        return interestBalance;
     }
 
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
+    public void setInterestBalance(BigDecimal interestBalance) {
+        this.interestBalance = interestBalance;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
-    public String getPayDate() {
-        return payDate;
+    public BigDecimal getManagementBalance() {
+        return managementBalance;
     }
 
-    public void setPayDate(String payDate) {
-        this.payDate = payDate;
+    public void setManagementBalance(BigDecimal managementBalance) {
+        this.managementBalance = managementBalance;
+    }
+
+    public BigDecimal getLateFeeBalance() {
+        return lateFeeBalance;
+    }
+
+    public void setLateFeeBalance(BigDecimal lateFeeBalance) {
+        this.lateFeeBalance = lateFeeBalance;
+    }
+
+    public BigDecimal getServicefeeBalance() {
+        return servicefeeBalance;
+    }
+
+    public void setServicefeeBalance(BigDecimal servicefeeBalance) {
+        this.servicefeeBalance = servicefeeBalance;
+    }
+
+    public BigDecimal getOtherBalance() {
+        return otherBalance;
+    }
+
+    public void setOtherBalance(BigDecimal otherBalance) {
+        this.otherBalance = otherBalance;
+    }
+
+    public BigDecimal getTotalBalance() {
+        return totalBalance;
+    }
+
+    public void setTotalBalance(BigDecimal totalBalance) {
+        this.totalBalance = totalBalance;
+    }
+
+    public String getConfirmDate() {
+        return confirmDate;
+    }
+
+    public void setConfirmDate(String confirmDate) {
+        this.confirmDate = confirmDate;
     }
 
     public String getOperOrg() {
@@ -181,7 +261,6 @@ public class ScfServiceFee implements BetterjrEntity {
         this.regOperName = regOperName;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getRegDate() {
         return regDate;
     }
@@ -214,7 +293,6 @@ public class ScfServiceFee implements BetterjrEntity {
         this.modiOperName = modiOperName;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getModiDate() {
         return modiDate;
     }
@@ -246,11 +324,17 @@ public class ScfServiceFee implements BetterjrEntity {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
+        sb.append(", requestNo=").append(requestNo);
         sb.append(", factorNo=").append(factorNo);
         sb.append(", custNo=").append(custNo);
-        sb.append(", requestNo=").append(requestNo);
-        sb.append(", balance=").append(balance);
-        sb.append(", payDate=").append(payDate);
+        sb.append(", principalBalance=").append(principalBalance);
+        sb.append(", interestBalance=").append(interestBalance);
+        sb.append(", managementBalance=").append(managementBalance);
+        sb.append(", lateFeeBalance=").append(lateFeeBalance);
+        sb.append(", servicefeeBalance=").append(servicefeeBalance);
+        sb.append(", otherBalance=").append(otherBalance);
+        sb.append(", totalBalance=").append(totalBalance);
+        sb.append(", confirmDate=").append(confirmDate);
         sb.append(", operOrg=").append(operOrg);
         sb.append(", regOperId=").append(regOperId);
         sb.append(", regOperName=").append(regOperName);
@@ -277,13 +361,19 @@ public class ScfServiceFee implements BetterjrEntity {
         if (getClass() != that.getClass()) {
             return false;
         }
-        ScfServiceFee other = (ScfServiceFee) that;
+        ScfBadDebt other = (ScfBadDebt) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
+            && (this.getRequestNo() == null ? other.getRequestNo() == null : this.getRequestNo().equals(other.getRequestNo()))
             && (this.getFactorNo() == null ? other.getFactorNo() == null : this.getFactorNo().equals(other.getFactorNo()))
             && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-            && (this.getRequestNo() == null ? other.getRequestNo() == null : this.getRequestNo().equals(other.getRequestNo()))
-            && (this.getBalance() == null ? other.getBalance() == null : this.getBalance().equals(other.getBalance()))
-            && (this.getPayDate() == null ? other.getPayDate() == null : this.getPayDate().equals(other.getPayDate()))
+            && (this.getPrincipalBalance() == null ? other.getPrincipalBalance() == null : this.getPrincipalBalance().equals(other.getPrincipalBalance()))
+            && (this.getInterestBalance() == null ? other.getInterestBalance() == null : this.getInterestBalance().equals(other.getInterestBalance()))
+            && (this.getManagementBalance() == null ? other.getManagementBalance() == null : this.getManagementBalance().equals(other.getManagementBalance()))
+            && (this.getLateFeeBalance() == null ? other.getLateFeeBalance() == null : this.getLateFeeBalance().equals(other.getLateFeeBalance()))
+            && (this.getServicefeeBalance() == null ? other.getServicefeeBalance() == null : this.getServicefeeBalance().equals(other.getServicefeeBalance()))
+            && (this.getOtherBalance() == null ? other.getOtherBalance() == null : this.getOtherBalance().equals(other.getOtherBalance()))
+            && (this.getTotalBalance() == null ? other.getTotalBalance() == null : this.getTotalBalance().equals(other.getTotalBalance()))
+            && (this.getConfirmDate() == null ? other.getConfirmDate() == null : this.getConfirmDate().equals(other.getConfirmDate()))
             && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
             && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
             && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
@@ -301,11 +391,17 @@ public class ScfServiceFee implements BetterjrEntity {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+        result = prime * result + ((getRequestNo() == null) ? 0 : getRequestNo().hashCode());
         result = prime * result + ((getFactorNo() == null) ? 0 : getFactorNo().hashCode());
         result = prime * result + ((getCustNo() == null) ? 0 : getCustNo().hashCode());
-        result = prime * result + ((getRequestNo() == null) ? 0 : getRequestNo().hashCode());
-        result = prime * result + ((getBalance() == null) ? 0 : getBalance().hashCode());
-        result = prime * result + ((getPayDate() == null) ? 0 : getPayDate().hashCode());
+        result = prime * result + ((getPrincipalBalance() == null) ? 0 : getPrincipalBalance().hashCode());
+        result = prime * result + ((getInterestBalance() == null) ? 0 : getInterestBalance().hashCode());
+        result = prime * result + ((getManagementBalance() == null) ? 0 : getManagementBalance().hashCode());
+        result = prime * result + ((getLateFeeBalance() == null) ? 0 : getLateFeeBalance().hashCode());
+        result = prime * result + ((getServicefeeBalance() == null) ? 0 : getServicefeeBalance().hashCode());
+        result = prime * result + ((getOtherBalance() == null) ? 0 : getOtherBalance().hashCode());
+        result = prime * result + ((getTotalBalance() == null) ? 0 : getTotalBalance().hashCode());
+        result = prime * result + ((getConfirmDate() == null) ? 0 : getConfirmDate().hashCode());
         result = prime * result + ((getOperOrg() == null) ? 0 : getOperOrg().hashCode());
         result = prime * result + ((getRegOperId() == null) ? 0 : getRegOperId().hashCode());
         result = prime * result + ((getRegOperName() == null) ? 0 : getRegOperName().hashCode());
@@ -317,22 +413,5 @@ public class ScfServiceFee implements BetterjrEntity {
         result = prime * result + ((getModiTime() == null) ? 0 : getModiTime().hashCode());
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
         return result;
-    }
-    
-    public void init() {
-        this.id = SerialGenerator.getLongValue("ScfServiceFee.id");
-        this.regOperName = UserUtils.getUserName();
-        this.regOperId = UserUtils.getOperatorInfo().getId();
-        this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
-        this.regDate = BetterDateUtils.getNumDate();
-        this.regTime = BetterDateUtils.getNumTime();
-    }
-
-    public void initModify() {
-        this.modiOperId = UserUtils.getOperatorInfo().getId();
-        this.modiOperName = UserUtils.getUserName();
-        this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
-        this.modiDate = BetterDateUtils.getNumDate();
-        this.modiTime = BetterDateUtils.getNumTime();
     }
 }

@@ -27,9 +27,12 @@ public class ScfLoanService extends BaseService<ScfLoanMapper, ScfLoan> {
      */
     public ScfLoan addLoan(ScfLoan anLoan) {
         BTAssert.notNull(anLoan, "新增放款记录失败-anLoan不能为空");
+        
         anLoan.init();
         this.insert(anLoan);
-        return findLoanDetail(anLoan.getId());
+        
+        setCustName(anLoan);
+        return anLoan;
     }
     
     /**
@@ -51,7 +54,9 @@ public class ScfLoanService extends BaseService<ScfLoanMapper, ScfLoan> {
         anLoan.initModify();
         anLoan.setId(anId);
         this.updateByPrimaryKeySelective(anLoan);
-        return findLoanDetail(anId);
+        
+        setCustName(anLoan);
+        return anLoan;
     }
 
     /**
@@ -66,8 +71,7 @@ public class ScfLoanService extends BaseService<ScfLoanMapper, ScfLoan> {
     public Page<ScfLoan> queryLoanList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
         Page<ScfLoan> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
         for (ScfLoan loan : page) {
-            loan.setCustName(custAccountService.queryCustName(loan.getCustNo()));
-            loan.setFactorName(custAccountService.queryCustName(loan.getFactorNo()));
+            setCustName(loan);
         }
         return page;
     }
@@ -86,10 +90,13 @@ public class ScfLoanService extends BaseService<ScfLoanMapper, ScfLoan> {
             return new ScfLoan();
         }
         
-        loan.setCustName(custAccountService.queryCustName(loan.getCustNo()));
-        loan.setFactorName(custAccountService.queryCustName(loan.getFactorNo()));
+        setCustName(loan);
         return loan;
     }
-    
+
+    private void setCustName(ScfLoan loan) {
+        loan.setCustName(custAccountService.queryCustName(loan.getCustNo()));
+        loan.setFactorName(custAccountService.queryCustName(loan.getFactorNo()));
+    }
 
 }
