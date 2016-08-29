@@ -2,7 +2,6 @@ package com.betterjr.modules.loan.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,13 +27,13 @@ import com.betterjr.modules.loan.entity.ScfPayPlan;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
 import com.betterjr.modules.loan.entity.ScfServiceFee;
+import com.betterjr.modules.loan.helper.RequestTradeStatus;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.helper.ScfOrderRelationType;
 import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
 import com.betterjr.modules.workflow.data.CustFlowNodeData;
-import com.betterjr.modules.workflow.entity.CustFlowNode;
 
 @Service
 public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest> {
@@ -132,9 +131,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         request.setFactorName(custAccountService.queryCustName(request.getFactorNo()));
 
         // 设置还款计划
-        Map<String, Object> propValue = new HashMap<String, Object>();
-        propValue.put("requestNo", anRequestNo);
-        request.setPayPlan(payPlanService.findPayPlanByProperty(propValue));
+        request.setPayPlan(payPlanService.findPayPlanByRequest(anRequestNo));
         return request;
     }
 
@@ -315,9 +312,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
             scfRequest.setCoreCustName(custAccountService.queryCustName(scfRequest.getCoreCustNo()));
             scfRequest.setFactorName(custAccountService.queryCustName(scfRequest.getFactorNo()));
             // 设置还款计划
-            Map<String, Object> propValue = new HashMap<String, Object>();
-            propValue.put("requestNo", scfRequest.getRequestNo());
-            scfRequest.setPayPlan(payPlanService.findPayPlanByProperty(propValue));
+            scfRequest.setPayPlan(payPlanService.findPayPlanByRequest(scfRequest.getRequestNo()));
         }
         return page;
     }
@@ -341,9 +336,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
             scfRequest.setCoreCustName(custAccountService.queryCustName(scfRequest.getCoreCustNo()));
             scfRequest.setFactorName(custAccountService.queryCustName(scfRequest.getFactorNo()));
             // 设置还款计划
-            Map<String, Object> propValue = new HashMap<String, Object>();
-            propValue.put("requestNo", scfRequest.getRequestNo());
-            scfRequest.setPayPlan(payPlanService.findPayPlanByProperty(propValue));
+            scfRequest.setPayPlan(payPlanService.findPayPlanByRequest(scfRequest.getRequestNo()));
         }
         return page;
     }
@@ -366,9 +359,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
             scfRequest.setCoreCustName(custAccountService.queryCustName(scfRequest.getCoreCustNo()));
             scfRequest.setFactorName(custAccountService.queryCustName(scfRequest.getFactorNo()));
             // 设置还款计划
-            Map<String, Object> propValue = new HashMap<String, Object>();
-            propValue.put("requestNo", scfRequest.getRequestNo());
-            scfRequest.setPayPlan(payPlanService.findPayPlanByProperty(propValue));
+            scfRequest.setPayPlan(payPlanService.findPayPlanByRequest(scfRequest.getRequestNo()));
         }
         return page;
     }
@@ -412,17 +403,17 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         List<ScfRequestCredit> creditList = new ArrayList<ScfRequestCredit>();
         
         if(BetterStringUtils.equals("1", type) || BetterStringUtils.equals("4", type)){
-            List<ScfOrder> list = (List)orderService.findInfoListByRequest(request.getRequestNo(), ScfOrderRelationType.ORDER.getCode());
+            List<ScfOrder> list = (List)orderService.findInfoListByRequest(request.getRequestNo(), "1");
             for (ScfOrder order : list) {
                 creditList = setInvoice(request, order.getInvoiceList(), order.getBalance(), order.getOrderNo(),agreement);
             }
         }else if(BetterStringUtils.equals("2", type)){
-            List<ScfReceivable> list = (List)orderService.findInfoListByRequest(request.getRequestNo(), ScfOrderRelationType.ORDER.getCode());
+            List<ScfReceivable> list = (List)orderService.findInfoListByRequest(request.getRequestNo(), "2");
             for (ScfReceivable receivable : list) {
                 creditList = setInvoice(request, receivable.getInvoiceList(), receivable.getBalance(), receivable.getReceivableNo() ,agreement);
             }
         }else if(BetterStringUtils.equals("3", type)){
-            List<ScfAcceptBill> list = (List)orderService.findInfoListByRequest(request.getRequestNo(), ScfOrderRelationType.ORDER.getCode());
+            List<ScfAcceptBill> list = (List)orderService.findInfoListByRequest(request.getRequestNo(), "3");
             for (ScfAcceptBill bill : list) {
                 creditList = setInvoice(request, bill.getInvoiceList(), bill.getBalance(), bill.getBtBillNo(),agreement);
             }
@@ -523,24 +514,24 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     public void getDefaultNode(List<CustFlowNodeData> list) {
         CustFlowNodeData node = new CustFlowNodeData();
         node = new CustFlowNodeData();
-        node.setNodeCustomName("逾期");
-        node.setSysNodeName("逾期");
-        node.setSysNodeId(new Long(170));
-        node.setId(new Long(170));
+        node.setNodeCustomName(RequestTradeStatus.OVERDUE.getName());
+        node.setSysNodeName(RequestTradeStatus.OVERDUE.getName());
+        node.setSysNodeId(new Long(RequestTradeStatus.OVERDUE.getCode()));
+        node.setId(new Long(RequestTradeStatus.OVERDUE.getCode()));
         list.add(node);
         
         node = new CustFlowNodeData();
-        node.setNodeCustomName("展期");
-        node.setSysNodeName("展期");
-        node.setSysNodeId(new Long(180));
-        node.setId(new Long(180));
+        node.setNodeCustomName(RequestTradeStatus.EXTENSION.getName());
+        node.setSysNodeName(RequestTradeStatus.EXTENSION.getName());
+        node.setSysNodeId(new Long(RequestTradeStatus.EXTENSION.getCode()));
+        node.setId(new Long(RequestTradeStatus.EXTENSION.getCode()));
         list.add(node);
         
         node = new CustFlowNodeData();
-        node.setNodeCustomName("还款完成");
-        node.setSysNodeName("还款完成");
-        node.setSysNodeId(new Long(190));
-        node.setId(new Long(190));
+        node.setNodeCustomName(RequestTradeStatus.PAYFINSH.getName());
+        node.setSysNodeName(RequestTradeStatus.PAYFINSH.getName());
+        node.setSysNodeId(new Long(RequestTradeStatus.PAYFINSH.getCode()));
+        node.setId(new Long(RequestTradeStatus.PAYFINSH.getCode()));
         list.add(node);
     }
 

@@ -62,7 +62,6 @@ public class ScfPayPlan implements BetterjrEntity {
      */
     @Column(name = "D_START_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="计息开始日期", comments = "计息开始日期")
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String startDate;
 
     /**
@@ -70,7 +69,6 @@ public class ScfPayPlan implements BetterjrEntity {
      */
     @Column(name = "D_PLAN_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="计划还款日期", comments = "计划还款日期")
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String planDate;
 
     /**
@@ -78,7 +76,6 @@ public class ScfPayPlan implements BetterjrEntity {
      */
     @Column(name = "D_PAY_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="实际还款日期", comments = "实际还款日期")
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String payDate;
 
     /**
@@ -204,7 +201,7 @@ public class ScfPayPlan implements BetterjrEntity {
      * 状态：1：未还，2：结清，3：逾期，4：提前还款，5：展期，6：坏账
      */
     @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="状态：1：未还", comments = "状态：1：未还，2：结清，3：逾期，4：提前还款，5：展期，6：坏账")
+    @MetaData( value="状态：1：未还", comments = "状态：1：未还，2：结清，3：逾期，4：提前结清，5：展期，6：坏账")
     private String businStatus;
 
     /**
@@ -221,6 +218,20 @@ public class ScfPayPlan implements BetterjrEntity {
     @MetaData( value="操作机构", comments = "操作机构")
     private String operOrg;
 
+    /**
+     * 期限
+     */
+    @Column(name = "N_PERIOD",  columnDefinition="INT" )
+    @MetaData( value="期限", comments = "期限")
+    private Integer period;
+
+    /**
+     * 期限单位
+     */
+    @Column(name = "N_PERIOD_UNIT",  columnDefinition="INT" )
+    @MetaData( value="期限单位", comments = "期限单位")
+    private Integer periodUnit;
+
     @Column(name = "L_REG_OPERID",  columnDefinition="BIGINT" )
     @MetaData( value="", comments = "")
     private Long regOperId;
@@ -231,7 +242,6 @@ public class ScfPayPlan implements BetterjrEntity {
 
     @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="", comments = "")
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
 
     @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
@@ -248,7 +258,6 @@ public class ScfPayPlan implements BetterjrEntity {
 
     @Column(name = "D_MODI_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="", comments = "")
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String modiDate;
 
     @Column(name = "T_MODI_TIME",  columnDefinition="VARCHAR" )
@@ -308,7 +317,7 @@ public class ScfPayPlan implements BetterjrEntity {
     @MetaData( value="未还合计", comments = "未还合计")
     private BigDecimal surplusTotalBalance;
 
-    private static final long serialVersionUID = 1470816190368L;
+    private static final long serialVersionUID = 1472092987634L;
 
     public Long getId() {
         return id;
@@ -350,6 +359,7 @@ public class ScfPayPlan implements BetterjrEntity {
         this.requestNo = requestNo;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getStartDate() {
         return startDate;
     }
@@ -358,6 +368,7 @@ public class ScfPayPlan implements BetterjrEntity {
         this.startDate = startDate;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getPlanDate() {
         return planDate;
     }
@@ -366,6 +377,7 @@ public class ScfPayPlan implements BetterjrEntity {
         this.planDate = planDate;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getPayDate() {
         return payDate;
     }
@@ -534,6 +546,22 @@ public class ScfPayPlan implements BetterjrEntity {
         this.operOrg = operOrg;
     }
 
+    public Integer getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(Integer period) {
+        this.period = period;
+    }
+
+    public Integer getPeriodUnit() {
+        return periodUnit;
+    }
+
+    public void setPeriodUnit(Integer periodUnit) {
+        this.periodUnit = periodUnit;
+    }
+
     public Long getRegOperId() {
         return regOperId;
     }
@@ -550,6 +578,7 @@ public class ScfPayPlan implements BetterjrEntity {
         this.regOperName = regOperName;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getRegDate() {
         return regDate;
     }
@@ -582,6 +611,7 @@ public class ScfPayPlan implements BetterjrEntity {
         this.modiOperName = modiOperName;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getModiDate() {
         return modiDate;
     }
@@ -696,6 +726,8 @@ public class ScfPayPlan implements BetterjrEntity {
         sb.append(", businStatus=").append(businStatus);
         sb.append(", overdueDays=").append(overdueDays);
         sb.append(", operOrg=").append(operOrg);
+        sb.append(", period=").append(period);
+        sb.append(", periodUnit=").append(periodUnit);
         sb.append(", regOperId=").append(regOperId);
         sb.append(", regOperName=").append(regOperName);
         sb.append(", regDate=").append(regDate);
@@ -757,6 +789,8 @@ public class ScfPayPlan implements BetterjrEntity {
             && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
             && (this.getOverdueDays() == null ? other.getOverdueDays() == null : this.getOverdueDays().equals(other.getOverdueDays()))
             && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
+            && (this.getPeriod() == null ? other.getPeriod() == null : this.getPeriod().equals(other.getPeriod()))
+            && (this.getPeriodUnit() == null ? other.getPeriodUnit() == null : this.getPeriodUnit().equals(other.getPeriodUnit()))
             && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
             && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
             && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
@@ -807,6 +841,8 @@ public class ScfPayPlan implements BetterjrEntity {
         result = prime * result + ((getBusinStatus() == null) ? 0 : getBusinStatus().hashCode());
         result = prime * result + ((getOverdueDays() == null) ? 0 : getOverdueDays().hashCode());
         result = prime * result + ((getOperOrg() == null) ? 0 : getOperOrg().hashCode());
+        result = prime * result + ((getPeriod() == null) ? 0 : getPeriod().hashCode());
+        result = prime * result + ((getPeriodUnit() == null) ? 0 : getPeriodUnit().hashCode());
         result = prime * result + ((getRegOperId() == null) ? 0 : getRegOperId().hashCode());
         result = prime * result + ((getRegOperName() == null) ? 0 : getRegOperName().hashCode());
         result = prime * result + ((getRegDate() == null) ? 0 : getRegDate().hashCode());

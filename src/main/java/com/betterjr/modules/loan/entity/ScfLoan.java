@@ -13,9 +13,11 @@ import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -167,6 +169,7 @@ public class ScfLoan implements BetterjrEntity {
         this.requestNo = requestNo;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getLoanDate() {
         return loanDate;
     }
@@ -175,6 +178,7 @@ public class ScfLoan implements BetterjrEntity {
         this.loanDate = loanDate;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getEndDate() {
         return endDate;
     }
@@ -239,6 +243,7 @@ public class ScfLoan implements BetterjrEntity {
         this.regOperName = regOperName;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getRegDate() {
         return regDate;
     }
@@ -271,6 +276,7 @@ public class ScfLoan implements BetterjrEntity {
         this.modiOperName = modiOperName;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getModiDate() {
         return modiDate;
     }

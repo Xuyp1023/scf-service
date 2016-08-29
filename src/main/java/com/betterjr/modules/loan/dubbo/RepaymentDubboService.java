@@ -1,5 +1,7 @@
 package com.betterjr.modules.loan.dubbo;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -9,12 +11,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.modules.loan.IScfRepaymentService;
+import com.betterjr.modules.loan.entity.ScfExempt;
+import com.betterjr.modules.loan.entity.ScfExtension;
 import com.betterjr.modules.loan.entity.ScfPayPlan;
 import com.betterjr.modules.loan.entity.ScfPayRecord;
 import com.betterjr.modules.loan.entity.ScfPayRecordDetail;
+import com.betterjr.modules.loan.entity.ScfPressMoney;
+import com.betterjr.modules.loan.service.ScfExemptService;
+import com.betterjr.modules.loan.service.ScfExtensionService;
 import com.betterjr.modules.loan.service.ScfPayPlanService;
 import com.betterjr.modules.loan.service.ScfPayRecordDetailService;
 import com.betterjr.modules.loan.service.ScfPayRecordService;
+import com.betterjr.modules.loan.service.ScfPressMoneyService;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 
 @Service(interfaceClass = IScfRepaymentService.class)
@@ -23,14 +31,16 @@ public class RepaymentDubboService implements IScfRepaymentService {
 
     @Autowired
     private ScfPayPlanService payPlanService;
-    
-    
     @Autowired
     private ScfPayRecordService payRecordService;
-    
     @Autowired
     private ScfPayRecordDetailService payRecordDetailService;
-
+    @Autowired
+    private ScfExemptService exemptService;
+    @Autowired
+    private ScfPressMoneyService pressMoneyService;
+    @Autowired
+    private ScfExtensionService extensionService;
     
     @Override
     public String webSaveRepayment(Map<String, Object> anMap) {
@@ -110,6 +120,72 @@ public class RepaymentDubboService implements IScfRepaymentService {
     public String webFindRecordDetail(Map<String, Object> anMap, Long anId) {
         logger.debug("查询还款记录详情，入参：" + anMap);
         return AjaxObject.newOk(payRecordDetailService.findRecordDetail(anId)).toJson();
+    }
+    
+    @Override
+    public String webQueryExemptList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
+        logger.debug("分页查询豁免列表，入参：" + anMap);
+        Map<String, Object> qyConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOkWithPage("分页查询豁免列表成功", exemptService.queryExemptList(qyConditionMap, anFlag, anPageNum, anPageSize)).toJson();
+    }
+    
+    @Override
+    public String webAddExempt(Map<String, Object> anMap) {
+        logger.debug("新增豁免，入参：" + anMap);
+        ScfExempt anExempt = (ScfExempt) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOk("新增催收成功", exemptService.addExempt(anExempt)).toJson();
+    }
+    
+    @Override
+    public String webQueryPressMoneyList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
+        logger.debug("分页查询催收列表，入参：" + anMap);
+        Map<String, Object> qyConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOkWithPage("分页查询催收列表成功", pressMoneyService.queryPressMoneyList(qyConditionMap, anFlag, anPageNum, anPageSize)).toJson();
+    }
+    
+    @Override
+    public String webAddPressMoney(Map<String, Object> anMap) {
+        logger.debug("新增豁免，入参：" + anMap);
+        ScfPressMoney anPress = (ScfPressMoney) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOk("新增豁免成功", pressMoneyService.addPressMoney(anPress)).toJson();
+    }
+
+    @Override
+    public String webCalculatExtensionEndDate(String anStartDate, Integer anPeriod, Integer anPeriodUnit) {
+        Map<String, Object> anMap = new HashMap<String, Object>();
+        anMap.put("endDate", payPlanService.calculatEndDate(anStartDate, anPeriod, anPeriodUnit));
+        return AjaxObject.newOk("操作成功", anMap).toJson();
+    }
+    
+    @Override
+    public String webCalculatExtensionFee(BigDecimal anRatio, BigDecimal anManagementRatio, BigDecimal anExtensionBalance) {
+        return AjaxObject.newOk("操作成功", extensionService.calculatInterest(anRatio, anManagementRatio, anExtensionBalance)).toJson();
+    }
+    
+    @Override
+    public String webPayAssigned(String anRequestNo, String anStartDate, BigDecimal anPayBalance) {
+        return AjaxObject.newOk("操作成功",  extensionService.payAssigned(anRequestNo, anStartDate, anPayBalance)).toJson();
+    }
+
+    @Override
+    public String webCalculatLoanBalance(String anRequestNo, String anStartDate) {
+        Map<String, BigDecimal> map = new HashMap<String, BigDecimal>();
+        map.put("loanBalance", extensionService.calculatLoanBalance(anRequestNo, anStartDate));
+        return AjaxObject.newOk("操作成功", map).toJson();
+    }
+    
+    @Override
+    public String webAddExtension(Map<String, Object> anMap) {
+        ScfExtension anExtension = (ScfExtension) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOk("操作成功", extensionService.addExtension(anExtension)).toJson();
+    }
+    
+    @Override
+    public String webQueryExtensionList(Map<String, Object> anMap, String requestNo, int anFlag, int anPageNum, int anPageSize) {
+        logger.debug("分页查展期列表，入参：" + anMap);
+        Map<String, Object> qyConditionMap = new HashMap<String, Object>();
+        qyConditionMap.put("requestNo", requestNo);
+        return AjaxObject.newOkWithPage("分页查询催收列表成功", extensionService.queryExtensionList(qyConditionMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
 }

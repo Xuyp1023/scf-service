@@ -160,18 +160,11 @@ public class ScfPayRecord implements BetterjrEntity {
     private BigDecimal managementRatio;
 
     /**
-     * 还款类型：1：正常还款，2：提前还款，3：逾期还款，4：豁免，5：逾期豁免，6.经销商还款
+     * 还款类型：1：正常还款，2：提前还款，3：逾期还款，4：豁免，5：逾期豁免，6.经销商还款 7展期
      */
     @Column(name = "C_PAY_TYPE",  columnDefinition="VARCHAR" )
-    @MetaData( value="还款类型：1：正常还款", comments = "还款类型：1：正常还款，2：提前还款，3：逾期还款，4：豁免，5：逾期豁免，6.经销商还款")
+    @MetaData( value="还款类型：1：正常还款", comments = "还款类型：1：正常还款，2：提前还款，3：逾期还款，4：豁免，5：逾期豁免，6.经销商还款, 7展期")
     private String payType;
-
-    /**
-     * 状态：1：未还，2：结清，3：逾期，4：提前还款，5：展期，6：坏账
-     */
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="状态：1：未还", comments = "状态：1：未还，2：结清，3：逾期，4：提前还款，5：展期，6：坏账")
-    private String cBusinStatus;
 
     /**
      * 发货通知单id,多个以逗号隔开
@@ -393,14 +386,6 @@ public class ScfPayRecord implements BetterjrEntity {
         this.payType = payType;
     }
 
-    public String getcBusinStatus() {
-        return cBusinStatus;
-    }
-
-    public void setcBusinStatus(String cBusinStatus) {
-        this.cBusinStatus = cBusinStatus == null ? null : cBusinStatus.trim();
-    }
-
     public String getDeliverys() {
         return deliverys;
     }
@@ -516,7 +501,6 @@ public class ScfPayRecord implements BetterjrEntity {
         sb.append(", ratio=").append(ratio);
         sb.append(", managementRatio=").append(managementRatio);
         sb.append(", payType=").append(payType);
-        sb.append(", cBusinStatus=").append(cBusinStatus);
         sb.append(", deliverys=").append(deliverys);
         sb.append(", operOrg=").append(operOrg);
         sb.append(", regOperId=").append(regOperId);
@@ -566,7 +550,6 @@ public class ScfPayRecord implements BetterjrEntity {
             && (this.getRatio() == null ? other.getRatio() == null : this.getRatio().equals(other.getRatio()))
             && (this.getManagementRatio() == null ? other.getManagementRatio() == null : this.getManagementRatio().equals(other.getManagementRatio()))
             && (this.getPayType() == null ? other.getPayType() == null : this.getPayType().equals(other.getPayType()))
-            && (this.getcBusinStatus() == null ? other.getcBusinStatus() == null : this.getcBusinStatus().equals(other.getcBusinStatus()))
             && (this.getDeliverys() == null ? other.getDeliverys() == null : this.getDeliverys().equals(other.getDeliverys()))
             && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
             && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
@@ -605,7 +588,6 @@ public class ScfPayRecord implements BetterjrEntity {
         result = prime * result + ((getRatio() == null) ? 0 : getRatio().hashCode());
         result = prime * result + ((getManagementRatio() == null) ? 0 : getManagementRatio().hashCode());
         result = prime * result + ((getPayType() == null) ? 0 : getPayType().hashCode());
-        result = prime * result + ((getcBusinStatus() == null) ? 0 : getcBusinStatus().hashCode());
         result = prime * result + ((getDeliverys() == null) ? 0 : getDeliverys().hashCode());
         result = prime * result + ((getOperOrg() == null) ? 0 : getOperOrg().hashCode());
         result = prime * result + ((getRegOperId() == null) ? 0 : getRegOperId().hashCode());
