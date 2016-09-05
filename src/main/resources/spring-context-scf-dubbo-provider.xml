@@ -219,5 +219,6 @@
 		init-method="init" scope="singleton" lazy-init="false" />
 
 	<import resource="scf-dubbo-provider.xml" />
+	<import resource="job-config.xml"/>
 
 </beans>
