@@ -3,7 +3,6 @@ package com.betterjr.modules.loan.job;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.modules.loan.service.ScfPayPlanService;
@@ -17,24 +16,11 @@ public class PayPlanJob extends AbstractSimpleElasticJob {
     @Autowired
     private ScfPayPlanService payPlanService;
     
-    
-    @Value("${sms.begin.time}")
-    private String beginTime;
-    
-    @Value("${sms.end.time}")
-    private String endTime;
-    
     @Override
     public void process(JobExecutionMultipleShardingContext anParamJobExecutionMultipleShardingContext) {
         logger.info("*********定时任务：开始计算利息!");
         logger.info("*********定时任务：开始计算利息!");
-        logger.info("*********定时任务：开始计算利息!");
-        logger.info("*********定时任务：开始计算利息!");
         payPlanService.saveAutoUpdateOverDue();
-        logger.info("*********定时任务：计算利息结束!");
-        logger.info("*********定时任务：计算利息结束!");
-        logger.info("*********定时任务：计算利息结束!");
-        logger.info("*********定时任务：计算利息结束!");
         logger.info("*********定时任务：计算利息结束!");
         logger.info("*********定时任务：计算利息结束!");
     }
