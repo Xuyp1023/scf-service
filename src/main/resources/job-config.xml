@@ -11,13 +11,13 @@
 	default-lazy-init="true">
 
 	<description>Elastic-Job 配置 </description>
-	<reg:zookeeper id="regCenter2" server-lists="${elastic.job.serverLists}"
+	<reg:zookeeper id="scfCenter" server-lists="${elastic.job.serverLists}"
 		namespace="payplan" base-sleep-time-milliseconds="${elastic.job.baseSleepTimeMilliseconds}"
 		max-sleep-time-milliseconds="${elastic.job.maxSleepTimeMilliseconds}"
 		max-retries="${elastic.job.maxRetries}" />
 
 	<job:simple id="payplanJob"
 		class="com.betterjr.modules.loan.job.PayPlanJob"
-		registry-center-ref="regCenter2" cron="0/10 * * * * ?"
-		sharding-total-count="3" sharding-item-parameters="0=A,1=B,2=C" />
+		registry-center-ref="scfCenter" cron="0 0 0 0/1 * ?"
+		sharding-total-count="1" sharding-item-parameters="0=A" />
 </beans>
