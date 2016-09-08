@@ -308,9 +308,9 @@ public class ScfRequestCredit implements BetterjrEntity,BaseRemoteEntity {
     
     public void fillInfo(ScfRequest anRequest){
         this.id = SerialGenerator.getIntValue("ScfRequestCredit.id");
-        //this.productCode = anRequest.getProductCode();
-        //this.buyerNo = Long.parseLong(anRequest.getBuyerNo());
-        //this.supplierNo = anRequest.getSupplierNo();
+        this.productCode = anRequest.getProductCode();
+        this.buyerNo = anRequest.getCoreCustNo()==null?0:anRequest.getCoreCustNo();
+        this.supplierNo = anRequest.getCustNo();
         this.regDate = BetterDateUtils.getNumDate();
     }
 }

@@ -241,5 +241,13 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
             throw new BytterTradeException(40001, anMessage);
         }
     }
-
+    
+    /***
+     * 根据产品id获取产品对象
+     * @param anProductId
+     * @return
+     */
+    public ScfProduct findProductById(Long anProductId){
+        return this.selectByPrimaryKey(anProductId);
+    }
 }

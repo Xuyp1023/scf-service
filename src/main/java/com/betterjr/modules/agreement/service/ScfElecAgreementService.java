@@ -1,6 +1,5 @@
 package com.betterjr.modules.agreement.service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,6 +27,9 @@ import com.betterjr.modules.agreement.data.ScfElecAgreementInfo;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.document.entity.CustFileItem;
+import com.betterjr.modules.loan.entity.ScfRequest;
+import com.betterjr.modules.loan.service.ScfRequestService;
+import com.betterjr.modules.product.service.ScfProductService;
 
 /***
  * 电子合同管理
@@ -43,6 +45,12 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
     private ScfElecAgreeStubService scfElecAgreeStubService;
     @Reference(interfaceClass=ICustFileService.class)
     private ICustFileService custFileService;
+    @Autowired
+    private ScfFactorRemoteHelper remoteHelper;
+    @Autowired
+    private ScfProductService productService;
+    @Autowired
+    private ScfRequestService requestService; 
     
     /**
      * 查找供应商的电子合同信息
@@ -61,7 +69,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
      *            是否需要统计
      * @return
      */
-    public Page<ScfElecAgreementInfo> queryScfElecAgreementList(String anAgreeType, Map<String, Object> anParam, int anPageNum, int anPageSize) {
+    public Page<ScfElecAgreementInfo> queryScfElecAgreementList(Map<String, Object> anParam, int anPageNum, int anPageSize) {
         Map<String, Object> termMap = new HashMap();
         termMap.put("GTEregDate", anParam.get("GTEregDate"));
         termMap.put("LTEregDate", anParam.get("LTEregDate"));
@@ -73,19 +81,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         else {
             termMap.put("signStatus", signStatus);
         }
-        termMap.put("agreeType", anAgreeType);
         List<Long> custNoList = UserUtils.findCustNoList();
-        if (Collections3.isEmpty(custNoList)) {
-            custNoList = new ArrayList<Long>();
-            // throw new BytterValidException("没有找到操作员相关的客户资料，请重新登陆！");
-        }
-        if ("0".equals(anAgreeType)) {
-            termMap.put("supplierNo", custNoList);
-        }
-        else if ("1".equals(anAgreeType)) {
-            termMap.put("buyerNo", anParam.get("custNo"));
-        }
-        
         if (logger.isInfoEnabled()){
             logger.info("this is findScfElecAgreementList params " + termMap);
         }
@@ -96,9 +92,26 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
             elecAgree.putStubInfos(scfElecAgreeStubService.findSignerList(elecAgree.getAppNo(),custAccoService), custNoSet);
             elecAgree.setBuyer(custAccoService.queryCustName(elecAgree.getBuyerNo()));
             elecAgree.setFactorName(DictUtils.getDictLabel("ScfAgencyGroup", elecAgree.getFactorNo()));
+            elecAgree.setProductName(getProductNameByRequestNo(elecAgree.getRequestNo()));
         }
         logger.info("this is findScfElecAgreementList result count :" + elecAgreeList.size());
         return elecAgreeList;
+    }
+    
+    /***
+     * 根据requstNo获取产品名称
+     * @param requestNo
+     * @return
+     */
+    public String getProductNameByRequestNo(String requestNo){
+        try {
+            ScfRequest request=requestService.findRequestDetail(requestNo);
+            return productService.findProductById(request.getProductId()).getProductName();            
+        }
+        catch (Exception e) {
+            logger.error("getProductNameByRequestNo 异常："+e.getMessage());
+        }
+        return "";
     }
     
     
@@ -159,8 +172,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
             logger.error("saveAndSendValidSMS not find signed parnter use with anAppNo " + anAppNo);
             return false;
         }
-//        boolean result = this.remoteHelper.sendValidSMS(anAppNo, custNo, anVcode);
-        boolean result=false;
+        boolean result = this.remoteHelper.sendValidSMS(anAppNo, custNo, anVcode);
         this.scfElecAgreeStubService.saveElecAgreeStubStatus(custNo, anAppNo, result ? "1" : "2");
         if  (result){
             saveSignFileInfo(anElecAgree, fileItem, false);
@@ -194,8 +206,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
             logger.info("this electAgreement appNo" + anAppNo + ", has sended!");
         }
 
-//        return this.remoteHelper.sendSMS(anAppNo, custNo);
-        return false;
+        return this.remoteHelper.sendSMS(anAppNo, custNo);
     }
     
     /**
@@ -207,8 +218,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
      */
     protected boolean saveAndSignElecAgreement(ScfElecAgreement anElectAgreement) {
         logger.info("create saveAndSignElecAgreement " + anElectAgreement);
-//        boolean result = this.remoteHelper.signElecAgreement(anElectAgreement);
-        boolean result=false;
+        boolean result = this.remoteHelper.signElecAgreement(anElectAgreement);
         if (result) {
 
             this.updateByPrimaryKey(anElectAgreement);

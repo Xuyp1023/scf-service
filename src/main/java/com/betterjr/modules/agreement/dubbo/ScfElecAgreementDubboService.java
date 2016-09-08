@@ -31,7 +31,7 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
     
     @Override
     public String webQueryElecAgreementByPage(Map<String, Object> anParam, int anPageNum, int anPageSize) {
-        return AjaxObject.newOkWithPage("查询用户电子合同分页信息成功",scfElecAgreementService.queryScfElecAgreementList("0", anParam, anPageNum, anPageSize)).toJson();
+        return AjaxObject.newOkWithPage("查询用户电子合同分页信息成功",scfElecAgreementService.queryScfElecAgreementList(anParam, anPageNum, anPageSize)).toJson();
     }
 
     @Override

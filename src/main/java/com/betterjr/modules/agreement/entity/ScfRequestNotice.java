@@ -370,7 +370,7 @@ public class ScfRequestNotice implements BetterjrEntity,BaseRemoteEntity {
     
     public void fillInfo(ScfRequest anRequest){
         this.productCode = anRequest.getProductCode();
-        this.buyerNo = anRequest.getBuyerNo()==null?0:Long.parseLong(anRequest.getBuyerNo());
+        this.buyerNo = anRequest.getCoreCustNo()==null?0:anRequest.getCoreCustNo();
         this.supplierNo = anRequest.getCustNo();
         this.factorNo = anRequest.getFactorNo()==null?null:anRequest.getFactorNo().toString();
         this.transStatus ="0";

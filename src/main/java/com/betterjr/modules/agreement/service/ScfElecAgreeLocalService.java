@@ -122,9 +122,9 @@ public abstract class ScfElecAgreeLocalService {
         return elecAgreeService.saveAndSendValidSMS(elecAgree, fileItem, anAppNo, anVcode);
     }
 
-    public Page<ScfElecAgreementInfo> findScfElecAgreementList(String anAgreeType, Map<String, Object> anParam, int anPageNum, int anPageSize) {
+    public Page<ScfElecAgreementInfo> findScfElecAgreementList(Map<String, Object> anParam, int anPageNum, int anPageSize) {
      
-        return elecAgreeService.queryScfElecAgreementList("0", anParam, anPageNum, anPageSize);
+        return elecAgreeService.queryScfElecAgreementList(anParam, anPageNum, anPageSize);
     }
     
     public boolean saveAndSendSMS(String anAppNo) {
