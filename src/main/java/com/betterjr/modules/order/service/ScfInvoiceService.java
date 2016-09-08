@@ -1,9 +1,11 @@
 package com.betterjr.modules.order.service;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.exception.BytterTradeException;
@@ -16,16 +18,19 @@ import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.order.dao.ScfInvoiceMapper;
 import com.betterjr.modules.order.entity.ScfInvoice;
+import com.betterjr.modules.order.entity.ScfInvoiceItem;
 import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
 
 @Service
 public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice> implements IScfOrderInfoCheckService {
 
+    @Autowired
+    private ScfInvoiceItemService invoiceItemService;
     
     /**
      * 订单发票信息录入
      */
-    public ScfInvoice addInvoice(ScfInvoice anInvoice, String anFileList) {
+    public ScfInvoice addInvoice(ScfInvoice anInvoice,String anInvoiceIds, String anFileList) {
         logger.info("Begin to add Invoice");
         if (BetterStringUtils.isBlank(anFileList)) {
             logger.error("发票附件信息不能为空");
@@ -34,6 +39,7 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
         anInvoice.initAddValue();
         // 发票初始状态为正常
         anInvoice.setBusinStatus("1");
+        invoiceItemService.saveInvoiceItemRelation(anInvoice.getId(), anInvoiceIds.split(","));
         this.insert(anInvoice);
         return anInvoice;
     }
@@ -48,8 +54,35 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
         anMap.put("businStatus", "0");
 
         Page<ScfInvoice> anInvoiceList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
+        
+        fillInvoiceItem(anInvoiceList);
 
         return anInvoiceList;
+    }
+    
+    /**
+     * 发票信息编辑修改
+     */
+    public ScfInvoice saveModifyInvoice(ScfInvoice anModiInvoice, String anInvoiceItemIds) {
+        //保存发票信息
+        ScfInvoice anInvoice = this.selectByPrimaryKey(anModiInvoice.getId());
+        BTAssert.notNull(anInvoice, "无法获取发票信息");
+        anInvoice.initModifyValue(anModiInvoice);
+        this.updateByPrimaryKeySelective(anInvoice);
+        
+        //先查询出原有的发票详情
+        List<ScfInvoiceItem> oldInvoiceItemList = invoiceItemService.findItemsByInvoiceId(anModiInvoice.getId());
+        //保存现有的发票详情
+        String[] invoiceIds = anInvoiceItemIds.split(",");
+        invoiceItemService.saveInvoiceItemRelation(anModiInvoice.getId(), invoiceIds);
+        //删除取消的发票详情
+        List<String> newInvoiceItemIdList = Arrays.asList(invoiceIds);
+        for(ScfInvoiceItem anInvoiceItem : oldInvoiceItemList) {
+            if(!newInvoiceItemIdList.contains(anInvoiceItem.getId().toString())) {
+                invoiceItemService.saveDeleteInvoiceItem(anInvoiceItem.getId());
+            }
+        }
+        return anInvoice;
     }
 
     /**
@@ -94,7 +127,21 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
      * 查询发票信息
      */
     public List<ScfInvoice> findInvoice(Map<String, Object> anMap) {
-    	return this.selectByClassProperty(ScfInvoice.class, anMap);
+        
+        List<ScfInvoice> invoiceList = this.selectByClassProperty(ScfInvoice.class, anMap);
+        
+        fillInvoiceItem(invoiceList);
+    	return invoiceList;
+    }
+    
+    /**
+     * 查询发票下的项目详情并填充
+     */
+    public void fillInvoiceItem(List<ScfInvoice> anInvoiceList) {
+        for(ScfInvoice anInvoice : anInvoiceList) {
+            List<ScfInvoiceItem> invoiceItemList = invoiceItemService.findItemsByInvoiceId(anInvoice.getId());
+            anInvoice.setInvoiceItemList(invoiceItemList);
+        }
     }
 
     /**

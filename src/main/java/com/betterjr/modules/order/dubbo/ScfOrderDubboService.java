@@ -48,4 +48,19 @@ public class ScfOrderDubboService implements IScfOrderService{
         return AjaxObject.newOk("订单信息查询成功", scfOrderService.findInfoListByRequest(anRequestNo, anRequestType)).toJson();
     }
 
+    @Override
+    public String webAddOrder(Map<String, Object> anMap, String anFileList, String anOtherFileList) {
+        ScfOrder anOrder = (ScfOrder) RuleServiceDubboFilterInvoker.getInputObj();
+        //保存附件信息
+        anOrder.setBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anOrder.getOtherBatchNo()));
+        //保存其他文件信息
+        anOrder.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anOrder.getBatchNo()));
+        return AjaxObject.newOk("订单信息新增成功", scfOrderService.addOrder(anOrder)).toJson();
+    }
+
+    @Override
+    public String webCheckCompleteInvoice(String anRequestType, String anIdList) {
+        return AjaxObject.newOk("检查关联发票关系成功", scfOrderService.checkCompleteInvoice(anRequestType, anIdList)).toJson();
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.betterjr.modules.order.entity;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -8,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
@@ -142,27 +144,6 @@ public class ScfInvoice implements BetterjrEntity {
     private String invoiceDate;
 
     /**
-     * 项目
-     */
-    @Column(name = "C_SUBJECT",  columnDefinition="VARCHAR" )
-    @MetaData( value="项目", comments = "项目")
-    private String subject;
-
-    /**
-     * 单价
-     */
-    @Column(name = "F_UNIT",  columnDefinition="DOUBLE" )
-    @MetaData( value="单价", comments = "单价")
-    private BigDecimal unit;
-
-    /**
-     * 数量
-     */
-    @Column(name = "N_AMOUNT",  columnDefinition="DOUBLE" )
-    @MetaData( value="数量", comments = "数量")
-    private Integer amount;
-
-    /**
      * 发票金额
      */
     @Column(name = "F_BALANCE",  columnDefinition="DOUBLE" )
@@ -196,6 +177,12 @@ public class ScfInvoice implements BetterjrEntity {
     @Column(name = "C_DESCRIPTION",  columnDefinition="VARCHAR" )
     @MetaData( value="备注", comments = "备注")
     private String description;
+    
+    /**
+     * 发票项目详情
+     */
+    @Transient
+    private List<ScfInvoiceItem> invoiceItemList;
 
     private static final long serialVersionUID = 1469428023697L;
 
@@ -327,30 +314,6 @@ public class ScfInvoice implements BetterjrEntity {
         this.invoiceDate = invoiceDate == null ? null : invoiceDate.trim();
     }
 
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject == null ? null : subject.trim();
-    }
-
-    public BigDecimal getUnit() {
-        return unit;
-    }
-
-    public void setUnit(BigDecimal unit) {
-        this.unit = unit;
-    }
-
-    public Integer getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Integer amount) {
-        this.amount = amount;
-    }
-
     public BigDecimal getBalance() {
         return balance;
     }
@@ -391,6 +354,14 @@ public class ScfInvoice implements BetterjrEntity {
         this.description = description == null ? null : description.trim();
     }
 
+    public List<ScfInvoiceItem> getInvoiceItemList() {
+        return this.invoiceItemList;
+    }
+
+    public void setInvoiceItemList(List<ScfInvoiceItem> anInvoiceItemList) {
+        this.invoiceItemList = anInvoiceItemList;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -413,9 +384,6 @@ public class ScfInvoice implements BetterjrEntity {
         sb.append(", taxpayerNo=").append(taxpayerNo);
         sb.append(", corpVocate=").append(corpVocate);
         sb.append(", invoiceDate=").append(invoiceDate);
-        sb.append(", subject=").append(subject);
-        sb.append(", unit=").append(unit);
-        sb.append(", amount=").append(amount);
         sb.append(", balance=").append(balance);
         sb.append(", drawer=").append(drawer);
         sb.append(", batchNo=").append(batchNo);
@@ -454,9 +422,6 @@ public class ScfInvoice implements BetterjrEntity {
             && (this.getTaxpayerNo() == null ? other.getTaxpayerNo() == null : this.getTaxpayerNo().equals(other.getTaxpayerNo()))
             && (this.getCorpVocate() == null ? other.getCorpVocate() == null : this.getCorpVocate().equals(other.getCorpVocate()))
             && (this.getInvoiceDate() == null ? other.getInvoiceDate() == null : this.getInvoiceDate().equals(other.getInvoiceDate()))
-            && (this.getSubject() == null ? other.getSubject() == null : this.getSubject().equals(other.getSubject()))
-            && (this.getUnit() == null ? other.getUnit() == null : this.getUnit().equals(other.getUnit()))
-            && (this.getAmount() == null ? other.getAmount() == null : this.getAmount().equals(other.getAmount()))
             && (this.getBalance() == null ? other.getBalance() == null : this.getBalance().equals(other.getBalance()))
             && (this.getDrawer() == null ? other.getDrawer() == null : this.getDrawer().equals(other.getDrawer()))
             && (this.getBatchNo() == null ? other.getBatchNo() == null : this.getBatchNo().equals(other.getBatchNo()))
@@ -484,9 +449,6 @@ public class ScfInvoice implements BetterjrEntity {
         result = prime * result + ((getTaxpayerNo() == null) ? 0 : getTaxpayerNo().hashCode());
         result = prime * result + ((getCorpVocate() == null) ? 0 : getCorpVocate().hashCode());
         result = prime * result + ((getInvoiceDate() == null) ? 0 : getInvoiceDate().hashCode());
-        result = prime * result + ((getSubject() == null) ? 0 : getSubject().hashCode());
-        result = prime * result + ((getUnit() == null) ? 0 : getUnit().hashCode());
-        result = prime * result + ((getAmount() == null) ? 0 : getAmount().hashCode());
         result = prime * result + ((getBalance() == null) ? 0 : getBalance().hashCode());
         result = prime * result + ((getDrawer() == null) ? 0 : getDrawer().hashCode());
         result = prime * result + ((getBatchNo() == null) ? 0 : getBatchNo().hashCode());
@@ -502,5 +464,22 @@ public class ScfInvoice implements BetterjrEntity {
         this.regDate = BetterDateUtils.getNumDate();
         this.regTime = BetterDateUtils.getNumTime();
         this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
+    }
+    
+    public void initModifyValue(ScfInvoice anModiInvoice) {
+        this.balance = anModiInvoice.balance;
+        this.businStatus = anModiInvoice.businStatus;
+        this.corpVocate = anModiInvoice.corpVocate;
+        this.description = anModiInvoice.description;
+        this.drawer = anModiInvoice.drawer;
+        this.invoiceCode = anModiInvoice.invoiceCode;
+        this.invoiceDate = anModiInvoice.invoiceDate;
+        this.invoiceNo = anModiInvoice.invoiceNo;
+        this.taxpayerNo = anModiInvoice.taxpayerNo;
+        
+        this.modiDate = BetterDateUtils.getNumDate();
+        this.modiOperId = UserUtils.getOperatorInfo().getId();
+        this.modiOperName = UserUtils.getOperatorInfo().getName();
+        this.modiTime = BetterDateUtils.getNumTime();
     }
 }
