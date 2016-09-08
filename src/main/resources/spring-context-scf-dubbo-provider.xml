@@ -27,6 +27,7 @@
 		com.betterjr.modules.receivable;
 		com.betterjr.modules.acceptbill;
 		com.betterjr.modules.cert.service;
+        com.betterjr.modules.discount;
 		com.betterjr.modules.account.service;
 		com.betterjr.modules.rule.service;
 		com.betterjr.modules.rule.validator;
@@ -208,7 +209,7 @@
 	<bean id="selectKeyGenIDService" class="com.betterjr.common.selectkey.SelectKeyGenIDService"
 		init-method="init" scope="singleton" lazy-init="false">
 	</bean>
-
+ 
 	<bean id="selectKeyAutoIDGen" class="com.betterjr.common.selectkey.SelectKeyAutoIDGen"
 		init-method="init" scope="prototype" lazy-init="false">
 	</bean>
@@ -218,6 +219,23 @@
 
 	<bean id="serialGenerator" class="com.betterjr.common.selectkey.SerialGenerator"
 		init-method="init" scope="singleton" lazy-init="false" />
+
+    <bean id="remoteProxyFactory" class="com.betterjr.modules.remote.service.RemoteProxyFactory" init-method="init" scope="singleton">
+     <property name="trustStoreFile" value="${trustStore.File}" />
+     <property name="trustStorePass" value="${trustStore.Pass}" />
+    </bean>
+   
+   
+    <bean id="farFaceService" class="com.betterjr.modules.remote.service.FarFaceService" scope="singleton" lazy-init="false">
+    </bean>
+    <bean id="qlExpressUtil" class="com.betterjr.modules.rule.service.QlExpressUtil" init-method="initRunner">
+     <property name="defPackages">
+      <list>
+       <value>com.betterjr.common.utils</value>
+       <value>com.betterjr.common.config</value>
+      </list>
+     </property>
+    </bean>
 
 	<import resource="scf-dubbo-provider.xml" />
 	<import resource="job-config.xml"/>

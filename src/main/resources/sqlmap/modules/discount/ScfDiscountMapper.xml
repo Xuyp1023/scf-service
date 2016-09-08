@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betterjr.modules.discount.dao.ScfDiscountMapper">
+  <resultMap id="BaseResultMap" type="com.betterjr.modules.discount.entity.ScfDiscount">
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="L_FACTORNO" jdbcType="INTEGER" property="factorNo" />
+    <result column="c_discountType" jdbcType="VARCHAR" property="discountType" />
+    <result column="c_interestType" jdbcType="VARCHAR" property="interestType" />
+    <result column="c_busin_status" jdbcType="VARCHAR" property="businStatus" />
+    <result column="c_discountDay" jdbcType="DOUBLE" property="discountDay" />
+    <result column="c_discountRate" jdbcType="DOUBLE" property="discountRate" />
+    <result column="c_billCount" jdbcType="INTEGER" property="billCount" />
+    <result column="c_billMoneyCount" jdbcType="DOUBLE" property="billMoneyCount" />
+    <result column="c_billsNo" jdbcType="VARCHAR" property="billsNo" />
+    <result column="D_REG_DATE" jdbcType="VARCHAR" property="regDate" />
+    <result column="D_REG_TIME" jdbcType="VARCHAR" property="regTime" />
+  </resultMap>
+</mapper>

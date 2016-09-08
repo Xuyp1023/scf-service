@@ -27,6 +27,7 @@ public class ScfElecAgreementInfo extends ScfElecAgreement {
     private String billNo;
     private String description;
     private BigDecimal confirmBalance;
+    private String productName;
 
     public String getSubscribed() {
         
@@ -92,7 +93,15 @@ public class ScfElecAgreementInfo extends ScfElecAgreement {
         this.confirmBalance = anConfirmBalance;
     }
 
-//    public void addAttachValue(ScfRequest anRequest) {
+    public String getProductName() {
+        return this.productName;
+    }
+
+    public void setProductName(String anProductName) {
+        this.productName = anProductName;
+    }
+
+    //    public void addAttachValue(ScfRequest anRequest) {
 //        if (anRequest != null) {
 //            BeanMapperHelper.invoke(anRequest, this, "billNo:billNo;description:description;confirmBalance:confirmBalance;balance:balance");
 //        }

@@ -22,6 +22,7 @@
 		com.betterjr.modules.acceptbill,
 		com.betterjr.modules.sys.dubbo,
 		com.betterjr.modules.account.dubbo,
+        com.betterjr.modules.discount,
 		com.betterjr.dubbo.extend.filter" />
 	<!-- 提供方应用信息，用于计算依赖关系 -->
 	<dubbo:application name="${dubbo.application}" />
