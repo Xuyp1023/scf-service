@@ -58,4 +58,9 @@ public class ScfAcceptBillDubboService implements IScfAcceptBillService {
         
         return AjaxObject.newOk("汇票信息查询成功", scfAcceptBillService.saveAduitAcceptBill(anId)).toJson();
     }
+
+    @Override
+    public String webFindAllFile(Long anId) {
+        return AjaxObject.newOk("汇票信息所有附件查询成功", scfAcceptBillService.findAllFile(anId)).toJson();
+    }
 }

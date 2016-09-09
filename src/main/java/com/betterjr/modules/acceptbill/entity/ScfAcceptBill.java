@@ -17,6 +17,7 @@ import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
+import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.entity.ScfTransport;
@@ -239,8 +240,8 @@ public class ScfAcceptBill implements BetterjrEntity {
     @MetaData(value = "买方客户号", comments = "买方客户号")
     private Long buyerNo;
 
-    @Transient
-    private String buyerName;
+/*    @Transient
+    private String buyerName;*/
 
     /**
      * 卖方客户号
@@ -249,8 +250,8 @@ public class ScfAcceptBill implements BetterjrEntity {
     @MetaData(value = "卖方客户号", comments = "卖方客户号")
     private Long supplierNo;
 
-    @Transient
-    private String supplierName;
+    /*@Transient
+    private String supplierName;*/
 
     /**
      * 合同编号
@@ -355,6 +356,12 @@ public class ScfAcceptBill implements BetterjrEntity {
 
     @Transient
     private String coreName;
+    
+    /**
+     * 合同列表
+     */
+    @Transient
+    private List<CustAgreement> agreementList;
     
     @Transient
     private List<ScfOrder> orderList;
@@ -634,7 +641,7 @@ public class ScfAcceptBill implements BetterjrEntity {
         this.coreCustNo = coreCustNo;
     }
 
-    public String getBuyerName() {
+/*    public String getBuyerName() {
         return buyerName;
     }
 
@@ -648,7 +655,7 @@ public class ScfAcceptBill implements BetterjrEntity {
 
     public void setSupplierName(String supplierName) {
         this.supplierName = supplierName;
-    }
+    }*/
 
     public String getCoreName() {
         return coreName;
@@ -778,6 +785,14 @@ public class ScfAcceptBill implements BetterjrEntity {
         this.receivableList = anReceivableList;
     }
 
+    public List<CustAgreement> getAgreementList() {
+        return this.agreementList;
+    }
+
+    public void setAgreementList(List<CustAgreement> anAgreementList) {
+        this.agreementList = anAgreementList;
+    }
+
     @Override
     public boolean equals(Object that) {
         if (this == that) {
@@ -903,7 +918,7 @@ public class ScfAcceptBill implements BetterjrEntity {
         this.from = "0";
         //未审核
         this.aduit = "0";
-        //默认前手为核心企业
+        //默认前手为付款方
         this.preHand = anAcceptBill.getBuyer();
     }
     
@@ -914,9 +929,11 @@ public class ScfAcceptBill implements BetterjrEntity {
         this.buyer = anModiAcceptBill.getBuyer();
         this.buyerBankAccount = anModiAcceptBill.getBuyerBankAccount();
         this.buyerBankName = anModiAcceptBill.getBuyerBankName();
+        this.buyerNo = anModiAcceptBill.getBuyerNo();
         this.supplier = anModiAcceptBill.getSupplier();
         this.suppBankAccount = anModiAcceptBill.getSuppBankAccount();
         this.suppBankName = anModiAcceptBill.getSuppBankName();
+        this.supplierNo = anModiAcceptBill.getSupplierNo();
         this.billType = anModiAcceptBill.getBillType();
         this.billMode = anModiAcceptBill.getBillMode();
         this.billNo = anModiAcceptBill.getBillNo();

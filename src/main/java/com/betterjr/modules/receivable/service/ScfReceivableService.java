@@ -1,5 +1,6 @@
 package com.betterjr.modules.receivable.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,8 +16,12 @@ import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
+import com.betterjr.modules.agreement.entity.CustAgreement;
+import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.entity.ScfOrderRelation;
+import com.betterjr.modules.order.entity.ScfTransport;
 import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
 import com.betterjr.modules.order.service.ScfOrderRelationService;
 import com.betterjr.modules.order.service.ScfOrderService;
@@ -92,17 +97,24 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
      * 根据订单关联关系补全汇票信息
      */
     public void fillReceivableInfo(ScfReceivable anReceivable, List<ScfOrderRelation> anOrderRelationList) {
+        anReceivable.setAgreementList(new ArrayList<CustAgreement>());
+        anReceivable.setOrderList(new ArrayList<ScfOrder>());
+        anReceivable.setTransportList(new ArrayList<ScfTransport>());
+        anReceivable.setInvoiceList(new ArrayList<ScfInvoice>());
+        anReceivable.setAcceptBillList(new ArrayList<ScfAcceptBill>());
         for(ScfOrderRelation anOrderRelation : anOrderRelationList) {
             Map<String, Object> queryMap = new HashMap<String, Object>();
             queryMap.put("id", anOrderRelation.getOrderId());
             List<ScfOrder> orderList = orderService.findOrder(queryMap);
             for(ScfOrder anOrder : orderList) {
-                anReceivable.setInvoiceList(anOrder.getInvoiceList());
-                anReceivable.setTransportList(anOrder.getTransportList());
-                anReceivable.setAcceptBillList(anOrder.getAcceptBillList());
+                anReceivable.getInvoiceList().addAll(anOrder.getInvoiceList());
+                anReceivable.getTransportList().addAll(anOrder.getTransportList());
+                anReceivable.getAcceptBillList().addAll(anOrder.getAcceptBillList());
+                anReceivable.getAgreementList().addAll(anOrder.getAgreementList());
+                //清除order下面的信息
                 anOrder.chearRelationInfo();
             }
-            anReceivable.setOrderList(orderList);
+            anReceivable.getOrderList().addAll(orderList);
         }
     }
     

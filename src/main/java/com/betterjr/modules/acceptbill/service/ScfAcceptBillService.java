@@ -1,5 +1,6 @@
 package com.betterjr.modules.acceptbill.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import com.betterjr.common.data.SimpleDataEntity;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
@@ -19,11 +22,16 @@ import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.dao.ScfAcceptBillMapper;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
+import com.betterjr.modules.agreement.entity.CustAgreement;
+import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.entity.ScfOrderRelation;
+import com.betterjr.modules.order.entity.ScfTransport;
 import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
+import com.betterjr.modules.order.helper.ScfOrderRelationType;
 import com.betterjr.modules.order.service.ScfOrderRelationService;
 import com.betterjr.modules.order.service.ScfOrderService;
+import com.betterjr.modules.receivable.entity.ScfReceivable;
 
 @Service
 public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAcceptBill> implements IScfOrderInfoCheckService {
@@ -66,6 +74,7 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         for(ScfAcceptBill anAcceptBill : anAcceptBillList) {
             Map<String, Object> acceptBillIdMap = new HashMap<String, Object>();
             acceptBillIdMap.put("infoId", anAcceptBill.getId());
+            acceptBillIdMap.put("infoType", ScfOrderRelationType.ACCEPTBILL.getCode());
             List<ScfOrderRelation> orderRelationList = orderRelationService.findOrderRelation(acceptBillIdMap);
             fillAcceptBillInfo(anAcceptBill, orderRelationList);
         }
@@ -78,6 +87,7 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
      */
     public ScfAcceptBill addAcceptBill(ScfAcceptBill anAcceptBill) {
         anAcceptBill.initAddValue(anAcceptBill);
+        //补充供应商客户号和持票人信息
         this.insert(anAcceptBill);
         return anAcceptBill;
     }
@@ -166,20 +176,83 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     }
     
     /**
+     * 查询汇票所有附件
+     */
+    public List<SimpleDataEntity> findAllFile(Long anId) {
+        //初始化信息
+        List<SimpleDataEntity> result = new ArrayList<SimpleDataEntity>();
+        List<String> agreementBathNoList = new ArrayList<String>();
+        List<String> transportBathNoList = new ArrayList<String>();
+        List<String> invoiceBathNoList = new ArrayList<String>();
+        List<String> orderBathNoList = new ArrayList<String>();
+        List<String> acceptBillBathNoList = new ArrayList<String>();
+        List<String> receivableBathNoList = new ArrayList<String>();
+        List<String> otherBathNoList = new ArrayList<String>();
+        //查询汇票所包含所有信息
+        ScfAcceptBill anAcceptBill = this.selectByPrimaryKey(anId);
+        BTAssert.notNull(anAcceptBill, "无法获得汇票信息");
+        Map<String, Object> queryMap = new HashMap<String, Object>();
+        queryMap.put("infoType", ScfOrderRelationType.ACCEPTBILL.getCode());
+        queryMap.put("infoId", anAcceptBill.getId());    
+        List<ScfOrderRelation> orderRelationList = orderRelationService.findOrderRelation(queryMap);
+        //查询相关联信息
+        fillAcceptBillInfo(anAcceptBill, orderRelationList);
+        //开始组织batchNo
+        //贸易合同
+        for(CustAgreement agreement : anAcceptBill.getAgreementList()) {
+            agreementBathNoList.add(agreement.getBatchNo().toString());
+        }
+        //运输单据
+        for(ScfTransport transport : anAcceptBill.getTransportList()) {
+            transportBathNoList.add(transport.getBatchNo().toString());
+        }
+        //发票
+        for(ScfInvoice invoice : anAcceptBill.getInvoiceList()) {
+            invoiceBathNoList.add(invoice.getBatchNo().toString());
+        }
+        //订单
+        for(ScfOrder order : anAcceptBill.getOrderList()) {
+            orderBathNoList.add(order.getBatchNo().toString());
+            otherBathNoList.add(order.getOtherBatchNo().toString());
+        }
+        //应收账款
+        for(ScfReceivable receivable : anAcceptBill.getReceivableList()) {
+            receivableBathNoList.add(receivable.getBatchNo().toString());
+        }
+        //汇票信息
+        acceptBillBathNoList.add(anAcceptBill.getBatchNo().toString());
+        result.add(new SimpleDataEntity("贸易合同附件", StringUtils.collectionToDelimitedString(agreementBathNoList, ",")));
+        result.add(new SimpleDataEntity("运输单据附件", StringUtils.collectionToDelimitedString(transportBathNoList, ",")));
+        result.add(new SimpleDataEntity("发票附件", StringUtils.collectionToDelimitedString(invoiceBathNoList, ",")));
+        result.add(new SimpleDataEntity("订单附件", StringUtils.collectionToDelimitedString(orderBathNoList, ",")));
+        result.add(new SimpleDataEntity("应收账款附件", StringUtils.collectionToDelimitedString(receivableBathNoList, ",")));
+        result.add(new SimpleDataEntity("汇票信息附件", StringUtils.collectionToDelimitedString(acceptBillBathNoList, ",")));
+        result.add(new SimpleDataEntity("其他信息附件", StringUtils.collectionToDelimitedString(otherBathNoList, ",")));
+        return result;
+    }
+    
+    /**
      * 根据订单关联关系补全汇票信息
      */
     public void fillAcceptBillInfo(ScfAcceptBill anAcceptBill, List<ScfOrderRelation> anOrderRelationList) {
+        anAcceptBill.setAgreementList(new ArrayList<CustAgreement>());
+        anAcceptBill.setOrderList(new ArrayList<ScfOrder>());
+        anAcceptBill.setTransportList(new ArrayList<ScfTransport>());
+        anAcceptBill.setInvoiceList(new ArrayList<ScfInvoice>());
+        anAcceptBill.setReceivableList(new ArrayList<ScfReceivable>());
         for(ScfOrderRelation anOrderRelation : anOrderRelationList) {
             Map<String, Object> queryMap = new HashMap<String, Object>();
             queryMap.put("id", anOrderRelation.getOrderId());
             List<ScfOrder> orderList = orderService.findOrder(queryMap);
             for(ScfOrder anOrder : orderList) {
-                anAcceptBill.setInvoiceList(anOrder.getInvoiceList());
-                anAcceptBill.setTransportList(anOrder.getTransportList());
-                anAcceptBill.setReceivableList(anOrder.getReceivableList());
+                anAcceptBill.getInvoiceList().addAll(anOrder.getInvoiceList());
+                anAcceptBill.getTransportList().addAll(anOrder.getTransportList());
+                anAcceptBill.getReceivableList().addAll(anOrder.getReceivableList());
+                anAcceptBill.getAgreementList().addAll(anOrder.getAgreementList());
+                //清除order下面的信息
                 anOrder.chearRelationInfo();
             }
-            anAcceptBill.setOrderList(orderList);
+            anAcceptBill.getOrderList().addAll(orderList);
         }
     }
     
