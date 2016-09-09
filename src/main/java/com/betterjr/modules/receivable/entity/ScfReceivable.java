@@ -17,6 +17,7 @@ import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
+import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.entity.ScfTransport;
@@ -194,6 +195,12 @@ public class ScfReceivable implements BetterjrEntity {
     
     @Transient
     private List<ScfAcceptBill> acceptBillList;
+    
+    /**
+     * 合同列表
+     */
+    @Transient
+    private List<CustAgreement> agreementList;
 
     private static final long serialVersionUID = 1469676107642L;
 
@@ -363,6 +370,14 @@ public class ScfReceivable implements BetterjrEntity {
 
     public void setDescription(String description) {
         this.description = description == null ? null : description.trim();
+    }
+
+    public List<CustAgreement> getAgreementList() {
+        return this.agreementList;
+    }
+
+    public void setAgreementList(List<CustAgreement> anAgreementList) {
+        this.agreementList = anAgreementList;
     }
 
     @Override

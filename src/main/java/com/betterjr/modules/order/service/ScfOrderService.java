@@ -178,16 +178,23 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         // 数据存盘
         this.updateByPrimaryKey(anOrder);
         return anOrder;
-
+    }
+    
+    /**
+     * 订单信息新增
+     */
+    public ScfOrder addOrder(ScfOrder anOrder) {
+        logger.info("Begin to add order");
+        anOrder.initAddValue();
+        this.insert(anOrder);
+        return anOrder;
     }
 
     /**
      * 检查是否存在相应id、操作机构、业务状态的订单编号
      * 
-     * @param anId
-     *            订单id
-     * @param anOperOrg
-     *            操作机构
+     * @param anId 订单id
+     * @param anOperOrg 操作机构
      */
     public void checkInfoExist(Long anId, String anOperOrg) {
         Map<String, Object> anMap = new HashMap<String, Object>();
@@ -347,6 +354,39 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
     }
     
     /**
+     * 检查订单下发票所关联订单是否勾选完成
+     */
+    public List<ScfOrder> checkCompleteInvoice(String anRequestType, String anIdList) {
+        String[] anChosedIds = anIdList.split(",");
+        Map<String, Object> anQueryInvoice = new HashMap<String, Object>();
+        anQueryInvoice.put("orderId", anChosedIds);
+        //查询发票关系
+        anQueryInvoice.put("infoType", "1");
+        List<ScfOrderRelation> invoiceRelationList = orderRelationService.findOrderRelation(anQueryInvoice);
+        List<Long> invoiceIdList = new ArrayList<Long>();
+        for(ScfOrderRelation orderRelation : invoiceRelationList) {
+            invoiceIdList.add(orderRelation.getInfoId());
+        }
+        //通过发票id上溯订单信息
+        Map<String, Object> anQueryOrderRelation = new HashMap<String, Object>();
+        anQueryOrderRelation.put("infoId", invoiceIdList.toArray());
+        anQueryOrderRelation.put("infoType", "1");
+        List<ScfOrderRelation> orderRelationList = orderRelationService.findOrderRelation(anQueryOrderRelation);
+        // 过滤掉已经勾选的订单
+        List<String> orderIdList = new ArrayList<String>();
+        for (ScfOrderRelation orderRelation : orderRelationList) {
+            for (String choseId : anChosedIds) {
+                if (!BetterStringUtils.equals(orderRelation.getOrderId().toString(), choseId)) {
+                    orderIdList.add(orderRelation.getOrderId().toString());
+                }
+            }
+        }
+        Map<String, Object> anQueryOrder = new HashMap<String, Object>();
+        anQueryOrder.put("id", orderIdList.toArray());
+        return this.selectByClassProperty(ScfOrder.class, anQueryOrder);
+    }
+    
+    /**
      * requestType 1:订单，2:票据;3:应收款;
      */
     public void saveInfoRequestNo(String anRequestType, String anRequestNo, String anIdList){
@@ -371,6 +411,11 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
                     anMap.put("infoType", ScfOrderRelationType.RECEIVABLE.getCode());
                 }
                 List<ScfOrderRelation> anOrderRelationList = orderRelationService.findOrderRelation(anMap);
+                //若未找到相应信息此时提醒用户选择订单进行关联
+                if(Collections3.isEmpty(anOrderRelationList)) {
+                    logger.error("未选择订单信息关联");
+                    throw new BytterTradeException(40001, "未选择订单信息关联");
+                }
                 for (ScfOrderRelation anOrderRelation : anOrderRelationList) {
                     this.saveOrderRequestNo(anOrderRelation.getOrderId(), anRequestNo);
                 }
@@ -379,7 +424,6 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
     }
     
     /**
-     * 
      * 根据requestNo解冻订单及相关信息状态
      */
     public void unForzenInfoes(String anRequestNo, String anStatus) {

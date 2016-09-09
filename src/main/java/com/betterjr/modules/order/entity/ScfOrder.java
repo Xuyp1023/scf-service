@@ -14,6 +14,7 @@ import javax.persistence.Transient;
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
+import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
@@ -657,5 +658,14 @@ public class ScfOrder implements BetterjrEntity {
         this.invoiceList = null;
         this.acceptBillList = null;
         this.receivableList = null;
+    }
+
+    public void initAddValue() {
+        this.id = SerialGenerator.getLongValue("ScfOrder.id");
+        this.businStatus = "0";
+        this.regDate = BetterDateUtils.getNumDate();
+        this.modiOperId = UserUtils.getOperatorInfo().getId();
+        this.modiOperName = UserUtils.getOperatorInfo().getName();
+        this.modiTime = BetterDateUtils.getNumTime();
     }
 }
