@@ -42,36 +42,40 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     private ScfOrderRelationService orderRelationService;
     @Autowired
     private ScfOrderService orderService;
-    
+
     /**
      * 汇票信息分页查询
-     * @param anIsOnlyNormal 是否过滤，仅查询正常未融资数据 1：未融资 0：查询所有
+     * 
+     * @param anIsOnlyNormal
+     *            是否过滤，仅查询正常未融资数据 1：未融资 0：查询所有
      */
     public Page<ScfAcceptBill> queryAcceptBill(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize) {
-       
-        //操作员只能查询本机构数据
+
+        // 操作员只能查询本机构数据
         anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
-        //构造custNo查询条件
-        //当用户为供应商
-        if(UserUtils.supplierUser()) {
+        // 构造custNo查询条件
+        // 当用户为供应商
+        if (UserUtils.supplierUser()) {
             anMap.put("supplierNo", anMap.get("custNo"));
-         //当用户为经销商
-        }else if(UserUtils.sellerUser()) {
+            // 当用户为经销商
+        }
+        else if (UserUtils.sellerUser()) {
             anMap.put("buyerNo", anMap.get("custNo"));
-            //当用户为核心企业
-        }else if(UserUtils.coreUser()) {
+            // 当用户为核心企业
+        }
+        else if (UserUtils.coreUser()) {
             anMap.put("coreCustNo", anMap.get("custNo"));
         }
         anMap.remove("custNo");
-        //仅查询正常未融资数据
-        if(BetterStringUtils.equals(anIsOnlyNormal, "1")) {
-            anMap.put("businStatus", new String[]{"0", "1"});
-            //已审核
+        // 仅查询正常未融资数据
+        if (BetterStringUtils.equals(anIsOnlyNormal, "1")) {
+            anMap.put("businStatus", new String[] { "0", "1" });
+            // 已审核
             anMap.put("aduit", "1");
         }
         Page<ScfAcceptBill> anAcceptBillList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
-        //补全关联信息
-        for(ScfAcceptBill anAcceptBill : anAcceptBillList) {
+        // 补全关联信息
+        for (ScfAcceptBill anAcceptBill : anAcceptBillList) {
             Map<String, Object> acceptBillIdMap = new HashMap<String, Object>();
             acceptBillIdMap.put("infoId", anAcceptBill.getId());
             acceptBillIdMap.put("infoType", ScfOrderRelationType.ACCEPTBILL.getCode());
@@ -81,56 +85,58 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
 
         return anAcceptBillList;
     }
-    
+
     /**
      * 新增汇票信息
      */
     public ScfAcceptBill addAcceptBill(ScfAcceptBill anAcceptBill) {
         anAcceptBill.initAddValue(anAcceptBill);
-        //补充供应商客户号和持票人信息
+        // 补充供应商客户号和持票人信息
         this.insert(anAcceptBill);
         return anAcceptBill;
     }
-    
+
     /**
      * 汇票信息无分页查询
-     * @param anIsOnlyNormal 是否过滤，仅查询正常未融资数据 1：未融资 0：查询所有
+     * 
+     * @param anIsOnlyNormal
+     *            是否过滤，仅查询正常未融资数据 1：未融资 0：查询所有
      */
     public List<ScfAcceptBill> findAcceptBillList(String anCustNo, String anIsOnlyNormal) {
         Map<String, Object> anMap = new HashMap<String, Object>();
-        //构造custNo查询条件
-        //当用户为供应商
-        if(UserUtils.supplierUser()) {
+        // 构造custNo查询条件
+        // 当用户为供应商
+        if (UserUtils.supplierUser()) {
             anMap.put("supplierNo", anCustNo);
-         //当用户为经销商
-        }else if(UserUtils.sellerUser()) {
+            // 当用户为经销商
+        }
+        else if (UserUtils.sellerUser()) {
             anMap.put("buyerNo", anCustNo);
         }
-        //仅查询正常未融资数据
-        if(BetterStringUtils.equals(anIsOnlyNormal, "1")) {
-            anMap.put("businStatus", new String[]{"0", "1"});
+        // 仅查询正常未融资数据
+        if (BetterStringUtils.equals(anIsOnlyNormal, "1")) {
+            anMap.put("businStatus", new String[] { "0", "1" });
         }
         return this.findAcceptBill(anMap);
     }
-    
+
     /**
      * 票据转让
      */
     public ScfAcceptBill saveTransferAcceptBill(Long anId, String anHolder, Long anHolderNo) {
         ScfAcceptBill anAcceptBill = this.selectByPrimaryKey(anId);
         BTAssert.notNull(anAcceptBill, "无法获得汇票信息");
-        //更新之前票据信息
+        // 更新之前票据信息
         anAcceptBill.setNextHand(anHolder);
-        //生成新票据
+        // 生成新票据
         anAcceptBill.initTransferValue();
-        //变更持票人
+        // 变更持票人
         anAcceptBill.setHolder(anHolder);
         anAcceptBill.setHolderNo(anHolderNo);
         this.insert(anAcceptBill);
         return anAcceptBill;
     }
-    
-    
+
     /**
      * 审核汇票信息
      */
@@ -167,60 +173,72 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         this.updateByPrimaryKeySelective(anAcceptBill);
         return anAcceptBill;
     }
-    
+
     /**
      * 查询汇票信息
      */
     public List<ScfAcceptBill> findAcceptBill(Map<String, Object> anMap) {
-    	return this.selectByClassProperty(ScfAcceptBill.class, anMap);
+        return this.selectByClassProperty(ScfAcceptBill.class, anMap);
     }
-    
+
     /**
      * 查询汇票所有附件
      */
     public List<SimpleDataEntity> findAllFile(Long anId) {
-        //初始化信息
+        // 初始化信息
         List<SimpleDataEntity> result = new ArrayList<SimpleDataEntity>();
-        List<String> agreementBathNoList = new ArrayList<String>();
-        List<String> transportBathNoList = new ArrayList<String>();
-        List<String> invoiceBathNoList = new ArrayList<String>();
-        List<String> orderBathNoList = new ArrayList<String>();
-        List<String> acceptBillBathNoList = new ArrayList<String>();
-        List<String> receivableBathNoList = new ArrayList<String>();
-        List<String> otherBathNoList = new ArrayList<String>();
-        //查询汇票所包含所有信息
+        List<Long> agreementBathNoList = new ArrayList<Long>();
+        List<Long> transportBathNoList = new ArrayList<Long>();
+        List<Long> invoiceBathNoList = new ArrayList<Long>();
+        List<Long> orderBathNoList = new ArrayList<Long>();
+        List<Long> acceptBillBathNoList = new ArrayList<Long>();
+        List<Long> receivableBathNoList = new ArrayList<Long>();
+        List<Long> otherBathNoList = new ArrayList<Long>();
+        // 查询汇票所包含所有信息
         ScfAcceptBill anAcceptBill = this.selectByPrimaryKey(anId);
         BTAssert.notNull(anAcceptBill, "无法获得汇票信息");
         Map<String, Object> queryMap = new HashMap<String, Object>();
         queryMap.put("infoType", ScfOrderRelationType.ACCEPTBILL.getCode());
-        queryMap.put("infoId", anAcceptBill.getId());    
+        queryMap.put("infoId", anAcceptBill.getId());
         List<ScfOrderRelation> orderRelationList = orderRelationService.findOrderRelation(queryMap);
-        //查询相关联信息
+        // 查询相关联信息
         fillAcceptBillInfo(anAcceptBill, orderRelationList);
-        //开始组织batchNo
-        //贸易合同
-        for(CustAgreement agreement : anAcceptBill.getAgreementList()) {
-            agreementBathNoList.add(agreement.getBatchNo().toString());
+        // 开始组织batchNo
+        // 贸易合同
+        for (CustAgreement agreement : anAcceptBill.getAgreementList()) {
+            if (null != agreement.getBatchNo()) {
+                agreementBathNoList.add(agreement.getBatchNo());
+            }
         }
-        //运输单据
-        for(ScfTransport transport : anAcceptBill.getTransportList()) {
-            transportBathNoList.add(transport.getBatchNo().toString());
+        // 运输单据
+        for (ScfTransport transport : anAcceptBill.getTransportList()) {
+            if (null != transport.getBatchNo()) {
+                transportBathNoList.add(transport.getBatchNo());
+            }
         }
-        //发票
-        for(ScfInvoice invoice : anAcceptBill.getInvoiceList()) {
-            invoiceBathNoList.add(invoice.getBatchNo().toString());
+        // 发票
+        for (ScfInvoice invoice : anAcceptBill.getInvoiceList()) {
+            if (null != invoice.getBatchNo()) {
+                invoiceBathNoList.add(invoice.getBatchNo());
+            }
         }
-        //订单
-        for(ScfOrder order : anAcceptBill.getOrderList()) {
-            orderBathNoList.add(order.getBatchNo().toString());
-            otherBathNoList.add(order.getOtherBatchNo().toString());
+        // 订单
+        for (ScfOrder order : anAcceptBill.getOrderList()) {
+            if (null != order.getBatchNo()) {
+                orderBathNoList.add(order.getBatchNo());
+            }
+            if (null != order.getOtherBatchNo()) {
+                otherBathNoList.add(order.getOtherBatchNo());
+            }
         }
-        //应收账款
-        for(ScfReceivable receivable : anAcceptBill.getReceivableList()) {
-            receivableBathNoList.add(receivable.getBatchNo().toString());
+        // 应收账款
+        for (ScfReceivable receivable : anAcceptBill.getReceivableList()) {
+            if (null != receivable.getBatchNo()) {
+                receivableBathNoList.add(receivable.getBatchNo());
+            }
         }
-        //汇票信息
-        acceptBillBathNoList.add(anAcceptBill.getBatchNo().toString());
+        // 汇票信息
+        acceptBillBathNoList.add(anAcceptBill.getBatchNo());
         result.add(new SimpleDataEntity("贸易合同附件", StringUtils.collectionToDelimitedString(agreementBathNoList, ",")));
         result.add(new SimpleDataEntity("运输单据附件", StringUtils.collectionToDelimitedString(transportBathNoList, ",")));
         result.add(new SimpleDataEntity("发票附件", StringUtils.collectionToDelimitedString(invoiceBathNoList, ",")));
@@ -230,7 +248,14 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         result.add(new SimpleDataEntity("其他信息附件", StringUtils.collectionToDelimitedString(otherBathNoList, ",")));
         return result;
     }
-    
+
+    /**
+     * 保理公司查询已经融资汇票信息
+     */
+    public Page<ScfAcceptBill> queryFinancedByFactor(Long anFactorNo, String anBillNo, String anInvoiceCorp, String anStartDate, String anEndDate) {
+        return null;
+    }
+
     /**
      * 根据订单关联关系补全汇票信息
      */
@@ -240,26 +265,29 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         anAcceptBill.setTransportList(new ArrayList<ScfTransport>());
         anAcceptBill.setInvoiceList(new ArrayList<ScfInvoice>());
         anAcceptBill.setReceivableList(new ArrayList<ScfReceivable>());
-        for(ScfOrderRelation anOrderRelation : anOrderRelationList) {
+        for (ScfOrderRelation anOrderRelation : anOrderRelationList) {
             Map<String, Object> queryMap = new HashMap<String, Object>();
             queryMap.put("id", anOrderRelation.getOrderId());
             List<ScfOrder> orderList = orderService.findOrder(queryMap);
-            for(ScfOrder anOrder : orderList) {
+            for (ScfOrder anOrder : orderList) {
                 anAcceptBill.getInvoiceList().addAll(anOrder.getInvoiceList());
                 anAcceptBill.getTransportList().addAll(anOrder.getTransportList());
                 anAcceptBill.getReceivableList().addAll(anOrder.getReceivableList());
                 anAcceptBill.getAgreementList().addAll(anOrder.getAgreementList());
-                //清除order下面的信息
+                // 清除order下面的信息
                 anOrder.chearRelationInfo();
             }
             anAcceptBill.getOrderList().addAll(orderList);
         }
     }
-    
+
     /**
      * 检查是否存在相应id、操作机构、业务状态的汇票信息
-     * @param anId  汇票信息id
-     * @param anOperOrg 操作机构
+     * 
+     * @param anId
+     *            汇票信息id
+     * @param anOperOrg
+     *            操作机构
      */
     public void checkInfoExist(Long anId, String anOperOrg) {
         Map<String, Object> anMap = new HashMap<String, Object>();
@@ -274,7 +302,7 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
             throw new BytterTradeException(40001, "不存在相对应id,操作机构,业务状态的汇票信息");
         }
     }
-    
+
     /**
      * 检查用户是否有权限操作数据
      */
@@ -284,7 +312,7 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
             throw new BytterTradeException(40001, anMessage);
         }
     }
-    
+
     /**
      * 检查状态信息
      */
@@ -294,37 +322,51 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
             throw new BytterTradeException(40001, anMessage);
         }
     }
+
     /**
-     * 变更汇票信息状态 0未处理，1完善资料，2已融资，3已过期
-     * 融资标志，0未融资，1已融资，2收款，3已还款
-     * @param anId 汇票流水号
-     * @param anStatus 状态
-     * @param anCheckOperOrg 是否检查操作机构权限
+     * 变更融资标志
+     */
+    public ScfAcceptBill saveFinanceFlag(Long anId, String anFinanceFalg) {
+        ScfAcceptBill anAcceptBill = this.selectByPrimaryKey(anId);
+        BTAssert.notNull(anAcceptBill, "无法获取汇票信息");
+        anAcceptBill.setFinanceFlag(anFinanceFalg);
+        this.updateByPrimaryKeySelective(anAcceptBill);
+        return anAcceptBill;
+    }
+
+    /**
+     * 变更汇票信息状态 0未处理，1完善资料，2已融资，3已过期 融资标志，0未融资，1已融资，2收款，3已还款
+     * 
+     * @param anId
+     *            汇票流水号
+     * @param anStatus
+     *            状态
+     * @param anCheckOperOrg
+     *            是否检查操作机构权限
      * @return
      */
     private ScfAcceptBill saveAcceptBillStatus(Long anId, String anStatus, String anFinanceFlag, boolean anCheckOperOrg) {
         ScfAcceptBill anAcceptBill = this.selectByPrimaryKey(anId);
         BTAssert.notNull(anAcceptBill, "无法获取汇票信息");
-        //检查用户权限
+        // 检查用户权限
         if (anCheckOperOrg) {
             checkOperator(anAcceptBill.getOperOrg(), "当前操作员无法变更汇票信息");
         }
-        //变更状态
+        // 变更状态
         anAcceptBill.setBusinStatus(anStatus);
         anAcceptBill.setFinanceFlag(anFinanceFlag);
         anAcceptBill.setModiOperId(UserUtils.getOperatorInfo().getId());
         anAcceptBill.setModiOperName(UserUtils.getOperatorInfo().getName());
         anAcceptBill.setModiDate(BetterDateUtils.getNumDate());
         anAcceptBill.setModiTime(BetterDateUtils.getNumTime());
-        //数据存盘
+        // 数据存盘
         this.updateByPrimaryKeySelective(anAcceptBill);
         return anAcceptBill;
     }
-    
+
     /**
-     * 变更汇票信息 -- 完善资料
-     * 0未处理，1完善资料，2已融资，3已过期
-     * 融资标志，0未融资，1已融资，2收款，3已还款
+     * 变更汇票信息 -- 完善资料 0未处理，1完善资料，2已融资，3已过期 融资标志，0未融资，1已融资，2收款，3已还款
+     * 
      * @param anId
      * @param anCheckOperOrg
      * @return
@@ -332,29 +374,27 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     public ScfAcceptBill saveNormalAcceptBill(Long anId, boolean anCheckOperOrg) {
         return this.saveAcceptBillStatus(anId, "1", "0", anCheckOperOrg);
     }
-    
+
     /**
-     * 变更汇票信息 -- 已融资
-     * 0未处理，1完善资料，2已融资，3已过期
-     * 融资标志，0未融资，1已融资，2收款，3已还款
+     * 变更汇票信息 -- 已融资 0未处理，1完善资料，2已融资，3已过期 融资标志，0未融资，1已融资，2收款，3已还款
+     * 
      * @param anId
      * @param anCheckOperOrg
      * @return
      */
     public ScfAcceptBill saveFinancedAcceptBill(Long anId, boolean anCheckOperOrg) {
-        return this.saveAcceptBillStatus(anId, "2","1", anCheckOperOrg);
+        return this.saveAcceptBillStatus(anId, "2", "1", anCheckOperOrg);
     }
-    
+
     /**
-     * 变更汇票信息 -- 已过期
-     * 0未处理，1完善资料，2已融资，3已过期
-     * 融资标志，0未融资，1已融资，2收款，3已还款
+     * 变更汇票信息 -- 已过期 0未处理，1完善资料，2已融资，3已过期 融资标志，0未融资，1已融资，2收款，3已还款
+     * 
      * @param anId
      * @param anCheckOperOrg
      * @return
      */
     public ScfAcceptBill saveExpireAcceptBill(Long anId, boolean anCheckOperOrg) {
-        return this.saveAcceptBillStatus(anId, "3","0", anCheckOperOrg);
+        return this.saveAcceptBillStatus(anId, "3", "0", anCheckOperOrg);
     }
 
 }

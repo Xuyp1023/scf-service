@@ -183,9 +183,9 @@ public class ScfAcceptBill implements BetterjrEntity {
     /**
      * 票据来源，0库存票据，1背书转让
      */
-    @Column(name = "C_FROM",  columnDefinition="VARCHAR" )
+    @Column(name = "C_BILLFROM",  columnDefinition="VARCHAR" )
     @MetaData( value="票据来源", comments = "票据来源，0库存票据，1背书转让")
-    private String from;
+    private String billFrom;
 
     /**
      * 前手
@@ -722,11 +722,11 @@ public class ScfAcceptBill implements BetterjrEntity {
     }
 
     public String getFrom() {
-        return this.from;
+        return this.billFrom;
     }
 
     public void setFrom(String anFrom) {
-        this.from = anFrom;
+        this.billFrom = anFrom;
     }
 
     public String getPreHand() {
@@ -910,12 +910,12 @@ public class ScfAcceptBill implements BetterjrEntity {
         this.businStatus = "0";
         this.financeFlag = "0";
         this.regDate = BetterDateUtils.getNumDate();
-        this.modiOperId = UserUtils.getOperatorInfo().getId();
-        this.modiOperName = UserUtils.getOperatorInfo().getName();
-        this.modiTime = BetterDateUtils.getNumTime();
+        this.operId = UserUtils.getOperatorInfo().getId();
+        this.operName = UserUtils.getOperatorInfo().getName();
+        this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
         
         //默认自开库存
-        this.from = "0";
+        this.billFrom = "0";
         //未审核
         this.aduit = "0";
         //默认前手为付款方
@@ -958,7 +958,7 @@ public class ScfAcceptBill implements BetterjrEntity {
         //后手为空
         this.nextHand = null;
         //来源改为转让
-        this.from = "1";
+        this.billFrom = "1";
         //业务状态初始化
         this.businStatus = "0";
         this.financeFlag = "0";
