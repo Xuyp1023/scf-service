@@ -278,7 +278,7 @@ public class ScfRequest implements BetterjrEntity {
      * 1,s订单，2:票据;3:应收款;4:经销商
      */
     @Column(name = "C_REQUEST_TYPE",  columnDefinition="VARCHAR" )
-    @MetaData( value="1,s订单", comments = "1,s订单，2:票据;3:应收款;4:经销商")
+    @MetaData( value="1订单", comments = "1,订单，2:票据;3:应收款;4:经销商")
     private String requestType;
 
     /**
@@ -1017,6 +1017,21 @@ public class ScfRequest implements BetterjrEntity {
     @Transient
     private BigDecimal approvedBalance;
     
+    /*用于保存票据金额，如果有多张票则相加 (为满足票据版需求)*/
+    @Transient 
+    private BigDecimal orderBalance;
+    
+    /*由requestType的类型决定存储的类型（订单，应收款，票据） 数据类型为list*/
+    @Transient
+    private Object order;
+
+    public Object getOrder() {
+        return order;
+    }
+
+    public void setOrder(Object order) {
+        this.order = order;
+    }
 
     public String getCoreCustName() {
         return coreCustName;
@@ -1074,6 +1089,14 @@ public class ScfRequest implements BetterjrEntity {
         this.approvedBalance = approvedBalance;
     }
 
+    public BigDecimal getOrderBalance() {
+        return orderBalance;
+    }
+
+    public void setOrderBalance(BigDecimal orderBalance) {
+        this.orderBalance = orderBalance;
+    }
+
     public void init() {
         this.requestNo = SerialGenerator.getLongValue("ScfRequest.id")+"";
         this.tradeStatus = "0";
@@ -1088,7 +1111,13 @@ public class ScfRequest implements BetterjrEntity {
     public void initModify() {
         this.modiOperId = UserUtils.getOperatorInfo().getId();
         this.modiOperName = UserUtils.getUserName();
-        this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
+        this.modiDate = BetterDateUtils.getNumDate();
+        this.modiTime = BetterDateUtils.getNumTime();
+    }
+    
+    public void initAutoModify() {
+        this.modiOperId = this.regOperId;
+        this.modiOperName = this.getRegOperName();
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
     }

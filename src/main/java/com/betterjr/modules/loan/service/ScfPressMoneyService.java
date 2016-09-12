@@ -1,20 +1,25 @@
 package com.betterjr.modules.loan.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.loan.dao.ScfPressMoneyMapper;
 import com.betterjr.modules.loan.entity.ScfPressMoney;
 
 @Service
 public class ScfPressMoneyService extends BaseService<ScfPressMoneyMapper, ScfPressMoney> {
 
+    @Autowired
+    private CustAccountService custAccountService;
     /**
      * 新增催收记录
      * @param anPress
@@ -50,7 +55,7 @@ public class ScfPressMoneyService extends BaseService<ScfPressMoneyMapper, ScfPr
     }
 
     /**
-     * 查询催收记录列表
+     * 分页查询催收记录列表
      * 
      * @param anMap
      * @param anFlag
@@ -62,6 +67,25 @@ public class ScfPressMoneyService extends BaseService<ScfPressMoneyMapper, ScfPr
         return this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
     }
 
+    
+    /**
+     * 查询催收列表
+     * 
+     * @param anMap
+     * @param anFlag
+     * @param anPageNum
+     * @param anPageSize
+     * @return
+     */
+    public List<ScfPressMoney> findPresMoneyist(Map<String, Object> anMap) {
+        List<ScfPressMoney> list = this.selectByClassProperty(ScfPressMoney.class, anMap);
+        for (ScfPressMoney press : list) {
+            press.setCustName(custAccountService.queryCustName(press.getCustNo()));
+            press.setFactorName(custAccountService.queryCustName(press.getFactorNo()));
+        }
+        return list;
+    }
+    
     /**
      * 查询催收记录详情
      * 

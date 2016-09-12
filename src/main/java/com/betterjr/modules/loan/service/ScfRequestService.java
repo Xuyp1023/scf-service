@@ -27,6 +27,7 @@ import com.betterjr.modules.loan.entity.ScfPayPlan;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
 import com.betterjr.modules.loan.entity.ScfServiceFee;
+import com.betterjr.modules.loan.entity.TransRequest;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
@@ -50,6 +51,8 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     private ScfServiceFeeService serviceFeeService;
     @Autowired
     private ScfOrderService orderService;
+
+    
     /**
      * 新增融资申请
      * 
@@ -60,11 +63,11 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         BTAssert.notNull(anRequest, "新增融资申请失败-anRequest不能为空");
         anRequest.init();
         anRequest.setCustName(custAccountService.queryCustName(anRequest.getCustNo()));
-        anRequest.setRequestDate(BetterDateUtils.getDate("yyyyMMdd"));
+        anRequest.setRequestDate(BetterDateUtils.getNumDate());
         this.insert(anRequest);
         return anRequest;
     }
-
+    
     /**
      * 修改融资申请
      * 
@@ -83,7 +86,26 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         this.updateByPrimaryKeySelective(anRequest);
         return anRequest;
     }
+    
+    /**
+     * 修改融资申请
+     * 
+     * @param anRequest
+     * @return
+     */
+    public ScfRequest saveAutoModifyRequest(ScfRequest anRequest, String anRequestNo) {
+        BTAssert.notNull(anRequest, "修改融资申请失败-anRequest不能为空");
 
+        if (Collections3.isEmpty(selectByProperty("requestNo", anRequestNo))) {
+            throw new IllegalArgumentException("修改融资申请失败-找不到原数据");
+        }
+
+        anRequest.initModify();
+        anRequest.setRequestNo(anRequestNo);
+        this.updateByPrimaryKeySelective(anRequest);
+        return anRequest;
+    }
+    
     /**
      * 查询融资申请列表
      * 
@@ -96,22 +118,12 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     public Page<ScfRequest> queryRequestList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
         Page<ScfRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
         for (ScfRequest scfRequest : page) {
-            scfRequest.setCoreCustName(custAccountService.queryCustName(scfRequest.getCoreCustNo()));
-            scfRequest.setFactorName(custAccountService.queryCustName(scfRequest.getFactorNo()));
-            scfRequest.setCustName(custAccountService.queryCustName(scfRequest.getCustNo()));
-            ScfRequestScheme scheme = schemeService.findSchemeDetail2(scfRequest.getRequestNo());
-            
-            //融资方案上否确认
-            if(null != scheme && BetterStringUtils.equals("1", scheme.getCustAduit())){
-                scfRequest.setApprovedBalance(scheme.getApprovedBalance());
-                scfRequest.setApprovedRatio(scheme.getApprovedRatio());
-                scfRequest.setApprovedPeriod(scheme.getApprovedPeriod());
-                scfRequest.setApprovedPeriodUnit(scheme.getApprovedPeriodUnit());
-            }
+            fillCustName(scfRequest);
+            this.fillApprovedInfo(scfRequest);
         }
         return page;
     }
-
+    
     /**
      * 查询融资申详情
      * 
@@ -126,13 +138,21 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
             return new ScfRequest();
         }
 
-        // 设置相关名称
-        request.setCoreCustName(custAccountService.queryCustName(request.getCoreCustNo()));
-        request.setFactorName(custAccountService.queryCustName(request.getFactorNo()));
+        this.fillCustName(request);
 
         // 设置还款计划
         request.setPayPlan(payPlanService.findPayPlanByRequest(anRequestNo));
+        
+        // 设置票据信息
+        this.fillOrderInfo(request);
         return request;
+    }
+
+    private void fillCustName(ScfRequest request) {
+        // 设置相关名称
+        request.setCoreCustName(custAccountService.queryCustName(request.getCoreCustNo()));
+        request.setFactorName(custAccountService.queryCustName(request.getFactorNo()));
+        request.setCustName(custAccountService.queryCustName(request.getCustNo()));
     }
 
     /**
@@ -229,17 +249,17 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         return request;
     }
 
-    private BigDecimal saveServiceFee(ScfLoan anLoan, ScfRequest request, ScfRequestScheme scheme) {
+    private BigDecimal saveServiceFee(ScfLoan anLoan, ScfRequest anRequest, ScfRequestScheme anScheme) {
         ScfServiceFee serviceFee = new ScfServiceFee();
-        serviceFee.setCustNo(request.getCustNo());
-        serviceFee.setFactorNo(request.getFactorNo());
+        serviceFee.setCustNo(anRequest.getCustNo());
+        serviceFee.setFactorNo(anRequest.getFactorNo());
         serviceFee.setRequestNo(anLoan.getRequestNo());
         serviceFee.setPayDate(anLoan.getLoanDate());
 
         BigDecimal servicefeeBalance;
         if (null == anLoan.getServicefeeBalance()) {
             // 计算手续费(按千分之收)
-            servicefeeBalance = scheme.getApprovedBalance().multiply(scheme.getServicefeeRatio()).divide(new BigDecimal(1000));
+            servicefeeBalance = anScheme.getApprovedBalance().multiply(anScheme.getServicefeeRatio()).divide(new BigDecimal(1000));
         }
         else {
             servicefeeBalance = anLoan.getServicefeeBalance();
@@ -264,14 +284,14 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         //计算应还
         plan.setShouldPrincipalBalance(anLoan.getLoanBalance());
         if (null == anLoan.getInterestBalance()) {
-            plan.setShouldInterestBalance(payPlanService.calculatFee(anLoan.getRequestNo(), scheme.getApprovedBalance(), 3));
+            plan.setShouldInterestBalance(payPlanService.getFee(anLoan.getRequestNo(), scheme.getApprovedBalance(), 3));
         }
         else {
             plan.setShouldInterestBalance(anLoan.getInterestBalance());
         }
         
         if(null == anLoan.getManagementBalance()){
-            plan.setShouldManagementBalance(payPlanService.calculatFee(anLoan.getRequestNo(), scheme.getApprovedBalance(), 1));
+            plan.setShouldManagementBalance(payPlanService.getFee(anLoan.getRequestNo(), scheme.getApprovedBalance(), 1));
         }else{
             plan.setShouldManagementBalance(anLoan.getManagementBalance());
         }
@@ -394,28 +414,28 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         return null;
     }
 
-    public List<ScfRequestCredit> getCreditList(ScfRequest request){
-        List<CustAgreement> agreementList = (List)orderService.findRelationInfo(request.getRequestNo(), ScfOrderRelationType.AGGREMENT);
+    public List<ScfRequestCredit> getCreditList(ScfRequest anRequest){
+        List<CustAgreement> agreementList = (List)orderService.findRelationInfo(anRequest.getRequestNo(), ScfOrderRelationType.AGGREMENT);
         CustAgreement agreement = Collections3.getFirst(agreementList);
         BTAssert.notNull(agreement, "发起融资背景确认失败：没有找到贸易合同！");
         
-        String type = request.getRequestType();
+        String type = anRequest.getRequestType();
         List<ScfRequestCredit> creditList = new ArrayList<ScfRequestCredit>();
         
         if(BetterStringUtils.equals("1", type) || BetterStringUtils.equals("4", type)){
-            List<ScfOrder> list = (List)orderService.findInfoListByRequest(request.getRequestNo(), "1");
+            List<ScfOrder> list = (List)orderService.findInfoListByRequest(anRequest.getRequestNo(), "1");
             for (ScfOrder order : list) {
-                creditList = setInvoice(request, order.getInvoiceList(), order.getBalance(), order.getOrderNo(),agreement);
+                creditList = setInvoice(anRequest, order.getInvoiceList(), order.getBalance(), order.getOrderNo(),agreement);
             }
         }else if(BetterStringUtils.equals("2", type)){
-            List<ScfReceivable> list = (List)orderService.findInfoListByRequest(request.getRequestNo(), "2");
+            List<ScfReceivable> list = (List)orderService.findInfoListByRequest(anRequest.getRequestNo(), "2");
             for (ScfReceivable receivable : list) {
-                creditList = setInvoice(request, receivable.getInvoiceList(), receivable.getBalance(), receivable.getReceivableNo() ,agreement);
+                creditList = setInvoice(anRequest, receivable.getInvoiceList(), receivable.getBalance(), receivable.getReceivableNo() ,agreement);
             }
         }else if(BetterStringUtils.equals("3", type)){
-            List<ScfAcceptBill> list = (List)orderService.findInfoListByRequest(request.getRequestNo(), "3");
+            List<ScfAcceptBill> list = (List)orderService.findInfoListByRequest(anRequest.getRequestNo(), "3");
             for (ScfAcceptBill bill : list) {
-                creditList = setInvoice(request, bill.getInvoiceList(), bill.getBalance(), bill.getBtBillNo(),agreement);
+                creditList = setInvoice(anRequest, bill.getInvoiceList(), bill.getBalance(), bill.getBtBillNo(),agreement);
             }
         }
         return creditList;
@@ -424,19 +444,19 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     /**
      * 设置转主明细相关信息
      * @param request
-     * @param invoiceList
-     * @param balance
-     * @param ObjectNo
-     * @param agreement
+     * @param anInvoiceList
+     * @param anBalance
+     * @param anObjectNo
+     * @param anAgreement
      * @return
      */
-    private List<ScfRequestCredit> setInvoice(ScfRequest request, List<ScfInvoice> invoiceList, BigDecimal balance, String ObjectNo, CustAgreement agreement){
+    private List<ScfRequestCredit> setInvoice(ScfRequest request, List<ScfInvoice> anInvoiceList, BigDecimal anBalance, String anObjectNo, CustAgreement anAgreement){
         List<ScfRequestCredit> creditList = new ArrayList<ScfRequestCredit>();
-        for (ScfInvoice invoice : invoiceList) {
+        for (ScfInvoice invoice : anInvoiceList) {
             ScfRequestCredit credit = new ScfRequestCredit();
-            credit.setTransNo(ObjectNo);
+            credit.setTransNo(anObjectNo);
             credit.setRequestNo(request.getRequestNo());
-            credit.setBalance(balance);
+            credit.setBalance(anBalance);
             credit.setInvoiceNo(invoice.getInvoiceNo());
             credit.setInvoiceBalance(invoice.getBalance());
             credit.setEndDate(invoice.getInvoiceDate());
@@ -448,17 +468,17 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     /**
      * 设置转让通知书相关信息
      * @param anRequestNo
-     * @param request
+     * @param anRequest
      * @return
      */
-    public ScfRequestNotice getNotice(ScfRequest request) {
+    public ScfRequestNotice getNotice(ScfRequest anRequest) {
         //TODO 合同名称、 银行账号， 保理公司详细地址
-        String noticeNo = BetterDateUtils.getDate("yyyyMMdd") + request.getRequestNo();
+        String noticeNo = BetterDateUtils.getDate("yyyyMMdd") + anRequest.getRequestNo();
         ScfRequestNotice noticeRequest = new ScfRequestNotice();
-        noticeRequest.setRequestNo(request.getRequestNo());
-        noticeRequest.setAgreeName(request.getCustName() + "应收账款转让申请书");
+        noticeRequest.setRequestNo(anRequest.getRequestNo());
+        noticeRequest.setAgreeName(anRequest.getCustName() + "应收账款转让申请书");
         noticeRequest.setNoticeNo(noticeNo);
-        noticeRequest.setBuyer(request.getFactorName());
+        noticeRequest.setBuyer(anRequest.getFactorName());
         noticeRequest.setFactorRequestNo(noticeNo);
         noticeRequest.setBankAccount("6229887842567285");
         noticeRequest.setFactorAddr("保理公司详细地址");
@@ -468,10 +488,10 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     }
 
     /**
-     * 设置三方协议相关信息
+     * TODO 设置三方协议相关信息
      * @return
      */
-    public ScfRequestProtacal getProtacal(ScfRequest request) {
+    public ScfRequestProtacal getProtacal(ScfRequest anRequest) {
         ScfRequestProtacal protacal = new ScfRequestProtacal();
         protacal.setFirstAddress("地址目前还没有");
         protacal.setFirstFax("fax目前还没有");
@@ -498,16 +518,16 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
 
     /**
      * 设置转让意见确认书相关信息
-     * @param request
+     * @param anRequest
      * @return
      */
-    public ScfRequestOpinion getOption(ScfRequest request) {
-        String noticeNo = BetterDateUtils.getDate("yyyyMMdd") + request.getRequestNo();
+    public ScfRequestOpinion getOption(ScfRequest anRequest) {
+        String noticeNo = BetterDateUtils.getNumDate() + anRequest.getRequestNo();
         ScfRequestOpinion opinion = new ScfRequestOpinion();
-        opinion.setRequestNo(request.getRequestNo());
+        opinion.setRequestNo(anRequest.getRequestNo());
         opinion.setFactorRequestNo(noticeNo);
         opinion.setConfirmNo(noticeNo);
-        opinion.setSupplier(request.getCustName());
+        opinion.setSupplier(anRequest.getCustName());
         return opinion;
     }
 
@@ -534,5 +554,40 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         node.setId(new Long(RequestTradeStatus.PAYFINSH.getCode()));
         list.add(node);
     }
+    
+    /**
+     * 填充订单信息
+     * @param anScfRequest
+     */
+    public Object fillOrderInfo(ScfRequest anScfRequest) {
+        //经销商融资不用设置
+        if(BetterStringUtils.equals("4", anScfRequest.getRequestType())){
+            return null;
+        }
+        
+        if(BetterStringUtils.equals("1", anScfRequest.getRequestType())){
+            List<ScfOrder> orderList = (List)orderService.findInfoListByRequest(anScfRequest.getRequestNo(), anScfRequest.getRequestType());
+            return Collections3.getFirst(orderList);
+        }
+        else if(BetterStringUtils.equals("2", anScfRequest.getRequestType())){
+            List<ScfAcceptBill> orderList = (List)orderService.findInfoListByRequest(anScfRequest.getRequestNo(), anScfRequest.getRequestType());
+            return Collections3.getFirst(orderList);
+        }else{
+            List<ScfReceivable> orderList = (List)orderService.findInfoListByRequest(anScfRequest.getRequestNo(), anScfRequest.getRequestType());
+            return Collections3.getFirst(orderList);
+        }
+       
+    }
 
+    private void fillApprovedInfo(ScfRequest scfRequest) {
+        ScfRequestScheme scheme = schemeService.findSchemeDetail2(scfRequest.getRequestNo());
+        
+        //融资方案是否确认
+        if(null != scheme && BetterStringUtils.equals("1", scheme.getCustAduit())){
+            scfRequest.setApprovedBalance(scheme.getApprovedBalance());
+            scfRequest.setApprovedRatio(scheme.getApprovedRatio());
+            scfRequest.setApprovedPeriod(scheme.getApprovedPeriod());
+            scfRequest.setApprovedPeriodUnit(scheme.getApprovedPeriodUnit());
+        }
+    }
 }

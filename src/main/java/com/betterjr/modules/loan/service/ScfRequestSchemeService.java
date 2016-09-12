@@ -60,6 +60,7 @@ public class ScfRequestSchemeService extends BaseService<ScfRequestApprovedMappe
         request.setRatio(anScheme.getApprovedRatio());
         request.setManagementRatio(anScheme.getApprovedRatio());
         request.setServicefeeRatio(anScheme.getServicefeeRatio());
+        request.setConfirmBalance(anScheme.getApprovedBalance());
         requestService.updateByPrimaryKeySelective(request);
 
         return findSchemeDetail(anScheme.getRequestNo());
@@ -81,7 +82,7 @@ public class ScfRequestSchemeService extends BaseService<ScfRequestApprovedMappe
 
         // 设置相关企业名称
         ScfRequestScheme scheme = Collections3.getFirst(schemeList);
-        setCustName(scheme);
+        fillCustName(scheme);
         return scheme;
     }
 
@@ -100,7 +101,7 @@ public class ScfRequestSchemeService extends BaseService<ScfRequestApprovedMappe
         }
 
         ScfRequestScheme scheme = Collections3.getFirst(schemeList);
-        setCustName(scheme);
+        fillCustName(scheme);
         return scheme;
     }
 
@@ -144,7 +145,7 @@ public class ScfRequestSchemeService extends BaseService<ScfRequestApprovedMappe
         // 设置相关企业名
         Page<ScfRequestScheme> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
         for (ScfRequestScheme scheme : page) {
-            setCustName(scheme);
+            fillCustName(scheme);
         }
 
         return page;
@@ -155,7 +156,7 @@ public class ScfRequestSchemeService extends BaseService<ScfRequestApprovedMappe
      * 
      * @param scheme
      */
-    private void setCustName(ScfRequestScheme scheme) {
+    private void fillCustName(ScfRequestScheme scheme) {
         scheme.setCustName(custAccountService.queryCustName(scheme.getCustNo()));
         scheme.setCoreCustName(custAccountService.queryCustName(scheme.getCoreCustNo()));
         scheme.setFactorName(custAccountService.queryCustName(scheme.getFactorNo()));

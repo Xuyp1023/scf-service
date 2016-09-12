@@ -24,6 +24,7 @@ import com.betterjr.modules.loan.entity.ScfPayRecord;
 import com.betterjr.modules.loan.entity.ScfPayRecordDetail;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
+import com.betterjr.modules.loan.helper.RequestTradeStatus;
 import com.betterjr.modules.param.entity.FactorParam;
 
 @Service
@@ -77,9 +78,31 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         this.updateByPrimaryKeySelective(anPlan);
         return findPayPlanDetail(anId);
     }
+    
+    /**
+     * 定时任务 自动修改还款计划
+     * 
+     * @param anPlan
+     * @return
+     */
+    public ScfPayPlan saveAutoModifyPayPlan(ScfPayPlan anPlan, Long anId) {
+        BTAssert.notNull(anPlan, "修改还款计划失败-anPlan不能为空");
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("factorNo", anPlan.getFactorNo());
+        map.put("id", anId);
+        if (Collections3.isEmpty(selectByClassProperty(ScfPayPlan.class, map))) {
+            throw new IllegalArgumentException("修改还款计划失败-找不到原数据");
+        }
+
+        anPlan.initAutoModify();
+        anPlan.setId(anId);
+        this.updateByPrimaryKeySelective(anPlan);
+        return findPayPlanDetail(anId);
+    }
 
     /**
-     * 查询还款计划列表
+     * 分页查询还款计划列表
      * 
      * @param anMap
      * @param anFlag
@@ -95,6 +118,25 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         }
         return page;
     }
+    
+    /**
+     * 查询还款计划列表
+     * 
+     * @param anMap
+     * @param anFlag
+     * @param anPageNum
+     * @param anPageSize
+     * @return
+     */
+    public List<ScfPayPlan> findPlanList(Map<String, Object> anMap) {
+        List<ScfPayPlan> list = this.selectByClassProperty(ScfPayPlan.class, anMap);
+        for (ScfPayPlan plan : list) {
+            plan.setCustName(custAccountService.queryCustName(plan.getCustNo()));
+            plan.setFactorName(custAccountService.queryCustName(plan.getFactorNo()));
+        }
+        return list;
+    }
+
 
     /**
      * 查询还款计划详情
@@ -152,7 +194,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
      * @param scheme
      * @return
      */
-    public String calculatEndDate(String anLoanDate, Integer period, Integer periodUnit) {
+    public String getEndDate(String anLoanDate, Integer period, Integer periodUnit) {
         String endDate = "";
 
         // 1：日，1：月，
@@ -179,7 +221,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
      *            1：管理费，2：手续费，3：利息
      * @return
      */
-    public BigDecimal calculatFee(String anRequestNo, BigDecimal anLoanBalance, int anType) {
+    public BigDecimal getFee(String anRequestNo, BigDecimal anLoanBalance, int anType) {
         ScfRequestScheme scheme = schemeService.findSchemeDetail2(anRequestNo);
         BigDecimal ratio = scheme.getApprovedRatio();
         BigDecimal scale = new BigDecimal(100);
@@ -584,17 +626,17 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         return anMeiosis.subtract(anMinuend);
     }
 
-    private BigDecimal plusCalculat(BigDecimal anBase, BigDecimal anPlus) {
+    private BigDecimal plusCalculat(BigDecimal anBase, BigDecimal addend) {
         // 被减数为空或 小于等于0 直接返回减数
-        if (null == anPlus || anPlus.compareTo(new BigDecimal(0)) < 1) {
+        if (null == addend || addend.compareTo(new BigDecimal(0)) < 1) {
             return anBase;
         }
 
         if (null == anBase) {
-            return anPlus;
+            return addend;
         }
 
-        return anBase.add(anPlus);
+        return anBase.add(addend);
     }
 
     /**
@@ -619,7 +661,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
             String factorNo = plan.getFactorNo().toString();
             FactorParam param = DictUtils.loadObject("FactorParam", factorNo, FactorParam.class);
             if (null == param) {
-                saveModifyPayPlan(plan, plan.getId());
+                saveAutoModifyPayPlan(plan, plan.getId());
                 continue;
             }
 
@@ -643,9 +685,20 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
             plan.setSurplusTotalBalance(surplusTotalBalance);
             plan.setSurplusLatefeeBalance(feeMap.get("latefeeBalance").subtract(plan.getAlreadyLatefeeBalance()));
             plan.setSurplusPenaltyBalance(feeMap.get("penaltyBalance").subtract(plan.getAlreadyPenaltyBalance()));
-
-            saveModifyPayPlan(plan, plan.getId());
+           
+            //修改状态为逾期
+            saveAutoModifyPayPlan(plan, plan.getId());
+            saveAutoUpdateRequest(plan.getRequestNo());
         }
+    }
+    
+    /**
+     * 自动更新逾期数据
+     */
+    public void saveAutoUpdateRequest(String anRequestNo) {
+        ScfRequest request = requestService.findRequestDetail(anRequestNo);
+        request.setTradeStatus(RequestTradeStatus.OVERDUE.getCode());
+        requestService.saveAutoModifyRequest(request, request.getRequestNo());
     }
 
 }

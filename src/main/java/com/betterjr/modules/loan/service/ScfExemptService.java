@@ -1,6 +1,7 @@
 package com.betterjr.modules.loan.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.loan.dao.ScfExemptMapper;
 import com.betterjr.modules.loan.entity.ScfExempt;
 import com.betterjr.modules.loan.entity.ScfPayPlan;
+import com.betterjr.modules.loan.entity.ScfPressMoney;
 import com.betterjr.modules.loan.entity.ScfRequest;
 
 @Service
@@ -85,6 +87,24 @@ public class ScfExemptService extends BaseService<ScfExemptMapper, ScfExempt> {
         return this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
     }
 
+    /**
+     * 查询催收列表
+     * 
+     * @param anMap
+     * @param anFlag
+     * @param anPageNum
+     * @param anPageSize
+     * @return
+     */
+    public List<ScfExempt> findExemptList(Map<String, Object> anMap) {
+        List<ScfExempt> list = this.selectByClassProperty(ScfExempt.class, anMap);
+        for (ScfExempt exempt : list) {
+            exempt.setCustName(custAccountService.queryCustName(exempt.getCustNo()));
+            exempt.setFactorName(custAccountService.queryCustName(exempt.getFactorNo()));
+        }
+        return list;
+    }
+    
     /**
      * 查询豁免记录详情
      * 
