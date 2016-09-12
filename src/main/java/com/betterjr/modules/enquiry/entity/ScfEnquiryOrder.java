@@ -4,9 +4,7 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
@@ -16,14 +14,10 @@ import com.betterjr.common.utils.UserUtils;
 
 @Access(AccessType.FIELD)
 @Entity
-@Table(name = "t_scf_enquiry_object")
-public class ScfEnquiryObject implements BetterjrEntity {
-    /**
-     * 流水号
-     */
-    @Id
-    @Column(name = "ID", columnDefinition = "BIGINT")
-    @MetaData(value = "流水号", comments = "流水号")
+@Table(name = "t_scf_enquiry_order")
+public class ScfEnquiryOrder implements BetterjrEntity {
+    @Column(name = "ID",  columnDefinition="BIGINT" )
+    @MetaData( value="", comments = "")
     private Long id;
 
     /**
@@ -34,47 +28,18 @@ public class ScfEnquiryObject implements BetterjrEntity {
     private String enquiryNo;
 
     /**
-     * 询价企业
+     * 订单id
      */
-    @Column(name = "L_CUSTNO",  columnDefinition="BIGINT" )
-    @MetaData( value="询价企业", comments = "询价企业")
-    private Long custNo;
+    @Column(name = "L_ORDERID",  columnDefinition="BIGINT" )
+    @MetaData( value="订单id", comments = "订单id")
+    private Long orderId;
 
     /**
-     * 意向企业（保理公司）
+     * 1:订单、2:票据、3:应收帐款
      */
-    @Column(name = "L_FACTORNO",  columnDefinition="BIGINT" )
-    @MetaData( value="意向企业（保理公司）", comments = "意向企业（保理公司）")
-    private Long factorNo;
-
-    /**
-     * 报价ID
-     */
-    @Column(name = "L_OFFERID",  columnDefinition="BIGINT" )
-    @MetaData( value="报价ID", comments = "报价ID")
-    private Long offerId;
-
-    /**
-     * 报价状态（0：未报价，1：已报价,2:放弃）
-     */
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="CHAR" )
-    @MetaData( value="报价状态（0：未报价", comments = "状态：-3:取消,-2：已融资，-1：放弃，0：未报价，1：已报价")
-    private String businStatus;
-
-    /**
-     * 操作机构
-     */
-    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
-    @MetaData( value="操作机构", comments = "操作机构")
-    private String operOrg;
-
-    @Column(name = "L_REG_OPERID",  columnDefinition="BIGINT" )
-    @MetaData( value="", comments = "")
-    private Long regOperId;
-
-    @Column(name = "C_REG_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
-    private String regOperName;
+    @Column(name = "C_ORDER_TYPE",  columnDefinition="CHAR" )
+    @MetaData( value="1:订单、2:票据、3:应收帐款", comments = "1:订单、2:票据、3:应收帐款")
+    private String orderType;
 
     @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="", comments = "")
@@ -104,7 +69,22 @@ public class ScfEnquiryObject implements BetterjrEntity {
     @MetaData( value="", comments = "")
     private Long version;
 
-    private static final long serialVersionUID = 1469590861140L;
+    /**
+     * 操作机构
+     */
+    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
+    @MetaData( value="操作机构", comments = "操作机构")
+    private String operOrg;
+
+    @Column(name = "L_REG_OPERID",  columnDefinition="BIGINT" )
+    @MetaData( value="", comments = "")
+    private Long regOperId;
+
+    @Column(name = "C_REG_OPERNAME",  columnDefinition="VARCHAR" )
+    @MetaData( value="", comments = "")
+    private String regOperName;
+
+    private static final long serialVersionUID = 1473305672867L;
 
     public Long getId() {
         return id;
@@ -122,60 +102,20 @@ public class ScfEnquiryObject implements BetterjrEntity {
         this.enquiryNo = enquiryNo;
     }
 
-    public Long getCustNo() {
-        return custNo;
+    public Long getOrderId() {
+        return orderId;
     }
 
-    public void setCustNo(Long custNo) {
-        this.custNo = custNo;
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 
-    public Long getFactorNo() {
-        return factorNo;
+    public String getOrderType() {
+        return orderType;
     }
 
-    public void setFactorNo(Long factorNo) {
-        this.factorNo = factorNo;
-    }
-
-    public Long getOfferId() {
-        return offerId;
-    }
-
-    public void setOfferId(Long offerId) {
-        this.offerId = offerId;
-    }
-
-    public String getBusinStatus() {
-        return businStatus;
-    }
-
-    public void setBusinStatus(String businStatus) {
-        this.businStatus = businStatus;
-    }
-
-    public String getOperOrg() {
-        return operOrg;
-    }
-
-    public void setOperOrg(String operOrg) {
-        this.operOrg = operOrg;
-    }
-
-    public Long getRegOperId() {
-        return regOperId;
-    }
-
-    public void setRegOperId(Long regOperId) {
-        this.regOperId = regOperId;
-    }
-
-    public String getRegOperName() {
-        return regOperName;
-    }
-
-    public void setRegOperName(String regOperName) {
-        this.regOperName = regOperName;
+    public void setOrderType(String orderType) {
+        this.orderType = orderType;
     }
 
     public String getRegDate() {
@@ -234,6 +174,30 @@ public class ScfEnquiryObject implements BetterjrEntity {
         this.version = version;
     }
 
+    public String getOperOrg() {
+        return operOrg;
+    }
+
+    public void setOperOrg(String operOrg) {
+        this.operOrg = operOrg;
+    }
+
+    public Long getRegOperId() {
+        return regOperId;
+    }
+
+    public void setRegOperId(Long regOperId) {
+        this.regOperId = regOperId;
+    }
+
+    public String getRegOperName() {
+        return regOperName;
+    }
+
+    public void setRegOperName(String regOperName) {
+        this.regOperName = regOperName;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -242,13 +206,8 @@ public class ScfEnquiryObject implements BetterjrEntity {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", enquiryNo=").append(enquiryNo);
-        sb.append(", custNo=").append(custNo);
-        sb.append(", factorNo=").append(factorNo);
-        sb.append(", offerId=").append(offerId);
-        sb.append(", businStatus=").append(businStatus);
-        sb.append(", operOrg=").append(operOrg);
-        sb.append(", regOperId=").append(regOperId);
-        sb.append(", regOperName=").append(regOperName);
+        sb.append(", orderId=").append(orderId);
+        sb.append(", orderType=").append(orderType);
         sb.append(", regDate=").append(regDate);
         sb.append(", regTime=").append(regTime);
         sb.append(", modiOperId=").append(modiOperId);
@@ -256,6 +215,9 @@ public class ScfEnquiryObject implements BetterjrEntity {
         sb.append(", modiDate=").append(modiDate);
         sb.append(", modiTime=").append(modiTime);
         sb.append(", version=").append(version);
+        sb.append(", operOrg=").append(operOrg);
+        sb.append(", regOperId=").append(regOperId);
+        sb.append(", regOperName=").append(regOperName);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -272,23 +234,21 @@ public class ScfEnquiryObject implements BetterjrEntity {
         if (getClass() != that.getClass()) {
             return false;
         }
-        ScfEnquiryObject other = (ScfEnquiryObject) that;
+        ScfEnquiryOrder other = (ScfEnquiryOrder) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getEnquiryNo() == null ? other.getEnquiryNo() == null : this.getEnquiryNo().equals(other.getEnquiryNo()))
-            && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-            && (this.getFactorNo() == null ? other.getFactorNo() == null : this.getFactorNo().equals(other.getFactorNo()))
-            && (this.getOfferId() == null ? other.getOfferId() == null : this.getOfferId().equals(other.getOfferId()))
-            && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
-            && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
-            && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
-            && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
+            && (this.getOrderId() == null ? other.getOrderId() == null : this.getOrderId().equals(other.getOrderId()))
+            && (this.getOrderType() == null ? other.getOrderType() == null : this.getOrderType().equals(other.getOrderType()))
             && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
             && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
             && (this.getModiOperId() == null ? other.getModiOperId() == null : this.getModiOperId().equals(other.getModiOperId()))
             && (this.getModiOperName() == null ? other.getModiOperName() == null : this.getModiOperName().equals(other.getModiOperName()))
             && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
             && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()))
-            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
+            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()))
+            && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
+            && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
+            && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()));
     }
 
     @Override
@@ -297,13 +257,8 @@ public class ScfEnquiryObject implements BetterjrEntity {
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         result = prime * result + ((getEnquiryNo() == null) ? 0 : getEnquiryNo().hashCode());
-        result = prime * result + ((getCustNo() == null) ? 0 : getCustNo().hashCode());
-        result = prime * result + ((getFactorNo() == null) ? 0 : getFactorNo().hashCode());
-        result = prime * result + ((getOfferId() == null) ? 0 : getOfferId().hashCode());
-        result = prime * result + ((getBusinStatus() == null) ? 0 : getBusinStatus().hashCode());
-        result = prime * result + ((getOperOrg() == null) ? 0 : getOperOrg().hashCode());
-        result = prime * result + ((getRegOperId() == null) ? 0 : getRegOperId().hashCode());
-        result = prime * result + ((getRegOperName() == null) ? 0 : getRegOperName().hashCode());
+        result = prime * result + ((getOrderId() == null) ? 0 : getOrderId().hashCode());
+        result = prime * result + ((getOrderType() == null) ? 0 : getOrderType().hashCode());
         result = prime * result + ((getRegDate() == null) ? 0 : getRegDate().hashCode());
         result = prime * result + ((getRegTime() == null) ? 0 : getRegTime().hashCode());
         result = prime * result + ((getModiOperId() == null) ? 0 : getModiOperId().hashCode());
@@ -311,34 +266,14 @@ public class ScfEnquiryObject implements BetterjrEntity {
         result = prime * result + ((getModiDate() == null) ? 0 : getModiDate().hashCode());
         result = prime * result + ((getModiTime() == null) ? 0 : getModiTime().hashCode());
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
+        result = prime * result + ((getOperOrg() == null) ? 0 : getOperOrg().hashCode());
+        result = prime * result + ((getRegOperId() == null) ? 0 : getRegOperId().hashCode());
+        result = prime * result + ((getRegOperName() == null) ? 0 : getRegOperName().hashCode());
         return result;
     }
     
-    @Transient
-    private ScfOffer offer;
-    @Transient
-    private String factorName;
-
-    public ScfOffer getOffer() {
-        return offer;
-    }
-
-    public void setOffer(ScfOffer offer) {
-        this.offer = offer;
-    }
-
-    
-    public String getFactorName() {
-        return factorName;
-    }
-
-    public void setFactorName(String factorName) {
-        this.factorName = factorName;
-    }
-
     public void init() {
-        this.id = SerialGenerator.getLongValue("ScfEnquiryObject.id");
-        this.businStatus = "0";
+        this.id = SerialGenerator.getLongValue("ScfEnquiryOrder.id");
         this.regOperName = UserUtils.getUserName();
         this.regOperId = UserUtils.getOperatorInfo().getId();
         this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
@@ -353,5 +288,4 @@ public class ScfEnquiryObject implements BetterjrEntity {
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
     }
-    
 }

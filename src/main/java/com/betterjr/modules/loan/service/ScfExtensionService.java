@@ -2,6 +2,7 @@ package com.betterjr.modules.loan.service;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -269,6 +270,19 @@ public class ScfExtensionService extends BaseService<ScfExtensionMapper, ScfExte
      */
     public Page<ScfExtension> queryExtensionList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
         return this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
+    }
+    
+    /**
+     * 无分页查询展期记录列表
+     * 
+     * @param anMap
+     * @param anFlag
+     * @param anPageNum
+     * @param anPageSize
+     * @return
+     */
+    public List<ScfExtension> queryExtensionList(Map<String, Object> anMap) {
+        return this.selectByClassProperty(ScfExtension.class, anMap);
     }
 
     /**

@@ -1,17 +1,19 @@
 package com.betterjr.modules.enquiry.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.service.BaseService;
+import com.betterjr.common.utils.Collections3;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.enquiry.dao.ScfEnquiryObjectMapper;
 import com.betterjr.modules.enquiry.entity.ScfEnquiryObject;
 
 @Service
-public class EnquiryObjectService extends BaseService<ScfEnquiryObjectMapper, ScfEnquiryObject> {
+public class ScfEnquiryObjectService extends BaseService<ScfEnquiryObjectMapper, ScfEnquiryObject> {
 
     /**
      * 新增
@@ -55,6 +57,18 @@ public class EnquiryObjectService extends BaseService<ScfEnquiryObjectMapper, Sc
      */
     public ScfEnquiryObject findDetail(Long id) {
         return this.selectByPrimaryKey(id);
+    }
+    
+    /**
+     * 根据询价编号和意向企业获取关系信息
+     * @param id
+     * @return
+     */
+    public ScfEnquiryObject findByEnquiryNoAndObject(String enquiryNo, Long factorNo) {
+        Map<String, Object> anMap = new HashMap<String, Object>();
+        anMap.put("enquiryNo", enquiryNo);
+        anMap.put("factorNo", factorNo);
+        return Collections3.getFirst(this.findList(anMap));
     }
     
     /**

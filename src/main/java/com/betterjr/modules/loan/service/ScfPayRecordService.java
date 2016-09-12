@@ -1,6 +1,7 @@
 package com.betterjr.modules.loan.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -55,6 +56,19 @@ public class ScfPayRecordService extends BaseService<ScfPayRecordMapper, ScfPayR
      */
     public Page<ScfPayRecord> queryPayRecordList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
         return this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
+    }
+    
+    /**
+     * 查询还款计划列表
+     * 
+     * @param anMap
+     * @param anFlag
+     * @param anPageNum
+     * @param anPageSize
+     * @return
+     */
+    public List<ScfPayRecord> findPayRecordList(Map<String, Object> anMap) {
+        return this.selectByClassProperty(ScfPayRecord.class, anMap);
     }
 
     /**

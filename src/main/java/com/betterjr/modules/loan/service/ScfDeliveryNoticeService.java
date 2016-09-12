@@ -1,5 +1,6 @@
 package com.betterjr.modules.loan.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,9 +64,17 @@ public class ScfDeliveryNoticeService extends BaseService<ScfDeliveryNoticeMappe
      * @param anPageSize
      * @return
      */
-    public List<ScfDeliveryNotice> findDeliveryNoticeList(Map<String, Object> anMap) {
+    public List<Map<String, Object>> getNoticeSelectList(Map<String, Object> anMap) {
         anMap.put("businStatus", "0");
-        return this.selectByProperty(anMap);
+        List<ScfDeliveryNotice> notiecList =this.selectByProperty(anMap);
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        for (ScfDeliveryNotice notice : notiecList) {
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("name", notice.getNoticeNo());
+            map.put("value", notice.getId());
+            list.add(map);
+        }
+        return list;
      }
 
     /**

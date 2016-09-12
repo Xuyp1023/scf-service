@@ -875,10 +875,18 @@ public class ScfPayPlan implements BetterjrEntity {
     public void initModify() {
         this.modiOperId = UserUtils.getOperatorInfo().getId();
         this.modiOperName = UserUtils.getUserName();
-        this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
     }
+    
+    public void initAutoModify() {
+        //定时任务取不到 当前登录用户，故使用登记用户
+        this.modiOperId = this.regOperId;
+        this.modiOperName = this.regOperName;
+        this.modiDate = BetterDateUtils.getNumDate();
+        this.modiTime = BetterDateUtils.getNumTime();
+    }
+
 
     @Transient
     private String custName;

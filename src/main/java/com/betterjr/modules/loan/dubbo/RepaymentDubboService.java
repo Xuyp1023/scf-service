@@ -145,15 +145,30 @@ public class RepaymentDubboService implements IScfRepaymentService {
     
     @Override
     public String webAddPressMoney(Map<String, Object> anMap) {
-        logger.debug("新增豁免，入参：" + anMap);
+        logger.debug("新增催收，入参：" + anMap);
         ScfPressMoney anPress = (ScfPressMoney) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk("新增豁免成功", pressMoneyService.addPressMoney(anPress)).toJson();
+        return AjaxObject.newOk("新增催收成功", pressMoneyService.addPressMoney(anPress)).toJson();
+    }
+    
+    @Override
+    public String webSaveModifyPressMoney(Map<String, Object> anMap, Long id) {
+        logger.debug("编辑催收，入参：" + anMap);
+        ScfPressMoney anPress = (ScfPressMoney) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOk("编辑催收成功", pressMoneyService.saveModifyPressMoney(anPress, id)).toJson();
+    }
+    
+    @Override
+    public String webSaveDelPressMoney(Map<String, Object> anMap, Long id) {
+        logger.debug("删除催收，入参：" + anMap);
+        ScfPressMoney anPress = (ScfPressMoney) RuleServiceDubboFilterInvoker.getInputObj();
+        pressMoneyService.delete(anPress);
+        return AjaxObject.newOk("删除催收成功").toJson();
     }
 
     @Override
     public String webCalculatExtensionEndDate(String anStartDate, Integer anPeriod, Integer anPeriodUnit) {
         Map<String, Object> anMap = new HashMap<String, Object>();
-        anMap.put("endDate", payPlanService.calculatEndDate(anStartDate, anPeriod, anPeriodUnit));
+        anMap.put("endDate", payPlanService.getEndDate(anStartDate, anPeriod, anPeriodUnit));
         return AjaxObject.newOk("操作成功", anMap).toJson();
     }
     
@@ -187,5 +202,46 @@ public class RepaymentDubboService implements IScfRepaymentService {
         qyConditionMap.put("requestNo", requestNo);
         return AjaxObject.newOkWithPage("分页查询催收列表成功", extensionService.queryExtensionList(qyConditionMap, anFlag, anPageNum, anPageSize)).toJson();
     }
+    
+    @Override
+    public String webFindExtensionList(Map<String, Object> anMap) {
+        logger.debug("无分页查展期列表，入参：" + anMap);
+        Map<String, Object> qyConditionMap = new HashMap<String, Object>();
+        qyConditionMap.put("requestNo", anMap.get("requestNo").toString());
+        return AjaxObject.newOk("无分页查询展期列表成功", extensionService.queryExtensionList(anMap)).toJson();
+    }
+    
+    @Override
+    public String webFindExemptList(Map<String, Object> anMap) {
+        logger.debug("无分页查询豁免列表，入参：" + anMap);
+        Map<String, Object> qyConditionMap = new HashMap<String, Object>();
+        qyConditionMap.put("requestNo", anMap.get("requestNo").toString());
+        return AjaxObject.newOk("分页查询豁免列表成功", exemptService.findExemptList(anMap)).toJson();
+    }
+    
+    @Override
+    public String webFindPresMoneyist(Map<String, Object> anMap) {
+        logger.debug("无分页查催收免列表，入参：" + anMap);
+        Map<String, Object> qyConditionMap = new HashMap<String, Object>();
+        qyConditionMap.put("requestNo", anMap.get("requestNo").toString());
+        return AjaxObject.newOk("分页查询催收列表成功", pressMoneyService.findPresMoneyist(anMap)).toJson();
+    }
+    
+    @Override
+    public String webFindPlanList(Map<String, Object> anMap) {
+        logger.debug("无分页查询还款计划列表，入参：" + anMap);
+        Map<String, Object> qyConditionMap = new HashMap<String, Object>();
+        qyConditionMap.put("requestNo", anMap.get("requestNo").toString());
+        return AjaxObject.newOk("无分页查还款计划列表成功", payPlanService.findPlanList(anMap)).toJson();
+    }
+    
+    @Override
+    public String webFindPayRecordList(Map<String, Object> anMap) {
+        logger.debug("无分页查询还款记录列表，入参：" + anMap);
+        Map<String, Object> qyConditionMap = new HashMap<String, Object>();
+        qyConditionMap.put("requestNo", anMap.get("requestNo").toString());
+        return AjaxObject.newOk("无分页查还款记录列表成功", payRecordService.findPayRecordList(anMap)).toJson();
+    }
+    
 
 }

@@ -1,5 +1,6 @@
 package com.betterjr.modules.enquiry.entity;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.persistence.Access;
@@ -12,12 +13,11 @@ import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
-import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
+import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.sys.entity.WorkUserInfo;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -82,10 +82,10 @@ public class ScfEnquiry implements BetterjrEntity {
     private String description;
 
     /**
-     * 1:票据;2:应收款;3:经销商
+     * 1,订单，2:票据;3:应收款
      */
     @Column(name = "C_REQUEST_TYPE",  columnDefinition="VARCHAR" )
-    @MetaData( value="1:票据;2:应收款;3:经销商", comments = "1:票据;2:应收款;3:经销商")
+    @MetaData( value="1,订单", comments = "1,订单，2:票据;3:应收款")
     private String requestType;
 
     /**
@@ -131,7 +131,49 @@ public class ScfEnquiry implements BetterjrEntity {
     @MetaData( value="", comments = "")
     private Long version;
 
-    private static final long serialVersionUID = 1469691347566L;
+    /**
+     * 期望金额
+     */
+    @Column(name = "F_BALANCE",  columnDefinition="DOUBLE" )
+    @MetaData( value="期望金额", comments = "期望金额")
+    private BigDecimal balance;
+
+    /**
+     * 利率范围
+     */
+    @Column(name = "C_RATIO",  columnDefinition="VARCHAR" )
+    @MetaData( value="利率范围", comments = "利率范围")
+    private String ratio;
+
+    /**
+     * 融资策略 1：时间优先，2：成本优先
+     */
+    @Column(name = "C_STRATEGY",  columnDefinition="CHAR" )
+    @MetaData( value="融资策略 1：时间优先", comments = "融资策略 1：时间优先，2：成本优先")
+    private String strategy;
+
+    /**
+     * 状态：-2：已融资，-1：放弃，0：未报价，1：已报价
+     */
+    @Column(name = "C_BUSIN_STATUS",  columnDefinition="CHAR" )
+    @MetaData( value="状态：-2：已融资", comments = "状态：-2：已融资，-1：放弃，0：未报价，1：已报价")
+    private String businStatus;
+
+    /**
+     * 报价次数
+     */
+    @Column(name = "N_OFFER_COUNT",  columnDefinition="INT" )
+    @MetaData( value="报价次数", comments = "报价次数")
+    private Integer offerCount;
+
+    /**
+     * 询价方式 1：自动，2，主动
+     */
+    @Column(name = "C_ENQUIRY_METHOD",  columnDefinition="CHAR" )
+    @MetaData( value="询价方式 1：自动", comments = "询价方式 1：自动，2，主动")
+    private String enquiryMethod;
+
+    private static final long serialVersionUID = 1473324455143L;
 
     public Long getId() {
         return id;
@@ -149,7 +191,6 @@ public class ScfEnquiry implements BetterjrEntity {
         this.custNo = custNo;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getActualDate() {
         return actualDate;
     }
@@ -166,7 +207,6 @@ public class ScfEnquiry implements BetterjrEntity {
         this.enquiryNo = enquiryNo;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getEndDate() {
         return endDate;
     }
@@ -231,7 +271,6 @@ public class ScfEnquiry implements BetterjrEntity {
         this.regOperName = regOperName;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getRegDate() {
         return regDate;
     }
@@ -264,7 +303,6 @@ public class ScfEnquiry implements BetterjrEntity {
         this.modiOperName = modiOperName;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getModiDate() {
         return modiDate;
     }
@@ -287,6 +325,54 @@ public class ScfEnquiry implements BetterjrEntity {
 
     public void setVersion(Long version) {
         this.version = version;
+    }
+
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
+
+    public String getRatio() {
+        return ratio;
+    }
+
+    public void setRatio(String ratio) {
+        this.ratio = ratio;
+    }
+
+    public String getStrategy() {
+        return strategy;
+    }
+
+    public void setStrategy(String strategy) {
+        this.strategy = strategy;
+    }
+
+    public String getBusinStatus() {
+        return businStatus;
+    }
+
+    public void setBusinStatus(String businStatus) {
+        this.businStatus = businStatus;
+    }
+
+    public Integer getOfferCount() {
+        return offerCount;
+    }
+
+    public void setOfferCount(Integer offerCount) {
+        this.offerCount = offerCount;
+    }
+
+    public String getEnquiryMethod() {
+        return enquiryMethod;
+    }
+
+    public void setEnquiryMethod(String enquiryMethod) {
+        this.enquiryMethod = enquiryMethod;
     }
 
     @Override
@@ -314,6 +400,12 @@ public class ScfEnquiry implements BetterjrEntity {
         sb.append(", modiDate=").append(modiDate);
         sb.append(", modiTime=").append(modiTime);
         sb.append(", version=").append(version);
+        sb.append(", balance=").append(balance);
+        sb.append(", ratio=").append(ratio);
+        sb.append(", strategy=").append(strategy);
+        sb.append(", businStatus=").append(businStatus);
+        sb.append(", offerCount=").append(offerCount);
+        sb.append(", enquiryMethod=").append(enquiryMethod);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -349,7 +441,13 @@ public class ScfEnquiry implements BetterjrEntity {
             && (this.getModiOperName() == null ? other.getModiOperName() == null : this.getModiOperName().equals(other.getModiOperName()))
             && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
             && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()))
-            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
+            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()))
+            && (this.getBalance() == null ? other.getBalance() == null : this.getBalance().equals(other.getBalance()))
+            && (this.getRatio() == null ? other.getRatio() == null : this.getRatio().equals(other.getRatio()))
+            && (this.getStrategy() == null ? other.getStrategy() == null : this.getStrategy().equals(other.getStrategy()))
+            && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
+            && (this.getOfferCount() == null ? other.getOfferCount() == null : this.getOfferCount().equals(other.getOfferCount()))
+            && (this.getEnquiryMethod() == null ? other.getEnquiryMethod() == null : this.getEnquiryMethod().equals(other.getEnquiryMethod()));
     }
 
     @Override
@@ -375,36 +473,44 @@ public class ScfEnquiry implements BetterjrEntity {
         result = prime * result + ((getModiDate() == null) ? 0 : getModiDate().hashCode());
         result = prime * result + ((getModiTime() == null) ? 0 : getModiTime().hashCode());
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
+        result = prime * result + ((getBalance() == null) ? 0 : getBalance().hashCode());
+        result = prime * result + ((getRatio() == null) ? 0 : getRatio().hashCode());
+        result = prime * result + ((getStrategy() == null) ? 0 : getStrategy().hashCode());
+        result = prime * result + ((getBusinStatus() == null) ? 0 : getBusinStatus().hashCode());
+        result = prime * result + ((getOfferCount() == null) ? 0 : getOfferCount().hashCode());
+        result = prime * result + ((getEnquiryMethod() == null) ? 0 : getEnquiryMethod().hashCode());
         return result;
     }
     
     @Transient
-    private List<ScfOffer> offerList;
-    @Transient
-    private int OfferCount;
+    private List offerList;
     
     @Transient
     private String custName;
     
     @Transient
     private String factorName;
+    
+    /*为适应票据版询价价列表查询，**/
+    @Transient
+    private Object order;
 
-    public List<ScfOffer> getOfferList() {
+    public Object getOrder() {
+        return order;
+    }
+
+    public void setOrder(Object order) {
+        this.order = order;
+    }
+
+    public List getOfferList() {
         return offerList;
     }
 
-    public void setOfferList(List<ScfOffer> offerList) {
+    public void setOfferList(List offerList) {
         this.offerList = offerList;
     }
 
-    public int getOfferCount() {
-        return OfferCount;
-    }
-
-    public void setOfferCount(int offerCount) {
-        OfferCount = offerCount;
-    }
-    
     public String getCustName() {
         return custName;
     }
@@ -423,16 +529,17 @@ public class ScfEnquiry implements BetterjrEntity {
 
     public void init() {
         this.id=SerialGenerator.getLongValue("ScfEnquiry.id");
-        this.enquiryNo = getId().toString();
-        this.actualDate = BetterDateUtils.getNumDate();
+        this.enquiryNo = BetterDateUtils.getNumDate()+getId().toString();
         this.regOperName = UserUtils.getUserName();
         this.regOperId = UserUtils.getOperatorInfo().getId();
         this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
         this.regDate = BetterDateUtils.getNumDate();
         this.regTime = BetterDateUtils.getNumTime();
+        this.offerCount = 0;
+        this.businStatus = "0";
     }
 
-    public void setModiBaseInfo() {
+    public void initModify() {
         WorkUserInfo user = UserUtils.getUser();
         this.modiOperId = user.getId();
         this.modiOperName = UserUtils.getUserName();
