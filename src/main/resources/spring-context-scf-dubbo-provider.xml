@@ -157,15 +157,38 @@
 		<property name="testOnBorrow" value="true" />
 	</bean>
 	
-	<bean id="jedisPool" class="redis.clients.jedis.JedisPool">
-		<constructor-arg name="host" value="192.168.2.49" />
-		<constructor-arg name="port" value="6379" />
-		<constructor-arg name="timeout" value="0" />
-		<constructor-arg name="poolConfig" ref="jedisPoolConfig" />
+	<bean id="defaultJedisPool" class="redis.clients.jedis.JedisPool">
+		<constructor-arg index="0" ref="jedisPoolConfig" />
+		<constructor-arg index="1" value="${redis.address}" type="String" />
+		<constructor-arg index="2" value="${redis.port}" type="int" />
+		<!-- connect timeout, sotimeout -->
+		<constructor-arg index="3" value="2000" type="int" />
+		<!-- password -->
+		<constructor-arg index="4" type="String" ><null/></constructor-arg>
+		<!-- database index -->
+		<constructor-arg index="5" value="0" type="int" />
+		<!-- client name -->
+		<constructor-arg index="6" type="String" ><null/></constructor-arg>
+	</bean>
+	
+	<bean id="shiroJedisPool" class="redis.clients.jedis.JedisPool">
+		<constructor-arg index="0" ref="jedisPoolConfig" />
+		<constructor-arg index="1" value="${redis.address}" type="String" />
+		<constructor-arg index="2" value="${redis.port}" type="int" />
+		<!-- connect timeout, sotimeout -->
+		<constructor-arg index="3" value="2000" type="int" />
+		<!-- password -->
+		<constructor-arg index="4" type="String" ><null/></constructor-arg>
+		<!-- database index -->
+		<constructor-arg index="5" value="1" type="int" />
+		<!-- client name -->
+		<constructor-arg index="6" type="String" ><null/></constructor-arg>
 	</bean>
 
 	<bean id="shiroRedisManager" class="com.betterjr.common.security.shiro.cache.RedisManager">
-		<property name="jedisPool" ref="jedisPool" />
+		<property name="jedisPool" ref="shiroJedisPool" />
+		<!-- 设置过期时间shiro cache keys， 默认1个小时 -->
+		<property name="expire" value="3600"/>
 	</bean>
 
 
