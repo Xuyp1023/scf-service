@@ -39,6 +39,10 @@ public abstract class ScfElecAgreeLocalService {
         this.freeMarkerService = SpringContextHolder.getBean(FreemarkerService.class);
         subInit();
     }
+    
+    public ScfElecAgreement getElecagree(){
+        return elecAgree;
+    }
 
     protected void putService(ScfElecAgreementService anElecAgreeService){
         
@@ -65,30 +69,7 @@ public abstract class ScfElecAgreeLocalService {
         }
         return BetterDateUtils.formatDispay(tmpDate);
     }
-
-    /**
-     * 获得创建的PDF文件信息
-     * 
-     * @return
-     */
-//    public CustFileItem findPdfFileInfo() {
-//        CustFileItem fileItem = null;
-//        if (MathExtend.smallValue(this.elecAgree.getSignBatchNo()) == false) {
-//
-//            fileItem = fileItemService.findOneByBatchNo(this.elecAgree.getSignBatchNo());
-//        }
-//        else if (MathExtend.smallValue(this.elecAgree.getBatchNo()) == false) {
-//
-//            fileItem = fileItemService.findOneByBatchNo(this.elecAgree.getBatchNo());
-//        }
-//        else {
-//            logger.info("file not find start create File");
-//            fileItem = checkPdfCreateStatus(false);
-//        }
-//
-//        return fileItem;
-//    };
-
+    
     /**
      * 检查PDF文件是否创建
      * 
@@ -143,6 +124,7 @@ public abstract class ScfElecAgreeLocalService {
 
         return freeMarkerService.processTemplateByFileNameUnderModule(getViewModeFile(), param, "supplychain");
     }
+    
 
     /**
      * 获得输出的模板文件

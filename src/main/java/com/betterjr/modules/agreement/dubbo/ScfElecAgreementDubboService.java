@@ -14,6 +14,8 @@ import com.betterjr.modules.agreement.entity.ScfRequestOpinion;
 import com.betterjr.modules.agreement.entity.ScfRequestProtacal;
 import com.betterjr.modules.agreement.service.ScfAgreementService;
 import com.betterjr.modules.agreement.service.ScfElecAgreementService;
+import com.betterjr.modules.agreement.service.ScfOtherFileService;
+import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 
 /***
@@ -28,6 +30,8 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
     private ScfElecAgreementService scfElecAgreementService;
     @Autowired
     private ScfAgreementService scfAgreementService;
+    @Autowired
+    private ScfOtherFileService scfOtherFileService;
     
     @Override
     public String webQueryElecAgreementByPage(Map<String, Object> anParam, int anPageNum, int anPageSize) {
@@ -113,5 +117,48 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
     public String webFindElecAgreeByOrderNo(String anRequestNo, String anSignType){
         return AjaxObject.newOk(scfElecAgreementService.findElecAgreeByOrderNo(anRequestNo, anSignType)).toJson();
     }
-
+    
+    /***
+     * 查找pdf文件
+     * @param appNo
+     * @return
+     */
+    public CustFileItem webFindPdfFileInfo(String appNo){
+        return scfAgreementService.findPdfFileInfo(appNo);
+    }
+    
+    /****
+     * 添加其它资料
+     * @param anMap
+     * @return
+     */
+    public String webAddOtherFile(Map<String, Object> anMap){
+       if(scfOtherFileService.addOtherFile(anMap)){
+           return AjaxObject.newOk("资料添加成功").toJson();
+       }else{
+           return AjaxObject.newError("资料添加失败").toJson();
+       }
+    }
+    
+    /***
+     * 根据申请单号查询其它资料信息
+     * @param anRequestNo
+     * @return
+     */
+    public String webQueryOtherFile(String anRequestNo){
+        return AjaxObject.newOk("查询其它资料",scfOtherFileService.queryOtherFile(anRequestNo)).toJson();
+    }
+    
+    /***
+     * 删除其它资料
+     * @param anOtherFileId
+     * @return
+     */
+    public String webDelOtherFile(Long anOtherFileId){
+        if(scfOtherFileService.delOtherFile(anOtherFileId)){
+            return AjaxObject.newOk("资料删除成功").toJson();
+        }else{
+            return AjaxObject.newError("资料删除失败").toJson();
+        }
+    }
 }

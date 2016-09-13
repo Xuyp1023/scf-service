@@ -5,15 +5,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
-
-import java.lang.reflect.Proxy;
-import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.modules.agreement.entity.FaceTradeResult;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.remote.entity.RemoteResultInfo;
 import com.betterjr.modules.remote.service.RemoteProxyFactory;
-import com.betterjr.modules.remote.service.RemoteProxyService;
 
 /**
  * 提供调用保理和沃通的远程接口辅助工具类。

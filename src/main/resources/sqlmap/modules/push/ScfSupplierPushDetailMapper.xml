@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.push.dao.ScfSupplierPushDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.betterjr.modules.push.entity.ScfSupplierPushDetail" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="C_ORDERID" property="orderId" jdbcType="INTEGER" />
+    <result column="C_BUSIN_TYPE" property="businType" jdbcType="VARCHAR" />
+    <result column="D_BEGIN_DATE" property="beginDate" jdbcType="VARCHAR" />
+    <result column="D_END_DATE" property="endDate" jdbcType="VARCHAR" />
+    <result column="C_AGENCYNO" property="agencyNo" jdbcType="VARCHAR" />
+    <result column="F_MONEY" property="moeny" jdbcType="DOUBLE" />
+    <result column="F_COSTRATE" property="costRate" jdbcType="VARCHAR" />
+    <result column="C_BUSIN_STATUS" property="businStatus" jdbcType="VARCHAR" />
+    <result column="D_REG_DATE" property="regDate" jdbcType="VARCHAR" />
+    <result column="T_REG_TIME" property="regTime" jdbcType="VARCHAR" />
+    <result column="D_MODIFY_DATE" property="modifyDate" jdbcType="VARCHAR" />
+    <result column="T_MODIFY_TIME" property="modifyTime" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>

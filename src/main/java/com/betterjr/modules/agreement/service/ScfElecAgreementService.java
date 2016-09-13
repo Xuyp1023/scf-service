@@ -51,7 +51,8 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
     private ScfProductService productService;
     @Autowired
     private ScfRequestService requestService; 
-    
+    @Reference(interfaceClass=ICustFileService.class)
+    protected ICustFileService fileItemService;
     /**
      * 查找供应商的电子合同信息
      * 
@@ -342,5 +343,25 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
             }
         }
     }
+    
+
+
+    /**
+     * 获得创建的PDF文件信息
+     * 
+     * @return
+     */
+    public CustFileItem findPdfFileInfo(ScfElecAgreement elecAgree) {
+        CustFileItem fileItem = null;
+        if (MathExtend.smallValue(elecAgree.getSignBatchNo()) == false) {
+
+            fileItem = fileItemService.findOneByBatchNo(elecAgree.getSignBatchNo());
+        }
+        else if (MathExtend.smallValue(elecAgree.getBatchNo()) == false) {
+
+            fileItem = fileItemService.findOneByBatchNo(elecAgree.getBatchNo());
+        }
+        return fileItem;
+    };
 
 }
