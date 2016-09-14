@@ -63,4 +63,10 @@ public class ScfAcceptBillDubboService implements IScfAcceptBillService {
     public String webFindAllFile(Long anId) {
         return AjaxObject.newOk("汇票信息所有附件查询成功", scfAcceptBillService.findAllFile(anId)).toJson();
     }
+
+    @Override
+    public String webQueryFinancedByFactor(Map<String, Object> anMap, Long anFactorNo) {
+        Map<String, Object> anBillConditionMap =  (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOkWithPage("保理公司查询已融资汇票", scfAcceptBillService.queryFinancedByFactor(anBillConditionMap, anFactorNo)).toJson();
+    }
 }

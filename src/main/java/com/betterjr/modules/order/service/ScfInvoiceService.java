@@ -39,7 +39,9 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
         anInvoice.initAddValue();
         // 发票初始状态为正常
         anInvoice.setBusinStatus("1");
-        invoiceItemService.saveInvoiceItemRelation(anInvoice.getId(), anInvoiceIds.split(","));
+        if(!BetterStringUtils.isBlank(anInvoiceIds)) {
+            invoiceItemService.saveInvoiceItemRelation(anInvoice.getId(), anInvoiceIds.split(","));
+        }
         this.insert(anInvoice);
         return anInvoice;
     }
@@ -51,7 +53,7 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
         // 限定操作员查询本机构数据
         anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
         //仅显示可用发票
-        anMap.put("businStatus", "0");
+        anMap.put("businStatus", "1");
 
         Page<ScfInvoice> anInvoiceList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
         

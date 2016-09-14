@@ -589,4 +589,25 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
             scfRequest.setApprovedPeriodUnit(scheme.getApprovedPeriodUnit());
         }
     }
+    
+    /**
+     * 查询融资列表，无分页
+     */
+    public List<ScfRequest> findRequestList(Map<String, Object> anMap) {
+        List<ScfRequest> requestList = this.selectByProperty(anMap);
+        for(ScfRequest scfRequest : requestList) {
+            scfRequest.setCoreCustName(custAccountService.queryCustName(scfRequest.getCoreCustNo()));
+            scfRequest.setFactorName(custAccountService.queryCustName(scfRequest.getFactorNo()));
+            scfRequest.setCustName(custAccountService.queryCustName(scfRequest.getCustNo()));
+            ScfRequestScheme scheme = schemeService.findSchemeDetail2(scfRequest.getRequestNo());
+            //融资方案上否确认
+            if(null != scheme && BetterStringUtils.equals("1", scheme.getCustAduit())){
+                scfRequest.setApprovedBalance(scheme.getApprovedBalance());
+                scfRequest.setApprovedRatio(scheme.getApprovedRatio());
+                scfRequest.setApprovedPeriod(scheme.getApprovedPeriod());
+                scfRequest.setApprovedPeriodUnit(scheme.getApprovedPeriodUnit());
+            }
+        }
+        return requestList;
+    }
 }

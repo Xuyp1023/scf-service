@@ -112,7 +112,7 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
                 anReceivable.getAcceptBillList().addAll(anOrder.getAcceptBillList());
                 anReceivable.getAgreementList().addAll(anOrder.getAgreementList());
                 //清除order下面的信息
-                anOrder.chearRelationInfo();
+                anOrder.clearRelationInfo();
             }
             anReceivable.getOrderList().addAll(orderList);
         }
