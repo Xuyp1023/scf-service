@@ -1,24 +1,24 @@
 package com.betterjr.modules;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 
 public abstract class BasicServiceTest<T> {
 	
-	private ClassPathXmlApplicationContext ctx;
+	private static ClassPathXmlApplicationContext ctx;
 
-	@Before
-	public void startSpring() {
-		String[] configFiles = new String[] { "spring-context-scf-service.xml" };
+	@BeforeClass
+	public static void startSpring() {
+		String[] configFiles = new String[] { "spring-context-scf-dubbo-provider.xml" };
 		ctx = new ClassPathXmlApplicationContext(configFiles);
 		ctx.start();
 	}
 
-	@After
-	public void closeSpring() {
+	@AfterClass
+	public static void closeSpring() {
 		if (ctx != null) {
 			ctx.close();
 		}
