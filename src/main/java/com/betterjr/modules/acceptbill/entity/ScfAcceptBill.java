@@ -177,7 +177,7 @@ public class ScfAcceptBill implements BetterjrEntity {
      * 融资标志，0未融资，1已融资，2收款，3已还款
      */
     @Column(name = "C_FINANCE_FLAG", columnDefinition = "VARCHAR")
-    @MetaData(value = "融资标志", comments = "融资标志，0未融资，1已融资，2收款，3已还款")
+    @MetaData(value = "融资标志", comments = "融资标志，0未融资，1已融资，2收款，3已还款，4融资失败")
     private String financeFlag;
     
     /**
@@ -355,7 +355,7 @@ public class ScfAcceptBill implements BetterjrEntity {
     private String modiTime;
 
     @Transient
-    private String coreName;
+    private String coreCustName;
     
     /**
      * 合同列表
@@ -657,13 +657,6 @@ public class ScfAcceptBill implements BetterjrEntity {
         this.supplierName = supplierName;
     }*/
 
-    public String getCoreName() {
-        return coreName;
-    }
-
-    public void setCoreName(String coreName) {
-        this.coreName = coreName;
-    }
 
     public Long getModiOperId() {
         return modiOperId;
@@ -721,12 +714,12 @@ public class ScfAcceptBill implements BetterjrEntity {
         this.acceptor = anAcceptor;
     }
 
-    public String getFrom() {
+    public String getBillFrom() {
         return this.billFrom;
     }
 
-    public void setFrom(String anFrom) {
-        this.billFrom = anFrom;
+    public void setBillFrom(String billFrom) {
+        this.billFrom = billFrom;
     }
 
     public String getPreHand() {
@@ -751,6 +744,14 @@ public class ScfAcceptBill implements BetterjrEntity {
 
     public void setAduit(String anAduit) {
         this.aduit = anAduit;
+    }
+
+    public String getCoreCustName() {
+        return this.coreCustName;
+    }
+
+    public void setCoreCustName(String anCoreCustName) {
+        this.coreCustName = anCoreCustName;
     }
 
     public List<ScfOrder> getOrderList() {
@@ -826,7 +827,7 @@ public class ScfAcceptBill implements BetterjrEntity {
             && (this.getBuyerBankName() == null ? other.getBuyerBankName() == null : this.getBuyerBankName().equals(other.getBuyerBankName()))
             && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
             && (this.getFinanceFlag() == null ? other.getFinanceFlag() == null : this.getFinanceFlag().equals(other.getFinanceFlag()))
-            && (this.getFrom() == null ? other.getFrom() == null : this.getFrom().equals(other.getFrom()))
+            && (this.getBillFrom() == null ? other.getBillFrom() == null : this.getBillFrom().equals(other.getBillFrom()))
             && (this.getPreHand() == null ? other.getPreHand() == null : this.getPreHand().equals(other.getPreHand()))
             && (this.getNextHand() == null ? other.getNextHand() == null : this.getNextHand().equals(other.getNextHand()))
             && (this.getAduit() == null ? other.getAduit() == null : this.getAduit().equals(other.getAduit()))
@@ -876,7 +877,7 @@ public class ScfAcceptBill implements BetterjrEntity {
         result = prime * result + ((getBuyerBankName() == null) ? 0 : getBuyerBankName().hashCode());
         result = prime * result + ((getBusinStatus() == null) ? 0 : getBusinStatus().hashCode());
         result = prime * result + ((getFinanceFlag() == null) ? 0 : getFinanceFlag().hashCode());
-        result = prime * result + ((getFrom() == null) ? 0 : getFrom().hashCode());
+        result = prime * result + ((getBillFrom() == null) ? 0 : getBillFrom().hashCode());
         result = prime * result + ((getPreHand() == null) ? 0 : getPreHand().hashCode());
         result = prime * result + ((getNextHand() == null) ? 0 : getNextHand().hashCode());
         result = prime * result + ((getAduit() == null) ? 0 : getAduit().hashCode());

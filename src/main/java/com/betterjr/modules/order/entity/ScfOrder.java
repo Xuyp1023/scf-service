@@ -256,11 +256,16 @@ public class ScfOrder implements BetterjrEntity {
     
     
     private static final long serialVersionUID = 1469676107640L;
+    
+    public ScfOrder() {
+        super();
+    }
 
     /**
      * 根据汇票信息生成订单
      */
     public ScfOrder(ScfAcceptBill anAcceptBill) {
+        super();
         this.initAddValue();
         this.custNo = anAcceptBill.getCoreCustNo();
         this.orderNo = "此订单由票据编号" + anAcceptBill.getBillNo() + "的汇票默认生成";
@@ -274,6 +279,7 @@ public class ScfOrder implements BetterjrEntity {
      * 根据应收账款生成订单
      */
     public ScfOrder(ScfReceivable anReceivable) {
+        super();
         this.initAddValue();
         this.coreCustNo = anReceivable.getCustNo();
         this.orderNo = "此订单由应收账款编号" + anReceivable.getReceivableNo() + "的应收账款默认生成";
@@ -680,7 +686,8 @@ public class ScfOrder implements BetterjrEntity {
     /**
      * 清空订单关联信息
      */
-    public void chearRelationInfo(){
+    public void clearRelationInfo(){
+        this.agreementList = null;
         this.transportList = null;
         this.invoiceList = null;
         this.acceptBillList = null;

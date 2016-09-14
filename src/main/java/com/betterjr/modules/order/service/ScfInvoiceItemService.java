@@ -37,12 +37,12 @@ public class ScfInvoiceItemService extends BaseService<ScfInvoiceItemMapper, Scf
      * 保存发票详情至发票
      */
     public void saveInvoiceItemRelation(Long anInvoiceId, String... anInvoiceItemIds) {
-       for(String anInvoiceItemId : anInvoiceItemIds) {
-           ScfInvoiceItem anInvoiceItem = this.selectByPrimaryKey(anInvoiceItemId);
-           BTAssert.notNull(anInvoiceItem, "不存在对应发票详情");
-           anInvoiceItem.setInvoiceId(anInvoiceId);
-           this.updateByPrimaryKeySelective(anInvoiceItem);
-       }
+        for (String anInvoiceItemId : anInvoiceItemIds) {
+            ScfInvoiceItem anInvoiceItem = this.selectByPrimaryKey(Long.valueOf(anInvoiceItemId));
+            BTAssert.notNull(anInvoiceItem, "不存在对应发票详情");
+            anInvoiceItem.setInvoiceId(anInvoiceId);
+            this.updateByPrimaryKeySelective(anInvoiceItem);
+        }
     }
     
     /**

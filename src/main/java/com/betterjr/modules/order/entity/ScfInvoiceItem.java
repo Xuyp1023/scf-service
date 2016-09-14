@@ -6,6 +6,7 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.betterjr.common.annotation.MetaData;
@@ -24,6 +25,7 @@ public class ScfInvoiceItem implements BetterjrEntity {
     /**
      * 流水号
      */
+    @Id
     @Column(name = "ID",  columnDefinition="INTEGER" )
     @MetaData( value="流水号", comments = "流水号")
     private Long id;
@@ -46,8 +48,8 @@ public class ScfInvoiceItem implements BetterjrEntity {
      * 单价
      */
     @Column(name = "F_UNIT",  columnDefinition="DOUBLE" )
-    @MetaData( value="单价", comments = "单价")
-    private BigDecimal unit;
+    @MetaData( value="单位", comments = "单位")
+    private String unit;
 
     /**
      * 数量
@@ -164,11 +166,11 @@ public class ScfInvoiceItem implements BetterjrEntity {
         this.subject = subject == null ? null : subject.trim();
     }
 
-    public BigDecimal getUnit() {
+    public String getUnit() {
         return unit;
     }
 
-    public void setUnit(BigDecimal unit) {
+    public void setUnit(String unit) {
         this.unit = unit;
     }
 
