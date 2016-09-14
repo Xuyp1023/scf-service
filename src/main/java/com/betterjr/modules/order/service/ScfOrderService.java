@@ -411,13 +411,29 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
                     anMap.put("infoType", ScfOrderRelationType.RECEIVABLE.getCode());
                 }
                 List<ScfOrderRelation> anOrderRelationList = orderRelationService.findOrderRelation(anMap);
-                //若未找到相应信息此时提醒用户选择订单进行关联
+                //若未找到相应信息生成默认数据
                 if(Collections3.isEmpty(anOrderRelationList)) {
-                    logger.error("未选择订单信息关联");
-                    throw new BytterTradeException(40001, "未选择订单信息关联");
+                    // 通过票据生成
+                    if (BetterStringUtils.equals(anRequestType, "2")) {
+                        ScfOrder order = new ScfOrder(acceptBillService.selectByPrimaryKey(anInfoId));
+                        order.setRequestNo(anRequestNo);
+                        this.insert(order);
+                        orderRelationService.addOrderRelation(ScfOrderRelationType.ORDER.getCode(), order.getId(),
+                                ScfOrderRelationType.ACCEPTBILL.getCode(), anInfoId);
+                    }
+                    // 应收账款生成
+                    else if (BetterStringUtils.equals(anRequestType, "3")) {
+                        ScfOrder order = new ScfOrder(receivableService.selectByPrimaryKey(anInfoId));
+                        order.setRequestNo(anRequestNo);
+                        this.insert(order);
+                        orderRelationService.addOrderRelation(ScfOrderRelationType.RECEIVABLE.getCode(), order.getId(),
+                                ScfOrderRelationType.RECEIVABLE.getCode(), anInfoId);
+                    }
                 }
-                for (ScfOrderRelation anOrderRelation : anOrderRelationList) {
-                    this.saveOrderRequestNo(anOrderRelation.getOrderId(), anRequestNo);
+                else {
+                    for (ScfOrderRelation anOrderRelation : anOrderRelationList) {
+                        this.saveOrderRequestNo(anOrderRelation.getOrderId(), anRequestNo);
+                    }
                 }
             }
         }

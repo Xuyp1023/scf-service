@@ -257,6 +257,33 @@ public class ScfOrder implements BetterjrEntity {
     
     private static final long serialVersionUID = 1469676107640L;
 
+    /**
+     * 根据汇票信息生成订单
+     */
+    public ScfOrder(ScfAcceptBill anAcceptBill) {
+        this.initAddValue();
+        this.custNo = anAcceptBill.getCoreCustNo();
+        this.orderNo = "此订单由票据编号" + anAcceptBill.getBillNo() + "的汇票默认生成";
+        this.goodsName = "此订单由票据编号" + anAcceptBill.getBillNo() + "的汇票默认生成";
+        this.balance = anAcceptBill.getBalance();
+        this.coreCustNo = anAcceptBill.getCoreCustNo();
+        this.settlement = "0";//结算方式 0-商业汇票
+        this.businStatus = "0";
+    }
+    /**
+     * 根据应收账款生成订单
+     */
+    public ScfOrder(ScfReceivable anReceivable) {
+        this.initAddValue();
+        this.coreCustNo = anReceivable.getCustNo();
+        this.orderNo = "此订单由应收账款编号" + anReceivable.getReceivableNo() + "的应收账款默认生成";
+        this.goodsName = anReceivable.getGoodsName();
+        this.balance = anReceivable.getBalance();
+        this.coreCustNo = anReceivable.getCoreCustNo();
+        this.settlement = "1";//结算方式 1-赊销
+        this.businStatus = "0";
+    }
+
     public Long getId() {
         return id;
     }

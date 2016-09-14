@@ -23,6 +23,8 @@ import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.dao.ScfAcceptBillMapper;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.agreement.entity.CustAgreement;
+import com.betterjr.modules.loan.entity.ScfRequest;
+import com.betterjr.modules.loan.service.ScfRequestService;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.entity.ScfOrderRelation;
@@ -42,6 +44,8 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     private ScfOrderRelationService orderRelationService;
     @Autowired
     private ScfOrderService orderService;
+    @Autowired
+    private ScfRequestService requestService;
 
     /**
      * 汇票信息分页查询
@@ -252,8 +256,34 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     /**
      * 保理公司查询已经融资汇票信息
      */
-    public Page<ScfAcceptBill> queryFinancedByFactor(Long anFactorNo, String anBillNo, String anInvoiceCorp, String anStartDate, String anEndDate) {
-        return null;
+    public Page<ScfAcceptBill> queryFinancedByFactor(Map<String, Object> anBillConditionMap, Long anFactorNo) {
+        List<ScfAcceptBill> acceptBillList = new ArrayList<ScfAcceptBill>();
+        //查询相应资金方下的已融资信息
+        Map<String, Object> queryRequestMap = new HashMap<String, Object>();
+        queryRequestMap.put("factorNo", anFactorNo);
+        //已放款融资
+        queryRequestMap.put("GTtradeStatus", "150");
+        List<ScfRequest> requestList = requestService.findRequestList(queryRequestMap);
+        //根据融资申请取出订单信息
+        Map<String, Object> queryOrderMap = new HashMap<String, Object>();
+        Map<String, Object> queryOrderRelationMap = new HashMap<String, Object>();
+        queryOrderRelationMap.put("infoType", "3");//信息类型 0:合同 1:发票 2:运输单据 3:汇票 4:应收账款
+        
+        for (ScfRequest request : requestList) {
+            queryOrderMap.put("requestNo", request.getRequestNo());
+            List<ScfOrder> orderList = orderService.findOrder(queryOrderMap);
+            // 根据订单查询订单与汇票关系
+            for (ScfOrder order : orderList) {
+                queryOrderRelationMap.put("orderId", order.getId());
+                List<ScfOrderRelation> orderRelationList = orderRelationService.findOrderRelation(queryOrderRelationMap);
+                //根据关系表查询汇票信息
+                for(ScfOrderRelation orderRelation : orderRelationList) {
+                    anBillConditionMap.put("id", orderRelation.getInfoId());
+                    acceptBillList.addAll(this.selectByProperty(anBillConditionMap));
+                }
+            }
+        }
+        return Page.listToPage(acceptBillList);
     }
 
     /**
