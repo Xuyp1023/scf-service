@@ -4,7 +4,6 @@ import java.util.Map;
 
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.utils.BetterDateUtils;
-import com.betterjr.modules.loan.entity.ScfRequest;
 
 import javax.persistence.*;
 

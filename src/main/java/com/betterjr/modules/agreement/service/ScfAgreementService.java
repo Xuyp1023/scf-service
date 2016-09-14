@@ -1,10 +1,12 @@
 package com.betterjr.modules.agreement.service;
 
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.web.AjaxObject;
@@ -12,6 +14,7 @@ import com.betterjr.modules.agreement.entity.ScfRequestCredit;
 import com.betterjr.modules.agreement.entity.ScfRequestNotice;
 import com.betterjr.modules.agreement.entity.ScfRequestOpinion;
 import com.betterjr.modules.agreement.entity.ScfRequestProtacal;
+import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.service.ScfRequestService;
 
@@ -33,6 +36,8 @@ public class ScfAgreementService {
     private ScfRequestCreditService requestCreditService;
     @Autowired
     private ScfRequestProtacalService requestProtacalService;
+    @Autowired
+    private ScfElecAgreementService scfElecAgreementService;
     /***
      * 生成通知书的静态页面成功
      * @param appNo
@@ -112,5 +117,14 @@ public class ScfAgreementService {
         ScfRequest request = requestService.findRequestDetail(protacal.getRequestNo());
         BTAssert.notNull(request, "三方协议申请单不存在");
         return requestProtacalService.updateProtacalInfo(protacal);
+    }
+    
+    public CustFileItem findPdfFileInfo(String appNo){
+        ScfElecAgreeLocalService localService = ScfElecAgreementFactory.create(appNo);
+        CustFileItem custFileItem= scfElecAgreementService.findPdfFileInfo(localService.getElecagree());
+        if(custFileItem==null){
+            custFileItem=localService.checkPdfCreateStatus(false);
+        }
+        return custFileItem;
     }
 }
