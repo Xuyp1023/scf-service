@@ -296,12 +296,17 @@ public class RequestDubboService implements IScfRequestService {
             return AjaxObject.newOkWithPage("分页查询用户任务列表，无数据", new Page<ScfRequest>()).toJson();
         }
 
-        // 获取任务中的requestNo
         List<Long> requestNos = new ArrayList<Long>();
-        for (FlowStatus flowStatus : page) {
-            requestNos.add(flowStatus.getBusinessId());
+        if(null != anMap.get("requestNo") && BetterStringUtils.isNotBlank(anMap.get("requestNo").toString())){
+            requestNos.add(Long.parseLong(anMap.get("requestNo").toString()));
+        }else{
+            // 获取任务中的requestNo
+           
+            for (FlowStatus flowStatus : page) {
+                requestNos.add(flowStatus.getBusinessId());
+            }
         }
-
+       
         anMap.remove("taskType");
         anMap.put("requestNo", requestNos);
         return AjaxObject.newOkWithPage("查询成功", requestService.queryRequestList(anMap, anFlag, anPageNum, anPageSize)).toJson();

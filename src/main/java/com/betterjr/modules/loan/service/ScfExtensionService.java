@@ -42,7 +42,7 @@ public class ScfExtensionService extends BaseService<ScfExtensionMapper, ScfExte
      * @param anStartDate
      * @return
      */
-    public BigDecimal calculatLoanBalance(String anRequestNo, String anStartDate){
+    public BigDecimal getLoanBalance(String anRequestNo, String anStartDate){
         Map<String, Object> anPropValue = new HashMap<String, Object>();
         anPropValue.put("requestNo", anRequestNo);
         ScfPayPlan payPlan = payPlanService.findPayPlanByRequest(anRequestNo);
@@ -153,7 +153,7 @@ public class ScfExtensionService extends BaseService<ScfExtensionMapper, ScfExte
      * @param payBalance
      * @return
      */
-    public Map<String, Object> calculatInterest(BigDecimal ratio, BigDecimal managementRatio, BigDecimal extensionBalance){
+    public Map<String, Object> getInterest(BigDecimal ratio, BigDecimal managementRatio, BigDecimal extensionBalance){
         Map<String, Object> payMap = new HashMap<String, Object>();
         BigDecimal interestBalance = extensionBalance.multiply(ratio).divide(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP);
         BigDecimal managementBalance = extensionBalance.multiply(managementRatio).divide(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP);
