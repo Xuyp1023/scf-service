@@ -34,12 +34,12 @@ public class RequestBillDubboService implements IScfBillRequestService {
         logger.debug("新增票据融资申请，入参：" + anMap);
         ScfRequest request = (ScfRequest) RuleServiceDubboFilterInvoker.getInputObj();
         request.setTradeStatus("100");
-        request = billRequestService.addBillRequest((ScfRequest) RuleServiceDubboFilterInvoker.getInputObj());
+        request = billRequestService.addBillRequest(request);
         // 关联订单
         orderService.saveInfoRequestNo(request.getRequestType(), request.getRequestNo(), request.getOrders());
         // 冻结订单
-        orderService.forzenInfos(request.getRequestNo(), null);
-        return AjaxObject.newOk(request).toJson();
+        //orderService.forzenInfos(request.getRequestNo(), null);
+        return AjaxObject.newOk(this.webFindRequestByNo(request.getRequestNo())).toJson();
     }
 
     @Override
@@ -50,9 +50,9 @@ public class RequestBillDubboService implements IScfBillRequestService {
     }
 
     @Override
-    public String webToRequest(String anId) {
-        logger.debug("获取票据申请数据，入参：" + anId);
-        return AjaxObject.newOk(offerService.selectByPrimaryKey(Long.parseLong(anId))).toJson();
+    public String webRequestByOffer(String anOfferId) {
+        logger.debug("获取票据申请数据，入参：" + anOfferId);
+        return AjaxObject.newOk(offerService.selectByPrimaryKey(Long.parseLong(anOfferId))).toJson();
     }
     
     @Override
@@ -60,7 +60,20 @@ public class RequestBillDubboService implements IScfBillRequestService {
         logger.debug("修改票据申请的融资状态，入参：anTradeStatus=" + anTradeStatus);
         ScfRequest request = requestService.findRequestDetail(anRequestNo);
         request.setTradeStatus(anTradeStatus);
-        return AjaxObject.newOk(requestService.saveModifyRequest(request, anRequestNo)).toJson();
+        request = requestService.saveModifyRequest(request, anRequestNo);
+        return AjaxObject.newOk(webFindRequestByNo(anRequestNo)).toJson();
     }
-
+    
+    @Override
+    public String webFindRequestByNo(String anRequestNo){
+        logger.debug("根据申请编号查询融资申请，入参：anRequestNo=" + anRequestNo);
+        return AjaxObject.newOk(billRequestService.findRequestByNo(anRequestNo)).toJson();
+    }
+    
+    @Override
+    public String webFindRequestByBill(String anBillId){
+        logger.debug("根据票据id查询融资申请，入参：anBillId=" + anBillId);
+        return AjaxObject.newOk(billRequestService.findRequestByBill(anBillId)).toJson();
+    }
+    
 }

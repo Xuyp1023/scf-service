@@ -1021,18 +1021,6 @@ public class ScfRequest implements BetterjrEntity {
     @Transient 
     private BigDecimal orderBalance;
     
-    /*由requestType的类型决定存储的类型（订单，应收款，票据） 数据类型为list*/
-    @Transient
-    private Object order;
-
-    public Object getOrder() {
-        return order;
-    }
-
-    public void setOrder(Object order) {
-        this.order = order;
-    }
-
     public String getCoreCustName() {
         return coreCustName;
     }

@@ -161,8 +161,10 @@ public class RepaymentDubboService implements IScfRepaymentService {
     public String webSaveDelPressMoney(Map<String, Object> anMap, Long id) {
         logger.debug("删除催收，入参：" + anMap);
         ScfPressMoney anPress = (ScfPressMoney) RuleServiceDubboFilterInvoker.getInputObj();
-        pressMoneyService.delete(anPress);
-        return AjaxObject.newOk("删除催收成功").toJson();
+        if(1 == pressMoneyService.delete(anPress)){
+            return AjaxObject.newOk("操作成功").toJson();
+        }
+        return AjaxObject.newOk("操作失败").toJson();
     }
 
     @Override
@@ -174,7 +176,7 @@ public class RepaymentDubboService implements IScfRepaymentService {
     
     @Override
     public String webCalculatExtensionFee(BigDecimal anRatio, BigDecimal anManagementRatio, BigDecimal anExtensionBalance) {
-        return AjaxObject.newOk("操作成功", extensionService.calculatInterest(anRatio, anManagementRatio, anExtensionBalance)).toJson();
+        return AjaxObject.newOk("操作成功", extensionService.getInterest(anRatio, anManagementRatio, anExtensionBalance)).toJson();
     }
     
     @Override
@@ -185,7 +187,7 @@ public class RepaymentDubboService implements IScfRepaymentService {
     @Override
     public String webCalculatLoanBalance(String anRequestNo, String anStartDate) {
         Map<String, BigDecimal> map = new HashMap<String, BigDecimal>();
-        map.put("loanBalance", extensionService.calculatLoanBalance(anRequestNo, anStartDate));
+        map.put("loanBalance", extensionService.getLoanBalance(anRequestNo, anStartDate));
         return AjaxObject.newOk("操作成功", map).toJson();
     }
     
@@ -220,7 +222,7 @@ public class RepaymentDubboService implements IScfRepaymentService {
     }
     
     @Override
-    public String webFindPresMoneyist(Map<String, Object> anMap) {
+    public String webFindPressMoneyList(Map<String, Object> anMap) {
         logger.debug("无分页查催收免列表，入参：" + anMap);
         Map<String, Object> qyConditionMap = new HashMap<String, Object>();
         qyConditionMap.put("requestNo", anMap.get("requestNo").toString());

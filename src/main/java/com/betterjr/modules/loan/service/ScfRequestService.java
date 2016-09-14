@@ -27,7 +27,6 @@ import com.betterjr.modules.loan.entity.ScfPayPlan;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
 import com.betterjr.modules.loan.entity.ScfServiceFee;
-import com.betterjr.modules.loan.entity.TransRequest;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
@@ -144,7 +143,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         request.setPayPlan(payPlanService.findPayPlanByRequest(anRequestNo));
         
         // 设置票据信息
-        this.fillOrderInfo(request);
+        //request.setOrder(this.fillOrderInfo(request));
         return request;
     }
 
