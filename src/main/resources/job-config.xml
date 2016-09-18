@@ -12,7 +12,7 @@
 
 	<description>Elastic-Job 配置 </description>
 	<reg:zookeeper id="scfCenter" server-lists="${elastic.job.serverLists}"
-		namespace="payplan" base-sleep-time-milliseconds="${elastic.job.baseSleepTimeMilliseconds}"
+		namespace="${elastic.job.namespace}" base-sleep-time-milliseconds="${elastic.job.baseSleepTimeMilliseconds}"
 		max-sleep-time-milliseconds="${elastic.job.maxSleepTimeMilliseconds}"
 		max-retries="${elastic.job.maxRetries}" />
 
