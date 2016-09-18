@@ -52,9 +52,9 @@
         </property>
     </bean>
 
-	<bean class="com.betterjr.common.utils.PropertiesHolder">
-		<property name="properties" value="scf-service-config.properties" />
-	</bean>
+    <bean class="com.betterjr.common.utils.PropertiesHolder">
+        <property name="properties" value="scf-service-config.properties" />
+    </bean>
 
 	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
 		init-method="init" destroy-method="close">
