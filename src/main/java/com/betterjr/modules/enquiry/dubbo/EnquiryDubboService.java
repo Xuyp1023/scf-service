@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
-import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.modules.enquiry.IScfEnquiryService;
 import com.betterjr.modules.enquiry.entity.ScfEnquiry;
@@ -35,10 +34,16 @@ public class EnquiryDubboService implements IScfEnquiryService {
     private ScfEnquiryObjectService enquiryObjectService;
     
     protected final Logger logger = LoggerFactory.getLogger(EnquiryDubboService.class);
+    
     public String webQueryEnquiryList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
         logger.debug("分页查询询价列表,入参："+ anMap);
         anMap = (Map) RuleServiceDubboFilterInvoker.getInputObj();
         return AjaxObject.newOkWithPage("查询成功", enquiryService.queryEnquiryList(anMap, anFlag, anPageNum, anPageSize)).toJson();
+    }
+    
+    public String webQuerySingleOrderEnquiryList(Long custNo, int anFlag, int anPageNum, int anPageSize) {
+        logger.debug("分页查询询价列表,入参："+ custNo);
+        return AjaxObject.newOkWithPage("查询成功", enquiryService.querySingleOrderEnquiryList(custNo, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     public String webAddEnquiry(Map<String, Object> anMap) {
@@ -50,6 +55,11 @@ public class EnquiryDubboService implements IScfEnquiryService {
     public String webFindEnquiryDetail(Long anId) {
         logger.debug("查询询价详情,入参：anId"+ anId);
         return AjaxObject.newOk(enquiryService.findEnquiryDetail(anId)).toJson();
+    }
+    
+    public String webFindSingleOrderEnquiryDetail(Long anId) {
+        logger.debug("查询询价详情,入参：anId"+ anId);
+        return AjaxObject.newOk(enquiryService.findSingleOrderEnquiryDetail(anId)).toJson();
     }
 
     public String webQueryOfferList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
@@ -114,13 +124,24 @@ public class EnquiryDubboService implements IScfEnquiryService {
     }
 
     @Override
-    public String webDropOffer(String anEnquiryNo, Long factorNo) {
-        logger.debug("意向企业放弃报价,入参：factorNo:"+ anEnquiryNo + " -factorNo:"+factorNo);
+    public String webFactorDropOffer(String anEnquiryNo, Long factorNo) {
+        logger.debug("资金方放弃报价,入参：factorNo:"+ anEnquiryNo + " -factorNo:"+factorNo);
         ScfEnquiryObject object = new ScfEnquiryObject();
         object.setEnquiryNo(anEnquiryNo);
         object.setFactorNo(factorNo);
         object.setBusinStatus("-1");
         return AjaxObject.newOk("保存成功", enquiryObjectService.saveModify(object)).toJson();
     }
+    
+    @Override
+    public String webCustDropFactorOffer(String anEnquiryNo, Long factorNo) {
+        logger.debug("询价企业放弃某个资金方的报价,入参：factorNo:"+ anEnquiryNo + " -factorNo:"+factorNo);
+        ScfEnquiryObject object = new ScfEnquiryObject();
+        object.setEnquiryNo(anEnquiryNo);
+        object.setFactorNo(factorNo);
+        object.setBusinStatus("-1");
+        return AjaxObject.newOk("保存成功", enquiryObjectService.saveModify(object)).toJson();
+    }
+    
     
 }

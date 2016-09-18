@@ -103,6 +103,7 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
        //设置保理公司名称
        for (ScfOffer offer : offerList) {
            offer.setFactorName(custAccountService.queryCustName(offer.getFactorNo()));
+           offer.setBusinStatus(getBusinStatus(offer.getBusinStatus())); 
        }
        return offerList;
     }
@@ -138,9 +139,30 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
             if(false == Collections3.isEmpty(offerList)){
                 object.setOffer(Collections3.getFirst(offerList));
             }
+            object.setBusinStatus(getBusinStatus(object.getBusinStatus()));
             object.setFactorName(accountService.queryCustName(object.getFactorNo()));
         }
         return list;
+    }
+    
+    private String getBusinStatus(String anBusinStatus) {
+        //状态：-2：已融资，-1：放弃，0：未报价，1：已报价
+        String ret = "";
+        switch (anBusinStatus) {
+            case "1":
+                ret = "已报价";
+                break;
+            case "0":
+                ret = "未报价";
+                break;
+             case "-1":
+                 ret = "已放弃";
+                break;
+            default:
+                ret = "已融资";
+                break;
+        }
+        return ret;
     }
     
     /**
