@@ -11,6 +11,8 @@ import javax.persistence.Table;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -229,6 +231,7 @@ public class ScfBadDebt implements BetterjrEntity {
         this.totalBalance = totalBalance;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getConfirmDate() {
         return confirmDate;
     }
@@ -261,6 +264,7 @@ public class ScfBadDebt implements BetterjrEntity {
         this.regOperName = regOperName;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getRegDate() {
         return regDate;
     }
@@ -293,6 +297,7 @@ public class ScfBadDebt implements BetterjrEntity {
         this.modiOperName = modiOperName;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getModiDate() {
         return modiDate;
     }

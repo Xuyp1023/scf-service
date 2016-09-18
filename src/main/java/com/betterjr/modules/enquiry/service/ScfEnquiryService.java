@@ -13,6 +13,7 @@ import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.enquiry.dao.ScfEnquiryMapper;
 import com.betterjr.modules.enquiry.entity.ScfEnquiry;
@@ -20,6 +21,7 @@ import com.betterjr.modules.enquiry.entity.ScfEnquiryObject;
 import com.betterjr.modules.enquiry.entity.ScfEnquiryOrder;
 import com.betterjr.modules.enquiry.entity.ScfOffer;
 import com.betterjr.modules.order.service.ScfOrderService;
+import com.betterjr.modules.receivable.service.ScfReceivableService;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 
 @Service
@@ -27,18 +29,18 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
 
     @Autowired
     private ScfOfferService offerService;
-
     @Autowired
     private ScfEnquiryObjectService enquiryObjectService;
-
     @Autowired
     private CustAccountService custAccountService;
-    
+    @Autowired
+    private ScfAcceptBillService billService;
+    @Autowired
+    private ScfReceivableService receivableService;
     @Autowired
     private ScfOrderService scfOrderService;
-
     @Autowired
-    private ScfEnquiryOrderService scfEnquiryOrderService;
+    private ScfEnquiryOrderService enquiryOrderService;
 
     /**
      * 新增询价
@@ -85,10 +87,76 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
     public Page<ScfEnquiry> queryEnquiryList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
         Page<ScfEnquiry> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
         for (ScfEnquiry scfEnquiry : page) {
-            scfEnquiry.setOrder(scfOrderService.findInfoListByRequest(scfEnquiry.getEnquiryNo(), scfEnquiry.getRequestType()));
-            scfEnquiry.setCustName(custAccountService.queryCustName(scfEnquiry.getCustNo()));
+            this.fillOrder(scfEnquiry, 1);
+            this.fillBusinStatus(scfEnquiry);
         }
         return page;
+    }
+    
+    /**
+     * 查询询价列表
+     * 
+     * @param anMap
+     * @param anFlag
+     * @param anPageNum
+     * @param anPageSize
+     * @return
+     */
+    public Page<ScfEnquiry> querySingleOrderEnquiryList(Long custNo, int anFlag, int anPageNum, int anPageSize) {
+        Page<ScfEnquiry> page = this.selectPropertyByPage("custNo", custNo, anPageNum, anPageSize, 1 == anFlag);
+        for (ScfEnquiry enquiry :page) {
+            this.fillOrder(enquiry, 2);
+            //设置报价状态
+            this.fillBusinStatus(enquiry);
+        }
+        return page;
+    }
+
+    /**
+     * 
+     * @param enquiry
+     * @param type 1：2.0版本一个询价有多个订单，2：一个询价只有一个订单
+     */
+    private void fillOrder(ScfEnquiry enquiry, int type) {
+        List idList = BetterStringUtils.splitTrim(enquiry.getOrders());
+        enquiry.setCustName(custAccountService.queryCustName(enquiry.getCustNo()));
+        
+        if(1 == type){
+            if(BetterStringUtils.equals("1", enquiry.getRequestType())){
+                enquiry.setOrder(scfOrderService.selectByListProperty("id", idList));
+            }else if(BetterStringUtils.equals("2", enquiry.getRequestType())){
+                enquiry.setOrder(billService.selectByListProperty("id", idList));
+            }else{
+                enquiry.setOrder(receivableService.selectByListProperty("id", idList));
+            }
+            return ;
+        }
+        
+        if(BetterStringUtils.equals("1", enquiry.getRequestType())){
+            enquiry.setOrder(Collections3.getFirst(scfOrderService.selectByListProperty("id", idList)));
+        }else if(BetterStringUtils.equals("2", enquiry.getRequestType())){
+            enquiry.setOrder(Collections3.getFirst(billService.selectByListProperty("id", idList)));
+        }else{
+            enquiry.setOrder(Collections3.getFirst(receivableService.selectByListProperty("id", idList)));
+        }
+    }
+
+    private void fillBusinStatus(ScfEnquiry enquiry) {
+        //状态：-2：已融资，-1：放弃，0：未报价，1：已报价
+        switch (enquiry.getBusinStatus()) {
+            case "1":
+                enquiry.setBusinStatus(enquiry.getOfferCount()+"个报价");
+                break;
+            case "0":
+                enquiry.setBusinStatus("未报价");
+                break;
+             case "-1":
+                 enquiry.setBusinStatus("已放弃");
+                break;
+            default:
+                enquiry.setBusinStatus("已融资");
+                break;
+        }
     }
 
     /**
@@ -99,10 +167,23 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
      */
     public ScfEnquiry findEnquiryDetail(Long anId) {
         ScfEnquiry enquiry = this.selectByPrimaryKey(anId);
-        enquiry.setCustName(custAccountService.queryCustName(enquiry.getCustNo()));
+        fillOrder(enquiry, 1);
         return enquiry;
     }
-
+    
+    /**
+     * 查询询价详情
+     * 
+     * @param anId
+     * @return
+     */
+    public ScfEnquiry findSingleOrderEnquiryDetail(Long anId) {
+        ScfEnquiry enquiry = this.selectByPrimaryKey(anId);
+        this.fillOrder(enquiry, 2);
+        this.fillBusinStatus(enquiry);
+        return enquiry;
+    }
+    
     /**
      * 查询询价详情
      * 
@@ -212,9 +293,9 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
         // 删除原有的关联订单
         Map<String, Object> qyOrderCondition = new HashMap<String, Object>();
         qyOrderCondition.put("enquiryNo", sourceEnquiry.getEnquiryNo());
-        List<ScfEnquiryOrder> orderList = scfEnquiryOrderService.selectByClassProperty(ScfEnquiryOrder.class, qyOrderCondition);
+        List<ScfEnquiryOrder> orderList = enquiryOrderService.selectByClassProperty(ScfEnquiryOrder.class, qyOrderCondition);
         for (ScfEnquiryOrder object : orderList) {
-            scfEnquiryOrderService.delete(object);
+            enquiryOrderService.delete(object);
         }
 
         // 保存新选的关联订单
@@ -224,7 +305,7 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
             order.setOrderId(Long.parseLong(orderId));
             order.setEnquiryNo(sourceEnquiry.getEnquiryNo());
             order.setOrderType(anEnquiry.getRequestType());
-            scfEnquiryOrderService.add(order);
+            enquiryOrderService.add(order);
         }
     }
 

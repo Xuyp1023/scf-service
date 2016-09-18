@@ -2,6 +2,7 @@ package com.betterjr.modules.loan.dubbo;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.modules.loan.IScfRepaymentService;
 import com.betterjr.modules.loan.entity.ScfExempt;
@@ -79,9 +81,10 @@ public class RepaymentDubboService implements IScfRepaymentService {
     }
     
     @Override
-    public String webFindPayPlanDetail(Map<String, Object> anMap, Long anId) {
-        logger.debug("查询还款详情，入参：" + anMap);
-        return AjaxObject.newOk(payPlanService.findPayPlanDetail(anId)).toJson();
+    public String webFindPayPlanDetail(String anRequestNo) {
+        logger.debug("查询还款详情，入参：" + anRequestNo);
+        List<ScfPayPlan> list = payPlanService.selectByClassProperty(ScfPayPlan.class, "requestNo", anRequestNo);
+        return AjaxObject.newOk(Collections3.getFirst(list)).toJson();
     }
     
     @Override
