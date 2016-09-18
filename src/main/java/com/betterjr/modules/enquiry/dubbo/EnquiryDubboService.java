@@ -134,13 +134,13 @@ public class EnquiryDubboService implements IScfEnquiryService {
     }
     
     @Override
-    public String webCustDropFactorOffer(String anEnquiryNo, Long factorNo) {
-        logger.debug("询价企业放弃某个资金方的报价,入参：factorNo:"+ anEnquiryNo + " -factorNo:"+factorNo);
-        ScfEnquiryObject object = new ScfEnquiryObject();
+    public String webCustDropOffer(String anEnquiryNo, Long offerId) {
+        logger.debug("询价企业放弃某个资金方的报价,入参：factorNo:"+ anEnquiryNo + " -offerId:"+offerId);
+        ScfOffer object = new ScfOffer();
         object.setEnquiryNo(anEnquiryNo);
-        object.setFactorNo(factorNo);
+        object.setId(offerId);
         object.setBusinStatus("-1");
-        return AjaxObject.newOk("保存成功", enquiryObjectService.saveModify(object)).toJson();
+        return AjaxObject.newOk("保存成功", offerService.saveModifyOffer(object, offerId)).toJson();
     }
     
     

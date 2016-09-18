@@ -103,7 +103,7 @@ public class ScfOffer implements BetterjrEntity {
      * 2：历史，1：报价，0：取消
      */
     @Column(name = "C_BUSIN_STATUS",  columnDefinition="CHAR" )
-    @MetaData( value="2：历史", comments = "2：历史，1：报价，0：取消")
+    @MetaData( value="2：历史", comments = "2：历史，1：报价，0：取消,-1")
     private String businStatus;
 
     /**
