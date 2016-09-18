@@ -56,13 +56,13 @@ public class ScfElecOpinionLocalService  extends ScfElecAgreeLocalService {
     }
 
     @Override
-    public boolean cancelElecAgreement() {
+    public boolean cancelElecAgreement(String anDescribe) {
         if (elecAgreeService.checkCancelElecAgreement(this.elecAgree.getAppNo())){
           ScfRequest tmpReq = this.requestService.selectByPrimaryKey(elecAgree.getRequestNo());
 //          tmpReq.cancelRequestValue("核心企业拒绝确认该融资订单！", "4");
 //          tmpReq = this.remoteHelper.sendRequestStatus(tmpReq);
-          if ("6".equalsIgnoreCase(tmpReq.getTradeStatus())){
-             return this.elecAgreeService.saveAndCancelElecAgreement(this.elecAgree.getAppNo());
+          if (tmpReq!=null && "6".equalsIgnoreCase(tmpReq.getTradeStatus())){
+             return this.elecAgreeService.saveAndCancelElecAgreement(this.elecAgree.getAppNo(),anDescribe);
           }
           else{
               return false;

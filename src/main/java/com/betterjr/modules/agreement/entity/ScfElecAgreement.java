@@ -146,6 +146,13 @@ public class ScfElecAgreement implements BetterjrEntity,BaseRemoteEntity {
     @Column(name = "C_SUPPLIER", columnDefinition = "VARCHAR")
     @MetaData(value = "供应商名称（卖方）", comments = "供应商名称（卖方）")
     private String supplier;
+    
+    /**
+     * 拒绝原因
+     */
+    @Column(name = "C_DESCRIBE", columnDefinition = "VARCHAR")
+    @MetaData(value = "拒绝原因", comments = "拒绝原因")
+    private String des;
  
     private static final long serialVersionUID = 1461746080033L;
 
@@ -314,6 +321,14 @@ public class ScfElecAgreement implements BetterjrEntity,BaseRemoteEntity {
         this.supplier = anSupplier;
     }
 
+    public String getDes() {
+        return this.des;
+    }
+
+    public void setDes(String anDescribe) {
+        this.des= anDescribe;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -338,6 +353,7 @@ public class ScfElecAgreement implements BetterjrEntity,BaseRemoteEntity {
         sb.append(", signerlist=").append(signerlist);
         sb.append(", dealFlag=").append(dealFlag);
         sb.append(", supplier=").append(supplier);
+        sb.append(", describe=").append(des);
         sb.append("]");
         return sb.toString();
     }

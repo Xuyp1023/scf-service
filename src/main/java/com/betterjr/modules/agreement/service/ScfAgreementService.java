@@ -48,6 +48,11 @@ public class ScfAgreementService {
         return localService.createOutHtmlInfo().toString();
     }
     
+    public boolean cancelElecAgreement(String anAppNo,String anDescribe){
+        ScfElecAgreeLocalService localService = ScfElecAgreementFactory.create(anAppNo);
+        return localService.cancelElecAgreement(anDescribe);
+    }
+    
     /****
      * 发送并验证签署合同的验证码
      * @param appNo

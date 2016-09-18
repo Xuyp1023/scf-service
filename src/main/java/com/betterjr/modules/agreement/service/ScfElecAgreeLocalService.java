@@ -32,11 +32,13 @@ public abstract class ScfElecAgreeLocalService {
 
     protected ScfElecAgreement elecAgree;
     protected FreemarkerService freeMarkerService;
+    protected ScfFactorRemoteHelper remoteHelper;
 
     protected void init(ScfElecAgreementService anElecAgreeService, ScfElecAgreement anElecAgree) {
         this.elecAgree = anElecAgree;
         this.elecAgreeService = anElecAgreeService;
         this.freeMarkerService = SpringContextHolder.getBean(FreemarkerService.class);
+        this.remoteHelper = SpringContextHolder.getBean(ScfFactorRemoteHelper.class);
         subInit();
     }
     
@@ -133,5 +135,10 @@ public abstract class ScfElecAgreeLocalService {
      */
     protected abstract String getViewModeFile();
 
-    public abstract boolean cancelElecAgreement();
+    /***
+     * 拒绝的原因
+     * @param anDescribe
+     * @return
+     */
+    public abstract boolean cancelElecAgreement(String anDescribe);
 }

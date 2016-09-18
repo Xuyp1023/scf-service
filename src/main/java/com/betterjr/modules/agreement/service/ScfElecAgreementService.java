@@ -258,7 +258,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
      * @param anAppNo
      * @return
      */
-    public boolean saveAndCancelElecAgreement(String anAppNo) {
+    public boolean saveAndCancelElecAgreement(String anAppNo,String anDescribe) {
         Long custNo = this.scfElecAgreeStubService.findContractCustNo(anAppNo);
         if (custNo <= 0L) {
             logger.error("saveAndCancelElecAgreement not find signed parnter use with anAppNo " + anAppNo);
@@ -270,6 +270,9 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
             // 未签署的协议才可以作废
             if ("1".equalsIgnoreCase(elecAgreement.getSignStatus()) == false) {
                 elecAgreement.fillElecAgreeStatus("9");
+                if(BetterStringUtils.isNotBlank(anDescribe)){
+                    elecAgreement.setDes(anDescribe);
+                }
                 this.updateByPrimaryKey(elecAgreement);
                 this.scfElecAgreeStubService.saveElecAgreeStubStatus(custNo, anAppNo, "9");
                 return true;

@@ -39,8 +39,8 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
     }
 
     @Override
-    public String webCancelElecAgreement(String anAppNo) {
-        if(scfElecAgreementService.saveAndCancelElecAgreement(anAppNo)){
+    public String webCancelElecAgreement(String anAppNo,String anDescribe) {
+        if(scfAgreementService.cancelElecAgreement(anAppNo,anDescribe)){
             return AjaxObject.newOk("取消电子合同的流水号成功").toJson();
         }else{
             return AjaxObject.newError("取消电子合同失败").toJson();
