@@ -103,7 +103,7 @@ public class ScfOffer implements BetterjrEntity {
      * 2：历史，1：报价，0：取消
      */
     @Column(name = "C_BUSIN_STATUS",  columnDefinition="CHAR" )
-    @MetaData( value="2：历史", comments = "2：历史，1：报价，0：取消,-1")
+    @MetaData( value="2：历史", comments = "2：历史，1：报价，0：取消,-1放弃")
     private String businStatus;
 
     /**
@@ -158,7 +158,7 @@ public class ScfOffer implements BetterjrEntity {
 
     private static final long serialVersionUID = 1473324455148L;
 
-    public Long getId() {
+    public Long getId() {// 1融资成本太高,2融资时间太长,3无资金需求,4操作太繁琐
         return id;
     }
 

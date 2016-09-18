@@ -13,14 +13,11 @@ import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
-import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.UserUtils;
-import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.sys.entity.WorkUserInfo;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -176,7 +173,14 @@ public class ScfEnquiry implements BetterjrEntity {
     @MetaData( value="询价方式 1：自动", comments = "询价方式 1：自动，2，主动")
     private String enquiryMethod;
 
-    private static final long serialVersionUID = 1473324455143L;
+    /**
+     * 放弃理由：1融资成本太高,2融资时间太长,3无资金需求,4操作太繁琐
+     */
+    @Column(name = "C_DROP_REASON",  columnDefinition="CHAR" )
+    @MetaData( value="放弃理由：1融资成本太高,2融资时间太长,3无资金需求,4操作太繁琐", comments = "放弃理由：1融资成本太高,2融资时间太长,3无资金需求,4操作太繁琐")
+    private String dropReason;
+
+    private static final long serialVersionUID = 1474169781476L;
 
     public Long getId() {
         return id;
@@ -194,7 +198,6 @@ public class ScfEnquiry implements BetterjrEntity {
         this.custNo = custNo;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getActualDate() {
         return actualDate;
     }
@@ -211,7 +214,6 @@ public class ScfEnquiry implements BetterjrEntity {
         this.enquiryNo = enquiryNo;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getEndDate() {
         return endDate;
     }
@@ -276,7 +278,6 @@ public class ScfEnquiry implements BetterjrEntity {
         this.regOperName = regOperName;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getRegDate() {
         return regDate;
     }
@@ -309,7 +310,6 @@ public class ScfEnquiry implements BetterjrEntity {
         this.modiOperName = modiOperName;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getModiDate() {
         return modiDate;
     }
@@ -382,6 +382,14 @@ public class ScfEnquiry implements BetterjrEntity {
         this.enquiryMethod = enquiryMethod;
     }
 
+    public String getDropReason() {
+        return dropReason;
+    }
+
+    public void setDropReason(String dropReason) {
+        this.dropReason = dropReason;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -413,6 +421,7 @@ public class ScfEnquiry implements BetterjrEntity {
         sb.append(", businStatus=").append(businStatus);
         sb.append(", offerCount=").append(offerCount);
         sb.append(", enquiryMethod=").append(enquiryMethod);
+        sb.append(", dropReason=").append(dropReason);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -454,7 +463,8 @@ public class ScfEnquiry implements BetterjrEntity {
             && (this.getStrategy() == null ? other.getStrategy() == null : this.getStrategy().equals(other.getStrategy()))
             && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
             && (this.getOfferCount() == null ? other.getOfferCount() == null : this.getOfferCount().equals(other.getOfferCount()))
-            && (this.getEnquiryMethod() == null ? other.getEnquiryMethod() == null : this.getEnquiryMethod().equals(other.getEnquiryMethod()));
+            && (this.getEnquiryMethod() == null ? other.getEnquiryMethod() == null : this.getEnquiryMethod().equals(other.getEnquiryMethod()))
+            && (this.getDropReason() == null ? other.getDropReason() == null : this.getDropReason().equals(other.getDropReason()));
     }
 
     @Override
@@ -486,6 +496,7 @@ public class ScfEnquiry implements BetterjrEntity {
         result = prime * result + ((getBusinStatus() == null) ? 0 : getBusinStatus().hashCode());
         result = prime * result + ((getOfferCount() == null) ? 0 : getOfferCount().hashCode());
         result = prime * result + ((getEnquiryMethod() == null) ? 0 : getEnquiryMethod().hashCode());
+        result = prime * result + ((getDropReason() == null) ? 0 : getDropReason().hashCode());
         return result;
     }
     
