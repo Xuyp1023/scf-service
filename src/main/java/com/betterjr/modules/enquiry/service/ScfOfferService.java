@@ -39,6 +39,11 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
     public ScfOffer addOffer(ScfOffer anOffer) {
         BTAssert.notNull(anOffer, "增加报价失败addOffer service failed offer =null");
         
+        ScfEnquiry enquiry = enquiryService.findEnquiryByNo(anOffer.getEnquiryNo());
+        if(BetterStringUtils.equals("1", enquiry.getEnquiryMethod())){
+            anOffer.setCustNo(enquiry.getCustNo());
+        }
+        
         //将原有的报价改为历史
         this.saveModifyToHistory(anOffer);
         enquiryService.saveUpdateOfferCount(anOffer.getEnquiryNo(), 1);
