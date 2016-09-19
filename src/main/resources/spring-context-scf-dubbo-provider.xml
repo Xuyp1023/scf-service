@@ -167,7 +167,7 @@
 		<!-- password -->
 		<constructor-arg index="4" type="String" ><null/></constructor-arg>
 		<!-- database index -->
-		<constructor-arg index="5" value="0" type="int" />
+		<constructor-arg index="5" value="${redis.default.index}" type="int" />
 		<!-- client name -->
 		<constructor-arg index="6" type="String" ><null/></constructor-arg>
 	</bean>
@@ -181,7 +181,7 @@
 		<!-- password -->
 		<constructor-arg index="4" type="String" ><null/></constructor-arg>
 		<!-- database index -->
-		<constructor-arg index="5" value="1" type="int" />
+		<constructor-arg index="5" value="${redis.shiro.index}" type="int" />
 		<!-- client name -->
 		<constructor-arg index="6" type="String" ><null/></constructor-arg>
 	</bean>
