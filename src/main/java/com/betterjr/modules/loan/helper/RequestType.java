@@ -1,10 +1,10 @@
 package com.betterjr.modules.loan.helper;
 
 public enum RequestType {
-    ORDER("1","申请"),
-    BILL("2","出具保理方案"),
-    RECEIVABLE("3","融资方确认方案"),
-    SELLER("4","发起融资背景确认");
+    ORDER("1","订单融资"),
+    BILL("2","票据融资"),
+    RECEIVABLE("3","应收账款融资"),
+    SELLER("4","经销商融资");
     
     private String code;
     private String name;

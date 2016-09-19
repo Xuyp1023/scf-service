@@ -31,14 +31,17 @@ public class RequestBillDubboService implements IScfBillRequestService {
 
     @Override
     public String webAddBillRequest(Map<String, Object> anMap) {
-        logger.debug("新增票据融资申请，入参：" + anMap);
+        logger.debug("微信版-新增票据融资申请，入参：" + anMap);
         ScfRequest request = (ScfRequest) RuleServiceDubboFilterInvoker.getInputObj();
         request.setTradeStatus("100");
+        request.setRequestFrom("2");
         request = billRequestService.addBillRequest(request);
+        
         // 关联订单
         orderService.saveInfoRequestNo(request.getRequestType(), request.getRequestNo(), request.getOrders());
+       
         // 冻结订单
-        //orderService.forzenInfos(request.getRequestNo(), null);
+        orderService.forzenInfos(request.getRequestNo(), null);
         return AjaxObject.newOk(this.webFindRequestByNo(request.getRequestNo())).toJson();
     }
 
@@ -60,8 +63,7 @@ public class RequestBillDubboService implements IScfBillRequestService {
         logger.debug("修改票据申请的融资状态，入参：anTradeStatus=" + anTradeStatus);
         ScfRequest request = requestService.findRequestDetail(anRequestNo);
         request.setTradeStatus(anTradeStatus);
-        request = requestService.saveModifyRequest(request, anRequestNo);
-        return AjaxObject.newOk(webFindRequestByNo(anRequestNo)).toJson();
+        return AjaxObject.newOk(requestService.saveModifyRequest(request, anRequestNo)).toJson();
     }
     
     @Override

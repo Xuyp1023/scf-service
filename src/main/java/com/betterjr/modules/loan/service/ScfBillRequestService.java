@@ -18,6 +18,7 @@ import com.betterjr.modules.loan.entity.ScfPayPlan;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.TransRequest;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
+import com.betterjr.modules.loan.helper.RequestType;
 import com.betterjr.modules.order.helper.ScfOrderRelationType;
 
 @Service
@@ -38,7 +39,7 @@ public class ScfBillRequestService extends BaseService<ScfRequestMapper, ScfRequ
      */
     public ScfRequest addBillRequest(ScfRequest anRequest) {
         BTAssert.notNull(anRequest, "新增融资申请失败-anRequest不能为空");
-        anRequest.setRequestType(ScfOrderRelationType.ORDER.getCode());
+        anRequest.setRequestType(RequestType.BILL.getCode());
         anRequest.setPeriodUnit(1);
         anRequest.setRequestDate(BetterDateUtils.getNumDate());
         anRequest.setTradeStatus(RequestTradeStatus.REQUEST.getCode());

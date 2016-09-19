@@ -1,5 +1,6 @@
 package com.betterjr.modules.loan.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,15 +55,6 @@ public class ScfRequestSchemeService extends BaseService<ScfRequestApprovedMappe
         anScheme.setCustNo(request.getCustNo());
         this.insert(anScheme);
 
-        // 修改申请表中的相关信息
-        request.setPeriod(anScheme.getApprovedPeriod());
-        request.setPeriodUnit(anScheme.getApprovedPeriodUnit());
-        request.setRatio(anScheme.getApprovedRatio());
-        request.setManagementRatio(anScheme.getApprovedRatio());
-        request.setServicefeeRatio(anScheme.getServicefeeRatio());
-        request.setConfirmBalance(anScheme.getApprovedBalance());
-        requestService.updateByPrimaryKeySelective(request);
-
         return findSchemeDetail(anScheme.getRequestNo());
     }
 
@@ -116,13 +108,24 @@ public class ScfRequestSchemeService extends BaseService<ScfRequestApprovedMappe
         BTAssert.notNull(anScheme, "修改贷款方案失败-anScheme不能为空");
 
         List<ScfRequestScheme> list = this.selectByProperty("requestNo", anScheme.getRequestNo());
-        if (Collections3.isEmpty(list) || list.size() == 0) {
+        if (Collections3.isEmpty(list)) {
             throw new IllegalArgumentException("修改贷款方案失败，找不到源数据-requestNo:" + anScheme.getRequestNo());
         }
 
         // 修改最新的一条
         anScheme.setId(Collections3.getFirst(list).getId());
         this.updateByPrimaryKeySelective(anScheme);
+        
+        //修改申请表中的信息
+        Map<String, Object> anMap = new HashMap<String, Object>();
+        anMap.put("approvedRatio",anScheme.getApprovedRatio());
+        anMap.put("managementRatio",anScheme.getApprovedManagementRatio());
+        anMap.put("approvedBalance",anScheme.getApprovedBalance());
+        anMap.put("approvedPeriod",anScheme.getApprovedPeriod());
+        anMap.put("approvedPeriodUnit",anScheme.getApprovedPeriodUnit());
+        anMap.put("requestNo",anScheme.getRequestNo());
+        requestService.saveApprovedInfo(anMap);
+        
         return findSchemeDetail(anScheme.getRequestNo());
     }
 
