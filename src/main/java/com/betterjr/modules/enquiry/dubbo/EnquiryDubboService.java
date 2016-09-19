@@ -1,5 +1,6 @@
 package com.betterjr.modules.enquiry.dubbo;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -7,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.modules.enquiry.IScfEnquiryService;
 import com.betterjr.modules.enquiry.entity.ScfEnquiry;
@@ -142,6 +144,17 @@ public class EnquiryDubboService implements IScfEnquiryService {
         object.setBusinStatus("-1");
         return AjaxObject.newOk("保存成功", offerService.saveModifyOffer(object, offerId)).toJson();
     }
-    
+
+    @Override
+    public String webCustDropEnquiry(Long enquiryId, String dropReason, String description) {
+        logger.debug("询价企业放询价,入参：enquiryId:"+ enquiryId);
+        ScfEnquiry enquiry = new ScfEnquiry();
+        enquiry.setId(enquiryId);
+        enquiry.setDropReason(dropReason);
+        enquiry.setDescription(description);
+        enquiry.setBusinStatus("-1");
+        return AjaxObject.newOk(enquiryService.saveUpdate(enquiry)).toJson();
+    }
+
     
 }

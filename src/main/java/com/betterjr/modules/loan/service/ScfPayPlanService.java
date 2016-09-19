@@ -23,7 +23,6 @@ import com.betterjr.modules.loan.entity.ScfPayPlan;
 import com.betterjr.modules.loan.entity.ScfPayRecord;
 import com.betterjr.modules.loan.entity.ScfPayRecordDetail;
 import com.betterjr.modules.loan.entity.ScfRequest;
-import com.betterjr.modules.loan.entity.ScfRequestScheme;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
 import com.betterjr.modules.param.entity.FactorParam;
 
@@ -38,8 +37,6 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
     private ScfRequestService requestService;
     @Autowired
     private CustAccountService custAccountService;
-    @Autowired
-    private ScfRequestSchemeService schemeService;
     @Autowired
     private ScfDeliveryNoticeService deliveryNotice;
 
@@ -222,14 +219,14 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
      * @return
      */
     public BigDecimal getFee(String anRequestNo, BigDecimal anLoanBalance, int anType) {
-        ScfRequestScheme scheme = schemeService.findSchemeDetail2(anRequestNo);
-        BigDecimal ratio = scheme.getApprovedRatio();
+        ScfRequest request =requestService.findRequestDetail(anRequestNo);
+        BigDecimal ratio = request.getApprovedRatio();
         BigDecimal scale = new BigDecimal(100);
         if (1 == anType) {
-            ratio = scheme.getApprovedManagementRatio();
+            ratio = request.getManagementRatio();
         }
         else if (2 == anType) {
-            ratio = scheme.getServicefeeRatio();
+            ratio = request.getServicefeeRatio();
             scale = new BigDecimal(1000);
         }
 
@@ -237,8 +234,8 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
             return new BigDecimal(0);
         }
 
-        BigDecimal fee = anLoanBalance.multiply(ratio).multiply(new BigDecimal(scheme.getApprovedPeriod())).divide(scale);
-        logger.debug("本金：" + anLoanBalance + "--利率：" + ratio + "--天数：" + scheme.getApprovedPeriod() + "--scale:" + scale + "--费用=" + fee);
+        BigDecimal fee = anLoanBalance.multiply(ratio).multiply(new BigDecimal(request.getApprovedPeriod())).divide(scale);
+        logger.debug("本金：" + anLoanBalance + "--利率：" + ratio + "--天数：" + request.getApprovedPeriod() + "--scale:" + scale + "--费用=" + fee);
         return fee;
     }
 
@@ -534,11 +531,11 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         int surplusDays = BetterDateUtils.getDaysBetween(startCalendar, payCalendar);
 
         // 计算利率(如果为月则换算成天=ratio*12/一年的天数)
-        ScfRequestScheme scheme = schemeService.findSchemeDetail2(plan.getRequestNo());
+        ScfRequest request = requestService.findRequestDetail(plan.getRequestNo());
         BigDecimal ratio = anRecord.getRatio();
         BigDecimal mgrRatio = anRecord.getManagementRatio();
-        if (BetterStringUtils.equals("2", scheme.getApprovedPeriodUnit().toString())) {
-            FactorParam param = DictUtils.loadObject("FactorParam", plan.getFactorNo().toString(), FactorParam.class);
+        FactorParam param = DictUtils.loadObject("FactorParam", plan.getFactorNo().toString(), FactorParam.class);
+        if (BetterStringUtils.equals("2", request.getApprovedPeriodUnit().toString())) {
             ratio = ratio.multiply(new BigDecimal(12)).divide(new BigDecimal(param.getCountDays())).setScale(2, BigDecimal.ROUND_HALF_UP);
             mgrRatio = mgrRatio.multiply(new BigDecimal(12)).divide(new BigDecimal(param.getCountDays())).setScale(2, BigDecimal.ROUND_HALF_UP);
         }

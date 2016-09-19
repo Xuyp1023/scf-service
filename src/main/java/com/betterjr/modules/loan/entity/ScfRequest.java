@@ -13,11 +13,9 @@ import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
-import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -49,11 +47,18 @@ public class ScfRequest implements BetterjrEntity {
     private String billNo;
 
     /**
-     * 融资金额
+     * 申请金额
      */
     @Column(name = "F_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="融资金额", comments = "融资金额")
+    @MetaData( value="申请金额", comments = "申请金额")
     private BigDecimal balance;
+
+    /**
+     * 审批金额
+     */
+    @Column(name = "F_APPROVED_BALANCE",  columnDefinition="DOUBLE" )
+    @MetaData( value="审批金额", comments = "审批金额")
+    private BigDecimal approvedBalance;
 
     /**
      * 实际融资金额
@@ -130,10 +135,10 @@ public class ScfRequest implements BetterjrEntity {
     private String aduit;
 
     /**
-     * 申请状态
+     * 申请状态（100 申请，110 出具保理方案 ，120 融资方确认方案 ，130 融资背景确认，140 核心企业确认背景，150 放款确认 ，160 放款完成，170 逾期，180 展期，190 还款完成）
      */
     @Column(name = "C_TRADE_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="申请状态", comments = "申请状态")
+    @MetaData( value="申请状态（100 申请", comments = "申请状态（100 申请，110 出具保理方案 ，120 融资方确认方案 ，130 发起融资背景确认，140 核心企业确认背景，150 放款确认 ，160 放款完成，170 逾期，180 展期，190 还款完成,200:交易关闭）")
     private String tradeStatus;
 
     @Column(name = "C_LAST_STATUS",  columnDefinition="VARCHAR" )
@@ -173,11 +178,18 @@ public class ScfRequest implements BetterjrEntity {
     private String cleanDate;
 
     /**
-     * 利率
+     * 申请利率
      */
     @Column(name = "F_RATIO",  columnDefinition="DOUBLE" )
-    @MetaData( value="利率", comments = "利率")
+    @MetaData( value="申请利率", comments = "申请利率")
     private BigDecimal ratio;
+
+    /**
+     * 审批利率
+     */
+    @Column(name = "F_APPROVED_RATIO",  columnDefinition="DOUBLE" )
+    @MetaData( value="审批利率", comments = "审批利率")
+    private BigDecimal approvedRatio;
 
     @Column(name = "C_CASH_REQUESTNO",  columnDefinition="VARCHAR" )
     @MetaData( value="", comments = "")
@@ -221,8 +233,11 @@ public class ScfRequest implements BetterjrEntity {
     @MetaData( value="", comments = "")
     private BigDecimal invoiceBalance;
 
+    /**
+     * 产品id
+     */
     @Column(name = "L_PRODUCT_ID",  columnDefinition="BIGINT" )
-    @MetaData( value="", comments = "")
+    @MetaData( value="产品id", comments = "产品id")
     private Long productId;
 
     /**
@@ -238,6 +253,20 @@ public class ScfRequest implements BetterjrEntity {
     @Column(name = "N_PERIOD_UNIT",  columnDefinition="INT" )
     @MetaData( value="期限单位：1：日", comments = "期限单位：1：日，2月")
     private Integer periodUnit;
+
+    /**
+     * 申请审批期限
+     */
+    @Column(name = "N_APPROVED_PERIOD",  columnDefinition="INT" )
+    @MetaData( value="申请审批期限", comments = "申请审批期限")
+    private Integer approvedPeriod;
+
+    /**
+     * 审批期限单位： 1日，2月
+     */
+    @Column(name = "N_APPROVED_PERIOD_UNIT",  columnDefinition="INT" )
+    @MetaData( value="审批期限单位： 1日", comments = "审批期限单位： 1日，2月")
+    private Integer approvedPeriodUnit;
 
     /**
      * 申请企业编号
@@ -278,7 +307,7 @@ public class ScfRequest implements BetterjrEntity {
      * 1,s订单，2:票据;3:应收款;4:经销商
      */
     @Column(name = "C_REQUEST_TYPE",  columnDefinition="VARCHAR" )
-    @MetaData( value="1订单", comments = "1,订单，2:票据;3:应收款;4:经销商")
+    @MetaData( value="1,s订单", comments = "1,s订单，2:票据;3:应收款;4:经销商")
     private String requestType;
 
     /**
@@ -345,7 +374,14 @@ public class ScfRequest implements BetterjrEntity {
     @MetaData( value="关联订单编号", comments = "关联订单编号")
     private String orders;
 
-    private static final long serialVersionUID = 1471502531685L;
+    /**
+     * 1:2.0, 2:微信票据
+     */
+    @Column(name = "C_REQUEST_FROM",  columnDefinition="CHAR" )
+    @MetaData( value="1:2.0, 2:微信票据", comments = "1:2.0, 2:微信票据")
+    private String requestFrom;
+
+    private static final long serialVersionUID = 1474255231687L;
 
     public String getRequestNo() {
         return requestNo;
@@ -395,6 +431,14 @@ public class ScfRequest implements BetterjrEntity {
         this.balance = balance;
     }
 
+    public BigDecimal getApprovedBalance() {
+        return approvedBalance;
+    }
+
+    public void setApprovedBalance(BigDecimal approvedBalance) {
+        this.approvedBalance = approvedBalance;
+    }
+
     public BigDecimal getConfirmBalance() {
         return confirmBalance;
     }
@@ -403,7 +447,6 @@ public class ScfRequest implements BetterjrEntity {
         this.confirmBalance = confirmBalance;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getRequestDate() {
         return requestDate;
     }
@@ -428,7 +471,6 @@ public class ScfRequest implements BetterjrEntity {
         this.factorRequestNo = factorRequestNo;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getOperDate() {
         return operDate;
     }
@@ -517,7 +559,6 @@ public class ScfRequest implements BetterjrEntity {
         this.loanBalance = loanBalance;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getActualDate() {
         return actualDate;
     }
@@ -526,7 +567,6 @@ public class ScfRequest implements BetterjrEntity {
         this.actualDate = actualDate;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getEndDate() {
         return endDate;
     }
@@ -535,7 +575,6 @@ public class ScfRequest implements BetterjrEntity {
         this.endDate = endDate;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getCleanDate() {
         return cleanDate;
     }
@@ -550,6 +589,14 @@ public class ScfRequest implements BetterjrEntity {
 
     public void setRatio(BigDecimal ratio) {
         this.ratio = ratio;
+    }
+
+    public BigDecimal getApprovedRatio() {
+        return approvedRatio;
+    }
+
+    public void setApprovedRatio(BigDecimal approvedRatio) {
+        this.approvedRatio = approvedRatio;
     }
 
     public String getCashRequestNo() {
@@ -648,6 +695,22 @@ public class ScfRequest implements BetterjrEntity {
         this.periodUnit = periodUnit;
     }
 
+    public Integer getApprovedPeriod() {
+        return approvedPeriod;
+    }
+
+    public void setApprovedPeriod(Integer approvedPeriod) {
+        this.approvedPeriod = approvedPeriod;
+    }
+
+    public Integer getApprovedPeriodUnit() {
+        return approvedPeriodUnit;
+    }
+
+    public void setApprovedPeriodUnit(Integer approvedPeriodUnit) {
+        this.approvedPeriodUnit = approvedPeriodUnit;
+    }
+
     public Long getCustNo() {
         return custNo;
     }
@@ -744,7 +807,6 @@ public class ScfRequest implements BetterjrEntity {
         this.modiOperName = modiOperName;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getModiDate() {
         return modiDate;
     }
@@ -777,7 +839,6 @@ public class ScfRequest implements BetterjrEntity {
         this.regOperName = regOperName;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getRegDate() {
         return regDate;
     }
@@ -802,6 +863,14 @@ public class ScfRequest implements BetterjrEntity {
         this.orders = orders;
     }
 
+    public String getRequestFrom() {
+        return requestFrom;
+    }
+
+    public void setRequestFrom(String requestFrom) {
+        this.requestFrom = requestFrom;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -814,6 +883,7 @@ public class ScfRequest implements BetterjrEntity {
         sb.append(", supplierNo=").append(supplierNo);
         sb.append(", billNo=").append(billNo);
         sb.append(", balance=").append(balance);
+        sb.append(", approvedBalance=").append(approvedBalance);
         sb.append(", confirmBalance=").append(confirmBalance);
         sb.append(", requestDate=").append(requestDate);
         sb.append(", requestTime=").append(requestTime);
@@ -833,6 +903,7 @@ public class ScfRequest implements BetterjrEntity {
         sb.append(", endDate=").append(endDate);
         sb.append(", cleanDate=").append(cleanDate);
         sb.append(", ratio=").append(ratio);
+        sb.append(", approvedRatio=").append(approvedRatio);
         sb.append(", cashRequestNo=").append(cashRequestNo);
         sb.append(", creditMoney=").append(creditMoney);
         sb.append(", remainMoney=").append(remainMoney);
@@ -845,6 +916,8 @@ public class ScfRequest implements BetterjrEntity {
         sb.append(", productId=").append(productId);
         sb.append(", period=").append(period);
         sb.append(", periodUnit=").append(periodUnit);
+        sb.append(", approvedPeriod=").append(approvedPeriod);
+        sb.append(", approvedPeriodUnit=").append(approvedPeriodUnit);
         sb.append(", custNo=").append(custNo);
         sb.append(", coreCustNo=").append(coreCustNo);
         sb.append(", custType=").append(custType);
@@ -864,6 +937,7 @@ public class ScfRequest implements BetterjrEntity {
         sb.append(", regDate=").append(regDate);
         sb.append(", regTime=").append(regTime);
         sb.append(", orders=").append(orders);
+        sb.append(", requestFrom=").append(requestFrom);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -887,6 +961,7 @@ public class ScfRequest implements BetterjrEntity {
             && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
             && (this.getBillNo() == null ? other.getBillNo() == null : this.getBillNo().equals(other.getBillNo()))
             && (this.getBalance() == null ? other.getBalance() == null : this.getBalance().equals(other.getBalance()))
+            && (this.getApprovedBalance() == null ? other.getApprovedBalance() == null : this.getApprovedBalance().equals(other.getApprovedBalance()))
             && (this.getConfirmBalance() == null ? other.getConfirmBalance() == null : this.getConfirmBalance().equals(other.getConfirmBalance()))
             && (this.getRequestDate() == null ? other.getRequestDate() == null : this.getRequestDate().equals(other.getRequestDate()))
             && (this.getRequestTime() == null ? other.getRequestTime() == null : this.getRequestTime().equals(other.getRequestTime()))
@@ -906,6 +981,7 @@ public class ScfRequest implements BetterjrEntity {
             && (this.getEndDate() == null ? other.getEndDate() == null : this.getEndDate().equals(other.getEndDate()))
             && (this.getCleanDate() == null ? other.getCleanDate() == null : this.getCleanDate().equals(other.getCleanDate()))
             && (this.getRatio() == null ? other.getRatio() == null : this.getRatio().equals(other.getRatio()))
+            && (this.getApprovedRatio() == null ? other.getApprovedRatio() == null : this.getApprovedRatio().equals(other.getApprovedRatio()))
             && (this.getCashRequestNo() == null ? other.getCashRequestNo() == null : this.getCashRequestNo().equals(other.getCashRequestNo()))
             && (this.getCreditMoney() == null ? other.getCreditMoney() == null : this.getCreditMoney().equals(other.getCreditMoney()))
             && (this.getRemainMoney() == null ? other.getRemainMoney() == null : this.getRemainMoney().equals(other.getRemainMoney()))
@@ -918,6 +994,8 @@ public class ScfRequest implements BetterjrEntity {
             && (this.getProductId() == null ? other.getProductId() == null : this.getProductId().equals(other.getProductId()))
             && (this.getPeriod() == null ? other.getPeriod() == null : this.getPeriod().equals(other.getPeriod()))
             && (this.getPeriodUnit() == null ? other.getPeriodUnit() == null : this.getPeriodUnit().equals(other.getPeriodUnit()))
+            && (this.getApprovedPeriod() == null ? other.getApprovedPeriod() == null : this.getApprovedPeriod().equals(other.getApprovedPeriod()))
+            && (this.getApprovedPeriodUnit() == null ? other.getApprovedPeriodUnit() == null : this.getApprovedPeriodUnit().equals(other.getApprovedPeriodUnit()))
             && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
             && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
             && (this.getCustType() == null ? other.getCustType() == null : this.getCustType().equals(other.getCustType()))
@@ -936,7 +1014,8 @@ public class ScfRequest implements BetterjrEntity {
             && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
             && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
             && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
-            && (this.getOrders() == null ? other.getOrders() == null : this.getOrders().equals(other.getOrders()));
+            && (this.getOrders() == null ? other.getOrders() == null : this.getOrders().equals(other.getOrders()))
+            && (this.getRequestFrom() == null ? other.getRequestFrom() == null : this.getRequestFrom().equals(other.getRequestFrom()));
     }
 
     @Override
@@ -949,6 +1028,7 @@ public class ScfRequest implements BetterjrEntity {
         result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
         result = prime * result + ((getBillNo() == null) ? 0 : getBillNo().hashCode());
         result = prime * result + ((getBalance() == null) ? 0 : getBalance().hashCode());
+        result = prime * result + ((getApprovedBalance() == null) ? 0 : getApprovedBalance().hashCode());
         result = prime * result + ((getConfirmBalance() == null) ? 0 : getConfirmBalance().hashCode());
         result = prime * result + ((getRequestDate() == null) ? 0 : getRequestDate().hashCode());
         result = prime * result + ((getRequestTime() == null) ? 0 : getRequestTime().hashCode());
@@ -968,6 +1048,7 @@ public class ScfRequest implements BetterjrEntity {
         result = prime * result + ((getEndDate() == null) ? 0 : getEndDate().hashCode());
         result = prime * result + ((getCleanDate() == null) ? 0 : getCleanDate().hashCode());
         result = prime * result + ((getRatio() == null) ? 0 : getRatio().hashCode());
+        result = prime * result + ((getApprovedRatio() == null) ? 0 : getApprovedRatio().hashCode());
         result = prime * result + ((getCashRequestNo() == null) ? 0 : getCashRequestNo().hashCode());
         result = prime * result + ((getCreditMoney() == null) ? 0 : getCreditMoney().hashCode());
         result = prime * result + ((getRemainMoney() == null) ? 0 : getRemainMoney().hashCode());
@@ -980,6 +1061,8 @@ public class ScfRequest implements BetterjrEntity {
         result = prime * result + ((getProductId() == null) ? 0 : getProductId().hashCode());
         result = prime * result + ((getPeriod() == null) ? 0 : getPeriod().hashCode());
         result = prime * result + ((getPeriodUnit() == null) ? 0 : getPeriodUnit().hashCode());
+        result = prime * result + ((getApprovedPeriod() == null) ? 0 : getApprovedPeriod().hashCode());
+        result = prime * result + ((getApprovedPeriodUnit() == null) ? 0 : getApprovedPeriodUnit().hashCode());
         result = prime * result + ((getCustNo() == null) ? 0 : getCustNo().hashCode());
         result = prime * result + ((getCoreCustNo() == null) ? 0 : getCoreCustNo().hashCode());
         result = prime * result + ((getCustType() == null) ? 0 : getCustType().hashCode());
@@ -999,6 +1082,7 @@ public class ScfRequest implements BetterjrEntity {
         result = prime * result + ((getRegDate() == null) ? 0 : getRegDate().hashCode());
         result = prime * result + ((getRegTime() == null) ? 0 : getRegTime().hashCode());
         result = prime * result + ((getOrders() == null) ? 0 : getOrders().hashCode());
+        result = prime * result + ((getRequestFrom() == null) ? 0 : getRequestFrom().hashCode());
         return result;
     }
     
@@ -1008,18 +1092,12 @@ public class ScfRequest implements BetterjrEntity {
     private String factorName;
     @Transient
     private ScfPayPlan payPlan;
-    @Transient
-    private BigDecimal approvedRatio;
-    @Transient
-    private Integer approvedPeriod;
-    @Transient
-    private Integer approvedPeriodUnit;
-    @Transient
-    private BigDecimal approvedBalance;
     
     /*用于保存票据金额，如果有多张票则相加 (为满足票据版需求)*/
     @Transient 
     private BigDecimal orderBalance;
+    @Transient
+    private String productName;
     
     public String getCoreCustName() {
         return coreCustName;
@@ -1045,44 +1123,20 @@ public class ScfRequest implements BetterjrEntity {
         this.payPlan = payPlan;
     }
     
-    public BigDecimal getApprovedRatio() {
-        return approvedRatio;
-    }
-
-    public void setApprovedRatio(BigDecimal approvedRatio) {
-        this.approvedRatio = approvedRatio;
-    }
-
-    public Integer getApprovedPeriod() {
-        return approvedPeriod;
-    }
-
-    public void setApprovedPeriod(Integer approvedPeriod) {
-        this.approvedPeriod = approvedPeriod;
-    }
-
-    public Integer getApprovedPeriodUnit() {
-        return approvedPeriodUnit;
-    }
-
-    public void setApprovedPeriodUnit(Integer approvedPeriodUnit) {
-        this.approvedPeriodUnit = approvedPeriodUnit;
-    }
-
-    public BigDecimal getApprovedBalance() {
-        return approvedBalance;
-    }
-
-    public void setApprovedBalance(BigDecimal approvedBalance) {
-        this.approvedBalance = approvedBalance;
-    }
-
     public BigDecimal getOrderBalance() {
         return orderBalance;
     }
 
     public void setOrderBalance(BigDecimal orderBalance) {
         this.orderBalance = orderBalance;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public void init() {
