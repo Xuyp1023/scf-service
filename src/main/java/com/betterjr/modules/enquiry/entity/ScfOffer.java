@@ -13,11 +13,9 @@ import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
-import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -103,7 +101,7 @@ public class ScfOffer implements BetterjrEntity {
      * 2：历史，1：报价，0：取消
      */
     @Column(name = "C_BUSIN_STATUS",  columnDefinition="CHAR" )
-    @MetaData( value="2：历史", comments = "2：历史，1：报价，0：取消,-1放弃")
+    @MetaData( value="2：历史", comments = "2：历史，1：报价，0：取消")
     private String businStatus;
 
     /**
@@ -156,9 +154,16 @@ public class ScfOffer implements BetterjrEntity {
     @MetaData( value="1:报价;2:最终报价", comments = "1:报价;2:最终报价")
     private String quoteType;
 
-    private static final long serialVersionUID = 1473324455148L;
+    /**
+     * 备注
+     */
+    @Column(name = "C_DESCRIPTION",  columnDefinition="VARCHAR" )
+    @MetaData( value="备注", comments = "备注")
+    private String description;
 
-    public Long getId() {// 1融资成本太高,2融资时间太长,3无资金需求,4操作太繁琐
+    private static final long serialVersionUID = 1474289210253L;
+
+    public Long getId() {
         return id;
     }
 
@@ -278,7 +283,6 @@ public class ScfOffer implements BetterjrEntity {
         this.regOperName = regOperName;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getRegDate() {
         return regDate;
     }
@@ -311,7 +315,6 @@ public class ScfOffer implements BetterjrEntity {
         this.modiOperName = modiOperName;
     }
 
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getModiDate() {
         return modiDate;
     }
@@ -344,6 +347,14 @@ public class ScfOffer implements BetterjrEntity {
         this.quoteType = quoteType;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -373,6 +384,7 @@ public class ScfOffer implements BetterjrEntity {
         sb.append(", modiTime=").append(modiTime);
         sb.append(", version=").append(version);
         sb.append(", quoteType=").append(quoteType);
+        sb.append(", description=").append(description);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -412,7 +424,8 @@ public class ScfOffer implements BetterjrEntity {
             && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
             && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()))
             && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()))
-            && (this.getQuoteType() == null ? other.getQuoteType() == null : this.getQuoteType().equals(other.getQuoteType()));
+            && (this.getQuoteType() == null ? other.getQuoteType() == null : this.getQuoteType().equals(other.getQuoteType()))
+            && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()));
     }
 
     @Override
@@ -442,6 +455,7 @@ public class ScfOffer implements BetterjrEntity {
         result = prime * result + ((getModiTime() == null) ? 0 : getModiTime().hashCode());
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
         result = prime * result + ((getQuoteType() == null) ? 0 : getQuoteType().hashCode());
+        result = prime * result + ((getDescription() == null) ? 0 : getDescription().hashCode());
         return result;
     }
     
