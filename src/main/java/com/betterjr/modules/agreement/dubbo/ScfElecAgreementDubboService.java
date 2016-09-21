@@ -51,6 +51,14 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
     public String webFindElecAgreePage(String anAppNo) {
         return AjaxObject.newOk("生成电子合同的静态页面",scfAgreementService.createOutHtmlInfo(anAppNo)).toJson();
     }
+    
+    /****
+     * 根据请求单号生成电子合同的静态页面
+     * @param 
+     */
+    public String webFindElecAgreePageByRequestNo(String anRequestNo,String anAgreeType){
+        return AjaxObject.newOk("生成电子合同的静态页面",scfAgreementService.createOutHtmlInfoByRequestNo(anRequestNo,anAgreeType)).toJson();
+    }
 
     @Override
     public String webFindValidCode(String anAppNo, String anCustType) {
@@ -86,7 +94,8 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
      */
     public boolean webTransNotice(Map<String, Object> anMap){
         ScfRequestNotice noticeRequest=(ScfRequestNotice)RuleServiceDubboFilterInvoker.getInputObj();
-        return scfAgreementService.transNotice(noticeRequest);
+        String agreeNo=scfAgreementService.transNotice(noticeRequest);
+        return agreeNo!=null;
     }
     
     

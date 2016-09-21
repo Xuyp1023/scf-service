@@ -48,6 +48,17 @@ public class ScfAgreementService {
         return localService.createOutHtmlInfo().toString();
     }
     
+    /***
+     * 生成通知书的静态页面成功
+     * @param appNo
+     * @return
+     */
+    public String createOutHtmlInfoByRequestNo(String anRequestNo,String anAgreeType){
+        String appNo=scfElecAgreementService.findElecAgreeByRequestNo(anRequestNo, anAgreeType);
+        ScfElecAgreeLocalService localService = ScfElecAgreementFactory.create(appNo);
+        return localService.createOutHtmlInfo().toString();
+    }
+    
     /****
      * 拒绝签署
      * @param anAppNo
@@ -107,7 +118,7 @@ public class ScfAgreementService {
      * 
      * @return
      */
-    public boolean transNotice(ScfRequestNotice anNoticeRequest){
+    public String transNotice(ScfRequestNotice anNoticeRequest){
         logger.info("转让通知书："+anNoticeRequest);
         ScfRequest request = requestService.findRequestDetail(anNoticeRequest.getRequestNo());
         anNoticeRequest.fillInfo(request);
@@ -129,7 +140,7 @@ public class ScfAgreementService {
     /***
      * 应收账款转让书
      */
-    public boolean transCredit(List<ScfRequestCredit> list){
+    public boolean transCredit(List<ScfRequestCredit> list,String anAgreeNo){
         logger.info("应收账款转让书："+list);
         ScfRequestCredit credit=Collections3.getFirst(list);
         BTAssert.notNull(credit,"应收账款明细不能为空");
@@ -138,7 +149,7 @@ public class ScfAgreementService {
         // 根据申请单号查询对应的转让书编号
         ScfRequestNotice notice=requestNoticeService.findTransNotice(requestNo);
         BTAssert.notNull(notice,"申请单："+requestNo+"的转让通知书不存在");
-        if (requestNoticeService.allowUpdate(requestNo) && requestCreditService.updateCreditList(request,notice.getNoticeNo(), list)) {
+        if (requestNoticeService.allowUpdate(requestNo) && requestCreditService.updateCreditList(request,notice.getNoticeNo(), list,anAgreeNo)) {
             return true;
         }
         return false;

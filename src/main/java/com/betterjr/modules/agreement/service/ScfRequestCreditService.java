@@ -27,11 +27,12 @@ public class ScfRequestCreditService extends BaseService<ScfRequestCreditMapper,
         return this.selectByProperty("requestNo", anRequestNo);
     }
     
-    public boolean updateCreditList(ScfRequest anRequest,String anNoticNo, List<ScfRequestCredit> anList){
+    public boolean updateCreditList(ScfRequest anRequest,String anNoticNo, List<ScfRequestCredit> anList,String anAgreeNo){
         this.deleteByProperty("requestNo", anRequest.getRequestNo());
         for(ScfRequestCredit credit : anList){
            credit.fillInfo(anRequest);
            credit.setConfirmNo(anNoticNo);
+           credit.setAgreeNo(anAgreeNo);
            this.insert(credit);
         }
         return true;
