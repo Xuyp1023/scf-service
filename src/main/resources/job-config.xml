@@ -18,6 +18,6 @@
 
 	<job:simple id="payplanJob"
 		class="com.betterjr.modules.loan.job.PayPlanJob"
-		registry-center-ref="scfCenter" cron="0 0 0 0/1 * ?"
+		registry-center-ref="scfCenter" cron="0 0 0 1/1 * ?"
 		sharding-total-count="1" sharding-item-parameters="0=A" />
 </beans>

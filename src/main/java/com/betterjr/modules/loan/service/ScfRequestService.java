@@ -29,6 +29,8 @@ import com.betterjr.modules.customer.ICustMechLawService;
 import com.betterjr.modules.customer.entity.CustMechBankAccount;
 import com.betterjr.modules.customer.entity.CustMechBase;
 import com.betterjr.modules.customer.entity.CustMechLaw;
+import com.betterjr.modules.enquiry.entity.ScfOffer;
+import com.betterjr.modules.enquiry.service.ScfOfferService;
 import com.betterjr.modules.loan.dao.ScfRequestMapper;
 import com.betterjr.modules.loan.entity.ScfLoan;
 import com.betterjr.modules.loan.entity.ScfPayPlan;
@@ -62,6 +64,8 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     private ScfOrderService orderService;
     @Autowired
     private ScfProductService productService;
+    @Autowired
+    private ScfOfferService offerService;
     
     @Reference(interfaceClass = ICustMechLawService.class)
     private ICustMechLawService mechLawService;
@@ -72,9 +76,12 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     @Autowired
     private ScfAgreementService agreementService;
     
-    public ScfRequest startRequest(ScfRequest anRequest){
+    public ScfRequest saveStartRequest(ScfRequest anRequest){
         anRequest.setRequestFrom("1");
         anRequest = this.addRequest(anRequest);
+        
+        //从报价过来的要改变报价状态
+        offerService.saveUpdateTradeStatus(anRequest.getOfferId(), "3");
 
         // 关联订单
         orderService.saveInfoRequestNo(anRequest.getRequestType(), anRequest.getRequestNo(), anRequest.getOrders());
@@ -220,18 +227,29 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     }
 
     /**
-     * 资方-出具融资方案
+     * 资方-出具融资方案（生成应收账款转让通知书）
      * 
      * @param anMap
      * @return
      */
     public ScfRequestScheme saveOfferScheme(ScfRequestScheme anScheme) {
+        ScfRequest request = this.selectByPrimaryKey(anScheme.getRequestNo());
+        // 1,订单，2:票据;3:应收款;4:经销商
+        if (BetterStringUtils.equals("4", request.getRequestType()) == false) {
+            // 发送出-应收帐款转让通知书
+            ScfRequestNotice noticeRequest = this.getNotice(request);
+            agreementService.transNotice(noticeRequest);
+
+            // 添加转让明细（因为在转让申请时就添加了 转让明细，如果核心企业不同意，那明细需要删除，但目前没有做删除这步）
+            agreementService.transCredit(this.getCreditList(request));
+        }
+        
         return schemeService.addScheme(anScheme);
     }
 
     /**
      * 融方-确认融资方案（确认融资金额，期限，利率，）
-     * （发出应收账款转让通知书）
+     * 
      * @param  anRequestNo
      * @param  anAduitStatus
      * @return
@@ -244,23 +262,11 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         ScfRequest request = this.selectByPrimaryKey(anRequestNo);
         request.setApprovedPeriod(scheme.getApprovedPeriod());
         request.setApprovedPeriodUnit(scheme.getApprovedPeriodUnit());
-        request.setApprovedRatio(scheme.getApprovedRatio());
         request.setManagementRatio(scheme.getApprovedManagementRatio());
         request.setServicefeeRatio(scheme.getServicefeeRatio());
         request.setApprovedBalance(scheme.getApprovedBalance());
         request.setConfirmBalance(scheme.getApprovedBalance());
         this.saveModifyRequest(request, anRequestNo);
-        
-        request = this.findRequestDetail(anRequestNo);
-        // 1,订单，2:票据;3:应收款;4:经销商
-        if (BetterStringUtils.equals("4", request.getRequestType()) == false) {
-            // 发送出-应收帐款转让通知书
-            ScfRequestNotice noticeRequest = this.getNotice(request);
-            agreementService.transNotice(noticeRequest);
-
-            // 添加转让明细（因为在转让申请时就添加了 转让明细，如果核心企业不同意，那明细需要删除，但目前没有做删除这步）
-            agreementService.transCredit(this.getCreditList(request));
-        }
         
         // 修改融资企业确认状态
         scheme.setCustAduit(anAduitStatus);
@@ -268,8 +274,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     }
 
     /**
-     * 资方-发起贸易背景确认
-     * 
+     * 资方-发起贸易背景确认（生成应收账款转确认意见书）
      * @param anMap
      * @return
      */
@@ -278,11 +283,21 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         ScfRequest request = this.selectByPrimaryKey(anRequestNo);
         scheme.setCoreCustAduit("0");
         schemeService.saveModifyScheme(scheme);
+        
+        // 1,订单，2:票据;3:应收款;4:经销商
+        if (BetterStringUtils.equals("4", request.getRequestType()) == true) {
+            //签署-三方协议
+            agreementService.transProtacal(this.getProtacal(request));
+        }
+        else {
+            // 签署-应收账款转让意见确认书
+            agreementService.transOpinion(this.getOption(request));
+        }
         return request;
     }
     
     /**
-     * 核心企业--（确认贸易背景、签署应收账款转让协议）
+     * 核心企业
      * 
      * @param anMap
      * @return
@@ -295,16 +310,6 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         scheme.setCoreCustAduit(anAduitStatus);
         schemeService.saveModifyScheme(scheme);
         
-        ScfRequest request = findRequestDetail(anRequestNo);
-        // 1,订单，2:票据;3:应收款;4:经销商
-        if (BetterStringUtils.equals("4", request.getRequestType()) == true) {
-            //签署-三方协议
-            agreementService.transProtacal(this.getProtacal(request));
-        }
-        else {
-            // 签署-应收账款转让意见确认书
-            agreementService.transOpinion(this.getOption(request));
-        }
         return findRequestDetail(anRequestNo);
     }
 

@@ -138,7 +138,7 @@ public class ScfRequest implements BetterjrEntity {
      * 申请状态（100 申请，110 出具保理方案 ，120 融资方确认方案 ，130 融资背景确认，140 核心企业确认背景，150 放款确认 ，160 放款完成，170 逾期，180 展期，190 还款完成）
      */
     @Column(name = "C_TRADE_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="申请状态（100 申请", comments = "申请状态（100 申请，110 出具保理方案 ，120 融资方确认方案 ，130 发起融资背景确认，140 核心企业确认背景，150 放款确认 ，160 放款完成，170 逾期，180 展期，190 还款完成,200:交易关闭）")
+    @MetaData( value="申请状态（100 申请", comments = "申请状态（100 申请，110 出具保理方案 ，120 融资方确认方案 ，130 融资背景确认，140 核心企业确认背景，150 放款确认 ，160 放款完成，170 逾期，180 展期，190 还款完成）")
     private String tradeStatus;
 
     @Column(name = "C_LAST_STATUS",  columnDefinition="VARCHAR" )
@@ -381,7 +381,14 @@ public class ScfRequest implements BetterjrEntity {
     @MetaData( value="1:2.0, 2:微信票据", comments = "1:2.0, 2:微信票据")
     private String requestFrom;
 
-    private static final long serialVersionUID = 1474255231687L;
+    /**
+     * 报价ID
+     */
+    @Column(name = "L_OFFERID",  columnDefinition="BIGINT" )
+    @MetaData( value="报价ID", comments = "报价ID")
+    private Long offerId;
+
+    private static final long serialVersionUID = 1474419650663L;
 
     public String getRequestNo() {
         return requestNo;
@@ -871,6 +878,14 @@ public class ScfRequest implements BetterjrEntity {
         this.requestFrom = requestFrom;
     }
 
+    public Long getOfferId() {
+        return offerId;
+    }
+
+    public void setOfferId(Long offerId) {
+        this.offerId = offerId;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -938,6 +953,7 @@ public class ScfRequest implements BetterjrEntity {
         sb.append(", regTime=").append(regTime);
         sb.append(", orders=").append(orders);
         sb.append(", requestFrom=").append(requestFrom);
+        sb.append(", offerId=").append(offerId);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -1015,7 +1031,8 @@ public class ScfRequest implements BetterjrEntity {
             && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
             && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
             && (this.getOrders() == null ? other.getOrders() == null : this.getOrders().equals(other.getOrders()))
-            && (this.getRequestFrom() == null ? other.getRequestFrom() == null : this.getRequestFrom().equals(other.getRequestFrom()));
+            && (this.getRequestFrom() == null ? other.getRequestFrom() == null : this.getRequestFrom().equals(other.getRequestFrom()))
+            && (this.getOfferId() == null ? other.getOfferId() == null : this.getOfferId().equals(other.getOfferId()));
     }
 
     @Override
@@ -1083,6 +1100,7 @@ public class ScfRequest implements BetterjrEntity {
         result = prime * result + ((getRegTime() == null) ? 0 : getRegTime().hashCode());
         result = prime * result + ((getOrders() == null) ? 0 : getOrders().hashCode());
         result = prime * result + ((getRequestFrom() == null) ? 0 : getRequestFrom().hashCode());
+        result = prime * result + ((getOfferId() == null) ? 0 : getOfferId().hashCode());
         return result;
     }
     

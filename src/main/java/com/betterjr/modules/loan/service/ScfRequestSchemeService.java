@@ -50,6 +50,7 @@ public class ScfRequestSchemeService extends BaseService<ScfRequestApprovedMappe
         
         // 初始化相关企业编号
         ScfRequest request = requestService.findRequestDetail(anScheme.getRequestNo());
+        BTAssert.notNull(request.getRequestNo(), "保存贷款方案失败-没找到相应的申请单");
         anScheme.setFactorNo(request.getFactorNo());
         anScheme.setCoreCustNo(request.getCoreCustNo());
         anScheme.setCustNo(request.getCustNo());

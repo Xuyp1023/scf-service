@@ -145,16 +145,16 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
         //状态：-2：已融资，-1：放弃，0：未报价，1：已报价
         switch (enquiry.getBusinStatus()) {
             case "1":
-                enquiry.setBusinStatus(enquiry.getOfferCount()+"个报价");
+                enquiry.setBusinStatusText(enquiry.getOfferCount()+"个报价");
                 break;
             case "0":
-                enquiry.setBusinStatus("未报价");
+                enquiry.setBusinStatusText("未报价");
                 break;
              case "-1":
-                 enquiry.setBusinStatus("已放弃");
+                 enquiry.setBusinStatusText("已放弃");
                 break;
             default:
-                enquiry.setBusinStatus("已融资");
+                enquiry.setBusinStatusText("已融资");
                 break;
         }
     }
@@ -351,4 +351,5 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
 
         return enquiryList;
     }
+    
 }
