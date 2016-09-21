@@ -2,12 +2,14 @@ package com.betterjr.modules.order.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
@@ -21,6 +23,8 @@ import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.agreement.service.ScfCustAgreementService;
+import com.betterjr.modules.document.ICustFileService;
+import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.order.dao.ScfOrderMapper;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
@@ -49,6 +53,9 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
     
     @Autowired
     private CustAccountService custAccountService;
+    
+    @Reference(interfaceClass = ICustFileService.class)
+    private ICustFileService custFileDubboService;
 
     /**
      * 订单信息分页查询
@@ -60,6 +67,8 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         if(BetterStringUtils.equals(anIsOnlyNormal, "1")) {
             anMap.put("businStatus", "0");
         }
+        //订单编号模糊查询
+        anMap = Collections3.fuzzyMap(anMap, new String[]{"orderNo"});
 
         Page<ScfOrder> anOrderList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
 
@@ -91,13 +100,13 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
                 anOrder.getAgreementList().add(custAgreementService.findCustAgreementDetail(anOrderRealtion.getInfoId()));
             }
             else if (BetterStringUtils.equals(ScfOrderRelationType.ACCEPTBILL.getCode(), anOrderRealtion.getInfoType())) {
-                anOrder.getAcceptBillList().addAll(acceptBillService.findAcceptBill(queryMap));
+                anOrder.getAcceptBillList().addAll(acceptBillService.selectByProperty(queryMap));
             }
             else if (BetterStringUtils.equals(ScfOrderRelationType.INVOICE.getCode(), anOrderRealtion.getInfoType())) {
                 anOrder.getInvoiceList().addAll((invoiceService.findInvoice(queryMap)));
             }
             else if (BetterStringUtils.equals(ScfOrderRelationType.RECEIVABLE.getCode(), anOrderRealtion.getInfoType())) {
-                anOrder.getReceivableList().addAll(receivableService.findReceivable(queryMap));
+                anOrder.getReceivableList().addAll(receivableService.selectByProperty(queryMap));
             }
             else if (BetterStringUtils.equals(ScfOrderRelationType.TRANSPORT.getCode(), anOrderRealtion.getInfoType())) {
                 anOrder.getTransportList().addAll(transportService.findTransport(queryMap));
@@ -117,6 +126,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         }
         List<ScfOrder> orderList = this.selectByProperty(anMap);
         for(ScfOrder anOrder : orderList) {
+            //核心企业名称
             anOrder.setCustName(custAccountService.queryCustName(anOrder.getCustNo()));
             anOrder.setCoreCustName(custAccountService.queryCustName(anOrder.getCoreCustNo()));
         }
@@ -289,7 +299,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
     }
     
     /**
-     * 由requestNo融资申请编号查询相关联信息
+     * 由requestNo融资申请编号查询相关联信息,不包含所关联的信息
      * anInfoType ScfOrderRelationType资料类型
      */
     public List findRelationInfo(String anRequestNo, ScfOrderRelationType anInfoType) {
@@ -459,5 +469,49 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         for(ScfAcceptBill anScfReceivable : anAcceptBillList) {
             acceptBillService.saveNormalAcceptBill(anScfReceivable.getId(), false);
         }
+    }
+    
+    /**
+     * 根据requestNo查询所有附件信息
+     */
+    public List<CustFileItem> findRequestBaseInfoFileList(String anRequestNo) {
+        List<CustFileItem> result = new ArrayList<CustFileItem>();
+        //获取相应信息
+        List<ScfOrder> orderList = this.findRelationInfo(anRequestNo, ScfOrderRelationType.ORDER);
+        List<CustAgreement> custAgreementList = this.findRelationInfo(anRequestNo, ScfOrderRelationType.AGGREMENT);
+        List<ScfTransport> transportList = this.findRelationInfo(anRequestNo, ScfOrderRelationType.TRANSPORT);
+        List<ScfInvoice> invoiceList = this.findRelationInfo(anRequestNo, ScfOrderRelationType.INVOICE);
+        List<ScfAcceptBill> acceptBillList = this.findRelationInfo(anRequestNo, ScfOrderRelationType.ACCEPTBILL);
+        List<ScfReceivable> receivableList = this.findRelationInfo(anRequestNo, ScfOrderRelationType.RECEIVABLE);
+        //订单、其他资料附件
+        for(ScfOrder order : orderList) {
+            result.addAll(custFileDubboService.findCustFiles(order.getBatchNo()));
+            result.addAll(custFileDubboService.findCustFiles(order.getOtherBatchNo()));
+        }
+        //贸易合同附件
+        for(CustAgreement custAgreement : custAgreementList) {
+            result.addAll(custFileDubboService.findCustFiles(custAgreement.getBatchNo()));
+        }
+        //运输单据附件
+        for(ScfTransport transport : transportList) {
+            result.addAll(custFileDubboService.findCustFiles(transport.getBatchNo()));
+        }
+        //发票附件
+        for(ScfInvoice invoice : invoiceList) {
+            result.addAll(custFileDubboService.findCustFiles(invoice.getBatchNo()));
+        }
+        //汇票附件
+        for(ScfAcceptBill acceptBill : acceptBillList) {
+            result.addAll(custFileDubboService.findCustFiles(acceptBill.getBatchNo()));
+        }
+        //应收账款附件
+        for(ScfReceivable receivable : receivableList) {
+            result.addAll(custFileDubboService.findCustFiles(receivable.getBatchNo()));
+        }
+        //对文件信息去重
+        HashSet<CustFileItem> tempSet = new HashSet<CustFileItem>(result);
+        result.clear();
+        result.addAll(tempSet);
+        return result;
     }
 }

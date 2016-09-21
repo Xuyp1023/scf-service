@@ -381,9 +381,9 @@ public class RequestDubboService implements IScfRequestService {
 
     @Override
     public String webQueryCoreEnterpriseRequest(Map<String, Object> anMap, String anRequestType, String anFlag, int anPageNum, int anPageSize) {
-        logger.debug("分页核心企业查询融资，入参：" + anMap);
+        logger.debug("分页查询融资，入参：" + anMap);
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOkWithPage("核心企业查询融资成功",
+        return AjaxObject.newOkWithPage("查询融资成功",
                 requestService.queryCoreEnterpriseRequest(anQueryConditionMap, anRequestType, anFlag, anPageNum, anPageSize)).toJson();
     }
 
