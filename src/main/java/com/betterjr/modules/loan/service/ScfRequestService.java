@@ -307,7 +307,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         BTAssert.notNull(scheme);
 
         // 修改核心企业确认状态
-        scheme.setCoreCustAduit(anAduitStatus);
+        scheme.setCoreCustAduit("1");
         schemeService.saveModifyScheme(scheme);
         
         return findRequestDetail(anRequestNo);

@@ -19,6 +19,7 @@ import com.betterjr.common.web.AjaxObject;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.account.service.CustAccountService;
+import com.betterjr.modules.agreement.service.ScfAgreementService;
 import com.betterjr.modules.agreement.service.ScfRequestNoticeService;
 import com.betterjr.modules.enquiry.service.ScfOfferService;
 import com.betterjr.modules.loan.IScfRequestService;
@@ -57,6 +58,8 @@ public class RequestDubboService implements IScfRequestService {
     private ScfRequestNoticeService requestNoticeService;
     @Autowired
     private ScfOfferService offerService;
+    @Autowired
+    private ScfAgreementService agreementService;
 
     @Reference(interfaceClass = IFlowService.class)
     private IFlowService flowService;
@@ -162,14 +165,22 @@ public class RequestDubboService implements IScfRequestService {
     }
 
     @Override
-    public String webConfirmScheme(String anRequestNo, String anApprovalResult) {
+    public String webConfirmScheme(String anRequestNo, String anApprovalResult, String smsCode) {
         logger.debug("申请企业-确认融资方案，入参：anRequestNo" + anRequestNo + "-  anApprovalResult:" + anApprovalResult);
 
+        //电子合同类型，0：应收账款债权转让通知书，1：买方确认意见，2三方协议书
+        if(false == agreementService.sendValidCodeByRequestNo(anRequestNo, "0", smsCode)){
+            return AjaxObject.newError("操作失败：短信验证码错误").toJson();
+        }
+        
         ScfRequestScheme scheme = new ScfRequestScheme();
         if (BetterStringUtils.equals(anApprovalResult, APPROVALRESULT_0) == true) {
             scheme = requestService.saveConfirmScheme(anRequestNo, "1");
+        }else{
+            //取消签约
+            agreementService.cancelElecAgreement(anRequestNo, "");
         }
-
+        
         // 执行流程
         execFllow(anRequestNo, scheme.getApprovedBalance(), anApprovalResult, "", "");
         return AjaxObject.newOk("操作成功").toJson();
@@ -200,10 +211,18 @@ public class RequestDubboService implements IScfRequestService {
     public String webConfirmTradingBackgrand(String anRequestNo, String anApprovalResult, String smsCode) {
         logger.debug("核心企业-确认贸易背景，入参：anRequestNo" + anRequestNo + "-  anApprovalResult:" + anApprovalResult);
 
+        //电子合同类型，0：应收账款债权转让通知书，1：买方确认意见，2三方协议书
+        if(false == agreementService.sendValidCodeByRequestNo(anRequestNo, "1", smsCode)){
+            return AjaxObject.newError("操作失败：短信验证码错误").toJson();
+        }
+        
         ScfRequest request = new ScfRequest();
         if (BetterStringUtils.equals(anApprovalResult, APPROVALRESULT_0) == true) {
             // 保存确认贸易背景确认状态
             request = requestService.confirmTradingBackgrand(anRequestNo, "1");
+        }else{
+            //取消签约
+            agreementService.cancelElecAgreement(anRequestNo, "");
         }
 
         // 执行流程
