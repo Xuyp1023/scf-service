@@ -7,8 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.service.FreemarkerService;
+import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.agreement.dao.ScfRequestNoticeMapper;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.agreement.entity.ScfRequestNotice;
@@ -30,6 +32,8 @@ public class ScfRequestNoticeService extends BaseService<ScfRequestNoticeMapper,
 
     @Autowired
     private ScfElecAgreementService elecAgreeService;
+    @Autowired
+    private CustAccountService custAccountService;
 
     /**
      * 更新转让通知书信息，只有未签署合同的转让通知书才能更新
@@ -37,10 +41,11 @@ public class ScfRequestNoticeService extends BaseService<ScfRequestNoticeMapper,
      * @param anRequest
      * @return
      */
-    public boolean updateTransNotice(ScfRequestNotice anRequest, String anSuppiler) {
+    public String updateTransNotice(ScfRequestNotice anRequest, String anSuppiler) {
         ScfRequestNotice tmpNotice = this.selectByPrimaryKey(anRequest.getRequestNo());
         boolean result = true;
         if (tmpNotice == null) {
+            anRequest.setBuyer(custAccountService.queryCustName(anRequest.getBuyerNo()));
             anRequest.setFactorName(SupplyChainUtil.findFactorNameByNo(anRequest.getFactorNo()));
             this.insert(anRequest);
         }
@@ -63,9 +68,10 @@ public class ScfRequestNoticeService extends BaseService<ScfRequestNoticeMapper,
             elecAgreement.setFactorNo(anRequest.getFactorNo());
             elecAgreement.setSupplier(anSuppiler);
             elecAgreeService.addElecAgreementInfo(elecAgreement, Arrays.asList(elecAgreement.getSupplierNo()));
-        }
 
-        return result;
+            return elecAgreement.getAgreeNo();
+        }
+        return null;
     }
 
     /**

@@ -383,9 +383,9 @@ public class WebService {
             noticeRequest.setFactorLinkMan(factorLinkMan);
             noticeRequest.setNoticeTime(updateTime);
             
-            boolean isOkTransNotice = requestNoticeService.updateTransNotice(noticeRequest, request.getCustName());
-            boolean isOktransCredit = agreementService.transCredit(requestService.getCreditList(request));
-            if(isOkTransNotice && isOktransCredit){
+            String agreeNo = requestNoticeService.updateTransNotice(noticeRequest, request.getCustName());
+            boolean isOktransCredit = agreementService.transCredit(requestService.getCreditList(request),agreeNo);
+            if(agreeNo!=null && isOktransCredit){
                 // 添加转让明细（因为在转让申请时就添加了 转让明细，如果核心企业不同意，那明细需要删除，但目前没有做删除这步）
                 return 1;
             }else{
