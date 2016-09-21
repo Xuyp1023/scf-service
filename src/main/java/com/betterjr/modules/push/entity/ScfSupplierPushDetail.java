@@ -3,6 +3,7 @@ package com.betterjr.modules.push.entity;
 import java.util.Map;
 
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDecimalJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 
@@ -52,6 +53,19 @@ public class ScfSupplierPushDetail implements BetterjrEntity {
     @Column(name = "T_MODIFY_TIME",  columnDefinition="VARCHAR" )
     private String modifyTime;
 
+    @Transient
+    private String custName;
+    @Transient
+    private String tragetCustName;
+    @Transient
+    private String acceptor;
+    @Transient
+    private String disDate;
+    @Transient
+    private String disMoney;
+    @Transient
+    private String billNo;
+    
     private static final long serialVersionUID = 1473315525514L;
 
     public Long getId() {
@@ -158,6 +172,54 @@ public class ScfSupplierPushDetail implements BetterjrEntity {
         this.modifyTime = modifyTime == null ? null : modifyTime.trim();
     }
 
+    public String getCustName() {
+        return this.custName;
+    }
+
+    public void setCustName(String anCustName) {
+        this.custName = anCustName;
+    }
+
+    public String getTragetCustName() {
+        return this.tragetCustName;
+    }
+
+    public void setTragetCustName(String anTragetCustName) {
+        this.tragetCustName = anTragetCustName;
+    }
+
+    public String getAcceptor() {
+        return this.acceptor;
+    }
+
+    public void setAcceptor(String anAcceptor) {
+        this.acceptor = anAcceptor;
+    }
+
+    public String getDisDate() {
+        return BetterDateUtils.formatDate(BetterDateUtils.parseDate(this.beginDate), "yyyy年MM月dd日")+"至"+BetterDateUtils.formatDate(BetterDateUtils.parseDate(this.endDate), "yyyy年MM月dd日");
+    }
+
+    public void setDisDate(String anDisDate) {
+        this.disDate = anDisDate;
+    }
+
+    public String getDisMoney() {
+        return "￥"+CustDecimalJsonSerializer.format(this.money);
+    }
+
+    public void setDisMoney(String anDisMoney) {
+        this.disMoney = anDisMoney;
+    }
+
+    public String getBillNo() {
+        return this.billNo;
+    }
+
+    public void setBillNo(String anBillNo) {
+        this.billNo = anBillNo;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -238,7 +300,6 @@ public class ScfSupplierPushDetail implements BetterjrEntity {
         this.endDate=anMap.get("endDate").toString();
         this.money=Double.parseDouble(anMap.get("balance").toString()==null?"0":anMap.get("balance").toString());
         this.costRate=anMap.get("ratio").toString()==null?"0":anMap.get("ratio").toString();
-        this.agencyNo=anMap.get("agencyNo").toString();
         this.businStatus="1";
         this.regDate=BetterDateUtils.getNumDate();
         this.regTime=BetterDateUtils.getNumTime();

@@ -21,6 +21,7 @@ import com.betterjr.common.utils.DictUtils;
 import com.betterjr.common.utils.MathExtend;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.agreement.dao.ScfElecAgreementMapper;
 import com.betterjr.modules.agreement.data.ScfElecAgreementInfo;
@@ -29,6 +30,7 @@ import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.service.ScfRequestService;
+import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.product.service.ScfProductService;
 
 /***
@@ -49,6 +51,8 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
     private ScfFactorRemoteHelper remoteHelper;
     @Autowired
     private ScfProductService productService;
+    @Autowired
+    private ScfOrderService orderService;
     @Autowired
     private ScfRequestService requestService; 
     @Reference(interfaceClass=ICustFileService.class)
@@ -72,12 +76,14 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
      */
     public Page<ScfElecAgreementInfo> queryScfElecAgreementList(Map<String, Object> anParam, int anPageNum, int anPageSize) {
         Map<String, Object> termMap = new HashMap();
-        termMap.put("GTEregDate", anParam.get("GTEregDate"));
-        termMap.put("LTEregDate", anParam.get("LTEregDate"));
+        if(BetterStringUtils.isNotBlank((String)anParam.get("GTEregDate")) && BetterStringUtils.isNotBlank((String)anParam.get("LTEregDate"))){
+            termMap.put("GTEregDate", anParam.get("GTEregDate"));
+            termMap.put("LTEregDate", anParam.get("LTEregDate"));
+        }
         String signStatus = (String) anParam.get("signStatus");
         anPageSize = MathExtend.defIntBetween(anPageSize, 2, ParamNames.MAX_PAGE_SIZE, 25);
         if (BetterStringUtils.isBlank(signStatus)) {
-            termMap.put("signStatus", Arrays.asList("0", "2", "3"));
+            termMap.put("signStatus", Arrays.asList("0","1", "2", "3"));
         }
         else {
             termMap.put("signStatus", signStatus);
@@ -94,6 +100,14 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
             elecAgree.setBuyer(custAccoService.queryCustName(elecAgree.getBuyerNo()));
             elecAgree.setFactorName(DictUtils.getDictLabel("ScfAgencyGroup", elecAgree.getFactorNo()));
             elecAgree.setProductName(getProductNameByRequestNo(elecAgree.getRequestNo()));
+            // 加入票据属性
+            ScfAcceptBill bill=getBillInfoByRequestNo(elecAgree.getRequestNo());
+            if(bill!=null){
+                elecAgree.setBillMode(bill.getBillMode());
+                elecAgree.setBillNo(bill.getBillNo());
+                elecAgree.setInvoiceDate(bill.getInvoiceDate());
+                elecAgree.setEndDate(bill.getEndDate());
+            }
         }
         logger.info("this is findScfElecAgreementList result count :" + elecAgreeList.size());
         return elecAgreeList;
@@ -115,6 +129,16 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         return "";
     }
     
+    /****
+     * 根据申请单号查询票据信息
+     * @param anRequestNo
+     * @return
+     */
+    public ScfAcceptBill getBillInfoByRequestNo(String anRequestNo){
+        List billList=orderService.findInfoListByRequest(anRequestNo, "2");
+        return (ScfAcceptBill)Collections3.getFirst(billList);
+    }
+    
     
     /**
      * 根据融资申请订单号和电子合同类型，获得不同合同信息
@@ -125,13 +149,30 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
      *            电子合同类型
      * @return
      */
-    public List<ScfElecAgreement> findElecAgreeByOrderNo(String anRequestNo, String anSignType) {
+    public List<ScfElecAgreementInfo> findElecAgreeByOrderNo(String anRequestNo, String anSignType) {
         Map workCondition = new HashMap();
         if(BetterStringUtils.isNotBlank(anSignType)){
             workCondition.put("agreeType", anSignType);
         }
+        List<Long> custNoList = UserUtils.findCustNoList();
         workCondition.put("requestNo", anRequestNo);
-        return this.selectByProperty(workCondition);
+        List<ScfElecAgreementInfo> elecAgreeList=this.selectByClassProperty(ScfElecAgreementInfo.class, workCondition);
+        Set<Long> custNoSet = new HashSet(custNoList);
+        for (ScfElecAgreementInfo elecAgree : elecAgreeList) {
+            elecAgree.putStubInfos(scfElecAgreeStubService.findSignerList(elecAgree.getAppNo(),custAccoService), custNoSet);
+            elecAgree.setBuyer(custAccoService.queryCustName(elecAgree.getBuyerNo()));
+            elecAgree.setFactorName(DictUtils.getDictLabel("ScfAgencyGroup", elecAgree.getFactorNo()));
+            elecAgree.setProductName(getProductNameByRequestNo(elecAgree.getRequestNo()));
+            // 加入票据属性
+            ScfAcceptBill bill=getBillInfoByRequestNo(anRequestNo);
+            if(bill!=null){
+                elecAgree.setBillMode(bill.getBillMode());
+                elecAgree.setBillNo(bill.getBillNo());
+                elecAgree.setInvoiceDate(bill.getInvoiceDate());
+                elecAgree.setEndDate(bill.getEndDate());
+            }
+        }
+        return elecAgreeList;
     }
     
     public boolean saveSignFileInfo(String anAppNo, CustFileItem anFileItem, boolean anSignedFile) {
@@ -366,5 +407,25 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         }
         return fileItem;
     };
+    
+    /**
+     * 根据请求单号查询电子合同
+     * 
+     * @param anRequestNo
+     *            融资申请业务订单号
+     * @param anSignType
+     *            电子合同类型
+     * @return
+     */
+    public String findElecAgreeByRequestNo(String anRequestNo, String anAgreeType) {
+        Map workCondition = new HashMap();
+        if(BetterStringUtils.isNotBlank(anAgreeType)){
+            workCondition.put("agreeType", anAgreeType);
+        }
+        workCondition.put("requestNo", anRequestNo);
+        List<ScfElecAgreementInfo> elecAgreeList=this.selectByClassProperty(ScfElecAgreementInfo.class, workCondition);
+        return Collections3.getFirst(elecAgreeList).getAppNo();
+    }
+    
 
 }

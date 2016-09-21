@@ -65,7 +65,7 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
     public CustAgreement addCustAgreement(CustAgreement anCustAgreement, String anFileList) {
         //初始化合同默认值
         Long supplierNo = Collections3.getFirst(UserUtils.findCustNoList());
-        anCustAgreement.initDefValue(UserUtils.getOperatorInfo(), custAccoService.queryCustName(anCustAgreement.getBuyerNo()), supplierNo, custAccoService.queryCustName(supplierNo));
+        anCustAgreement.initDefValue(UserUtils.getOperatorInfo(),anCustAgreement.getBuyerNo(), custAccoService.queryCustName(anCustAgreement.getBuyerNo()), supplierNo, custAccoService.queryCustName(supplierNo));
 
         // 保存合同附件信息
         anCustAgreement.setBatchNo(custFileService.updateCustFileItemInfo(anFileList, anCustAgreement.getBatchNo()));
@@ -154,7 +154,6 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
 
             throw new BytterTradeException(40001, "已启用或废止的合同不能修改！");
         }
-
         CustAgreement reqAgreement = anCustAgreement;
         reqAgreement.modifyAgreement(tmpAgreement);
 

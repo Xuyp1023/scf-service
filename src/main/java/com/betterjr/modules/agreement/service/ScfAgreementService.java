@@ -48,8 +48,26 @@ public class ScfAgreementService {
         return localService.createOutHtmlInfo().toString();
     }
     
+    /****
+     * 拒绝签署
+     * @param anAppNo
+     * @param anDescribe
+     * @return
+     */
     public boolean cancelElecAgreement(String anAppNo,String anDescribe){
         ScfElecAgreeLocalService localService = ScfElecAgreementFactory.create(anAppNo);
+        return localService.cancelElecAgreement(anDescribe);
+    }
+    
+    /****
+     * 拒绝签署
+     * @param anAppNo
+     * @param anDescribe
+     * @return
+     */
+    public boolean cancelElecAgreement(String anRequestNo,String anAgreeType,String anDescribe){
+        String appNo=scfElecAgreementService.findElecAgreeByRequestNo(anRequestNo, anAgreeType);
+        ScfElecAgreeLocalService localService = ScfElecAgreementFactory.create(appNo);
         return localService.cancelElecAgreement(anDescribe);
     }
     
@@ -69,6 +87,19 @@ public class ScfAgreementService {
         else {
             return AjaxObject.newError("发送并验证签署合同的验证码失败，请稍后重试！").toJson();
         }
+    }
+    
+    /****
+     * 发送并验证签署合同的验证码
+     * @param appNo
+     * @param custType
+     * @param vCode
+     * @return
+     */
+    public boolean sendValidCodeByRequestNo(String anRequestNo, String anAgreeType, String vCode){
+        String appNo=scfElecAgreementService.findElecAgreeByRequestNo(anRequestNo, anAgreeType);
+        ScfElecAgreeLocalService localService = ScfElecAgreementFactory.create(appNo);
+        return localService.saveAndSendValidSMS(appNo, vCode);
     }
     
     /***

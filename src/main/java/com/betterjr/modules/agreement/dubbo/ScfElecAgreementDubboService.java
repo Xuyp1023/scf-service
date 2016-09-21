@@ -49,7 +49,7 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
 
     @Override
     public String webFindElecAgreePage(String anAppNo) {
-        return AjaxObject.newOk(scfAgreementService.createOutHtmlInfo(anAppNo)).toJson();
+        return AjaxObject.newOk("生成电子合同的静态页面",scfAgreementService.createOutHtmlInfo(anAppNo)).toJson();
     }
 
     @Override
@@ -63,7 +63,7 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
 
     @Override
     public String webSendValidCode(String anAppNo, String anCustType, String anVcode) {
-        return AjaxObject.newOk(scfAgreementService.sendValidCode(anAppNo, anCustType, anVcode)).toString();
+        return AjaxObject.newOk("发送验证签署验证码",scfAgreementService.sendValidCode(anAppNo, anCustType, anVcode)).toString();
     }
     
     /***
@@ -115,7 +115,7 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
      * @return
      */
     public String webFindElecAgreeByOrderNo(String anRequestNo, String anSignType){
-        return AjaxObject.newOk(scfElecAgreementService.findElecAgreeByOrderNo(anRequestNo, anSignType)).toJson();
+        return AjaxObject.newOk("查询合同信息",scfElecAgreementService.findElecAgreeByOrderNo(anRequestNo, anSignType)).toJson();
     }
     
     /***
@@ -160,5 +160,31 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
         }else{
             return AjaxObject.newError("资料删除失败").toJson();
         }
+    }
+    
+    /***
+     * 根据请求单号和合同类型获取验证码
+     * @param anRequestNo
+     * @param anAgreeType
+     * @return
+     */
+    public String webFindValidCodeByRequestNo(String anRequestNo, String anAgreeType){
+        if(scfElecAgreementService.saveAndSendSMS(scfElecAgreementService.findElecAgreeByRequestNo(anRequestNo, anAgreeType))){
+            return AjaxObject.newOk("获取签署合同的验证码成功").toJson();
+        }else{
+            return AjaxObject.newError("获取签署合同的验证码失败，请稍后重试！").toJson();
+        }
+    }
+    
+    /***
+     * 发送并验证签署合同的验证码
+     * @param anAppNo
+     * @param anCustType
+     * @param anVcode
+     * @return
+     */
+    public String webSendValidCodeByRequestNo(String anRequestNo, String anAgreeType, String anVcode){
+        String appno=scfElecAgreementService.findElecAgreeByRequestNo(anRequestNo, anAgreeType);
+        return AjaxObject.newOk("发送验证签署验证码",scfAgreementService.sendValidCode(appno, anAgreeType, anVcode)).toString();
     }
 }
