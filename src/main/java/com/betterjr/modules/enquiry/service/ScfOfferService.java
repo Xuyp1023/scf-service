@@ -119,6 +119,7 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
        //设置保理公司名称
        for (ScfOffer offer : offerList) {
            offer.setFactorName(custAccountService.queryCustName(offer.getFactorNo()));
+           offer.setCustName(custAccountService.queryCustName(offer.getCustNo()));
            offer.setEnquiry(enquiryService.findEnquiryByNo(offer.getEnquiryNo()));
        }
        return offerList;
@@ -179,6 +180,7 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
         ScfOffer offer = Collections3.getFirst(offerList);
         offer.setCustName(custAccountService.queryCustName(offer.getCustNo()));
         offer.setFactorName(custAccountService.queryCustName(offer.getFactorNo()));
+        offer.setEnquiry(enquiryService.findEnquiryByNo(offer.getEnquiryNo()));
         return offer;
     }
     

@@ -135,7 +135,7 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
         //可编辑的业务状态
         String[] anBusinStatusList = { "0" };
         anMap.put("id", anId);
-        anMap.put("operOrg", anOperOrg);
+        //anMap.put("operOrg", anOperOrg);
         anMap.put("businStatus", anBusinStatusList);
         List<ScfReceivable> receivableList = this.selectByClassProperty(ScfReceivable.class, anMap);
         if (Collections3.isEmpty(receivableList)) {
