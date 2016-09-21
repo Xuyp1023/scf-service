@@ -238,10 +238,10 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         if (BetterStringUtils.equals("4", request.getRequestType()) == false) {
             // 发送出-应收帐款转让通知书
             ScfRequestNotice noticeRequest = this.getNotice(request);
-            agreementService.transNotice(noticeRequest);
+            String appNo = agreementService.transNotice(noticeRequest);
 
             // 添加转让明细（因为在转让申请时就添加了 转让明细，如果核心企业不同意，那明细需要删除，但目前没有做删除这步）
-            agreementService.transCredit(this.getCreditList(request));
+            agreementService.transCredit(this.getCreditList(request), appNo);
         }
         
         return schemeService.addScheme(anScheme);
