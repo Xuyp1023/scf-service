@@ -494,20 +494,38 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
      * 放款确认 - 150
      * 完成融资 - 160
      * 放款完成 - 170
+     * anRequestType - 1：未放款，2：还款中  3.已还款
      */
     public Page<ScfRequest> queryCoreEnterpriseRequest(Map<String, Object> anMap, String anRequestType, String anFlag, int anPageNum, int anPageSize) {
-        switch (anRequestType) {
-        case "1":
-            // 未还款
-            return this.queryPendingRequest(anMap, anFlag, anPageNum, anPageSize);
-        case "2":
-            // 还款中
-            return this.queryRepaymentRequest(anMap, anFlag, anPageNum, anPageSize);
-        case "3":
-            // 已还款
-            return this.queryCompletedRequest(anMap, anFlag, anPageNum, anPageSize);
-        default:
-            return (Page<ScfRequest>) Collections3.union(queryPendingRequest(anMap, anFlag, anPageNum, anPageSize), Collections3.union(queryRepaymentRequest(anMap, anFlag, anPageNum, anPageSize),queryCompletedRequest(anMap, anFlag, anPageNum, anPageSize)));
+        if (BetterStringUtils.isBlank(anRequestType)) {
+            Page<ScfRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
+            for (ScfRequest request : page) {
+                fillCustName(request);
+                // 设置还款计划
+                request.setPayPlan(payPlanService.findPayPlanByRequest(request.getRequestNo()));
+            }
+            return page;
+        }
+        else {
+            switch (anRequestType) {
+            case "1":
+                // 未放款
+                return this.queryPendingRequest(anMap, anFlag, anPageNum, anPageSize);
+            case "2":
+                // 还款中
+                return this.queryRepaymentRequest(anMap, anFlag, anPageNum, anPageSize);
+            case "3":
+                // 已还款
+                return this.queryCompletedRequest(anMap, anFlag, anPageNum, anPageSize);
+            default:
+                Page<ScfRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
+                for (ScfRequest request : page) {
+                    fillCustName(request);
+                    // 设置还款计划
+                    request.setPayPlan(payPlanService.findPayPlanByRequest(request.getRequestNo()));
+                }
+                return page;
+            }
         }
     }
     

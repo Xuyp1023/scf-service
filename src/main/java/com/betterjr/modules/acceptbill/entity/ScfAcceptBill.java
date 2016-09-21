@@ -8,6 +8,7 @@ import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -71,6 +72,7 @@ public class ScfAcceptBill implements BetterjrEntity {
     @Column(name = "D_INVOICE_DATE", columnDefinition = "VARCHAR")
     @MetaData(value = "开票日期", comments = "开票日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
+    @OrderBy("DESC")
     private String invoiceDate;
 
     /**
@@ -79,6 +81,13 @@ public class ScfAcceptBill implements BetterjrEntity {
     @Column(name = "C_INVOICE_CORP",  columnDefinition="VARCHAR" )
     @MetaData( value="开票单位", comments = "开票单位")
     private String invoiceCorp;
+    
+    /**
+     * 开票人在资金管理系统中的企业编号
+     */
+    @Column(name = "C_DRAWERID",  columnDefinition="VARCHAR" )
+    @MetaData( value="开票人在资金管理系统中的企业编号", comments = "开票人在资金管理系统中的企业编号")
+    private String drawerId;
     
     /**
      * 到期日期
@@ -111,11 +120,25 @@ public class ScfAcceptBill implements BetterjrEntity {
     private Long holderNo;
     
     /**
+     * 持票人帐号
+     */
+    @Column(name = "C_HOLDER_ACCOUNT",  columnDefinition="VARCHAR" )
+    @MetaData( value="持票人帐号", comments = "持票人帐号")
+    private String holderBankAccount;
+    
+    /**
      * 承兑人
      */
     @Column(name = "C_ACCEPTOR",  columnDefinition="VARCHAR" )
     @MetaData( value="承兑人", comments = "承兑人")
     private String acceptor;
+    
+    /**
+     * 承兑人银行账户
+     */
+    @Column(name = "C_ACCEPTOR_ACCOUNT",  columnDefinition="VARCHAR" )
+    @MetaData( value="承兑人银行账户", comments = "承兑人银行账户")
+    private String acceptorBankAccount;
     
     /**
      * 收款人名称
@@ -424,6 +447,14 @@ public class ScfAcceptBill implements BetterjrEntity {
     public void setInvoiceDate(String invoiceDate) {
         this.invoiceDate = invoiceDate;
     }
+    
+    public String getDrawerId() {
+        return drawerId;
+    }
+
+    public void setDrawerId(String drawerId) {
+        this.drawerId = drawerId == null ? null : drawerId.trim();
+    }
 
     public String getEndDate() {
         return endDate;
@@ -705,6 +736,14 @@ public class ScfAcceptBill implements BetterjrEntity {
     public void setHolder(String anHolder) {
         this.holder = anHolder;
     }
+    
+    public String getHolderBankAccount() {
+        return holderBankAccount;
+    }
+
+    public void setHolderBankAccount(String holderBankAccount) {
+        this.holderBankAccount = holderBankAccount == null ? null : holderBankAccount.trim();
+    }
 
     public String getAcceptor() {
         return this.acceptor;
@@ -712,6 +751,14 @@ public class ScfAcceptBill implements BetterjrEntity {
 
     public void setAcceptor(String anAcceptor) {
         this.acceptor = anAcceptor;
+    }
+    
+    public String getAcceptorBankAccount() {
+        return acceptorBankAccount;
+    }
+
+    public void setAcceptorBankAccount(String acceptorBankAccount) {
+        this.acceptorBankAccount = acceptorBankAccount == null ? null : acceptorBankAccount.trim();
     }
 
     public String getBillFrom() {
@@ -795,6 +842,64 @@ public class ScfAcceptBill implements BetterjrEntity {
     }
 
     @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName());
+        sb.append(" [");
+        sb.append("Hash = ").append(hashCode());
+        sb.append(", id=").append(id);
+        sb.append(", billNo=").append(billNo);
+        sb.append(", billType=").append(billType);
+        sb.append(", billMode=").append(billMode);
+        sb.append(", balance=").append(balance);
+        sb.append(", invoiceDate=").append(invoiceDate);
+        sb.append(", invoiceCorp=").append(invoiceCorp);
+        sb.append(", drawerId=").append(drawerId);
+        sb.append(", endDate=").append(endDate);
+        sb.append(", cashDate=").append(cashDate);
+        sb.append(", holder =").append(holder );
+        sb.append(", holderNo=").append(holderNo);
+        sb.append(", holderBankAccount=").append(holderBankAccount);
+        sb.append(", acceptor=").append(acceptor);
+        sb.append(", acceptorBankAccount=").append(acceptorBankAccount);
+        sb.append(", supplier=").append(supplier);
+        sb.append(", suppBankAccount=").append(suppBankAccount);
+        sb.append(", suppBankName=").append(suppBankName);
+        sb.append(", buyer=").append(buyer);
+        sb.append(", realBuyer=").append(realBuyer);
+        sb.append(", buyerBankAccount=").append(buyerBankAccount);
+        sb.append(", buyerBankName=").append(buyerBankName);
+        sb.append(", businStatus=").append(businStatus);
+        sb.append(", financeFlag=").append(financeFlag);
+        sb.append(", billFrom=").append(billFrom);
+        sb.append(", preHand=").append(preHand);
+        sb.append(", nextHand=").append(nextHand);
+        sb.append(", aduit=").append(aduit);
+        sb.append(", regDate=").append(regDate);
+        sb.append(", modiDate=").append(modiDate);
+        sb.append(", btBillNo=").append(btBillNo);
+        sb.append(", buyerNo=").append(buyerNo);
+        sb.append(", supplierNo=").append(supplierNo);
+        sb.append(", agreeNo=").append(agreeNo);
+        sb.append(", operId=").append(operId);
+        sb.append(", operName=").append(operName);
+        sb.append(", operOrg=").append(operOrg);
+        sb.append(", batchNo=").append(batchNo);
+        sb.append(", agreeId=").append(agreeId);
+        sb.append(", confirmBalance=").append(confirmBalance);
+        sb.append(", loanBalance=").append(loanBalance);
+        sb.append(", ratio=").append(ratio);
+        sb.append(", description=").append(description);
+        sb.append(", coreCustNo=").append(coreCustNo);
+        sb.append(", modiOperId=").append(modiOperId);
+        sb.append(", modiOperName=").append(modiOperName);
+        sb.append(", modiTime=").append(modiTime);
+        sb.append(", serialVersionUID=").append(serialVersionUID);
+        sb.append("]");
+        return sb.toString();
+    }
+
+    @Override
     public boolean equals(Object that) {
         if (this == that) {
             return true;
@@ -813,11 +918,14 @@ public class ScfAcceptBill implements BetterjrEntity {
             && (this.getBalance() == null ? other.getBalance() == null : this.getBalance().equals(other.getBalance()))
             && (this.getInvoiceDate() == null ? other.getInvoiceDate() == null : this.getInvoiceDate().equals(other.getInvoiceDate()))
             && (this.getInvoiceCorp() == null ? other.getInvoiceCorp() == null : this.getInvoiceCorp().equals(other.getInvoiceCorp()))
+            && (this.getDrawerId() == null ? other.getDrawerId() == null : this.getDrawerId().equals(other.getDrawerId()))
             && (this.getEndDate() == null ? other.getEndDate() == null : this.getEndDate().equals(other.getEndDate()))
             && (this.getCashDate() == null ? other.getCashDate() == null : this.getCashDate().equals(other.getCashDate()))
             && (this.getHolder () == null ? other.getHolder () == null : this.getHolder ().equals(other.getHolder ()))
             && (this.getHolderNo() == null ? other.getHolderNo() == null : this.getHolderNo().equals(other.getHolderNo()))
+            && (this.getHolderBankAccount() == null ? other.getHolderBankAccount() == null : this.getHolderBankAccount().equals(other.getHolderBankAccount()))
             && (this.getAcceptor() == null ? other.getAcceptor() == null : this.getAcceptor().equals(other.getAcceptor()))
+            && (this.getAcceptorBankAccount() == null ? other.getAcceptorBankAccount() == null : this.getAcceptorBankAccount().equals(other.getAcceptorBankAccount()))
             && (this.getSupplier() == null ? other.getSupplier() == null : this.getSupplier().equals(other.getSupplier()))
             && (this.getSuppBankAccount() == null ? other.getSuppBankAccount() == null : this.getSuppBankAccount().equals(other.getSuppBankAccount()))
             && (this.getSuppBankName() == null ? other.getSuppBankName() == null : this.getSuppBankName().equals(other.getSuppBankName()))
@@ -863,11 +971,14 @@ public class ScfAcceptBill implements BetterjrEntity {
         result = prime * result + ((getBalance() == null) ? 0 : getBalance().hashCode());
         result = prime * result + ((getInvoiceDate() == null) ? 0 : getInvoiceDate().hashCode());
         result = prime * result + ((getInvoiceCorp() == null) ? 0 : getInvoiceCorp().hashCode());
+        result = prime * result + ((getDrawerId() == null) ? 0 : getDrawerId().hashCode());
         result = prime * result + ((getEndDate() == null) ? 0 : getEndDate().hashCode());
         result = prime * result + ((getCashDate() == null) ? 0 : getCashDate().hashCode());
         result = prime * result + ((getHolder () == null) ? 0 : getHolder ().hashCode());
         result = prime * result + ((getHolderNo() == null) ? 0 : getHolderNo().hashCode());
+        result = prime * result + ((getHolderBankAccount() == null) ? 0 : getHolderBankAccount().hashCode());
         result = prime * result + ((getAcceptor() == null) ? 0 : getAcceptor().hashCode());
+        result = prime * result + ((getAcceptorBankAccount() == null) ? 0 : getAcceptorBankAccount().hashCode());
         result = prime * result + ((getSupplier() == null) ? 0 : getSupplier().hashCode());
         result = prime * result + ((getSuppBankAccount() == null) ? 0 : getSuppBankAccount().hashCode());
         result = prime * result + ((getSuppBankName() == null) ? 0 : getSuppBankName().hashCode());

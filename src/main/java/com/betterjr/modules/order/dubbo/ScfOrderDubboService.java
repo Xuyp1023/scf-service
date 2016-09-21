@@ -62,5 +62,10 @@ public class ScfOrderDubboService implements IScfOrderService{
     public String webCheckCompleteInvoice(String anRequestType, String anIdList) {
         return AjaxObject.newOk("检查关联发票关系成功", scfOrderService.checkCompleteInvoice(anRequestType, anIdList)).toJson();
     }
+    
+    @Override
+    public String webFindRequestBaseInfoFileList(String anRequestNo) {
+        return AjaxObject.newOk("查询所有附件成功", scfOrderService.findRequestBaseInfoFileList(anRequestNo)).toJson();
+    }
 
 }
