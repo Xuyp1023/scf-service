@@ -455,8 +455,17 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         record.setPrincipalBalance(plan.getSurplusPrincipalBalance());
         record.setPayPlanId(anRecord.getPayPlanId());
         record.setPayDate(anRecord.getPayDate());
-        record.setRatio(anRecord.getRatio());
-        record.setManagementRatio(anRecord.getManagementRatio());
+        if(null == anRecord.getRatio()){
+            record.setRatio(plan.getRatio());
+        }else{
+            record.setRatio(anRecord.getRatio());
+        }
+        if(null == anRecord.getManagementRatio()){
+            record.setManagementRatio(plan.getManagementRatio());
+        }else{
+            record.setManagementRatio(anRecord.getManagementRatio());
+        }
+        
         Map<String, BigDecimal> map = getSellerPayPlanFee(record, plan.getStartDate());
 
         // 新增还款详情

@@ -213,7 +213,8 @@
 	<aop:aspectj-autoproxy proxy-target-class="true"/>
 	<aop:config>
 		<aop:pointcut id="appService"
-			expression="execution(* com.betterjr..service.*Service.*(..))" />
+			expression="execution(* com.betterjr..service.*Service.*(..)) 
+			or execution(* com.betterjr..dubbo.*Service.*(..))" />
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="appService" />
 	</aop:config>
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">

@@ -13,9 +13,11 @@ import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -101,7 +103,7 @@ public class ScfOffer implements BetterjrEntity {
      * 2：历史，1：报价，0：取消
      */
     @Column(name = "C_BUSIN_STATUS",  columnDefinition="CHAR" )
-    @MetaData( value="2：历史", comments = "2：历史，1：报价，0：取消")
+    @MetaData( value="2：历史", comments = "3：已，2：历史，1：报价，0：取消")
     private String businStatus;
 
     /**
@@ -283,6 +285,7 @@ public class ScfOffer implements BetterjrEntity {
         this.regOperName = regOperName;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getRegDate() {
         return regDate;
     }
@@ -315,6 +318,7 @@ public class ScfOffer implements BetterjrEntity {
         this.modiOperName = modiOperName;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getModiDate() {
         return modiDate;
     }
@@ -463,6 +467,8 @@ public class ScfOffer implements BetterjrEntity {
     public String custName;
     @Transient
     public String factorName;
+    @Transient
+    public ScfEnquiry enquiry;
     
     public String getCustName() {
         return custName;
@@ -480,6 +486,14 @@ public class ScfOffer implements BetterjrEntity {
         this.factorName = factorName;
     }
     
+    public ScfEnquiry getEnquiry() {
+        return enquiry;
+    }
+
+    public void setEnquiry(ScfEnquiry enquiry) {
+        this.enquiry = enquiry;
+    }
+
     public void init() {
         this.id=SerialGenerator.getLongValue("ScfOffer.id");
         this.businStatus = "1";

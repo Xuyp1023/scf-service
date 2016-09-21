@@ -12,9 +12,11 @@ import javax.persistence.Table;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -274,6 +276,7 @@ public class ScfPayRecord implements BetterjrEntity {
         this.payPlanId = payPlanId;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getPayDate() {
         return payDate;
     }
@@ -282,6 +285,7 @@ public class ScfPayRecord implements BetterjrEntity {
         this.payDate = payDate;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getPlanPayDate() {
         return planPayDate;
     }
@@ -290,6 +294,7 @@ public class ScfPayRecord implements BetterjrEntity {
         this.planPayDate = planPayDate;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getdStartDate() {
         return dStartDate;
     }
@@ -418,6 +423,7 @@ public class ScfPayRecord implements BetterjrEntity {
         this.regOperName = regOperName;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getRegDate() {
         return regDate;
     }
@@ -450,6 +456,7 @@ public class ScfPayRecord implements BetterjrEntity {
         this.modiOperName = modiOperName;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getModiDate() {
         return modiDate;
     }

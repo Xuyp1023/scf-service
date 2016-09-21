@@ -59,6 +59,17 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
         return anOffer;
     }
 
+    public ScfOffer saveUpdateTradeStatus(Long anId, String tradeStatus){
+        ScfOffer offer = new ScfOffer();
+        if(null == anId){
+            return offer;
+        }
+        
+        offer.setBusinStatus(tradeStatus);
+        return this.saveModifyOffer(offer , anId);
+    }
+    
+    
     public ScfOffer saveModifyOffer(ScfOffer anOffer, Long anId) {
         //取消报价:1.要修改报价次数, 2.修改报价与意向企业关联表中的报价状态
         if (BetterStringUtils.equals("0", anOffer.getBusinStatus())) {
@@ -108,7 +119,7 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
        //设置保理公司名称
        for (ScfOffer offer : offerList) {
            offer.setFactorName(custAccountService.queryCustName(offer.getFactorNo()));
-           offer.setBusinStatus(getBusinStatus(offer.getBusinStatus())); 
+           offer.setEnquiry(enquiryService.findEnquiryByNo(offer.getEnquiryNo()));
        }
        return offerList;
     }
@@ -144,30 +155,9 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
             if(false == Collections3.isEmpty(offerList)){
                 object.setOffer(Collections3.getFirst(offerList));
             }
-            object.setBusinStatus(getBusinStatus(object.getBusinStatus()));
             object.setFactorName(accountService.queryCustName(object.getFactorNo()));
         }
         return list;
-    }
-    
-    private String getBusinStatus(String anBusinStatus) {
-        //状态：-2：已融资，-1：放弃，0：未报价，1：已报价
-        String ret = "";
-        switch (anBusinStatus) {
-            case "1":
-                ret = "已报价";
-                break;
-            case "0":
-                ret = "未报价";
-                break;
-             case "-1":
-                 ret = "已放弃";
-                break;
-            default:
-                ret = "已融资";
-                break;
-        }
-        return ret;
     }
     
     /**
@@ -204,6 +194,7 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
         //设置保理公司名称
         for (ScfOffer offer : offerList) {
             offer.setFactorName(custAccountService.queryCustName(offer.getFactorNo()));
+            offer.setEnquiry(enquiryService.findEnquiryByNo(offer.getEnquiryNo()));
         }
         return offerList;
     }
