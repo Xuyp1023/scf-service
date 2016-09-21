@@ -69,16 +69,7 @@ public class ScfElecNoticeLocalService extends ScfElecAgreeLocalService {
     public boolean cancelElecAgreement(String anDescribe) {
         logger.info("will cancel appNo is " + this.elecAgree.getAppNo());
         if (elecAgreeService.checkCancelElecAgreement(this.elecAgree.getAppNo())) {
-            ScfRequest tmpReq = this.requestService.selectByPrimaryKey(elecAgree.getRequestNo());
-//            tmpReq.cancelRequestValue("供应商取消转让协议！", "6");
-//            tmpReq = this.remoteHelper.sendRequestStatus(tmpReq);
-            if (tmpReq!=null && "6".equalsIgnoreCase(tmpReq.getTradeStatus())) {
-                this.requestService.addRequest(tmpReq);
-                return this.elecAgreeService.saveAndCancelElecAgreement(this.elecAgree.getAppNo(),anDescribe);
-            }
-            else {
-                return false;
-            }
+            return this.elecAgreeService.saveAndCancelElecAgreement(this.elecAgree.getAppNo(),anDescribe);
         }
         return false;
     }

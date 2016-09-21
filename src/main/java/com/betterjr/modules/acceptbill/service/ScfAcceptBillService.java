@@ -440,5 +440,4 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     public ScfAcceptBill saveExpireAcceptBill(Long anId, boolean anCheckOperOrg) {
         return this.saveAcceptBillStatus(anId, "3", "0", anCheckOperOrg);
     }
-
 }

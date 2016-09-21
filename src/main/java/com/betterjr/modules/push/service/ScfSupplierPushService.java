@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.service.BaseService;
+import com.betterjr.modules.customer.data.CustRelationData;
+import com.betterjr.modules.enquiry.entity.ScfEnquiry;
+import com.betterjr.modules.enquiry.service.ScfEnquiryService;
 import com.betterjr.modules.push.dao.ScfSupplierPushMapper;
 import com.betterjr.modules.push.entity.ScfSupplierPush;
 import com.betterjr.modules.push.entity.ScfSupplierPushDetail;
@@ -19,19 +22,45 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
     
     @Autowired
     private ScfSupplierPushDetailService supplierPushDetailService;
+    @Autowired
+    private ScfPushCheckService pushCheckService;
+    @Autowired
+    private ScfEnquiryService scfEnquiryService;
     
     public boolean pushSupplierInfo(Map<String, Object> anMap){
         boolean bool=false;
         try {
-            // 先根据需要获取摄推送的企业列表，从刘万林那边接口中获取，也可能是多个机构。这里先暂时写死
-            anMap.put("agencyNo", "123456");
+            Long coreCustNo=Long.parseLong(anMap.get("coreCustNo").toString());
+            Long supplierCustNo=Long.parseLong(anMap.get("supplierNo").toString());
             ScfSupplierPushDetail supplierPushDetail=new ScfSupplierPushDetail();
             supplierPushDetail.initDefValue(anMap);
-            if(supplierPushDetailService.addPushDetail(supplierPushDetail)){
-                ScfSupplierPush supplierPush=new ScfSupplierPush();
-                supplierPush.initDefValue(Long.parseLong(anMap.get("coreCustNo").toString()),Long.parseLong(anMap.get("supplierNo").toString()),supplierPushDetail.getId());
-                this.insert(supplierPush);
-                bool=true;
+            String factors="";
+            int i=0;
+            // 添加发送记录
+            for(CustRelationData custRelationData:pushCheckService.pushData(coreCustNo,supplierCustNo,supplierPushDetail)){
+                if(i==0){
+                    factors=custRelationData.getRelateCustno().toString();
+                }else{
+                    factors=","+custRelationData.getRelateCustno().toString();
+                }
+                supplierPushDetail.setAgencyNo(custRelationData.getRelateCustno().toString());
+                if(supplierPushDetailService.addPushDetail(supplierPushDetail)){
+                    ScfSupplierPush supplierPush=new ScfSupplierPush();
+                    supplierPush.initDefValue(coreCustNo,supplierCustNo,supplierPushDetail.getId());
+                    this.insert(supplierPush);
+                    bool=true;
+                }
+                i++;
+            }
+            if(bool){
+                // 推送成功后调询价接口
+                ScfEnquiry scfEnquiry=new ScfEnquiry();
+                scfEnquiry.setCustNo(coreCustNo);
+                scfEnquiry.setFactors(factors);
+                scfEnquiry.setOrders(supplierPushDetail.getOrderId().toString());
+                scfEnquiry.setRequestType("2");
+                scfEnquiry.setEnquiryMethod("1");
+                scfEnquiryService.addEnquiry(scfEnquiry);
             }
         }
         catch (Exception e) {

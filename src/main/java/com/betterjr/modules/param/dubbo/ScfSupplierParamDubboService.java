@@ -1,6 +1,7 @@
 package com.betterjr.modules.param.dubbo;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.DictUtils;
+import com.betterjr.common.utils.UserUtils;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.param.IScfSupplierParamService;
@@ -75,5 +77,4 @@ public class ScfSupplierParamDubboService implements IScfSupplierParamService{
         }
         return agencyName;
     }
-
 }

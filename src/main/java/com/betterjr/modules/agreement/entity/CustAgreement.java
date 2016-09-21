@@ -532,6 +532,11 @@ public class CustAgreement implements BetterjrEntity {
         this.status = anAgree.getStatus();
         this.modiDate = BetterDateUtils.getNumDate();
         this.batchNo = anAgree.getBatchNo();
+        this.supplierNo=anAgree.getSupplierNo();
+        this.supplier=anAgree.getSupplier();
+        this.operOrg = anAgree.getOperOrg();
+        this.operCode = anAgree.getOperCode();
+        this.operName = anAgree.getOperName();
     }
     
     public void updateStatus(String anStatus){
@@ -539,7 +544,7 @@ public class CustAgreement implements BetterjrEntity {
        this.modiDate = BetterDateUtils.getNumDate();
     }
     
-    public void initDefValue(CustOperatorInfo anCustOperInfo, String anBuyer, Long anSupplierNo, String anSupplier) {
+    public void initDefValue(CustOperatorInfo anCustOperInfo,Long buyerNo, String anBuyer, Long anSupplierNo, String anSupplier) {
         this.id = SerialGenerator.getLongValue("CustAgreement.id");
         this.regDate = BetterDateUtils.getNumDate();
         this.modiDate = BetterDateUtils.getNumDate();
@@ -548,6 +553,7 @@ public class CustAgreement implements BetterjrEntity {
         this.operCode = anCustOperInfo.getOperCode();
         this.operName = anCustOperInfo.getName();
         this.buyer = anBuyer;
+        this.buyerNo=buyerNo;
         this.supplierNo = anSupplierNo;
         this.supplier = anSupplier;
     }

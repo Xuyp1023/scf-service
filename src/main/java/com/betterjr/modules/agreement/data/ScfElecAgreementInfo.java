@@ -28,6 +28,9 @@ public class ScfElecAgreementInfo extends ScfElecAgreement {
     private String description;
     private BigDecimal confirmBalance;
     private String productName;
+    private String billMode;
+    private String invoiceDate;
+    private String endDate;
 
     public String getSubscribed() {
         
@@ -99,6 +102,30 @@ public class ScfElecAgreementInfo extends ScfElecAgreement {
 
     public void setProductName(String anProductName) {
         this.productName = anProductName;
+    }
+
+    public String getBillMode() {
+        return this.billMode;
+    }
+
+    public void setBillMode(String anBillMode) {
+        this.billMode = anBillMode;
+    }
+
+    public String getInvoiceDate() {
+        return this.invoiceDate;
+    }
+
+    public void setInvoiceDate(String anInvoiceDate) {
+        this.invoiceDate = anInvoiceDate;
+    }
+
+    public String getEndDate() {
+        return this.endDate;
+    }
+
+    public void setEndDate(String anEndDate) {
+        this.endDate = anEndDate;
     }
 
     //    public void addAttachValue(ScfRequest anRequest) {
