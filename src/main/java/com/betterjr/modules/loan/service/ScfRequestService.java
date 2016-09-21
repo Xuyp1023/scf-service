@@ -592,7 +592,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
      */
     public ScfRequestNotice getNotice(ScfRequest anRequest) {
         //TODO 合同名称、 银行账号， 保理公司详细地址
-        //CustMechBankAccount bankAccount = mechBankAccountService.findDefaultBankAccount(anRequest.getFactorNo());
+        CustMechBankAccount bankAccount = mechBankAccountService.findDefaultBankAccount(anRequest.getFactorNo());
         
         String noticeNo = BetterDateUtils.getDate("yyyyMMdd") + anRequest.getRequestNo();
         ScfRequestNotice noticeRequest = new ScfRequestNotice();
@@ -601,13 +601,13 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         noticeRequest.setNoticeNo(noticeNo);
         noticeRequest.setBuyer(anRequest.getCoreCustName());
         noticeRequest.setFactorRequestNo(noticeNo);
-        //noticeRequest.setBankAccount(bankAccount.getBankAcco());
-        CustMechBase factorBase = mechBaseService.findBaseInfo(anRequest.getFactorNo());
-        if(null != factorBase){
-            noticeRequest.setFactorAddr(factorBase.getAddress());
-            noticeRequest.setFactorPost(factorBase.getZipCode());
-            noticeRequest.setFactorLinkMan(factorBase.getLawName());
-        }
+        noticeRequest.setBankAccount(bankAccount.getBankAcco());
+        CustMechBase custBase = mechBaseService.findBaseInfo(anRequest.getCustNo());
+        noticeRequest.setFactorAddr(custBase.getAddress());
+        noticeRequest.setFactorPost(custBase.getZipCode());
+        
+        CustMechLaw custMechLaw = mechLawService.findLawInfo(anRequest.getCustNo());
+        noticeRequest.setFactorLinkMan(custMechLaw.getName());
         return noticeRequest;
     }
 

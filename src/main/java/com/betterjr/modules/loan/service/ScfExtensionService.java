@@ -194,7 +194,7 @@ public class ScfExtensionService extends BaseService<ScfExtensionMapper, ScfExte
 
         //修改原还款计划 
         plan.setBusinStatus(PayPlanBusinStatus.EXTENSION.getCode());
-        payPlanService.setPayPlanFee(record, plan);
+        payPlanService.fillPayPlanFee(record, plan);
         payPlanService.saveModifyPayPlan(plan, plan.getId());
         
         //修改申请的状态为展期 
