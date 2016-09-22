@@ -115,7 +115,7 @@ public class RequestDubboService implements IScfRequestService {
     @Override
     public String webFindSchemeDetail(String anRequestNo) {
         logger.debug("获取融资审批详情，入参：anRequestNo" + anRequestNo);
-        return AjaxObject.newOk(approvedService.selectByPrimaryKey(anRequestNo)).toJson();
+        return AjaxObject.newOk(approvedService.findSchemeDetail(anRequestNo)).toJson();
     }
 
     @Override
