@@ -76,11 +76,7 @@ public class ScfPushCheckService {
         }
         // 微信发送
         for(CustRelationData relationData:supplierRelationDataList){
-            if("0".equals(relationData.getRelateType())){ // 说明是给供应商推送消息
-                send(anCoreCustNo,relationData.getCustNo(),supplierPushDetail);
-            }else if("2".equals(relationData.getRelateType())){ // 说明是给保理机构关系用户推送数据
-                send(anCoreCustNo,relationData.getRelateCustno(),supplierPushDetail);
-            }
+            send(anCoreCustNo,relationData.getRelateCustno(),supplierPushDetail);
         }
         return supplierRelationDataList;
     }
@@ -116,7 +112,12 @@ public class ScfPushCheckService {
         supplierPushDetail.setAcceptor(findBillAcceptor(supplierPushDetail.getOrderId()).getAcceptor());
         supplierPushDetail.setBillNo(findBillAcceptor(supplierPushDetail.getOrderId()).getBillNo());
         final Builder builder = NotificationModel.newBuilder("商业汇票开立通知", sendCustomer, sendOperator);
-        builder.setEntity(supplierPushDetail);
+        builder.addParam("tragetCustName", supplierPushDetail.getTragetCustName());
+        builder.addParam("custName", supplierPushDetail.getCustName());
+        builder.addParam("acceptor", supplierPushDetail.getAcceptor());
+        builder.addParam("billNo", supplierPushDetail.getBillNo());
+        builder.addParam("disMoney", supplierPushDetail.getDisMoney());
+        builder.addParam("disDate", supplierPushDetail.getDisDate());
         builder.addReceiveOperator(targetOperator.getId()); // 接收人
         notificationSendService.sendNotification(builder.build());
     }
