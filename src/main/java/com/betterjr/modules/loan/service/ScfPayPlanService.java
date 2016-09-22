@@ -16,6 +16,7 @@ import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.DictUtils;
+import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.loan.dao.ScfPayPlanMapper;
@@ -317,8 +318,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         // 融资方式 ：1,订单，2:票据;3:应收款;4:经销商
         if (BetterStringUtils.equals("4", request.getRequestType())) {
             // 经销商融资只能选经销商还款
-            payType.put("value", "6");
-            payType.put("name", "经销商还款");
+            payType = QueryTermBuilder.newInstance().put("value", "6").put("name", "经销商还款").build();
             list.add(payType);
         }
         else {
@@ -329,27 +329,22 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
             int overDays = getOverDueDays(plan.getPlanDate(), anPayDate);
             if (overDays > 0) {
                 // 逾期可使用正常还款和逾期还款
-                payType = new HashMap<String, String>();
-                payType.put("value", "3");
-                payType.put("name", "逾期还款");
+                payType = QueryTermBuilder.newInstance().put("value", "3").put("name", "逾期还款").build();
                 list.add(payType);
             }
             else {
                 // 未到期可使用正常还款和提前还款
-                payType = new HashMap<String, String>();
-                payType.put("value", "2");
-                payType.put("name", "提前还款");
+                payType = QueryTermBuilder.newInstance().put("value", "2").put("name", "提前还款").build();
                 list.add(payType);
             }
-            payType = new HashMap<String, String>();
-            payType.put("value", "1");
-            payType.put("name", "正常还款");
+            
+            payType = QueryTermBuilder.newInstance().put("value", "1").put("name", "正常还款").build();
             list.add(payType);
         }
 
         return list;
     }
-
+    
     /**
      * 获取逾期相关数据
      * 

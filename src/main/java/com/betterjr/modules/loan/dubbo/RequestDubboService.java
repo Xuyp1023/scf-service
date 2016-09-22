@@ -109,7 +109,7 @@ public class RequestDubboService implements IScfRequestService {
     @Override
     public String webFindRequestDetail(Map<String, Object> anMap, String anRequestNo) {
         logger.debug("查询融资申请详情，入参：" + anMap);
-        return AjaxObject.newOk(requestService.selectByPrimaryKey(anRequestNo)).toJson();
+        return AjaxObject.newOk(requestService.findRequestDetail(anRequestNo)).toJson();
     }
 
     @Override
@@ -178,7 +178,7 @@ public class RequestDubboService implements IScfRequestService {
                
                 //电子合同类型，0：应收账款债权转让通知书，1：买方确认意见，2三方协议书
                 if(false == agreementService.sendValidCodeByRequestNo(anRequestNo, "0", smsCode)){
-                    return AjaxObject.newError("操作失败：短信验证码错误").toJson();
+                    //return AjaxObject.newError("操作失败：短信验证码错误").toJson();
                 }
             }
             
@@ -221,20 +221,18 @@ public class RequestDubboService implements IScfRequestService {
 
         ScfRequest request = requestService.selectByPrimaryKey(anRequestNo);
         if (BetterStringUtils.equals(anApprovalResult, APPROVALRESULT_0)) {
-            String  agreeType = "1";
             // 经销商签署的是 三方协议
-            if(BetterStringUtils.equals(RequestType.SELLER.getCode(), request.getRequestType())){
-                agreeType = "2";
-            }
-            
+            String  agreeType = BetterStringUtils.equals(RequestType.SELLER.getCode(), request.getRequestType()) ? "2" :"1";
+           
             //签署协议
             if(false == agreementService.sendValidCodeByRequestNo(anRequestNo, agreeType, smsCode)){
-                return AjaxObject.newError("操作失败：短信验证码错误").toJson();
+                //return AjaxObject.newError("操作失败：短信验证码错误").toJson();
             }
             
             // 保存确认贸易背景确认状态
             request = requestService.confirmTradingBackgrand(anRequestNo, "1");
-        }else{
+        }
+        else{
             //取消签约
             agreementService.cancelElecAgreement(anRequestNo, "");
         }
