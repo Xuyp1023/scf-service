@@ -29,7 +29,7 @@ import com.betterjr.modules.customer.ICustMechLawService;
 import com.betterjr.modules.customer.entity.CustMechBankAccount;
 import com.betterjr.modules.customer.entity.CustMechBase;
 import com.betterjr.modules.customer.entity.CustMechLaw;
-import com.betterjr.modules.enquiry.entity.ScfOffer;
+import com.betterjr.modules.enquiry.service.ScfEnquiryService;
 import com.betterjr.modules.enquiry.service.ScfOfferService;
 import com.betterjr.modules.loan.dao.ScfRequestMapper;
 import com.betterjr.modules.loan.entity.ScfLoan;
@@ -38,6 +38,7 @@ import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
 import com.betterjr.modules.loan.entity.ScfServiceFee;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
+import com.betterjr.modules.loan.helper.RequestType;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.helper.ScfOrderRelationType;
@@ -66,6 +67,8 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     private ScfProductService productService;
     @Autowired
     private ScfOfferService offerService;
+    @Autowired
+    private ScfEnquiryService enquiryService;
     
     @Reference(interfaceClass = ICustMechLawService.class)
     private ICustMechLawService mechLawService;
@@ -82,6 +85,8 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         
         //从报价过来的要改变报价状态
         offerService.saveUpdateTradeStatus(anRequest.getOfferId(), "3");
+        //从报价过来的要改变报价状态
+        enquiryService.saveUpdateBusinStatus(anRequest.getRequestNo(), "-2");
 
         // 关联订单
         orderService.saveInfoRequestNo(anRequest.getRequestType(), anRequest.getRequestNo(), anRequest.getOrders());
@@ -538,23 +543,22 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         CustAgreement agreement = Collections3.getFirst(agreementList);
         BTAssert.notNull(agreement, "发起融资背景确认失败：没有找到贸易合同！");
         
-        String type = anRequest.getRequestType();
         List<ScfRequestCredit> creditList = new ArrayList<ScfRequestCredit>();
-        
-        if(BetterStringUtils.equals("1", type) || BetterStringUtils.equals("4", type)){
-            List<ScfOrder> list = (List)orderService.findInfoListByRequest(anRequest.getRequestNo(), "1");
+        String type = anRequest.getRequestType();
+        if(BetterStringUtils.equals(RequestType.ORDER.getCode(), type) || BetterStringUtils.equals(RequestType.SELLER.getCode(), type)){
+            List<ScfOrder> list = (List)orderService.findInfoListByRequest(anRequest.getRequestNo(), RequestType.ORDER.getCode());
             for (ScfOrder order : list) {
                 creditList = setInvoice(anRequest, order.getInvoiceList(), order.getBalance(), order.getOrderNo(),agreement);
             }
-        }else if(BetterStringUtils.equals("2", type)){
-            List<ScfReceivable> list = (List)orderService.findInfoListByRequest(anRequest.getRequestNo(), "2");
-            for (ScfReceivable receivable : list) {
-                creditList = setInvoice(anRequest, receivable.getInvoiceList(), receivable.getBalance(), receivable.getReceivableNo() ,agreement);
-            }
-        }else if(BetterStringUtils.equals("3", type)){
-            List<ScfAcceptBill> list = (List)orderService.findInfoListByRequest(anRequest.getRequestNo(), "3");
+        }else if(BetterStringUtils.equals(RequestType.BILL.getCode(), type)){
+            List<ScfAcceptBill> list = (List)orderService.findInfoListByRequest(anRequest.getRequestNo(), RequestType.BILL.getCode());
             for (ScfAcceptBill bill : list) {
-                creditList = setInvoice(anRequest, bill.getInvoiceList(), bill.getBalance(), bill.getBtBillNo(),agreement);
+                creditList = setInvoice(anRequest, bill.getInvoiceList(), bill.getBalance(), bill.getBtBillNo() ,agreement);
+            }
+        }else if(BetterStringUtils.equals(RequestType.RECEIVABLE.getCode(), type)){
+            List<ScfReceivable> list = (List)orderService.findInfoListByRequest(anRequest.getRequestNo(), RequestType.RECEIVABLE.getCode());
+            for (ScfReceivable receivable : list) {
+                creditList = setInvoice(anRequest, receivable.getInvoiceList(), receivable.getBalance(), receivable.getReceivableNo(), agreement);
             }
         }
         return creditList;
@@ -686,6 +690,13 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         node.setSysNodeName(RequestTradeStatus.PAYFINSH.getName());
         node.setSysNodeId(new Long(RequestTradeStatus.PAYFINSH.getCode()));
         node.setId(new Long(RequestTradeStatus.PAYFINSH.getCode()));
+        list.add(node);
+        
+        node = new CustFlowNodeData();
+        node.setNodeCustomName(RequestTradeStatus.CLOSED.getName());
+        node.setSysNodeName(RequestTradeStatus.CLOSED.getName());
+        node.setSysNodeId(new Long(RequestTradeStatus.CLOSED.getCode()));
+        node.setId(new Long(RequestTradeStatus.CLOSED.getCode()));
         list.add(node);
     }
     
