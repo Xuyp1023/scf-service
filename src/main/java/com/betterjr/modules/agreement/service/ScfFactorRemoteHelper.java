@@ -9,7 +9,7 @@ import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.modules.agreement.entity.FaceTradeResult;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.remote.entity.RemoteResultInfo;
-import com.betterjr.modules.remote.service.RemoteProxyFactory;
+import com.betterjr.modules.remote.helper.RemoteProxyFactory;
 
 /**
  * 提供调用保理和沃通的远程接口辅助工具类。

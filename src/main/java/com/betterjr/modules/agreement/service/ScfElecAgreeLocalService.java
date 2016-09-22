@@ -12,8 +12,9 @@ import com.betterjr.common.utils.MathExtend;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.agreement.data.ScfElecAgreementInfo;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
-import com.betterjr.modules.agreement.utils.CustFileClientUtils;
 import com.betterjr.modules.document.entity.CustFileItem;
+import com.betterjr.modules.document.utils.CustFileClientUtils;
+import com.betterjr.modules.document.utils.CustFileUtils;
 
 import java.util.*;
 
@@ -84,7 +85,7 @@ public abstract class ScfElecAgreeLocalService {
             KeyAndValueObject fileInfo = FileUtils.findFilePathWithParent(ParamNames.CONTRACT_PATH,"");
             logger.info("work file info " + fileInfo);
             if (CustFileClientUtils.exportPDF(buffer, fileInfo)) {
-                fileItem = CustFileClientUtils.createSignDocFileItem(fileInfo, "signFile", this.elecAgree.getAgreeName().concat(".pdf"));
+                fileItem = CustFileUtils.createSignDocFileItem(fileInfo, "signFile", this.elecAgree.getAgreeName().concat(".pdf"));
                 if (anSave) {
                     elecAgreeService.saveSignFileInfo(elecAgree, fileItem, false);
                 }

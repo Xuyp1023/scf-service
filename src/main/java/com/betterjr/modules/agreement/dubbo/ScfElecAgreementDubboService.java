@@ -170,6 +170,7 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
             return AjaxObject.newError("资料删除失败").toJson();
         }
     }
+
     
     /***
      * 根据请求单号和合同类型获取验证码
@@ -195,5 +196,36 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
     public String webSendValidCodeByRequestNo(String anRequestNo, String anAgreeType, String anVcode){
         String appno=scfElecAgreementService.findElecAgreeByRequestNo(anRequestNo, anAgreeType);
         return AjaxObject.newOk("发送验证签署验证码",scfAgreementService.sendValidCode(appno, anAgreeType, anVcode)).toString();
+
+
+    @Override
+    public List<Long> findBatchNo(String anAppNo) {
+        // TODO Auto-generated method stub
+        return this.scfElecAgreementService.findBatchNo(anAppNo);
+    }
+
+    @Override
+    public List<Long> findSignedBatchNo(String anRequestNo) {
+        // TODO Auto-generated method stub
+        return this.scfElecAgreementService.findSignedBatchNo(anRequestNo);
+    }
+
+    @Override
+    public void saveElecAgreementStatus(String anAppNo, String anStatus) {
+        // TODO Auto-generated method stub
+        this.scfElecAgreementService.saveElecAgreementStatus(anAppNo, anStatus);
+    }
+
+    @Override
+    public ScfElecAgreement findOneElecAgreement(String anAppNo) {
+        // TODO Auto-generated method stub
+        return this.scfElecAgreementService.findOneElecAgreement(anAppNo);
+    }
+
+    @Override
+    public boolean saveSignedFile(String anAppNo, CustFileItem anFileItem) {
+        // TODO Auto-generated method stub
+        return this.scfElecAgreementService.saveSignedFile(anAppNo, anFileItem);
+
     }
 }

@@ -377,6 +377,12 @@ public class ScfRequest implements BetterjrEntity {
     @Column(name = "C_ORDERS",  columnDefinition="VARCHAR" )
     @MetaData( value="关联订单编号", comments = "关联订单编号")
     private String orders;
+    
+    /**
+     * 发送的审批状态
+     */
+    @Transient
+    private String outStatus;
 
     /**
      * 1:2.0, 2:微信票据
@@ -1160,12 +1166,32 @@ public class ScfRequest implements BetterjrEntity {
         this.orderBalance = orderBalance;
     }
 
+
     public String getProductName() {
         return productName;
     }
 
     public void setProductName(String productName) {
         this.productName = productName;
+
+    public String getOutStatus() {
+        return outStatus;
+    }
+
+    public void setOutStatus(String anOutStatus) {
+        outStatus = anOutStatus;
+    }
+
+    public void init() {
+        this.requestNo = SerialGenerator.getLongValue("ScfRequest.id")+"";
+        this.tradeStatus = "0";
+        this.lastStatus = "0";
+        this.regOperName = UserUtils.getUserName();
+        this.regOperId = UserUtils.getOperatorInfo().getId();
+        this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
+        this.regDate = BetterDateUtils.getNumDate();
+        this.regTime = BetterDateUtils.getNumTime();
+
     }
 
     public void init(ScfRequest request) {

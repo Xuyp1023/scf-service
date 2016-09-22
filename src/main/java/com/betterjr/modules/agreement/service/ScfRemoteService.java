@@ -4,6 +4,7 @@ import com.betterjr.common.annotation.AnnonRemoteMethod;
 import com.betterjr.common.data.BusinClassType;
 import com.betterjr.modules.agreement.entity.FaceTradeResult;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
+import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.remote.entity.RemoteResultInfo;
 
 /***
@@ -12,6 +13,29 @@ import com.betterjr.modules.remote.entity.RemoteResultInfo;
  *
  */
 public interface ScfRemoteService {
+    /**
+     * 
+     * 融资申请
+     * 
+     * @param 融资申请信息
+     * @return 融资申请结果通知
+     * @throws AccessException
+     *             抛出访问异常信息
+     */
+    @AnnonRemoteMethod(businFlag = "007", businClass = BusinClassType.SCF_APP, custType = "X")
+    public RemoteResultInfo<ScfRequest> appFinancing(ScfRequest anRequest);
+    
+    /**
+     * 
+     * 发送订单状态信息
+     * 
+     * @param 订单状态信息列表
+     * @return 订单状态发送结果通知
+     * @throws AccessException
+     *             抛出访问异常信息
+     */
+    @AnnonRemoteMethod(businFlag = "008", businClass = BusinClassType.SCF_STATE, custType = "X")
+    public RemoteResultInfo<FaceTradeResult> sendAppFinancingState(ScfRequest anRequest);
 
     /**
      * 

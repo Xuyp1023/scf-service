@@ -17,6 +17,7 @@ import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.order.dao.ScfInvoiceMapper;
+import com.betterjr.modules.order.data.ScfInvoiceAndAccess;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfInvoiceItem;
 import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
@@ -186,5 +187,29 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
             logger.warn(anMessage);
             throw new BytterTradeException(40001, anMessage);
         }
+    }
+    
+
+    /**
+     * 根据票据ID查找票据信息
+     * 
+     * @param anBillNo
+     * @return
+     */
+    public List<ScfInvoiceAndAccess> queryScfInvoiceByBillNo(Long anBillId, String anAgreeNo) {
+        List<ScfInvoiceAndAccess> invoiceList = this.selectByClassProperty(ScfInvoiceAndAccess.class, makeCondition(anBillId));
+        for (ScfInvoiceAndAccess invoice : invoiceList) {
+
+            invoice.setAgreeNo(anAgreeNo);
+        }
+
+        return invoiceList;
+    }
+    
+    private Map<String, Object> makeCondition(Long anBillId) {
+        Map<String, Object> termMap = new HashMap();
+        termMap.put("billId", anBillId);
+        termMap.put("status", "1");
+        return termMap;
     }
 }

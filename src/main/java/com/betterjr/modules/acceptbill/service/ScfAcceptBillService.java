@@ -25,17 +25,23 @@ import com.betterjr.modules.acceptbill.dao.ScfAcceptBillMapper;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.agreement.entity.CustAgreement;
+
 import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.document.entity.CustFileItem;
+
+import com.betterjr.modules.agreement.service.ScfCustAgreementService;
+
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.helper.RequestType;
 import com.betterjr.modules.loan.service.ScfRequestService;
+import com.betterjr.modules.order.data.ScfInvoiceAndAccess;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.entity.ScfOrderRelation;
 import com.betterjr.modules.order.entity.ScfTransport;
 import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
 import com.betterjr.modules.order.helper.ScfOrderRelationType;
+import com.betterjr.modules.order.service.ScfInvoiceService;
 import com.betterjr.modules.order.service.ScfOrderRelationService;
 import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
@@ -54,8 +60,52 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     @Autowired
     private CustAccountService custAccountService;
     
+
     @Reference(interfaceClass = ICustFileService.class)
     private ICustFileService custFileDubboService;
+
+    @Autowired
+    private ScfCustAgreementService custAgreementSerive;
+    @Autowired
+    private ScfInvoiceService scfInvoiceService;
+    
+    
+    /**
+     * 批量获取票据对应的相关文件信息
+     * 
+     * @param anResult
+     * @param anBillId
+     * @return
+     */
+    public List<Long> findBillRelBatchNoWithOutInvoice(Long anBillId) {
+
+        return findBillRelBatchNo(new ArrayList(), anBillId, false);
+    }
+
+    public List<Long> findBillRelBatchNo(Long anBillId) {
+
+        return findBillRelBatchNo(new ArrayList(), anBillId, true);
+    }
+
+    private List<Long> findBillRelBatchNo(List<Long> anResult, Long anBillId, boolean anUseInvoice) {
+        ScfAcceptBill bill = this.selectByPrimaryKey(anBillId);
+        if (bill == null) {
+
+            return anResult;
+        }
+        logger.info("findBillRelBatchNo anBillId =" + anBillId + ", anUseInvoice = " + anUseInvoice);
+        anResult.add(bill.getBatchNo());
+        anResult.add(this.custAgreementSerive.findBatchNoById(bill.getAgreeId()));
+        if (anUseInvoice) {
+            for (ScfInvoiceAndAccess scfInvoice : this.scfInvoiceService.queryScfInvoiceByBillNo(bill.getId(), bill.getAgreeNo())) {
+                anResult.add(scfInvoice.getBatchNo());
+            }
+        }
+        logger.info("findBillRelBatchNo result is " + anResult);
+        return anResult;
+    }
+    
+>>>>>>> 92a700f... dubbo remote
 
     /**
      * 汇票信息分页查询

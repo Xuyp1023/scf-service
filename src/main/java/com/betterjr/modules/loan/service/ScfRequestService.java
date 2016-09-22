@@ -8,8 +8,16 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import com.alibaba.dubbo.config.annotation.Reference;
+
 import com.betterjr.common.exception.BytterTradeException;
+
+
+import com.betterjr.common.data.WebServiceErrorCode;
+import com.betterjr.common.exception.BytterWebServiceException;
+
+
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
@@ -17,6 +25,7 @@ import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
+import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.agreement.entity.ScfRequestCredit;
@@ -39,7 +48,11 @@ import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
 import com.betterjr.modules.loan.entity.ScfServiceFee;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
+
 import com.betterjr.modules.loan.helper.RequestType;
+
+import com.betterjr.modules.loan.helper.ScfFactorRemoteHelper;
+
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.helper.ScfOrderRelationType;
@@ -51,6 +64,9 @@ import com.betterjr.modules.workflow.data.CustFlowNodeData;
 
 @Service
 public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest> {
+    
+    @Autowired
+    private ScfAcceptBillService scfAcceptService;
 
     @Autowired
     private ScfPayPlanService payPlanService;
@@ -64,6 +80,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     private ScfServiceFeeService serviceFeeService;
     @Autowired
     private ScfOrderService orderService;
+
     @Autowired
     private ScfProductService productService;
     @Autowired
@@ -77,6 +94,9 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     private ICustMechBaseService mechBaseService;
     @Reference(interfaceClass = ICustMechBankAccountService.class)
     private ICustMechBankAccountService mechBankAccountService;
+
+    private ScfFactorRemoteHelper factorRemoteHelper=new ScfFactorRemoteHelper();
+
     
     public ScfRequest saveStartRequest(ScfRequest anRequest){
         anRequest.setRequestFrom("1");
@@ -682,6 +702,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         return requestList;
     }
 
+
     /**
      * anBusinStatus - 1：未放款，2：还款中  3.已还款
      */
@@ -698,5 +719,35 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
             int anPageSize) {
         anQueryConditionMap.put("requestType", new String[]{RequestType.SELLER.getCode()});
         return this.queryCoreEnterpriseRequest(anQueryConditionMap, anBusinStatus, anFlag, anPageNum, anPageSize);
+        }
+    
+    
+    public List<Long> findVoucherBatchNo(String anRequest) {
+        ScfRequest request = this.selectByPrimaryKey(anRequest);
+        if (request != null) {
+            return scfAcceptService.findBillRelBatchNo(Long.parseLong(request.getBillId()));
+        }
+        throw new BytterWebServiceException(WebServiceErrorCode.E1004);
+    }
+    
+    /**
+     * 发送申请单状态给保理公司
+     * 
+     * @param anRequestNo
+     *            申请单编号
+     * @param anStatus
+     *            申请单状态
+     */
+    public void updateAndSendRequestStatus(String anRequestNo, String anStatus) {
+        ScfRequest request = this.selectByPrimaryKey(anRequestNo);
+        if (request != null) {
+            request.setOutStatus(anStatus);
+            this.factorRemoteHelper.sendRequestStatus(request);
+            this.updateByPrimaryKey(request);
+        }
+        else {
+            logger.warn("sendRequestStatus method not find requestNo " + anRequestNo);
+        }
+
     }
 }
