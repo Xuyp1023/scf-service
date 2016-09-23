@@ -16,6 +16,8 @@ import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.BetterStringUtils;
+import com.betterjr.common.utils.MathExtend;
 import com.betterjr.common.utils.UserUtils;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -1166,28 +1168,46 @@ public class ScfRequest implements BetterjrEntity {
         this.productName = productName;
     }
 
-    public void init() {
-        this.requestNo = SerialGenerator.getLongValue("ScfRequest.id")+"";
-        this.tradeStatus = "0";
-        this.lastStatus = "0";
-        this.regOperName = UserUtils.getUserName();
-        this.regOperId = UserUtils.getOperatorInfo().getId();
-        this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
-        this.regDate = BetterDateUtils.getNumDate();
-        this.regTime = BetterDateUtils.getNumTime();
+    public void init(ScfRequest request) {
+        request.requestNo = SerialGenerator.getLongValue("ScfRequest.id")+"";
+        request.tradeStatus = "0";
+        request.lastStatus = "0";
+        request.regOperName = UserUtils.getUserName();
+        request.regOperId = UserUtils.getOperatorInfo().getId();
+        request.operOrg = UserUtils.getOperatorInfo().getOperOrg();
+        request.regDate = BetterDateUtils.getNumDate();
+        request.regTime = BetterDateUtils.getNumTime();
+        fillBalance(request);
     }
 
-    public void initModify() {
+    public void initModify(ScfRequest request) {
         this.modiOperId = UserUtils.getOperatorInfo().getId();
         this.modiOperName = UserUtils.getUserName();
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
+        fillBalance(request);
     }
     
-    public void initAutoModify() {
+    public void initAutoModify(ScfRequest request) {
         this.modiOperId = this.regOperId;
         this.modiOperName = this.getRegOperName();
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
+        fillBalance(request);
+    }
+    
+    private void fillBalance(ScfRequest request){
+        request.confirmBalance = MathExtend.defaultValue(request.confirmBalance, BigDecimal.ZERO);
+        request.loanBalance = MathExtend.defaultValue(request.loanBalance, BigDecimal.ZERO);
+        request.creditMoney = MathExtend.defaultValue(request.creditMoney, BigDecimal.ZERO);
+        request.ratio =MathExtend.defaultValue(request.ratio, BigDecimal.ZERO);
+        request.approvedBalance = MathExtend.defaultValue(request.approvedBalance, BigDecimal.ZERO);
+        request.remainMoney =  MathExtend.defaultValue(request.remainMoney, BigDecimal.ZERO);
+        request.invoiceBalance =MathExtend.defaultValue(request.invoiceBalance, BigDecimal.ZERO);
+        request.bondBalance = MathExtend.defaultValue(request.bondBalance, BigDecimal.ZERO);
+        request.ratio = MathExtend.defaultValue(request.ratio, BigDecimal.ZERO);
+        request.approvedRatio = MathExtend.defaultValue(request.ratio, BigDecimal.ZERO);
+        request.periodUnit = (null ==request.periodUnit)?approvedPeriodUnit:request.periodUnit;
+        request.approvedPeriodUnit = (null ==request.approvedPeriodUnit)?1:request.approvedPeriodUnit;
     }
 }

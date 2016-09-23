@@ -109,7 +109,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
      */
     public ScfRequest addRequest(ScfRequest anRequest) {
         BTAssert.notNull(anRequest, "新增融资申请失败-anRequest不能为空");
-        anRequest.init();
+        anRequest.init(anRequest);
         anRequest.setCustName(custAccountService.queryCustName(anRequest.getCustNo()));
         anRequest.setRequestDate(BetterDateUtils.getNumDate());
         this.insert(anRequest);
@@ -129,7 +129,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
             throw new IllegalArgumentException("修改融资申请失败-找不到原数据");
         }
 
-        anRequest.initModify();
+        anRequest.initModify(anRequest);
         anRequest.setRequestNo(anRequestNo);
         this.updateByPrimaryKeySelective(anRequest);
         return anRequest;
@@ -179,7 +179,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
             throw new IllegalArgumentException("修改融资申请失败-找不到原数据");
         }
 
-        anRequest.initModify();
+        anRequest.initModify(anRequest);
         anRequest.setRequestNo(anRequestNo);
         this.updateByPrimaryKeySelective(anRequest);
         return anRequest;
@@ -341,7 +341,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         request.setActualDate(anLoan.getLoanDate());
         request.setEndDate(anLoan.getEndDate());
         request.setConfirmBalance(anLoan.getLoanBalance());
-        this.updateByPrimaryKey(request);
+        this.saveModifyRequest(request, request.getRequestNo());
 
         // ---保存还款计划------------------------------------------
         ScfPayPlan plan = createPayPlan(anLoan, request);

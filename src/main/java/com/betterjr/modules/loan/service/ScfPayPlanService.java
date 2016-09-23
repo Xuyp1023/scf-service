@@ -50,7 +50,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
     public ScfPayPlan addPayPlan(ScfPayPlan anPlan) {
         BTAssert.notNull(anPlan, "新增还款计划失败-anPlan不能为空");
 
-        anPlan.init();
+        anPlan.init(anPlan);
         this.insert(anPlan);
         return findPayPlanDetail(anPlan.getId());
     }
@@ -71,8 +71,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
             throw new IllegalArgumentException("修改还款计划失败-找不到原数据");
         }
 
-        anPlan.initModify();
-        anPlan.setId(anId);
+        anPlan.initModify(anPlan, anId);
         this.updateByPrimaryKeySelective(anPlan);
         return findPayPlanDetail(anId);
     }
@@ -93,8 +92,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
             throw new IllegalArgumentException("修改还款计划失败-找不到原数据");
         }
 
-        anPlan.initAutoModify();
-        anPlan.setId(anId);
+        anPlan.initAutoModify(anPlan, anId);
         this.updateByPrimaryKeySelective(anPlan);
         return findPayPlanDetail(anId);
     }
@@ -232,7 +230,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         }
 
         if (null == ratio) {
-            return new BigDecimal(0);
+            return BigDecimal.ZERO;
         }
 
         BigDecimal fee = anLoanBalance.multiply(ratio).multiply(new BigDecimal(request.getApprovedPeriod())).divide(scale);
@@ -244,31 +242,52 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
      * 进入还款界面后，填充还款数据
      * 
      * @param anRequestNo
+     * @param payDate 
      * @return
      */
-    public ScfPayRecord queryRepaymentFee(String anRequestNo, String anPayType, String anFactorNo) {
+    public ScfPayRecord queryRepaymentFee(String anRequestNo, String anPayType, String anFactorNo, String payDate) {
         ScfPayPlan plan = findPlanByRequestNo(anRequestNo);
+        BigDecimal principalBalance = plan.getSurplusPrincipalBalance();
+        BigDecimal interestBalance = plan.getSurplusInterestBalance();
+        BigDecimal managementBalance = plan.getSurplusManagementBalance();
+        BigDecimal totalBalance =plan.getSurplusTotalBalance();
+        
+        FactorParam param = DictUtils.loadObject("FactorParam", anFactorNo, FactorParam.class);
+        BTAssert.notNull(param, "查询还款费用失败-请先设置系统参数");
+        
         ScfPayRecord record = new ScfPayRecord();
-        record.setPrincipalBalance(plan.getSurplusPrincipalBalance());
-        record.setInterestBalance(plan.getSurplusInterestBalance());
-        record.setManagementBalance(plan.getSurplusManagementBalance());
+        // 还款类型：1：正常还款，2：提前还款，3：逾期还款，4：豁免，5：逾期豁免, 6:经销商还款，
+        if ("2".equals(anPayType)) {
+            //提前还款要计算提前还款手续费 和 贷款实际使用天数的利息;
+            
+            //提前还款手续费= 本次还款本金 * 提前还款手续费利率 / 100
+            BigDecimal servicefee = plan.getSurplusPrincipalBalance().multiply(param.getAdvanceRepaymentRatio()).divide(new BigDecimal(100));
+            record.setServicefeeBalance(servicefee);
+            
+            //计算实际使用的利息
+            Calendar planDateCalendar = Calendar.getInstance();
+            Calendar payDateCalendar = Calendar.getInstance();
+            planDateCalendar.setTime(BetterDateUtils.parseDate(plan.getStartDate().toString()));
+            payDateCalendar.setTime(BetterDateUtils.parseDate(payDate));
+            int payDays = BetterDateUtils.getDaysBetween(planDateCalendar, payDateCalendar);
+            
+            Map<String, BigDecimal> feeMap = getInterestByDays(anRequestNo, plan.getSurplusPrincipalBalance(), anFactorNo, payDays);
+            interestBalance = feeMap.get("interestBalance");
+            managementBalance = feeMap.get("managementBalance");
+            totalBalance = principalBalance.add(interestBalance).add(managementBalance).add(servicefee);
+        }
+        
+        record.setPrincipalBalance(principalBalance);
+        record.setInterestBalance(interestBalance);
+        record.setManagementBalance(managementBalance);
+        record.setTotalBalance(totalBalance);
+        
         record.setPayPlanId(plan.getId());
         record.setPayDate(BetterDateUtils.getDate());
         record.setPlanPayDate(plan.getPlanDate());
         record.setLatefeeBalance(plan.getShouldLatefeeBalance());
         record.setPenaltyBalance(plan.getShouldPenaltyBalance());
         record.setOverdueDays(plan.getOverdueDays());
-
-        // 还款类型：1：正常还款，2：提前还款，3：逾期还款，4：豁免，5：逾期豁免, 6:经销商还款，
-        if ("2".equals(anPayType)) {
-            FactorParam param = DictUtils.loadObject("FactorParam", anFactorNo, FactorParam.class);
-            BTAssert.notNull(param, "查询还款费用失败-请先设置系统参数");
-
-            // 本次还款本金 * 利息 / 100
-            BigDecimal servicefee = plan.getSurplusPrincipalBalance().multiply(param.getAdvanceRepaymentRatio()).divide(new BigDecimal(100));
-            record.setServicefeeBalance(servicefee);
-        }
-
         return record;
     }
 
@@ -360,8 +379,8 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
 
         // 小于宽限期不计算罚息
         if (overDays <= param.getGraceDays()) {
-            feeMap.put("latefeeBalance", new BigDecimal(0));
-            feeMap.put("penaltyBalance", new BigDecimal(0));
+            feeMap.put("latefeeBalance", BigDecimal.ZERO);
+            feeMap.put("penaltyBalance", BigDecimal.ZERO);
             return feeMap;
         }
 
@@ -388,22 +407,21 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         Map<String, BigDecimal> feeMap = new HashMap<String, BigDecimal>();
         FactorParam param = DictUtils.loadObject("FactorParam", anCustNo, FactorParam.class);
         ScfPayPlan plan = findPlanByRequestNo(anRequestNo);
-        BigDecimal managementBalance = new BigDecimal(0);
-        BigDecimal interestBalance = new BigDecimal(0);
         
-        BigDecimal managementRatio = plan.getManagementRatio();
-        BigDecimal ratio = plan.getManagementRatio();
+        BigDecimal dayManagementRatio = plan.getManagementRatio();
+        BigDecimal dayRatio = plan.getRatio();
         
         // 以月为单位，需要换算成天
-        if (plan.getPeriodUnit() == 2) {
-            managementRatio = plan.getManagementRatio().multiply(new BigDecimal(12)).divide(new BigDecimal(param.getCountDays()));
-            ratio = plan.getRatio().multiply(new BigDecimal(12)).divide(new BigDecimal(param.getCountDays()));
+        ScfRequest request = requestService.findRequestDetail(anRequestNo);
+        if (request.getPeriodUnit() == 2) {
+            dayManagementRatio = plan.getManagementRatio().multiply(new BigDecimal(12)).divide(new BigDecimal(param.getCountDays()));
+            dayRatio = plan.getRatio().multiply(new BigDecimal(12)).divide(new BigDecimal(param.getCountDays()));
         }
        
         //计算利息
-        managementBalance = plan.getSurplusPrincipalBalance().multiply(managementRatio).multiply(new BigDecimal(anDays))
+        BigDecimal managementBalance = plan.getSurplusPrincipalBalance().multiply(dayManagementRatio).multiply(new BigDecimal(anDays))
                 .divide(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP);
-        interestBalance = plan.getSurplusPrincipalBalance().multiply(ratio).multiply(new BigDecimal(anDays)).divide(new BigDecimal(100))
+        BigDecimal interestBalance = plan.getSurplusPrincipalBalance().multiply(dayRatio).multiply(new BigDecimal(anDays)).divide(new BigDecimal(100))
                 .setScale(2, BigDecimal.ROUND_HALF_UP);
         
         feeMap.put("managementBalance", managementBalance);
@@ -439,7 +457,6 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         anRecord.setCustNo(plan.getCustNo());
         anRecord.setFactorNo(plan.getFactorNo());
         anRecord.setPayCustNo(anRecord.getPayCustNo());
-        anRecord.init();
         payRecordService.addPayRecord(anRecord);
 
         ScfPayRecord record = new ScfPayRecord();
@@ -457,34 +474,37 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
             record.setManagementRatio(anRecord.getManagementRatio());
         }
         
-        Map<String, BigDecimal> map = getSellerPayPlanFee(record, plan.getStartDate());
-
         // 新增还款详情
-        saveRecordDetail(anRecord);
+        this.saveRecordDetail(anRecord);
 
         // 设置还款计划相关参数
-        fillPayPlanFee(anRecord, plan);
+        this.fillPayPlanFee(anRecord, plan);
 
-        if(plan.getSurplusPrincipalBalance().compareTo(new BigDecimal(0)) <=0){
-            // 状态改为结清
-            plan.setBusinStatus("2");
-            plan = saveModifyPayPlan(plan, anRecord.getPayPlanId());
+        // 状态改为结清
+        plan.setBusinStatus("2");
+        plan = saveModifyPayPlan(plan, anRecord.getPayPlanId());
+        
+        // 结清
+        if (plan.getSurplusPrincipalBalance().compareTo(BigDecimal.ZERO) <= 0) {
+            ScfRequest request = requestService.findRequestDetail(plan.getRequestNo());
+            request.setTradeStatus(RequestTradeStatus.PAYFINSH.getCode());
+            requestService.saveModifyRequest(request, plan.getRequestNo());
+            return plan;
         }
         
-        // 不是经销商还款
+        // 非经销商还款
         if (BetterStringUtils.equals("6", anRecord.getPayType()) == false) {
             return plan;
         }
 
+        //******************************以下为经销商特殊操作******************************************
+        //1.关联放款通知单
+        //2.新生成一还款计划
+        //******************************以下为经销商特殊操作******************************************
+        
         // 关联放款通知单
         deliveryNotice.saveRelationRequest(plan.getRequestNo(), anRecord.getDeliverys());
 
-        // 是经销商，但本次已还款完成
-        if (anRecord.getTotalBalance().compareTo(map.get("totalBalance")) < 0 == false) {
-            return plan;
-        }
-
-        
         // 这一次没有还完（还款金额 小于 剩余金额） 则 根据 剩余本金 重新计算 剩余利息
         // 如果经销商还款 一次没有还款，则默认把还计算方式 改为按天计算
         ScfPayPlan newPlan = new ScfPayPlan();
@@ -498,11 +518,12 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         newPlan.setCustNo(plan.getCustNo());
         newPlan.setCoreCustNo(plan.getCoreCustNo());
         newPlan.setFactorNo(plan.getFactorNo());
+        
         // 在原来的期数上加1
         newPlan.setTerm(plan.getTerm() + 1);
-        newPlan.setSurplusPrincipalBalance(plan.getSurplusPrincipalBalance().subtract(anRecord.getPrincipalBalance()));
+        newPlan.setSurplusPrincipalBalance(plan.getSurplusPrincipalBalance());
 
-        map = getSellerPayPlanFee(anRecord, plan.getStartDate());
+        Map<String, BigDecimal> map = getSellerPayPlanFee(anRecord, plan.getStartDate());
         BigDecimal interestBalance = map.get("interestBalance");
         BigDecimal mgrBalance = map.get("mgrBalance");
 
@@ -568,32 +589,32 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         recordDetail.setFactorNo(anRecord.getFactorNo());
         recordDetail.setPayDate(anRecord.getPayDate());
         recordDetail.setPayType(anRecord.getPayType());
-        if (null != anRecord.getPrincipalBalance() && anRecord.getPrincipalBalance().compareTo(new BigDecimal(0)) == 1) {
+        if (null != anRecord.getPrincipalBalance() && anRecord.getPrincipalBalance().compareTo(BigDecimal.ZERO) == 1) {
             recordDetail.init();
             recordDetail.setPayBalance(anRecord.getPrincipalBalance());
             payRecordDetailService.addRecordDetail(recordDetail);
         }
-        if (null != anRecord.getInterestBalance() && anRecord.getInterestBalance().compareTo(new BigDecimal(0)) == 1) {
+        if (null != anRecord.getInterestBalance() && anRecord.getInterestBalance().compareTo(BigDecimal.ZERO) == 1) {
             recordDetail.init();
             recordDetail.setPayBalance(anRecord.getInterestBalance());
             payRecordDetailService.addRecordDetail(recordDetail);
         }
-        if (null != anRecord.getManagementBalance() && anRecord.getManagementBalance().compareTo(new BigDecimal(0)) == 1) {
+        if (null != anRecord.getManagementBalance() && anRecord.getManagementBalance().compareTo(BigDecimal.ZERO) == 1) {
             recordDetail.init();
             recordDetail.setPayBalance(anRecord.getManagementBalance());
             payRecordDetailService.addRecordDetail(recordDetail);
         }
-        if (null != anRecord.getPenaltyBalance() && anRecord.getPenaltyBalance().compareTo(new BigDecimal(0)) == 1) {
+        if (null != anRecord.getPenaltyBalance() && anRecord.getPenaltyBalance().compareTo(BigDecimal.ZERO) == 1) {
             recordDetail.init();
             recordDetail.setPayBalance(anRecord.getPenaltyBalance());
             payRecordDetailService.addRecordDetail(recordDetail);
         }
-        if (null != anRecord.getLatefeeBalance() && anRecord.getLatefeeBalance().compareTo(new BigDecimal(0)) == 1) {
+        if (null != anRecord.getLatefeeBalance() && anRecord.getLatefeeBalance().compareTo(BigDecimal.ZERO) == 1) {
             recordDetail.init();
             recordDetail.setPayBalance(anRecord.getLatefeeBalance());
             payRecordDetailService.addRecordDetail(recordDetail);
         }
-        if (null != anRecord.getServicefeeBalance() && anRecord.getServicefeeBalance().compareTo(new BigDecimal(0)) == 1) {
+        if (null != anRecord.getServicefeeBalance() && anRecord.getServicefeeBalance().compareTo(BigDecimal.ZERO) == 1) {
             recordDetail.init();
             recordDetail.setPayBalance(anRecord.getServicefeeBalance());
             payRecordDetailService.addRecordDetail(recordDetail);
@@ -603,6 +624,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
 
     public void fillPayPlanFee(ScfPayRecord anRecord, ScfPayPlan anPlan) {
         // 剩余金额
+        anPlan.setSurplusTotalBalance(minusCalculat(anPlan.getSurplusTotalBalance(), anRecord.getTotalBalance()));
         anPlan.setSurplusPrincipalBalance(minusCalculat(anPlan.getSurplusPrincipalBalance(), anRecord.getPrincipalBalance()));
         anPlan.setSurplusInterestBalance(minusCalculat(anPlan.getSurplusInterestBalance(), anRecord.getInterestBalance()));
         anPlan.setSurplusManagementBalance(minusCalculat(anPlan.getSurplusManagementBalance(), anRecord.getManagementBalance()));
@@ -615,11 +637,12 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         anPlan.setAlreadyManagementBalance(plusCalculat(anPlan.getAlreadyManagementBalance(), anRecord.getManagementBalance()));
         anPlan.setAlreadyPenaltyBalance(plusCalculat(anPlan.getAlreadyPenaltyBalance(), anRecord.getPenaltyBalance()));
         anPlan.setAlreadyLatefeeBalance(plusCalculat(anPlan.getAlreadyLatefeeBalance(), anRecord.getLatefeeBalance()));
+        anPlan.setAlreadyTotalBalance(plusCalculat(anPlan.getAlreadyTotalBalance(), anRecord.getTotalBalance()));
     }
 
     private BigDecimal minusCalculat(BigDecimal anMeiosis, BigDecimal anMinuend) {
         // 被减数为空或 小于等于0 直接返回减数
-        if (null == anMinuend || anMinuend.compareTo(new BigDecimal(0)) < 1) {
+        if (null == anMinuend || anMinuend.compareTo(BigDecimal.ZERO) < 1) {
             return anMeiosis;
         }
 
@@ -628,7 +651,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
 
     private BigDecimal plusCalculat(BigDecimal anBase, BigDecimal addend) {
         // 被减数为空或 小于等于0 直接返回减数
-        if (null == addend || addend.compareTo(new BigDecimal(0)) < 1) {
+        if (null == addend || addend.compareTo(BigDecimal.ZERO) < 1) {
             return anBase;
         }
 

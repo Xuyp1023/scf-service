@@ -10,7 +10,7 @@ public enum RequestTradeStatus {
     FINISH("160","融资完成"),
     OVERDUE("170","逾期"),
     EXTENSION("180","展期"),
-    PAYFINSH("190","还款完成"),
+    PAYFINSH("190","结清"),
     CLOSED("200","关闭");
     
     private String code;

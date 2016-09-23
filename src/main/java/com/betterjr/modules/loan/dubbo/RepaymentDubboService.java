@@ -1,6 +1,7 @@
 package com.betterjr.modules.loan.dubbo;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,8 +52,8 @@ public class RepaymentDubboService implements IScfRepaymentService {
     }
     
     @Override
-    public String webQueryRepaymentFee(String anRequestNo, String anPayType, String anFactorNo) {
-        ScfPayRecord record = payPlanService.queryRepaymentFee(anRequestNo, anPayType, anFactorNo);
+    public String webQueryRepaymentFee(String anRequestNo, String anPayType, String anFactorNo, String anPayDate) {
+        ScfPayRecord record = payPlanService.queryRepaymentFee(anRequestNo, anPayType, anFactorNo, anPayDate);
         return AjaxObject.newOk("操作成功", record).toJson();
     }
     
