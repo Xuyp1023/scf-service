@@ -14,6 +14,7 @@ import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
+import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
@@ -23,6 +24,7 @@ import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.entity.ScfOrderRelation;
 import com.betterjr.modules.order.entity.ScfTransport;
 import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
+import com.betterjr.modules.order.helper.ScfOrderRelationType;
 import com.betterjr.modules.order.service.ScfOrderRelationService;
 import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.receivable.dao.ScfReceivableMapper;
@@ -73,8 +75,7 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
         
         //补全关联信息
         for(ScfReceivable anReceivable : anReceivableList) {
-            Map<String, Object> anReceivableIdMap = new HashMap<String, Object>();
-            anReceivableIdMap.put("infoId", anReceivable.getId());
+            Map<String, Object> anReceivableIdMap = QueryTermBuilder.newInstance().put("infoId", anReceivable.getId()).put("infoType", ScfOrderRelationType.RECEIVABLE.getCode()).build();
             List<ScfOrderRelation> orderRelationList = orderRelationService.findOrderRelation(anReceivableIdMap);
             fillReceivableInfo(anReceivable, orderRelationList);
         }

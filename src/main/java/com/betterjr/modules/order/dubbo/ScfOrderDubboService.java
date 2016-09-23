@@ -26,9 +26,9 @@ public class ScfOrderDubboService implements IScfOrderService{
     public String webSaveModifyOrder(Map<String, Object> anMap, Long anId, String anFileList, String anOtherFileList) {
         ScfOrder anOrder = (ScfOrder) RuleServiceDubboFilterInvoker.getInputObj();
         //保存附件信息
-        anOrder.setBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anOrder.getOtherBatchNo()));
+        anOrder.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anOrder.getBatchNo()));
         //保存其他文件信息
-        anOrder.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anOrder.getBatchNo()));
+        anOrder.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anOrder.getOtherBatchNo()));
         return AjaxObject.newOk("订单信息编辑成功", scfOrderService.saveModifyOrder(anOrder, anId, anFileList)).toJson();
     }
 
