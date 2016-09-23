@@ -14,6 +14,7 @@ import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
+import com.betterjr.common.utils.DictUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.service.CustAccountService;
@@ -103,7 +104,7 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         Long anFactorNo = Collections3.getFirst(custAndOperatorRelaService.findCustNoList(anProduct.getRegOperId(), anProduct.getOperOrg()));
         anProduct.setFactorNo(anFactorNo);
         anProduct.setFactorName(custAccountService.queryCustName(anProduct.getFactorNo()));
-        anProduct.setFactorCorp(Collections3.getFirst(custAccountService.selectByProperty("custNo", anFactorNo)).getShortName());
+        anProduct.setFactorCorp(DictUtils.getDictCode("ScfFactorGroup", String.valueOf(anFactorNo)));
         // 设置核心企业名称
         anProduct.setCoreName(custAccountService.queryCustName(anProduct.getCoreCustNo()));
     }
@@ -241,13 +242,14 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
             throw new BytterTradeException(40001, anMessage);
         }
     }
-    
+
     /***
      * 根据产品id获取产品对象
+     * 
      * @param anProductId
      * @return
      */
-    public ScfProduct findProductById(Long anProductId){
+    public ScfProduct findProductById(Long anProductId) {
         return this.selectByPrimaryKey(anProductId);
     }
 }
