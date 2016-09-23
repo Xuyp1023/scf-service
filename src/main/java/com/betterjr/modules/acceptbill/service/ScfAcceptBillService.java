@@ -18,6 +18,7 @@ import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
+import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.dao.ScfAcceptBillMapper;
@@ -69,18 +70,7 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         // 操作员只能查询本机构数据
         anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
         // 构造custNo查询条件
-        // 当用户为供应商
-        if (UserUtils.supplierUser()) {
-            anMap.put("supplierNo", anMap.get("custNo"));
-            // 当用户为经销商
-        }
-        else if (UserUtils.sellerUser()) {
-            anMap.put("buyerNo", anMap.get("custNo"));
-            // 当用户为核心企业
-        }
-        else if (UserUtils.coreUser()) {
-            anMap.put("coreCustNo", anMap.get("custNo"));
-        }
+        anMap.put("holderNo", anMap.get("custNo"));
         anMap.remove("custNo");
         // 仅查询正常未融资数据
         if (BetterStringUtils.equals(anIsOnlyNormal, "1")) {
@@ -107,8 +97,8 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
      * 新增汇票信息
      */
     public ScfAcceptBill addAcceptBill(ScfAcceptBill anAcceptBill) {
-        anAcceptBill.initAddValue(anAcceptBill);
-        // 补充供应商客户号和持票人信息
+        anAcceptBill.initAddValue(UserUtils.getOperatorInfo(), anAcceptBill);
+        // 补充供应商客户号和持票人信息?
         this.insert(anAcceptBill);
         return anAcceptBill;
     }
@@ -122,14 +112,9 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     public List<ScfAcceptBill> findAcceptBillList(String anCustNo, String anIsOnlyNormal) {
         Map<String, Object> anMap = new HashMap<String, Object>();
         // 构造custNo查询条件
-        // 当用户为供应商
-        if (UserUtils.supplierUser()) {
-            anMap.put("supplierNo", anCustNo);
-            // 当用户为经销商
-        }
-        else if (UserUtils.sellerUser()) {
-            anMap.put("buyerNo", anCustNo);
-        }
+        // 构造custNo查询条件
+        anMap.put("holderNo", anMap.get("custNo"));
+        anMap.remove("custNo");
         // 仅查询正常未融资数据
         if (BetterStringUtils.equals(anIsOnlyNormal, "1")) {
             anMap.put("businStatus", new String[] { "0", "1" });
@@ -145,13 +130,30 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         BTAssert.notNull(anAcceptBill, "无法获得汇票信息");
         // 更新之前票据信息
         anAcceptBill.setNextHand(anHolder);
-        // 生成新票据
+        anAcceptBill.setNextHandNo(anHolderNo);
+        this.updateByPrimaryKeySelective(anAcceptBill);
+        // 生成新票据，流水号也是新的
         anAcceptBill.initTransferValue();
         // 变更持票人
         anAcceptBill.setHolder(anHolder);
         anAcceptBill.setHolderNo(anHolderNo);
         this.insert(anAcceptBill);
+        saveCopyOrderRelation(anId, anAcceptBill.getId());
         return anAcceptBill;
+    }
+    
+    /**
+     * 复制票据资料的关联关系
+     */
+    private void saveCopyOrderRelation(Long anOldId, Long anAimId) {
+        Map<String, Object> queryMap = QueryTermBuilder.newInstance().put("infoTyoe", ScfOrderRelationType.ACCEPTBILL.getCode())
+                .put("infoId", anOldId).build();
+        List<ScfOrderRelation> orderRelationList = orderRelationService.selectByProperty(queryMap);
+        for(ScfOrderRelation orderRelation : orderRelationList) {
+            orderRelation.initAddValue();
+            orderRelation.setInfoId(anAimId);
+            orderRelationService.insert(orderRelation);
+        }
     }
 
     /**
@@ -183,7 +185,8 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         checkStatus(anAcceptBill.getBusinStatus(), "3", true, "当前票据已过期,不允许修改");
         checkStatus(anAcceptBill.getFinanceFlag(), "0", false, "当前票据已融资,不允许修改");
         // 数据编辑初始化
-        anAcceptBill.initModifyValue(anModiAcceptBill);
+        anModiAcceptBill.setId(anId);
+        anModiAcceptBill.initModifyValue(UserUtils.getOperatorInfo());
         // 设置汇票状态(businStatus:1-完善资料)
         anAcceptBill.setBusinStatus("1");
         // 数据存盘

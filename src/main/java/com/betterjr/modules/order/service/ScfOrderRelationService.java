@@ -11,6 +11,7 @@ import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
+import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.order.dao.ScfOrderRelationMapper;
 import com.betterjr.modules.order.entity.ScfOrderRelation;
@@ -39,10 +40,14 @@ public class ScfOrderRelationService extends BaseService<ScfOrderRelationMapper,
         if(BetterStringUtils.equals(ScfOrderRelationType.ORDER.getCode(), anEnterType)) {
             for(String anInfoId : anInfoIds) {
                 ScfOrderRelation anOrderRelation = new ScfOrderRelation();
-                anOrderRelation.initAddValue();
                 anOrderRelation.setOrderId(anEnterId);
                 anOrderRelation.setInfoId(Long.valueOf(anInfoId));
                 anOrderRelation.setInfoType(anInfoType);
+                //检查关系是否存在，若存在则不再添加
+                if(checkRelationExists(anOrderRelation.getOrderId(), anOrderRelation.getInfoId(), anOrderRelation.getInfoType())) {
+                    continue;
+                }
+                anOrderRelation.initAddValue();
                 this.insert(anOrderRelation);
                 anOrderRelationList.add(anOrderRelation);
             }
@@ -51,17 +56,21 @@ public class ScfOrderRelationService extends BaseService<ScfOrderRelationMapper,
         else if (BetterStringUtils.equals(ScfOrderRelationType.ORDER.getCode(), anInfoType)){
             for(String anInfoId : anInfoIds) {
                 ScfOrderRelation anOrderRelation = new ScfOrderRelation();
-                anOrderRelation.initAddValue();
                 anOrderRelation.setOrderId(Long.valueOf(anInfoId));
                 anOrderRelation.setInfoId(anEnterId);
                 anOrderRelation.setInfoType(anEnterType);
+                //检查关系是否存在，若存在则不再添加
+                if(checkRelationExists(anOrderRelation.getOrderId(), anOrderRelation.getInfoId(), anOrderRelation.getInfoType())) {
+                    continue;
+                }
+                anOrderRelation.initAddValue();
                 this.insert(anOrderRelation);
                 anOrderRelationList.add(anOrderRelation);
             }
         }
         //当两个id都不为订单时
         else{
-            //根据enterId查询订单Id
+            //从enterId 来上溯到orderId
             Map<String, Object> anMap = new HashMap<String, Object>();
             anMap.put("infoId", anEnterId);
             anMap.put("infoType", anEnterType);
@@ -69,14 +78,18 @@ public class ScfOrderRelationService extends BaseService<ScfOrderRelationMapper,
             if(Collections3.isEmpty(orderRelationList)) {
                 throw new BytterTradeException(40001, "请先选择订单进行关联");
             }
-            //从enterId 来上溯到orderId
+            //将上溯出来的订单与所选信息关联
             Long anOrderId = Collections3.getFirst(orderRelationList).getOrderId();
             for(String anInfoId : anInfoIds) {
                 ScfOrderRelation anOrderRelation = new ScfOrderRelation();
-                anOrderRelation.initAddValue();
                 anOrderRelation.setOrderId(anOrderId);
                 anOrderRelation.setInfoId(Long.valueOf(anInfoId));
                 anOrderRelation.setInfoType(anInfoType);
+                //检查关系是否存在，若存在则不再添加
+                if(checkRelationExists(anOrderRelation.getOrderId(), anOrderRelation.getInfoId(), anOrderRelation.getInfoType())) {
+                    continue;
+                }
+                anOrderRelation.initAddValue();
                 this.insert(anOrderRelation);
                 anOrderRelationList.add(anOrderRelation);
             }
@@ -139,5 +152,15 @@ public class ScfOrderRelationService extends BaseService<ScfOrderRelationMapper,
      */
     public List<ScfOrderRelation> findOrderRelation(Map<String, Object> anMap) {
         return this.selectByClassProperty(ScfOrderRelation.class, anMap);
+    }
+    
+    /**
+     * 检查关系是否已存在
+     */
+    private boolean checkRelationExists(Long anOrderId, Long anInfoId, String anInfoType) {
+        Map<String, Object> queryMap = QueryTermBuilder.newInstance().put("orderId", anOrderId).put("infoId", anInfoId).put("infoType", anInfoType)
+                .build();
+        List<ScfOrderRelation> orderRelationList = this.selectByProperty(queryMap);
+        return !Collections3.isEmpty(orderRelationList);
     }
 }

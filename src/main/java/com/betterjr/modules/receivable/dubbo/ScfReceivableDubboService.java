@@ -23,12 +23,13 @@ public class ScfReceivableDubboService implements IScfReceivableService {
     private ICustFileService custFileDubboService;
 
     @Override
-    public String webSaveModifyReceivable(Map<String, Object> anMap, Long anId, String anFileList) {
+    public String webSaveModifyReceivable(Map<String, Object> anMap, Long anId, String anFileList, String anOtherFileList) {
         ScfReceivable anReceivable = (ScfReceivable) RuleServiceDubboFilterInvoker.getInputObj();
         
         //保存附件信息
         anReceivable.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anReceivable.getBatchNo()));
-        return AjaxObject.newOk("应收账款信息编辑成功", scfReceivableService.saveModifyReceivable(anReceivable, anId, anFileList)).toJson();
+        anReceivable.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anReceivable.getOtherBatchNo()));
+        return AjaxObject.newOk("应收账款信息编辑成功", scfReceivableService.saveModifyReceivable(anReceivable, anId, anFileList, anOtherFileList)).toJson();
     }
 
     @Override

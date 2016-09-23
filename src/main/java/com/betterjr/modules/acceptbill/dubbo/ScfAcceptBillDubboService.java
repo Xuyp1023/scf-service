@@ -36,20 +36,22 @@ public class ScfAcceptBillDubboService implements IScfAcceptBillService {
     }
 
     @Override
-    public String webSaveModifyAcceptBill(Map<String, Object> anMap, Long anId, String anFileList) {
+    public String webSaveModifyAcceptBill(Map<String, Object> anMap, Long anId, String anFileList, String anOtherFileList) {
         
         ScfAcceptBill anAcceptBill = (ScfAcceptBill) RuleServiceDubboFilterInvoker.getInputObj();
         //保存附件信息
         anAcceptBill.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anAcceptBill.getBatchNo()));
+        anAcceptBill.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anAcceptBill.getOtherBatchNo()));
         return AjaxObject.newOk("汇票信息修改成功", scfAcceptBillService.saveModifyAcceptBill(anAcceptBill, anId, anFileList)).toJson();
     }
     
     @Override
-    public String webAddAcceptBill(Map<String, Object> anMap, String anFileList) {
+    public String webAddAcceptBill(Map<String, Object> anMap, String anFileList, String anOtherFileList) {
         
         ScfAcceptBill anAcceptBill = (ScfAcceptBill) RuleServiceDubboFilterInvoker.getInputObj();
         //保存附件信息
         anAcceptBill.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anAcceptBill.getBatchNo()));
+        anAcceptBill.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anAcceptBill.getOtherBatchNo()));
         return AjaxObject.newOk("汇票信息登记成功", scfAcceptBillService.addAcceptBill(anAcceptBill)).toJson();
     }
     
