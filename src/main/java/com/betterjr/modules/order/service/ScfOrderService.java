@@ -16,6 +16,7 @@ import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
+import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
@@ -528,5 +529,46 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         result.clear();
         result.addAll(tempSet);
         return result;
+    }
+    
+    /**
+     * 检查业务所需信息是否完成--贸易合同、发票
+     * 1:订单，2:票据;3:应收款;
+     */
+    public void checkInfoCompleted(String anIdList, String anRequestType) {
+        String[] idList = anIdList.split(",");
+        List<CustAgreement> agreementList = new ArrayList<CustAgreement>();
+        List<ScfInvoice> invoiceList = new ArrayList<ScfInvoice>();
+        for (String anId : idList) {
+            if ("1".equals(anRequestType)) {
+                List<ScfOrder> orderList = this.findOrder(QueryTermBuilder.newInstance().put("id", Long.valueOf(anId)).build());
+                for(ScfOrder anOrder : orderList) {
+                    agreementList.addAll(anOrder.getAgreementList());
+                    invoiceList.addAll(anOrder.getInvoiceList());
+                }
+            }
+            else if ("2".equals(anRequestType)) {
+                List<ScfAcceptBill> acceptBillList = acceptBillService.findAcceptBill(QueryTermBuilder.newInstance().put("id", Long.valueOf(anId)).build());
+                for(ScfAcceptBill anAcceptBill : acceptBillList) {
+                    agreementList.addAll(anAcceptBill.getAgreementList());
+                    invoiceList.addAll(anAcceptBill.getInvoiceList());
+                }
+            }
+            else if ("3".equals(anRequestType)) {
+                List<ScfReceivable> receivableList = receivableService.findReceivable(QueryTermBuilder.newInstance().put("id", Long.valueOf(anId)).build());
+                for(ScfReceivable anReceivbale : receivableList) {
+                    agreementList.addAll(anReceivbale.getAgreementList());
+                    invoiceList.addAll(anReceivbale.getInvoiceList());
+                }
+            }
+        }
+        if(Collections3.isEmpty(agreementList)) {
+            logger.warn("所选资料不存在贸易合同");
+            throw new BytterTradeException(40001, "所选资料不存在贸易合同");
+        }
+        if(Collections3.isEmpty(invoiceList)) {
+            logger.warn("所选资料不存在发票信息");
+            throw new BytterTradeException(40001, "所选资料不存在发票信息");
+        }
     }
 }
