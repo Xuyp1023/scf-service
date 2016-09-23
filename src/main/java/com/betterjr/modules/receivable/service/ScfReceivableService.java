@@ -39,7 +39,7 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
     /**
      * 应收账款编辑
      */
-    public ScfReceivable saveModifyReceivable(ScfReceivable anMoidReceivable, Long anId, String anFileList) {
+    public ScfReceivable saveModifyReceivable(ScfReceivable anMoidReceivable, Long anId, String anFileList, String anOtherFileList) {
         logger.info("Begin to modify receivable");
         
         ScfReceivable anReceivable = this.selectByPrimaryKey(anId);
@@ -50,7 +50,8 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
         checkStatus(anReceivable.getBusinStatus(), "1", true, "当前应收账款已过期,不允许被编辑");
         checkStatus(anReceivable.getBusinStatus(), "2", true, "当前应收账款已冻结,不允许被编辑");
         //应收账款信息变更迁移初始化
-        anReceivable.initModifyValue(anMoidReceivable);
+        anMoidReceivable.setId(anId);
+        anMoidReceivable.initModifyValue(UserUtils.getOperatorInfo());
         //数据存盘
         this.updateByPrimaryKey(anReceivable);
         return anReceivable;

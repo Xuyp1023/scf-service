@@ -17,6 +17,7 @@ import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
@@ -176,6 +177,13 @@ public class ScfReceivable implements BetterjrEntity {
     @Column(name = "N_BATCHNO",  columnDefinition="INTEGER" )
     @MetaData( value="上传的批次号", comments = "上传的批次号，对应fileinfo中的ID")
     private Long batchNo;
+    
+    /**
+     * 其他资料，对应fileinfo中的ID
+     */
+    @Column(name = "N_OTHERBATCHNO",  columnDefinition="INTEGER" )
+    @MetaData( value="其他资料", comments = "其他资料，对应fileinfo中的ID")
+    private Long otherBatchNo;
 
     /**
      * 备注
@@ -201,6 +209,10 @@ public class ScfReceivable implements BetterjrEntity {
      */
     @Transient
     private List<CustAgreement> agreementList;
+    
+    /**
+     * 其他资料，从订单信息下面查出
+     */
 
     private static final long serialVersionUID = 1469676107642L;
 
@@ -363,6 +375,14 @@ public class ScfReceivable implements BetterjrEntity {
     public void setBatchNo(Long batchNo) {
         this.batchNo = batchNo;
     }
+    
+    public Long getOtherBatchNo() {
+        return otherBatchNo;
+    }
+
+    public void setOtherBatchNo(Long otherBatchNo) {
+        this.otherBatchNo = otherBatchNo;
+    }
 
     public String getDescription() {
         return description;
@@ -406,6 +426,7 @@ public class ScfReceivable implements BetterjrEntity {
         sb.append(", modiTime=").append(modiTime);
         sb.append(", businStatus=").append(businStatus);
         sb.append(", batchNo=").append(batchNo);
+        sb.append(", otherBatchNo=").append(otherBatchNo);
         sb.append(", description=").append(description);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
@@ -444,6 +465,7 @@ public class ScfReceivable implements BetterjrEntity {
             && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()))
             && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
             && (this.getBatchNo() == null ? other.getBatchNo() == null : this.getBatchNo().equals(other.getBatchNo()))
+            && (this.getOtherBatchNo() == null ? other.getOtherBatchNo() == null : this.getOtherBatchNo().equals(other.getOtherBatchNo()))
             && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()));
     }
 
@@ -471,6 +493,7 @@ public class ScfReceivable implements BetterjrEntity {
         result = prime * result + ((getModiTime() == null) ? 0 : getModiTime().hashCode());
         result = prime * result + ((getBusinStatus() == null) ? 0 : getBusinStatus().hashCode());
         result = prime * result + ((getBatchNo() == null) ? 0 : getBatchNo().hashCode());
+        result = prime * result + ((getOtherBatchNo() == null) ? 0 : getOtherBatchNo().hashCode());
         result = prime * result + ((getDescription() == null) ? 0 : getDescription().hashCode());
         return result;
     }
@@ -510,19 +533,12 @@ public class ScfReceivable implements BetterjrEntity {
     /**
      * 应收账款信息变更迁移初始化
      */
-    public void initModifyValue(ScfReceivable anModiReceivable) {
-        this.receivableNo = anModiReceivable.getReceivableNo();
-        this.debtor = anModiReceivable.getDebtor();
-        this.creditor = anModiReceivable.getCreditor();
-        this.unit = anModiReceivable.getUnit();
-        this.amount = anModiReceivable.getAmount();
-        this.goodsName = anModiReceivable.getGoodsName();
-        this.balance = anModiReceivable.getBalance();
-        this.endDate = anModiReceivable.getEndDate();
-
+    public void initModifyValue(CustOperatorInfo anOperatorInfo) {
+        if (null != anOperatorInfo) {
+            this.modiOperId = UserUtils.getOperatorInfo().getId();
+            this.modiOperName = UserUtils.getOperatorInfo().getName();
+        }
         this.modiDate = BetterDateUtils.getNumDate();
-        this.modiOperId = UserUtils.getOperatorInfo().getId();
-        this.modiOperName = UserUtils.getOperatorInfo().getName();
         this.modiTime = BetterDateUtils.getNumTime();
     }
 }

@@ -18,6 +18,7 @@ import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -266,7 +267,7 @@ public class ScfOrder implements BetterjrEntity {
      */
     public ScfOrder(ScfAcceptBill anAcceptBill) {
         super();
-        this.initAddValue();
+        this.initAddValue(UserUtils.getOperatorInfo());
         this.custNo = anAcceptBill.getCoreCustNo();
         this.orderNo = "此订单由票据编号" + anAcceptBill.getBillNo() + "的汇票默认生成";
         this.goodsName = "此订单由票据编号" + anAcceptBill.getBillNo() + "的汇票默认生成";
@@ -280,7 +281,7 @@ public class ScfOrder implements BetterjrEntity {
      */
     public ScfOrder(ScfReceivable anReceivable) {
         super();
-        this.initAddValue();
+        this.initAddValue(UserUtils.getOperatorInfo());
         this.coreCustNo = anReceivable.getCustNo();
         this.orderNo = "此订单由应收账款编号" + anReceivable.getReceivableNo() + "的应收账款默认生成";
         this.goodsName = anReceivable.getGoodsName();
@@ -667,19 +668,12 @@ public class ScfOrder implements BetterjrEntity {
     /**
      * 订单信息编辑数据保存
      */
-    public void initModifyValue(ScfOrder anModiOrder) {
-        this.orderNo = anModiOrder.getOrderNo();
-        this.goodsName = anModiOrder.getGoodsName();
-        this.orderDate = anModiOrder.getOrderDate();
-        this.unit = anModiOrder.getUnit();
-        this.amount = anModiOrder.getAmount();
-        this.balance = anModiOrder.getBalance();
-        this.coreCustNo = anModiOrder.getCoreCustNo();
-        this.settlement = anModiOrder.getSettlement();
-       
+    public void initModifyValue(CustOperatorInfo anOperatorInfo) {
+        if (null != anOperatorInfo) {
+            this.modiOperId = anOperatorInfo.getId();
+            this.modiOperName = anOperatorInfo.getName();
+        }
         this.modiDate = BetterDateUtils.getNumDate();
-        this.modiOperId = UserUtils.getOperatorInfo().getId();
-        this.modiOperName = UserUtils.getOperatorInfo().getName();
         this.modiTime = BetterDateUtils.getNumTime();
     }
     
@@ -687,19 +681,21 @@ public class ScfOrder implements BetterjrEntity {
      * 清空订单关联信息
      */
     public void clearRelationInfo(){
-        this.agreementList = null;
-        this.transportList = null;
-        this.invoiceList = null;
-        this.acceptBillList = null;
-        this.receivableList = null;
+        this.agreementList.clear();
+        this.transportList.clear();
+        this.invoiceList.clear();
+        this.acceptBillList.clear();
+        this.receivableList.clear();
     }
 
-    public void initAddValue() {
+    public void initAddValue(CustOperatorInfo anOperatorInfo) {
         this.id = SerialGenerator.getLongValue("ScfOrder.id");
         this.businStatus = "0";
+        if (null != anOperatorInfo) {
+            this.modiOperId = anOperatorInfo.getId();
+            this.modiOperName = anOperatorInfo.getName();
+            this.operOrg = anOperatorInfo.getOperOrg();
+        }
         this.regDate = BetterDateUtils.getNumDate();
-        this.modiOperId = UserUtils.getOperatorInfo().getId();
-        this.modiOperName = UserUtils.getOperatorInfo().getName();
-        this.modiTime = BetterDateUtils.getNumTime();
     }
 }

@@ -184,10 +184,11 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         checkStatus(anOrder.getBusinStatus(), "1", true, "当前订单已过期,不允许被编辑");
         checkStatus(anOrder.getBusinStatus(), "2", true, "当前订单已冻结,不允许被编辑");
         // 应收账款信息变更迁移初始化
-        anOrder.initModifyValue(anModiOrder);
+        anModiOrder.setId(anOrder.getId());
+        anModiOrder.initModifyValue(UserUtils.getOperatorInfo());
         // 数据存盘
-        this.updateByPrimaryKey(anOrder);
-        return anOrder;
+        this.updateByPrimaryKeySelective(anModiOrder);
+        return anModiOrder;
     }
     
     /**
@@ -195,7 +196,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
      */
     public ScfOrder addOrder(ScfOrder anOrder) {
         logger.info("Begin to add order");
-        anOrder.initAddValue();
+        anOrder.initAddValue(UserUtils.getOperatorInfo());
         this.insert(anOrder);
         return anOrder;
     }
@@ -399,7 +400,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
     /**
      * requestType 1:订单，2:票据;3:应收款;
      */
-    public void saveInfoRequestNo(String anRequestType, String anRequestNo, String anIdList){
+    public void saveInfoRequestNo(String anRequestType, String anRequestNo, String anIdList) {
         String[] anIds = anIdList.split(",");
         // 订单
         if (BetterStringUtils.equals(anRequestType, "1")) {
@@ -407,7 +408,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
                 this.saveOrderRequestNo(Long.valueOf(anOrderId), anRequestNo);
             }
         }
-        //非订单
+        // 非订单
         else {
             for (String anInfoId : anIds) {
                 Map<String, Object> anMap = new HashMap<String, Object>();
@@ -421,23 +422,34 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
                     anMap.put("infoType", ScfOrderRelationType.RECEIVABLE.getCode());
                 }
                 List<ScfOrderRelation> anOrderRelationList = orderRelationService.findOrderRelation(anMap);
-                //若未找到相应信息生成默认数据
-                if(Collections3.isEmpty(anOrderRelationList)) {
+
+                // 若未找到相应信息生成默认数据
+                if (Collections3.isEmpty(anOrderRelationList)) {
                     // 通过票据生成
                     if (BetterStringUtils.equals(anRequestType, "2")) {
-                        ScfOrder order = new ScfOrder(acceptBillService.selectByPrimaryKey(anInfoId));
+                        ScfOrder order = new ScfOrder(acceptBillService.selectByPrimaryKey(Long.parseLong(anInfoId)));
                         order.setRequestNo(anRequestNo);
                         this.insert(order);
-                        orderRelationService.addOrderRelation(ScfOrderRelationType.ORDER.getCode(), order.getId(),
-                                ScfOrderRelationType.ACCEPTBILL.getCode(), anInfoId);
+                        // 保存关联关系
+                        ScfOrderRelation relation = new ScfOrderRelation();
+                        relation.initAddValue();
+                        relation.setOrderId(order.getId());
+                        relation.setInfoType(ScfOrderRelationType.ACCEPTBILL.getCode());
+                        relation.setInfoId(Long.valueOf(anInfoId));
+                        orderRelationService.insert(relation);
                     }
                     // 应收账款生成
                     else if (BetterStringUtils.equals(anRequestType, "3")) {
-                        ScfOrder order = new ScfOrder(receivableService.selectByPrimaryKey(anInfoId));
+                        ScfOrder order = new ScfOrder(receivableService.selectByPrimaryKey(Long.parseLong(anInfoId)));
                         order.setRequestNo(anRequestNo);
                         this.insert(order);
-                        orderRelationService.addOrderRelation(ScfOrderRelationType.RECEIVABLE.getCode(), order.getId(),
-                                ScfOrderRelationType.RECEIVABLE.getCode(), anInfoId);
+                        // 保存关联关系
+                        ScfOrderRelation relation = new ScfOrderRelation();
+                        relation.initAddValue();
+                        relation.setOrderId(order.getId());
+                        relation.setInfoType(ScfOrderRelationType.RECEIVABLE.getCode());
+                        relation.setInfoId(Long.valueOf(anInfoId));
+                        orderRelationService.insert(relation);
                     }
                 }
                 else {
@@ -448,6 +460,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
             }
         }
     }
+
     
     /**
      * 根据requestNo解冻订单及相关信息状态
@@ -503,10 +516,12 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         //汇票附件
         for(ScfAcceptBill acceptBill : acceptBillList) {
             result.addAll(custFileDubboService.findCustFiles(acceptBill.getBatchNo()));
+            result.addAll(custFileDubboService.findCustFiles(acceptBill.getOtherBatchNo()));
         }
         //应收账款附件
         for(ScfReceivable receivable : receivableList) {
             result.addAll(custFileDubboService.findCustFiles(receivable.getBatchNo()));
+            result.addAll(custFileDubboService.findCustFiles(receivable.getOtherBatchNo()));
         }
         //对文件信息去重
         HashSet<CustFileItem> tempSet = new HashSet<CustFileItem>(result);
