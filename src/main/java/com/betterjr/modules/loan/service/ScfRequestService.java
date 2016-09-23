@@ -29,6 +29,7 @@ import com.betterjr.modules.customer.ICustMechLawService;
 import com.betterjr.modules.customer.entity.CustMechBankAccount;
 import com.betterjr.modules.customer.entity.CustMechBase;
 import com.betterjr.modules.customer.entity.CustMechLaw;
+import com.betterjr.modules.enquiry.entity.ScfOffer;
 import com.betterjr.modules.enquiry.service.ScfEnquiryService;
 import com.betterjr.modules.enquiry.service.ScfOfferService;
 import com.betterjr.modules.loan.dao.ScfRequestMapper;
@@ -83,10 +84,14 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         anRequest.setRequestFrom("1");
         anRequest = this.addRequest(anRequest);
         
-        //从报价过来的要改变报价状态
-        offerService.saveUpdateTradeStatus(anRequest.getOfferId(), "3");
-        //从报价过来的要改变报价状态
-        enquiryService.saveUpdateBusinStatus(anRequest.getRequestNo(), "-2");
+        if(null != anRequest.getOfferId()){
+            //从报价过来的要改变报价状态
+            offerService.saveUpdateTradeStatus(anRequest.getOfferId(), "3");
+            
+            ScfOffer offer = offerService.selectByPrimaryKey(anRequest.getOfferId());
+            //从报价过来的要改变报价状态
+            enquiryService.saveUpdateBusinStatus(offer.getEnquiryNo(), "-2");
+        }
 
         // 关联订单
         orderService.saveInfoRequestNo(anRequest.getRequestType(), anRequest.getRequestNo(), anRequest.getOrders());
