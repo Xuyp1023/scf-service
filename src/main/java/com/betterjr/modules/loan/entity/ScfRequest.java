@@ -13,9 +13,11 @@ import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -454,6 +456,7 @@ public class ScfRequest implements BetterjrEntity {
         this.confirmBalance = confirmBalance;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getRequestDate() {
         return requestDate;
     }
@@ -478,6 +481,7 @@ public class ScfRequest implements BetterjrEntity {
         this.factorRequestNo = factorRequestNo;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getOperDate() {
         return operDate;
     }
@@ -566,6 +570,7 @@ public class ScfRequest implements BetterjrEntity {
         this.loanBalance = loanBalance;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getActualDate() {
         return actualDate;
     }
@@ -574,6 +579,7 @@ public class ScfRequest implements BetterjrEntity {
         this.actualDate = actualDate;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getEndDate() {
         return endDate;
     }
@@ -582,6 +588,7 @@ public class ScfRequest implements BetterjrEntity {
         this.endDate = endDate;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getCleanDate() {
         return cleanDate;
     }
@@ -814,6 +821,7 @@ public class ScfRequest implements BetterjrEntity {
         this.modiOperName = modiOperName;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getModiDate() {
         return modiDate;
     }
@@ -846,6 +854,7 @@ public class ScfRequest implements BetterjrEntity {
         this.regOperName = regOperName;
     }
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     public String getRegDate() {
         return regDate;
     }

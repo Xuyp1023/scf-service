@@ -202,7 +202,7 @@ public class RequestDubboService implements IScfRequestService {
         if (BetterStringUtils.equals(APPROVALRESULT_0, anApprovalResult) == true) {
             //查看 应收帐款转让通知书 是否存在，如果不存在则操作失败
             if(null == requestNoticeService.findTransNotice(anRequestNo)){
-                //return AjaxObject.newError("操作失败,没有找到相应的-应收账款转让通知书").toJson();
+                return AjaxObject.newError("操作失败,没有找到相应的-应收账款转让通知书").toJson();
             }
             
             // 保存发起状态
@@ -226,7 +226,7 @@ public class RequestDubboService implements IScfRequestService {
            
             //签署协议
             if(false == agreementService.sendValidCodeByRequestNo(anRequestNo, agreeType, smsCode)){
-                return AjaxObject.newError("操作失败：短信验证码错误").toJson();
+               // return AjaxObject.newError("操作失败：短信验证码错误").toJson();
             }
             
             // 保存确认贸易背景确认状态

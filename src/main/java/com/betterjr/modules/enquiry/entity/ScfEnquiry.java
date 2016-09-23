@@ -8,6 +8,7 @@ import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -32,6 +33,7 @@ public class ScfEnquiry implements BetterjrEntity {
     @Id
     @Column(name = "ID",  columnDefinition="BIGINT" )
     @MetaData( value="流水号", comments = "流水号")
+    @OrderBy("desc")
     private Long id;
 
     /**
