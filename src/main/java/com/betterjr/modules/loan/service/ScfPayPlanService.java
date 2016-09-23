@@ -465,10 +465,12 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         // 设置还款计划相关参数
         fillPayPlanFee(anRecord, plan);
 
-        // 状态改为结清
-        plan.setBusinStatus("2");
-        plan = saveModifyPayPlan(plan, anRecord.getPayPlanId());
-
+        if(plan.getSurplusPrincipalBalance().compareTo(new BigDecimal(0)) <=0){
+            // 状态改为结清
+            plan.setBusinStatus("2");
+            plan = saveModifyPayPlan(plan, anRecord.getPayPlanId());
+        }
+        
         // 不是经销商还款
         if (BetterStringUtils.equals("6", anRecord.getPayType()) == false) {
             return plan;

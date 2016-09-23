@@ -7,6 +7,7 @@ import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import com.betterjr.common.annotation.MetaData;
@@ -26,6 +27,7 @@ public class ScfBadDebt implements BetterjrEntity {
      */
     @Column(name = "C_REQUESTNO",  columnDefinition="VARCHAR" )
     @MetaData( value="申请单号", comments = "申请单号")
+    @OrderBy("desc")
     private String requestNo;
 
     /**
