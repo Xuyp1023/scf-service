@@ -15,6 +15,7 @@ import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.MathExtend;
 import com.betterjr.common.utils.UserUtils;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -624,6 +625,18 @@ public class ScfPayRecord implements BetterjrEntity {
         this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
+    }
+    
+    private void fillBalance(ScfPayRecord anRecord){
+        anRecord.interestBalance = MathExtend.defaultValue(anRecord.interestBalance, BigDecimal.ZERO);
+        anRecord.managementBalance = MathExtend.defaultValue(anRecord.managementBalance, BigDecimal.ZERO);
+        anRecord.latefeeBalance = MathExtend.defaultValue(anRecord.latefeeBalance, BigDecimal.ZERO);
+        anRecord.penaltyBalance = MathExtend.defaultValue(anRecord.penaltyBalance, BigDecimal.ZERO);
+        anRecord.principalBalance = MathExtend.defaultValue(anRecord.principalBalance, BigDecimal.ZERO);
+        anRecord.servicefeeBalance = MathExtend.defaultValue(anRecord.servicefeeBalance, BigDecimal.ZERO);
+        anRecord.totalBalance = MathExtend.defaultValue(anRecord.totalBalance, BigDecimal.ZERO);
+        anRecord.managementRatio = MathExtend.defaultValue(anRecord.managementRatio, BigDecimal.ZERO);
+        anRecord.ratio = MathExtend.defaultValue(anRecord.ratio, BigDecimal.ZERO);
     }
     
 }

@@ -16,6 +16,7 @@ import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.MathExtend;
 import com.betterjr.common.utils.UserUtils;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -862,7 +863,7 @@ public class ScfPayPlan implements BetterjrEntity {
         return result;
     }
 
-    public void init() {
+    public void init(ScfPayPlan anPlan) {
         this.id = SerialGenerator.getLongValue("ScfPayPlan.id");
         this.businStatus = "0";
         this.regOperName = UserUtils.getUserName();
@@ -870,21 +871,56 @@ public class ScfPayPlan implements BetterjrEntity {
         this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
         this.regDate = BetterDateUtils.getNumDate();
         this.regTime = BetterDateUtils.getNumTime();
+        fillBalance(anPlan);
     }
 
-    public void initModify() {
-        this.modiOperId = UserUtils.getOperatorInfo().getId();
-        this.modiOperName = UserUtils.getUserName();
-        this.modiDate = BetterDateUtils.getNumDate();
-        this.modiTime = BetterDateUtils.getNumTime();
+    public void initModify(ScfPayPlan anPlan, Long anId) {
+        anPlan.id = anId;
+        anPlan.modiOperId = UserUtils.getOperatorInfo().getId();
+        anPlan.modiOperName = UserUtils.getUserName();
+        anPlan.modiDate = BetterDateUtils.getNumDate();
+        anPlan.modiTime = BetterDateUtils.getNumTime();
+        fillBalance(anPlan);
     }
     
-    public void initAutoModify() {
+    public void initAutoModify(ScfPayPlan anPlan, Long anId) {
         //定时任务取不到 当前登录用户，故使用登记用户
-        this.modiOperId = this.regOperId;
-        this.modiOperName = this.regOperName;
-        this.modiDate = BetterDateUtils.getNumDate();
-        this.modiTime = BetterDateUtils.getNumTime();
+        anPlan.id = anId;
+        anPlan.modiOperId = this.regOperId;
+        anPlan.modiOperName = this.regOperName;
+        anPlan.modiDate = BetterDateUtils.getNumDate();
+        anPlan.modiTime = BetterDateUtils.getNumTime();
+        fillBalance(anPlan);
+    }
+    
+    private void fillBalance(ScfPayPlan anPlan){
+        anPlan.shouldInterestBalance = MathExtend.defaultValue(anPlan.shouldInterestBalance, BigDecimal.ZERO);
+        anPlan.shouldLatefeeBalance = MathExtend.defaultValue(anPlan.shouldLatefeeBalance, BigDecimal.ZERO);
+        anPlan.shouldManagementBalance = MathExtend.defaultValue(anPlan.shouldManagementBalance, BigDecimal.ZERO);
+        anPlan.shouldPenaltyBalance = MathExtend.defaultValue(anPlan.shouldPenaltyBalance, BigDecimal.ZERO);
+        anPlan.shouldPrincipalBalance = MathExtend.defaultValue(anPlan.shouldPrincipalBalance, BigDecimal.ZERO);
+        anPlan.shouldServicefeeBalance = MathExtend.defaultValue(anPlan.shouldServicefeeBalance, BigDecimal.ZERO);
+        anPlan.shouldTotalBalance = MathExtend.defaultValue(anPlan.shouldTotalBalance, BigDecimal.ZERO);
+        
+        anPlan.surplusInterestBalance = MathExtend.defaultValue(anPlan.surplusInterestBalance, BigDecimal.ZERO);
+        anPlan.surplusLatefeeBalance = MathExtend.defaultValue(anPlan.surplusLatefeeBalance, BigDecimal.ZERO);
+        anPlan.surplusManagementBalance = MathExtend.defaultValue(anPlan.surplusManagementBalance, BigDecimal.ZERO);
+        anPlan.surplusPenaltyBalance = MathExtend.defaultValue(anPlan.surplusPenaltyBalance, BigDecimal.ZERO);
+        anPlan.surplusPrincipalBalance = MathExtend.defaultValue(anPlan.surplusPrincipalBalance, BigDecimal.ZERO);
+        anPlan.surplusServicefeeBalance = MathExtend.defaultValue(anPlan.surplusServicefeeBalance, BigDecimal.ZERO);
+        anPlan.surplusTotalBalance = MathExtend.defaultValue(anPlan.surplusTotalBalance, BigDecimal.ZERO);
+        
+        anPlan.alreadyInterestBalance = MathExtend.defaultValue(anPlan.alreadyInterestBalance, BigDecimal.ZERO);
+        anPlan.alreadyLatefeeBalance = MathExtend.defaultValue(anPlan.alreadyLatefeeBalance, BigDecimal.ZERO);
+        anPlan.alreadyManagementBalance = MathExtend.defaultValue(anPlan.alreadyManagementBalance, BigDecimal.ZERO);
+        anPlan.alreadyPenaltyBalance = MathExtend.defaultValue(anPlan.alreadyPenaltyBalance, BigDecimal.ZERO);
+        anPlan.alreadyPrincipalBalance = MathExtend.defaultValue(anPlan.alreadyPrincipalBalance, BigDecimal.ZERO);
+        anPlan.alreadyServicefeeBalance = MathExtend.defaultValue(anPlan.alreadyServicefeeBalance, BigDecimal.ZERO);
+        anPlan.alreadyTotalBalance = MathExtend.defaultValue(anPlan.alreadyTotalBalance, BigDecimal.ZERO);
+        
+        anPlan.ratio = MathExtend.defaultValue(anPlan.ratio, BigDecimal.ZERO);
+        anPlan.managementRatio = MathExtend.defaultValue(anPlan.managementRatio, BigDecimal.ZERO);
+        anPlan.overdueDays = (null == anPlan.overdueDays)?0:anPlan.overdueDays;
     }
 
 
