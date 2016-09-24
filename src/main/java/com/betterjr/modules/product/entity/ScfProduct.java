@@ -8,7 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
@@ -720,8 +719,11 @@ public class ScfProduct implements BetterjrEntity {
         this.businStatus = anProduct.getBusinStatus();
         this.operOrg = anProduct.getOperOrg();
 
+        this.coreCustNo = anProduct.getCoreCustNo();
+        this.coreName = anProduct.getCoreName();
         this.factorNo = anProduct.getFactorNo();
         this.factorCorp = anProduct.getFactorCorp();
+        this.factorName = anProduct.getFactorName();
 
         this.regOperId = anProduct.getRegOperId();
         this.regOperName = anProduct.getRegOperName();
