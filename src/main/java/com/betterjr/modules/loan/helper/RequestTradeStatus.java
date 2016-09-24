@@ -5,7 +5,7 @@ public enum RequestTradeStatus {
     SCHEME("110","出具保理方案"),
     CONFIRM_SCHEME("120","确认融资方案"),
     REQUEST_TRADING("130","发起贸易背景确认"),
-    CONFIRM_Trading("140","确认贸易背景"),
+    CONFIRM_TRADING("140","确认贸易背景"),
     LOAN("150","放款确认"),
     FINISH("160","融资完成"),
     OVERDUE("170","逾期"),

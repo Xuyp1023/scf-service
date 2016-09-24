@@ -19,8 +19,8 @@ import com.betterjr.common.web.AjaxObject;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.account.service.CustAccountService;
+import com.betterjr.modules.agreement.entity.ScfRequestNotice;
 import com.betterjr.modules.agreement.service.ScfAgreementService;
-import com.betterjr.modules.agreement.service.ScfRequestNoticeService;
 import com.betterjr.modules.enquiry.service.ScfOfferService;
 import com.betterjr.modules.loan.IScfRequestService;
 import com.betterjr.modules.loan.entity.ScfLoan;
@@ -55,8 +55,6 @@ public class RequestDubboService implements IScfRequestService {
     private ScfOrderService orderService;
     @Autowired
     private CustAccountService custAccountService;
-    @Autowired
-    private ScfRequestNoticeService requestNoticeService;
     @Autowired
     private ScfOfferService offerService;
     @Autowired
@@ -145,7 +143,6 @@ public class RequestDubboService implements IScfRequestService {
         
         // 执行流程
         execFllow(anRequestNo, request.getBalance(), anApprovalResult, anReturnNode, anDescription);
-
         return AjaxObject.newOk("操作成功").toJson();
     }
 
@@ -153,38 +150,51 @@ public class RequestDubboService implements IScfRequestService {
     public String webOfferScheme(Map<String, Object> anMap, String anApprovalResult, String anReturnNode, String anDescription) {
         logger.debug("保理公司-出具融资方案，入参：" + anMap);
 
-        ScfRequestScheme scheme = new ScfRequestScheme();
+        ScfRequestScheme scheme = (ScfRequestScheme) RuleServiceDubboFilterInvoker.getInputObj();
         if (BetterStringUtils.equals(anApprovalResult, APPROVALRESULT_0)) {
-            scheme = (ScfRequestScheme) RuleServiceDubboFilterInvoker.getInputObj();
-            requestService.saveOfferScheme(scheme);
+            ScfRequest request = requestService.selectByPrimaryKey(scheme.getRequestNo());
+            
+            // 1,订单，2:票据;3:应收款;4:经销商
+            if (BetterStringUtils.equals(RequestType.SELLER.getCode(), request.getRequestType())) {
+                //生成-保兑仓业务三方合作协议
+                agreementService.transProtacal(requestService.getProtacal(request));
+            }
+            else{
+                // 生成-应收帐款转让通知书
+                ScfRequestNotice noticeRequest = requestService.getNotice(request);
+                String appNo = agreementService.transNotice(noticeRequest);
+                
+                // 添加转让明细（因为在转让申请时就添加了 转让明细，如果核心企业不同意，那明细需要删除，但目前没有做删除这步）
+                agreementService.transCredit(requestService.getCreditList(request), appNo);
+            }
+            
+            //保存融资方案
+            scheme = requestService.saveOfferScheme(scheme);
         }
 
         // 执行流程
         execFllow(anMap.get("requestNo").toString(), scheme.getApprovedBalance(), anApprovalResult, anReturnNode, anDescription);
-
         return AjaxObject.newOk("操作成功", scheme).toJson();
     }
 
     @Override
-    public String webConfirmScheme(String anRequestNo, String anApprovalResult, String smsCode) {
+    public String webConfirmScheme(String anRequestNo, String anApprovalResult, String anSmsCode) {
         logger.debug("申请企业-确认融资方案，入参：anRequestNo" + anRequestNo + "-  anApprovalResult:" + anApprovalResult);
         
         ScfRequest request = requestService.selectByPrimaryKey(anRequestNo);
         ScfRequestScheme scheme = new ScfRequestScheme();
         if (BetterStringUtils.equals(anApprovalResult, APPROVALRESULT_0)) {
 
-            //经销商融资的时候 不需要发送
-            if(false == BetterStringUtils.equals(RequestType.SELLER.getCode(), request.getRequestType())){
-               
-                //电子合同类型，0：应收账款债权转让通知书，1：买方确认意见，2三方协议书
-                if(false == agreementService.sendValidCodeByRequestNo(anRequestNo, "0", smsCode)){
-                    //return AjaxObject.newError("操作失败：短信验证码错误").toJson();
-                }
+            //电子合同类型，0：应收账款债权转让通知书，1：买方确认意见，2三方协议书
+            String  agreeType = BetterStringUtils.equals(RequestType.SELLER.getCode(), request.getRequestType()) ? "2" :"0";
+            if(false == agreementService.sendValidCodeByRequestNo(anRequestNo, agreeType, anSmsCode)){
+                //return AjaxObject.newError("操作失败：短信验证码错误").toJson();
             }
             
             //修改融资方案确认状态
             scheme = requestService.saveConfirmScheme(anRequestNo, "1");
-        }else{
+        }
+        else{
             //取消签约
             agreementService.cancelElecAgreement(anRequestNo, "");
         }
@@ -195,14 +205,23 @@ public class RequestDubboService implements IScfRequestService {
     }
 
     @Override
-    public String webRequestTradingBackgrand(String anRequestNo, String anApprovalResult, String anReturnNode, String anDescription) {
+    public String webRequestTradingBackgrand(String anRequestNo, String anApprovalResult, String anReturnNode, String anDescription, String anSmsCode) {
         logger.debug("保理公司-发起贸易背景确认，入参：anRequestNo" + anRequestNo);
 
-        ScfRequest request = new ScfRequest();
+        ScfRequest request = requestService.findRequestDetail(anRequestNo);
         if (BetterStringUtils.equals(APPROVALRESULT_0, anApprovalResult) == true) {
-            //查看 应收帐款转让通知书 是否存在，如果不存在则操作失败
-            if(null == requestNoticeService.findTransNotice(anRequestNo)){
-                return AjaxObject.newError("操作失败,没有找到相应的-应收账款转让通知书").toJson();
+           
+            // 1,订单，2:票据;3:应收款;4:经销商
+            if (BetterStringUtils.equals(RequestType.SELLER.getCode(), request.getRequestType())) {
+                
+                //签署三方协议
+                if(false == agreementService.sendValidCodeByRequestNo(anRequestNo, "2", anSmsCode)){
+                    //return AjaxObject.newError("操作失败：短信验证码错误").toJson();
+                }
+            }
+            else{
+               //生成-应收账款转让确认意见确认书
+               agreementService.transOpinion(requestService.getOption(request));
             }
             
             // 保存发起状态
@@ -221,7 +240,8 @@ public class RequestDubboService implements IScfRequestService {
 
         ScfRequest request = requestService.selectByPrimaryKey(anRequestNo);
         if (BetterStringUtils.equals(anApprovalResult, APPROVALRESULT_0)) {
-            // 经销商签署的是 三方协议
+            
+            //电子合同类型，0：应收账款债权转让通知书，1：买方确认意见，2三方协议书
             String  agreeType = BetterStringUtils.equals(RequestType.SELLER.getCode(), request.getRequestType()) ? "2" :"1";
            
             //签署协议
@@ -230,7 +250,7 @@ public class RequestDubboService implements IScfRequestService {
             }
             
             // 保存确认贸易背景确认状态
-            request = requestService.confirmTradingBackgrand(anRequestNo, "1");
+            requestService.confirmTradingBackgrand(anRequestNo, "1");
         }
         else{
             //取消签约
@@ -239,7 +259,6 @@ public class RequestDubboService implements IScfRequestService {
 
         // 执行流程
         execFllow(anRequestNo, request.getBalance(), anApprovalResult, "", "");
-
         return AjaxObject.newOk("操作成功").toJson();
     }
 
@@ -254,7 +273,6 @@ public class RequestDubboService implements IScfRequestService {
 
         // 执行流程
         execFllow(request.getRequestNo(), request.getBalance(), anApprovalResult, anReturnNode, anDescription);
-
         return AjaxObject.newOk("操作成功").toJson();
     }
 
