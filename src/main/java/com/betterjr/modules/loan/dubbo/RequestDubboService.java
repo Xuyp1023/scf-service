@@ -474,7 +474,8 @@ public class RequestDubboService implements IScfRequestService {
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
         return AjaxObject.newOkWithPage("查询融资成功",
                 requestService.querySellerRequestByCore(anQueryConditionMap, anBusinStatus, anFlag, anPageNum, anPageSize)).toJson();
-
+    }
+    
     public List<Long> findVoucherBatchNo(String anRequest) {
         // TODO Auto-generated method stub
         return this.requestService.findVoucherBatchNo(anRequest);

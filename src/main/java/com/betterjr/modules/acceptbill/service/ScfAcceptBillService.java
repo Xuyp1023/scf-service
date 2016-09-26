@@ -105,7 +105,7 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         return anResult;
     }
     
->>>>>>> 92a700f... dubbo remote
+
 
     /**
      * 汇票信息分页查询

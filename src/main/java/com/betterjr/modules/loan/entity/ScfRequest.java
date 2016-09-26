@@ -1173,6 +1173,7 @@ public class ScfRequest implements BetterjrEntity {
 
     public void setProductName(String productName) {
         this.productName = productName;
+    }
 
     public String getOutStatus() {
         return outStatus;

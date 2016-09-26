@@ -196,7 +196,7 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
     public String webSendValidCodeByRequestNo(String anRequestNo, String anAgreeType, String anVcode){
         String appno=scfElecAgreementService.findElecAgreeByRequestNo(anRequestNo, anAgreeType);
         return AjaxObject.newOk("发送验证签署验证码",scfAgreementService.sendValidCode(appno, anAgreeType, anVcode)).toString();
-
+    }
 
     @Override
     public List<Long> findBatchNo(String anAppNo) {

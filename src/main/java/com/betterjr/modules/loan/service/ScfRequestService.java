@@ -719,8 +719,10 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
             int anPageSize) {
         anQueryConditionMap.put("requestType", new String[]{RequestType.SELLER.getCode()});
         return this.queryCoreEnterpriseRequest(anQueryConditionMap, anBusinStatus, anFlag, anPageNum, anPageSize);
+
         }
     
+
     
     public List<Long> findVoucherBatchNo(String anRequest) {
         ScfRequest request = this.selectByPrimaryKey(anRequest);
