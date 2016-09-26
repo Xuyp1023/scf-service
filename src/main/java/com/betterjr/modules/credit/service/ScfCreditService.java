@@ -248,10 +248,10 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         return anCredit;
     }
 
-    public ScfCredit findCredit(Long anCustNo, Long anCoreNo, Long anFactorNo, String anCreditMode) {
+    public ScfCredit findCredit(Long anCustNo, Long anCoreCustNo, Long anFactorNo, String anCreditMode) {
         Map<String, Object> anMap = new HashMap<String, Object>();
         anMap.put("custNo", anCustNo);
-        anMap.put("coreCustNo", anCoreNo);
+        anMap.put("coreCustNo", anCoreCustNo);
         anMap.put("factorNo", anFactorNo);
         anMap.put("creditMode", anCreditMode);
         anMap.put("businStatus", CreditConstants.CREDIT_STATUS_EFFECTIVE);// 授信状态:0-未生效;1-已生效;2-已失效;
