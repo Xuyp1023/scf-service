@@ -16,6 +16,7 @@ import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.MathExtend;
 import com.betterjr.common.utils.UserUtils;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -551,7 +552,7 @@ public class ScfRequestScheme implements BetterjrEntity {
         this.factorName = factorName;
     }
     
-    public void init() {
+    public void init(ScfRequestScheme anScheme) {
         this.id = SerialGenerator.getLongValue("ScfRequestApproved.id");
         this.custAduit = "0";
         this.coreCustAduit = "-1";
@@ -562,11 +563,21 @@ public class ScfRequestScheme implements BetterjrEntity {
         this.regTime = BetterDateUtils.getNumTime();
     }
 
-    public void initModify() {
+    public void initModify(ScfRequestScheme anScheme) {
         this.modiOperId = UserUtils.getOperatorInfo().getId();
         this.modiOperName = UserUtils.getUserName();
         this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
+        fillBalance(anScheme);
+    }
+    
+    private void fillBalance(ScfRequestScheme anScheme){
+        anScheme.approvedBalance = MathExtend.defaultValue(anScheme.approvedBalance, BigDecimal.ZERO);
+        anScheme.approvedManagementRatio = MathExtend.defaultValue(anScheme.approvedManagementRatio, BigDecimal.ZERO);
+        anScheme.approvedRatio = MathExtend.defaultValue(anScheme.approvedRatio, BigDecimal.ZERO);
+        anScheme.servicefeeRatio = MathExtend.defaultValue(anScheme.servicefeeRatio, BigDecimal.ZERO);
+        anScheme.requestBalance = MathExtend.defaultValue(anScheme.requestBalance, BigDecimal.ZERO);
+        anScheme.approvedPeriodUnit = (null == anScheme.approvedPeriodUnit) ? 1 :anScheme.approvedPeriodUnit;
     }
 }
