@@ -249,6 +249,10 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
     }
 
     public ScfCredit findCredit(Long anCustNo, Long anCoreCustNo, Long anFactorNo, String anCreditMode) {
+        BTAssert.notNull(anCustNo, "请选择客户!");
+        BTAssert.notNull(anCoreCustNo, "请选择核心企业!");
+        BTAssert.notNull(anFactorNo, "请选择保理公司!");
+        BTAssert.notNull(anCreditMode, "请选择授信类型!");
         Map<String, Object> anMap = new HashMap<String, Object>();
         anMap.put("custNo", anCustNo);
         anMap.put("coreCustNo", anCoreCustNo);
