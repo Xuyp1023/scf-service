@@ -453,4 +453,20 @@ public class RequestDubboService implements IScfRequestService {
         return AjaxObject.newOk("查询还款计划详情", payPlanService.findPayPlanDetail(anId)).toJson();
     }
 
+    @Override
+    public String webQuerySupplierRequestByCore(Map<String, Object> anMap, String anBusinStatus, String anFlag, int anPageNum, int anPageSize) {
+        logger.debug("分页查询融资，入参：" + anMap);
+        Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOkWithPage("查询融资成功",
+                requestService.querySupplierRequestByCore(anQueryConditionMap, anBusinStatus, anFlag, anPageNum, anPageSize)).toJson();
+    }
+
+    @Override
+    public String webQuerySellerRequestByCore(Map<String, Object> anMap, String anBusinStatus, String anFlag, int anPageNum, int anPageSize) {
+        logger.debug("分页查询融资，入参：" + anMap);
+        Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOkWithPage("查询融资成功",
+                requestService.querySellerRequestByCore(anQueryConditionMap, anBusinStatus, anFlag, anPageNum, anPageSize)).toJson();
+    }
+
 }

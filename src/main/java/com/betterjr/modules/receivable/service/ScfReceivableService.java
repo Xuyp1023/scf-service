@@ -85,7 +85,7 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
     }
     
     /**
-     * 应收账款分页查询
+     * 应收账款无分页查询
      * anIsOnlyNormal 是否过滤，仅查询正常未融资数据 1：未融资 0：查询所有
      */
     public List<ScfReceivable> findReceivableList(String anCustNo, String anIsOnlyNormal) {
@@ -94,7 +94,22 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
         if(BetterStringUtils.equals(anIsOnlyNormal, "1")) {
             anMap.put("businStatus", "0");
         }
-        return this.findReceivable(anMap);
+        return this.selectByProperty(anMap);
+    }
+    
+    /**
+     * 查询应收账款信息,包含所有下属信息
+     */
+    public List<ScfReceivable> findReceivable(Map<String, Object> anMap) {
+        List<ScfReceivable> anReceivbaleList = this.selectByClassProperty(ScfReceivable.class, anMap);
+        //下属信息
+        for (ScfReceivable anReceivbale : anReceivbaleList) {
+            Map<String, Object> receivbaleIdMap = QueryTermBuilder.newInstance().put("infoId", anReceivbale.getId())
+                    .put("infoType", ScfOrderRelationType.RECEIVABLE.getCode()).build();
+            List<ScfOrderRelation> orderRelationList = orderRelationService.findOrderRelation(receivbaleIdMap);
+            fillReceivableInfo(anReceivbale, orderRelationList);
+        }
+        return anReceivbaleList;
     }
     
     /**
@@ -122,12 +137,6 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
         }
     }
     
-    /**
-     * 查询应收账款
-     */
-    public List<ScfReceivable> findReceivable(Map<String, Object> anMap) {
-    	return this.selectByClassProperty(ScfReceivable.class, anMap);
-    }
     
     /**
      * 检查是否存在相应id、操作机构、业务状态的应收账款

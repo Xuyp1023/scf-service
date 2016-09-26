@@ -440,10 +440,10 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
      * 放款确认 - 150
      * 完成融资 - 160
      * 放款完成 - 170
-     * anRequestType - 1：未放款，2：还款中  3.已还款
+     * anBusinStatus - 1：未放款，2：还款中  3.已还款
      */
-    public Page<ScfRequest> queryCoreEnterpriseRequest(Map<String, Object> anMap, String anRequestType, String anFlag, int anPageNum, int anPageSize) {
-        if (BetterStringUtils.isBlank(anRequestType)) {
+    public Page<ScfRequest> queryCoreEnterpriseRequest(Map<String, Object> anMap, String anBusinStatus, String anFlag, int anPageNum, int anPageSize) {
+        if (BetterStringUtils.isBlank(anBusinStatus)) {
             Page<ScfRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
             for (ScfRequest request : page) {
                 fillCustName(request);
@@ -453,7 +453,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
             return page;
         }
         else {
-            switch (anRequestType) {
+            switch (anBusinStatus) {
             case "1":
                 // 未放款
                 return this.queryPendingRequest(anMap, anFlag, anPageNum, anPageSize);
@@ -678,5 +678,23 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
             fillCustName(request);
         }
         return requestList;
+    }
+
+    /**
+     * anBusinStatus - 1：未放款，2：还款中  3.已还款
+     */
+    public Page querySupplierRequestByCore(Map<String, Object> anQueryConditionMap, String anBusinStatus, String anFlag, int anPageNum,
+            int anPageSize) {
+        anQueryConditionMap.put("requestType", new String[]{"1", "2", "3"});
+        return this.queryCoreEnterpriseRequest(anQueryConditionMap, anBusinStatus, anFlag, anPageNum, anPageSize);
+    }
+
+    /**
+     * anBusinStatus - 1：未放款，2：还款中  3.已还款
+     */
+    public Page querySellerRequestByCore(Map<String, Object> anQueryConditionMap, String anBusinStatus, String anFlag, int anPageNum,
+            int anPageSize) {
+        anQueryConditionMap.put("requestType", new String[]{"4"});
+        return this.queryCoreEnterpriseRequest(anQueryConditionMap, anBusinStatus, anFlag, anPageNum, anPageSize);
     }
 }
