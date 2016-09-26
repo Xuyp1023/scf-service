@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.Collections3;
@@ -48,7 +49,8 @@ public class ScfLoanService extends BaseService<ScfLoanMapper, ScfLoan> {
         map.put("factorNo", anLoan.getFactorNo());
         map.put("id", anId);
         if(Collections3.isEmpty(selectByClassProperty(ScfLoan.class, map))){
-            throw new IllegalArgumentException("找不到原数据");
+            logger.error("修改放款记录失败,找不到原数据");
+            throw new BytterTradeException(40001, "找不到原数据");
         }
 
         anLoan.initModify();

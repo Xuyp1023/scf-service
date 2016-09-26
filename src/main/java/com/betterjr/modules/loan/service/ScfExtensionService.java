@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
@@ -62,11 +63,11 @@ public class ScfExtensionService extends BaseService<ScfExtensionMapper, ScfExte
     /**
      * 还款分配（顺序是 滞纳金-》罚息-》管理费-》利息-》本金）
      * @param anRequestNo
-     * @param anStartDate
+     * @param anPayDate
      * @param payBalance
      * @return
      */
-    public Map<String, Object> payAssigned(String anRequestNo, String anStartDate, BigDecimal payBalance){
+    public Map<String, Object> payAssigned(String anRequestNo, String anPayDate, BigDecimal payBalance){
         ScfPayPlan payPlan = payPlanService.findPayPlanByRequest(anRequestNo);
         String tomorrowDate = BetterDateUtils.addStrDays(BetterDateUtils.getDate(), 1);
         
@@ -81,9 +82,9 @@ public class ScfExtensionService extends BaseService<ScfExtensionMapper, ScfExte
         FactorParam param = DictUtils.loadObject("FactorParam", custNo, FactorParam.class);
         
         //有逾期且超过宽限限的情况下要计算逾期（如今天是10号系统定时已算了逾期费用，那如果用户选择的是 15号开始展期 那么就要计算11号到14号这4天的逾期费用）
-        int overDueDays = payPlanService.getOverDueDays(tomorrowDate, anStartDate);
+        int overDueDays = payPlanService.getOverDueDays(tomorrowDate, anPayDate);
         if(overDueDays > 0 && overDueDays > param.getGraceDays()){
-            Map<String, BigDecimal> feeMap = payPlanService.getOverDueFee(tomorrowDate, anStartDate, payPlan.getSurplusPrincipalBalance(), custNo);
+            Map<String, BigDecimal> feeMap = payPlanService.getOverDueFee(tomorrowDate, anPayDate, payPlan.getSurplusPrincipalBalance(), custNo);
             
             //分配滞纳金（如果还款金额小于滞纳金，则本次还款滞纳金则为本次的还款总额，将不再往下走。下面的程序也是这种判断）
             BigDecimal lateFee = payPlan.getSurplusLatefeeBalance().add(feeMap.get("latefeeBalance"));
@@ -113,7 +114,7 @@ public class ScfExtensionService extends BaseService<ScfExtensionMapper, ScfExte
         BigDecimal overManagementBalance = new BigDecimal(0);
         BigDecimal overInterestBalance = new BigDecimal(0);
         if(overDueDays > 0 && overDueDays < param.getGraceDays()){
-            Map<String, BigDecimal> interestMap = payPlanService.getInterestByDays(anRequestNo, payPlan.getSurplusPrincipalBalance(), custNo, overDueDays);
+            Map<String, BigDecimal> interestMap = payPlanService.getInterestByDays(payPlan, anPayDate);
             overManagementBalance = interestMap.get("managementBalance");
             overInterestBalance = interestMap.get("interestBalance");
         }
@@ -248,7 +249,7 @@ public class ScfExtensionService extends BaseService<ScfExtensionMapper, ScfExte
         map.put("factorNo", anExtension.getFactorNo());
         map.put("id", anId);
         if(Collections3.isEmpty(selectByClassProperty(ScfExtension.class, map))){
-            throw new IllegalArgumentException("修改展期记录失败-找不到原数据");
+            throw new BytterTradeException(40001, "修改展期记录失败-找不到原数据");
         }
 
         anExtension.initModify();

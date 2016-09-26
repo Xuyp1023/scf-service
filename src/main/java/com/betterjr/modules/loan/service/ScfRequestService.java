@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
@@ -123,7 +124,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         BTAssert.notNull(anRequest, "修改融资申请失败-anRequest不能为空");
 
         if (Collections3.isEmpty(selectByProperty("requestNo", anRequestNo))) {
-            throw new IllegalArgumentException("修改融资申请失败-找不到原数据");
+            throw new BytterTradeException(40001, "修改融资申请失败-找不到原数据");
         }
 
         anRequest.initModify(anRequest);
@@ -143,7 +144,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         BTAssert.notNull(anRequest, "修改融资申请失败-anRequest不能为空");
 
         if (Collections3.isEmpty(selectByProperty("requestNo", anRequestNo))) {
-            throw new IllegalArgumentException("修改融资申请失败-找不到原数据");
+            throw new BytterTradeException(40001, "修改融资申请失败-找不到原数据");
         }
 
         anRequest.initModify(anRequest);
@@ -227,6 +228,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         request.setApprovedPeriod(scheme.getApprovedPeriod());
         request.setApprovedPeriodUnit(scheme.getApprovedPeriodUnit());
         request.setManagementRatio(scheme.getApprovedManagementRatio());
+        request.setApprovedRatio(scheme.getApprovedRatio());
         request.setServicefeeRatio(scheme.getServicefeeRatio());
         request.setApprovedBalance(scheme.getApprovedBalance());
         request.setConfirmBalance(scheme.getApprovedBalance());
@@ -651,15 +653,15 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
      */
     public Object fillOrderInfo(ScfRequest anScfRequest) {
         //经销商融资不用设置
-        if(BetterStringUtils.equals("4", anScfRequest.getRequestType())){
+        if(BetterStringUtils.equals(RequestType.SELLER.getCode(), anScfRequest.getRequestType())){
             return null;
         }
         
-        if(BetterStringUtils.equals("1", anScfRequest.getRequestType())){
+        if(BetterStringUtils.equals(RequestType.ORDER.getCode(), anScfRequest.getRequestType())){
             List<ScfOrder> orderList = (List)orderService.findInfoListByRequest(anScfRequest.getRequestNo(), anScfRequest.getRequestType());
             return Collections3.getFirst(orderList);
         }
-        else if(BetterStringUtils.equals("2", anScfRequest.getRequestType())){
+        else if(BetterStringUtils.equals(RequestType.BILL.getCode(), anScfRequest.getRequestType())){
             List<ScfAcceptBill> orderList = (List)orderService.findInfoListByRequest(anScfRequest.getRequestNo(), anScfRequest.getRequestType());
             return Collections3.getFirst(orderList);
         }else{
@@ -685,7 +687,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
      */
     public Page querySupplierRequestByCore(Map<String, Object> anQueryConditionMap, String anBusinStatus, String anFlag, int anPageNum,
             int anPageSize) {
-        anQueryConditionMap.put("requestType", new String[]{"1", "2", "3"});
+        anQueryConditionMap.put("requestType", new String[]{RequestType.ORDER.getCode(), RequestType.BILL.getCode(), RequestType.RECEIVABLE.getCode()});
         return this.queryCoreEnterpriseRequest(anQueryConditionMap, anBusinStatus, anFlag, anPageNum, anPageSize);
     }
 
@@ -694,7 +696,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
      */
     public Page querySellerRequestByCore(Map<String, Object> anQueryConditionMap, String anBusinStatus, String anFlag, int anPageNum,
             int anPageSize) {
-        anQueryConditionMap.put("requestType", new String[]{"4"});
+        anQueryConditionMap.put("requestType", new String[]{RequestType.SELLER.getCode()});
         return this.queryCoreEnterpriseRequest(anQueryConditionMap, anBusinStatus, anFlag, anPageNum, anPageSize);
     }
 }

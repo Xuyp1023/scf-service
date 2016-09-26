@@ -28,6 +28,7 @@ import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.loan.entity.ScfRequest;
+import com.betterjr.modules.loan.helper.RequestType;
 import com.betterjr.modules.loan.service.ScfRequestService;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
@@ -119,7 +120,20 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         if (BetterStringUtils.equals(anIsOnlyNormal, "1")) {
             anMap.put("businStatus", new String[] { "0", "1" });
         }
-        return this.findAcceptBill(anMap);
+        
+        //查询当前用户未融资的汇票
+        List<ScfAcceptBill> retList = new ArrayList<>();
+        List<ScfAcceptBill> billList = this.findAcceptBill(anMap);
+        
+        //过滤掉 不能融资的汇票（发票或者合同不全）
+        for (ScfAcceptBill scfAcceptBill : billList) {
+            if(false == orderService.checkInfoCompleted(scfAcceptBill.getId().toString(), RequestType.BILL.getCode())){
+                continue;
+            }
+            retList.add(scfAcceptBill);
+        }
+        
+        return retList;
     }
 
     /**

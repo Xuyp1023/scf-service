@@ -1185,7 +1185,7 @@ public class ScfRequest implements BetterjrEntity {
         this.modiOperName = UserUtils.getUserName();
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
-        fillBalance(request);
+        //fillBalance(request);
     }
     
     public void initAutoModify(ScfRequest request) {
@@ -1193,7 +1193,7 @@ public class ScfRequest implements BetterjrEntity {
         this.modiOperName = this.getRegOperName();
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
-        fillBalance(request);
+        //fillBalance(request);
     }
     
     private void fillBalance(ScfRequest request){
@@ -1206,7 +1206,7 @@ public class ScfRequest implements BetterjrEntity {
         request.invoiceBalance =MathExtend.defaultValue(request.invoiceBalance, BigDecimal.ZERO);
         request.bondBalance = MathExtend.defaultValue(request.bondBalance, BigDecimal.ZERO);
         request.ratio = MathExtend.defaultValue(request.ratio, BigDecimal.ZERO);
-        request.approvedRatio = MathExtend.defaultValue(request.ratio, BigDecimal.ZERO);
+        request.approvedRatio = MathExtend.defaultValue(request.approvedRatio, BigDecimal.ZERO);
         request.periodUnit = (null ==request.periodUnit)?approvedPeriodUnit:request.periodUnit;
         request.approvedPeriodUnit = (null ==request.approvedPeriodUnit)?1:request.approvedPeriodUnit;
     }
