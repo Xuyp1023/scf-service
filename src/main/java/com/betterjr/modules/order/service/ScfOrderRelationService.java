@@ -5,29 +5,40 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
+import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
 import com.betterjr.modules.order.dao.ScfOrderRelationMapper;
+import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.entity.ScfOrderRelation;
 import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
 import com.betterjr.modules.order.helper.ScfOrderInfoCheckFactory;
 import com.betterjr.modules.order.helper.ScfOrderRelationType;
+import com.betterjr.modules.receivable.service.ScfReceivableService;
 
 @Service
 public class ScfOrderRelationService extends BaseService<ScfOrderRelationMapper, ScfOrderRelation> {
 
+    
+    @Autowired
+    private ScfAcceptBillService acceptBillService;
+    @Autowired
+    private ScfOrderService orderService;
+    @Autowired
+    private ScfReceivableService receivbaleService;
+    
     /**
      * 订单关联关系保存
      */
     public List<ScfOrderRelation> addOrderRelation(String anEnterType, Long anEnterId, String anInfoType, String anInfoIdList) {
         logger.info("Begin to add OrderRelation");
-        List<ScfOrderRelation> anOrderRelationList = new ArrayList<ScfOrderRelation>();
+        List<ScfOrderRelation> resultList = new ArrayList<ScfOrderRelation>();
         String[] anInfoIds = anInfoIdList.split(",");
         //检查相应单据是否存在
         IScfOrderInfoCheckService enterCheck = ScfOrderInfoCheckFactory.create(anEnterType);
@@ -49,7 +60,8 @@ public class ScfOrderRelationService extends BaseService<ScfOrderRelationMapper,
                 }
                 anOrderRelation.initAddValue();
                 this.insert(anOrderRelation);
-                anOrderRelationList.add(anOrderRelation);
+                //作为返回值添加
+                resultList.add(anOrderRelation);
             }
         }
         //选择订单关联
@@ -65,7 +77,7 @@ public class ScfOrderRelationService extends BaseService<ScfOrderRelationMapper,
                 }
                 anOrderRelation.initAddValue();
                 this.insert(anOrderRelation);
-                anOrderRelationList.add(anOrderRelation);
+                resultList.add(anOrderRelation);
             }
         }
         //当两个id都不为订单时
@@ -75,8 +87,32 @@ public class ScfOrderRelationService extends BaseService<ScfOrderRelationMapper,
             anMap.put("infoId", anEnterId);
             anMap.put("infoType", anEnterType);
             List<ScfOrderRelation> orderRelationList = this.selectByProperty(anMap);
-            if(Collections3.isEmpty(orderRelationList)) {
-                throw new BytterTradeException(40001, "请先选择订单进行关联");
+            // 若未找到相应信息生成默认数据
+            if (Collections3.isEmpty(resultList)) {
+                // 通过票据生成订单，并于此票据建立
+                if(BetterStringUtils.equals(anEnterType, ScfOrderRelationType.ACCEPTBILL.getCode())) {
+                    ScfOrder order = new ScfOrder(acceptBillService.selectByPrimaryKey(anEnterId));
+                    orderService.insert(order);
+                    ScfOrderRelation relation = new ScfOrderRelation();
+                    relation.initAddValue();
+                    relation.setOrderId(order.getId());
+                    relation.setInfoType(ScfOrderRelationType.ACCEPTBILL.getCode());
+                    relation.setInfoId(anEnterId);
+                    orderRelationList.add(relation);
+                    resultList.add(relation);
+                }
+                //通过应收账款生成
+                if(BetterStringUtils.equals(anEnterType, ScfOrderRelationType.RECEIVABLE.getCode())) {
+                    ScfOrder order = new ScfOrder(receivbaleService.selectByPrimaryKey(anEnterId));
+                    orderService.insert(order);
+                    ScfOrderRelation relation = new ScfOrderRelation();
+                    relation.initAddValue();
+                    relation.setOrderId(order.getId());
+                    relation.setInfoType(ScfOrderRelationType.RECEIVABLE.getCode());
+                    relation.setInfoId(anEnterId);
+                    orderRelationList.add(relation);
+                    resultList.add(relation);
+                }
             }
             //将上溯出来的订单与所选信息关联
             Long anOrderId = Collections3.getFirst(orderRelationList).getOrderId();
@@ -91,10 +127,10 @@ public class ScfOrderRelationService extends BaseService<ScfOrderRelationMapper,
                 }
                 anOrderRelation.initAddValue();
                 this.insert(anOrderRelation);
-                anOrderRelationList.add(anOrderRelation);
+                resultList.add(anOrderRelation);
             }
         }
-        return anOrderRelationList;
+        return resultList;
     }
     
     /**
