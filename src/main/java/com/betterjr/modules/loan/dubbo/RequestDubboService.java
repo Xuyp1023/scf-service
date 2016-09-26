@@ -9,6 +9,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.RequestEntity;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
@@ -26,6 +27,7 @@ import com.betterjr.modules.loan.IScfRequestService;
 import com.betterjr.modules.loan.entity.ScfLoan;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
+import com.betterjr.modules.loan.helper.RequestTradeStatus;
 import com.betterjr.modules.loan.helper.RequestType;
 import com.betterjr.modules.loan.service.ScfPayPlanService;
 import com.betterjr.modules.loan.service.ScfRequestSchemeService;
@@ -196,7 +198,8 @@ public class RequestDubboService implements IScfRequestService {
         }
         else{
             //取消签约
-            agreementService.cancelElecAgreement(anRequestNo, "");
+            agreementService.cancelElecAgreement(anRequestNo, "0", "");
+            //agreementService.cancelElecAgreement(anRequestNo, "");
         }
         
         // 执行流程
@@ -370,6 +373,8 @@ public class RequestDubboService implements IScfRequestService {
             
             //改为可用状态
             offerService.saveUpdateTradeStatus(request.getOfferId(), "1");
+            
+            request.setTradeStatus(RequestTradeStatus.CLOSED.getCode());
         }
 
         // 执行流程
@@ -387,6 +392,7 @@ public class RequestDubboService implements IScfRequestService {
             if (BetterStringUtils.equals(anApprovalResult, "2")) {
                 // 流程-中止
                 request.setFlowStatus("2");
+                request.setTradeStatus(RequestTradeStatus.CLOSED.getCode());
             }
             else {
                 // 流程-进行中

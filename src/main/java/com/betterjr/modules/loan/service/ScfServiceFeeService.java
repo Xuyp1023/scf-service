@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.Collections3;
@@ -40,7 +41,7 @@ public class ScfServiceFeeService extends BaseService<ScfServiceFeeMapper, ScfSe
         map.put("factorNo", anServiceFee.getFactorNo());
         map.put("id", anId);
         if(Collections3.isEmpty(selectByClassProperty(ScfServiceFee.class, map))){
-            throw new IllegalArgumentException("修改手续费记录失败-找不到原数据");
+            throw new BytterTradeException(40001, "修改手续费记录失败-找不到原数据");
         }
 
         anServiceFee.initModify();

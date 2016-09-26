@@ -52,15 +52,14 @@ public class RepaymentDubboService implements IScfRepaymentService {
     }
     
     @Override
-    public String webQueryRepaymentFee(String anRequestNo, String anPayType, String anFactorNo, String anPayDate) {
-        ScfPayRecord record = payPlanService.queryRepaymentFee(anRequestNo, anPayType, anFactorNo, anPayDate);
+    public String webQueryRepaymentFee(String anRequestNo, String anPayType, String anFactorNo, String anPayDate, BigDecimal anTotalBalance) {
+        ScfPayRecord record = payPlanService.queryRepaymentFee(anRequestNo, anPayType, anFactorNo, anPayDate, anTotalBalance);
         return AjaxObject.newOk("操作成功", record).toJson();
     }
     
     @Override
-    public String webQuerySellerRepaymentFee(Map<String, Object> anMap) {
-        ScfPayRecord record = (ScfPayRecord) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk("操作成功", payPlanService.querySellerRepaymentFee(record)).toJson();
+    public String webQuerySellerRepaymentFee(String anRequestNo, String anPayType, String anPayDate, BigDecimal anTotalBalance) {
+        return AjaxObject.newOk("操作成功", payPlanService.querySellerRepaymentFee(anRequestNo,anPayType, anPayDate, anTotalBalance)).toJson();
     }
     
     @Override

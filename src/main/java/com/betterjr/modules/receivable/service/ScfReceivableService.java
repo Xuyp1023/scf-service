@@ -19,6 +19,7 @@ import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.agreement.entity.CustAgreement;
+import com.betterjr.modules.loan.helper.RequestType;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.entity.ScfOrderRelation;
@@ -94,7 +95,19 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
         if(BetterStringUtils.equals(anIsOnlyNormal, "1")) {
             anMap.put("businStatus", "0");
         }
-        return this.selectByProperty(anMap);
+        
+        //查询当前用户未融资的应收账
+        List<ScfReceivable> receivaList = this.selectByProperty(anMap);
+        List<ScfReceivable> retList = new ArrayList<>();
+        
+        //过滤掉 不能融资的应收账（发票或者合同不全）
+        for (ScfReceivable receivable : receivaList) {
+            if(false == orderService.checkInfoCompleted(receivable.getId().toString(), RequestType.RECEIVABLE.getCode())){
+                continue;
+            }
+            retList.add(receivable);
+        }
+        return retList;
     }
     
     /**

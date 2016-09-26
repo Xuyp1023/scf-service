@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
@@ -111,7 +112,7 @@ public class ScfRequestSchemeService extends BaseService<ScfRequestApprovedMappe
 
         List<ScfRequestScheme> list = this.selectByProperty("requestNo", anScheme.getRequestNo());
         if (Collections3.isEmpty(list)) {
-            throw new IllegalArgumentException("修改贷款方案失败，找不到源数据-requestNo:" + anScheme.getRequestNo());
+            throw new BytterTradeException(40001, "修改贷款方案失败，找不到源数据-requestNo:" + anScheme.getRequestNo());
         }
 
         // 修改最新的一条
@@ -155,11 +156,10 @@ public class ScfRequestSchemeService extends BaseService<ScfRequestApprovedMappe
             requestsNo.add(scfRequest.getRequestNo());
         }
         
-        anMap.remove("requestType");
-        anMap.put("requestNo", requestsNo.toArray());
+        anMap = QueryTermBuilder.newInstance().put("requestNo", requestsNo.toArray()).build();
         Page<ScfRequestScheme> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
-        // 设置相关企业名
         for (ScfRequestScheme scheme : page) {
+            // 设置相关企业名
             fillCustName(scheme);
         }
 

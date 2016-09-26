@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.Collections3;
@@ -65,7 +66,7 @@ public class ScfExemptService extends BaseService<ScfExemptMapper, ScfExempt> {
         map.put("factorNo", anExempt.getFactorNo());
         map.put("id", anId);
         if(Collections3.isEmpty(selectByClassProperty(ScfExempt.class, map))){
-            throw new IllegalArgumentException("修改豁免记录失败-找不到原数据");
+            throw new BytterTradeException(40001, "修改豁免记录失败-找不到原数据");
         }
 
         anExempt.initModify();

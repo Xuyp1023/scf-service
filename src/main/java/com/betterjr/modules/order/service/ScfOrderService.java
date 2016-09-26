@@ -26,6 +26,7 @@ import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.agreement.service.ScfCustAgreementService;
 import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.document.entity.CustFileItem;
+import com.betterjr.modules.loan.helper.RequestType;
 import com.betterjr.modules.order.dao.ScfOrderMapper;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
@@ -125,33 +126,65 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         if(BetterStringUtils.equals(anIsOnlyNormal, "1")) {
             anMap.put("businStatus", "0");
         }
+        
+        //查询当前用户未融资的订单
         List<ScfOrder> orderList = this.selectByProperty(anMap);
+        List<ScfOrder> retList = new ArrayList<>();
+
+        //过滤掉 不能融资的订单信（发票或者合同不全）
         for(ScfOrder anOrder : orderList) {
+            if(false == checkInfoCompleted(anOrder.getId().toString(), RequestType.ORDER.getCode())){
+                continue;
+            }
             //核心企业名称
             anOrder.setCustName(custAccountService.queryCustName(anOrder.getCustNo()));
             anOrder.setCoreCustName(custAccountService.queryCustName(anOrder.getCoreCustNo()));
+            retList.add(anOrder);
         }
-        return orderList;
+        return retList;
     }
     
     /**
-     * 通过融资申请信息,查询融资基本信息，无分页。
+     * 通过融资申请信息,查询融资基本信息，无分页。 包含所有下属信息
      * @param anRequestNo   融资申请编号 1：订单，2:票据;3:应收款;4:经销商
      * @param anRequestType
      */
     public List<Object> findInfoListByRequest(String anRequestNo, String anRequestType) {
         ScfOrderRelationType orderRealtionType = null;
+        List<Object> result = new ArrayList<Object>();
         // 订单融资
         if ("1".equals(anRequestType) || "4".equals(anRequestType)) {
             orderRealtionType = ScfOrderRelationType.ORDER;
+            //订单已经包含下属信息，直接返回
+            return this.findRelationInfo(anRequestNo, orderRealtionType);
         }
         else if ("2".equals(anRequestType)) {
             orderRealtionType = ScfOrderRelationType.ACCEPTBILL;
+            //查询汇票基本信息
+            List<ScfAcceptBill> acceptBillList = this.findRelationInfo(anRequestNo, orderRealtionType);
+            //通过汇票基本信息查询汇票所有信息
+            List<Long> anIdList = new ArrayList<Long>();
+            for(ScfAcceptBill acceptBill : acceptBillList) {
+                anIdList.add(acceptBill.getId());
+            }
+            Map<String, Object> queryAcceptBillMap = QueryTermBuilder.newInstance().put("id", anIdList.toArray()).build();
+            result.addAll(acceptBillService.findAcceptBill(queryAcceptBillMap));
+            return result;
         }
         else if ("3".equals(anRequestType)) {
             orderRealtionType = ScfOrderRelationType.RECEIVABLE;
+            //查询应收账款基本信息
+            List<ScfReceivable> receivableList = this.findRelationInfo(anRequestNo, orderRealtionType);
+            //通过应收账款基本信息查询应收账款所有信息
+            List<Long> anIdList = new ArrayList<Long>();
+            for(ScfReceivable receiable : receivableList) {
+                anIdList.add(receiable.getId());
+            }
+            Map<String, Object> queryReceivableMap = QueryTermBuilder.newInstance().put("id", anIdList.toArray()).build();
+            result.addAll(receivableService.findReceivable(queryReceivableMap));
+            return result;
         }
-        return this.findRelationInfo(anRequestNo, orderRealtionType);
+        return result;
     }
     
     
@@ -404,7 +437,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
     public void saveInfoRequestNo(String anRequestType, String anRequestNo, String anIdList) {
         String[] anIds = anIdList.split(",");
         // 订单
-        if (BetterStringUtils.equals(anRequestType, "1")) {
+        if (BetterStringUtils.equals(anRequestType, "1") || BetterStringUtils.equals(anRequestType, "4")) {
             for (String anOrderId : anIds) {
                 this.saveOrderRequestNo(Long.valueOf(anOrderId), anRequestNo);
             }
@@ -535,7 +568,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
      * 检查业务所需信息是否完成--贸易合同、发票
      * 1:订单，2:票据;3:应收款;
      */
-    public void checkInfoCompleted(String anIdList, String anRequestType) {
+    public boolean checkInfoCompleted(String anIdList, String anRequestType) {
         String[] idList = anIdList.split(",");
         List<CustAgreement> agreementList = new ArrayList<CustAgreement>();
         List<ScfInvoice> invoiceList = new ArrayList<ScfInvoice>();
@@ -564,11 +597,15 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         }
         if(Collections3.isEmpty(agreementList)) {
             logger.warn("所选资料不存在贸易合同");
-            throw new BytterTradeException(40001, "所选资料不存在贸易合同");
+            return false;
+            //throw new BytterTradeException(40001, "所选资料不存在贸易合同");
         }
         if(Collections3.isEmpty(invoiceList)) {
             logger.warn("所选资料不存在发票信息");
-            throw new BytterTradeException(40001, "所选资料不存在发票信息");
+            //throw new BytterTradeException(40001, "所选资料不存在发票信息");
+            return false;
         }
+        
+        return true;
     }
 }
