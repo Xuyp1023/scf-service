@@ -48,6 +48,12 @@ public class ScfCreditDubboService implements IScfCreditService {
     }
 
     @Override
+    public String webFindCredit(Long anCustNo, Long anCoreCustNo, Long anFactorNo, String anCreditMode) {
+
+        return AjaxObject.newOk("授信额度信息查询成功", scfCreditService.findCredit(anCustNo, anCoreCustNo, anFactorNo, anCreditMode)).toJson();
+    }
+
+    @Override
     public String webFindCreditSumByCustNo(Long anCustNo) {
 
         return AjaxObject.newOk("授信额度信息查询成功", scfCreditService.findCreditSumByCustNo(anCustNo)).toJson();
