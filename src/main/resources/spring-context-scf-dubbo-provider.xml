@@ -225,7 +225,7 @@
 	<bean id="serialGenerator" class="com.betterjr.common.selectkey.SerialGenerator"
 		init-method="init" scope="singleton" lazy-init="false" />
 
-    <bean id="remoteProxyFactory" class="com.betterjr.modules.remote.service.RemoteProxyFactory" init-method="init" scope="singleton">
+    <bean id="remoteProxyFactory" class="com.betterjr.modules.remote.helper.RemoteProxyFactory" init-method="init" scope="singleton">
      <property name="trustStoreFile" value="${trustStore.File}" />
      <property name="trustStorePass" value="${trustStore.Pass}" />
     </bean>
@@ -243,6 +243,6 @@
     </bean>
 
 	<import resource="scf-dubbo-provider.xml" />
-	<import resource="job-config.xml"/>
+	<!-- <import resource="job-config.xml"/> -->
 
 </beans>

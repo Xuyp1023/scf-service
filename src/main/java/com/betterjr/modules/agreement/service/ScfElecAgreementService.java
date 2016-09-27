@@ -1,5 +1,6 @@
 package com.betterjr.modules.agreement.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -408,6 +409,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         return fileItem;
     };
     
+
     /**
      * 根据请求单号查询电子合同
      * 
@@ -427,5 +429,94 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         return Collections3.getFirst(elecAgreeList).getAppNo();
     }
     
+
+    
+    /**
+     * 根据订单号，查询需要签署的文件
+     * 
+     * @param anAppNo
+     * @return
+     */
+    public List<Long> findBatchNo(String anAppNo) {
+        ScfElecAgreement tmpElecAgree = findOneElecAgreement(anAppNo);
+        List<Long> result = new ArrayList();
+        if (tmpElecAgree != null) {
+            if (tmpElecAgree.getBatchNo() != null && tmpElecAgree.getBatchNo() > 10L) {
+
+                result.add(tmpElecAgree.getBatchNo());
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * 获得签名的文件信息
+     * 
+     * @param anAppNo
+     * @return
+     */
+    public List<Long> findSignedBatchNo(String anRequestNo) {
+        List<Long> result = new ArrayList();
+        for (ScfElecAgreement tmpElecAgree : this.selectByProperty("requestNo", anRequestNo)) {
+            if (tmpElecAgree.getSignBatchNo() != null && tmpElecAgree.getSignBatchNo() > 10L) {
+
+                result.add(tmpElecAgree.getSignBatchNo());
+            }
+        }
+
+        return result;
+
+    }
+    
+    /**
+     * 更新电子合同的状态
+     * 
+     * @param anAppNo
+     * @param anStatus
+     */
+    public void saveElecAgreementStatus(String anAppNo, String anStatus) {
+        ScfElecAgreement tmpElecAgree = this.selectByPrimaryKey(anAppNo);
+        if (tmpElecAgree != null) {
+            tmpElecAgree.fillElecAgreeStatus(anStatus);
+            this.updateByPrimaryKey(tmpElecAgree);
+        }
+        else {
+            throw new BytterWebServiceException(WebServiceErrorCode.E1004);
+        }
+    }
+    
+    /**
+     * 根据主键找到电子合同协议信息
+     * 
+     * @param anAppNo
+     * @return
+     */
+    public ScfElecAgreement findOneElecAgreement(String anAppNo) {
+        if (BetterStringUtils.isNotBlank(anAppNo)) {
+
+            return this.selectByPrimaryKey(anAppNo);
+        }
+        else {
+
+            return null;
+        }
+    }
+    
+    
+    /**
+     * 更新已经签署的电子文件信息
+     * 
+     * @param anAppNo
+     *            签署的电子文件订单号信息
+     * @param anFileItem
+     *            文件信息
+     * @return
+     */
+    public boolean saveSignedFile(String anAppNo, CustFileItem anFileItem) {
+
+        return saveSignFileInfo(anAppNo, anFileItem, true);
+    }
+
 
 }
