@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-4.1.xsd">
+
+	<bean class="com.betterjr.common.service.SpringContextHolder" />
+	<!-- 扫描spring注解 -->
+	<context:component-scan
+		base-package="com.betterjr.modules.test;
+		com.betterjr.modules.agreement;
+		com.betterjr.modules.product;
+		com.betterjr.modules.credit;
+		com.betterjr.modules.loan;
+		com.betterjr.modules.param;
+		com.betterjr.modules.enquiry;
+		com.betterjr.modules.order;
+		com.betterjr.modules.receivable;
+		com.betterjr.modules.acceptbill;
+		com.betterjr.modules.cert.service;
+        com.betterjr.modules.discount;
+        com.betterjr.modules.push;
+		com.betterjr.modules.account.service;
+		com.betterjr.modules.rule.service;
+		com.betterjr.modules.rule.validator;
+		com.betterjr.modules.sys.service;
+		com.betterjr.common" />
+	<!-- <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" 
+		p:host-name="192.168.2.49" p:port="6379" /> <bean id="stringRedisSerializer" 
+		class="org.springframework.data.redis.serializer.StringRedisSerializer"/> 
+		<bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate" 
+		p:key-serializer-ref="stringRedisSerializer" p:hash-key-serializer-ref="stringRedisSerializer" 
+		p:value-serializer-ref="stringRedisSerializer" p:hash-value-serializer-ref="stringRedisSerializer" 
+		p:connection-factory-ref="jedisConnectionFactory"/> -->
+
+
+    <bean class="com.betterjr.common.config.BetterPropertyPlaceholderConfigurer">
+        <property name="fileEncoding" value="UTF-8" />
+        <property name="betterLocations">
+            <list>
+                <value>scf-service-config.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean class="com.betterjr.common.utils.PropertiesHolder">
+        <property name="properties" value="scf-service-config.properties" />
+    </bean>
+
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driverClass}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.user}" />
+		<property name="password" value="${jdbc.password}" />
+
+		<property name="filters" value="stat" />
+
+		<property name="maxActive" value="20" />
+		<property name="initialSize" value="1" />
+		<property name="maxWait" value="60000" />
+		<property name="minIdle" value="1" />
+
+		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+
+		<property name="validationQuery" value="SELECT 1 from dual" />
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+	</bean>
+
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:mybatis-config.xml" />
+		<property name="mapperLocations">
+			<list>
+				<value>classpath*:/sqlmap/**/*.xml</value>
+			</list>
+		</property>
+		<property name="typeAliasesPackage" value="com.betterjr.modules" />
+		<property name="typeAliasesSuperType" value="com.betterjr.common.entity.BetterjrEntity" />
+		<property name="plugins">
+			<list>
+				<bean class="com.betterjr.mapper.pagehelper.PageHelper">
+					<property name="properties">
+						<value>
+							dialect=mysql
+							reasonable=true
+							offsetAsPageNum=true
+							rowBoundsWithCount=true
+						</value>
+					</property>
+				</bean>
+				<bean class="com.betterjr.mapper.mapperhelper.MapperInterceptor">
+					<property name="properties">
+						<value>
+							mappers=com.betterjr.mapper.common.Mapper
+							IDENTITY=mysql
+							notEmpty=true
+						</value>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+		<property name="addToConfig" value="true" />
+		<property name="basePackage" value="com.betterjr.modules" />
+		<property name="annotationClass"
+			value="com.betterjr.common.annotation.BetterjrMapper" />
+	</bean>
+
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate"
+		scope="prototype">
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+	</bean>
+
+	<bean id="sqlMapper" class="com.betterjr.common.dao.SqlMapper"
+		scope="prototype">
+		<constructor-arg ref="sqlSession" />
+	</bean>
+
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="maxIdle" value="300" />
+		<property name="maxTotal" value="60000" />
+		<property name="testOnBorrow" value="true" />
+	</bean>
+	
+	<bean id="defaultJedisPool" class="redis.clients.jedis.JedisPool">
+		<constructor-arg index="0" ref="jedisPoolConfig" />
+		<constructor-arg index="1" value="${redis.address}" type="String" />
+		<constructor-arg index="2" value="${redis.port}" type="int" />
+		<!-- connect timeout, sotimeout -->
+		<constructor-arg index="3" value="2000" type="int" />
+		<!-- password -->
+		<constructor-arg index="4" type="String" ><null/></constructor-arg>
+		<!-- database index -->
+		<constructor-arg index="5" value="${redis.default.index}" type="int" />
+		<!-- client name -->
+		<constructor-arg index="6" type="String" ><null/></constructor-arg>
+	</bean>
+	
+	<bean id="shiroJedisPool" class="redis.clients.jedis.JedisPool">
+		<constructor-arg index="0" ref="jedisPoolConfig" />
+		<constructor-arg index="1" value="${redis.address}" type="String" />
+		<constructor-arg index="2" value="${redis.port}" type="int" />
+		<!-- connect timeout, sotimeout -->
+		<constructor-arg index="3" value="2000" type="int" />
+		<!-- password -->
+		<constructor-arg index="4" type="String" ><null/></constructor-arg>
+		<!-- database index -->
+		<constructor-arg index="5" value="${redis.shiro.index}" type="int" />
+		<!-- client name -->
+		<constructor-arg index="6" type="String" ><null/></constructor-arg>
+	</bean>
+
+	<bean id="shiroRedisManager" class="com.betterjr.common.security.shiro.cache.RedisManager">
+		<property name="jedisPool" ref="shiroJedisPool" />
+		<!-- 设置过期时间shiro cache keys， 默认1个小时 -->
+		<property name="expire" value="3600"/>
+	</bean>
+
+
+	<!-- 自定义Session存储容器 -->
+	<bean id="redisSessionDAO"
+		class="com.betterjr.common.security.shiro.session.RedisSessionDAO">
+		<property name="keyPrefix" value="betterjr_session_id" />
+		<property name="redisManager" ref="shiroRedisManager" />
+	</bean>
+
+	<bean id="custKeyManager" class="com.betterjr.common.security.CustKeyManager"
+		scope="prototype">
+		<constructor-arg index="0" value="${keyStore.privateKeyStore}" />
+		<constructor-arg index="1"
+			value="${keyStore.privateKeyPassword}" />
+		<constructor-arg index="2" value="" />
+	</bean>
+
+	<!-- 事务配置 -->
+	<!-- proxy-target-class默认为false，使用jdk动态代理织入增强，如果目标类没有声明接口,则自动使用CGLib动态代理。 -->
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+	<aop:config>
+		<aop:pointcut id="appService"
+			expression="execution(* com.betterjr..service.*Service.*(..)) 
+			or execution(* com.betterjr..dubbo.*Service.*(..))" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="appService" />
+	</aop:config>
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="add*" propagation="REQUIRED" />
+			<tx:method name="query*" read-only="true" />
+			<tx:method name="find*" read-only="true" />
+			<tx:method name="*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="selectKeyGenIDService" class="com.betterjr.common.selectkey.SelectKeyGenIDService"
+		init-method="init" scope="singleton" lazy-init="false">
+	</bean>
+ 
+	<bean id="selectKeyAutoIDGen" class="com.betterjr.common.selectkey.SelectKeyAutoIDGen"
+		init-method="init" scope="prototype" lazy-init="false">
+	</bean>
+
+	<bean id="freemarkerService" class="com.betterjr.common.service.FreemarkerService"
+		scope="prototype" lazy-init="false" />
+
+	<bean id="serialGenerator" class="com.betterjr.common.selectkey.SerialGenerator"
+		init-method="init" scope="singleton" lazy-init="false" />
+
+    <bean id="remoteProxyFactory" class="com.betterjr.modules.remote.helper.RemoteProxyFactory" init-method="init" scope="singleton">
+     <property name="trustStoreFile" value="${trustStore.File}" />
+     <property name="trustStorePass" value="${trustStore.Pass}" />
+    </bean>
+   
+   
+    <bean id="farFaceService" class="com.betterjr.modules.remote.service.FarFaceService" scope="singleton" lazy-init="false">
+    </bean>
+    <bean id="qlExpressUtil" class="com.betterjr.modules.rule.service.QlExpressUtil" init-method="initRunner">
+     <property name="defPackages">
+      <list>
+       <value>com.betterjr.common.utils</value>
+       <value>com.betterjr.common.config</value>
+      </list>
+     </property>
+    </bean>
+
+	<!-- <import resource="scf-dubbo-provider.xml" /> -->
+	<!-- <import resource="job-config.xml"/> -->
+
+</beans>

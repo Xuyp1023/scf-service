@@ -3,6 +3,7 @@ package com.betterjr.modules.remote.entity;
 import java.io.File;
 import java.security.cert.Certificate;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -22,9 +23,11 @@ import com.betterjr.common.exception.BytterValidException;
 import com.betterjr.common.mapper.BeanMapper;
 import com.betterjr.common.security.CustKeyManager;
 import com.betterjr.common.security.KeyReader;
+import com.betterjr.common.utils.BetterClassUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.ClassLoaderUtil;
 import com.betterjr.common.utils.Collections3;
+import com.betterjr.modules.remote.RemoteModule;
 import com.betterjr.modules.remote.data.DataFormatInfo;
 import com.betterjr.modules.remote.data.FaceDataStyle;
 import com.betterjr.modules.remote.helper.RemoteCryptService;
@@ -256,36 +259,22 @@ public class WorkFarFaceInfo extends FarInfterfaceInfo {
         String tmpClassName = "";
         try {
             // 初始化化服务提供类
-            if (StringUtils.isBlank(getProvider())) {
-                tmpClassName = RemoteProxyService.class.getName();
-            }
-            else {
-                tmpClassName = this.getProvider();
-            }
-            if (XmlUtils.split(tmpClassName, ".").size() == 1) {
-                tmpClassName = RemoteProxyService.class.getPackage().getName().concat(".").concat(tmpClassName);
-            }
-
-            this.providerClass = Class.forName(tmpClassName);
+            this.providerClass = findDeclareClass(this.getProvider(), RemoteProxyService.class);
 
             tmpClassName = bs.getString("cryptService", "RemoteCryptService");
-            if (XmlUtils.split(tmpClassName, ".").size() == 1) {
-                tmpClassName = RemoteProxyService.class.getPackage().getName().concat(".").concat(tmpClassName);
-            }
-            this.cryptService = (RemoteCryptService) Class.forName(tmpClassName).newInstance();
+            this.cryptService = (RemoteCryptService) RemoteModule.findClassInModule(tmpClassName).newInstance();
             this.cryptService.initParameter(this.config, this.keyManager);
 
             tmpClassName = bs.getString("signService", "RemoteSignService");
-
-            if (XmlUtils.split(tmpClassName, ".").size() == 1) {
-                tmpClassName = RemoteProxyService.class.getPackage().getName().concat(".").concat(tmpClassName);
-            }
-
-            this.signService = (RemoteSignService) Class.forName(tmpClassName).newInstance();
+            this.signService = (RemoteSignService) RemoteModule.findClassInModule(tmpClassName).newInstance();
             this.signService.initParameter(this.config, this.keyManager);
-            this.deSerializerClass = findDeclareClass(bs.getString("deSerializerClass"), this.deSerializerClass);
-            this.serializerClass = findDeclareClass(bs.getString("dataSerializerClass"), this.serializerClass);
             
+            try{
+                this.deSerializerClass = findDeclareClass(bs.getString("deSerializerClass"), this.deSerializerClass);
+                this.serializerClass = findDeclareClass(bs.getString("dataSerializerClass"), this.serializerClass);
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
         }
         catch (ClassNotFoundException e) {
             throw new BetterjrClientProtocolException(25201, "Create " + tmpClassName + " Service Class NotFund", e);
@@ -305,10 +294,7 @@ public class WorkFarFaceInfo extends FarInfterfaceInfo {
 
     public static Class findDeclareClass(String tmpClassName, Class anDefValue) throws ClassNotFoundException {
         if (BetterStringUtils.isNotBlank(tmpClassName)) {
-            if (XmlUtils.split(tmpClassName, ".").size() == 1) {
-                tmpClassName = RemoteProxyService.class.getPackage().getName().concat(".").concat(tmpClassName);
-            }
-            return Class.forName(tmpClassName);
+            return RemoteModule.findClassInModule(tmpClassName);
         }
         return anDefValue;
     }

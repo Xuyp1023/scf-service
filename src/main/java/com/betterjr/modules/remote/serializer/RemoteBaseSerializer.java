@@ -12,7 +12,6 @@ import com.betterjr.common.data.WebServiceErrorCode;
 import com.betterjr.common.exception.BytterValidException;
 import com.betterjr.common.mapper.JsonMapper;
 import com.betterjr.common.security.CustKeyManager;
-import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.UUIDUtils;
 import com.betterjr.modules.remote.connection.RemoteConnection;
 import com.betterjr.modules.remote.data.DataAttribNode;

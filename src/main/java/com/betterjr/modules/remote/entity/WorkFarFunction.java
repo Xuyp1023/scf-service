@@ -231,8 +231,11 @@ public class WorkFarFunction extends FarFunctionInfo {
             ent.getValue().init(this);
         }
         
-        initReturnClass(BetterClassUtils.findClassByName(this.getReturnClass(), SysConfigService.getList("ClassRecursivePathList")));
-        
+        try{
+            initReturnClass(BetterClassUtils.findClassByName(this.getReturnClass(), SysConfigService.getList("ClassRecursivePathList")));
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
         try {
             this.deSerializerClass = WorkFarFaceInfo.findDeclareClass(this.getDataDeSerializer());
             this.serializerClass = WorkFarFaceInfo.findDeclareClass(this.getDataSerializer());

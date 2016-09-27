@@ -2,6 +2,7 @@ package com.betterjr.modules.remote.connection;
 
 import java.util.Map;
 
+
 public class MockRemoteConnection extends RemoteConnection {
 
     private static final long serialVersionUID = 4963034736383808792L;

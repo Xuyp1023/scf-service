@@ -6,10 +6,13 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.dubbo.config.annotation.Service;
+import com.betterjr.modules.remote.IRemoteInvoker;
 import com.betterjr.modules.remote.entity.RemoteResultInfo;
 import com.betterjr.modules.remote.helper.RemoteProxyFactory;
 import com.betterjr.modules.remote.helper.RemoteProxyService;
 
+@Service(interfaceClass=IRemoteInvoker.class)
 public class RemoteInvokerDubboService implements IRemoteInvoker {
     private static final Logger logger = LoggerFactory.getLogger(RemoteInvokerDubboService.class);
 
