@@ -28,10 +28,9 @@ public class DeliveryNoticeDubboService implements IScfDeliveryNoticeService {
     }
     
     @Override
-    public String webFindDeliveryNoticeList(Map<String, Object> anMap) {
+    public String webFindDeliveryNoticeList(Map<String, Object> anMap, String factorNo) {
         logger.debug("查询发货通知列表，入参："+anMap);
-        anMap = (Map)RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk("发货通知单查询成功", deliveryNoticeService.getNoticeSelectList(anMap)).toJson();
+        return AjaxObject.newOk("发货通知单查询成功", deliveryNoticeService.getNoticeSelectList(factorNo)).toJson();
     }
     
     @Override

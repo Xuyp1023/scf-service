@@ -16,14 +16,10 @@ import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.loan.dao.ScfExemptMapper;
 import com.betterjr.modules.loan.entity.ScfExempt;
 import com.betterjr.modules.loan.entity.ScfPayPlan;
-import com.betterjr.modules.loan.entity.ScfPressMoney;
-import com.betterjr.modules.loan.entity.ScfRequest;
 
 @Service
 public class ScfExemptService extends BaseService<ScfExemptMapper, ScfExempt> {
 
-    @Autowired
-    private ScfRequestService requestService;
     @Autowired
     private ScfPayPlanService payPlanService;
     @Autowired
@@ -37,19 +33,24 @@ public class ScfExemptService extends BaseService<ScfExemptMapper, ScfExempt> {
     public ScfExempt addExempt(ScfExempt anExempt) {
         BTAssert.notNull(anExempt, "新增豁免记录失败-anExempt不能为空");
         
-        //获取申请单信息
-        ScfRequest request = requestService.selectByPrimaryKey(anExempt.getRequestNo());
-        anExempt.setCustNo(request.getCustNo());
-        
-        //获取还款计划信息
+        //修改还款计划中的还款豁免信息
         ScfPayPlan plan = payPlanService.findPayPlanByRequest(anExempt.getRequestNo());
-        anExempt.setPayPlanId(plan.getId());
+        plan.setExemptInterestBalance(plan.getExemptInterestBalance().add(anExempt.getInterestBalance()));
+        plan.setExemptManagementBalance(plan.getExemptManagementBalance().add(anExempt.getManagementBalance()));
+        plan.setExemptLatefeeBalance(plan.getExemptLatefeeBalance().add(anExempt.getLatefeeBalance()));
+        plan.setExemptPenaltyBalance(plan.getExemptPenaltyBalance().add(anExempt.getPenaltyBalance()));
+        plan.setExemptServicefeeBalance(plan.getExemptServicefeeBalance().add(anExempt.getServicefeeBalance()));
+        plan.setExemptPrincipalBalance(plan.getExemptPrincipalBalance().add(anExempt.getPrincipalBalance()));
+        plan.setExemptTotalBalance(plan.getExemptTotalBalance().add(anExempt.getTotalBalance()));
+        payPlanService.saveModifyPayPlan(plan, plan.getId());
         
         //保存豁免
-        anExempt.init();
+        anExempt.setCustNo(plan.getCustNo());
+        anExempt.setPayPlanId(plan.getId());
+        anExempt.init(anExempt);
         this.insert(anExempt);
         
-        setCustName(anExempt);
+        this.fillCustName(anExempt);
         return anExempt;
     }
     
@@ -100,8 +101,7 @@ public class ScfExemptService extends BaseService<ScfExemptMapper, ScfExempt> {
     public List<ScfExempt> findExemptList(Map<String, Object> anMap) {
         List<ScfExempt> list = this.selectByClassProperty(ScfExempt.class, anMap);
         for (ScfExempt exempt : list) {
-            exempt.setCustName(custAccountService.queryCustName(exempt.getCustNo()));
-            exempt.setFactorName(custAccountService.queryCustName(exempt.getFactorNo()));
+            this.fillCustName(exempt);
         }
         return list;
     }
@@ -119,11 +119,11 @@ public class ScfExemptService extends BaseService<ScfExemptMapper, ScfExempt> {
             return new ScfExempt();
         }
         
-        setCustName(exempt);
+        this.fillCustName(exempt);
         return exempt;
     }
     
-    private void setCustName(ScfExempt anExempt){
+    private void fillCustName(ScfExempt anExempt){
         anExempt.setCustName(custAccountService.queryCustName(anExempt.getCustNo()));
         anExempt.setFactorName(custAccountService.queryCustName(anExempt.getFactorNo()));
     }

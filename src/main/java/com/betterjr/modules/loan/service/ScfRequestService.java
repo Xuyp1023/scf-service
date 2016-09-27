@@ -279,15 +279,16 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         request.setActualDate(anLoan.getLoanDate());
         request.setEndDate(anLoan.getEndDate());
         request.setConfirmBalance(anLoan.getLoanBalance());
+        request.setLoanBalance(anLoan.getLoanBalance());
         this.saveModifyRequest(request, request.getRequestNo());
 
         // ---保存还款计划------------------------------------------
-        ScfPayPlan plan = createPayPlan(anLoan, request);
+        ScfPayPlan plan = createPayPlan(anLoan.getInterestBalance(), anLoan.getManagementBalance(), request);
 
         // ---保存手续费----------------------------------------------
         BigDecimal servicefeeBalance = new BigDecimal(0);
-        if (null != anLoan.getServicefeeBalance() || null != request.getServicefeeRatio()) {
-            servicefeeBalance = saveServiceFee(anLoan, request);
+        if (null != anLoan.getServicefeeBalance()) {
+            servicefeeBalance = saveServiceFee(anLoan.getServicefeeBalance(), request);
         }
 
         // ---保存放款记录------------------------------------------
@@ -301,51 +302,48 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         return request;
     }
 
-    private BigDecimal saveServiceFee(ScfLoan anLoan, ScfRequest anRequest) {
+    private BigDecimal saveServiceFee(BigDecimal servicefeeBalance, ScfRequest anRequest) {
         ScfServiceFee serviceFee = new ScfServiceFee();
         serviceFee.setCustNo(anRequest.getCustNo());
         serviceFee.setFactorNo(anRequest.getFactorNo());
-        serviceFee.setRequestNo(anLoan.getRequestNo());
-        serviceFee.setPayDate(anLoan.getLoanDate());
+        serviceFee.setRequestNo(anRequest.getRequestNo());
+        serviceFee.setPayDate(anRequest.getActualDate());
 
-        BigDecimal servicefeeBalance;
-        if (null == anLoan.getServicefeeBalance()) {
+        if (null == servicefeeBalance) {
             // 计算手续费(按千分之收)
             servicefeeBalance = anRequest.getApprovedBalance().multiply(anRequest.getServicefeeRatio()).divide(new BigDecimal(1000));
         }
-        else {
-            servicefeeBalance = anLoan.getServicefeeBalance();
-        }
+        
         serviceFee.setBalance(servicefeeBalance);
         serviceFeeService.addServiceFee(serviceFee);
         return servicefeeBalance;
     }
 
-    private ScfPayPlan createPayPlan(ScfLoan anLoan, ScfRequest request) {
+    private ScfPayPlan createPayPlan(BigDecimal anInterestBalance, BigDecimal anManagementBalance, ScfRequest anRequest) {
         ScfPayPlan plan = new ScfPayPlan();
         plan.setTerm(1);
-        plan.setCustNo(request.getCustNo());
-        plan.setCoreCustNo(request.getCoreCustNo());
-        plan.setFactorNo(request.getFactorNo());
-        plan.setRequestNo(anLoan.getRequestNo());
-        plan.setStartDate(anLoan.getLoanDate());
-        plan.setPlanDate(anLoan.getEndDate());
-        plan.setRatio(request.getApprovedRatio());
-        plan.setManagementRatio(request.getManagementRatio());
+        plan.setCustNo(anRequest.getCustNo());
+        plan.setCoreCustNo(anRequest.getCoreCustNo());
+        plan.setFactorNo(anRequest.getFactorNo());
+        plan.setRequestNo(anRequest.getRequestNo());
+        plan.setStartDate(anRequest.getActualDate());
+        plan.setPlanDate(anRequest.getEndDate());
+        plan.setRatio(anRequest.getApprovedRatio());
+        plan.setManagementRatio(anRequest.getManagementRatio());
         
         //计算应还
-        plan.setShouldPrincipalBalance(anLoan.getLoanBalance());
-        if (null == anLoan.getInterestBalance()) {
-            plan.setShouldInterestBalance(payPlanService.getFee(anLoan.getRequestNo(), request.getApprovedBalance(), 3));
+        plan.setShouldPrincipalBalance(anRequest.getLoanBalance());
+        if (null == anInterestBalance) {
+            plan.setShouldInterestBalance(payPlanService.getFee(anRequest.getRequestNo(), anRequest.getLoanBalance(), 3));
         }
         else {
-            plan.setShouldInterestBalance(anLoan.getInterestBalance());
+            plan.setShouldInterestBalance(anInterestBalance);
         }
         
-        if(null == anLoan.getManagementBalance()){
-            plan.setShouldManagementBalance(payPlanService.getFee(anLoan.getRequestNo(), request.getApprovedBalance(), 1));
+        if(null == anManagementBalance){
+            plan.setShouldManagementBalance(payPlanService.getFee(anRequest.getRequestNo(), anRequest.getLoanBalance(), 1));
         }else{
-            plan.setShouldManagementBalance(anLoan.getManagementBalance());
+            plan.setShouldManagementBalance(anManagementBalance);
         }
         
         //未还
