@@ -573,23 +573,25 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         List<CustAgreement> agreementList = new ArrayList<CustAgreement>();
         List<ScfInvoice> invoiceList = new ArrayList<ScfInvoice>();
         for (String anId : idList) {
+            List<ScfOrder> orderList = this.findOrder(QueryTermBuilder.newInstance().put("id", Long.valueOf(anId)).build());
             if ("1".equals(anRequestType)) {
-                List<ScfOrder> orderList = this.findOrder(QueryTermBuilder.newInstance().put("id", Long.valueOf(anId)).build());
-                for(ScfOrder anOrder : orderList) {
+                for (ScfOrder anOrder : orderList) {
                     agreementList.addAll(anOrder.getAgreementList());
                     invoiceList.addAll(anOrder.getInvoiceList());
                 }
             }
             else if ("2".equals(anRequestType)) {
-                List<ScfAcceptBill> acceptBillList = acceptBillService.findAcceptBill(QueryTermBuilder.newInstance().put("id", Long.valueOf(anId)).build());
-                for(ScfAcceptBill anAcceptBill : acceptBillList) {
+                List<ScfAcceptBill> acceptBillList = acceptBillService
+                        .findAcceptBill(QueryTermBuilder.newInstance().put("id", Long.valueOf(anId)).build());
+                for (ScfAcceptBill anAcceptBill : acceptBillList) {
                     agreementList.addAll(anAcceptBill.getAgreementList());
                     invoiceList.addAll(anAcceptBill.getInvoiceList());
                 }
             }
             else if ("3".equals(anRequestType)) {
-                List<ScfReceivable> receivableList = receivableService.findReceivable(QueryTermBuilder.newInstance().put("id", Long.valueOf(anId)).build());
-                for(ScfReceivable anReceivbale : receivableList) {
+                List<ScfReceivable> receivableList = receivableService
+                        .findReceivable(QueryTermBuilder.newInstance().put("id", Long.valueOf(anId)).build());
+                for (ScfReceivable anReceivbale : receivableList) {
                     agreementList.addAll(anReceivbale.getAgreementList());
                     invoiceList.addAll(anReceivbale.getInvoiceList());
                 }

@@ -16,6 +16,7 @@ import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.MathExtend;
 import com.betterjr.common.utils.UserUtils;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -484,13 +485,14 @@ public class ScfExempt implements BetterjrEntity {
         this.custName = custName;
     }
 
-    public void init() {
+    public void init(ScfExempt amExempt) {
         this.id = SerialGenerator.getLongValue("ScfServiceFee.id");
         this.regOperName = UserUtils.getUserName();
         this.regOperId = UserUtils.getOperatorInfo().getId();
         this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
         this.regDate = BetterDateUtils.getNumDate();
         this.regTime = BetterDateUtils.getNumTime();
+        fillDefaultValue(amExempt);
     }
 
     public void initModify() {
@@ -499,5 +501,15 @@ public class ScfExempt implements BetterjrEntity {
         this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
+    }
+    
+    private void fillDefaultValue(ScfExempt amExempt){
+        amExempt.interestBalance = MathExtend.defaultValue(amExempt.interestBalance, BigDecimal.ZERO);
+        amExempt.latefeeBalance = MathExtend.defaultValue(amExempt.latefeeBalance, BigDecimal.ZERO);
+        amExempt.managementBalance = MathExtend.defaultValue(amExempt.managementBalance, BigDecimal.ZERO);
+        amExempt.penaltyBalance = MathExtend.defaultValue(amExempt.penaltyBalance, BigDecimal.ZERO);
+        amExempt.principalBalance = MathExtend.defaultValue(amExempt.principalBalance, BigDecimal.ZERO);
+        amExempt.servicefeeBalance = MathExtend.defaultValue(amExempt.servicefeeBalance, BigDecimal.ZERO);
+        amExempt.totalBalance = MathExtend.defaultValue(amExempt.totalBalance, BigDecimal.ZERO);
     }
 }

@@ -13,6 +13,7 @@ import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
+import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.loan.dao.ScfDeliveryNoticeMapper;
 import com.betterjr.modules.loan.entity.ScfDeliveryNotice;
@@ -65,9 +66,10 @@ public class ScfDeliveryNoticeService extends BaseService<ScfDeliveryNoticeMappe
      * @param anPageSize
      * @return
      */
-    public List<Map<String, Object>> getNoticeSelectList(Map<String, Object> anMap) {
-        anMap.put("businStatus", "0");
-        List<ScfDeliveryNotice> notiecList =this.selectByProperty(anMap);
+    public List<Map<String, Object>> getNoticeSelectList(String anFactorNo) {
+        
+        Map<String, Object> qyMap = QueryTermBuilder.newInstance().put("businStatus", "0").put("custNo", anFactorNo).build();
+        List<ScfDeliveryNotice> notiecList =this.selectByClassProperty(ScfDeliveryNotice.class, qyMap);
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         for (ScfDeliveryNotice notice : notiecList) {
             Map<String, Object> map = new HashMap<String, Object>();
