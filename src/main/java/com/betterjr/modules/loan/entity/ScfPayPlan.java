@@ -880,7 +880,7 @@ public class ScfPayPlan implements BetterjrEntity {
         anPlan.modiOperName = UserUtils.getUserName();
         anPlan.modiDate = BetterDateUtils.getNumDate();
         anPlan.modiTime = BetterDateUtils.getNumTime();
-        fillBalance(anPlan);
+        //fillBalance(anPlan);
     }
     
     public void initAutoModify(ScfPayPlan anPlan, Long anId) {
@@ -890,7 +890,7 @@ public class ScfPayPlan implements BetterjrEntity {
         anPlan.modiOperName = this.regOperName;
         anPlan.modiDate = BetterDateUtils.getNumDate();
         anPlan.modiTime = BetterDateUtils.getNumTime();
-        fillBalance(anPlan);
+        //fillBalance(anPlan);
     }
     
     private void fillBalance(ScfPayPlan anPlan){
