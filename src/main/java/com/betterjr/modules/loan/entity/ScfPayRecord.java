@@ -610,13 +610,14 @@ public class ScfPayRecord implements BetterjrEntity {
         return result;
     }
     
-    public void init() {
+    public void init(ScfPayRecord anRecord) {
         this.id = SerialGenerator.getLongValue("ScfPayRecord.id");
         this.regOperName = UserUtils.getUserName();
         this.regOperId = UserUtils.getOperatorInfo().getId();
         this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
         this.regDate = BetterDateUtils.getNumDate();
         this.regTime = BetterDateUtils.getNumTime();
+        fillBalance(anRecord);
     }
 
     public void initModify() {

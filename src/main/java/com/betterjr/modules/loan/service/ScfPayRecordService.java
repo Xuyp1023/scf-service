@@ -22,7 +22,7 @@ public class ScfPayRecordService extends BaseService<ScfPayRecordMapper, ScfPayR
      */
     public int addPayRecord(ScfPayRecord anRecord) {
         BTAssert.notNull(anRecord, "新增还款记录失败-anRecord不能为空");
-        anRecord.init();
+        anRecord.init(anRecord);
         return this.insert(anRecord);
     }
     
