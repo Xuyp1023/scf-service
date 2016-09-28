@@ -525,7 +525,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         // 在原来的期数上加1
         newPlan.setTerm(anPlan.getTerm() + 1);
         
-        //本金
+        //应还本金
         newPlan.setShouldPrincipalBalance(anPlan.getSurplusPrincipalBalance().subtract(anRecord.getPrincipalBalance()));
         newPlan.setSurplusPrincipalBalance(newPlan.getShouldPrincipalBalance());
         
@@ -534,15 +534,14 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         BigDecimal mgrBalance = map.get("managementBalance");
 
         // 新的应还
-        newPlan.setShouldInterestBalance(interestBalance.add(anPlan.getSurplusInterestBalance()));
-        newPlan.setShouldManagementBalance(mgrBalance.add(anPlan.getSurplusManagementBalance()));
+        newPlan.setShouldInterestBalance(interestBalance);
+        newPlan.setShouldManagementBalance(mgrBalance);
         newPlan.setShouldTotalBalance(newPlan.getShouldPrincipalBalance().add(newPlan.getShouldInterestBalance()).add(newPlan.getShouldManagementBalance()));
 
-        // 新的剩余
+        // 新的未还
         newPlan.setSurplusInterestBalance(newPlan.getShouldInterestBalance());
         newPlan.setSurplusManagementBalance(newPlan.getShouldManagementBalance());
-        newPlan.setSurplusManagementBalance(newPlan.getShouldTotalBalance());
-
+        newPlan.setSurplusTotalBalance(newPlan.getShouldTotalBalance());
         return addPayPlan(newPlan);
     }
 
