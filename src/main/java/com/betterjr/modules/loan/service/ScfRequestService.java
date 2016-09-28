@@ -307,9 +307,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
 
         // ---保存手续费----------------------------------------------
         BigDecimal servicefeeBalance = new BigDecimal(0);
-        if (null != anLoan.getServicefeeBalance()) {
-            servicefeeBalance = saveServiceFee(anLoan.getServicefeeBalance(), request);
-        }
+        servicefeeBalance = saveServiceFee(anLoan.getServicefeeBalance(), request);
 
         // ---保存放款记录------------------------------------------
         anLoan.setInterestBalance(plan.getShouldInterestBalance());
@@ -332,6 +330,10 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         if (null == servicefeeBalance) {
             // 计算手续费(按千分之收)
             servicefeeBalance = anRequest.getApprovedBalance().multiply(anRequest.getServicefeeRatio()).divide(new BigDecimal(1000));
+        }
+        
+        if(servicefeeBalance.compareTo(BigDecimal.ZERO) < 1){
+            return BigDecimal.ZERO;
         }
         
         serviceFee.setBalance(servicefeeBalance);
