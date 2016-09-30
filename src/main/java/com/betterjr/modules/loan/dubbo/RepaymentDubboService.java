@@ -1,7 +1,6 @@
 package com.betterjr.modules.loan.dubbo;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +46,7 @@ public class RepaymentDubboService implements IScfRepaymentService {
     
     @Override
     public String webSaveRepayment(Map<String, Object> anMap) {
+        logger.debug("保存还款，入参：" + anMap);
         ScfPayRecord record = (ScfPayRecord) RuleServiceDubboFilterInvoker.getInputObj();
         return AjaxObject.newOk("操作成功", payPlanService.saveRepayment(record)).toJson();
     }
@@ -64,6 +64,7 @@ public class RepaymentDubboService implements IScfRepaymentService {
     
     @Override
     public String webCalculatPayType(String anRequestNo, String anPayDate) {
+        logger.debug("计算还款方式，入参：" + anPayDate);
         return AjaxObject.newOk("操作成功", payPlanService.calculatPayType(anRequestNo, anPayDate)).toJson();
     }
 
@@ -172,6 +173,7 @@ public class RepaymentDubboService implements IScfRepaymentService {
 
     @Override
     public String webCalculatExtensionEndDate(String anStartDate, Integer anPeriod, Integer anPeriodUnit) {
+        logger.debug("计算展期结束日期，入参：" + anStartDate);
         Map<String, Object> anMap = new HashMap<String, Object>();
         anMap.put("endDate", payPlanService.getEndDate(anStartDate, anPeriod, anPeriodUnit));
         return AjaxObject.newOk("操作成功", anMap).toJson();
@@ -179,16 +181,19 @@ public class RepaymentDubboService implements IScfRepaymentService {
     
     @Override
     public String webCalculatExtensionFee(BigDecimal anRatio, BigDecimal anManagementRatio, BigDecimal anExtensionBalance) {
+        logger.debug("计算展期费用，入参：" + anExtensionBalance);
         return AjaxObject.newOk("操作成功", extensionService.getInterest(anRatio, anManagementRatio, anExtensionBalance)).toJson();
     }
     
     @Override
     public String webPayAssigned(String anRequestNo, String anStartDate, BigDecimal anPayBalance) {
+        logger.debug("计算还款分配，入参：" + anRequestNo);
         return AjaxObject.newOk("操作成功",  extensionService.payAssigned(anRequestNo, anStartDate, anPayBalance)).toJson();
     }
 
     @Override
     public String webCalculatLoanBalance(String anRequestNo, String anStartDate) {
+        logger.debug("计算放款金额，入参：" + anRequestNo);
         Map<String, BigDecimal> map = new HashMap<String, BigDecimal>();
         map.put("loanBalance", extensionService.getLoanBalance(anRequestNo, anStartDate));
         return AjaxObject.newOk("操作成功", map).toJson();
@@ -196,6 +201,7 @@ public class RepaymentDubboService implements IScfRepaymentService {
     
     @Override
     public String webAddExtension(Map<String, Object> anMap) {
+        logger.debug("新增展期记录，入参：" + anMap);
         ScfExtension anExtension = (ScfExtension) RuleServiceDubboFilterInvoker.getInputObj();
         return AjaxObject.newOk("操作成功", extensionService.addExtension(anExtension)).toJson();
     }
@@ -246,6 +252,15 @@ public class RepaymentDubboService implements IScfRepaymentService {
         Map<String, Object> qyConditionMap = new HashMap<String, Object>();
         qyConditionMap.put("requestNo", anMap.get("requestNo").toString());
         return AjaxObject.newOk("无分页查还款记录列表成功", payRecordService.findPayRecordList(anMap)).toJson();
+    }
+    
+    @Override
+    public String webNotifyPay(Map<String, Object> anMap, String requestNo) {
+        logger.debug("还款提醒发送消息发送，入参：" + anMap);
+        if(payPlanService.notifyPay(requestNo)){
+            return AjaxObject.newOk("还款提醒发送成功！").toJson();
+        }
+        return AjaxObject.newError("还款提醒发送失败！").toJson();
     }
     
 

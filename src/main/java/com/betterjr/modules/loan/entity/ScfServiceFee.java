@@ -55,6 +55,13 @@ public class ScfServiceFee implements BetterjrEntity {
     @Column(name = "F_BALANCE",  columnDefinition="DOUBLE" )
     @MetaData( value="金额", comments = "金额")
     private BigDecimal balance;
+    
+    /**
+     * 金额
+     */
+    @Column(name = "C_FEE_TYPE",  columnDefinition="DOUBLE" )
+    @MetaData( value="费用类型", comments = "费用类型:1,放款手续费，2，提前还款手续费")
+    private String feeType;
 
     /**
      * 支付日期
@@ -239,6 +246,14 @@ public class ScfServiceFee implements BetterjrEntity {
         this.version = version;
     }
 
+    public String getFeeType() {
+        return feeType;
+    }
+
+    public void setFeeType(String feeType) {
+        this.feeType = feeType;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -250,6 +265,7 @@ public class ScfServiceFee implements BetterjrEntity {
         sb.append(", custNo=").append(custNo);
         sb.append(", requestNo=").append(requestNo);
         sb.append(", balance=").append(balance);
+        sb.append(", feeType=").append(feeType);
         sb.append(", payDate=").append(payDate);
         sb.append(", operOrg=").append(operOrg);
         sb.append(", regOperId=").append(regOperId);
@@ -283,6 +299,7 @@ public class ScfServiceFee implements BetterjrEntity {
             && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
             && (this.getRequestNo() == null ? other.getRequestNo() == null : this.getRequestNo().equals(other.getRequestNo()))
             && (this.getBalance() == null ? other.getBalance() == null : this.getBalance().equals(other.getBalance()))
+            && (this.getFeeType() == null ? other.getFeeType() == null : this.getFeeType().equals(other.getFeeType()))
             && (this.getPayDate() == null ? other.getPayDate() == null : this.getPayDate().equals(other.getPayDate()))
             && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
             && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
@@ -305,6 +322,7 @@ public class ScfServiceFee implements BetterjrEntity {
         result = prime * result + ((getCustNo() == null) ? 0 : getCustNo().hashCode());
         result = prime * result + ((getRequestNo() == null) ? 0 : getRequestNo().hashCode());
         result = prime * result + ((getBalance() == null) ? 0 : getBalance().hashCode());
+        result = prime * result + ((getFeeType() == null) ? 0 : getFeeType().hashCode());
         result = prime * result + ((getPayDate() == null) ? 0 : getPayDate().hashCode());
         result = prime * result + ((getOperOrg() == null) ? 0 : getOperOrg().hashCode());
         result = prime * result + ((getRegOperId() == null) ? 0 : getRegOperId().hashCode());

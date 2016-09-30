@@ -1,6 +1,7 @@
 package com.betterjr.modules.loan.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -76,6 +77,23 @@ public class ScfServiceFeeService extends BaseService<ScfServiceFeeMapper, ScfSe
             return new ScfServiceFee();
         }
         return fee;
+    }
+    
+    /**
+     * 查询手续费记录详情
+     * 
+     * @param anId
+     * @return
+     */
+    public ScfServiceFee findServiceFeeByType(String anRequestNo, String feeType) {
+        Map<String, Object> qyMap = new HashMap<String, Object>();
+        qyMap.put("requestNo", anRequestNo);
+        qyMap.put("feeType", feeType);
+        List<ScfServiceFee> list = this.selectByClassProperty(ScfServiceFee.class, qyMap);
+        if(Collections3.isEmpty(list)){
+            return null;
+        }
+        return Collections3.getFirst(list);
     }
     
 

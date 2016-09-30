@@ -87,6 +87,8 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     private ScfOfferService offerService;
     @Autowired
     private ScfEnquiryService enquiryService;
+    @Autowired
+    private ScfServiceFeeService feeService;
     
     @Reference(interfaceClass = ICustMechLawService.class)
     private ICustMechLawService mechLawService;
@@ -131,6 +133,8 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         anRequest.setCustName(custAccountService.queryCustName(anRequest.getCustNo()));
         anRequest.setRequestDate(BetterDateUtils.getNumDate());
         this.insert(anRequest);
+        
+        fillCustName(anRequest);
         return anRequest;
     }
     
@@ -220,6 +224,11 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         if(null != product){
             request.setProductName(product.getProductName());  
         }
+        
+        ScfServiceFee serviceFee = feeService.findServiceFeeByType(request.getRequestNo(), "1");
+        if(null != serviceFee){
+            request.setServicefeeBalance(serviceFee.getBalance());
+        }
     }
 
     /**
@@ -303,11 +312,11 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         this.saveModifyRequest(request, request.getRequestNo());
 
         // ---保存还款计划------------------------------------------
-        ScfPayPlan plan = createPayPlan(anLoan.getInterestBalance(), anLoan.getManagementBalance(), request);
-
+        ScfPayPlan plan = createPayPlan(anLoan.getInterestBalance(), anLoan.getManagementBalance(),  request);
+        payPlanService.addPayPlan(plan);
+        
         // ---保存手续费----------------------------------------------
-        BigDecimal servicefeeBalance = new BigDecimal(0);
-        servicefeeBalance = saveServiceFee(anLoan.getServicefeeBalance(), request);
+        BigDecimal servicefeeBalance = saveServiceFee(anLoan.getServicefeeBalance(), request);
 
         // ---保存放款记录------------------------------------------
         anLoan.setInterestBalance(plan.getShouldInterestBalance());
@@ -321,12 +330,6 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     }
 
     private BigDecimal saveServiceFee(BigDecimal servicefeeBalance, ScfRequest anRequest) {
-        ScfServiceFee serviceFee = new ScfServiceFee();
-        serviceFee.setCustNo(anRequest.getCustNo());
-        serviceFee.setFactorNo(anRequest.getFactorNo());
-        serviceFee.setRequestNo(anRequest.getRequestNo());
-        serviceFee.setPayDate(anRequest.getActualDate());
-
         if (null == servicefeeBalance) {
             // 计算手续费(按千分之收)
             servicefeeBalance = anRequest.getApprovedBalance().multiply(anRequest.getServicefeeRatio()).divide(new BigDecimal(1000));
@@ -336,7 +339,13 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
             return BigDecimal.ZERO;
         }
         
+        ScfServiceFee serviceFee = new ScfServiceFee();
+        serviceFee.setCustNo(anRequest.getCustNo());
+        serviceFee.setFactorNo(anRequest.getFactorNo());
+        serviceFee.setRequestNo(anRequest.getRequestNo());
+        serviceFee.setPayDate(anRequest.getActualDate());
         serviceFee.setBalance(servicefeeBalance);
+        serviceFee.setFeeType("1");
         serviceFeeService.addServiceFee(serviceFee);
         return servicefeeBalance;
     }
@@ -372,18 +381,12 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         plan.setSurplusPrincipalBalance(plan.getShouldPrincipalBalance());
         plan.setSurplusInterestBalance(plan.getShouldInterestBalance());
         plan.setSurplusManagementBalance(plan.getShouldManagementBalance());
-        
+       
         //计算应还未还总额
         BigDecimal totalBalance = plan.getShouldPrincipalBalance().add(plan.getShouldInterestBalance()).add(plan.getShouldManagementBalance());
         plan.setShouldTotalBalance(totalBalance);
         plan.setSurplusTotalBalance(totalBalance);
-        payPlanService.addPayPlan(plan);
         return plan;
-    }
-    
-    public List<ScfRequest> queryTodoList(){
-        
-        return null;
     }
     
     /**
@@ -653,10 +656,10 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         list.add(node);
         
         node = new CustFlowNodeData();
-        node.setNodeCustomName(RequestTradeStatus.PAYFINSH.getName());
-        node.setSysNodeName(RequestTradeStatus.PAYFINSH.getName());
-        node.setSysNodeId(new Long(RequestTradeStatus.PAYFINSH.getCode()));
-        node.setId(new Long(RequestTradeStatus.PAYFINSH.getCode()));
+        node.setNodeCustomName(RequestTradeStatus.CLEAN.getName());
+        node.setSysNodeName(RequestTradeStatus.CLEAN.getName());
+        node.setSysNodeId(new Long(RequestTradeStatus.CLEAN.getCode()));
+        node.setId(new Long(RequestTradeStatus.CLEAN.getCode()));
         list.add(node);
         
         node = new CustFlowNodeData();
