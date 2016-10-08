@@ -10,6 +10,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
@@ -19,15 +20,22 @@ import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.DictUtils;
 import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.account.entity.CustInfo;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.account.service.CustAccountService;
+import com.betterjr.modules.account.service.CustOperatorService;
 import com.betterjr.modules.loan.dao.ScfPayPlanMapper;
 import com.betterjr.modules.loan.entity.ScfExempt;
 import com.betterjr.modules.loan.entity.ScfPayPlan;
 import com.betterjr.modules.loan.entity.ScfPayRecord;
 import com.betterjr.modules.loan.entity.ScfPayRecordDetail;
 import com.betterjr.modules.loan.entity.ScfRequest;
+import com.betterjr.modules.loan.entity.ScfServiceFee;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
 import com.betterjr.modules.loan.helper.RequestType;
+import com.betterjr.modules.notification.INotificationSendService;
+import com.betterjr.modules.notification.NotificationModel;
+import com.betterjr.modules.notification.NotificationModel.Builder;
 import com.betterjr.modules.param.entity.FactorParam;
 
 @Service
@@ -42,10 +50,17 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
     @Autowired
     private CustAccountService custAccountService;
     @Autowired
+    private CustOperatorService custOperatorService;
+    @Autowired
     private ScfDeliveryNoticeService deliveryNotice;
     @Autowired
     private ScfExemptService exemptService;
-
+    @Autowired
+    private ScfServiceFeeService serviceFeeService;
+    
+    @Reference(interfaceClass = INotificationSendService.class)
+    private INotificationSendService notificationSendService;
+    
     /**
      * 新增还款计划
      * 
@@ -265,7 +280,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
             BigDecimal servicefee = plan.getSurplusPrincipalBalance().multiply(param.getAdvanceRepaymentRatio()).divide(new BigDecimal(100));
             record.setServicefeeBalance(servicefee);
             
-            //按天计算利息
+            //提前还款时-按天计算利息
             Map<String, BigDecimal> feeMap = getInterestByDays(plan, anPayDate);
             record.setInterestBalance(feeMap.get("interestBalance"));
             record.setManagementBalance(feeMap.get("managementBalance"));
@@ -278,7 +293,8 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
             record.setTotalBalance(plan.getSurplusTotalBalance());
             record.setOverdueDays(plan.getOverdueDays());
             
-        }else{
+        }
+        else{
             //即使逾期了，选择正常还款 也是不收罚息的，所以要把罚息去掉
             record.setTotalBalance(plan.getSurplusTotalBalance().subtract(plan.getSurplusLatefeeBalance()).subtract(plan.getSurplusPenaltyBalance()));
         }
@@ -478,15 +494,15 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
 
         // 设置还款计划相关参数
         this.fillPayPlan(anRecord, plan);
-
-        // 状态改为结清
-        plan.setBusinStatus("2");
-        plan = saveModifyPayPlan(plan, anRecord.getPayPlanId());
+        this.saveModifyPayPlan(plan, anRecord.getPayPlanId());
+        
+        //保存手续费
+        this.saveServicefee(anRecord, plan);
 
         // 结清
         if (plan.getSurplusPrincipalBalance().compareTo(BigDecimal.ZERO) <= 0) {
             ScfRequest request = requestService.findRequestDetail(plan.getRequestNo());
-            request.setTradeStatus(RequestTradeStatus.PAYFINSH.getCode());
+            request.setTradeStatus(RequestTradeStatus.CLEAN.getCode());
             requestService.saveModifyRequest(request, plan.getRequestNo());
             return plan;
         }
@@ -506,42 +522,48 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         return createNewPlan(anRecord, plan);
     }
 
-    private ScfPayPlan createNewPlan(ScfPayRecord anRecord, ScfPayPlan anPlan) {
+    private void saveServicefee(ScfPayRecord anRecord, ScfPayPlan plan) {
+        if(null == anRecord.getServicefeeBalance() && anRecord.getServicefeeBalance().compareTo(BigDecimal.ZERO) <= 0){
+            return;
+        }
+        
+        ScfServiceFee serviceFee = new ScfServiceFee();
+        serviceFee.setBalance(anRecord.getServicefeeBalance());
+        serviceFee.setRequestNo(plan.getRequestNo());
+        serviceFee.setCustNo(anRecord.getPayCustNo());
+        serviceFee.setFactorNo(plan.getFactorNo());
+        serviceFee.setFeeType("2");
+        serviceFee.setPayDate(anRecord.getPayDate());
+        serviceFeeService.addServiceFee(serviceFee);
+    }
+
+    private ScfPayPlan createNewPlan(ScfPayRecord anRecord, ScfPayPlan anOldPlan) {
         // 这一次没有还完（还款金额 小于 剩余金额） 则 根据 剩余本金 重新计算 剩余利息
         // 如果经销商还款 一次没有还款，则默认把还计算方式 改为按天计算
-        ScfPayPlan newPlan = new ScfPayPlan();
-        newPlan.setRequestNo(anPlan.getRequestNo());
+        ScfPayPlan newPlan = anOldPlan;
 
         // 设置 新的 开始计息日（今天的利息已经收了，从明天开始 所以要往后推一天）
         newPlan.setStartDate(BetterDateUtils.addStrDays(anRecord.getPayDate(), 1));
-        newPlan.setPlanDate(anPlan.getPlanDate());
         newPlan.setRatio(anRecord.getRatio());
         newPlan.setManagementRatio(anRecord.getManagementRatio());
 
-        newPlan.setCustNo(anPlan.getCustNo());
-        newPlan.setCoreCustNo(anPlan.getCoreCustNo());
-        newPlan.setFactorNo(anPlan.getFactorNo());
-
         // 在原来的期数上加1
-        newPlan.setTerm(anPlan.getTerm() + 1);
+        newPlan.setTerm(anOldPlan.getTerm() + 1);
         
         //应还本金
-        newPlan.setShouldPrincipalBalance(anPlan.getSurplusPrincipalBalance().subtract(anRecord.getPrincipalBalance()));
-        newPlan.setSurplusPrincipalBalance(newPlan.getShouldPrincipalBalance());
-        
         Map<String, BigDecimal> map = getInterestByDays(newPlan, newPlan.getPlanDate());
         BigDecimal interestBalance = map.get("interestBalance");
-        BigDecimal mgrBalance = map.get("managementBalance");
+        BigDecimal mgrBalance = map.get("managementBalance");  
 
-        // 新的应还
-        newPlan.setShouldInterestBalance(interestBalance);
-        newPlan.setShouldManagementBalance(mgrBalance);
-        newPlan.setShouldTotalBalance(newPlan.getShouldPrincipalBalance().add(newPlan.getShouldInterestBalance()).add(newPlan.getShouldManagementBalance()));
+        // 新的应还=原计划已还部分 + 剩余本金*新利率*（本次还款日到截止日期的天数）
+        newPlan.setShouldInterestBalance(newPlan.getAlreadyInterestBalance().add(interestBalance));
+        newPlan.setShouldManagementBalance(newPlan.getAlreadyManagementBalance().add(mgrBalance));
+        newPlan.setShouldTotalBalance(newPlan.getAlreadyTotalBalance().add(newPlan.getShouldPrincipalBalance()).add(newPlan.getShouldInterestBalance()).add(newPlan.getShouldManagementBalance()));
 
         // 新的未还
-        newPlan.setSurplusInterestBalance(newPlan.getShouldInterestBalance());
-        newPlan.setSurplusManagementBalance(newPlan.getShouldManagementBalance());
-        newPlan.setSurplusTotalBalance(newPlan.getShouldTotalBalance());
+        newPlan.setSurplusInterestBalance(interestBalance);
+        newPlan.setSurplusManagementBalance(mgrBalance);
+        newPlan.setSurplusTotalBalance(newPlan.getSurplusPrincipalBalance().add(newPlan.getSurplusInterestBalance()).add(newPlan.getSurplusManagementBalance()));
         return addPayPlan(newPlan);
     }
 
@@ -627,6 +649,9 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         anPlan.setAlreadyTotalBalance(plusCalculat(anPlan.getAlreadyTotalBalance(), anRecord.getTotalBalance()));
         
         anPlan.setPayDate(anRecord.getPayDate());
+        
+        // 状态改为结清
+        anPlan.setBusinStatus("2");
     }
 
     private BigDecimal minusCalculat(BigDecimal anMeiosis, BigDecimal anMinuend) {
@@ -723,5 +748,41 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
 
         ScfPayPlan plan = Collections3.getFirst(list);
         return plan;
+    }
+    
+    /**
+     * 开户消息
+     */
+    public boolean notifyPay(String anRequestNo){
+        try {
+            ScfRequest request = requestService.findRequestDetail(anRequestNo);
+            ScfPayPlan plan = this.findPlanByRequestNo(anRequestNo);
+            
+            //供应商融资
+            String profileName = "供应商提醒核心企业还款";
+            CustInfo sendCustomer = custAccountService.findCustInfo(request.getCustNo());
+            CustInfo accCustomer = custAccountService.findCustInfo(request.getCoreCustNo());
+            
+            //经销融资（核心企业提醒经销商还款）
+            if(BetterStringUtils.equals(request.getRequestType(), RequestType.SELLER.getCode())){
+                profileName = "核心企业提醒经销商还款";
+                sendCustomer = custAccountService.findCustInfo(request.getCoreCustNo());
+                accCustomer = custAccountService.findCustInfo(request.getCustNo());
+            }
+            
+            CustOperatorInfo sendOperator = custOperatorService.findCustOperatorInfo(sendCustomer.getRegOperId());// 
+            CustOperatorInfo accOperator = custOperatorService.findCustOperatorInfo(accCustomer.getRegOperId());// 
+            
+            Builder builder = NotificationModel.newBuilder(profileName, sendCustomer, sendOperator);
+            builder.addParam("custName", request.getCustName());
+            builder.addParam("coreCustName", request.getCoreCustName());
+            builder.addParam("planDate", plan.getPlanDate());
+            builder.addReceiveOperator(accOperator.getId());
+            return notificationSendService.sendNotification(builder.build());
+        }
+        catch (final Exception e) {
+            logger.error("还款提醒消息发送失败！", e);
+        }
+        return false;
     }
 }

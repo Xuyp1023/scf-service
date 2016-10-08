@@ -2,7 +2,7 @@ package com.betterjr.modules.loan.helper;
 
 public enum PayRecordPayType {
     NORMAL("1", "正常还款"),
-    CLEAN("2", "提前还款"),
+    PREPAYMENT("2", "提前还款"),
     OVERDUE("3", "逾期还款"),
     EXPMPT("4", "豁免"),
     OVERDUE_EXPMPT("5", "逾期豁免"),

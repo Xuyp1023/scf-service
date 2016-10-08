@@ -2,15 +2,15 @@ package com.betterjr.modules.loan.helper;
 
 public enum RequestTradeStatus {
     REQUEST("100","申请"),
-    SCHEME("110","出具保理方案"),
+    OFFER_SCHEME("110","出具保理方案"),
     CONFIRM_SCHEME("120","确认融资方案"),
     REQUEST_TRADING("130","发起贸易背景确认"),
     CONFIRM_TRADING("140","确认贸易背景"),
-    LOAN("150","放款确认"),
-    FINISH("160","融资完成"),
+    CONFIRM_LOAN("150","放款确认"),
+    FINISH_LOAN("160","放款完成"),
     OVERDUE("170","逾期"),
     EXTENSION("180","展期"),
-    PAYFINSH("190","结清"),
+    CLEAN("190","结清"),
     CLOSED("200","关闭");
     
     private String code;

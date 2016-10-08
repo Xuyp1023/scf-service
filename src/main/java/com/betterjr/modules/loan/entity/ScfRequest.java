@@ -16,7 +16,6 @@ import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
-import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.MathExtend;
 import com.betterjr.common.utils.UserUtils;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -1133,6 +1132,9 @@ public class ScfRequest implements BetterjrEntity {
     private BigDecimal orderBalance;
     @Transient
     private String productName;
+    //手续费
+    @Transient
+    private BigDecimal servicefeeBalance;
     
     public String getCoreCustName() {
         return coreCustName;
@@ -1181,6 +1183,16 @@ public class ScfRequest implements BetterjrEntity {
 
     public void setOutStatus(String anOutStatus) {
         outStatus = anOutStatus;
+    }
+    
+    
+
+    public BigDecimal getServicefeeBalance() {
+        return servicefeeBalance;
+    }
+
+    public void setServicefeeBalance(BigDecimal servicefeeBalance) {
+        this.servicefeeBalance = servicefeeBalance;
     }
 
     public void init() {

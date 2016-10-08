@@ -9,7 +9,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.RequestEntity;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
@@ -185,21 +184,19 @@ public class RequestDubboService implements IScfRequestService {
         
         ScfRequest request = requestService.selectByPrimaryKey(anRequestNo);
         ScfRequestScheme scheme = new ScfRequestScheme();
+        //电子合同类型，0：应收账款债权转让通知书，1：买方确认意见，2三方协议书
+        String  agreeType = BetterStringUtils.equals(RequestType.SELLER.getCode(), request.getRequestType()) ? "2" :"0";
         if (BetterStringUtils.equals(anApprovalResult, APPROVALRESULT_0)) {
-
-            //电子合同类型，0：应收账款债权转让通知书，1：买方确认意见，2三方协议书
-            String  agreeType = BetterStringUtils.equals(RequestType.SELLER.getCode(), request.getRequestType()) ? "2" :"0";
             if(false == agreementService.sendValidCodeByRequestNo(anRequestNo, agreeType, anSmsCode)){
                 //return AjaxObject.newError("操作失败：短信验证码错误").toJson();
             }
             
             //修改融资方案确认状态
-            scheme = requestService.saveConfirmScheme(anRequestNo, "1");
+            scheme = requestService.saveConfirmScheme(anRequestNo, agreeType);
         }
         else{
             //取消签约
-            agreementService.cancelElecAgreement(anRequestNo, "0", "");
-            //agreementService.cancelElecAgreement(anRequestNo, "");
+            agreementService.cancelElecAgreement(anRequestNo, agreeType, "");
         }
         
         // 执行流程
@@ -242,22 +239,21 @@ public class RequestDubboService implements IScfRequestService {
         logger.debug("核心企业-确认贸易背景，入参：anRequestNo" + anRequestNo + "-  anApprovalResult:" + anApprovalResult);
 
         ScfRequest request = requestService.selectByPrimaryKey(anRequestNo);
+        //电子合同类型，0：应收账款债权转让通知书，1：买方确认意见，2三方协议书
+        String  agreeType = BetterStringUtils.equals(RequestType.SELLER.getCode(), request.getRequestType()) ? "2" :"1";
         if (BetterStringUtils.equals(anApprovalResult, APPROVALRESULT_0)) {
             
-            //电子合同类型，0：应收账款债权转让通知书，1：买方确认意见，2三方协议书
-            String  agreeType = BetterStringUtils.equals(RequestType.SELLER.getCode(), request.getRequestType()) ? "2" :"1";
-           
             //签署协议
             if(false == agreementService.sendValidCodeByRequestNo(anRequestNo, agreeType, smsCode)){
                // return AjaxObject.newError("操作失败：短信验证码错误").toJson();
             }
             
             // 保存确认贸易背景确认状态
-            requestService.confirmTradingBackgrand(anRequestNo, "1");
+            requestService.confirmTradingBackgrand(anRequestNo, agreeType);
         }
         else{
             //取消签约
-            agreementService.cancelElecAgreement(anRequestNo, "");
+            agreementService.cancelElecAgreement(anRequestNo, agreeType, "");
         }
 
         // 执行流程
