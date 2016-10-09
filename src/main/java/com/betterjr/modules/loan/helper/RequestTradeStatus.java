@@ -11,7 +11,7 @@ public enum RequestTradeStatus {
     OVERDUE("170","逾期"),
     EXTENSION("180","展期"),
     CLEAN("190","结清"),
-    CLOSED("200","关闭");
+    CLOSED("-100","关闭");
     
     private String code;
     private String name;

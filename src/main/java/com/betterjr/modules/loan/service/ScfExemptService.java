@@ -35,13 +35,35 @@ public class ScfExemptService extends BaseService<ScfExemptMapper, ScfExempt> {
         
         //修改还款计划中的还款豁免信息
         ScfPayPlan plan = payPlanService.findPayPlanByRequest(anExempt.getRequestNo());
-        plan.setExemptInterestBalance(plan.getExemptInterestBalance().add(anExempt.getInterestBalance()));
-        plan.setExemptManagementBalance(plan.getExemptManagementBalance().add(anExempt.getManagementBalance()));
-        plan.setExemptLatefeeBalance(plan.getExemptLatefeeBalance().add(anExempt.getLatefeeBalance()));
-        plan.setExemptPenaltyBalance(plan.getExemptPenaltyBalance().add(anExempt.getPenaltyBalance()));
-        plan.setExemptServicefeeBalance(plan.getExemptServicefeeBalance().add(anExempt.getServicefeeBalance()));
-        plan.setExemptPrincipalBalance(plan.getExemptPrincipalBalance().add(anExempt.getPrincipalBalance()));
-        plan.setExemptTotalBalance(plan.getExemptTotalBalance().add(anExempt.getTotalBalance()));
+        if(null != anExempt.getInterestBalance()){
+            plan.setExemptInterestBalance(plan.getExemptInterestBalance().add(anExempt.getInterestBalance()));
+        }
+        
+        if(null != anExempt.getManagementBalance()){
+            
+            plan.setExemptManagementBalance(plan.getExemptManagementBalance().add(anExempt.getManagementBalance()));
+        }
+        
+        if(null != anExempt.getLatefeeBalance()){
+            plan.setExemptLatefeeBalance(plan.getExemptLatefeeBalance().add(anExempt.getLatefeeBalance()));
+        }
+        
+        if(null != anExempt.getPenaltyBalance()){
+            plan.setExemptPenaltyBalance(plan.getExemptPenaltyBalance().add(anExempt.getPenaltyBalance()));
+        }
+        
+        if(null != anExempt.getServicefeeBalance()){
+            plan.setExemptServicefeeBalance(plan.getExemptServicefeeBalance().add(anExempt.getServicefeeBalance()));
+        }
+        
+        if(null != anExempt.getPrincipalBalance()){
+            plan.setExemptPrincipalBalance(plan.getExemptPrincipalBalance().add(anExempt.getPrincipalBalance()));
+        }
+        
+        if(null != anExempt.getTotalBalance()){
+            plan.setExemptTotalBalance(plan.getExemptTotalBalance().add(anExempt.getTotalBalance()));
+        }
+        
         payPlanService.saveModifyPayPlan(plan, plan.getId());
         
         //保存豁免
