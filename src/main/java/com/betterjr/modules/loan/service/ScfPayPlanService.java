@@ -577,6 +577,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         if (BetterDateUtils.parseDate(anRecord.getPayDate()).after(BetterDateUtils.parseDate(anRecord.getPlanPayDate()))
                 && (anRecord.getLatefeeBalance().compareTo(BigDecimal.ZERO) == 0 && anRecord.getLatefeeBalance().compareTo(BigDecimal.ZERO) == 0)) {
             ScfExempt anExempt = new ScfExempt();
+            anExempt.setRequestNo(anPlan.getRequestNo());
             anExempt.setExemptDate(anRecord.getPayDate());
             anExempt.setFactorNo(anRecord.getFactorNo());
             anExempt.setCustNo(anRecord.getCustNo());
@@ -751,7 +752,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
     }
     
     /**
-     * 开户消息
+     * 还款提醒
      */
     public boolean notifyPay(String anRequestNo){
         try {
@@ -777,6 +778,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
             builder.addParam("custName", request.getCustName());
             builder.addParam("coreCustName", request.getCoreCustName());
             builder.addParam("planDate", plan.getPlanDate());
+            builder.addParam("requestNo", plan.getRequestNo());
             builder.addReceiveOperator(accOperator.getId());
             return notificationSendService.sendNotification(builder.build());
         }
