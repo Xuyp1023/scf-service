@@ -561,6 +561,7 @@ public class ScfRequestScheme implements BetterjrEntity {
         this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
         this.regDate = BetterDateUtils.getNumDate();
         this.regTime = BetterDateUtils.getNumTime();
+        fillDefault(anScheme);
     }
 
     public void initModify(ScfRequestScheme anScheme) {
@@ -569,10 +570,10 @@ public class ScfRequestScheme implements BetterjrEntity {
         this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
-        fillBalance(anScheme);
+        fillDefault(anScheme);
     }
     
-    private void fillBalance(ScfRequestScheme anScheme){
+    private void fillDefault(ScfRequestScheme anScheme){
         anScheme.approvedBalance = MathExtend.defaultValue(anScheme.approvedBalance, BigDecimal.ZERO);
         anScheme.approvedManagementRatio = MathExtend.defaultValue(anScheme.approvedManagementRatio, BigDecimal.ZERO);
         anScheme.approvedRatio = MathExtend.defaultValue(anScheme.approvedRatio, BigDecimal.ZERO);
