@@ -128,6 +128,7 @@ public class CustAgreement implements BetterjrEntity {
      */
     @Column(name = "D_AGREE_START_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="合同起始日期", comments = "合同起始日期")
+    @OrderBy
     private String agreeStartDate;
 
     /**

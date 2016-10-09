@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.config.ParamNames;
+import com.betterjr.common.data.SimpleDataEntity;
 import com.betterjr.common.data.WebServiceErrorCode;
 import com.betterjr.common.exception.BytterWebServiceException;
 import com.betterjr.common.service.BaseService;
@@ -517,6 +518,76 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
 
         return saveSignFileInfo(anAppNo, anFileItem, true);
     }
-
-
+    
+    /***
+     * 保理合同新增
+     * @param anElecAgreement
+     * @param anFileList 附件列表
+     * @return
+     */
+    public ScfElecAgreement addFactorAgreement(ScfElecAgreement anElecAgreement,String anFileList){
+        anElecAgreement.initDefValue(custAccoService.queryCustName(anElecAgreement.getSupplierNo()));
+        anElecAgreement.setBatchNo(custFileService.updateCustFileItemInfo(anFileList, anElecAgreement.getBatchNo()));
+        this.insert(anElecAgreement);
+        return anElecAgreement;
+    }
+    
+    /***
+     * 查询保理合同
+     * @param anParam
+     * @param anPageNum
+     * @param anPageSize
+     * @return
+     */
+    public Page<ScfElecAgreementInfo> queryFactorAgreementList(Map<String, Object> anParam, int anPageNum, int anPageSize) {
+        Map<String, Object> termMap = new HashMap();
+        if(BetterStringUtils.isNotBlank((String)anParam.get("GTEregDate")) && BetterStringUtils.isNotBlank((String)anParam.get("LTEregDate"))){
+            termMap.put("GTEregDate", anParam.get("GTEregDate"));
+            termMap.put("LTEregDate", anParam.get("LTEregDate"));
+        }
+        String signStatus = (String) anParam.get("signStatus");
+        anPageSize = MathExtend.defIntBetween(anPageSize, 2, ParamNames.MAX_PAGE_SIZE, 25);
+        if (BetterStringUtils.isBlank(signStatus)) {
+            termMap.put("signStatus", Arrays.asList("0","1", "2", "9"));
+        }
+        else {
+            termMap.put("signStatus", signStatus);
+        }
+        termMap.put("agreeType", anParam.get("agreeType"));
+        Page<ScfElecAgreementInfo> elecAgreeList = this.selectPropertyByPage(ScfElecAgreementInfo.class, termMap, anPageNum, anPageSize,
+                "1".equals(anParam.get("flag")));
+        
+        return elecAgreeList;
+    }
+    
+    /***
+     * 查询保理合同关联下拉列表
+     * @param anCustNo 客户号 
+     * @param anFactorNo 保理公司编号
+     * @param anCoreCustNo 核心企业编号
+     * @param anAgreeType 合同类型
+     * @return
+     */
+    public List<SimpleDataEntity> findFactorAgreement(Long anCustNo,Long anFactorNo,String anAgreeType){
+        Map<String,Object> anMap=new HashMap<String,Object>();
+        anMap.put("supplierNo", anCustNo);
+        anMap.put("factorNo", anFactorNo);
+        anMap.put("agreeType", anAgreeType);
+        anMap.put("signStatus", Arrays.asList("1", "2"));
+        List<SimpleDataEntity> result = new ArrayList<SimpleDataEntity>();
+        for(ScfElecAgreement elecAgreement:this.selectByProperty(anMap)){
+            result.add(new SimpleDataEntity(elecAgreement.getAgreeName(), elecAgreement.getAppNo()));
+        }
+        return result;
+    }
+    
+    public String updateFactorAgree(String anAppNo,String anStatus){
+        ScfElecAgreement elecAgreement=this.selectByPrimaryKey(anAppNo);
+        elecAgreement.setSignStatus(anStatus);
+        if(this.updateByPrimaryKey(elecAgreement)>0){
+            return "作废/启用成功";
+        }else{
+            return "作废/启用失败";
+        }
+    }
 }
