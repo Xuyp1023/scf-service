@@ -8,6 +8,7 @@ import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -97,6 +98,7 @@ public class ScfOrder implements BetterjrEntity {
     @Column(name = "D_ORDER_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="订单日期", comments = "订单日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
+    @OrderBy("ASC")
     private String orderDate;
 
     /**

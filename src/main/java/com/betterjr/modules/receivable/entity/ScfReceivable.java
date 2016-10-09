@@ -8,6 +8,7 @@ import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -115,6 +116,7 @@ public class ScfReceivable implements BetterjrEntity {
     @Column(name = "D_END_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="付款到期日期", comments = "付款到期日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
+    @OrderBy("DESC")
     private String endDate;
 
     /**
