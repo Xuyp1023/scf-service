@@ -153,7 +153,7 @@ public class RequestDubboService implements IScfRequestService {
 
         ScfRequestScheme scheme = (ScfRequestScheme) RuleServiceDubboFilterInvoker.getInputObj();
         if (BetterStringUtils.equals(anApprovalResult, APPROVALRESULT_0)) {
-            ScfRequest request = requestService.selectByPrimaryKey(scheme.getRequestNo());
+            ScfRequest request = requestService.findRequestDetail(scheme.getRequestNo());
             
             // 1,订单，2:票据;3:应收款;4:经销商
             if (BetterStringUtils.equals(RequestType.SELLER.getCode(), request.getRequestType())) {
@@ -182,7 +182,7 @@ public class RequestDubboService implements IScfRequestService {
     public String webConfirmScheme(String anRequestNo, String anApprovalResult, String anSmsCode) {
         logger.debug("申请企业-确认融资方案，入参：anRequestNo" + anRequestNo + "-  anApprovalResult:" + anApprovalResult);
         
-        ScfRequest request = requestService.selectByPrimaryKey(anRequestNo);
+        ScfRequest request = requestService.findRequestDetail(anRequestNo);
         ScfRequestScheme scheme = new ScfRequestScheme();
         //电子合同类型，0：应收账款债权转让通知书，1：买方确认意见，2三方协议书
         String  agreeType = BetterStringUtils.equals(RequestType.SELLER.getCode(), request.getRequestType()) ? "2" :"0";
@@ -238,7 +238,7 @@ public class RequestDubboService implements IScfRequestService {
     public String webConfirmTradingBackgrand(String anRequestNo, String anApprovalResult, String smsCode) {
         logger.debug("核心企业-确认贸易背景，入参：anRequestNo" + anRequestNo + "-  anApprovalResult:" + anApprovalResult);
 
-        ScfRequest request = requestService.selectByPrimaryKey(anRequestNo);
+        ScfRequest request = requestService.findRequestDetail(anRequestNo);
         //电子合同类型，0：应收账款债权转让通知书，1：买方确认意见，2三方协议书
         String  agreeType = BetterStringUtils.equals(RequestType.SELLER.getCode(), request.getRequestType()) ? "2" :"1";
         if (BetterStringUtils.equals(anApprovalResult, APPROVALRESULT_0)) {
@@ -265,13 +265,16 @@ public class RequestDubboService implements IScfRequestService {
     public String webConfirmLoan(Map<String, Object> anMap, String anApprovalResult, String anReturnNode, String anDescription) {
         logger.debug("保理公司-放款确认：" + anMap);
 
+        ScfLoan loan = (ScfLoan) RuleServiceDubboFilterInvoker.getInputObj();
         ScfRequest request = new ScfRequest();
         if (BetterStringUtils.equals(anApprovalResult, APPROVALRESULT_0)) {
-            request = requestService.saveConfirmLoan((ScfLoan) RuleServiceDubboFilterInvoker.getInputObj());
+            request = requestService.saveConfirmLoan(loan);
+        }else{
+            //flowService.webFindExecutedNodes(Long.parseLong(loan.getRequestNo()));
         }
 
         // 执行流程
-        execFllow(request.getRequestNo(), request.getBalance(), anApprovalResult, anReturnNode, anDescription);
+        execFllow(loan.getRequestNo(), request.getBalance(), anApprovalResult, anReturnNode, anDescription);
         return AjaxObject.newOk("操作成功").toJson();
     }
 
@@ -350,7 +353,7 @@ public class RequestDubboService implements IScfRequestService {
         input.setReason(anDescription);
 
         // 当前融资申请单
-        ScfRequest request = requestService.selectByPrimaryKey(anRequestNo);
+        ScfRequest request = requestService.findRequestDetail(anRequestNo);
         if (BetterStringUtils.equals(anApprovalResult, APPROVALRESULT_0)) {
             // 下一步
             input.setCommand(FlowCommand.GoNext);

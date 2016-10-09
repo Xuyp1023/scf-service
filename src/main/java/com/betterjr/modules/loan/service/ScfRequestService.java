@@ -238,6 +238,16 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
      * @return
      */
     public ScfRequestScheme saveOfferScheme(ScfRequestScheme anScheme) {
+        // 将融资确认后的融资信息放入到申请表中（修改申请表中的信息）
+        ScfRequest request = this.selectByPrimaryKey(anScheme.getRequestNo());
+        request.setApprovedPeriod(anScheme.getApprovedPeriod());
+        request.setApprovedPeriodUnit(anScheme.getApprovedPeriodUnit());
+        request.setManagementRatio(anScheme.getApprovedManagementRatio());
+        request.setApprovedRatio(anScheme.getApprovedRatio());
+        request.setServicefeeRatio(anScheme.getServicefeeRatio());
+        request.setApprovedBalance(anScheme.getApprovedBalance());
+        request.setConfirmBalance(anScheme.getApprovedBalance());
+        this.saveModifyRequest(request, anScheme.getRequestNo());
         return schemeService.addScheme(anScheme);
     }
 
@@ -251,17 +261,6 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     public ScfRequestScheme saveConfirmScheme(String anRequestNo, String anAduitStatus) {
         ScfRequestScheme scheme = schemeService.findSchemeDetail2(anRequestNo);
         BTAssert.notNull(scheme);
-        
-        // 将融资确认后的融资信息放入到申请表中（修改申请表中的信息）
-        ScfRequest request = this.selectByPrimaryKey(anRequestNo);
-        request.setApprovedPeriod(scheme.getApprovedPeriod());
-        request.setApprovedPeriodUnit(scheme.getApprovedPeriodUnit());
-        request.setManagementRatio(scheme.getApprovedManagementRatio());
-        request.setApprovedRatio(scheme.getApprovedRatio());
-        request.setServicefeeRatio(scheme.getServicefeeRatio());
-        request.setApprovedBalance(scheme.getApprovedBalance());
-        request.setConfirmBalance(scheme.getApprovedBalance());
-        this.saveModifyRequest(request, anRequestNo);
         
         // 修改融资企业确认状态
         scheme.setCustAduit(anAduitStatus);
