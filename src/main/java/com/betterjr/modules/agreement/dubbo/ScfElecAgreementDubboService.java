@@ -226,6 +226,48 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
     public boolean saveSignedFile(String anAppNo, CustFileItem anFileItem) {
         // TODO Auto-generated method stub
         return this.scfElecAgreementService.saveSignedFile(anAppNo, anFileItem);
-
+    }
+    
+    /***
+     * 添加保理合同
+     * @param anElecAgreement
+     * @param anFileList
+     * @return
+     */
+    public String webAddFactorAgreement(Map anMap,String anFileList){
+        ScfElecAgreement anElecAgreement=(ScfElecAgreement)RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOk("添加保理合同",this.scfElecAgreementService.addFactorAgreement(anElecAgreement, anFileList)).toJson();
+    }
+    
+    /***
+     * 分页查询保理合同
+     * @param anParam
+     * @param anPageNum
+     * @param anPageSize
+     * @return
+     */
+    public String webQueryFactorAgreement(Map<String, Object> anParam, int anPageNum, int anPageSize){
+        return AjaxObject.newOkWithPage("分页查询保理合同",this.scfElecAgreementService.queryFactorAgreementList(anParam, anPageNum, anPageSize)).toJson();
+    }
+    
+    /***
+     * 查询保理合同关联下拉列表
+     * @param anCustNo 客户号 
+     * @param anFactorNo 保理公司编号
+     * @param anCoreCustNo 核心企业编号
+     * @param anAgreeType 合同类型
+     * @return
+     */
+    public String webFindFactorAgreement(Long anCustNo,Long anFactorNo,String anAgreeType){
+        return AjaxObject.newOk("查询合同列表",this.scfElecAgreementService.findFactorAgreement(anCustNo, anFactorNo, anAgreeType)).toJson();
+    }
+    
+    /***
+     * 作废合同
+     * @param anAppNo
+     * @return
+     */
+    public String updateFactorAgree(String anAppNo,String anStatus){
+        return AjaxObject.newOk(this.scfElecAgreementService.updateFactorAgree(anAppNo,anStatus)).toJson();
     }
 }

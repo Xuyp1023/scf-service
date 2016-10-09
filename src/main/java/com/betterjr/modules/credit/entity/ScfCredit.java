@@ -128,9 +128,9 @@ public class ScfCredit implements BetterjrEntity {
     /**
      * 保理合同
      */
-    @Column(name = "L_AGREEID", columnDefinition = "INTEGER")
+    @Column(name = "C_AGREEID", columnDefinition = "VARCHAR")
     @MetaData(value = "保理合同", comments = "保理合同")
-    private Long agreeId;
+    private String agreeId;
 
     /**
      * 授信录入操作员ID号
@@ -392,11 +392,11 @@ public class ScfCredit implements BetterjrEntity {
         this.creditMode = creditMode == null ? null : creditMode.trim();
     }
 
-    public Long getAgreeId() {
+    public String getAgreeId() {
         return agreeId;
     }
 
-    public void setAgreeId(Long agreeId) {
+    public void setAgreeId(String agreeId) {
         this.agreeId = agreeId;
     }
 
