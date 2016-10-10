@@ -181,6 +181,15 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         
         return retList;
     }
+    
+    /**
+     * 根据Id汇票详情查询
+     */
+    public ScfAcceptBill findAcceptBillDetailsById(Long anId) {
+        Map<String, Object> queryMap = QueryTermBuilder.newInstance().put("id", anId).build();
+        List<ScfAcceptBill> acceptBillList = this.findAcceptBill(queryMap);
+        return Collections3.getFirst(acceptBillList);
+    }
 
     /**
      * 票据转让

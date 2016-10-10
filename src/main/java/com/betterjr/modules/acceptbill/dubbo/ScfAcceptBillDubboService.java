@@ -58,7 +58,7 @@ public class ScfAcceptBillDubboService implements IScfAcceptBillService {
     @Override
     public String webSaveAduitAcceptBill(Long anId) {
         
-        return AjaxObject.newOk("汇票信息查询成功", scfAcceptBillService.saveAduitAcceptBill(anId)).toJson();
+        return AjaxObject.newOk("汇票信息审核", scfAcceptBillService.saveAduitAcceptBill(anId)).toJson();
     }
 
     @Override
@@ -70,5 +70,11 @@ public class ScfAcceptBillDubboService implements IScfAcceptBillService {
     public String webQueryFinancedByFactor(Map<String, Object> anMap, Long anFactorNo) {
         Map<String, Object> anBillConditionMap =  (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
         return AjaxObject.newOkWithPage("保理公司查询已融资汇票", scfAcceptBillService.queryFinancedByFactor(anBillConditionMap, anFactorNo)).toJson();
+    }
+    
+    @Override
+    public String webFindAcceptBillDetailsById(Long anId) {
+        
+        return AjaxObject.newOk("汇票信息详情查询", scfAcceptBillService.findAcceptBillDetailsById(anId)).toJson();
     }
 }
