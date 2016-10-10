@@ -43,5 +43,10 @@ public class ScfReceivableDubboService implements IScfReceivableService {
     public String webFindReceivableList(String anCustNo, String anIsOnlyNormal) {
         return AjaxObject.newOk("应收账款查询成功", scfReceivableService.findReceivableList(anCustNo, anIsOnlyNormal)).toJson();
     }
+    
+    @Override
+    public String webFindReceivableDetailsById(Long anId) {
+        return AjaxObject.newOk("应收账款详情查询成功", scfReceivableService.findReceivableDetailsById(anId)).toJson();
+    }
 
 }

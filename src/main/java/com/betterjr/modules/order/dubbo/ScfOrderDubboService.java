@@ -39,6 +39,11 @@ public class ScfOrderDubboService implements IScfOrderService{
     }
     
     @Override
+    public String webFindOrderDetailsById(Long anId) {
+        return AjaxObject.newOk("订单信息查询成功", scfOrderService.findOrderDetailsById(anId)).toJson();
+    }
+    
+    @Override
     public String webFindOrderList(String anCustNo, String anIsOnlyNormal) {
         return AjaxObject.newOk("订单信息查询成功", scfOrderService.findOrderList(anCustNo, anIsOnlyNormal)).toJson();
     }

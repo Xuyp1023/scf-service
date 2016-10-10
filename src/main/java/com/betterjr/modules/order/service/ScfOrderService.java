@@ -69,8 +69,8 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         if(BetterStringUtils.equals(anIsOnlyNormal, "1")) {
             anMap.put("businStatus", "0");
         }
-        //订单编号模糊查询
-        anMap = Collections3.fuzzyMap(anMap, new String[]{"orderNo"});
+        //模糊查询
+        anMap = Collections3.fuzzyMap(anMap, new String[]{"orderNo", "settlement", "coreCustNo"});
 
         Page<ScfOrder> anOrderList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
 
@@ -142,6 +142,15 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
             retList.add(anOrder);
         }
         return retList;
+    }
+    
+    /**
+     * 根据Id查看订单详情，前台调用
+     */
+    public ScfOrder findOrderDetailsById(Long anId) {
+        Map<String, Object> queryMap = QueryTermBuilder.newInstance().put("id", anId).build();
+        List<ScfOrder> orderList = this.findOrder(queryMap);
+        return Collections3.getFirst(orderList);
     }
     
     /**

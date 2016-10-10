@@ -110,6 +110,12 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
         return retList;
     }
     
+    public ScfReceivable findReceivableDetailsById(Long anId) {
+        Map<String, Object> queryMap = QueryTermBuilder.newInstance().put("id", anId).build();
+        List<ScfReceivable> receivableList = this.findReceivable(queryMap);
+        return Collections3.getFirst(receivableList);
+    }
+    
     /**
      * 查询应收账款信息,包含所有下属信息
      */
