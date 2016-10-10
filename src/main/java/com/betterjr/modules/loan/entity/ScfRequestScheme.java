@@ -65,14 +65,14 @@ public class ScfRequestScheme implements BetterjrEntity {
      * 申请企业确认状态，-1初始值 ，0未确认，1已确认，2否决,3作废
      */
     @Column(name = "C_CUST_ADUIT",  columnDefinition="VARCHAR" )
-    @MetaData( value="申请企业确认状态", comments = "申请企业确认状态，-1初始值 ，0确认，1否决，2作废")
+    @MetaData( value="申请企业确认状态", comments = "申请企业确认状态，-1初始值 ，0未确认，1已确认，2否决,3作废")
     private String custAduit;
 
     /**
      * 核心企业确认状态，-1初始值，0未确认，1已确认，2否决,3作废
      */
     @Column(name = "C_CORECUST_ADUIT",  columnDefinition="VARCHAR" )
-    @MetaData( value="核心企业确认状态", comments = "核心企业确认状态，-1初始值 ，0确认，1否决，2作废")
+    @MetaData( value="核心企业确认状态", comments = "核心企业确认状态，-1初始值，0未确认，1已确认，2否决,3作废")
     private String coreCustAduit;
 
     /**

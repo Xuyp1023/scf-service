@@ -131,24 +131,27 @@ public class ScfRequestSchemeService extends BaseService<ScfRequestApprovedMappe
      * @return
      */
     public Page<ScfRequestScheme> querySchemeList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
-        // 核心企业查询时
-        if (UserUtils.coreUser() && (null == anMap.get("coreCustAduit") || BetterStringUtils.isEmpty(anMap.get("coreCustAduit").toString()))) {
-            // 去除未到审批时的数据
-            anMap.put("coreCustAduit", new String[] { "0", "1"});
-        }
-        
-        Map<String, Object> qyMap = QueryTermBuilder.newInstance().put("tradeStatus", RequestTradeStatus.CONFIRM_TRADING.getCode()).put("coreCustNo", anMap.get("coreCustNo")).build();
+        Map<String, Object> qyReqyestMap = QueryTermBuilder.newInstance().addAll(anMap).build();
+        Map<String, Object> qySchemeMap = QueryTermBuilder.newInstance().addAll(anMap).build();
         //查询待批 并且 指定类型（经销商/其它），(属于该核心企业要审批，申请单状态状态为：背景确认)
         if(BetterStringUtils.equals(RequestType.SELLER.getCode(), anMap.get("requestType").toString())){
-            qyMap.putAll(QueryTermBuilder.newInstance().put("requestType", RequestType.SELLER.getCode()).build());
+            qyReqyestMap.put("requestType", RequestType.SELLER.getCode());
         }else{
             String[] requestType = new String[]{RequestType.ORDER.getCode(),RequestType.BILL.getCode(), RequestType.RECEIVABLE.getCode()};
-            qyMap.putAll(QueryTermBuilder.newInstance().put("requestType", requestType).build());
+            qyReqyestMap.put("requestType", requestType);
         }
         
-        List<ScfRequest> requestList =  requestService.selectByClassProperty(ScfRequest.class, qyMap);
+        // 核心企业查询时
+        if (UserUtils.coreUser()) {
+            qyReqyestMap.put("GTEtradeStatus", RequestTradeStatus.CONFIRM_TRADING.getCode());
+           
+            // 去除未到审批时的数据
+            qySchemeMap.put("coreCustAduit", new String[]{"0", "1"} );
+        }
+        
+        List<ScfRequest> requestList =  requestService.selectByClassProperty(ScfRequest.class, qyReqyestMap);
         if(Collections3.isEmpty(requestList)){
-            return new Page();
+            return new Page(anPageNum, anPageSize, 1 == anFlag);
         }
         
         List<String> requestsNo = new ArrayList<String>();
@@ -156,8 +159,9 @@ public class ScfRequestSchemeService extends BaseService<ScfRequestApprovedMappe
             requestsNo.add(scfRequest.getRequestNo());
         }
         
-        anMap = QueryTermBuilder.newInstance().put("requestNo", requestsNo.toArray()).build();
-        Page<ScfRequestScheme> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
+        qySchemeMap.put("requestNo", requestsNo.toArray());
+        qySchemeMap.remove("requestType");
+        Page<ScfRequestScheme> page = this.selectPropertyByPage(qySchemeMap, anPageNum, anPageSize, 1 == anFlag);
         for (ScfRequestScheme scheme : page) {
             // 设置相关企业名
             fillCustName(scheme);
