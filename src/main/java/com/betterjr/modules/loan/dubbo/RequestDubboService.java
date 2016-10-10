@@ -60,6 +60,8 @@ public class RequestDubboService implements IScfRequestService {
     private ScfOfferService offerService;
     @Autowired
     private ScfAgreementService agreementService;
+    @Autowired
+    private ScfRequestSchemeService schemeService;
 
     @Reference(interfaceClass = IFlowService.class)
     private IFlowService flowService;
@@ -143,7 +145,7 @@ public class RequestDubboService implements IScfRequestService {
         ScfRequest request = requestService.selectByPrimaryKey(anRequestNo);
         
         // 执行流程
-        execFllow(anRequestNo, request.getBalance(), anApprovalResult, anReturnNode, anDescription);
+        execFlow(anRequestNo, request.getBalance(), anApprovalResult, anReturnNode, anDescription);
         return AjaxObject.newOk("操作成功").toJson();
     }
 
@@ -174,7 +176,7 @@ public class RequestDubboService implements IScfRequestService {
         }
 
         // 执行流程
-        execFllow(anMap.get("requestNo").toString(), scheme.getApprovedBalance(), anApprovalResult, anReturnNode, anDescription);
+        execFlow(anMap.get("requestNo").toString(), scheme.getApprovedBalance(), anApprovalResult, anReturnNode, anDescription);
         return AjaxObject.newOk("操作成功", scheme).toJson();
     }
 
@@ -200,7 +202,7 @@ public class RequestDubboService implements IScfRequestService {
         }
         
         // 执行流程
-        execFllow(anRequestNo, scheme.getApprovedBalance(), anApprovalResult, "", "");
+        execFlow(anRequestNo, scheme.getApprovedBalance(), anApprovalResult, "", "");
         return AjaxObject.newOk("操作成功").toJson();
     }
 
@@ -229,7 +231,7 @@ public class RequestDubboService implements IScfRequestService {
         }
 
         // 执行流程
-        execFllow(anRequestNo, request.getBalance(), anApprovalResult, anReturnNode, anDescription);
+        execFlow(anRequestNo, request.getBalance(), anApprovalResult, anReturnNode, anDescription);
 
         return AjaxObject.newOk("操作成功").toJson();
     }
@@ -251,13 +253,14 @@ public class RequestDubboService implements IScfRequestService {
             // 保存确认贸易背景确认状态
             requestService.confirmTradingBackgrand(anRequestNo, agreeType);
         }
-        else{
+        else
+        {
             //取消签约
             agreementService.cancelElecAgreement(anRequestNo, agreeType, "");
         }
 
         // 执行流程
-        execFllow(anRequestNo, request.getBalance(), anApprovalResult, "", "");
+        execFlow(anRequestNo, request.getBalance(), anApprovalResult, "", "");
         return AjaxObject.newOk("操作成功").toJson();
     }
 
@@ -270,11 +273,15 @@ public class RequestDubboService implements IScfRequestService {
         if (BetterStringUtils.equals(anApprovalResult, APPROVALRESULT_0)) {
             request = requestService.saveConfirmLoan(loan);
         }else{
+            //此处要贺伟提供一个获取当前流程的上一步 no 的接口
             //flowService.webFindExecutedNodes(Long.parseLong(loan.getRequestNo()));
+            
+            //目前的业务：如果放款失败则会打回，现在的流程是如果打回就到了 核心企业放款确认，这样是不对的。
+            anReturnNode = "140";
         }
 
         // 执行流程
-        execFllow(loan.getRequestNo(), request.getBalance(), anApprovalResult, anReturnNode, anDescription);
+        execFlow(loan.getRequestNo(), request.getBalance(), anApprovalResult, anReturnNode, anDescription);
         return AjaxObject.newOk("操作成功").toJson();
     }
 
@@ -310,7 +317,8 @@ public class RequestDubboService implements IScfRequestService {
             // 待办
             page = flowService.queryCurrentUserWorkTask(null, null);
         }
-        else {
+        else
+        {
             // 已办
             page = flowService.queryCurrentUserHistoryWorkTask(null, null);
         }
@@ -323,9 +331,10 @@ public class RequestDubboService implements IScfRequestService {
         List<Long> requestNos = new ArrayList<Long>();
         if(null != anMap.get("requestNo") && BetterStringUtils.isNotBlank(anMap.get("requestNo").toString())){
             requestNos.add(Long.parseLong(anMap.get("requestNo").toString()));
-        }else{
+        }
+        else
+        {
             // 获取任务中的requestNo
-           
             for (FlowStatus flowStatus : page) {
                 requestNos.add(flowStatus.getBusinessId());
             }
@@ -345,7 +354,7 @@ public class RequestDubboService implements IScfRequestService {
      * @param anReturnNode
      * @param anDescription
      */
-    private void execFllow(String anRequestNo, BigDecimal money, String anApprovalResult, String anReturnNode, String anDescription) {
+    private void execFlow(String anRequestNo, BigDecimal money, String anApprovalResult, String anReturnNode, String anDescription) {
         FlowInput input = new FlowInput();
         input.setBusinessId(Long.parseLong(anRequestNo));
         input.setMoney(money);
@@ -362,6 +371,12 @@ public class RequestDubboService implements IScfRequestService {
             // 打回
             input.setRollbackNodeId(anReturnNode);
             input.setCommand(FlowCommand.Rollback);
+            
+            //打回到此区间内需要修改融资方案的确认值
+            int returnNode = Integer.parseInt(anReturnNode);
+            if(returnNode>120 && returnNode <= 140){
+                updateScheme(anRequestNo, anApprovalResult, anReturnNode);
+            }
         }
         else {
             // 拒绝
@@ -393,10 +408,7 @@ public class RequestDubboService implements IScfRequestService {
                 request.setFlowStatus("2");
                 request.setTradeStatus(RequestTradeStatus.CLOSED.getCode());
             }
-            else {
-                // 流程-进行中
-                request.setFlowStatus("1");
-            }
+            
         }
         else {
             // 流程-结束
@@ -459,7 +471,6 @@ public class RequestDubboService implements IScfRequestService {
     }
 
     @Override
-
     public String webQuerySupplierRequestByCore(Map<String, Object> anMap, String anBusinStatus, String anFlag, int anPageNum, int anPageSize) {
         logger.debug("分页查询融资，入参：" + anMap);
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
@@ -485,6 +496,19 @@ public class RequestDubboService implements IScfRequestService {
         // TODO Auto-generated method stub
         this.requestService.updateAndSendRequestStatus(anRequestNo, anStatus);
 
+    }
+    
+    private void updateScheme(String anRequestNo, String anApprovalResult, String anReturnNode) {
+        ScfRequestScheme scheme = schemeService.findSchemeDetail(anRequestNo);
+        
+        int returnNode = Integer.parseInt(anReturnNode);
+        if(returnNode>120 && returnNode <= 130){
+            scheme.setCoreCustAduit("-1");
+        }
+        else if(returnNode>130 && returnNode <= 140){
+            scheme.setCoreCustAduit("0");
+        }
+        schemeService.saveModifyScheme(scheme);
     }
 
 }

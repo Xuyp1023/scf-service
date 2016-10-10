@@ -102,6 +102,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     
     public ScfRequest saveStartRequest(ScfRequest anRequest){
         anRequest.setRequestFrom("1");
+        anRequest.setFlowStatus("1");
         anRequest = this.addRequest(anRequest);
         
         if(null != anRequest.getOfferId()){
