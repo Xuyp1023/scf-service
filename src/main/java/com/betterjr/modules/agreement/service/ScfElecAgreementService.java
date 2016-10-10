@@ -26,6 +26,7 @@ import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.agreement.dao.ScfElecAgreementMapper;
+import com.betterjr.modules.agreement.data.ScfElecAgreeStubInfo;
 import com.betterjr.modules.agreement.data.ScfElecAgreementInfo;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.document.ICustFileService;
@@ -85,12 +86,16 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         String signStatus = (String) anParam.get("signStatus");
         anPageSize = MathExtend.defIntBetween(anPageSize, 2, ParamNames.MAX_PAGE_SIZE, 25);
         if (BetterStringUtils.isBlank(signStatus)) {
-            termMap.put("signStatus", Arrays.asList("0","1", "2", "3"));
+            termMap.put("signStatus", Arrays.asList("0","1", "2", "9"));
         }
         else {
             termMap.put("signStatus", signStatus);
         }
+        termMap.put("agreeType", Arrays.asList("1","2","0"));
         List<Long> custNoList = UserUtils.findCustNoList();
+        if(BetterStringUtils.isNotBlank((String)anParam.get("custNo"))){
+            termMap.put("supplierNo", (String)anParam.get("custNo"));
+        }
         if (logger.isInfoEnabled()){
             logger.info("this is findScfElecAgreementList params " + termMap);
         }
