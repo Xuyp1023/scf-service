@@ -641,6 +641,9 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
 
     public void getDefaultNode(List<CustFlowNodeData> list) {
         CustFlowNodeData node = new CustFlowNodeData();
+        node = list.get(list.size()-1);
+        node.setNodeCustomName(RequestTradeStatus.FINISH_LOAN.getName());
+        
         node = new CustFlowNodeData();
         node.setNodeCustomName(RequestTradeStatus.OVERDUE.getName());
         node.setSysNodeName(RequestTradeStatus.OVERDUE.getName());
