@@ -779,7 +779,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
             builder.addParam("coreCustName", request.getCoreCustName());
             builder.addParam("planDate", plan.getPlanDate());
             builder.addParam("requestNo", plan.getRequestNo());
-            builder.addReceiveOperator(accOperator.getId());
+            builder.addRecevieCustomer(accCustomer.getCustNo());
             return notificationSendService.sendNotification(builder.build());
         }
         catch (final Exception e) {
