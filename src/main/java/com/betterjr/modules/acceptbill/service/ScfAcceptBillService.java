@@ -147,9 +147,14 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     /**
      * 新增汇票信息
      */
-    public ScfAcceptBill addAcceptBill(ScfAcceptBill anAcceptBill) {
+    public ScfAcceptBill addAcceptBill(ScfAcceptBill anAcceptBill, String anFileList, String anOtherFileList) {
         anAcceptBill.initAddValue(UserUtils.getOperatorInfo(), anAcceptBill);
-        // 补充供应商客户号和持票人信息?
+        // 补充供应商客户号和持票人信息
+        anAcceptBill.setHolder(anAcceptBill.getBuyer());
+        anAcceptBill.setHolderNo(anAcceptBill.getBuyerNo());
+        //保存附件信息
+        anAcceptBill.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anAcceptBill.getBatchNo()));
+        anAcceptBill.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anAcceptBill.getOtherBatchNo()));
         this.insert(anAcceptBill);
         return anAcceptBill;
     }
@@ -240,7 +245,7 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     /**
      * 汇票信息编辑修改
      */
-    public ScfAcceptBill saveModifyAcceptBill(ScfAcceptBill anModiAcceptBill, Long anId, String anFileList) {
+    public ScfAcceptBill saveModifyAcceptBill(ScfAcceptBill anModiAcceptBill, Long anId, String anFileList, String anOtherFileList) {
         logger.info("Begin to modify AcceptBill");
 
         ScfAcceptBill anAcceptBill = this.selectByPrimaryKey(anId);
@@ -257,10 +262,13 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         anModiAcceptBill.setId(anId);
         anModiAcceptBill.initModifyValue(UserUtils.getOperatorInfo());
         // 设置汇票状态(businStatus:1-完善资料)
-        anAcceptBill.setBusinStatus("1");
+        anModiAcceptBill.setBusinStatus("1");
         // 数据存盘
-        this.updateByPrimaryKeySelective(anAcceptBill);
-        return anAcceptBill;
+        //保存附件信息
+        anModiAcceptBill.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anAcceptBill.getBatchNo()));
+        anModiAcceptBill.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anAcceptBill.getOtherBatchNo()));
+        this.updateByPrimaryKeySelective(anModiAcceptBill);
+        return anModiAcceptBill;
     }
 
     /**

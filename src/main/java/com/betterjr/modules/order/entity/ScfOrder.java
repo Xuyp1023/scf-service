@@ -42,6 +42,7 @@ public class ScfOrder implements BetterjrEntity {
      */
     @Column(name = "C_ORDERNO",  columnDefinition="VARCHAR" )
     @MetaData( value="订单编号", comments = "订单编号")
+    @OrderBy("ASC")
     private String orderNo;
 
     /**

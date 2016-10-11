@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
+import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
@@ -72,5 +73,27 @@ public class ScfTransportService extends BaseService<ScfTransportMapper, ScfTran
             logger.warn("不存在相对应id,操作机构,业务状态的运输单据");
             throw new BytterTradeException(40001, "不存在相对应id,操作机构,业务状态的运输单据");
         }
+    }
+    
+    /**
+     * 运输单据编辑
+     */
+    public ScfTransport saveModifyTransport(ScfTransport anModiTransport, Long anId,String anFileList) {
+        ScfTransport anTransport = this.selectByPrimaryKey(anId);
+        BTAssert.notNull(anTransport, "无法获取运输单据信息");
+        anModiTransport.setId(anTransport.getId());
+        anModiTransport.initModifyValue(UserUtils.getOperatorInfo());
+        this.updateByPrimaryKeySelective(anModiTransport);
+        return anModiTransport;
+    }
+    
+    /**
+     * 运输单据删除
+     */
+    public ScfTransport saveDeleteTransport(Long anId) {
+        ScfTransport anTransport = this.selectByPrimaryKey(anId);
+        BTAssert.notNull(anTransport, "无法获取运输单据信息");
+        this.deleteByPrimaryKey(anId);
+        return anTransport;
     }
 }

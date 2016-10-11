@@ -13,7 +13,6 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
-import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.QueryTermBuilder;
@@ -216,7 +215,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
     /**
      * 订单信息编辑
      */
-    public ScfOrder saveModifyOrder(ScfOrder anModiOrder, Long anId, String anFileList) {
+    public ScfOrder saveModifyOrder(ScfOrder anModiOrder, Long anId, String anFileList, String anOtherFileList) {
         logger.info("Begin to modify order");
 
         ScfOrder anOrder = this.selectByPrimaryKey(anId);
@@ -229,6 +228,10 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         // 应收账款信息变更迁移初始化
         anModiOrder.setId(anOrder.getId());
         anModiOrder.initModifyValue(UserUtils.getOperatorInfo());
+        //保存附件信息
+        anModiOrder.setBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anOrder.getBatchNo()));
+        //保存其他文件信息
+        anModiOrder.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anOrder.getOtherBatchNo()));
         // 数据存盘
         this.updateByPrimaryKeySelective(anModiOrder);
         return anModiOrder;
@@ -237,9 +240,13 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
     /**
      * 订单信息新增
      */
-    public ScfOrder addOrder(ScfOrder anOrder) {
+    public ScfOrder addOrder(ScfOrder anOrder, String anFileList, String anOtherFileList) {
         logger.info("Begin to add order");
         anOrder.initAddValue(UserUtils.getOperatorInfo());
+        //保存附件信息
+        anOrder.setBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anOrder.getBatchNo()));
+        //保存其他文件信息
+        anOrder.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anOrder.getOtherBatchNo()));
         this.insert(anOrder);
         return anOrder;
     }
@@ -300,10 +307,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         }
         //变更状态
         anOrder.setBusinStatus(anStatus);
-        anOrder.setModiOperId(UserUtils.getOperatorInfo().getId());
-        anOrder.setModiOperName(UserUtils.getOperatorInfo().getName());
-        anOrder.setModiDate(BetterDateUtils.getNumDate());
-        anOrder.setModiTime(BetterDateUtils.getNumTime());
+        anOrder.initModifyValue(UserUtils.getOperatorInfo());
         //数据存盘
         this.updateByPrimaryKeySelective(anOrder);
         return anOrder;

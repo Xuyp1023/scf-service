@@ -13,6 +13,7 @@ import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -427,5 +428,14 @@ public class ScfTransport implements BetterjrEntity {
         this.regTime = BetterDateUtils.getNumTime();
         this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
         
+    }
+    
+    public void initModifyValue(CustOperatorInfo anOperatorInfo) {
+        if(null != anOperatorInfo) {
+            this.modiOperId = anOperatorInfo.getId();
+            this.modiOperName = anOperatorInfo.getName();
+        }
+        this.modiDate = BetterDateUtils.getNumDate();
+        this.modiTime = BetterDateUtils.getNumTime();
     }
 }
