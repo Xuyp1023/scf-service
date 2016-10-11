@@ -19,9 +19,6 @@ public class ScfAcceptBillDubboService implements IScfAcceptBillService {
     @Autowired
     private ScfAcceptBillService scfAcceptBillService;
     
-    @Reference(interfaceClass = ICustFileService.class)
-    private ICustFileService custFileDubboService;
-
     @Override
     public String webQueryAcceptBill(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize) {
         
@@ -39,20 +36,14 @@ public class ScfAcceptBillDubboService implements IScfAcceptBillService {
     public String webSaveModifyAcceptBill(Map<String, Object> anMap, Long anId, String anFileList, String anOtherFileList) {
         
         ScfAcceptBill anAcceptBill = (ScfAcceptBill) RuleServiceDubboFilterInvoker.getInputObj();
-        //保存附件信息
-        anAcceptBill.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anAcceptBill.getBatchNo()));
-        anAcceptBill.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anAcceptBill.getOtherBatchNo()));
-        return AjaxObject.newOk("汇票信息修改成功", scfAcceptBillService.saveModifyAcceptBill(anAcceptBill, anId, anFileList)).toJson();
+        return AjaxObject.newOk("汇票信息修改成功", scfAcceptBillService.saveModifyAcceptBill(anAcceptBill, anId, anFileList, anOtherFileList)).toJson();
     }
     
     @Override
     public String webAddAcceptBill(Map<String, Object> anMap, String anFileList, String anOtherFileList) {
         
         ScfAcceptBill anAcceptBill = (ScfAcceptBill) RuleServiceDubboFilterInvoker.getInputObj();
-        //保存附件信息
-        anAcceptBill.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anAcceptBill.getBatchNo()));
-        anAcceptBill.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anAcceptBill.getOtherBatchNo()));
-        return AjaxObject.newOk("汇票信息登记成功", scfAcceptBillService.addAcceptBill(anAcceptBill)).toJson();
+        return AjaxObject.newOk("汇票信息登记成功", scfAcceptBillService.addAcceptBill(anAcceptBill,anFileList, anOtherFileList)).toJson();
     }
     
     @Override

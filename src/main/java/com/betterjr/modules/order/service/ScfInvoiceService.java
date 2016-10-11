@@ -212,4 +212,15 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
         termMap.put("status", "1");
         return termMap;
     }
+    
+    /**
+     * 删除发票 包括发票详情
+     */
+    public ScfInvoice saveDeleteInvoice(Long anId) {
+        ScfInvoice anInvoice = this.selectByPrimaryKey(anId);
+        BTAssert.notNull(anInvoice, "无法获取发票信息");
+        this.deleteByPrimaryKey(anId);
+        invoiceItemService.deleteByProperty("invoiceId", anId);
+        return anInvoice;
+    }
 }

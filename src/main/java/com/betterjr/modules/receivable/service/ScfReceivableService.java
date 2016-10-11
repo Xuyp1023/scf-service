@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
@@ -19,6 +20,7 @@ import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.agreement.entity.CustAgreement;
+import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.loan.helper.RequestType;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
@@ -39,6 +41,9 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
     @Autowired
     private ScfOrderService orderService;
     
+    @Reference(interfaceClass = ICustFileService.class)
+    private ICustFileService custFileDubboService;
+    
     /**
      * 应收账款编辑
      */
@@ -55,9 +60,12 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
         //应收账款信息变更迁移初始化
         anMoidReceivable.setId(anId);
         anMoidReceivable.initModifyValue(UserUtils.getOperatorInfo());
+        //保存附件信息
+        anMoidReceivable.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anReceivable.getBatchNo()));
+        anMoidReceivable.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anReceivable.getOtherBatchNo()));
         //数据存盘
-        this.updateByPrimaryKey(anReceivable);
-        return anReceivable;
+        this.updateByPrimaryKeySelective(anMoidReceivable);
+        return anMoidReceivable;
     }
     
 

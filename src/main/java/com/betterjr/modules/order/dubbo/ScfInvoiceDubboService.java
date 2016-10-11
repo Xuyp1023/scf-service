@@ -53,5 +53,10 @@ public class ScfInvoiceDubboService implements IScfInvoiceService {
         ScfInvoiceItem anInvoiceItem = RuleServiceDubboFilterInvoker.getInputObj();
         return AjaxObject.newOk("发票详情录入成功", scfInvoiceItemService.addInvoiceItem(anInvoiceItem)).toJson();
     }
+    
+    @Override
+    public String webSaveDeleteInvoice(Long anId) {
+        return AjaxObject.newOk("删除发票信息成功", scfInvoiceItemService.saveDeleteInvoiceItem(anId)).toJson();
+    }
 
 }
