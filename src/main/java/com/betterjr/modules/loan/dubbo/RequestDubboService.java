@@ -341,7 +341,8 @@ public class RequestDubboService implements IScfRequestService {
         }
        
         anMap.remove("taskType");
-        anMap.put("requestNo", requestNos);
+        anMap.put("requestNo", requestNos); 
+        anMap.put("LTtradeStatus", "160");
         return AjaxObject.newOkWithPage("查询成功", requestService.queryRequestList(anMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
