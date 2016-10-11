@@ -7,11 +7,11 @@ public enum RequestTradeStatus {
     REQUEST_TRADING("130","发起贸易背景确认"),
     CONFIRM_TRADING("140","确认贸易背景"),
     CONFIRM_LOAN("150","放款确认"),
-    FINISH_LOAN("160","放款完成"),
+    FINISH_LOAN("160","还款中"),
     OVERDUE("170","逾期"),
     EXTENSION("180","展期"),
     CLEAN("190","结清"),
-    CLOSED("-100","关闭");
+    CLOSED("-100","交易终止");
     
     private String code;
     private String name;
