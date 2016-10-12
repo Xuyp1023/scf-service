@@ -341,9 +341,8 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         anCreditInfo.setCreditMode(request.getCreditMode());
         anCreditInfo.setRequestNo(request.getRequestNo());
         anCreditInfo.setDescription(request.getDescription());
-        if(-1 == creditDetailService.saveOccupyCredit(anCreditInfo)){
-            throw new BytterTradeException("放款失败：修改授信额度");
-        }
+        creditDetailService.saveOccupyCredit(anCreditInfo);
+        
         return request;
     }
 
