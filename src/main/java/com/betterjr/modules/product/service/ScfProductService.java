@@ -56,6 +56,22 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
     }
 
     /**
+     * 融资产品信息分页查询
+     * 
+     * @param anCoreCustNo:核心企业客户编号
+     * @param anFlag
+     * @param anPageNum
+     * @param anPageSize
+     * @return
+     */
+    public Page<ScfProduct> queryProduct(Long anCoreCustNo, String anFlag, int anPageNum, int anPageSize) {
+        // 构建查询条件
+        Map<String, Object> anMap = QueryTermBuilder.newInstance().put("coreCustNo", anCoreCustNo)
+                .put("businStatus", ProductConstants.PRO_STATUS_SHELVES).build();
+        return this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "factorNo,productCode");
+    }
+
+    /**
      * 融资产品下拉列表查询
      * 
      * @param coreCustNo

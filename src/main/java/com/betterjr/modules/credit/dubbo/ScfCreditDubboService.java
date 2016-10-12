@@ -87,14 +87,14 @@ public class ScfCreditDubboService implements IScfCreditService {
         return AjaxObject.newOk("授信终止成功", scfCreditService.saveTerminatCredit(anId)).toJson();
     }
 
-    public int saveOccupyCredit(ScfCreditInfo anOccupyCredit) {
+    public void saveOccupyCredit(ScfCreditInfo anOccupyCredit) {
 
-        return scfCreditDetailService.saveOccupyCredit(anOccupyCredit);
+        scfCreditDetailService.saveOccupyCredit(anOccupyCredit);
     }
 
-    public int saveReleaseCredit(ScfCreditInfo anOccupyCredit) {
+    public void saveReleaseCredit(ScfCreditInfo anOccupyCredit) {
 
-        return scfCreditDetailService.saveReleaseCredit(anOccupyCredit);
+        scfCreditDetailService.saveReleaseCredit(anOccupyCredit);
     }
 
 }
