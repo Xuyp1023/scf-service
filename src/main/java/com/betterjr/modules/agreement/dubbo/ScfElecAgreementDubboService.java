@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.betterjr.common.config.ParamNames;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.modules.agreement.IScfElecAgreementService;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
@@ -17,6 +18,7 @@ import com.betterjr.modules.agreement.service.ScfElecAgreementService;
 import com.betterjr.modules.agreement.service.ScfOtherFileService;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
+import com.betterjr.modules.sys.service.SysConfigService;
 
 /***
  * dubbo 服务
@@ -86,37 +88,6 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
         scfElecAgreementService.addElecAgreementInfo(scfElecAgreement, anCustNoList);
     }
     
-    /***
-     * 转让通知书
-     * @param anRequestNo 申请单号
-     * @param anFactorRequestNo 保理商单号
-     * @return
-     */
-    public boolean webTransNotice(Map<String, Object> anMap){
-        ScfRequestNotice noticeRequest=(ScfRequestNotice)RuleServiceDubboFilterInvoker.getInputObj();
-        String agreeNo=scfAgreementService.transNotice(noticeRequest);
-        return agreeNo!=null;
-    }
-    
-    
-    public boolean webTransProtacal(Map<String, Object> anMap){
-        ScfRequestProtacal protacal=new ScfRequestProtacal();
-        protacal.initProtacal(anMap);
-        return scfAgreementService.transProtacal(protacal);
-    }
-    
-    
-    /***
-     * 确认意见书
-     * @param anRequestNo 申请单号
-     * @param anFactorRequestNo 保理商单号
-     * @return
-     */
-    public boolean webTransOpinion(Map<String, Object> anMap){
-        ScfRequestOpinion opinion=(ScfRequestOpinion)RuleServiceDubboFilterInvoker.getInputObj();
-        return scfAgreementService.transOpinion(opinion);
-    }
-    
     /****
      * 根据申请单号，类型查询合同
      * @param anRequestNo
@@ -125,6 +96,14 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
      */
     public String webFindElecAgreeByOrderNo(String anRequestNo, String anSignType){
         return AjaxObject.newOk("查询合同信息",scfElecAgreementService.findElecAgreeByOrderNo(anRequestNo, anSignType)).toJson();
+    }
+    /***
+     * 查询参数
+     * @param anParam
+     * @return
+     */
+    public String webFindParamPath(String anParam){
+        return  SysConfigService.getString(anParam);
     }
     
     /***

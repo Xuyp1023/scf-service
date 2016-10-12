@@ -14,7 +14,7 @@ public class SupplyChainUtil {
 
     private static String[] queryCondition = new String[] { "GTEagreeStartDate", "LTEagreeStartDate", "GTErequestDate", "LTErequestDate",
             "GTEinvoiceDate", "LTEinvoiceDate", "buyer", "supplier", "buyerNo", "billNo", "factorRequestNo", "productId", "GTErepayDate",
-            "LTErepayDate", "cashRequestNo","agreeNo" };
+            "LTErepayDate", "cashRequestNo","agreeNo","status" };
 
     private static String[] fuzzyQueryCondition = new String[] { "buyer", "supplier" };
 
