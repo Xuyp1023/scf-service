@@ -18,12 +18,15 @@ import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.DictUtils;
+import com.betterjr.common.utils.MathExtend;
 import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.account.service.CustOperatorService;
+import com.betterjr.modules.credit.entity.ScfCreditInfo;
+import com.betterjr.modules.credit.service.ScfCreditDetailService;
 import com.betterjr.modules.loan.dao.ScfPayPlanMapper;
 import com.betterjr.modules.loan.entity.ScfExempt;
 import com.betterjr.modules.loan.entity.ScfPayPlan;
@@ -57,6 +60,8 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
     private ScfExemptService exemptService;
     @Autowired
     private ScfServiceFeeService serviceFeeService;
+    @Autowired
+    private ScfCreditDetailService creditDetailService;
     
     @Reference(interfaceClass = INotificationSendService.class)
     private INotificationSendService notificationSendService;
@@ -478,6 +483,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
      */
     public ScfPayPlan saveRepayment(ScfPayRecord anRecord) {
         ScfPayPlan plan = findPayPlanDetail(anRecord.getPayPlanId());
+        ScfRequest request = requestService.findRequestDetail(anRecord.getRequestNo());
         BTAssert.notNull(plan, "保存还款失败-找不到对应还款计划");
 
         // 新增还款记录
@@ -498,10 +504,12 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         
         //保存手续费
         this.saveServicefee(anRecord, plan);
+        
+        //释放授信额度(释放还款本金的信息额度)
+        this.saveReleaseCredit(request, anRecord.getPrincipalBalance());
 
         // 结清
         if (plan.getSurplusPrincipalBalance().compareTo(BigDecimal.ZERO) <= 0) {
-            ScfRequest request = requestService.findRequestDetail(plan.getRequestNo());
             request.setTradeStatus(RequestTradeStatus.CLEAN.getCode());
             requestService.saveModifyRequest(request, plan.getRequestNo());
             return plan;
@@ -522,6 +530,25 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         return createNewPlan(anRecord, plan);
     }
 
+    //释放授信额度
+    private void saveReleaseCredit(ScfRequest anRequest, BigDecimal anReleaseBalance){
+        if(false == MathExtend.compareToZero(anReleaseBalance)){
+            return;
+        }
+        
+        ScfCreditInfo anCreditInfo = new ScfCreditInfo();
+        anCreditInfo.setBusinFlag(anRequest.getRequestType());
+        anCreditInfo.setBalance(anReleaseBalance);
+        anCreditInfo.setBusinId(Long.parseLong(anRequest.getRequestNo()));
+        anCreditInfo.setCoreCustNo(anRequest.getCoreCustNo());
+        anCreditInfo.setCustNo(anRequest.getCustNo());
+        anCreditInfo.setFactorNo(anRequest.getFactorNo());
+        anCreditInfo.setCreditMode(anCreditInfo.getCreditMode());
+        anCreditInfo.setRequestNo(anRequest.getRequestNo());
+        anCreditInfo.setDescription(anRequest.getDescription());
+        creditDetailService.saveReleaseCredit(anCreditInfo);
+    }
+    
     private void saveServicefee(ScfPayRecord anRecord, ScfPayPlan plan) {
         if(null == anRecord.getServicefeeBalance() && anRecord.getServicefeeBalance().compareTo(BigDecimal.ZERO) <= 0){
             return;
