@@ -724,6 +724,7 @@ public class ScfProduct implements BetterjrEntity {
         this.factorNo = anProduct.getFactorNo();
         this.factorCorp = anProduct.getFactorCorp();
         this.factorName = anProduct.getFactorName();
+        this.productCode = anProduct.getProductCode();
 
         this.regOperId = anProduct.getRegOperId();
         this.regOperName = anProduct.getRegOperName();
