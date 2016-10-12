@@ -15,6 +15,7 @@ import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.DictUtils;
+import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.service.CustAccountService;
@@ -79,6 +80,27 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
     }
 
     /**
+     * 查询融资产品信息
+     * 
+     * @param anCoreCustNo
+     * @param anFactorNo
+     * @param anProductCode
+     * @return
+     */
+    public ScfProduct findProductByCode(Long anCoreCustNo, Long anFactorNo, String anProductCode) {
+        BTAssert.notNull(anCoreCustNo, "请选择核心企业!");
+        BTAssert.notNull(anFactorNo, "请选择保理公司!");
+        if (BetterStringUtils.isBlank(anProductCode)) {
+            logger.info("产品编号不能为空");
+            throw new BytterTradeException(40001, "产品编号不能为空!");
+        }
+        // 构建查询条件,使用保理产品编号查询产品详细信息
+        Map<String, Object> anMap = QueryTermBuilder.newInstance().put("coreCustNo", anCoreCustNo).put("factorNo", anFactorNo)
+                .put("productCode", anProductCode).build();
+        return Collections3.getFirst(this.selectByProperty(anMap));
+    }
+
+    /**
      * 融资产品录入
      * 
      * @param anMap
@@ -92,6 +114,10 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
 
         // 设置企业名称
         initName(anProduct);
+
+        // 产品编号不允许重复
+        ScfProduct product = findProductByCode(anProduct.getCoreCustNo(), anProduct.getFactorNo(), anProduct.getProductCode());
+        BTAssert.isNull(product, "产品编号不允许重复!");
 
         // 数据存盘
         this.insert(anProduct);
@@ -250,6 +276,7 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
      * @return
      */
     public ScfProduct findProductById(Long anProductId) {
+
         return this.selectByPrimaryKey(anProductId);
     }
 }
