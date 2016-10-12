@@ -89,6 +89,15 @@ public class ScfRequestProtacal implements BetterjrEntity {
 
     @Column(name = "C_AGREENAME",  columnDefinition="VARCHAR" )
     private String agreeName;
+    
+    @Column(name = "L_FIRSTNO",  columnDefinition="VARCHAR" )
+    private String firstNo;
+
+    @Column(name = "L_SECONDNO",  columnDefinition="Long" )
+    private Long secondNo;
+
+    @Column(name = "L_THREENO",  columnDefinition="Long" )
+    private Long threeNo;
 
     private static final long serialVersionUID = 2746923015924615585L;
 
@@ -300,6 +309,30 @@ public class ScfRequestProtacal implements BetterjrEntity {
         this.agreeName = anAgreeName;
     }
 
+    public String getFirstNo() {
+        return this.firstNo;
+    }
+
+    public void setFirstNo(String anFirstNo) {
+        this.firstNo = anFirstNo;
+    }
+
+    public Long getSecondNo() {
+        return this.secondNo;
+    }
+
+    public void setSecondNo(Long anSecondNo) {
+        this.secondNo = anSecondNo;
+    }
+
+    public Long getThreeNo() {
+        return this.threeNo;
+    }
+
+    public void setThreeNo(Long anThreeNo) {
+        this.threeNo = anThreeNo;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -410,31 +443,8 @@ public class ScfRequestProtacal implements BetterjrEntity {
         return result;
     }
     
-    public void initProtacal(Map<String, Object> anMap){
-        this.beginDate=(String)anMap.get("beginDate");
-        this.endDate=(String)anMap.get("endDate");
-        this.businStatus=(String)anMap.get("status")==null?"1":(String)anMap.get("status");
-        this.regDate=BetterDateUtils.getNumDate();
-        this.protocalNo=(String)anMap.get("protocalNo");
-        this.payment=(String)anMap.get("payment");
-        this.requestNo=(String)anMap.get("requestNo");
-        this.firstName=(String)anMap.get("firstName");
-        this.firstAddress=(String)anMap.get("firstAddress");
-        this.firstFax=(String)anMap.get("firstFax");
-        this.firstJob=(String)anMap.get("firstJob");
-        this.firstLegal=(String)anMap.get("firstLegal");
-        this.firstPhone=(String)anMap.get("firstPhone");
-        this.secondName=(String)anMap.get("secondName");
-        this.secondAddress=(String)anMap.get("secondAddress");
-        this.secondFax=(String)anMap.get("secondFax");
-        this.secondJob=(String)anMap.get("secondJob");
-        this.secondLegal=(String)anMap.get("secondLegal");
-        this.secondPhone=(String)anMap.get("secondPhone");
-        this.threeName=(String)anMap.get("threeName");
-        this.threeAddress=(String)anMap.get("threeAddress");
-        this.threeFax=(String)anMap.get("threeFax");
-        this.threeJob=(String)anMap.get("threeJob");
-        this.threeLegal=(String)anMap.get("threeLegal");
-        this.threePhone=(String)anMap.get("threePhone");
+    public void initProtacal(){
+        this.businStatus="0";
+        this.regDate = BetterDateUtils.getNumDate();
     }
 }

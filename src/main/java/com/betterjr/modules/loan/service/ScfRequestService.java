@@ -599,25 +599,29 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         CustMechBase sellerBase = mechBaseService.findBaseInfo(anRequest.getCustNo());
         protacal.setFirstAddress(factorBase.getAddress());
         protacal.setFirstFax(factorBase.getFax());
+        protacal.setFirstNo(anRequest.getFactorNo().toString());
         protacal.setFirstName(anRequest.getFactorName());
         protacal.setFirstJob(firstJob);
-        protacal.setFirstPhone(factorBase.getMobile());
+        protacal.setFirstPhone(factorBase.getPhone());
         protacal.setFirstLegal(factorLow.getCustName());
         
         protacal.setSecondAddress(buyBase.getAddress());
         protacal.setSecondFax(buyBase.getFax());
+        protacal.setSecondNo(anRequest.getCoreCustNo());
         protacal.setSecondName(anRequest.getCoreCustName());
         protacal.setSecondJob(firstJob);
-        protacal.setSecondPhone(buyBase.getMobile());
+        protacal.setSecondPhone(buyBase.getPhone());
         protacal.setSecondLegal(buyLow.getCustName());
         
         protacal.setThreeAddress(sellerBase.getAddress());
         protacal.setThreeFax(sellerBase.getFax());
+        protacal.setThreeNo(anRequest.getCustNo());
         protacal.setThreeName(anRequest.getCustName());
         protacal.setThreeJob(firstJob);
-        protacal.setThreePhone(sellerBase.getMobile());
+        protacal.setThreePhone(sellerBase.getPhone());
         protacal.setThreeLegal(sellerLow.getCustName());
         protacal.setRequestNo(anRequest.getRequestNo());
+        
         
         List<CustAgreement> list = orderService.findRelationInfo(anRequest.getRequestNo(), ScfOrderRelationType.AGGREMENT);
         protacal.setProtocalNo(Collections3.getFirst(list).getAgreeNo());

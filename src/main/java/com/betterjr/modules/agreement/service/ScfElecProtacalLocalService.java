@@ -51,7 +51,7 @@ public class ScfElecProtacalLocalService  extends ScfElecAgreeLocalService {
     @Override
     protected String getViewModeFile() {
 
-        return "protacal";
+        return "threePartProtocol";
     }
 
     @Override
