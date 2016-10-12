@@ -8,16 +8,10 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import com.alibaba.dubbo.config.annotation.Reference;
-
-import com.betterjr.common.exception.BytterTradeException;
-
-
 import com.betterjr.common.data.WebServiceErrorCode;
+import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.exception.BytterWebServiceException;
-
-
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
@@ -32,6 +26,10 @@ import com.betterjr.modules.agreement.entity.ScfRequestCredit;
 import com.betterjr.modules.agreement.entity.ScfRequestNotice;
 import com.betterjr.modules.agreement.entity.ScfRequestOpinion;
 import com.betterjr.modules.agreement.entity.ScfRequestProtacal;
+import com.betterjr.modules.credit.entity.ScfCredit;
+import com.betterjr.modules.credit.entity.ScfCreditInfo;
+import com.betterjr.modules.credit.service.ScfCreditDetailService;
+import com.betterjr.modules.credit.service.ScfCreditService;
 import com.betterjr.modules.customer.ICustMechBankAccountService;
 import com.betterjr.modules.customer.ICustMechBaseService;
 import com.betterjr.modules.customer.ICustMechLawService;
@@ -48,11 +46,8 @@ import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
 import com.betterjr.modules.loan.entity.ScfServiceFee;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
-
 import com.betterjr.modules.loan.helper.RequestType;
-
 import com.betterjr.modules.loan.helper.ScfFactorRemoteHelper;
-
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.helper.ScfOrderRelationType;
@@ -89,6 +84,10 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     private ScfEnquiryService enquiryService;
     @Autowired
     private ScfServiceFeeService feeService;
+    @Autowired
+    private ScfCreditDetailService  creditDetailService;
+    @Autowired
+    private ScfCreditService scfCreditService;
     
     @Reference(interfaceClass = ICustMechLawService.class)
     private ICustMechLawService mechLawService;
@@ -101,6 +100,11 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
 
     
     public ScfRequest saveStartRequest(ScfRequest anRequest){
+        //检查核心企业 在 该保理公司的授信情况
+        ScfCredit coreCredit = scfCreditService.findCredit(anRequest.getCoreCustNo(), anRequest.getCoreCustNo(),
+                anRequest.getFactorNo(), anRequest.getCreditMode());
+        BTAssert.notNull(coreCredit, "无法获取核心企业授信记录");
+        
         anRequest.setRequestFrom("1");
         anRequest.setFlowStatus("1");
         anRequest = this.addRequest(anRequest);
@@ -326,6 +330,20 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         anLoan.setFactorNo(request.getFactorNo());
         loanService.addLoan(anLoan);
 
+        //占用授信额度
+        ScfCreditInfo anCreditInfo = new ScfCreditInfo();
+        anCreditInfo.setBusinFlag(request.getRequestType());
+        anCreditInfo.setBalance(request.getApprovedBalance());
+        anCreditInfo.setBusinId(Long.parseLong(request.getRequestNo()));
+        anCreditInfo.setCoreCustNo(request.getCoreCustNo());
+        anCreditInfo.setCustNo(request.getCustNo());
+        anCreditInfo.setFactorNo(request.getFactorNo());
+        anCreditInfo.setCreditMode(request.getCreditMode());
+        anCreditInfo.setRequestNo(request.getRequestNo());
+        anCreditInfo.setDescription(request.getDescription());
+        if(-1 == creditDetailService.saveOccupyCredit(anCreditInfo)){
+            throw new BytterTradeException("放款失败：修改授信额度");
+        }
         return request;
     }
 
