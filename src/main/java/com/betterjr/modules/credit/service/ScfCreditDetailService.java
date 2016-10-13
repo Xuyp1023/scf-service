@@ -144,6 +144,8 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
     private void saveOccupyData(ScfCreditInfo anCreditInfo, Long anCreditId) {
         ScfCreditDetail anCreditDetail = new ScfCreditDetail();
         anCreditDetail.initOccupyValue(anCreditInfo, anCreditId);
+        // 设置客户名称
+        anCreditDetail.setCustName(custAccountService.queryCustName(anCreditInfo.getCustNo()));
         // 业务描述信息
         if (BetterStringUtils.isBlank(anCreditInfo.getDescription())) {
             Long factorNo = anCreditInfo.getFactorNo();
@@ -157,6 +159,8 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
     private void saveReleaseData(ScfCreditInfo anCreditInfo, Long anCreditId) {
         ScfCreditDetail anCreditDetail = new ScfCreditDetail();
         anCreditDetail.initReleaseValue(anCreditInfo, anCreditId);
+        // 设置客户名称
+        anCreditDetail.setCustName(custAccountService.queryCustName(anCreditInfo.getCustNo()));
         // 业务描述信息
         if (BetterStringUtils.isBlank(anCreditInfo.getDescription())) {
             Long custNo = anCreditInfo.getFactorNo();
