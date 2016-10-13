@@ -339,7 +339,6 @@ public class ScfCreditDetail implements BetterjrEntity {
         this.businId = anCreditInfo.getBusinId();
         this.requestNo = anCreditInfo.getRequestNo();
         this.creditId = anCreditId;
-        this.description = anCreditInfo.getDescription();
     }
 
 }
