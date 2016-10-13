@@ -148,7 +148,7 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         if (BetterStringUtils.isBlank(anCreditInfo.getDescription())) {
             Long factorNo = anCreditInfo.getFactorNo();
             String factorName = custAccountService.queryCustName(factorNo);
-            anCreditDetail.setDescription(factorName + "放款,金额:￥" + anCreditInfo.getBalance());
+            anCreditDetail.setDescription(factorName + "放款,业务单据号：" + anCreditInfo.getRequestNo() + ",金额:￥" + anCreditInfo.getBalance());
         }
 
         this.insert(anCreditDetail);
@@ -161,7 +161,7 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         if (BetterStringUtils.isBlank(anCreditInfo.getDescription())) {
             Long custNo = anCreditInfo.getFactorNo();
             String custName = custAccountService.queryCustName(custNo);
-            anCreditDetail.setDescription(custName + "还款,金额:￥" + anCreditInfo.getBalance());
+            anCreditDetail.setDescription(custName + "还款,业务单据号：" + anCreditInfo.getRequestNo() + ",金额:￥" + anCreditInfo.getBalance());
         }
 
         this.insert(anCreditDetail);
