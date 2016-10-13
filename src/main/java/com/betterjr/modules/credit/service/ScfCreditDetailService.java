@@ -163,7 +163,7 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         anCreditDetail.setCustName(custAccountService.queryCustName(anCreditInfo.getCustNo()));
         // 业务描述信息
         if (BetterStringUtils.isBlank(anCreditInfo.getDescription())) {
-            Long custNo = anCreditInfo.getFactorNo();
+            Long custNo = anCreditInfo.getCustNo();
             String custName = custAccountService.queryCustName(custNo);
             anCreditDetail.setDescription(custName + "还款,业务单据号：" + anCreditInfo.getRequestNo() + ",金额:￥" + anCreditInfo.getBalance());
         }
