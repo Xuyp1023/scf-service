@@ -48,7 +48,7 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         checkCreditCondition(anMap);
 
         // 查询授信记录
-        return this.selectPropertyByPage(ScfCredit.class, anMap, anPageNum, anPageSize, "1".equals(anFlag));
+        return this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "custNo,creditMode");
     }
 
     private void checkCreditCondition(Map<String, Object> anMap) {
@@ -73,6 +73,8 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
                     anMap.remove(anTempKey);
                 }
             }
+            // 授信状态:0-未生效;1-已生效;2-已失效;
+            anMap.put("businStatus", CreditConstants.CREDIT_STATUS_EFFECTIVE);
         }
 
     }
