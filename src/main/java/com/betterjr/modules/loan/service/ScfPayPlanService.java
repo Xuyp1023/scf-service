@@ -543,7 +543,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         anCreditInfo.setCoreCustNo(anRequest.getCoreCustNo());
         anCreditInfo.setCustNo(anRequest.getCustNo());
         anCreditInfo.setFactorNo(anRequest.getFactorNo());
-        anCreditInfo.setCreditMode(anCreditInfo.getCreditMode());
+        anCreditInfo.setCreditMode(anRequest.getCreditMode());
         anCreditInfo.setRequestNo(anRequest.getRequestNo());
         anCreditInfo.setDescription(anRequest.getDescription());
         creditDetailService.saveReleaseCredit(anCreditInfo);
