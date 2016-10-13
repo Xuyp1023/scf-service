@@ -93,9 +93,9 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         }
         termMap.put("agreeType", Arrays.asList("1","2","0"));
         List<Long> custNoList = UserUtils.findCustNoList();
-        if(BetterStringUtils.isNotBlank((String)anParam.get("custNo"))){
+//        if(BetterStringUtils.isNotBlank((String)anParam.get("custNo"))){
             termMap.put("supplierNo", (String)anParam.get("custNo"));
-        }
+//        }
         if (logger.isInfoEnabled()){
             logger.info("this is findScfElecAgreementList params " + termMap);
         }
