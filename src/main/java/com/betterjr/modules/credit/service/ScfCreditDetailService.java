@@ -40,6 +40,7 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
     public Page<ScfCreditDetail> queryCreditDetail(Map<String, Object> anMap, Long anCreditId, String anFlag, int anPageNum, int anPageSize) {
         // 授信来源ID
         anMap.put("creditId", anCreditId);
+        anMap.remove("custNo");//去掉该入参
 
         // 获取查询结果
         return this.selectPropertyByPage(ScfCreditDetail.class, anMap, anPageNum, anPageSize, "1".equals(anFlag));
@@ -148,9 +149,7 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         anCreditDetail.setCustName(custAccountService.queryCustName(anCreditInfo.getCustNo()));
         // 业务描述信息
         if (BetterStringUtils.isBlank(anCreditInfo.getDescription())) {
-            Long factorNo = anCreditInfo.getFactorNo();
-            String factorName = custAccountService.queryCustName(factorNo);
-            anCreditDetail.setDescription(factorName + "放款,业务单据号：" + anCreditInfo.getRequestNo() + ",金额:￥" + anCreditInfo.getBalance());
+            anCreditDetail.setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",放款金额:￥" + anCreditInfo.getBalance());
         }
 
         this.insert(anCreditDetail);
@@ -163,9 +162,7 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         anCreditDetail.setCustName(custAccountService.queryCustName(anCreditInfo.getCustNo()));
         // 业务描述信息
         if (BetterStringUtils.isBlank(anCreditInfo.getDescription())) {
-            Long custNo = anCreditInfo.getCustNo();
-            String custName = custAccountService.queryCustName(custNo);
-            anCreditDetail.setDescription(custName + "还款,业务单据号：" + anCreditInfo.getRequestNo() + ",金额:￥" + anCreditInfo.getBalance());
+            anCreditDetail.setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",还款金额:￥" + anCreditInfo.getBalance());
         }
 
         this.insert(anCreditDetail);
