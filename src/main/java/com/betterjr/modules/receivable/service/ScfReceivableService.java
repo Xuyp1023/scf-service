@@ -81,7 +81,7 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
         }
         //应收账款模糊查询
         anMap = Collections3.fuzzyMap(anMap, new String[]{"receivableNo"}); 
-        Page<ScfReceivable> anReceivableList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
+        Page<ScfReceivable> anReceivableList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "businStatus, receivableNo");
         
         //补全关联信息
         for(ScfReceivable anReceivable : anReceivableList) {
@@ -256,5 +256,18 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
      */
     public ScfReceivable saveForzenReceivable(Long anId, boolean anCheckOperOrg) {
         return this.saveReceivableStatus(anId, "2", anCheckOperOrg);
+    }
+    
+    /**
+     * 应收账款新增
+     */
+    public ScfReceivable addReceivable(ScfReceivable anReceivable, String anFileList, String anOtherFileList) {
+        anReceivable.initAddValue(UserUtils.getOperatorInfo());
+        //保存附件信息
+        anReceivable.setBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anReceivable.getBatchNo()));
+        //保存其他文件信息
+        anReceivable.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anReceivable.getOtherBatchNo()));
+        this.insert(anReceivable);
+        return anReceivable;
     }
 }

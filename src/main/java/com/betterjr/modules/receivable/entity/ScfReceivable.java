@@ -15,6 +15,7 @@ import javax.persistence.Transient;
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
+import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
@@ -542,5 +543,16 @@ public class ScfReceivable implements BetterjrEntity {
         }
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
+    }
+    
+    public void initAddValue(CustOperatorInfo anOperatorInfo) {
+        this.id = SerialGenerator.getLongValue("ScfReceivable.id");
+        this.businStatus = "0";
+        if (null != anOperatorInfo) {
+            this.modiOperId = anOperatorInfo.getId();
+            this.modiOperName = anOperatorInfo.getName();
+            this.operOrg = anOperatorInfo.getOperOrg();
+        }
+        this.regDate = BetterDateUtils.getNumDate();
     }
 }

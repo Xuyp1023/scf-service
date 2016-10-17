@@ -69,9 +69,9 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
             anMap.put("businStatus", "0");
         }
         //模糊查询
-        anMap = Collections3.fuzzyMap(anMap, new String[]{"orderNo", "settlement", "coreCustNo"});
+        anMap = Collections3.fuzzyMap(anMap, new String[]{"orderNo", "settlement"});
 
-        Page<ScfOrder> anOrderList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
+        Page<ScfOrder> anOrderList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "businStatus,orderNo");
 
         for (ScfOrder anOrder : anOrderList) {
             anOrder.setCustName(custAccountService.queryCustName(anOrder.getCustNo()));
