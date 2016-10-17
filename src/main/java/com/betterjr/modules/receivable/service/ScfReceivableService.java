@@ -81,7 +81,7 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
         }
         //应收账款模糊查询
         anMap = Collections3.fuzzyMap(anMap, new String[]{"receivableNo"}); 
-        Page<ScfReceivable> anReceivableList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
+        Page<ScfReceivable> anReceivableList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "businStatus, receivableNo");
         
         //补全关联信息
         for(ScfReceivable anReceivable : anReceivableList) {

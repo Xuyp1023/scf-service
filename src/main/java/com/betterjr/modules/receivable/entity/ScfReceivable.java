@@ -546,7 +546,7 @@ public class ScfReceivable implements BetterjrEntity {
     }
     
     public void initAddValue(CustOperatorInfo anOperatorInfo) {
-        this.id = SerialGenerator.getLongValue("ScfReceivbale.id");
+        this.id = SerialGenerator.getLongValue("ScfReceivable.id");
         this.businStatus = "0";
         if (null != anOperatorInfo) {
             this.modiOperId = anOperatorInfo.getId();

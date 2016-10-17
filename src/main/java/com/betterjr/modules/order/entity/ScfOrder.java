@@ -271,7 +271,9 @@ public class ScfOrder implements BetterjrEntity {
     public ScfOrder(ScfAcceptBill anAcceptBill) {
         super();
         this.initAddValue(UserUtils.getOperatorInfo());
-        this.custNo = anAcceptBill.getCoreCustNo();
+        this.custNo = anAcceptBill.getCustNo();
+        //暂用开票日期作为订单日期
+        this.orderDate = anAcceptBill.getInvoiceDate();
         this.orderNo = "此订单由票据编号" + anAcceptBill.getBillNo() + "的汇票默认生成";
         this.goodsName = "此订单由票据编号" + anAcceptBill.getBillNo() + "的汇票默认生成";
         this.balance = anAcceptBill.getBalance();
@@ -286,6 +288,8 @@ public class ScfOrder implements BetterjrEntity {
         super();
         this.initAddValue(UserUtils.getOperatorInfo());
         this.coreCustNo = anReceivable.getCustNo();
+        //暂用数据生成日期作为订单日期
+        this.orderDate = anReceivable.getRegDate();
         this.orderNo = "此订单由应收账款编号" + anReceivable.getReceivableNo() + "的应收账款默认生成";
         this.goodsName = anReceivable.getGoodsName();
         this.balance = anReceivable.getBalance();

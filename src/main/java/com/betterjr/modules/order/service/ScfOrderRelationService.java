@@ -98,6 +98,7 @@ public class ScfOrderRelationService extends BaseService<ScfOrderRelationMapper,
                     relation.setOrderId(order.getId());
                     relation.setInfoType(ScfOrderRelationType.ACCEPTBILL.getCode());
                     relation.setInfoId(anEnterId);
+                    this.insert(relation);
                     orderRelationList.add(relation);
                     resultList.add(relation);
                 }
@@ -110,6 +111,7 @@ public class ScfOrderRelationService extends BaseService<ScfOrderRelationMapper,
                     relation.setOrderId(order.getId());
                     relation.setInfoType(ScfOrderRelationType.RECEIVABLE.getCode());
                     relation.setInfoId(anEnterId);
+                    this.insert(relation);
                     orderRelationList.add(relation);
                     resultList.add(relation);
                 }
