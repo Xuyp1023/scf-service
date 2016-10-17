@@ -15,6 +15,7 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.config.ParamNames;
 import com.betterjr.common.data.SimpleDataEntity;
 import com.betterjr.common.data.WebServiceErrorCode;
+import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.exception.BytterWebServiceException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BetterStringUtils;
@@ -28,6 +29,7 @@ import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.agreement.dao.ScfElecAgreementMapper;
 import com.betterjr.modules.agreement.data.ScfElecAgreeStubInfo;
 import com.betterjr.modules.agreement.data.ScfElecAgreementInfo;
+import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.document.entity.CustFileItem;
@@ -86,7 +88,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         String signStatus = (String) anParam.get("signStatus");
         anPageSize = MathExtend.defIntBetween(anPageSize, 2, ParamNames.MAX_PAGE_SIZE, 25);
         if (BetterStringUtils.isBlank(signStatus)) {
-            termMap.put("signStatus", Arrays.asList("0","1", "2", "9"));
+            termMap.put("signStatus", Arrays.asList("0","1", "2","3","9"));
         }
         else {
             termMap.put("signStatus", signStatus);
@@ -537,6 +539,33 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         return anElecAgreement;
     }
     
+    /**
+     * 更新客户合同信息
+     * 
+     * @param anParam
+     * @param fileList
+     * @return 更新后的客户合同信息
+     */
+    public ScfElecAgreement updateFactorAgreement(ScfElecAgreement anElecAgreement, String anAppNo, String anFileList) {
+        logger.info("update param:" + anElecAgreement);
+        ScfElecAgreement tmpAgreement = this.selectByPrimaryKey(anAppNo);
+
+        // 只更新数据，不能更新状态，而且只有未启用的合同才能更新
+        if ("0".equals(tmpAgreement.getSignStatus()) == false) {
+
+            throw new BytterTradeException(40001, "已启用或废止的合同不能修改！");
+        }
+        ScfElecAgreement reqAgreement = anElecAgreement;
+        reqAgreement.modifyAgreement(tmpAgreement);
+
+        reqAgreement.setBatchNo(custFileService.updateCustFileItemInfo(anFileList, reqAgreement.getBatchNo()));
+        // 保存附件信息
+
+        this.updateByPrimaryKey(reqAgreement);
+
+        return reqAgreement;
+    }
+    
     /***
      * 查询保理合同
      * @param anParam
@@ -553,12 +582,13 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         String signStatus = (String) anParam.get("signStatus");
         anPageSize = MathExtend.defIntBetween(anPageSize, 2, ParamNames.MAX_PAGE_SIZE, 25);
         if (BetterStringUtils.isBlank(signStatus)) {
-            termMap.put("signStatus", Arrays.asList("0","1", "2", "9"));
+            termMap.put("signStatus", Arrays.asList("0","1", "2","3", "9"));
         }
         else {
             termMap.put("signStatus", signStatus);
         }
         termMap.put("agreeType", anParam.get("agreeType"));
+        termMap.put("factorNo", anParam.get("factorNo"));
         Page<ScfElecAgreementInfo> elecAgreeList = this.selectPropertyByPage(ScfElecAgreementInfo.class, termMap, anPageNum, anPageSize,
                 "1".equals(anParam.get("flag")));
         

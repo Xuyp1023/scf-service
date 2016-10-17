@@ -545,7 +545,7 @@ public class CustAgreement implements BetterjrEntity {
        this.modiDate = BetterDateUtils.getNumDate();
     }
     
-    public void initDefValue(CustOperatorInfo anCustOperInfo,Long buyerNo, String anBuyer, Long anSupplierNo, String anSupplier) {
+    public void initDefValue(CustOperatorInfo anCustOperInfo,Long buyerNo, String anBuyer, String anSupplier) {
         this.id = SerialGenerator.getLongValue("CustAgreement.id");
         this.regDate = BetterDateUtils.getNumDate();
         this.modiDate = BetterDateUtils.getNumDate();
@@ -555,7 +555,6 @@ public class CustAgreement implements BetterjrEntity {
         this.operName = anCustOperInfo.getName();
         this.buyer = anBuyer;
         this.buyerNo=buyerNo;
-        this.supplierNo = anSupplierNo;
         this.supplier = anSupplier;
     }
     
