@@ -219,6 +219,18 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
     }
     
     /***
+     * 修改保理合同
+     * @param anMap
+     * @param anAppNo 应用号
+     * @param anFileList 文件列表
+     * @return
+     */
+    public String webUpdateFactorAgreement(Map anMap,String anAppNo,String anFileList){
+        ScfElecAgreement anElecAgreement=(ScfElecAgreement)RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOk("修改保理合同",this.scfElecAgreementService.updateFactorAgreement(anElecAgreement,anAppNo,anFileList)).toJson();
+    }
+    
+    /***
      * 分页查询保理合同
      * @param anParam
      * @param anPageNum

@@ -64,8 +64,8 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
      */
     public CustAgreement addCustAgreement(CustAgreement anCustAgreement, String anFileList) {
         //初始化合同默认值
-        Long supplierNo = Collections3.getFirst(UserUtils.findCustNoList());
-        anCustAgreement.initDefValue(UserUtils.getOperatorInfo(),anCustAgreement.getBuyerNo(), custAccoService.queryCustName(anCustAgreement.getBuyerNo()), supplierNo, custAccoService.queryCustName(supplierNo));
+//        Long supplierNo = Collections3.getFirst(UserUtils.findCustNoList());
+        anCustAgreement.initDefValue(UserUtils.getOperatorInfo(),anCustAgreement.getBuyerNo(), custAccoService.queryCustName(anCustAgreement.getBuyerNo()), custAccoService.queryCustName(anCustAgreement.getSupplierNo()));
 
         // 保存合同附件信息
         anCustAgreement.setBatchNo(custFileService.updateCustFileItemInfo(anFileList, anCustAgreement.getBatchNo()));
