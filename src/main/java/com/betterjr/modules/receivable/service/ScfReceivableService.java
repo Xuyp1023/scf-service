@@ -257,4 +257,17 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
     public ScfReceivable saveForzenReceivable(Long anId, boolean anCheckOperOrg) {
         return this.saveReceivableStatus(anId, "2", anCheckOperOrg);
     }
+    
+    /**
+     * 应收账款新增
+     */
+    public ScfReceivable addReceivable(ScfReceivable anReceivable, String anFileList, String anOtherFileList) {
+        anReceivable.initAddValue(UserUtils.getOperatorInfo());
+        //保存附件信息
+        anReceivable.setBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anReceivable.getBatchNo()));
+        //保存其他文件信息
+        anReceivable.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anReceivable.getOtherBatchNo()));
+        this.insert(anReceivable);
+        return anReceivable;
+    }
 }
