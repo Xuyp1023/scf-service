@@ -118,7 +118,7 @@ public class ScfPushCheckService {
         builder.addParam("billNo", supplierPushDetail.getBillNo());
         builder.addParam("disMoney", supplierPushDetail.getDisMoney());
         builder.addParam("disDate", supplierPushDetail.getDisDate());
-        builder.addReceiveOperator(targetOperator.getId()); // 接收人
+        builder.addReceiver(targetCustNo, targetOperator.getId());  // 接收人
         notificationSendService.sendNotification(builder.build());
     }
     

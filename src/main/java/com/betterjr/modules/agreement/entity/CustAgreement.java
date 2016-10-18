@@ -530,11 +530,11 @@ public class CustAgreement implements BetterjrEntity {
 
     public void modifyAgreement(CustAgreement anAgree){
         this.id = anAgree.getId();
-        this.status = anAgree.getStatus();
+//        this.status = anAgree.getStatus();
         this.modiDate = BetterDateUtils.getNumDate();
-        this.batchNo = anAgree.getBatchNo();
-        this.supplierNo=anAgree.getSupplierNo();
-        this.supplier=anAgree.getSupplier();
+//        this.batchNo = anAgree.getBatchNo();
+//        this.supplierNo=anAgree.getSupplierNo();
+//        this.supplier=anAgree.getSupplier();
         this.operOrg = anAgree.getOperOrg();
         this.operCode = anAgree.getOperCode();
         this.operName = anAgree.getOperName();
