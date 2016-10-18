@@ -14,6 +14,7 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
+import com.betterjr.common.utils.MathExtend;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.mapper.pagehelper.Page;
@@ -288,7 +289,8 @@ public class RequestDubboService implements IScfRequestService {
     @Override
     public String webGetServiecFee(String anRequestNo, BigDecimal anLoanBalance) {
         Map<String, Object> anMap = new HashMap<String, Object>();
-        anMap.put("servicefeeBalance", payPlanService.getFee(anRequestNo, anLoanBalance, 2));
+        ScfRequest request = requestService.findRequestDetail(anRequestNo);
+        anMap.put("servicefeeBalance",anLoanBalance.multiply(request.getServicefeeRatio()).divide(new BigDecimal(1000)));
         return AjaxObject.newOk("操作成功", anMap).toJson();
     }
 
@@ -301,10 +303,12 @@ public class RequestDubboService implements IScfRequestService {
     }
 
     @Override
-    public String webGetInsterest(String anRequestNo, BigDecimal anLoanBalance) {
+    public String webGetInsterest(String anRequestNo, BigDecimal anLoanBalance, String loanDate, String endDate) {
         Map<String, Object> anMap = new HashMap<String, Object>();
-        anMap.put("interestBalance", payPlanService.getFee(anRequestNo, anLoanBalance, 3));
-        anMap.put("managementBalance", payPlanService.getFee(anRequestNo, anLoanBalance, 1));
+        ScfRequest request = requestService.findRequestDetail(anRequestNo);
+        anMap.put("interestBalance", payPlanService.getFee(request.getFactorNo(), anLoanBalance, request.getApprovedRatio(), loanDate, endDate));
+        anMap.put("managementBalance", payPlanService.getFee(request.getFactorNo(), anLoanBalance, request.getManagementRatio(), loanDate, endDate));
+        anMap.put("serviceBalance", MathExtend.divide(MathExtend.multiply(anLoanBalance, request.getServicefeeRatio()), new BigDecimal(1000)));
         return AjaxObject.newOk("操作成功", anMap).toJson();
     }
 
