@@ -315,11 +315,14 @@ public class RequestDubboService implements IScfRequestService {
     @Override
     public String webQueryWorkTask(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
         anMap = (Map) RuleServiceDubboFilterInvoker.getInputObj();
+        Map<String, Object> qyRequestMap = new HashMap<>();
+        
         // 查询当前用户任务列表
         Page<FlowStatus> page = new Page<FlowStatus>(anPageNum, anPageSize, 1 == anFlag);
         if (BetterStringUtils.equals("1", anMap.get("taskType").toString())) {
             // 待办
             page = flowService.queryCurrentUserWorkTask(null, null);
+            qyRequestMap.put("GTtradeStatus", "160");
         }
         else
         {
@@ -332,22 +335,35 @@ public class RequestDubboService implements IScfRequestService {
             return AjaxObject.newOkWithPage("分页查询用户任务列表，无数据", new Page<ScfRequest>()).toJson();
         }
 
-        List<Long> requestNos = new ArrayList<Long>();
-        if(null != anMap.get("requestNo") && BetterStringUtils.isNotBlank(anMap.get("requestNo").toString())){
-            requestNos.add(Long.parseLong(anMap.get("requestNo").toString()));
+        // 获取任务中的requestNo
+        List<Long> requestsNo = new ArrayList<Long>();
+        for (FlowStatus flowStatus : page) {
+            requestsNo.add(flowStatus.getBusinessId());
         }
-        else
-        {
-            // 获取任务中的requestNo
-            for (FlowStatus flowStatus : page) {
-                requestNos.add(flowStatus.getBusinessId());
+        
+        List<Long> queryRequestsNo = new ArrayList<Long>();
+        //如果输入中的值有requestNo 且 在任务列表中 则以输入的为准
+        if((null != anMap.get("requestNo") && BetterStringUtils.isNotBlank(anMap.get("requestNo").toString()))){
+            Long inputRequestNo = Long.parseLong(anMap.get("requestNo").toString());
+            for (Long no : requestsNo) {
+                if(null!=no && no.equals(inputRequestNo)){
+                    queryRequestsNo.add(inputRequestNo);
+                    break;
+                }
             }
+        }else{
+            queryRequestsNo.addAll(requestsNo);
         }
-       
+        
+        if(0 == queryRequestsNo.size()){
+            return AjaxObject.newOkWithPage("查询成功", new Page(anPageNum, anPageSize, 1==anFlag)).toJson();
+        }
+        
+        qyRequestMap.put("requestNo", queryRequestsNo); 
         anMap.remove("taskType");
-        anMap.put("requestNo", requestNos); 
-        anMap.put("LTtradeStatus", "160");
-        return AjaxObject.newOkWithPage("查询成功", requestService.queryRequestList(anMap, anFlag, anPageNum, anPageSize)).toJson();
+        anMap.remove("requestNo");
+        qyRequestMap.putAll(anMap);
+        return AjaxObject.newOkWithPage("查询成功", requestService.queryRequestList(qyRequestMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     /**
