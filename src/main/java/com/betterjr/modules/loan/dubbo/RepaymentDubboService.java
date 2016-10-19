@@ -148,8 +148,9 @@ public class RepaymentDubboService implements IScfRepaymentService {
     @Override
     public String webQueryPressMoneyList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
         logger.debug("分页查询催收列表，入参：" + anMap);
-        Map<String, Object> qyConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOkWithPage("分页查询催收列表成功", pressMoneyService.queryPressMoneyList(qyConditionMap, anFlag, anPageNum, anPageSize)).toJson();
+        String[] queryTerm = new String[] {"requestNo","factorNo"};
+        anMap = Collections3.filterMap(anMap, queryTerm);
+        return AjaxObject.newOkWithPage("分页查询催收列表成功", pressMoneyService.queryPressMoneyList(anMap, anFlag, anPageNum, anPageSize)).toJson();
     }
     
     @Override

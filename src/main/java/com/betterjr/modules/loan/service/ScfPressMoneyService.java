@@ -15,12 +15,15 @@ import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.loan.dao.ScfPressMoneyMapper;
 import com.betterjr.modules.loan.entity.ScfPressMoney;
+import com.betterjr.modules.loan.entity.ScfRequest;
 
 @Service
 public class ScfPressMoneyService extends BaseService<ScfPressMoneyMapper, ScfPressMoney> {
 
     @Autowired
     private CustAccountService custAccountService;
+    @Autowired
+    private ScfRequestService requestService;
     /**
      * 新增催收记录
      * @param anPress
@@ -28,6 +31,11 @@ public class ScfPressMoneyService extends BaseService<ScfPressMoneyMapper, ScfPr
      */
     public ScfPressMoney addPressMoney(ScfPressMoney anPress) {
         BTAssert.notNull(anPress, "新增催收记录失败-anPressMoney不能为空");
+        
+        ScfRequest request = requestService.findRequestDetail(anPress.getRequestNo());
+        BTAssert.notNull(request, "新增催收记录失败-request不存在");
+        
+        anPress.setFactorNo(request.getFactorNo());
         anPress.init();
         this.insert(anPress);
         return findPressMoneyDetail(anPress.getId());
@@ -65,7 +73,12 @@ public class ScfPressMoneyService extends BaseService<ScfPressMoneyMapper, ScfPr
      * @return
      */
     public Page<ScfPressMoney> queryPressMoneyList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
-        return this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
+        Page<ScfPressMoney> pressPage = this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
+        for (ScfPressMoney press : pressPage) {
+            press.setCustName(custAccountService.queryCustName(press.getCustNo()));
+            press.setFactorName(custAccountService.queryCustName(press.getFactorNo()));
+        }
+        return pressPage;
     }
 
     

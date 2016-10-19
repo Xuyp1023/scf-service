@@ -43,9 +43,9 @@ public class EnquiryDubboService implements IScfEnquiryService {
         return AjaxObject.newOkWithPage("查询成功", enquiryService.queryEnquiryList(anMap, anFlag, anPageNum, anPageSize)).toJson();
     }
     
-    public String webQuerySingleOrderEnquiryList(Long custNo, int anFlag, int anPageNum, int anPageSize) {
-        logger.debug("分页查询询价列表,入参："+ custNo);
-        return AjaxObject.newOkWithPage("查询成功", enquiryService.querySingleOrderEnquiryList(custNo, anFlag, anPageNum, anPageSize)).toJson();
+    public String webQuerySingleOrderEnquiryList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
+        logger.debug("分页查询询价列表,入参："+ anMap);
+        return AjaxObject.newOkWithPage("查询成功", enquiryService.querySingleOrderEnquiryList(anMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     public String webAddEnquiry(Map<String, Object> anMap) {
@@ -70,10 +70,9 @@ public class EnquiryDubboService implements IScfEnquiryService {
         return AjaxObject.newOkWithPage("查询成功", offerService.queryOfferList(anMap, anFlag, anPageNum, anPageSize)).toJson();
     }
     
-    public String webQueryOfferByFactor(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
-        anMap = (Map) RuleServiceDubboFilterInvoker.getInputObj();
-        logger.debug("查看有哪些公司报了价,入参："+ anMap);
-        return AjaxObject.newOkWithPage("查询成功", offerService.queryOfferByFactor(anMap, anFlag, anPageNum, anPageSize)).toJson();
+    public String webQueryOfferByBill(String enquiryNo) {
+        logger.debug("查看有哪些公司报了价,入参："+ enquiryNo);
+        return AjaxObject.newOk("查询成功", offerService.queryOfferByBill(enquiryNo)).toJson();
     }
 
     public String webAddOffer(Map<String, Object> anMap) {
@@ -154,6 +153,13 @@ public class EnquiryDubboService implements IScfEnquiryService {
         enquiry.setDescription(description);
         enquiry.setBusinStatus("-1");
         return AjaxObject.newOk(enquiryService.saveUpdate(enquiry)).toJson();
+    }
+
+    @Override
+    public String webFindOfferList(String enquiryNo) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("enquiryNo", enquiryNo);
+        return AjaxObject.newOk(offerService.findOfferList(map)).toJson();
     }
 
     

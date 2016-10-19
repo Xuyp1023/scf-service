@@ -131,6 +131,8 @@ public class ScfRequestSchemeService extends BaseService<ScfRequestApprovedMappe
      * @return
      */
     public Page<ScfRequestScheme> querySchemeList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
+        String[] queryTerm = new String[] {"custNo", "requestType", "factorNo", "coreCustNo"};
+        anMap = Collections3.filterMap(anMap, queryTerm);
         Map<String, Object> qyReqyestMap = QueryTermBuilder.newInstance().addAll(anMap).build();
         Map<String, Object> qySchemeMap = QueryTermBuilder.newInstance().addAll(anMap).build();
         //查询待批 并且 指定类型（经销商/其它），(属于该核心企业要审批，申请单状态状态为：背景确认)
