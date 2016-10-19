@@ -102,8 +102,8 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
      * @param anPageSize
      * @return
      */
-    public Page<ScfEnquiry> querySingleOrderEnquiryList(Long custNo, int anFlag, int anPageNum, int anPageSize) {
-        Page<ScfEnquiry> page = this.selectPropertyByPage("custNo", custNo, anPageNum, anPageSize, 1 == anFlag);
+    public Page<ScfEnquiry> querySingleOrderEnquiryList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
+        Page<ScfEnquiry> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
         for (ScfEnquiry enquiry :page) {
             this.fillOrder(enquiry, 2);
             //设置报价状态

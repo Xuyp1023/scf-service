@@ -129,26 +129,26 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
      * 根据意向企业分组查询报价
      * @return
      */
-    public Page<ScfEnquiryObject> queryOfferByFactor(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize){
+    public List<ScfEnquiryObject> queryOfferByBill(String enquiryNo){
         Map<String, Object> qyObjectMap = new HashMap<String, Object>();
-        qyObjectMap.put("enquiryNo", anMap.get("enquiryNo").toString());
+        qyObjectMap.put("enquiryNo", enquiryNo);
         
-        Page<ScfEnquiryObject> list = null;
+        List<ScfEnquiryObject> list = null;
         Map<String, Object> qyOfferMap = null;
-        ScfEnquiry enquiry = enquiryService.findEnquiryByNo(anMap.get("enquiryNo").toString());
+        ScfEnquiry enquiry = enquiryService.findEnquiryByNo(enquiryNo);
                 
         if(BetterStringUtils.equals("2", enquiry.getEnquiryMethod())){
             //主动报价
-            list = scfEnquiryObjectService.selectPropertyByPage(anMap, anPageNum, anPageSize, 1==anFlag);
+            list = scfEnquiryObjectService.selectByClassProperty(ScfEnquiryObject.class, qyObjectMap);
         }else{
             //自动报价(只查有报价的企业)
             qyObjectMap.put("businStatus", new String[]{"1", "-3"});
-            list = scfEnquiryObjectService.selectPropertyByPage(anMap, anPageNum, anPageSize, 1==anFlag);
+            list = scfEnquiryObjectService.selectByClassProperty(ScfEnquiryObject.class,qyObjectMap);
         }
         
         for (ScfEnquiryObject object : list) {
             qyOfferMap = new HashMap<String, Object>();
-            qyOfferMap.put("enquiryNo", anMap.get("enquiryNo").toString());
+            qyOfferMap.put("enquiryNo", enquiryNo);
             qyOfferMap.put("factorNo", object.getFactorNo());
             List<ScfOffer> offerList = this.findOfferList(qyOfferMap);
            

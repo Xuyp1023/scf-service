@@ -15,6 +15,7 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.MathExtend;
+import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.mapper.pagehelper.Page;
@@ -315,6 +316,8 @@ public class RequestDubboService implements IScfRequestService {
     @Override
     public String webQueryWorkTask(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
         anMap = (Map) RuleServiceDubboFilterInvoker.getInputObj();
+        String[] queryTerm = new String[] {"taskType","tradeStatus", "GTErequestDate", "LTErequestDate"};
+        anMap = Collections3.filterMap(anMap, queryTerm);
         Map<String, Object> qyRequestMap = new HashMap<>();
         
         // 查询当前用户任务列表
@@ -322,7 +325,7 @@ public class RequestDubboService implements IScfRequestService {
         if (BetterStringUtils.equals("1", anMap.get("taskType").toString())) {
             // 待办
             page = flowService.queryCurrentUserWorkTask(null, null);
-            qyRequestMap.put("GTtradeStatus", "160");
+            qyRequestMap.put("LTtradeStatus", "160");
         }
         else
         {
@@ -359,10 +362,10 @@ public class RequestDubboService implements IScfRequestService {
             return AjaxObject.newOkWithPage("查询成功", new Page(anPageNum, anPageSize, 1==anFlag)).toJson();
         }
         
-        qyRequestMap.put("requestNo", queryRequestsNo); 
         anMap.remove("taskType");
         anMap.remove("requestNo");
         qyRequestMap.putAll(anMap);
+        qyRequestMap.put("requestNo", queryRequestsNo); 
         return AjaxObject.newOkWithPage("查询成功", requestService.queryRequestList(qyRequestMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
