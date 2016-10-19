@@ -58,6 +58,11 @@ public class RepaymentDubboService implements IScfRepaymentService {
     }
     
     @Override
+    public String webQueryDistributeFee(String anRequestNo, String anPayType, String anPayDate, BigDecimal anTotalBalance) {
+        return AjaxObject.newOk("操作成功", payPlanService.queryDistributeFee(anRequestNo,anPayType, anPayDate, anTotalBalance)).toJson();
+    }
+    
+    @Override
     public String webQuerySellerRepaymentFee(String anRequestNo, String anPayType, String anPayDate, BigDecimal anTotalBalance) {
         return AjaxObject.newOk("操作成功", payPlanService.querySellerRepaymentFee(anRequestNo,anPayType, anPayDate, anTotalBalance)).toJson();
     }

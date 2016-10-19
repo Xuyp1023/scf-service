@@ -17,6 +17,7 @@ import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
+import com.betterjr.common.utils.MathExtend;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
@@ -380,16 +381,16 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         plan.setManagementRatio(anRequest.getManagementRatio());
         
         //计算应还
-        plan.setShouldPrincipalBalance(anRequest.getLoanBalance());
+        plan.setShouldPrincipalBalance(MathExtend.subtract(anRequest.getLoanBalance(), anRequest.getBondBalance()));
         if (null == anInterestBalance) {
-            plan.setShouldInterestBalance(payPlanService.getFee(anRequest.getRequestNo(), anRequest.getLoanBalance(), 3));
+            plan.setShouldInterestBalance(payPlanService.getFee(anRequest.getFactorNo(), anRequest.getLoanBalance(), anRequest.getApprovedRatio(), anRequest.getActualDate(), anRequest.getEndDate()));
         }
         else {
             plan.setShouldInterestBalance(anInterestBalance);
         }
         
         if(null == anManagementBalance){
-            plan.setShouldManagementBalance(payPlanService.getFee(anRequest.getRequestNo(), anRequest.getLoanBalance(), 1));
+            plan.setShouldManagementBalance(payPlanService.getFee(anRequest.getFactorNo(), anRequest.getLoanBalance(), anRequest.getManagementRatio(), anRequest.getActualDate(), anRequest.getEndDate()));
         }else{
             plan.setShouldManagementBalance(anManagementBalance);
         }

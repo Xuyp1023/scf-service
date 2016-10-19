@@ -14,6 +14,7 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
+import com.betterjr.common.utils.MathExtend;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.mapper.pagehelper.Page;
@@ -288,7 +289,8 @@ public class RequestDubboService implements IScfRequestService {
     @Override
     public String webGetServiecFee(String anRequestNo, BigDecimal anLoanBalance) {
         Map<String, Object> anMap = new HashMap<String, Object>();
-        anMap.put("servicefeeBalance", payPlanService.getFee(anRequestNo, anLoanBalance, 2));
+        ScfRequest request = requestService.findRequestDetail(anRequestNo);
+        anMap.put("servicefeeBalance",anLoanBalance.multiply(request.getServicefeeRatio()).divide(new BigDecimal(1000)));
         return AjaxObject.newOk("操作成功", anMap).toJson();
     }
 
@@ -301,21 +303,26 @@ public class RequestDubboService implements IScfRequestService {
     }
 
     @Override
-    public String webGetInsterest(String anRequestNo, BigDecimal anLoanBalance) {
+    public String webGetInsterest(String anRequestNo, BigDecimal anLoanBalance, String loanDate, String endDate) {
         Map<String, Object> anMap = new HashMap<String, Object>();
-        anMap.put("interestBalance", payPlanService.getFee(anRequestNo, anLoanBalance, 3));
-        anMap.put("managementBalance", payPlanService.getFee(anRequestNo, anLoanBalance, 1));
+        ScfRequest request = requestService.findRequestDetail(anRequestNo);
+        anMap.put("interestBalance", payPlanService.getFee(request.getFactorNo(), anLoanBalance, request.getApprovedRatio(), loanDate, endDate));
+        anMap.put("managementBalance", payPlanService.getFee(request.getFactorNo(), anLoanBalance, request.getManagementRatio(), loanDate, endDate));
+        anMap.put("serviceBalance", MathExtend.divide(MathExtend.multiply(anLoanBalance, request.getServicefeeRatio()), new BigDecimal(1000)));
         return AjaxObject.newOk("操作成功", anMap).toJson();
     }
 
     @Override
     public String webQueryWorkTask(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
         anMap = (Map) RuleServiceDubboFilterInvoker.getInputObj();
+        Map<String, Object> qyRequestMap = new HashMap<>();
+        
         // 查询当前用户任务列表
         Page<FlowStatus> page = new Page<FlowStatus>(anPageNum, anPageSize, 1 == anFlag);
         if (BetterStringUtils.equals("1", anMap.get("taskType").toString())) {
             // 待办
             page = flowService.queryCurrentUserWorkTask(null, null);
+            qyRequestMap.put("GTtradeStatus", "160");
         }
         else
         {
@@ -328,22 +335,35 @@ public class RequestDubboService implements IScfRequestService {
             return AjaxObject.newOkWithPage("分页查询用户任务列表，无数据", new Page<ScfRequest>()).toJson();
         }
 
-        List<Long> requestNos = new ArrayList<Long>();
-        if(null != anMap.get("requestNo") && BetterStringUtils.isNotBlank(anMap.get("requestNo").toString())){
-            requestNos.add(Long.parseLong(anMap.get("requestNo").toString()));
+        // 获取任务中的requestNo
+        List<Long> requestsNo = new ArrayList<Long>();
+        for (FlowStatus flowStatus : page) {
+            requestsNo.add(flowStatus.getBusinessId());
         }
-        else
-        {
-            // 获取任务中的requestNo
-            for (FlowStatus flowStatus : page) {
-                requestNos.add(flowStatus.getBusinessId());
+        
+        List<Long> queryRequestsNo = new ArrayList<Long>();
+        //如果输入中的值有requestNo 且 在任务列表中 则以输入的为准
+        if((null != anMap.get("requestNo") && BetterStringUtils.isNotBlank(anMap.get("requestNo").toString()))){
+            Long inputRequestNo = Long.parseLong(anMap.get("requestNo").toString());
+            for (Long no : requestsNo) {
+                if(null!=no && no.equals(inputRequestNo)){
+                    queryRequestsNo.add(inputRequestNo);
+                    break;
+                }
             }
+        }else{
+            queryRequestsNo.addAll(requestsNo);
         }
-       
+        
+        if(0 == queryRequestsNo.size()){
+            return AjaxObject.newOkWithPage("查询成功", new Page(anPageNum, anPageSize, 1==anFlag)).toJson();
+        }
+        
+        qyRequestMap.put("requestNo", queryRequestsNo); 
         anMap.remove("taskType");
-        anMap.put("requestNo", requestNos); 
-        anMap.put("LTtradeStatus", "160");
-        return AjaxObject.newOkWithPage("查询成功", requestService.queryRequestList(anMap, anFlag, anPageNum, anPageSize)).toJson();
+        anMap.remove("requestNo");
+        qyRequestMap.putAll(anMap);
+        return AjaxObject.newOkWithPage("查询成功", requestService.queryRequestList(qyRequestMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     /**

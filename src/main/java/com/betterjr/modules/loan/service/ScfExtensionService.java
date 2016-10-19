@@ -14,6 +14,7 @@ import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.DictUtils;
+import com.betterjr.common.utils.MathExtend;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.loan.dao.ScfExtensionMapper;
@@ -114,15 +115,14 @@ public class ScfExtensionService extends BaseService<ScfExtensionMapper, ScfExte
         BigDecimal overManagementBalance = new BigDecimal(0);
         BigDecimal overInterestBalance = new BigDecimal(0);
         if(overDueDays > 0 && overDueDays < param.getGraceDays()){
-            Map<String, BigDecimal> interestMap = payPlanService.getInterestByDays(payPlan, anPayDate);
-            overManagementBalance = interestMap.get("managementBalance");
-            overInterestBalance = interestMap.get("interestBalance");
+            overManagementBalance = payPlanService.getFee(payPlan.getFactorNo(), payPlan.getSurplusPrincipalBalance(), payPlan.getManagementRatio(), payPlan.getStartDate(), payPlan.getPlanDate());
+            overInterestBalance = payPlanService.getFee(payPlan.getFactorNo(), payPlan.getSurplusPrincipalBalance(), payPlan.getRatio(), payPlan.getStartDate(), payPlan.getPlanDate());
         }
         
         //分配管理费
         if(payBalance.compareTo(payPlan.getSurplusManagementBalance()) == 1){
             payMap.put("payManagementBalance", payPlan.getSurplusManagementBalance().add(overManagementBalance));
-            payBalance = payBalance.subtract(payPlan.getSurplusManagementBalance());
+            payBalance = MathExtend.subtract(payBalance, payPlan.getSurplusManagementBalance());
         }else{
             payMap.put("payManagementBalance", payBalance);
             return payMap;
@@ -156,8 +156,8 @@ public class ScfExtensionService extends BaseService<ScfExtensionMapper, ScfExte
      */
     public Map<String, Object> getInterest(BigDecimal ratio, BigDecimal managementRatio, BigDecimal extensionBalance){
         Map<String, Object> payMap = new HashMap<String, Object>();
-        BigDecimal interestBalance = extensionBalance.multiply(ratio).divide(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP);
-        BigDecimal managementBalance = extensionBalance.multiply(managementRatio).divide(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal interestBalance = MathExtend.multiply(extensionBalance,ratio).divide(new BigDecimal(100));
+        BigDecimal managementBalance = MathExtend.multiply(extensionBalance, managementRatio).divide(new BigDecimal(100));
         payMap.put("shouldInterestBalance", interestBalance);
         payMap.put("shouldManagementBalance", managementBalance);
         payMap.put("shouldTotalBalance", extensionBalance.add(interestBalance).add(managementBalance));
