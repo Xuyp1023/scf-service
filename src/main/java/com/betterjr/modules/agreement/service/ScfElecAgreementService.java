@@ -620,9 +620,9 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         ScfElecAgreement elecAgreement=this.selectByPrimaryKey(anAppNo);
         elecAgreement.setSignStatus(anStatus);
         if(this.updateByPrimaryKey(elecAgreement)>0){
-            return "作废/启用成功";
+            return "成功";
         }else{
-            return "作废/启用失败";
+            return "失败";
         }
     }
 }
