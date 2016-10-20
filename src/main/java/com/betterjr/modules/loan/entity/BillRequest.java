@@ -5,9 +5,9 @@ import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import de.ruedigermoeller.serialization.annotations.Transient;
 
 @Transient
-public class TransRequest {
-    public TransRequest(){}
-    public TransRequest(ScfRequest request, ScfAcceptBill bill,ScfPayPlan plan) {
+public class BillRequest {
+    public BillRequest(){}
+    public BillRequest(ScfRequest request, ScfAcceptBill bill,ScfPayPlan plan) {
         super();
         this.request = request;
         this.bill = bill;
