@@ -534,8 +534,14 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
      */
     public ScfElecAgreement addFactorAgreement(ScfElecAgreement anElecAgreement,String anFileList){
         anElecAgreement.initDefValue(custAccoService.queryCustName(anElecAgreement.getSupplierNo()));
+        anElecAgreement.setAgreeType("3");
         anElecAgreement.setBatchNo(custFileService.updateCustFileItemInfo(anFileList, anElecAgreement.getBatchNo()));
-        this.insert(anElecAgreement);
+        try {
+            this.insert(anElecAgreement);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         return anElecAgreement;
     }
     
@@ -557,6 +563,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         }
         ScfElecAgreement reqAgreement = anElecAgreement;
         reqAgreement.modifyAgreement(tmpAgreement);
+        reqAgreement.setSupplier(custAccoService.queryCustName(anElecAgreement.getSupplierNo()));
 
         reqAgreement.setBatchNo(custFileService.updateCustFileItemInfo(anFileList, reqAgreement.getBatchNo()));
         // 保存附件信息
@@ -608,7 +615,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         anMap.put("supplierNo", anCustNo);
         anMap.put("factorNo", anFactorNo);
         anMap.put("agreeType", anAgreeType);
-        anMap.put("signStatus", Arrays.asList("1", "2"));
+        anMap.put("signStatus", Arrays.asList("1"));
         List<SimpleDataEntity> result = new ArrayList<SimpleDataEntity>();
         for(ScfElecAgreement elecAgreement:this.selectByProperty(anMap)){
             result.add(new SimpleDataEntity(elecAgreement.getAgreeName(), elecAgreement.getAppNo()));
