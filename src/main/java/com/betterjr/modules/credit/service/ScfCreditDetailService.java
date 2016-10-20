@@ -60,43 +60,53 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         // 解冻额度
         BigDecimal unfreezeBalance = anCreditInfo.getBalance();
 
-        //
-        String custName = custAccountService.queryCustName(anCreditInfo.getCustNo());
-        logger.info("Credit Customer[" + anCreditInfo.getCustNo() + "|" + custName + "]" + ",Unfreeze amount[" + unfreezeBalance + "]");
-
         // 获取客户授信记录
         ScfCredit custCredit = scfCreditService.findCredit(anCreditInfo.getCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),
                 anCreditInfo.getCreditMode());
+
+        // 获取客户授信额度冻结记录
+        ScfCreditDetail custFreezeCreditDetail = findCreditDetail(anCreditInfo, custCredit);
+        if (custFreezeCreditDetail != null) {
+            // 更新客户授信额度累计使用,授信余额
+            custCredit.releaseCreditBalance(custCredit.getCreditUsed(), custCredit.getCreditBalance(), unfreezeBalance);
+
+            // 数据存盘-回写客户授信余额
+            scfCreditService.updateByPrimaryKeySelective(custCredit);
+
+            // 数据存盘,客户授信额度变动
+            ScfCreditDetail custCreditDetail = createCreditDetail(anCreditInfo, custCredit.getId(), CreditConstants.CREDIT_DIRECTION_INCOME);
+            custCreditDetail.setBalance(unfreezeBalance);
+            custCreditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_DONE);// 状态(0:已完成;1:冻结中;)
+            custCreditDetail.setDescription("交易终止,业务单据号：" + anCreditInfo.getRequestNo() + ",解冻额度:￥" + unfreezeBalance);
+            this.insert(custCreditDetail);
+
+            // 删除客户冻结的记录
+            this.delete(custFreezeCreditDetail);
+        }
 
         // 获取核心企业授信记录
         ScfCredit coreCredit = scfCreditService.findCredit(anCreditInfo.getCoreCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),
                 anCreditInfo.getCreditMode());
 
-        // 更新客户授信额度累计使用,授信余额
-        custCredit.releaseCreditBalance(custCredit.getCreditUsed(), custCredit.getCreditBalance(), unfreezeBalance);
+        // 获取核心企业授信额度冻结记录
+        ScfCreditDetail coreFreezeCreditDetail = findCreditDetail(anCreditInfo, coreCredit);
+        if (coreFreezeCreditDetail != null) {
+            // 更新核心企业授信额度累计使用,授信余额
+            coreCredit.releaseCreditBalance(coreCredit.getCreditUsed(), coreCredit.getCreditBalance(), unfreezeBalance);
 
-        // 更新核心企业授信额度累计使用,授信余额
-        coreCredit.releaseCreditBalance(coreCredit.getCreditUsed(), coreCredit.getCreditBalance(), unfreezeBalance);
+            // 数据存盘-回写核心企业授信余额
+            scfCreditService.updateByPrimaryKeySelective(coreCredit);
 
-        // 数据存盘,客户授信额度变动
-        ScfCreditDetail custCreditDetail = createCreditDetail(anCreditInfo, custCredit.getId(), CreditConstants.CREDIT_DIRECTION_INCOME);
-        custCreditDetail.setBalance(unfreezeBalance);
-        custCreditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_DONE);// 状态(0:已完成;1:冻结中;)
-        custCreditDetail.setDescription("交易终止,业务单据号：" + anCreditInfo.getRequestNo() + ",解冻额度:￥" + unfreezeBalance);
-        this.insert(custCreditDetail);
+            // 数据存盘,核心企业授信额度变动
+            ScfCreditDetail coreCreditDetail = createCreditDetail(anCreditInfo, coreCredit.getId(), CreditConstants.CREDIT_DIRECTION_INCOME);
+            coreCreditDetail.setBalance(unfreezeBalance);
+            coreCreditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_DONE);// 状态(0:已完成;1:冻结中;)
+            coreCreditDetail.setDescription("交易终止,业务单据号：" + anCreditInfo.getRequestNo() + ",解冻额度:￥" + unfreezeBalance);
+            this.insert(coreCreditDetail);
 
-        // 数据存盘,核心企业授信额度变动
-        ScfCreditDetail coreCreditDetail = createCreditDetail(anCreditInfo, coreCredit.getId(), CreditConstants.CREDIT_DIRECTION_INCOME);
-        coreCreditDetail.setBalance(unfreezeBalance);
-        coreCreditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_DONE);// 状态(0:已完成;1:冻结中;)
-        coreCreditDetail.setDescription("交易终止,业务单据号：" + anCreditInfo.getRequestNo() + ",解冻额度:￥" + unfreezeBalance);
-        this.insert(coreCreditDetail);
-
-        // 数据存盘-回写客户授信余额
-        scfCreditService.updateByPrimaryKeySelective(custCredit);
-
-        // 数据存盘-回写核心企业授信余额
-        scfCreditService.updateByPrimaryKeySelective(coreCredit);
+            // 删除核心企业冻结的授信记录
+            this.delete(coreFreezeCreditDetail);
+        }
     }
 
     /**
@@ -116,7 +126,6 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         String custName = custAccountService.queryCustName(anCreditInfo.getCustNo());
         String coreCustName = custAccountService.queryCustName(anCreditInfo.getCoreCustNo());
         String factorName = custAccountService.queryCustName(anCreditInfo.getFactorNo());
-        logger.info("Credit Customer[" + anCreditInfo.getCustNo() + "|" + custName + "]" + ",Freeze amount[" + freezeBalance + "]");
 
         // 获取客户授信记录
         ScfCredit custCredit = scfCreditService.findCredit(anCreditInfo.getCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),
@@ -176,10 +185,6 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
 
         // 占用额度
         BigDecimal occupyBalance = anCreditInfo.getBalance();
-
-        //
-        String custName = custAccountService.queryCustName(anCreditInfo.getCustNo());
-        logger.info("Credit Customer[" + anCreditInfo.getCustNo() + "|" + custName + "]" + ",Occupy amount[" + occupyBalance + "]");
 
         // 获取客户授信记录
         ScfCredit custCredit = scfCreditService.findCredit(anCreditInfo.getCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),
@@ -274,10 +279,6 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
 
         // 释放额度
         BigDecimal releaseBalance = anCreditInfo.getBalance();
-
-        //
-        String custName = custAccountService.queryCustName(anCreditInfo.getCustNo());
-        logger.info("Credit Customer[" + anCreditInfo.getCustNo() + "|" + custName + "]" + ",Release amount[" + releaseBalance + "]");
 
         // 获取客户授信记录
         ScfCredit custCredit = scfCreditService.findCredit(anCreditInfo.getCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),

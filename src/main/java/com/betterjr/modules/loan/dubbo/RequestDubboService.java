@@ -421,7 +421,7 @@ public class RequestDubboService implements IScfRequestService {
             // 当融资流程终止时,对冻结的授信额度进行解冻 add by Liusq 2016-10-20
             ScfCreditInfo anCreditInfo = new ScfCreditInfo();
             anCreditInfo.setBusinFlag(request.getRequestType());
-            anCreditInfo.setBalance(request.getApprovedBalance());
+            anCreditInfo.setBalance(request.getBalance());
             anCreditInfo.setBusinId(Long.valueOf(request.getRequestNo()));
             anCreditInfo.setCoreCustNo(request.getCoreCustNo());
             anCreditInfo.setCustNo(request.getCustNo());

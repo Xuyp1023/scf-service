@@ -127,7 +127,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         // 当融资流程启动时,冻结授信额度 add by Liusq 2016-10-20
         ScfCreditInfo anCreditInfo = new ScfCreditInfo();
         anCreditInfo.setBusinFlag(anRequest.getRequestType());
-        anCreditInfo.setBalance(anRequest.getApprovedBalance());
+        anCreditInfo.setBalance(anRequest.getBalance());
         anCreditInfo.setBusinId(Long.valueOf(anRequest.getRequestNo()));
         anCreditInfo.setCoreCustNo(anRequest.getCoreCustNo());
         anCreditInfo.setCustNo(anRequest.getCustNo());
