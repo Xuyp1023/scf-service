@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
@@ -16,10 +17,12 @@ import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
 import com.betterjr.modules.loan.dao.ScfRequestMapper;
 import com.betterjr.modules.loan.entity.ScfPayPlan;
 import com.betterjr.modules.loan.entity.ScfRequest;
-import com.betterjr.modules.loan.entity.TransRequest;
+import com.betterjr.modules.loan.entity.BillRequest;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
 import com.betterjr.modules.loan.helper.RequestType;
 import com.betterjr.modules.order.helper.ScfOrderRelationType;
+import com.betterjr.modules.product.entity.ScfProduct;
+import com.betterjr.modules.product.service.ScfProductService;
 
 @Service
 public class ScfBillRequestService extends BaseService<ScfRequestMapper, ScfRequest> {
@@ -30,6 +33,8 @@ public class ScfBillRequestService extends BaseService<ScfRequestMapper, ScfRequ
     private ScfAcceptBillService billService;
     @Autowired
     private ScfPayPlanService payPlanService;
+    @Autowired
+    private ScfProductService productService;
     
     /**
      * 新增融资申请
@@ -55,17 +60,41 @@ public class ScfBillRequestService extends BaseService<ScfRequestMapper, ScfRequ
      * @param anPageSize
      * @return
      */
-    public Page<TransRequest> queryRequestList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
+    public Page<BillRequest> queryRequestList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
         Page<ScfRequest> page = requestService.queryRequestList(anMap, anFlag, anPageNum, anPageSize);
-        Page<TransRequest> billPage = new Page<>(anPageNum, anPageSize, anFlag == 1);
+        
+        //将融资列表的分页信息拷贝到新的列表中
+        Page<BillRequest> billPage = new Page<>(page.getPageNum(), page.getPageSize(), page.isCount());
+        billPage.setTotal(page.getTotal());
+        billPage.setPageSizeZero(page.getPageSizeZero());
+        billPage.setReasonable(page.getReasonable());
+        
+        //组装
         for (ScfRequest scfRequest : page) {
-            TransRequest transRequest = new TransRequest();
+            BillRequest transRequest = fillInfo(scfRequest);
             transRequest.setRequest(scfRequest);
-            transRequest.setBill(billService.selectByPrimaryKey(Long.parseLong(scfRequest.getOrders())));
-            transRequest.setPlan(payPlanService.findPayPlanByRequest(scfRequest.getRequestNo()));
             billPage.add(transRequest);
         }
         return billPage;
+    }
+
+    private BillRequest fillInfo(ScfRequest anRequest) {
+        BillRequest transRequest = new BillRequest();
+        if(!BetterStringUtils.isBlank(anRequest.getOrders())){
+            transRequest.setBill(billService.selectByPrimaryKey(Long.parseLong(anRequest.getOrders())));
+        }
+        
+        ScfPayPlan plan = payPlanService.findPayPlanByRequest(anRequest.getRequestNo());
+        if(null != plan){
+            transRequest.setPlan(plan);
+        }
+        
+        ScfProduct product = productService.findProductById(anRequest.getProductId());
+        if(null != product){
+            anRequest.setProductName(product.getProductName());
+        }
+        transRequest.setRequest(anRequest);
+        return transRequest;
     }
     
     /**
@@ -77,12 +106,9 @@ public class ScfBillRequestService extends BaseService<ScfRequestMapper, ScfRequ
      * @param anPageSize
      * @return
      */
-    public TransRequest findRequestByNo(String anRequestNo) {
+    public BillRequest findRequestByNo(String anRequestNo) {
         ScfRequest request = requestService.findRequestDetail(anRequestNo);
-        ScfAcceptBill bill = billService.selectByPrimaryKey(Long.parseLong(request.getOrders()));
-        ScfPayPlan plan = payPlanService.findPayPlanByRequest(anRequestNo);
-        TransRequest transRequest = new TransRequest(request, bill, plan);
-        return transRequest;
+        return fillInfo(request);
     }
     
     /**
@@ -94,12 +120,8 @@ public class ScfBillRequestService extends BaseService<ScfRequestMapper, ScfRequ
      * @param anPageSize
      * @return
      */
-    public TransRequest findRequestByBill(String anBillsId) {
+    public BillRequest findRequestByBill(String anBillsId) {
         List<ScfRequest> list = requestService.selectByClassProperty(ScfRequest.class, "orders", anBillsId);
-        ScfRequest request = Collections3.getFirst(list);
-        ScfAcceptBill bill = billService.selectByPrimaryKey(Long.parseLong(request.getOrders()));
-        ScfPayPlan plan = payPlanService.findPayPlanByRequest(request.getRequestNo());
-        TransRequest transRequest = new TransRequest(request, bill, plan);
-        return transRequest;
+        return fillInfo(Collections3.getFirst(list));
     }
 }

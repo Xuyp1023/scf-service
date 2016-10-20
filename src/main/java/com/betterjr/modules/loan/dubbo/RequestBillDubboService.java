@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.betterjr.common.utils.UserUtils;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.modules.enquiry.service.ScfOfferService;
 import com.betterjr.modules.loan.IScfBillRequestService;
@@ -48,8 +49,17 @@ public class RequestBillDubboService implements IScfBillRequestService {
     @Override
     public String webQueryBillRequestList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
         logger.debug("分页查询票据融资申请，入参：" + anMap);
+        anMap = (Map) RuleServiceDubboFilterInvoker.getInputObj();
+        
+        if(UserUtils.supplierUser() || UserUtils.sellerUser()){
+            anMap.put("custNo", UserUtils.getDefCustInfo().getCustNo());
+        }
+        else if(UserUtils.factorUser()){
+            anMap.put("factorNo", UserUtils.getDefCustInfo().getCustNo());
+        }
+        
         return AjaxObject.newOkWithPage("分页查询融资申请成功",
-                billRequestService.queryRequestList((Map) RuleServiceDubboFilterInvoker.getInputObj(), anFlag, anPageNum, anPageSize)).toJson();
+                billRequestService.queryRequestList(anMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     @Override
