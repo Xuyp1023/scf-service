@@ -305,7 +305,7 @@ public class ScfCreditDetail implements BetterjrEntity {
         this.businId = 0l;
         this.businStatus = CreditConstants.CREDIT_CHANGE_STATUS_DONE;// 状态(0:已完成;1:冻结中;)
         this.creditId = anCreditId;
-        this.description = "授信初始录入";
+        this.description = "额度初始";
     }
 
     public void initModifyValue(Long anCustNo, String anCustName, Long anCreditId) {
@@ -316,7 +316,7 @@ public class ScfCreditDetail implements BetterjrEntity {
         this.businId = 0l;
         this.businStatus = CreditConstants.CREDIT_CHANGE_STATUS_DONE;// 状态(0:已完成;1:冻结中;)
         this.creditId = anCreditId;
-        this.description = "授信额度调整";
+        this.description = "额度调整";
     }
 
     public void initOccupyValue(ScfCreditInfo anCreditInfo, Long anCreditId) {

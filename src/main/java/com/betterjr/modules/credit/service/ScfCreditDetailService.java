@@ -40,7 +40,6 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
     public Page<ScfCreditDetail> queryCreditDetail(Map<String, Object> anMap, Long anCreditId, String anFlag, int anPageNum, int anPageSize) {
         // 授信来源ID
         anMap.put("creditId", anCreditId);
-        anMap.remove("custNo");//去掉该入参
 
         // 获取查询结果
         return this.selectPropertyByPage(ScfCreditDetail.class, anMap, anPageNum, anPageSize, "1".equals(anFlag));
@@ -62,12 +61,14 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         // 获取客户授信记录
         ScfCredit anCustCredit = scfCreditService.findCredit(anCreditInfo.getCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),
                 anCreditInfo.getCreditMode());
-        BTAssert.notNull(anCustCredit, "无法获取客户授信额度信息");
+        String custName = custAccountService.queryCustName(anCreditInfo.getCustNo());
+        BTAssert.notNull(anCustCredit, custName + "未获得保理公司授信,无法继续办理当前业务!");
 
         // 获取核心企业授信记录
         ScfCredit anCoreCredit = scfCreditService.findCredit(anCreditInfo.getCoreCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),
                 anCreditInfo.getCreditMode());
-        BTAssert.notNull(anCoreCredit, "无法获取核心企业授信额度信息");
+        String coreCustName = custAccountService.queryCustName(anCreditInfo.getCoreCustNo());
+        BTAssert.notNull(anCoreCredit, coreCustName + "未获得保理公司授信,当前业务需要占用");
 
         // 检查当前授信变动额度是否超过客户授信余额
         checkCreditBalance(anCustCredit.getCreditBalance(), anOccupyBalance,
