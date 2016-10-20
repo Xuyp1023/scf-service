@@ -124,6 +124,19 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         // 冻结订单
         orderService.forzenInfos(anRequest.getRequestNo(), null);
         
+        // 当融资流程启动时,冻结授信额度 add by Liusq 2016-10-20
+        ScfCreditInfo anCreditInfo = new ScfCreditInfo();
+        anCreditInfo.setBusinFlag(anRequest.getRequestType());
+        anCreditInfo.setBalance(anRequest.getApprovedBalance());
+        anCreditInfo.setBusinId(Long.valueOf(anRequest.getRequestNo()));
+        anCreditInfo.setCoreCustNo(anRequest.getCoreCustNo());
+        anCreditInfo.setCustNo(anRequest.getCustNo());
+        anCreditInfo.setFactorNo(anRequest.getFactorNo());
+        anCreditInfo.setCreditMode(anRequest.getCreditMode());
+        anCreditInfo.setRequestNo(anRequest.getRequestNo());
+        anCreditInfo.setDescription(anRequest.getDescription());
+        creditDetailService.saveFreezeCredit(anCreditInfo);
+        
         return anRequest;
     }
     
@@ -335,7 +348,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         ScfCreditInfo anCreditInfo = new ScfCreditInfo();
         anCreditInfo.setBusinFlag(request.getRequestType());
         anCreditInfo.setBalance(request.getApprovedBalance());
-        anCreditInfo.setBusinId(Long.parseLong(request.getRequestNo()));
+        anCreditInfo.setBusinId(anLoan.getId());
         anCreditInfo.setCoreCustNo(request.getCoreCustNo());
         anCreditInfo.setCustNo(request.getCustNo());
         anCreditInfo.setFactorNo(request.getFactorNo());

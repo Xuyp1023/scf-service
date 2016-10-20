@@ -749,11 +749,11 @@ public class ScfCredit implements BetterjrEntity {
         this.creditBalance = MathExtend.subtract(anCreditBalance, anOccupyBalance);
     }
 
-    public void releaseCreditBalance(BigDecimal anCreditUsed, BigDecimal anCreditBalance, BigDecimal anOccupyBalance) {
+    public void releaseCreditBalance(BigDecimal anCreditUsed, BigDecimal anCreditBalance, BigDecimal anReleaseBalance) {
         // 更新授信额度累计使用
-        this.creditUsed = MathExtend.subtract(anCreditUsed, anOccupyBalance);
+        this.creditUsed = MathExtend.subtract(anCreditUsed, anReleaseBalance);
         // 更新授信余额
-        this.creditBalance = MathExtend.add(anCreditBalance, anOccupyBalance);
+        this.creditBalance = MathExtend.add(anCreditBalance, anReleaseBalance);
     }
 
 }

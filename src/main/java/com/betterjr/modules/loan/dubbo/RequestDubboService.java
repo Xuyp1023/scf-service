@@ -23,6 +23,8 @@ import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.agreement.entity.ScfRequestNotice;
 import com.betterjr.modules.agreement.service.ScfAgreementService;
+import com.betterjr.modules.credit.entity.ScfCreditInfo;
+import com.betterjr.modules.credit.service.ScfCreditDetailService;
 import com.betterjr.modules.enquiry.service.ScfOfferService;
 import com.betterjr.modules.loan.IScfRequestService;
 import com.betterjr.modules.loan.entity.ScfLoan;
@@ -64,6 +66,8 @@ public class RequestDubboService implements IScfRequestService {
     private ScfAgreementService agreementService;
     @Autowired
     private ScfRequestSchemeService schemeService;
+    @Autowired
+    private ScfCreditDetailService  creditDetailService;
 
     @Reference(interfaceClass = IFlowService.class)
     private IFlowService flowService;
@@ -413,6 +417,19 @@ public class RequestDubboService implements IScfRequestService {
             offerService.saveUpdateTradeStatus(request.getOfferId(), "1");
             
             request.setTradeStatus(RequestTradeStatus.CLOSED.getCode());
+            
+            // 当融资流程终止时,对冻结的授信额度进行解冻 add by Liusq 2016-10-20
+            ScfCreditInfo anCreditInfo = new ScfCreditInfo();
+            anCreditInfo.setBusinFlag(request.getRequestType());
+            anCreditInfo.setBalance(request.getApprovedBalance());
+            anCreditInfo.setBusinId(Long.valueOf(request.getRequestNo()));
+            anCreditInfo.setCoreCustNo(request.getCoreCustNo());
+            anCreditInfo.setCustNo(request.getCustNo());
+            anCreditInfo.setFactorNo(request.getFactorNo());
+            anCreditInfo.setCreditMode(request.getCreditMode());
+            anCreditInfo.setRequestNo(request.getRequestNo());
+            anCreditInfo.setDescription(request.getDescription());
+            creditDetailService.saveUnfreezeCredit(anCreditInfo);
         }
 
         // 执行流程
