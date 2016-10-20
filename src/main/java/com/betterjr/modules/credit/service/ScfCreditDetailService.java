@@ -213,7 +213,7 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         if (balance.longValue() != 0) {
             if (balance.longValue() < 0) {// 冻结额度小于当前占用额度,需要额外占用多出来的额度
                 // 更新授信额度累计使用,授信余额
-                anCredit.occupyCreditBalance(anCredit.getCreditUsed(), anCredit.getCreditBalance(), balance);
+                anCredit.occupyCreditBalance(anCredit.getCreditUsed(), anCredit.getCreditBalance(), balance.abs());
 
                 // 数据存盘,回写授信余额信息
                 scfCreditService.updateByPrimaryKeySelective(anCredit);
@@ -227,9 +227,9 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
 
                 // 生成本次授信额度额外占用的记录
                 ScfCreditDetail extraCreditDetail = createCreditDetail(anCreditInfo, anCredit.getId(), CreditConstants.CREDIT_DIRECTION_EXPEND);
-                extraCreditDetail.setBalance(balance);
+                extraCreditDetail.setBalance(balance.abs());
                 extraCreditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_DONE);
-                extraCreditDetail.setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",追加占用:￥" + balance);
+                extraCreditDetail.setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",追加占用:￥" + balance.abs());
                 this.insert(extraCreditDetail);
             }
             if (balance.longValue() > 0) {// 冻结额度大于当前占用额度,需要释放多出来的额度
