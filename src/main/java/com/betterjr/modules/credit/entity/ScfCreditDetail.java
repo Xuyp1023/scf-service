@@ -291,7 +291,7 @@ public class ScfCreditDetail implements BetterjrEntity {
         return result;
     }
 
-    private void init() {
+    public void init() {
         this.id = SerialGenerator.getLongValue("ScfCreditDetail.id");
         this.occupyDate = BetterDateUtils.getNumDate();
         this.occupyTime = BetterDateUtils.getNumTime();
@@ -317,28 +317,6 @@ public class ScfCreditDetail implements BetterjrEntity {
         this.businStatus = CreditConstants.CREDIT_CHANGE_STATUS_DONE;// 状态(0:已完成;1:冻结中;)
         this.creditId = anCreditId;
         this.description = "额度调整";
-    }
-
-    public void initOccupyValue(ScfCreditInfo anCreditInfo, Long anCreditId) {
-        init();
-        initOccupyAndReleaseValue(anCreditInfo, anCreditId);
-        this.direction = CreditConstants.CREDIT_DIRECTION_EXPEND;// 方向：0-收;1-支;
-    }
-
-    public void initReleaseValue(ScfCreditInfo anCreditInfo, Long anCreditId) {
-        init();
-        initOccupyAndReleaseValue(anCreditInfo, anCreditId);
-        this.direction = CreditConstants.CREDIT_DIRECTION_INCOME;// 方向：0-收;1-支;
-    }
-
-    private void initOccupyAndReleaseValue(ScfCreditInfo anCreditInfo, Long anCreditId) {
-        this.businStatus = CreditConstants.CREDIT_CHANGE_STATUS_DONE;// 状态(0:已完成;1:冻结中;)
-        this.custNo = anCreditInfo.getCustNo();
-        this.balance = anCreditInfo.getBalance();
-        this.businFlag = anCreditInfo.getBusinFlag();
-        this.businId = anCreditInfo.getBusinId();
-        this.requestNo = anCreditInfo.getRequestNo();
-        this.creditId = anCreditId;
     }
 
 }

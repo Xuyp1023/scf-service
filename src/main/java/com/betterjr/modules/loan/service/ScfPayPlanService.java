@@ -475,7 +475,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         this.saveServicefee(anRecord, plan);
         
         //释放授信额度(释放还款本金的信息额度)
-        this.saveReleaseCredit(request, anRecord.getPrincipalBalance());
+        this.saveReleaseCredit(request, anRecord);
         
         // 结清
         if (false == MathExtend.compareToZero(plan.getSurplusPrincipalBalance())) {
@@ -500,8 +500,9 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         return createNewPlan(anRecord, plan);
     }
 
-    //释放授信额度
-    private void saveReleaseCredit(ScfRequest anRequest, BigDecimal anReleaseBalance){
+    //释放授信额度 
+    private void saveReleaseCredit(ScfRequest anRequest, ScfPayRecord anRecord){
+        BigDecimal anReleaseBalance = anRecord.getPrincipalBalance();
         if(false == MathExtend.compareToZero(anReleaseBalance)){
             return;
         }
@@ -509,7 +510,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         ScfCreditInfo anCreditInfo = new ScfCreditInfo();
         anCreditInfo.setBusinFlag(anRequest.getRequestType());
         anCreditInfo.setBalance(anReleaseBalance);
-        anCreditInfo.setBusinId(Long.parseLong(anRequest.getRequestNo()));
+        anCreditInfo.setBusinId(anRecord.getId());
         anCreditInfo.setCoreCustNo(anRequest.getCoreCustNo());
         anCreditInfo.setCustNo(anRequest.getCustNo());
         anCreditInfo.setFactorNo(anRequest.getFactorNo());
