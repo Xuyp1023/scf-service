@@ -537,7 +537,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         }else if(BetterStringUtils.equals(RequestType.BILL.getCode(), type)){
             List<ScfAcceptBill> list = (List)orderService.findInfoListByRequest(anRequest.getRequestNo(), RequestType.BILL.getCode());
             for (ScfAcceptBill bill : list) {
-                creditList = setInvoice(anRequest, bill.getInvoiceList(), bill.getBalance(), bill.getBtBillNo() ,agreement);
+                creditList = setInvoice(anRequest, bill.getInvoiceList(), bill.getBalance(), bill.getBillNo() ,agreement);
             }
         }else if(BetterStringUtils.equals(RequestType.RECEIVABLE.getCode(), type)){
             List<ScfReceivable> list = (List)orderService.findInfoListByRequest(anRequest.getRequestNo(), RequestType.RECEIVABLE.getCode());
