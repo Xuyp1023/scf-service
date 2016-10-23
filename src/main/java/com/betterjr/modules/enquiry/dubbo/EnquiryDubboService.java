@@ -59,9 +59,9 @@ public class EnquiryDubboService implements IScfEnquiryService {
         return AjaxObject.newOk(enquiryService.findEnquiryDetail(anId)).toJson();
     }
     
-    public String webFindSingleOrderEnquiryDetail(Long anId) {
-        logger.debug("查询询价详情,入参：anId"+ anId);
-        return AjaxObject.newOk(enquiryService.findSingleOrderEnquiryDetail(anId)).toJson();
+    public String webFindSingleOrderEnquiryDetail(String enquiryNo) {
+        logger.debug("查询询价详情,入参：enquiryNo"+ enquiryNo);
+        return AjaxObject.newOk(enquiryService.findSingleOrderEnquiryDetail(enquiryNo)).toJson();
     }
 
     public String webQueryOfferList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
@@ -70,9 +70,9 @@ public class EnquiryDubboService implements IScfEnquiryService {
         return AjaxObject.newOkWithPage("查询成功", offerService.queryOfferList(anMap, anFlag, anPageNum, anPageSize)).toJson();
     }
     
-    public String webQueryOfferByBill(String enquiryNo) {
-        logger.debug("查看有哪些公司报了价,入参："+ enquiryNo);
-        return AjaxObject.newOk("查询成功", offerService.queryOfferByBill(enquiryNo)).toJson();
+    public String webQueryOfferByEnquiryObject(String enquriyNo) {
+        logger.debug("查看有哪些公司报了价,入参："+ enquriyNo);
+        return AjaxObject.newOk("查询成功", offerService.queryOfferByEnquiryObject(enquriyNo)).toJson();
     }
 
     public String webAddOffer(Map<String, Object> anMap) {

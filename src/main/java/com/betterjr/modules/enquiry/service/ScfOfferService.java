@@ -129,13 +129,13 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
      * 根据意向企业分组查询报价
      * @return
      */
-    public List<ScfEnquiryObject> queryOfferByBill(String enquiryNo){
+    public List<ScfEnquiryObject> queryOfferByEnquiryObject(String enquriyNo){
         Map<String, Object> qyObjectMap = new HashMap<String, Object>();
-        qyObjectMap.put("enquiryNo", enquiryNo);
         
         List<ScfEnquiryObject> list = null;
         Map<String, Object> qyOfferMap = null;
-        ScfEnquiry enquiry = enquiryService.findEnquiryByNo(enquiryNo);
+        ScfEnquiry enquiry = enquiryService.findSingleOrderEnquiryDetail(enquriyNo);
+        qyObjectMap.put("enquiryNo", enquiry.getEnquiryNo());
                 
         if(BetterStringUtils.equals("2", enquiry.getEnquiryMethod())){
             //主动报价
@@ -148,7 +148,7 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
         
         for (ScfEnquiryObject object : list) {
             qyOfferMap = new HashMap<String, Object>();
-            qyOfferMap.put("enquiryNo", enquiryNo);
+            qyOfferMap.put("enquiryNo", object.getEnquiryNo());
             qyOfferMap.put("factorNo", object.getFactorNo());
             List<ScfOffer> offerList = this.findOfferList(qyOfferMap);
            

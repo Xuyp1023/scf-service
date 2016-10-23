@@ -339,7 +339,7 @@ public class ScfEnquiryObject implements BetterjrEntity {
     public void setFactorName(String factorName) {
         this.factorName = factorName;
     }
-
+    
     public void init() {
         this.id = SerialGenerator.getLongValue("ScfEnquiryObject.id");
         this.businStatus = "0";

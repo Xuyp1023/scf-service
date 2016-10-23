@@ -177,8 +177,8 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
      * @param anId
      * @return
      */
-    public ScfEnquiry findSingleOrderEnquiryDetail(Long anId) {
-        ScfEnquiry enquiry = this.selectByPrimaryKey(anId);
+    public ScfEnquiry findSingleOrderEnquiryDetail(String anEnquiryNo) {
+        ScfEnquiry enquiry = this.findEnquiryByNo(anEnquiryNo);
         this.fillOrder(enquiry, 2);
         this.fillBusinStatus(enquiry);
         return enquiry;
