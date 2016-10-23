@@ -17,6 +17,7 @@ import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -466,20 +467,13 @@ public class ScfInvoice implements BetterjrEntity {
         this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
     }
     
-    public void initModifyValue(ScfInvoice anModiInvoice) {
-        this.balance = anModiInvoice.balance;
-        this.businStatus = anModiInvoice.businStatus;
-        this.corpVocate = anModiInvoice.corpVocate;
-        this.description = anModiInvoice.description;
-        this.drawer = anModiInvoice.drawer;
-        this.invoiceCode = anModiInvoice.invoiceCode;
-        this.invoiceDate = anModiInvoice.invoiceDate;
-        this.invoiceNo = anModiInvoice.invoiceNo;
-        this.taxpayerNo = anModiInvoice.taxpayerNo;
-        
+    public void initModifyValue(CustOperatorInfo anOperator) {
         this.modiDate = BetterDateUtils.getNumDate();
-        this.modiOperId = UserUtils.getOperatorInfo().getId();
-        this.modiOperName = UserUtils.getOperatorInfo().getName();
+        if (null != anOperator) {
+            this.modiOperId = anOperator.getId();
+            this.modiOperName = anOperator.getName();
+            this.operOrg = anOperator.getOperOrg();
+        }
         this.modiTime = BetterDateUtils.getNumTime();
     }
 }

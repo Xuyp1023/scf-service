@@ -13,12 +13,14 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
+import com.betterjr.common.data.PlatformBaseRuleType;
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.MathExtend;
+import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.acceptbill.data.ScfClientDataParentFace;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.agreement.entity.CustAgreement;
@@ -1223,6 +1225,10 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         this.id = SerialGenerator.getLongValue("ScfAcceptBill.id");
         this.businStatus = "0";
         this.financeFlag = "0";
+        //数据来源：核心企业手工
+        if (UserUtils.findInnerRules().contains(PlatformBaseRuleType.CORE_USER)) {
+            this.dataSource = "01";
+        }
         this.regDate = BetterDateUtils.getNumDate();
         if (anOperInfo != null){
             this.operId = anOperInfo.getId();

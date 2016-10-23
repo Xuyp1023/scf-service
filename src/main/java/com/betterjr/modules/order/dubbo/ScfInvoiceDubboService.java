@@ -4,10 +4,8 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.betterjr.common.web.AjaxObject;
-import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.order.IScfInvoiceService;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfInvoiceItem;
@@ -23,14 +21,10 @@ public class ScfInvoiceDubboService implements IScfInvoiceService {
     @Autowired
     private ScfInvoiceItemService scfInvoiceItemService;
 
-    @Reference(interfaceClass = ICustFileService.class)
-    private ICustFileService custFileDubboService;
-
     @Override
     public String webAddInvoice(Map<String, Object> anMap, String anInvoiceItemIds, String anFileList) {
         ScfInvoice anInvoice = (ScfInvoice) RuleServiceDubboFilterInvoker.getInputObj();
         // 保存附件信息
-        anInvoice.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anInvoice.getBatchNo()));
         return AjaxObject.newOk("订单发票信息录入成功", scfInvoiceService.addInvoice(anInvoice, anInvoiceItemIds, anFileList)).toJson();
     }
 
@@ -44,8 +38,7 @@ public class ScfInvoiceDubboService implements IScfInvoiceService {
     @Override
     public String webSaveModifyInvoice(Map<String, Object> anMap, String anInvoiceItemIds, String anFileList) {
         ScfInvoice anInvoice = RuleServiceDubboFilterInvoker.getInputObj();
-        anInvoice.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anInvoice.getBatchNo()));
-        return AjaxObject.newOk("订单发票信息编辑成功", scfInvoiceService.saveModifyInvoice(anInvoice, anInvoiceItemIds)).toJson();
+        return AjaxObject.newOk("订单发票信息编辑成功", scfInvoiceService.saveModifyInvoice(anInvoice,anFileList, anInvoiceItemIds)).toJson();
     }
     
     @Override
@@ -56,7 +49,7 @@ public class ScfInvoiceDubboService implements IScfInvoiceService {
     
     @Override
     public String webSaveDeleteInvoice(Long anId) {
-        return AjaxObject.newOk("删除发票信息成功", scfInvoiceItemService.saveDeleteInvoiceItem(anId)).toJson();
+        return AjaxObject.newOk("删除发票信息成功", scfInvoiceService.saveDeleteInvoice(anId)).toJson();
     }
 
 }

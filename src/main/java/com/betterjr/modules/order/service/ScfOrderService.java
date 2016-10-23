@@ -23,6 +23,7 @@ import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.agreement.service.ScfCustAgreementService;
+import com.betterjr.modules.customer.ICustMechBaseService;
 import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.loan.helper.RequestType;
@@ -57,6 +58,9 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
     
     @Reference(interfaceClass = ICustFileService.class)
     private ICustFileService custFileDubboService;
+    
+    @Reference(interfaceClass = ICustMechBaseService.class)
+    private ICustMechBaseService baseService;
 
     /**
      * 订单信息分页查询
@@ -64,7 +68,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
      */
     public Page<ScfOrder> queryOrder(Map<String, Object> anMap,String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize) {
         // 操作员只能查询本机构数据
-        anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+//        anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
         if(BetterStringUtils.equals(anIsOnlyNormal, "1")) {
             anMap.put("businStatus", "0");
         }
@@ -221,7 +225,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         ScfOrder anOrder = this.selectByPrimaryKey(anId);
         BTAssert.notNull(anOrder, "无法获取订单信息");
         // 检查用户是否有权限编辑
-        checkOperator(anOrder.getOperOrg(), "当前操作员不能修改该订单");
+//        checkOperator(anOrder.getOperOrg(), "当前操作员不能修改该订单");
         // 检查应收账款状态 0:可用 1:过期 2:冻结
         checkStatus(anOrder.getBusinStatus(), "1", true, "当前订单已过期,不允许被编辑");
         checkStatus(anOrder.getBusinStatus(), "2", true, "当前订单已冻结,不允许被编辑");
@@ -229,9 +233,9 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         anModiOrder.setId(anOrder.getId());
         anModiOrder.initModifyValue(UserUtils.getOperatorInfo());
         //保存附件信息
-        anModiOrder.setBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anOrder.getBatchNo()));
+        anModiOrder.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anOtherFileList, anOrder.getBatchNo()));
         //保存其他文件信息
-        anModiOrder.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anOrder.getOtherBatchNo()));
+        anModiOrder.setOtherBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anFileList, anOrder.getOtherBatchNo()));
         // 数据存盘
         this.updateByPrimaryKeySelective(anModiOrder);
         return anModiOrder;
@@ -243,6 +247,8 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
     public ScfOrder addOrder(ScfOrder anOrder, String anFileList, String anOtherFileList) {
         logger.info("Begin to add order");
         anOrder.initAddValue(UserUtils.getOperatorInfo());
+        //操作机构设置为供应商
+        anOrder.setOperOrg(baseService.findBaseInfo(anOrder.getCustNo()).getOperOrg());
         //保存附件信息
         anOrder.setBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anOrder.getBatchNo()));
         //保存其他文件信息
