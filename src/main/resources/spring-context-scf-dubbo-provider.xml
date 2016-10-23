@@ -29,6 +29,9 @@
 		com.betterjr.modules.cert.service;
         com.betterjr.modules.discount;
         com.betterjr.modules.push;
+        com.betterjr.modules.wechat.service;
+        com.betterjr.modules.operator.service;
+        com.betterjr.modules.role.service;
 		com.betterjr.modules.account.service;
 		com.betterjr.modules.rule.service;
 		com.betterjr.modules.rule.validator;
