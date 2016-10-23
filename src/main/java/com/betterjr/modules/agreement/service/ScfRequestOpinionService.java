@@ -42,7 +42,7 @@ public class ScfRequestOpinionService extends BaseService<ScfRequestOpinionMappe
      *            核心企业确认书信息
      * @return
      */
-    public boolean updateOpinionInfo(ScfRequestOpinion anOpinion, String anSupplier) {
+    public boolean updateOpinionInfo(ScfRequestOpinion anOpinion, String anSupplier,BigDecimal anBalance) {
         anOpinion.setAgreeName(anSupplier + "买方确认意见");
         ScfRequestOpinion tmpOpinion = this.selectByPrimaryKey(anOpinion.getRequestNo());
         ScfRequestNotice notice = scfRequestNoticeService.selectByPrimaryKey(anOpinion.getRequestNo());
@@ -69,7 +69,7 @@ public class ScfRequestOpinionService extends BaseService<ScfRequestOpinionMappe
 
         if (result) {
             ScfElecAgreement elecAgreement = ScfElecAgreement.createByOpinion(anOpinion.getAgreeName(), anOpinion.getConfirmNo(),
-                    BigDecimal.ZERO);
+                    anBalance);
             elecAgreement.setSupplierNo(anOpinion.getSupplierNo());
             elecAgreement.setRequestNo(anOpinion.getRequestNo());
             elecAgreement.setBuyerNo(anOpinion.getBuyerNo());

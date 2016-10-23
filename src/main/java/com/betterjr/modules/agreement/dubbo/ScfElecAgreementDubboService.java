@@ -208,6 +208,15 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
     }
     
     /***
+     * 查找详情
+     * @param anAppNo
+     * @return
+     */
+    public String webFindElecAgreementInfo(String anAppNo){
+        return AjaxObject.newOk("查找详情",scfElecAgreementService.findElecAgreementInfo(anAppNo)).toJson();
+    }
+    
+    /***
      * 添加保理合同
      * @param anElecAgreement
      * @param anFileList
@@ -250,7 +259,7 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
      * @return
      */
     public String webFindFactorAgreement(Long anCustNo,Long anFactorNo,String anAgreeType){
-        return AjaxObject.newOk("查询合同列表",this.scfElecAgreementService.findFactorAgreement(anCustNo, anFactorNo, anAgreeType)).toJson();
+        return AjaxObject.newOk("查询保理合同列表",this.scfElecAgreementService.findFactorAgreement(anCustNo, anFactorNo, anAgreeType)).toJson();
     }
     
     /***
