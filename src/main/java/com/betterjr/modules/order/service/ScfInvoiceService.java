@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
@@ -16,6 +17,7 @@ import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.order.dao.ScfInvoiceMapper;
 import com.betterjr.modules.order.data.ScfInvoiceAndAccess;
 import com.betterjr.modules.order.entity.ScfInvoice;
@@ -28,6 +30,9 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
     @Autowired
     private ScfInvoiceItemService invoiceItemService;
     
+    @Reference(interfaceClass = ICustFileService.class)
+    private ICustFileService custFileDubboService;
+    
     /**
      * 订单发票信息录入
      */
@@ -37,6 +42,7 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
             logger.error("发票附件信息不能为空");
             throw new BytterTradeException(40001, "发票附件信息不能为空");
         }
+        anInvoice.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anInvoice.getBatchNo()));
         anInvoice.initAddValue();
         // 发票初始状态为正常
         anInvoice.setBusinStatus("1");
@@ -66,24 +72,28 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
     /**
      * 发票信息编辑修改
      */
-    public ScfInvoice saveModifyInvoice(ScfInvoice anModiInvoice, String anInvoiceItemIds) {
+    public ScfInvoice saveModifyInvoice(ScfInvoice anModiInvoice,String anFileList, String anInvoiceItemIds) {
         //保存发票信息
         ScfInvoice anInvoice = this.selectByPrimaryKey(anModiInvoice.getId());
         BTAssert.notNull(anInvoice, "无法获取发票信息");
-        anInvoice.initModifyValue(anModiInvoice);
-        this.updateByPrimaryKeySelective(anInvoice);
+        anModiInvoice.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anFileList, anInvoice.getBatchNo()));
+        anModiInvoice.setId(anInvoice.getId());
+        anModiInvoice.initModifyValue(UserUtils.getOperatorInfo());
+        this.updateByPrimaryKeySelective(anModiInvoice);
         
         //先查询出原有的发票详情
         List<ScfInvoiceItem> oldInvoiceItemList = invoiceItemService.findItemsByInvoiceId(anModiInvoice.getId());
         //保存现有的发票详情
-        String[] invoiceIds = anInvoiceItemIds.split(",");
-        invoiceItemService.saveInvoiceItemRelation(anModiInvoice.getId(), invoiceIds);
-        //删除取消的发票详情
-        List<String> newInvoiceItemIdList = Arrays.asList(invoiceIds);
-        for(ScfInvoiceItem anInvoiceItem : oldInvoiceItemList) {
-            if(!newInvoiceItemIdList.contains(anInvoiceItem.getId().toString())) {
-                invoiceItemService.saveDeleteInvoiceItem(anInvoiceItem.getId());
-            }
+        if (!BetterStringUtils.isBlank(anInvoiceItemIds)) {
+            String[] invoiceIds = anInvoiceItemIds.split(",");
+            invoiceItemService.saveInvoiceItemRelation(anModiInvoice.getId(), invoiceIds);
+            //删除取消的发票详情
+            List<String> newInvoiceItemIdList = Arrays.asList(invoiceIds);
+            for (ScfInvoiceItem anInvoiceItem : oldInvoiceItemList) {
+                if (!newInvoiceItemIdList.contains(anInvoiceItem.getId().toString())) {
+                    invoiceItemService.saveDeleteInvoiceItem(anInvoiceItem.getId());
+                }
+            } 
         }
         return anInvoice;
     }

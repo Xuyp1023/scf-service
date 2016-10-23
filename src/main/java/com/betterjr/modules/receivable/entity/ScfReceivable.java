@@ -59,7 +59,6 @@ public class ScfReceivable implements BetterjrEntity {
      */
     @Column(name = "L_CORE_CUSTNO",  columnDefinition="INTEGER" )
     @MetaData( value="核心企业编号", comments = "核心企业编号")
-    @JsonIgnore
     private Long coreCustNo;
 
     /**
@@ -187,6 +186,21 @@ public class ScfReceivable implements BetterjrEntity {
     @Column(name = "N_OTHERBATCHNO",  columnDefinition="INTEGER" )
     @MetaData( value="其他资料", comments = "其他资料，对应fileinfo中的ID")
     private Long otherBatchNo;
+
+    /**
+     * 备注
+     */
+    @Column(name = "C_ADUIT",  columnDefinition="VARCHAR" )
+    @MetaData( value="是否审核，0未审核，1已审核", comments = "是否审核，0未审核，1已审核")
+    private String aduit;
+    
+    public String getAduit() {
+        return this.aduit;
+    }
+
+    public void setAduit(String anAduit) {
+        this.aduit = anAduit;
+    }
 
     /**
      * 备注
@@ -431,6 +445,7 @@ public class ScfReceivable implements BetterjrEntity {
         sb.append(", batchNo=").append(batchNo);
         sb.append(", otherBatchNo=").append(otherBatchNo);
         sb.append(", description=").append(description);
+        sb.append(", aduit=").append(aduit);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -469,6 +484,7 @@ public class ScfReceivable implements BetterjrEntity {
             && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
             && (this.getBatchNo() == null ? other.getBatchNo() == null : this.getBatchNo().equals(other.getBatchNo()))
             && (this.getOtherBatchNo() == null ? other.getOtherBatchNo() == null : this.getOtherBatchNo().equals(other.getOtherBatchNo()))
+            && (this.getAduit() == null ? other.getAduit() == null : this.getAduit().equals(other.getAduit()))
             && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()));
     }
 
@@ -498,6 +514,7 @@ public class ScfReceivable implements BetterjrEntity {
         result = prime * result + ((getBatchNo() == null) ? 0 : getBatchNo().hashCode());
         result = prime * result + ((getOtherBatchNo() == null) ? 0 : getOtherBatchNo().hashCode());
         result = prime * result + ((getDescription() == null) ? 0 : getDescription().hashCode());
+        result = prime * result + ((getAduit() == null) ? 0 : getAduit().hashCode());
         return result;
     }
 
@@ -548,6 +565,7 @@ public class ScfReceivable implements BetterjrEntity {
     public void initAddValue(CustOperatorInfo anOperatorInfo) {
         this.id = SerialGenerator.getLongValue("ScfReceivable.id");
         this.businStatus = "0";
+        this.aduit = "0";
         if (null != anOperatorInfo) {
             this.modiOperId = anOperatorInfo.getId();
             this.modiOperName = anOperatorInfo.getName();

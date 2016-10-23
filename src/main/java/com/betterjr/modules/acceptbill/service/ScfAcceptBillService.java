@@ -25,12 +25,10 @@ import com.betterjr.modules.acceptbill.dao.ScfAcceptBillMapper;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.agreement.entity.CustAgreement;
-
+import com.betterjr.modules.agreement.service.ScfCustAgreementService;
+import com.betterjr.modules.customer.ICustMechBaseService;
 import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.document.entity.CustFileItem;
-
-import com.betterjr.modules.agreement.service.ScfCustAgreementService;
-
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.helper.RequestType;
 import com.betterjr.modules.loan.service.ScfRequestService;
@@ -63,6 +61,9 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
 
     @Reference(interfaceClass = ICustFileService.class)
     private ICustFileService custFileDubboService;
+    
+    @Reference(interfaceClass = ICustMechBaseService.class)
+    private ICustMechBaseService baseService;
 
     @Autowired
     private ScfCustAgreementService custAgreementSerive;
@@ -119,7 +120,7 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
             anMap.remove("financeFlag");
         }
         // 操作员只能查询本机构数据
-        anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+//        anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
         // 构造custNo查询条件
         anMap.put("holderNo", anMap.get("custNo"));
         anMap.remove("custNo");
@@ -150,8 +151,10 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     public ScfAcceptBill addAcceptBill(ScfAcceptBill anAcceptBill, String anFileList, String anOtherFileList) {
         anAcceptBill.initAddValue(UserUtils.getOperatorInfo(), anAcceptBill);
         // 补充供应商客户号和持票人信息
-        anAcceptBill.setHolder(anAcceptBill.getBuyer());
-        anAcceptBill.setHolderNo(anAcceptBill.getBuyerNo());
+        anAcceptBill.setHolder(anAcceptBill.getSupplier());
+        anAcceptBill.setHolderNo(anAcceptBill.getSupplierNo());
+        //操作机构设置为供应商
+        anAcceptBill.setOperOrg(baseService.findBaseInfo(anAcceptBill.getSupplierNo()).getOperOrg());
         //保存附件信息
         anAcceptBill.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anAcceptBill.getBatchNo()));
         anAcceptBill.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anAcceptBill.getOtherBatchNo()));
@@ -236,7 +239,7 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     public ScfAcceptBill saveAduitAcceptBill(Long anId) {
         ScfAcceptBill anAcceptBill = this.selectByPrimaryKey(anId);
         BTAssert.notNull(anAcceptBill, "无法获得汇票信息");
-        BTAssert.isTrue(anAcceptBill.getAduit().equals("1"), "所选汇票已审核");
+        BTAssert.isTrue(anAcceptBill.getAduit().equals("0"), "所选汇票已审核");
         anAcceptBill.setAduit("1");
         this.updateByPrimaryKey(anAcceptBill);
         return anAcceptBill;
@@ -252,7 +255,7 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         BTAssert.notNull(anAcceptBill, "无法获得汇票信息");
 
         // 检查当前操作员是否可以修改该票据信息
-        checkOperator(anAcceptBill.getOperOrg(), "当前操作员不能修改该票据");
+//        checkOperator(anAcceptBill.getOperOrg(), "当前操作员不能修改该票据");
 
         // 检查状态,仅未处理和未融资状态允许修改汇票信息
         checkStatus(anAcceptBill.getBusinStatus(), "2", true, "当前票据已融资,不允许修改");
@@ -265,8 +268,8 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         anModiAcceptBill.setBusinStatus("1");
         // 数据存盘
         //保存附件信息
-        anModiAcceptBill.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anAcceptBill.getBatchNo()));
-        anModiAcceptBill.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anAcceptBill.getOtherBatchNo()));
+        anModiAcceptBill.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anFileList, anAcceptBill.getBatchNo()));
+        anModiAcceptBill.setOtherBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anOtherFileList, anAcceptBill.getOtherBatchNo()));
         this.updateByPrimaryKeySelective(anModiAcceptBill);
         return anModiAcceptBill;
     }

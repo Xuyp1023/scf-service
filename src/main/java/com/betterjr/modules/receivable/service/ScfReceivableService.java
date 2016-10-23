@@ -20,6 +20,7 @@ import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.agreement.entity.CustAgreement;
+import com.betterjr.modules.customer.ICustMechBaseService;
 import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.loan.helper.RequestType;
 import com.betterjr.modules.order.entity.ScfInvoice;
@@ -44,6 +45,9 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
     @Reference(interfaceClass = ICustFileService.class)
     private ICustFileService custFileDubboService;
     
+    @Reference(interfaceClass = ICustMechBaseService.class)
+    private ICustMechBaseService baseService;
+    
     /**
      * 应收账款编辑
      */
@@ -53,7 +57,7 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
         ScfReceivable anReceivable = this.selectByPrimaryKey(anId);
         BTAssert.notNull(anReceivable, "无法获取原应收账款信息");
         //检查用户是否有权限编辑
-        checkOperator(anReceivable.getOperOrg(), "当前操作员不能修改该应收账款");
+//        checkOperator(anReceivable.getOperOrg(), "当前操作员不能修改该应收账款");
         //检查应收账款状态 0:可用 1:过期 2:冻结
         checkStatus(anReceivable.getBusinStatus(), "1", true, "当前应收账款已过期,不允许被编辑");
         checkStatus(anReceivable.getBusinStatus(), "2", true, "当前应收账款已冻结,不允许被编辑");
@@ -61,8 +65,8 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
         anMoidReceivable.setId(anId);
         anMoidReceivable.initModifyValue(UserUtils.getOperatorInfo());
         //保存附件信息
-        anMoidReceivable.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anReceivable.getBatchNo()));
-        anMoidReceivable.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anReceivable.getOtherBatchNo()));
+        anMoidReceivable.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anFileList, anReceivable.getBatchNo()));
+        anMoidReceivable.setOtherBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anOtherFileList, anReceivable.getOtherBatchNo()));
         //数据存盘
         this.updateByPrimaryKeySelective(anMoidReceivable);
         return anMoidReceivable;
@@ -75,13 +79,15 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
      */
     public Page<ScfReceivable> queryReceivable(Map<String, Object> anMap, String anIsOnlyNormal,  String anFlag, int anPageNum, int anPageSize) {
         //操作员只能查询本机构数据
-        anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+//        anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
         if(BetterStringUtils.equals(anIsOnlyNormal, "1")) {
             anMap.put("businStatus", "0");
+            // 已审核
+            anMap.put("aduit", "1");
         }
         //应收账款模糊查询
         anMap = Collections3.fuzzyMap(anMap, new String[]{"receivableNo"}); 
-        Page<ScfReceivable> anReceivableList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "businStatus, receivableNo");
+        Page<ScfReceivable> anReceivableList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "aduit,businStatus, receivableNo");
         
         //补全关联信息
         for(ScfReceivable anReceivable : anReceivableList) {
@@ -263,11 +269,25 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
      */
     public ScfReceivable addReceivable(ScfReceivable anReceivable, String anFileList, String anOtherFileList) {
         anReceivable.initAddValue(UserUtils.getOperatorInfo());
+        //操作机构设置为供应商
+        anReceivable.setOperOrg(baseService.findBaseInfo(anReceivable.getCustNo()).getOperOrg());
         //保存附件信息
         anReceivable.setBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anReceivable.getBatchNo()));
         //保存其他文件信息
         anReceivable.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anReceivable.getOtherBatchNo()));
         this.insert(anReceivable);
+        return anReceivable;
+    }
+    
+    /**
+     * 审核应收信息
+     */
+    public ScfReceivable saveAduitReceivable(Long anId) {
+        ScfReceivable anReceivable = this.selectByPrimaryKey(anId);
+        BTAssert.notNull(anReceivable, "无法获得汇票信息");
+        BTAssert.isTrue(anReceivable.getAduit().equals("0"), "所选汇票已审核");
+        anReceivable.setAduit("1");
+        this.updateByPrimaryKey(anReceivable);
         return anReceivable;
     }
 }
