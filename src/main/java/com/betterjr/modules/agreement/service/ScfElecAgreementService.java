@@ -17,6 +17,7 @@ import com.betterjr.common.data.SimpleDataEntity;
 import com.betterjr.common.data.WebServiceErrorCode;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.exception.BytterWebServiceException;
+import com.betterjr.common.mapper.BeanMapper;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
@@ -27,9 +28,7 @@ import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.agreement.dao.ScfElecAgreementMapper;
-import com.betterjr.modules.agreement.data.ScfElecAgreeStubInfo;
 import com.betterjr.modules.agreement.data.ScfElecAgreementInfo;
-import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.document.entity.CustFileItem;
@@ -95,9 +94,9 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         }
         termMap.put("agreeType", Arrays.asList("1","2","0"));
         List<Long> custNoList = UserUtils.findCustNoList();
-//        if(BetterStringUtils.isNotBlank((String)anParam.get("custNo"))){
-            termMap.put("supplierNo", (String)anParam.get("custNo"));
-//        }
+        if(anParam.get("custNo")!=null){
+            termMap.put("supplierNo", anParam.get("custNo"));
+        }
         if (logger.isInfoEnabled()){
             logger.info("this is findScfElecAgreementList params " + termMap);
         }
@@ -105,18 +104,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
                 "1".equals(anParam.get("flag")));
         Set<Long> custNoSet = new HashSet(custNoList);
         for (ScfElecAgreementInfo elecAgree : elecAgreeList) {
-            elecAgree.putStubInfos(scfElecAgreeStubService.findSignerList(elecAgree.getAppNo(),custAccoService), custNoSet);
-            elecAgree.setBuyer(custAccoService.queryCustName(elecAgree.getBuyerNo()));
-            elecAgree.setFactorName(DictUtils.getDictLabel("ScfAgencyGroup", elecAgree.getFactorNo()));
-            elecAgree.setProductName(getProductNameByRequestNo(elecAgree.getRequestNo()));
-            // 加入票据属性
-            ScfAcceptBill bill=getBillInfoByRequestNo(elecAgree.getRequestNo());
-            if(bill!=null){
-                elecAgree.setBillMode(bill.getBillMode());
-                elecAgree.setBillNo(bill.getBillNo());
-                elecAgree.setInvoiceDate(bill.getInvoiceDate());
-                elecAgree.setEndDate(bill.getEndDate());
-            }
+            initAgreemtnBill(elecAgree, custNoSet);
         }
         logger.info("this is findScfElecAgreementList result count :" + elecAgreeList.size());
         return elecAgreeList;
@@ -168,18 +156,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         List<ScfElecAgreementInfo> elecAgreeList=this.selectByClassProperty(ScfElecAgreementInfo.class, workCondition);
         Set<Long> custNoSet = new HashSet(custNoList);
         for (ScfElecAgreementInfo elecAgree : elecAgreeList) {
-            elecAgree.putStubInfos(scfElecAgreeStubService.findSignerList(elecAgree.getAppNo(),custAccoService), custNoSet);
-            elecAgree.setBuyer(custAccoService.queryCustName(elecAgree.getBuyerNo()));
-            elecAgree.setFactorName(DictUtils.getDictLabel("ScfAgencyGroup", elecAgree.getFactorNo()));
-            elecAgree.setProductName(getProductNameByRequestNo(elecAgree.getRequestNo()));
-            // 加入票据属性
-            ScfAcceptBill bill=getBillInfoByRequestNo(anRequestNo);
-            if(bill!=null){
-                elecAgree.setBillMode(bill.getBillMode());
-                elecAgree.setBillNo(bill.getBillNo());
-                elecAgree.setInvoiceDate(bill.getInvoiceDate());
-                elecAgree.setEndDate(bill.getEndDate());
-            }
+            initAgreemtnBill(elecAgree,custNoSet);
         }
         return elecAgreeList;
     }
@@ -502,12 +479,33 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
      */
     public ScfElecAgreement findOneElecAgreement(String anAppNo) {
         if (BetterStringUtils.isNotBlank(anAppNo)) {
-
             return this.selectByPrimaryKey(anAppNo);
         }
         else {
 
             return null;
+        }
+    }
+    
+    /***
+     * 初始合同票据属性的参数
+     * @param elecAgree
+     * @param custNoSet
+     * @param anRequestNo
+     * @return
+     */
+    public void initAgreemtnBill(ScfElecAgreementInfo elecAgree,Set<Long> custNoSet){
+        elecAgree.putStubInfos(scfElecAgreeStubService.findSignerList(elecAgree.getAppNo(),custAccoService), custNoSet);
+        elecAgree.setBuyer(custAccoService.queryCustName(elecAgree.getBuyerNo()));
+        elecAgree.setFactorName(DictUtils.getDictLabel("ScfAgencyGroup", elecAgree.getFactorNo()));
+        elecAgree.setProductName(getProductNameByRequestNo(elecAgree.getRequestNo()));
+        // 加入票据属性
+        ScfAcceptBill bill=getBillInfoByRequestNo(elecAgree.getRequestNo());
+        if(bill!=null){
+            elecAgree.setBillMode(bill.getBillMode());
+            elecAgree.setBillNo(bill.getBillNo());
+            elecAgree.setInvoiceDate(bill.getInvoiceDate());
+            elecAgree.setEndDate(bill.getEndDate());
         }
     }
     
@@ -631,5 +629,20 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         }else{
             return "失败";
         }
+    }
+    
+    /***
+     * 查找详情
+     * @param anAppNo
+     * @return
+     */
+    public ScfElecAgreementInfo findElecAgreementInfo(String anAppNo){
+        List<Long> custNoList = UserUtils.findCustNoList();
+        Set<Long> custNoSet = new HashSet(custNoList);
+        ScfElecAgreementInfo elecAgree=new ScfElecAgreementInfo();
+        BeanMapper.copy(this.selectByPrimaryKey(anAppNo),elecAgree);
+        initAgreemtnBill(elecAgree, custNoSet);
+        System.out.println("elecAgree:"+elecAgree);
+        return elecAgree;
     }
 }

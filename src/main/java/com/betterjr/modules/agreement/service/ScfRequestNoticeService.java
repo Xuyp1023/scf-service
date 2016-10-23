@@ -41,7 +41,7 @@ public class ScfRequestNoticeService extends BaseService<ScfRequestNoticeMapper,
      * @param anRequest
      * @return
      */
-    public String updateTransNotice(ScfRequestNotice anRequest, String anSuppiler) {
+    public String updateTransNotice(ScfRequestNotice anRequest, String anSuppiler,BigDecimal anBalance) {
         ScfRequestNotice tmpNotice = this.selectByPrimaryKey(anRequest.getRequestNo());
         boolean result = true;
         if (tmpNotice == null) {
@@ -61,7 +61,7 @@ public class ScfRequestNoticeService extends BaseService<ScfRequestNoticeMapper,
         // 表示需要更新电子合同签署信息
         if (result) {
             ScfElecAgreement elecAgreement = ScfElecAgreement.createByNotice(anRequest.getAgreeName(), anRequest.getNoticeNo(),
-                    BigDecimal.ZERO);
+                    anBalance);
             elecAgreement.setSupplierNo(anRequest.getSupplierNo());
             elecAgreement.setRequestNo(anRequest.getRequestNo());
             elecAgreement.setBuyerNo(anRequest.getBuyerNo());

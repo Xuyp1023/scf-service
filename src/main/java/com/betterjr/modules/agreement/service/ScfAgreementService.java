@@ -124,7 +124,7 @@ public class ScfAgreementService {
         BTAssert.notNull(anNoticeRequest.getBankAccount(), "银行账户不能为空");
         ScfRequest request = requestService.findRequestDetail(anNoticeRequest.getRequestNo());
         anNoticeRequest.fillInfo(request);
-        return requestNoticeService.updateTransNotice(anNoticeRequest,request.getCustName());
+        return requestNoticeService.updateTransNotice(anNoticeRequest,request.getCustName(),request.getApprovedBalance());
     }
     
     /***
@@ -136,7 +136,7 @@ public class ScfAgreementService {
         logger.info("意见确认书："+anOpinion);
         ScfRequest request = requestService.findRequestDetail(anOpinion.getRequestNo());
         anOpinion.fillInfo(request);
-        return requestOpinionService.updateOpinionInfo(anOpinion,request.getCustName());
+        return requestOpinionService.updateOpinionInfo(anOpinion,request.getCustName(),request.getApprovedBalance());
     }
 
     /***
@@ -166,7 +166,7 @@ public class ScfAgreementService {
         ScfRequest request = requestService.findRequestDetail(protacal.getRequestNo());
         protacal.initProtacal();
         BTAssert.notNull(request, "三方协议申请单不存在");
-        return requestProtacalService.updateProtacalInfo(protacal);
+        return requestProtacalService.updateProtacalInfo(protacal,request.getApprovedBalance());
     }
     
     public CustFileItem findPdfFileInfo(String appNo){

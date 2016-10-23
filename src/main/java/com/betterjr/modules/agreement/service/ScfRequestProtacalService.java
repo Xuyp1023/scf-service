@@ -27,7 +27,7 @@ public class ScfRequestProtacalService extends BaseService<ScfRequestProtacalMap
      * @param protacal
      * @return
      */
-    public boolean updateProtacalInfo(ScfRequestProtacal protacal){
+    public boolean updateProtacalInfo(ScfRequestProtacal protacal,BigDecimal anBalance){
         protacal.setAgreeName("保兑仓业务三方合作协议");
         ScfRequestProtacal tmpProtacal = this.selectByPrimaryKey(protacal.getRequestNo());
         if(tmpProtacal==null){
@@ -37,7 +37,7 @@ public class ScfRequestProtacalService extends BaseService<ScfRequestProtacalMap
         }else{
             throw new BytterTradeException("此申请单协议已签署");
         }
-        ScfElecAgreement elecAgreement = ScfElecAgreement.createByProtacal(protacal.getAgreeName(), protacal.getProtocalNo(),BigDecimal.ZERO);
+        ScfElecAgreement elecAgreement = ScfElecAgreement.createByProtacal(protacal.getAgreeName(), protacal.getProtocalNo(),anBalance);
         elecAgreement.setRequestNo(protacal.getRequestNo());
         elecAgreementService.addElecAgreementInfo(elecAgreement);
         elecAgreement.setSupplierNo(protacal.getThreeNo());
