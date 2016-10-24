@@ -194,7 +194,14 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
         Map<String, Object> anPropValue = new HashMap<String, Object>();
         anPropValue.put("enquiryNo", anEnquiryNo);
         List<ScfEnquiry> list = this.selectByClassProperty(ScfEnquiry.class, anPropValue);
-        return Collections3.getFirst(list);
+        ScfEnquiry enquiry = Collections3.getFirst(list);
+        if(null != enquiry){
+            enquiry.setCustName(custAccountService.queryCustName(enquiry.getCustNo()));
+            if(false == BetterStringUtils.isBlank(enquiry.getOrders())){
+                enquiry.setOrder(billService.findAcceptBill(Long.parseLong(enquiry.getOrders())));
+            }
+        }
+        return enquiry;
     }
 
     /**

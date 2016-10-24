@@ -44,6 +44,10 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
             anOffer.setCustNo(enquiry.getCustNo());
         }
         
+        //保存报价
+        anOffer.init();
+        this.insert(anOffer);
+        
         //将原有的报价改为历史
         this.saveModifyToHistory(anOffer);
         enquiryService.saveUpdateOfferCount(anOffer.getEnquiryNo(), 1);
@@ -51,11 +55,10 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
         
         //修改询价意向企业关系表中的状 为 已报价
         ScfEnquiryObject object = scfEnquiryObjectService.findByEnquiryNoAndObject(anOffer.getEnquiryNo(), anOffer.getFactorNo());
+        object.setOfferId(anOffer.getId());
         object.setBusinStatus("1");
         scfEnquiryObjectService.saveModify(object);
         
-        anOffer.init();
-        this.insert(anOffer);
         return anOffer;
     }
 
@@ -120,6 +123,30 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
        for (ScfOffer offer : offerList) {
            offer.setFactorName(custAccountService.queryCustName(offer.getFactorNo()));
            offer.setCustName(custAccountService.queryCustName(offer.getCustNo()));
+           offer.setEnquiry(enquiryService.findEnquiryByNo(offer.getEnquiryNo()));
+       }
+       return offerList;
+    }
+    
+    /**
+     * 查询报价列表
+     * @param anMap
+     * @param anFlag
+     * @param anPageNum
+     * @param anPageSize
+     * @return
+     */
+    public List<ScfOffer> searchOfferList(Map<String, Object> anMap) {
+       if(anMap.get("businStatus") == null || BetterStringUtils.isEmpty(anMap.get("businStatus").toString())){
+           anMap.put("businStatus", new String[]{"1", "2"});
+       }
+        
+       List<ScfOffer> offerList = this.selectByClassProperty(ScfOffer.class, anMap);
+       //设置保理公司名称
+       for (ScfOffer offer : offerList) {
+           offer.setFactorName(custAccountService.queryCustName(offer.getFactorNo()));
+           offer.setCustName(custAccountService.queryCustName(offer.getCustNo()));
+           offer.setCoreCustName(custAccountService.queryCustName(offer.getCoreCustNo()));
            offer.setEnquiry(enquiryService.findEnquiryByNo(offer.getEnquiryNo()));
        }
        return offerList;

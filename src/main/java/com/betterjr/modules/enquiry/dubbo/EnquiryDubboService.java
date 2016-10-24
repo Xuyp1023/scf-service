@@ -70,11 +70,22 @@ public class EnquiryDubboService implements IScfEnquiryService {
         return AjaxObject.newOkWithPage("查询成功", offerService.queryOfferList(anMap, anFlag, anPageNum, anPageSize)).toJson();
     }
     
+    public String webSearchOfferList(Map<String, Object> anMap) {
+        anMap = (Map) RuleServiceDubboFilterInvoker.getInputObj();
+        logger.debug("分页查询报价列表,入参："+ anMap);
+        return AjaxObject.newOk("查询成功", offerService.searchOfferList(anMap)).toJson();
+    }
+    
     public String webQueryOfferByEnquiryObject(String enquriyNo) {
         logger.debug("查看有哪些公司报了价,入参："+ enquriyNo);
         return AjaxObject.newOk("查询成功", offerService.queryOfferByEnquiryObject(enquriyNo)).toJson();
     }
 
+    public String webQueryEnquiryObject(String enquiryNo, Long factorNo) {
+        logger.debug("查看有哪些公司报了价,入参："+ enquiryNo);
+        return AjaxObject.newOk("查询成功", enquiryObjectService.findByEnquiryNoAndObject(enquiryNo, factorNo)).toJson();
+    }
+    
     public String webAddOffer(Map<String, Object> anMap) {
         logger.debug("新增报价,入参："+ anMap);
         return AjaxObject.newOk(offerService.addOffer((ScfOffer) RuleServiceDubboFilterInvoker.getInputObj())).toJson();
@@ -145,14 +156,14 @@ public class EnquiryDubboService implements IScfEnquiryService {
     }
 
     @Override
-    public String webCustDropEnquiry(Long enquiryId, String dropReason, String description) {
-        logger.debug("询价企业放询价,入参：enquiryId:"+ enquiryId);
-        ScfEnquiry enquiry = new ScfEnquiry();
-        enquiry.setId(enquiryId);
-        enquiry.setDropReason(dropReason);
-        enquiry.setDescription(description);
-        enquiry.setBusinStatus("-1");
-        return AjaxObject.newOk(enquiryService.saveUpdate(enquiry)).toJson();
+    public String webCustDropEnquiry(Long offerId, String dropReason, String description) {
+        logger.debug("询价企业放询价,入参：offerId:"+ offerId);
+        ScfOffer offer = new ScfOffer();
+        offer.setId(offerId);
+        //offer.setDropReason(dropReason);
+        offer.setDescription(description);
+        offer.setBusinStatus("-1");
+        return AjaxObject.newOk(offerService.saveModifyOffer(offer, offerId)).toJson();
     }
 
     @Override
@@ -162,5 +173,4 @@ public class EnquiryDubboService implements IScfEnquiryService {
         return AjaxObject.newOk(offerService.findOfferList(map)).toJson();
     }
 
-    
 }

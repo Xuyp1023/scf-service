@@ -4,17 +4,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.enquiry.dao.ScfEnquiryObjectMapper;
 import com.betterjr.modules.enquiry.entity.ScfEnquiryObject;
 
 @Service
 public class ScfEnquiryObjectService extends BaseService<ScfEnquiryObjectMapper, ScfEnquiryObject> {
 
+    @Autowired
+    private CustAccountService custAccountService;
     /**
      * 新增
      * @param id
@@ -68,7 +72,9 @@ public class ScfEnquiryObjectService extends BaseService<ScfEnquiryObjectMapper,
         Map<String, Object> anMap = new HashMap<String, Object>();
         anMap.put("enquiryNo", enquiryNo);
         anMap.put("factorNo", factorNo);
-        return Collections3.getFirst(this.findList(anMap));
+        ScfEnquiryObject object = Collections3.getFirst(this.findList(anMap));
+        object.setFactorName(custAccountService.queryCustName(factorNo));
+        return object;
     }
     
     /**
