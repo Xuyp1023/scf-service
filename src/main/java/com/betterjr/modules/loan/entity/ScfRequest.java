@@ -396,6 +396,14 @@ public class ScfRequest implements BetterjrEntity {
     @Column(name = "L_OFFERID",  columnDefinition="BIGINT" )
     @MetaData( value="报价ID", comments = "报价ID")
     private Long offerId;
+    
+
+    /**
+     * 上传的批次号，对应fileinfo中的ID
+     */
+    @Column(name = "N_BATCHNO",  columnDefinition="INT" )
+    @MetaData( value="上传的批次号", comments = "上传的批次号，对应fileinfo中的ID")
+    private Integer batchNo;
 
     private static final long serialVersionUID = 1474419650663L;
 
@@ -902,6 +910,14 @@ public class ScfRequest implements BetterjrEntity {
         this.offerId = offerId;
     }
 
+    public Integer getBatchNo() {
+        return batchNo;
+    }
+
+    public void setBatchNo(Integer batchNo) {
+        this.batchNo = batchNo;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -970,6 +986,7 @@ public class ScfRequest implements BetterjrEntity {
         sb.append(", orders=").append(orders);
         sb.append(", requestFrom=").append(requestFrom);
         sb.append(", offerId=").append(offerId);
+        sb.append(", batchNo=").append(batchNo);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -1048,7 +1065,8 @@ public class ScfRequest implements BetterjrEntity {
             && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
             && (this.getOrders() == null ? other.getOrders() == null : this.getOrders().equals(other.getOrders()))
             && (this.getRequestFrom() == null ? other.getRequestFrom() == null : this.getRequestFrom().equals(other.getRequestFrom()))
-            && (this.getOfferId() == null ? other.getOfferId() == null : this.getOfferId().equals(other.getOfferId()));
+            && (this.getOfferId() == null ? other.getOfferId() == null : this.getOfferId().equals(other.getOfferId()))
+            && (this.getBatchNo() == null ? other.getBatchNo() == null : this.getBatchNo().equals(other.getBatchNo()));
     }
 
     @Override
@@ -1117,6 +1135,7 @@ public class ScfRequest implements BetterjrEntity {
         result = prime * result + ((getOrders() == null) ? 0 : getOrders().hashCode());
         result = prime * result + ((getRequestFrom() == null) ? 0 : getRequestFrom().hashCode());
         result = prime * result + ((getOfferId() == null) ? 0 : getOfferId().hashCode());
+        result = prime * result + ((getBatchNo() == null) ? 0 : getBatchNo().hashCode());
         return result;
     }
     

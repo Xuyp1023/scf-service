@@ -1,5 +1,6 @@
 package com.betterjr.modules.loan.dubbo;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -87,5 +88,7 @@ public class RequestBillDubboService implements IScfBillRequestService {
         logger.debug("根据票据id查询融资申请，入参：anBillId=" + anBillId);
         return AjaxObject.newOk(billRequestService.findRequestByBill(anBillId)).toJson();
     }
+
+
     
 }

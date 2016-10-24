@@ -100,10 +100,10 @@ public class ScfOffer implements BetterjrEntity {
     private Integer maxCycle;
 
     /**
-     * 2：历史，1：报价，0：取消
+     * 3：已，2：历史，1：报价，0：取消,-1：放弃
      */
     @Column(name = "C_BUSIN_STATUS",  columnDefinition="CHAR" )
-    @MetaData( value="2：历史", comments = "3：已，2：历史，1：报价，0：取消")
+    @MetaData( value="2：历史", comments = "3：已，2：历史，1：报价，0：取消,-1：放弃")
     private String businStatus;
 
     /**
@@ -163,6 +163,13 @@ public class ScfOffer implements BetterjrEntity {
     @MetaData( value="备注", comments = "备注")
     private String description;
 
+    /**
+     * 放弃该报价的原因：1:融资成本太高, 2:融资时间太长, 3:无资金要求, 4:操作太繁琐
+     */
+    @Column(name = "C_DROP_REASON",  columnDefinition="CHAR" )
+    @MetaData( value="放弃该报价的原因：1:融资成本太高, 2:融资时间太长, 3:无资金要求, 4:操作太繁琐", comments = "放弃该报价的原因：1:融资成本太高, 2:融资时间太长, 3:无资金要求, 4:操作太繁琐")
+    private String dropReason;
+    
     private static final long serialVersionUID = 1474289210253L;
 
     public Long getId() {
@@ -359,6 +366,14 @@ public class ScfOffer implements BetterjrEntity {
         this.description = description;
     }
 
+    public String getDropReason() {
+        return dropReason;
+    }
+
+    public void setDropReason(String dropReason) {
+        this.dropReason = dropReason;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -389,6 +404,7 @@ public class ScfOffer implements BetterjrEntity {
         sb.append(", version=").append(version);
         sb.append(", quoteType=").append(quoteType);
         sb.append(", description=").append(description);
+        sb.append(", dropReason=").append(dropReason);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -429,7 +445,8 @@ public class ScfOffer implements BetterjrEntity {
             && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()))
             && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()))
             && (this.getQuoteType() == null ? other.getQuoteType() == null : this.getQuoteType().equals(other.getQuoteType()))
-            && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()));
+            && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()))
+            && (this.getDropReason() == null ? other.getDropReason() == null : this.getDropReason().equals(other.getDropReason()));
     }
 
     @Override
@@ -460,6 +477,7 @@ public class ScfOffer implements BetterjrEntity {
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
         result = prime * result + ((getQuoteType() == null) ? 0 : getQuoteType().hashCode());
         result = prime * result + ((getDescription() == null) ? 0 : getDescription().hashCode());
+        result = prime * result + ((getDropReason() == null) ? 0 : getDropReason().hashCode());
         return result;
     }
     
@@ -467,6 +485,8 @@ public class ScfOffer implements BetterjrEntity {
     public String custName;
     @Transient
     public String factorName;
+    @Transient
+    public String coreCustName;
     @Transient
     public ScfEnquiry enquiry;
     
@@ -492,6 +512,14 @@ public class ScfOffer implements BetterjrEntity {
 
     public void setEnquiry(ScfEnquiry enquiry) {
         this.enquiry = enquiry;
+    }
+
+    public String getCoreCustName() {
+        return coreCustName;
+    }
+
+    public void setCoreCustName(String coreCustName) {
+        this.coreCustName = coreCustName;
     }
 
     public void init() {
