@@ -88,7 +88,7 @@ public class ScfOrderRelationService extends BaseService<ScfOrderRelationMapper,
             anMap.put("infoType", anEnterType);
             List<ScfOrderRelation> orderRelationList = this.selectByProperty(anMap);
             // 若未找到相应信息生成默认数据
-            if (Collections3.isEmpty(resultList)) {
+            if (Collections3.isEmpty(orderRelationList)) {
                 // 通过票据生成订单，并于此票据建立
                 if(BetterStringUtils.equals(anEnterType, ScfOrderRelationType.ACCEPTBILL.getCode())) {
                     ScfOrder order = new ScfOrder(acceptBillService.selectByPrimaryKey(anEnterId));
