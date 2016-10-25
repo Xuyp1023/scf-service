@@ -1,7 +1,5 @@
 package com.betterjr.modules.push.dubbo;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
@@ -16,8 +14,8 @@ public class ScfSupplierPushDubboService implements IScfSupplierPushService {
     private ScfSupplierPushService scfSupplierPushService; 
     
     @Override
-    public String webAddPushSupplier(Map<String, Object> anMap) {
-        if(scfSupplierPushService.pushSupplierInfo(anMap)){
+    public String webAddPushSupplier(Long anBillId) {
+        if(scfSupplierPushService.pushSupplierInfo(anBillId)){
             return AjaxObject.newOk("推送成功").toJson();
         }else{
             return AjaxObject.newError("推送失败").toJson();

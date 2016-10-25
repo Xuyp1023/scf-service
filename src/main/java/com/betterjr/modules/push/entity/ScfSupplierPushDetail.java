@@ -1,11 +1,13 @@
 package com.betterjr.modules.push.entity;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDecimalJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 
 import javax.persistence.*;
 
@@ -33,7 +35,7 @@ public class ScfSupplierPushDetail implements BetterjrEntity {
     private String agencyNo;
 
     @Column(name = "F_MONEY",  columnDefinition="DOUBLE" )
-    private Double money;
+    private BigDecimal money;
 
     @Column(name = "F_COSTRATE",  columnDefinition="VARCHAR" )
     private String costRate;
@@ -116,11 +118,11 @@ public class ScfSupplierPushDetail implements BetterjrEntity {
         this.agencyNo = agencyNo == null ? null : agencyNo.trim();
     }
 
-    public Double getMoney() {
+    public BigDecimal getMoney() {
         return money;
     }
 
-    public void setMoney(Double money) {
+    public void setMoney(BigDecimal money) {
         this.money = money;
     }
 
@@ -292,14 +294,14 @@ public class ScfSupplierPushDetail implements BetterjrEntity {
     }
     
 
-    public void initDefValue(Map<String,Object> anMap){
+    public void initDefValue(ScfAcceptBill scfAcceptBill){
         this.id=SerialGenerator.getLongValue("pushDetail.id");
-        this.orderId=Long.parseLong(anMap.get("billNo").toString());
-        this.businType=anMap.get("businType").toString();
-        this.beginDate=anMap.get("invoiceDate").toString();
-        this.endDate=anMap.get("endDate").toString();
-        this.money=Double.parseDouble(anMap.get("balance").toString()==null?"0":anMap.get("balance").toString());
-        this.costRate=anMap.get("ratio").toString()==null?"0":anMap.get("ratio").toString();
+        this.orderId=scfAcceptBill.getId();
+        this.businType="1";// 0:订单，1票据，2应收账款
+        this.beginDate=scfAcceptBill.getInvoiceDate();
+        this.endDate=scfAcceptBill.getEndDate();
+        this.money=scfAcceptBill.getBalance();
+        this.costRate=scfAcceptBill.getRatio().toString();
         this.businStatus="1";
         this.regDate=BetterDateUtils.getNumDate();
         this.regTime=BetterDateUtils.getNumTime();
