@@ -177,12 +177,14 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
             qyOfferMap = new HashMap<String, Object>();
             qyOfferMap.put("enquiryNo", object.getEnquiryNo());
             qyOfferMap.put("factorNo", object.getFactorNo());
-            List<ScfOffer> offerList = this.findOfferList(qyOfferMap);
-           
+            qyOfferMap.put("businStatus", new String[]{"1", "-1"});
+            
             //如果查到了给出最近一次报价的信息
-            if(false == Collections3.isEmpty(offerList)){
-                object.setOffer(Collections3.getFirst(offerList));
+            if(null != object.getOfferId()){
+                ScfOffer offer = this.selectByPrimaryKey(object.getOfferId());
+                object.setOffer(offer);
             }
+            
             object.setFactorName(accountService.queryCustName(object.getFactorNo()));
         }
         return list;
