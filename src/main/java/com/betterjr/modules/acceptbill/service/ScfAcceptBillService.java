@@ -579,7 +579,7 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         for (final ScfAcceptBill sendBill : tmpBillSet) {
             try {
                 if (sendBill.sendCheck()) {
-                    wechatPushService.billPush(sendBill.getId());
+                    //wechatPushService.billPush(sendBill.getId());
                 }
                 else {
                     logger.warn("其它原因，不能发送票据信息, getSupplierNo = " + sendBill.getSupplierNo() + ", getBillType =" + sendBill.getBillType());
