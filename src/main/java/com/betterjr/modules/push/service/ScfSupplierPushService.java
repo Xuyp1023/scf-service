@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.service.BaseService;
+import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
+import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
 import com.betterjr.modules.customer.data.CustRelationData;
 import com.betterjr.modules.enquiry.entity.ScfEnquiry;
 import com.betterjr.modules.enquiry.service.ScfEnquiryService;
@@ -26,18 +28,20 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
     private ScfPushCheckService pushCheckService;
     @Autowired
     private ScfEnquiryService scfEnquiryService;
+    @Autowired
+    private ScfAcceptBillService scfAcceptBillService;
     
-    public boolean pushSupplierInfo(Map<String, Object> anMap){
+    public boolean pushSupplierInfo(Long anBillId){
         boolean bool=false;
         try {
-            Long coreCustNo=Long.parseLong(anMap.get("coreCustNo").toString());
-            Long supplierCustNo=Long.parseLong(anMap.get("supplierNo").toString());
+            // 获取票据信息
+            ScfAcceptBill scfAcceptBill=scfAcceptBillService.findAcceptBillDetailsById(anBillId);
             ScfSupplierPushDetail supplierPushDetail=new ScfSupplierPushDetail();
-            supplierPushDetail.initDefValue(anMap);
+            supplierPushDetail.initDefValue(scfAcceptBill);
             String factors="";
             int i=0;
             // 添加发送记录
-            for(CustRelationData custRelationData:pushCheckService.pushData(coreCustNo,supplierCustNo,supplierPushDetail)){
+            for(CustRelationData custRelationData:pushCheckService.pushData(scfAcceptBill.getCoreCustNo(),scfAcceptBill.getSupplierNo(),supplierPushDetail)){
                 if(i==0){
                     factors=custRelationData.getRelateCustno().toString();
                 }else{
@@ -46,7 +50,7 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
                 supplierPushDetail.setAgencyNo(custRelationData.getRelateCustno().toString());
                 if(supplierPushDetailService.addPushDetail(supplierPushDetail)){
                     ScfSupplierPush supplierPush=new ScfSupplierPush();
-                    supplierPush.initDefValue(coreCustNo,supplierCustNo,supplierPushDetail.getId());
+                    supplierPush.initDefValue(scfAcceptBill.getCoreCustNo(),scfAcceptBill.getSupplierNo(),supplierPushDetail.getId());
                     this.insert(supplierPush);
                     bool=true;
                 }
@@ -55,7 +59,7 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
             if(bool){
                 // 推送成功后调询价接口
                 ScfEnquiry scfEnquiry=new ScfEnquiry();
-                scfEnquiry.setCustNo(coreCustNo);
+                scfEnquiry.setCustNo(scfAcceptBill.getCoreCustNo());
                 scfEnquiry.setFactors(factors);
                 scfEnquiry.setOrders(supplierPushDetail.getOrderId().toString());
                 scfEnquiry.setRequestType("2");
