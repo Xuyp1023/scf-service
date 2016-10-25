@@ -115,10 +115,7 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
      *            是否过滤，仅查询正常未融资数据 1：未融资 0：查询所有
      */
     public Page<ScfAcceptBill> queryAcceptBill(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize) {
-        // 融资标志为空，查询全部
-        if(BetterStringUtils.isBlank((String) anMap.get("financeFlag"))) {
-            anMap.remove("financeFlag");
-        }
+        anMap = Collections3.filterMap(anMap, new String[]{"custNo", "coreCustNo", "financeFlag", "businStatus"});
         // 操作员只能查询本机构数据
 //        anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
         // 构造custNo查询条件
