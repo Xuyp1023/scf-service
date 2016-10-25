@@ -85,5 +85,11 @@ public class ScfEnquiryObjectService extends BaseService<ScfEnquiryObjectMapper,
     public List<ScfEnquiryObject> findList(Map<String, Object> anMap) {
         return this.selectByClassProperty(ScfEnquiryObject.class, anMap);
     }
+    
+    public ScfEnquiryObject find(Map<String, Object> anMap){
+        ScfEnquiryObject object = Collections3.getFirst(this.findList(anMap));
+        object.setFactorName(custAccountService.queryCustName(object.getFactorNo()));
+        return object;
+    }
 
 }
