@@ -29,7 +29,8 @@ public class FarFaceService extends BaseService<FarInfterfaceInfoMapper, FarInft
         Map<String, WorkFarFaceInfo> faceMap = new HashMap();
         String faceNo = null;
         //for (FarInfterfaceInfo faceInfo : this.selectByProperty("faceGroup", "FUND")) {
-        for (FarInfterfaceInfo faceInfo : this.selectAll()) {
+        //暂时只支持供应链金融，基金业务分布式后再取全部数据  by zhoucy 20161025
+        for (FarInfterfaceInfo faceInfo : this.selectByProperty("faceGroup", "SCF")) {
             faceNo = faceInfo.getFaceNo();
             Map<String, FaceFieldDictInfo> fieldMap = findFaceDict(faceNo);
             Map<String, WorkFarFunction> funMap = findFarFunList(faceNo, fieldMap);

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
+import com.betterjr.common.utils.reflection.ReflectionUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.dao.ScfAcceptBillMapper;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
@@ -27,6 +29,7 @@ import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.agreement.service.ScfCustAgreementService;
 import com.betterjr.modules.customer.ICustMechBaseService;
+import com.betterjr.modules.customer.ICustRelationService;
 import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.loan.entity.ScfRequest;
@@ -70,6 +73,9 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     @Autowired
     private ScfInvoiceService scfInvoiceService;
     
+    @Autowired
+    @Reference(interfaceClass = ICustRelationService.class)
+    private ICustRelationService relationService;
     
     /**
      * 批量获取票据对应的相关文件信息
@@ -525,4 +531,65 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     public ScfAcceptBill saveExpireAcceptBill(Long anId, boolean anCheckOperOrg) {
         return this.saveAcceptBillStatus(anId, "3", "0", anCheckOperOrg);
     }
+
+    /**
+     * 保存上传上来的票据信息数据。处理的逻辑是如果票据信息没有使用就更新，不存在里面增加，<BR>
+     * 如果已经使用，则不变。 需要了解票据作废的处理流程。
+     *
+     * @param anList
+     * @param anOperOrg
+     * @return
+     */
+    public boolean saveUploadSupplierData(final List<ScfAcceptBill> anList, final Long anCoreCustNo) {
+        // 没数据，直接返回
+        if (Collections3.isEmpty(anList)) {
+            return true;
+        }
+        final Set<String> billNoSet = ReflectionUtils.listToKeySet(anList, "btBillNo");
+        final Map<String, Object> termMap = new HashMap();
+        termMap.put("coreCustNo", anCoreCustNo);
+        termMap.put("btBillNo", billNoSet);
+        final Map<String, ScfAcceptBill> scfAcceptMap = ReflectionUtils.listConvertToMap(this.selectByProperty(termMap), "btBillNo");
+        ScfAcceptBill tmpScfBill = null;
+        final Set<ScfAcceptBill> tmpBillSet = new HashSet();
+        for (final ScfAcceptBill scfAccept : anList) {
+            tmpScfBill = scfAcceptMap.get(scfAccept.getBtBillNo());
+            if (tmpScfBill == null) {
+                if (scfAccept.getSupplierNo() == null || scfAccept.getSupplierNo() < 10L){
+                    scfAccept.setSupplierNo(this.relationService.findCustNoByBankInfo(scfAccept.getSupplier(), scfAccept.getSuppBankAccount()));
+                }
+                // scfAccept.fillDefaultValue();
+                scfAccept.setHolderNo( scfAccept.getSupplierNo());
+                scfAccept.setHolder(scfAccept.getHolder());
+                scfAccept.setHolderBankAccount(scfAccept.getSuppBankAccount());
+                this.insert(scfAccept);
+                tmpBillSet.add(scfAccept);
+            } // 只能更新状态为0未处理的票据信息，状态为“9”表示作废
+            else if ("0".equals(tmpScfBill.getBusinStatus()) || "9".equals(scfAccept.getBusinStatus())) {
+                scfAccept.modifyDfaultValue(tmpScfBill);
+                this.updateByPrimaryKey(scfAccept);
+
+                // 如果出现退票的情况，需要检查是否存在交易，如果存在交易，相关的交易应该也需要撤单。
+                if ("9".equals(scfAccept.getBusinStatus())) {
+                  //  MQSender.send(MQTopics.ACCESS_BILL, scfAccept);
+                }
+            }
+        }
+
+        for (final ScfAcceptBill sendBill : tmpBillSet) {
+            try {
+                if (sendBill.sendCheck()) {
+                    wechatPushService.billPush(sendBill.getId());
+                }
+                else {
+                    logger.warn("其它原因，不能发送票据信息, getSupplierNo = " + sendBill.getSupplierNo() + ", getBillType =" + sendBill.getBillType());
+                }
+            }
+            catch (final Exception ex) {
+                logger.error("发送微信消息出现异常", ex);
+            }
+        }
+        return true;
+    }
+    
 }
