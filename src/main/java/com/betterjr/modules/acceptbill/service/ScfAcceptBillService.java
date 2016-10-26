@@ -73,7 +73,6 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     @Autowired
     private ScfInvoiceService scfInvoiceService;
     
-    @Autowired
     @Reference(interfaceClass = ICustRelationService.class)
     private ICustRelationService relationService;
     
