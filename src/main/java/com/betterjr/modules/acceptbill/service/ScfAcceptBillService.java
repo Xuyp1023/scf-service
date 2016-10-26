@@ -45,6 +45,7 @@ import com.betterjr.modules.order.helper.ScfOrderRelationType;
 import com.betterjr.modules.order.service.ScfInvoiceService;
 import com.betterjr.modules.order.service.ScfOrderRelationService;
 import com.betterjr.modules.order.service.ScfOrderService;
+import com.betterjr.modules.push.service.ScfSupplierPushService;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
 
 @Service
@@ -75,6 +76,9 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     
     @Reference(interfaceClass = ICustRelationService.class)
     private ICustRelationService relationService;
+    
+    @Autowired
+    private ScfSupplierPushService supplierPushService; 
     
     /**
      * 批量获取票据对应的相关文件信息
@@ -578,7 +582,7 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         for (final ScfAcceptBill sendBill : tmpBillSet) {
             try {
                 if (sendBill.sendCheck()) {
-                    //wechatPushService.billPush(sendBill.getId());
+                    supplierPushService.pushSupplierInfo(sendBill.getId());
                 }
                 else {
                     logger.warn("其它原因，不能发送票据信息, getSupplierNo = " + sendBill.getSupplierNo() + ", getBillType =" + sendBill.getBillType());
