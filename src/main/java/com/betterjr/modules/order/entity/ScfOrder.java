@@ -228,6 +228,13 @@ public class ScfOrder implements BetterjrEntity {
     @Column(name = "F_BALANCE_REST",  columnDefinition="DOUBLE" )
     @MetaData( value="剩余金额", comments = "剩余金额")
     private BigDecimal balanceRest;
+    
+    /**
+     * 数据来源, 0:关联单据默认生成, 1:用户录入
+     */
+    @Column(name = "C_DATASOURCE",  columnDefinition="VARCHAR" )
+    @MetaData( value="数据来源, 0:关联单据默认生成, 1:用户录入", comments = "数据来源, 0:关联单据默认生成, 1:用户录入")
+    private String dataSource;
 
     /**
      * 合同列表
@@ -280,6 +287,7 @@ public class ScfOrder implements BetterjrEntity {
         this.coreCustNo = anAcceptBill.getCoreCustNo();
         this.settlement = "0";//结算方式 0-商业汇票
         this.businStatus = "0";
+        this.dataSource = "0";
     }
     /**
      * 根据应收账款生成订单
@@ -296,6 +304,7 @@ public class ScfOrder implements BetterjrEntity {
         this.coreCustNo = anReceivable.getCoreCustNo();
         this.settlement = "1";//结算方式 1-赊销
         this.businStatus = "0";
+        this.dataSource = "0";
     }
 
     public Long getId() {
@@ -562,6 +571,14 @@ public class ScfOrder implements BetterjrEntity {
         this.coreCustName = anCoreCustName;
     }
 
+    public String getDataSource() {
+        return this.dataSource;
+    }
+
+    public void setDataSource(String anDataSource) {
+        this.dataSource = anDataSource;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -594,6 +611,7 @@ public class ScfOrder implements BetterjrEntity {
         sb.append(", otherBatchNo=").append(otherBatchNo);
         sb.append(", balanceUsed=").append(balanceUsed);
         sb.append(", balanceRest=").append(balanceRest);
+        sb.append(", dataSource=").append(dataSource);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -636,6 +654,7 @@ public class ScfOrder implements BetterjrEntity {
             && (this.getBatchNo() == null ? other.getBatchNo() == null : this.getBatchNo().equals(other.getBatchNo()))
             && (this.getOtherBatchNo() == null ? other.getOtherBatchNo() == null : this.getOtherBatchNo().equals(other.getOtherBatchNo()))
             && (this.getBalanceUsed() == null ? other.getBalanceUsed() == null : this.getBalanceUsed().equals(other.getBalanceUsed()))
+            && (this.getDataSource() == null ? other.getDataSource() == null : this.getDataSource().equals(other.getDataSource()))
             && (this.getBalanceRest() == null ? other.getBalanceRest() == null : this.getBalanceRest().equals(other.getBalanceRest()));
     }
 
@@ -668,6 +687,7 @@ public class ScfOrder implements BetterjrEntity {
         result = prime * result + ((getBatchNo() == null) ? 0 : getBatchNo().hashCode());
         result = prime * result + ((getOtherBatchNo() == null) ? 0 : getOtherBatchNo().hashCode());
         result = prime * result + ((getBalanceUsed() == null) ? 0 : getBalanceUsed().hashCode());
+        result = prime * result + ((getDataSource() == null) ? 0 : getDataSource().hashCode());
         result = prime * result + ((getBalanceRest() == null) ? 0 : getBalanceRest().hashCode());
         return result;
     }
@@ -698,6 +718,7 @@ public class ScfOrder implements BetterjrEntity {
     public void initAddValue(CustOperatorInfo anOperatorInfo) {
         this.id = SerialGenerator.getLongValue("ScfOrder.id");
         this.businStatus = "0";
+        this.dataSource = "1";
         if (null != anOperatorInfo) {
             this.modiOperId = anOperatorInfo.getId();
             this.modiOperName = anOperatorInfo.getName();
