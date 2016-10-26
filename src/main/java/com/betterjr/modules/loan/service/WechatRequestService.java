@@ -12,20 +12,21 @@ import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.mapper.pagehelper.Page;
-import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
+import com.betterjr.modules.enquiry.entity.ScfOffer;
+import com.betterjr.modules.enquiry.service.ScfEnquiryService;
+import com.betterjr.modules.enquiry.service.ScfOfferService;
 import com.betterjr.modules.loan.dao.ScfRequestMapper;
+import com.betterjr.modules.loan.entity.BillRequest;
 import com.betterjr.modules.loan.entity.ScfPayPlan;
 import com.betterjr.modules.loan.entity.ScfRequest;
-import com.betterjr.modules.loan.entity.BillRequest;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
-import com.betterjr.modules.loan.helper.RequestType;
-import com.betterjr.modules.order.helper.ScfOrderRelationType;
+import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.product.entity.ScfProduct;
 import com.betterjr.modules.product.service.ScfProductService;
 
 @Service
-public class ScfBillRequestService extends BaseService<ScfRequestMapper, ScfRequest> {
+public class WechatRequestService extends BaseService<ScfRequestMapper, ScfRequest> {
     
     @Autowired
     private ScfRequestService requestService;
@@ -35,6 +36,12 @@ public class ScfBillRequestService extends BaseService<ScfRequestMapper, ScfRequ
     private ScfPayPlanService payPlanService;
     @Autowired
     private ScfProductService productService;
+    @Autowired
+    private ScfOrderService orderService;
+    @Autowired
+    private ScfOfferService offerService;
+    @Autowired
+    private ScfEnquiryService enquiryService;
     
     /**
      * 新增融资申请
@@ -42,13 +49,31 @@ public class ScfBillRequestService extends BaseService<ScfRequestMapper, ScfRequ
      * @param anRequest
      * @return
      */
-    public ScfRequest addBillRequest(ScfRequest anRequest) {
+    public ScfRequest saveRequest(ScfRequest anRequest) {
         BTAssert.notNull(anRequest, "新增融资申请失败-anRequest不能为空");
-        anRequest.setRequestType(RequestType.BILL.getCode());
+        //anRequest.setRequestType(RequestType.BILL.getCode());
+        anRequest.setTradeStatus(RequestTradeStatus.REQUEST.getCode());
         anRequest.setPeriodUnit(1);
         anRequest.setRequestDate(BetterDateUtils.getNumDate());
         anRequest.setTradeStatus(RequestTradeStatus.REQUEST.getCode());
-        return requestService.addRequest(anRequest);
+        
+        //保存申请
+        requestService.addRequest(anRequest);
+        // 关联订单
+        orderService.saveInfoRequestNo(anRequest.getRequestType(), anRequest.getRequestNo(), anRequest.getOrders());
+        // 冻结订单
+        orderService.forzenInfos(anRequest.getRequestNo(), null);
+        
+        if(null != anRequest.getOfferId()){
+            //从报价过来的要改变报价状态
+            offerService.saveUpdateTradeStatus(anRequest.getOfferId(), "3");
+            
+            ScfOffer offer = offerService.selectByPrimaryKey(anRequest.getOfferId());
+            //从报价过来的要改变报价状态
+            enquiryService.saveUpdateBusinStatus(offer.getEnquiryNo(), "-2");
+        }
+
+        return anRequest;
     }
     
     /**

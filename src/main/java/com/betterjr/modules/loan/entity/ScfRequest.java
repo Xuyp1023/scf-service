@@ -1263,7 +1263,8 @@ public class ScfRequest implements BetterjrEntity {
         request.remainMoney =  MathExtend.defaultValue(request.remainMoney, BigDecimal.ZERO);
         request.invoiceBalance =MathExtend.defaultValue(request.invoiceBalance, BigDecimal.ZERO);
         request.bondBalance = MathExtend.defaultValue(request.bondBalance, BigDecimal.ZERO);
-        request.ratio = MathExtend.defaultValue(request.ratio, BigDecimal.ZERO);
+        request.managementRatio = MathExtend.defaultValue(request.managementRatio, BigDecimal.ZERO);
+        request.servicefeeRatio = MathExtend.defaultValue(request.servicefeeRatio, BigDecimal.ZERO);
         request.approvedRatio = MathExtend.defaultValue(request.approvedRatio, BigDecimal.ZERO);
         request.periodUnit = (null ==request.periodUnit)?approvedPeriodUnit:request.periodUnit;
         request.approvedPeriodUnit = (null ==request.approvedPeriodUnit)?1:request.approvedPeriodUnit;
