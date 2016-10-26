@@ -71,6 +71,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
 //        anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
         if(BetterStringUtils.equals(anIsOnlyNormal, "1")) {
             anMap.put("businStatus", "0");
+            anMap.put("dataSource", "1");
         }
         //模糊查询
         anMap = Collections3.fuzzyMap(anMap, new String[]{"orderNo", "settlement"});

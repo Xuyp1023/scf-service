@@ -278,7 +278,7 @@ public class ScfOrder implements BetterjrEntity {
     public ScfOrder(ScfAcceptBill anAcceptBill) {
         super();
         this.initAddValue(UserUtils.getOperatorInfo());
-        this.custNo = anAcceptBill.getCustNo();
+        this.custNo = anAcceptBill.getHolderNo();
         //暂用开票日期作为订单日期
         this.orderDate = anAcceptBill.getInvoiceDate();
         this.orderNo = "此订单由票据编号" + anAcceptBill.getBillNo() + "的汇票默认生成";
@@ -296,6 +296,7 @@ public class ScfOrder implements BetterjrEntity {
         super();
         this.initAddValue(UserUtils.getOperatorInfo());
         this.coreCustNo = anReceivable.getCustNo();
+        this.custNo = anReceivable.getCustNo();
         //暂用数据生成日期作为订单日期
         this.orderDate = anReceivable.getRegDate();
         this.orderNo = "此订单由应收账款编号" + anReceivable.getReceivableNo() + "的应收账款默认生成";
@@ -516,38 +517,38 @@ public class ScfOrder implements BetterjrEntity {
     }
 
     public List<ScfInvoice> getInvoiceList() {
-		return invoiceList;
-	}
+        return invoiceList;
+    }
 
-	public void setInvoiceList(List<ScfInvoice> invoiceList) {
-		this.invoiceList = invoiceList;
-	}
+    public void setInvoiceList(List<ScfInvoice> invoiceList) {
+        this.invoiceList = invoiceList;
+    }
 
-	public List<ScfReceivable> getReceivableList() {
-		return receivableList;
-	}
+    public List<ScfReceivable> getReceivableList() {
+        return receivableList;
+    }
 
-	public void setReceivableList(List<ScfReceivable> receivableList) {
-		this.receivableList = receivableList;
-	}
+    public void setReceivableList(List<ScfReceivable> receivableList) {
+        this.receivableList = receivableList;
+    }
 
-	public List<ScfTransport> getTransportList() {
-		return transportList;
-	}
+    public List<ScfTransport> getTransportList() {
+        return transportList;
+    }
 
-	public void setTransportList(List<ScfTransport> transportList) {
-		this.transportList = transportList;
-	}
+    public void setTransportList(List<ScfTransport> transportList) {
+        this.transportList = transportList;
+    }
 
-	public List<ScfAcceptBill> getAcceptBillList() {
-		return acceptBillList;
-	}
+    public List<ScfAcceptBill> getAcceptBillList() {
+        return acceptBillList;
+    }
 
-	public void setAcceptBillList(List<ScfAcceptBill> acceptBillList) {
-		this.acceptBillList = acceptBillList;
-	}
+    public void setAcceptBillList(List<ScfAcceptBill> acceptBillList) {
+        this.acceptBillList = acceptBillList;
+    }
 
-	public List<CustAgreement> getAgreementList() {
+    public List<CustAgreement> getAgreementList() {
         return this.agreementList;
     }
 
