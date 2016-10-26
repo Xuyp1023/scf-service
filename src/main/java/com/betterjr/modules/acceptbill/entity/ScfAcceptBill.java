@@ -1328,4 +1328,9 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         
         return this.supplier;
     }
+
+    public boolean sendCheck(){
+
+        return (this.supplierNo != null && this.supplierNo > 10L)  && "0".equals(this.getBillType());
+    }
 }

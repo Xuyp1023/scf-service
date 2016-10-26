@@ -13,7 +13,7 @@ import com.betterjr.modules.remote.helper.RemoteProxyFactory;
 
 /**
  * 提供调用保理和沃通的远程接口辅助工具类。
- * 
+ *  lipeijie@kukahome.com
  * @author zhoucy
  *
  */

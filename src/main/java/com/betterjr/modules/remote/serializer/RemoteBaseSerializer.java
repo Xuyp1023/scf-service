@@ -12,6 +12,7 @@ import com.betterjr.common.data.WebServiceErrorCode;
 import com.betterjr.common.exception.BytterValidException;
 import com.betterjr.common.mapper.JsonMapper;
 import com.betterjr.common.security.CustKeyManager;
+import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.UUIDUtils;
 import com.betterjr.modules.remote.connection.RemoteConnection;
 import com.betterjr.modules.remote.data.DataAttribNode;
@@ -304,7 +305,10 @@ public abstract class RemoteBaseSerializer extends RemoteAlgorithmService implem
         objMap.clear();
 
         String encryptedStr;
-        if (this.getBoolean("encrypt_use", true)) {
+        if (BetterStringUtils.isBlank(respData)){
+            respData =" ";
+        }
+        if (this.getBoolean("encrypt_use", true) && (this.keyManager != null)) {
             encryptedStr = this.keyManager.encrypt(respData);
         }
         else {
@@ -312,7 +316,7 @@ public abstract class RemoteBaseSerializer extends RemoteAlgorithmService implem
         }
 
         String signedStr = "";
-        if (this.getBoolean("sign_Data", true)) {
+        if (this.getBoolean("sign_Data", true) && (this.keyManager != null) ) {
             signedStr = this.keyManager.signData(respData);
         }
         // eqrbank
