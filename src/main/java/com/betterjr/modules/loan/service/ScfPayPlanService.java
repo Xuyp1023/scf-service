@@ -250,8 +250,8 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         Assert.notNull(param, "获取费用失败-请先设置系统参数");
         
         //金额 X 年利率 / 一年的天数  X 实现融资天数  / 100
-        BigDecimal fee = anBalance.multiply(ratio).multiply(new BigDecimal(days)).divide(new BigDecimal(100));
-        return MathExtend.divide(fee, new BigDecimal(param.getCountDays()));
+        BigDecimal fee = anBalance.multiply(ratio).multiply(new BigDecimal(days)).divide(new BigDecimal(100)).divide(new BigDecimal(param.getCountDays())).setScale(2, BigDecimal.ROUND_HALF_EVEN);
+        return fee;
     }
     
     /**
@@ -307,7 +307,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         ScfPayPlan plan = this.findPlanByRequestNo(anRequestNo);
         BigDecimal managementBalance = plan.getSurplusManagementBalance();
         BigDecimal interestBalance = plan.getSurplusInterestBalance();
-        return fp(anPayDate, anTotalBalance, plan, managementBalance, interestBalance);
+        return fillFee(anPayDate, anTotalBalance, plan, managementBalance, interestBalance);
     }
     
     /**
@@ -320,10 +320,10 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         ScfPayPlan plan = this.findPlanByRequestNo(anRequestNo);
         BigDecimal managementBalance = getFee(plan.getFactorNo(), plan.getSurplusPrincipalBalance(), plan.getManagementRatio(), plan.getStartDate(), anPayDate);
         BigDecimal interestBalance = getFee(plan.getFactorNo(), plan.getSurplusPrincipalBalance(), plan.getRatio(), plan.getStartDate(), anPayDate);
-        return fp(anPayDate, anTotalBalance, plan, managementBalance, interestBalance);
+        return fillFee(anPayDate, anTotalBalance, plan, managementBalance, interestBalance);
     }
 
-    private ScfPayRecord fp(String anPayDate, BigDecimal anTotalBalance, ScfPayPlan plan, BigDecimal managementBalance,
+    private ScfPayRecord fillFee(String anPayDate, BigDecimal anTotalBalance, ScfPayPlan plan, BigDecimal managementBalance,
             BigDecimal interestBalance) {
         ScfPayRecord record = new ScfPayRecord();
         if (false == MathExtend.compareToZero(anTotalBalance)) {
