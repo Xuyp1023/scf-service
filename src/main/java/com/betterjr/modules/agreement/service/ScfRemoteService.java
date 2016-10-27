@@ -1,12 +1,16 @@
 package com.betterjr.modules.agreement.service;
 
+import java.util.List;
+import java.util.Map;
+
 import com.betterjr.common.annotation.AnnonRemoteMethod;
 import com.betterjr.common.data.BusinClassType;
 import com.betterjr.modules.agreement.entity.FaceTradeResult;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.loan.entity.ScfRequest;
+import com.betterjr.modules.product.entity.ScfProduct;
 import com.betterjr.modules.remote.entity.RemoteResultInfo;
-
+ 
 /***
  * 电子合同发送短信
  * @author hubl
@@ -72,5 +76,17 @@ public interface ScfRemoteService {
      */
     @AnnonRemoteMethod(businFlag = "008", businClass = BusinClassType.SCF_STATE, custType = "X")
     public RemoteResultInfo<FaceTradeResult> createSignOrder(ScfElecAgreement anElecAgreement);
+
+    /**
+     * 
+     * 查询保理产品信息
+     * 
+     * @param 查询条件
+     *            ，使用Map作为入参
+     * @return 查询结果通知，返回是一个列表
+     * @throws AccessException
+     *             抛出访问异常信息
+     */
+    public RemoteResultInfo<List<ScfProduct>> queryFactorProduct(Map anMap);
 
 }
