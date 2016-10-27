@@ -14,6 +14,7 @@ import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
@@ -344,16 +345,23 @@ public class ScfEnquiryObject implements BetterjrEntity {
         this.id = SerialGenerator.getLongValue("ScfEnquiryObject.id");
         this.businStatus = "0";
         this.regOperName = UserUtils.getUserName();
-        this.regOperId = UserUtils.getOperatorInfo().getId();
-        this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
+        CustOperatorInfo operator = UserUtils.getOperatorInfo();
+        if (operator != null){
+            this.regOperId = operator.getId();
+            this.operOrg = operator.getOperOrg();
+        } 
         this.regDate = BetterDateUtils.getNumDate();
         this.regTime = BetterDateUtils.getNumTime();
     }
 
     public void initModify() {
-        this.modiOperId = UserUtils.getOperatorInfo().getId();
+        CustOperatorInfo operator = UserUtils.getOperatorInfo();
+        if (operator != null){
+            this.modiOperId = operator.getId();
+            this.operOrg = operator.getOperOrg();
+            
+        }
         this.modiOperName = UserUtils.getUserName();
-        this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
     }
