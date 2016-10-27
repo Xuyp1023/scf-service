@@ -50,7 +50,8 @@ public class ParamService {
     public boolean checkSupplierParam(String anSupplierNo){
         boolean bool=false;
         SupplierParam param = DictUtils.loadObject("SupplierParam", anSupplierNo, SupplierParam.class);
-        if("1".equals(param.getIsPush())){
+        
+        if((param == null) || ("1".equals(param.getIsPush()))){
             bool=true;
         }
         return bool;

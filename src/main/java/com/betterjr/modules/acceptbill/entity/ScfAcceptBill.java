@@ -1189,6 +1189,9 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         this.regDate = anBill.regDate;
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
+        this.setHolderNo( anBill.getSupplierNo());
+        this.setHolder(anBill.getHolder());
+        this.setHolderBankAccount(anBill.getSuppBankAccount());
     }
 
     public void fillAddDefaultValue() {

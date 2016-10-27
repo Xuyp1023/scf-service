@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import com.betterjr.common.utils.BetterStringUtils;
+import com.betterjr.common.utils.DictUtils;
 import com.betterjr.common.utils.MathExtend;
 import com.betterjr.modules.agreement.entity.FaceTradeResult;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
@@ -156,8 +157,8 @@ public class ScfFactorRemoteHelper extends Thread {
             if (remoteResult.isSucess()) {
                 result = (List<ScfProduct>) remoteResult.getData();
                 for (ScfProduct product : result) {
-                  //  product.setCustNo(this.relService.findCustNoByScfId(product.getScfId(), agencyNo));
-                  //  this.productService.saveOrUpdateProduct(product);
+                    product.setFactorCorp(agencyNo);
+                    this.scfProductService.saveOrUpdateProduct(product);
                 }
             }
         }
@@ -187,7 +188,7 @@ public class ScfFactorRemoteHelper extends Thread {
 
     protected ScfRequest dealFactorAppRequest(ScfRequest anRequest, boolean anWorkApp) {
         logger.info("dealFactorAppRequest :" + anRequest);
-        ScfRemoteService remoteService=RemoteProxyFactory.createService("yqr", ScfRemoteService.class);
+        ScfRemoteService remoteService=RemoteProxyFactory.createService(DictUtils.getDictCode("ScfFactorGroup", String.valueOf(anRequest.getFactorNo())), ScfRemoteService.class);
         RemoteResultInfo remoteResult;
         ScfRequest result;
         try {

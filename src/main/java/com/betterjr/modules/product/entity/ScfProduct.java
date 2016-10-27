@@ -8,8 +8,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
+import com.betterjr.common.data.BetterBaseEntity;
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
@@ -21,7 +23,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "T_SCF_PRODUCT")
-public class ScfProduct implements BetterjrEntity {
+public class ScfProduct extends BetterBaseEntity  implements BetterjrEntity {
     /**
      * 产品流水号
      */
@@ -282,6 +284,19 @@ public class ScfProduct implements BetterjrEntity {
     private String operOrg;
 
     private static final long serialVersionUID = 1467703726398L;
+
+
+    //临时的远端给过来的核心企业信息
+    @Transient
+    private String scfId;
+
+    public String getScfId() {
+        return this.scfId;
+    }
+
+    public void setScfId(String anScfId) {
+        this.scfId = anScfId;
+    }
 
     public Long getId() {
         return id;
@@ -751,6 +766,29 @@ public class ScfProduct implements BetterjrEntity {
         this.offLineOperName = UserUtils.getOperatorInfo().getName();
         this.offLineDate = BetterDateUtils.getNumDate();
         this.offLineTime = BetterDateUtils.getNumTime();
+    }
+    public void modifyValue(ScfProduct anMyValue) {
+        this.id = anMyValue.id;
+        this.modiDate = BetterDateUtils.getNumDate();
+        this.regDate = anMyValue.regDate;
+        this.businStatus = anMyValue.businStatus;
+        this.coreName = anMyValue.coreName;
+        this.factorName = anMyValue.factorName;
+        this.factorNo = anMyValue.factorNo;
+        this.minLoanDays =anMyValue.minLoanDays;
+        this.maxLoanDays = anMyValue.maxLoanDays;
+        this.factorType = anMyValue.factorType;
+        this.operOrg = anMyValue.getOperOrg();
+    }
+
+    public void initDefValue() {
+        this.businStatus = "1";
+        this.factorType="2";
+        this.minLoanDays =0;
+        this.maxLoanDays = 0; 
+        this.id = SerialGenerator.getLongValue("ScfProduct.id");
+        this.regDate = BetterDateUtils.getNumDate();
+        this.modiDate = BetterDateUtils.getNumDate();
     }
 
 }

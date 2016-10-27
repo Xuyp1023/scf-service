@@ -19,6 +19,7 @@ import com.betterjr.common.utils.DictUtils;
 import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.account.service.CustAndOperatorRelaService;
 import com.betterjr.modules.customer.ICustRelationService;
@@ -329,6 +330,41 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
             throw new BytterTradeException(40001, anMessage);
         }
     }
+    
+    /**
+     * 保存或增保理产品信息
+     * @param anProduct
+     */
+    public void saveOrUpdateProduct(ScfProduct anProduct) {
+        Map<String, Object> workCondition = new HashMap();
+        workCondition.put("productCode", anProduct.getProductCode());
+        workCondition.put("factorCorp", anProduct.getFactorCorp());
+        List<ScfProduct> resultList = this.selectByProperty(workCondition);
+        if (Collections3.isEmpty(resultList)){
+            anProduct.initValue(null);
+            anProduct.initDefValue();
+            anProduct.setCoreName(DictUtils.getDictLabelByCode("FactorCoreCustInfo", Long.toString(anProduct.getCoreCustNo())));
+            try{
+                anProduct.setFactorNo(Long.parseLong(DictUtils.getDictValueByCode("ScfFactorGroup", anProduct.getFactorCorp())));
+                anProduct.setFactorName( DictUtils.getDictLabelByCode("ScfFactorGroup", anProduct.getFactorCorp()));
+            }
+            catch(Exception ex){
+                logger.warn("saveOrUpdateProduct not find FactorNo in dict ScfFactorGroup");
+            }
+            CustInfo custInfo = this.custAccountService.selectByPrimaryKey( anProduct.getFactorNo() );
+            if (custInfo != null){
+                anProduct.setOperOrg( custInfo.getOperOrg());
+            }
+            this.insert(anProduct);
+        }
+        else {
+            ScfProduct tmpScfProd = Collections3.getFirst(resultList);
+            anProduct.modifyValue(tmpScfProd);
+            anProduct.modifyValue(null, tmpScfProd);
+            this.updateByExample(anProduct, workCondition);
+        }
+    }
+
 
     /***
      * 根据产品id获取产品对象
