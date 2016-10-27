@@ -157,16 +157,18 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
         for(ScfOrderRelation anOrderRelation : anOrderRelationList) {
             Map<String, Object> queryMap = new HashMap<String, Object>();
             queryMap.put("id", anOrderRelation.getOrderId());
-            List<ScfOrder> orderList = orderService.findOrder(queryMap);
-            for(ScfOrder anOrder : orderList) {
-                anReceivable.getInvoiceList().addAll(anOrder.getInvoiceList());
-                anReceivable.getTransportList().addAll(anOrder.getTransportList());
-                anReceivable.getAcceptBillList().addAll(anOrder.getAcceptBillList());
-                anReceivable.getAgreementList().addAll(anOrder.getAgreementList());
-                //清除order下面的信息
-                anOrder.clearRelationInfo();
+            //由于是id查出，取出数据
+            ScfOrder anOrder = Collections3.getFirst(orderService.findOrder(queryMap));
+            anReceivable.getInvoiceList().addAll(anOrder.getInvoiceList());
+            anReceivable.getTransportList().addAll(anOrder.getTransportList());
+            anReceivable.getAcceptBillList().addAll(anOrder.getAcceptBillList());
+            anReceivable.getAgreementList().addAll(anOrder.getAgreementList());
+            //清除order下面的信息
+            anOrder.clearRelationInfo();
+            //若数据来源不为自动生成，则加入
+            if(!"0".equals(anOrder.getDataSource())){
+                anReceivable.getOrderList().add(anOrder);
             }
-            anReceivable.getOrderList().addAll(orderList);
         }
     }
     

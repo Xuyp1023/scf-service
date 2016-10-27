@@ -69,6 +69,8 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
     public Page<ScfOrder> queryOrder(Map<String, Object> anMap,String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize) {
         // 操作员只能查询本机构数据
 //        anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+        //只查询数据非自动生成的数据来源
+        anMap.put("dataSource", "1");
         if(BetterStringUtils.equals(anIsOnlyNormal, "1")) {
             anMap.put("businStatus", "0");
         }
