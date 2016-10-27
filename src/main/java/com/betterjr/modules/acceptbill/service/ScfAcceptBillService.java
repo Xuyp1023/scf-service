@@ -393,16 +393,18 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         for (ScfOrderRelation anOrderRelation : anOrderRelationList) {
             Map<String, Object> queryMap = new HashMap<String, Object>();
             queryMap.put("id", anOrderRelation.getOrderId());
-            List<ScfOrder> orderList = orderService.findOrder(queryMap);
-            for (ScfOrder anOrder : orderList) {
-                anAcceptBill.getInvoiceList().addAll(anOrder.getInvoiceList());
-                anAcceptBill.getTransportList().addAll(anOrder.getTransportList());
-                anAcceptBill.getReceivableList().addAll(anOrder.getReceivableList());
-                anAcceptBill.getAgreementList().addAll(anOrder.getAgreementList());
-                // 清除order下面的信息
-                anOrder.clearRelationInfo();
+            //由于是id查出，取出数据
+            ScfOrder anOrder = Collections3.getFirst(orderService.findOrder(queryMap));
+            anAcceptBill.getInvoiceList().addAll(anOrder.getInvoiceList());
+            anAcceptBill.getTransportList().addAll(anOrder.getTransportList());
+            anAcceptBill.getReceivableList().addAll(anOrder.getReceivableList());
+            anAcceptBill.getAgreementList().addAll(anOrder.getAgreementList());
+            // 清除order下面的信息
+            anOrder.clearRelationInfo();
+            //若数据来源不为自动生成，则加入
+            if(!"0".equals(anOrder.getDataSource())){
+                anAcceptBill.getOrderList().add(anOrder);
             }
-            anAcceptBill.getOrderList().addAll(orderList);
         }
     }
 
