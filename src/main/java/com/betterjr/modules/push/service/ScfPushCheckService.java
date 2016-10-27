@@ -76,7 +76,7 @@ public class ScfPushCheckService {
         }
         // 微信发送
         for(CustRelationData relationData:supplierRelationDataList){
-            if(!send(anCoreCustNo,relationData.getRelateCustno(),supplierPushDetail)){
+            if(!send(anCoreCustNo,relationData.getCustNo(),supplierPushDetail)){
                 supplierRelationDataList=new ArrayList<CustRelationData>();
                 break;
             }
