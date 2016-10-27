@@ -21,13 +21,13 @@ import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.MathExtend;
 import com.betterjr.common.utils.UserUtils;
-import com.betterjr.modules.acceptbill.data.ScfClientDataParentFace;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.entity.ScfTransport;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
+import com.betterjr.modules.supplychain.data.ScfClientDataParentFace;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -1183,8 +1183,12 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
      */
     public void modifyDfaultValue(ScfAcceptBill anBill) {
         this.id = anBill.id;
+        this.billFrom = anBill.billFrom;
+        this.dataSource = anBill.dataSource;
+        this.aduit = anBill.aduit;
         this.regDate = anBill.regDate;
         this.modiDate = BetterDateUtils.getNumDate();
+        this.modiTime = BetterDateUtils.getNumTime();
     }
 
     public void fillAddDefaultValue() {
@@ -1206,6 +1210,9 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
 
     public void fillDefaultValue(){
         String tmpStatus = this.businStatus;
+        this.billFrom = "0";
+        this.dataSource ="00";
+        this.aduit ="1";
         fillAddDefaultValue();
         if ("0".equals(tmpStatus)){
             this.businStatus = "9";
