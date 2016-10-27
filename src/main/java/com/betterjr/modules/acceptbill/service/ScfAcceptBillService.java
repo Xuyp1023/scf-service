@@ -19,6 +19,7 @@ import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
+import com.betterjr.common.utils.MathExtend;
 import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.common.utils.reflection.ReflectionUtils;
@@ -557,14 +558,20 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         final Set<ScfAcceptBill> tmpBillSet = new HashSet();
         for (final ScfAcceptBill scfAccept : anList) {
             tmpScfBill = scfAcceptMap.get(scfAccept.getBtBillNo());
+            if (tmpScfBill == null){
+                tmpScfBill = findBillByNo(anCoreCustNo, scfAccept.getBillNo());
+            }
+            
+            if (MathExtend.smallValue(scfAccept.getSupplierNo())){
+                scfAccept.setSupplierNo(this.relationService.findCustNoByBankInfo(scfAccept.getSupplier(), scfAccept.getSuppBankAccount()));
+            }
+            
             if (tmpScfBill == null) {
-                if (scfAccept.getSupplierNo() == null || scfAccept.getSupplierNo() < 10L){
-                    scfAccept.setSupplierNo(this.relationService.findCustNoByBankInfo(scfAccept.getSupplier(), scfAccept.getSuppBankAccount()));
-                }
                 // scfAccept.fillDefaultValue();
                 scfAccept.setHolderNo( scfAccept.getSupplierNo());
                 scfAccept.setHolder(scfAccept.getHolder());
                 scfAccept.setHolderBankAccount(scfAccept.getSuppBankAccount());
+                logger.debug("this is save bill data " + scfAccept);
                 this.insert(scfAccept);
                 tmpBillSet.add(scfAccept);
             } // 只能更新状态为0未处理的票据信息，状态为“9”表示作废
@@ -595,4 +602,17 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         return true;
     }
     
+    /**
+     * 检查核心企业中票据的唯一性
+     * @param anCoreCustNo
+     * @param anBillNo
+     * @return
+     */
+    public ScfAcceptBill findBillByNo(final Long anCoreCustNo, final String anBillNo) { 
+        final Map<String, Object> termMap = new HashMap();
+        termMap.put("coreCustNo", anCoreCustNo);
+        termMap.put("billNo", anBillNo);
+ 
+        return Collections3.getFirst(this.selectByProperty(termMap));
+    }    
 }
