@@ -87,16 +87,22 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         String signStatus = (String) anParam.get("signStatus");
         anPageSize = MathExtend.defIntBetween(anPageSize, 2, ParamNames.MAX_PAGE_SIZE, 25);
         if (BetterStringUtils.isBlank(signStatus)) {
-            termMap.put("signStatus", Arrays.asList("0","1", "2","3","9"));
+            termMap.put("signStatus", Arrays.asList("0","1", "2","3"));
         }
         else {
             termMap.put("signStatus", signStatus);
         }
-        termMap.put("agreeType", Arrays.asList("1","2","0"));
-        List<Long> custNoList = UserUtils.findCustNoList();
-        if(anParam.get("custNo")!=null){
+        if(UserUtils.coreUser()){
+            termMap.put("agreeType", Arrays.asList("1","2"));
+            termMap.put("buyerNo", anParam.get("custNo"));
+        }else if(UserUtils.supplierUser()){
+            termMap.put("agreeType", Arrays.asList("0"));
             termMap.put("supplierNo", anParam.get("custNo"));
+        }else if(UserUtils.sellerUser()){
+            termMap.put("agreeType", Arrays.asList("2"));
+            termMap.put("buyerNo", anParam.get("custNo"));
         }
+        List<Long> custNoList = UserUtils.findCustNoList();
         if (logger.isInfoEnabled()){
             logger.info("this is findScfElecAgreementList params " + termMap);
         }
