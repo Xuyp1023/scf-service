@@ -251,7 +251,7 @@ public class RequestDubboService implements IScfRequestService {
     @Override
     public String webQueryWorkTask(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
         anMap = (Map) RuleServiceDubboFilterInvoker.getInputObj();
-        String[] queryTerm = new String[] {"taskType","tradeStatus", "GTErequestDate", "LTErequestDate"};
+        String[] queryTerm = new String[] {"taskType","tradeStatus", "GTErequestDate", "LTErequestDate", "requestNo", "requestType"};
         anMap = Collections3.filterMap(anMap, queryTerm);
         Map<String, Object> qyRequestMap = new HashMap<>();
         
