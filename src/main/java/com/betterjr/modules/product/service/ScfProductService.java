@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.data.SimpleDataEntity;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
@@ -20,6 +21,9 @@ import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.account.service.CustAndOperatorRelaService;
+import com.betterjr.modules.customer.ICustRelationService;
+import com.betterjr.modules.customer.constants.CustomerConstants;
+import com.betterjr.modules.customer.data.CustRelationData;
 import com.betterjr.modules.product.constant.ProductConstants;
 import com.betterjr.modules.product.dao.ScfProductMapper;
 import com.betterjr.modules.product.entity.ScfProduct;
@@ -32,6 +36,9 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
 
     @Autowired
     private CustAndOperatorRelaService custAndOperatorRelaService;
+
+    @Reference(interfaceClass = ICustRelationService.class)
+    private ICustRelationService relationService;
 
     /**
      * 融资产品信息分页查询
@@ -87,6 +94,44 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         anMap.put("coreCustNo", coreCustNo);
         anMap.put("factorNo", anFactorNo);
         anMap.put("businStatus", ProductConstants.PRO_STATUS_SHELVES);// 状态(0:登记;1:上架;2:下架;)
+
+        for (ScfProduct product : this.selectByProperty(anMap)) {
+            result.add(new SimpleDataEntity(product.getProductName(), String.valueOf(product.getId())));
+        }
+
+        return result;
+    }
+
+    /**
+     * 微信端客户(供应商或经销商)查询保理产品
+     * 
+     * @return
+     */
+    public List<SimpleDataEntity> queryProductKeyAndValue() {
+        Long custNo = Collections3.getFirst(UserUtils.findCustNoList());
+        List<SimpleDataEntity> result = new ArrayList<SimpleDataEntity>();
+        if (null == custNo) {
+
+            return result;
+        }
+        // 构建查询条件
+        List<Long> coreCustList = new ArrayList<Long>();
+        // 查找当前供应商对应的核心企业
+        List<CustRelationData> supplierRelations = relationService.webQueryCustRelationData(custNo, CustomerConstants.RELATE_TYPE_SUPPLIER_CORE);
+        for (CustRelationData relation : supplierRelations) {
+            if (coreCustList.contains(relation.getRelateCustno())) {
+                coreCustList.add(relation.getRelateCustno());
+            }
+        }
+        // 查找当经销商对应的核心企业
+        List<CustRelationData> sellerRelations = relationService.webQueryCustRelationData(custNo, CustomerConstants.RELATE_TYPE_SELLER_CORE);
+        for (CustRelationData relation : sellerRelations) {
+            if (coreCustList.contains(relation.getRelateCustno())) {
+                coreCustList.add(relation.getRelateCustno());
+            }
+        }
+        Map<String, Object> anMap = QueryTermBuilder.newInstance().put("businStatus", ProductConstants.PRO_STATUS_SHELVES)
+                .put("coreCustNo", coreCustList).build();
 
         for (ScfProduct product : this.selectByProperty(anMap)) {
             result.add(new SimpleDataEntity(product.getProductName(), String.valueOf(product.getId())));
