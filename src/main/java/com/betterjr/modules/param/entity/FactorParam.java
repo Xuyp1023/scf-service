@@ -24,6 +24,28 @@ public class FactorParam {
     
     //是否自动发布询价 1:是， 2:否
     private BigDecimal autoEnquiry;
+    
+    //平台：0模式，1：接口模式
+    private int remoting;
+    
+    //授信方式：0无需授信，1：需要授信
+    private int credit;
+    
+    public int getRemoting() {
+        return remoting;
+    }
+
+    public void setRemoting(int remoting) {
+        this.remoting = remoting;
+    }
+
+    public int getCredit() {
+        return credit;
+    }
+
+    public void setCredit(int credit) {
+        this.credit = credit;
+    }
 
     public Long getCustNo() {
         return custNo;

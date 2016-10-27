@@ -248,9 +248,8 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         int days = getDaysBetween(loanDate, endDate);
         FactorParam param = DictUtils.loadObject("FactorParam", factorNo.toString(), FactorParam.class);
         Assert.notNull(param, "获取费用失败-请先设置系统参数");
-        
         //金额 X 年利率 / 一年的天数  X 实现融资天数  / 100
-        BigDecimal fee = anBalance.multiply(ratio).multiply(new BigDecimal(days)).divide(new BigDecimal(100)).divide(new BigDecimal(param.getCountDays())).setScale(2, BigDecimal.ROUND_HALF_EVEN);
+        BigDecimal fee = anBalance.multiply(ratio).multiply(new BigDecimal(days)).divide(new BigDecimal(100)).divide(new BigDecimal(param.getCountDays()), 2, BigDecimal.ROUND_HALF_EVEN);
         return fee;
     }
     
@@ -758,7 +757,8 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         }
         catch (final Exception e) {
             logger.error("还款提醒消息发送失败！", e);
+            return false;
         }
-        return false;
+        
     }
 }
