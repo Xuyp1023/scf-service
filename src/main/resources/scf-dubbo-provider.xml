@@ -13,6 +13,8 @@
 		package="com.betterjr.modules.test,
 		com.betterjr.modules.remote,
 		com.betterjr.modules.agreement,
+	    com.betterjr.modules.supplychain.service,
+	    com.betterjr.modules.supplychain.dubbo,
 		com.betterjr.modules.product,
 		com.betterjr.modules.credit,
 		com.betterjr.modules.loan,

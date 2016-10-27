@@ -47,7 +47,6 @@ import java.util.*;
  *
  */
 @Service("scfClientService")
-@AnnotRuleService("scfClientService")
 public class ScfClientService {
     private static Logger logger = LoggerFactory.getLogger(ScfClientService.class);
     protected static final String ATTACH_DATA = "attachData";
@@ -75,7 +74,6 @@ public class ScfClientService {
      * 
      * @return
      */
-    @AnnotRuleFunc(name = "findUnCheckAccount", fundType = RuleFuncType.OBJECT)
     public List<ScfClientDataDetail> findUnCheckAccount(Map anMap) {
         List<ScfClientDataDetail> result = new ArrayList();
         String operOrg = (String)anMap.get(ATTACH_DATA);
@@ -150,7 +148,6 @@ public class ScfClientService {
      * @param anCoreCustNo
      * @return
      */
-    @AnnotRuleFunc(name = "findWorkAccount", fundType = RuleFuncType.OBJECT)
     public List<ScfClientDataDetail> findWorkAccount(Map anMap) {
         List<ScfClientDataDetail> result = new ArrayList();
         ScfClientDataProcess clientData = BeanMapper.map(anMap, ScfClientDataProcess.class);
@@ -201,7 +198,6 @@ public class ScfClientService {
      * @param anMap
      * @return
      */
-    @AnnotRuleFunc(name = "processPushData", fundType = RuleFuncType.OBJECT)
     public boolean saveProcessPushData(Map anMap) {
         logger.info("saveProcessPushData data is :"+anMap);
 
@@ -214,7 +210,6 @@ public class ScfClientService {
      * @param anMap
      * @return
      */
-    @AnnotRuleFunc(name = "processCoreCorp", fundType = RuleFuncType.OBJECT)
     public boolean saveProcessCoreCorp(Map anMap) {
         logger.info("saveProcessPushData data is :"+anMap);
 
@@ -231,7 +226,6 @@ public class ScfClientService {
      * @param anMap
      * @return
      */
-    @AnnotRuleFunc(name = "processData", fundType = RuleFuncType.OBJECT)
     public boolean saveProcessData(Map anMap) {
 
         return processData(anMap, false);
@@ -296,7 +290,6 @@ public class ScfClientService {
      * @param anMap
      * @return
      */
-    @AnnotRuleFunc(name = "batchProcessData", fundType = RuleFuncType.OBJECT)
     public boolean saveBatchProcessData(Map anMap) {
         processData(anMap, true);
         String operOrg = (String)anMap.get(ATTACH_DATA);
@@ -312,7 +305,6 @@ public class ScfClientService {
      * @param anMap
      * @return
      */
-    @AnnotRuleFunc(name = "noticeProcess", fundType = RuleFuncType.OBJECT)
     public boolean noticeProcess(Map anMap) {
         logger.info("requestData :" + anMap);
 
@@ -330,7 +322,6 @@ public class ScfClientService {
         return result;
     }
 
-    @AnnotRuleFunc(name = "findDataProcess", fundType = RuleFuncType.OBJECT)
     public List<ScfClientDataProcess> findDataProcess(Map anMap) {
         List<ScfClientDataProcess> result = new ArrayList();
         String operOrg = (String)anMap.get(ATTACH_DATA);

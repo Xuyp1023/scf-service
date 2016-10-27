@@ -38,11 +38,9 @@ public class ScfFactorClientHelperService {
     @Autowired
     private ScfSupplierBankService supplierBankService;
 
-    @Autowired
     @Reference(interfaceClass = ICustRelationService.class)
     private ICustRelationService relationService;
     
-
     @Autowired
     private SupplyAccoRequestService supplyAccoService;
 
