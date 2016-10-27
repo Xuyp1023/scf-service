@@ -76,7 +76,10 @@ public class ScfPushCheckService {
         }
         // 微信发送
         for(CustRelationData relationData:supplierRelationDataList){
-            send(anCoreCustNo,relationData.getRelateCustno(),supplierPushDetail);
+            if(!send(anCoreCustNo,relationData.getRelateCustno(),supplierPushDetail)){
+                supplierRelationDataList=new ArrayList<CustRelationData>();
+                break;
+            }
         }
         return supplierRelationDataList;
     }
@@ -103,23 +106,28 @@ public class ScfPushCheckService {
      * @param sendCustNo 发送客户
      * @param targetCustNo 接口客户
      */
-    public void send(Long sendCustNo,Long targetCustNo,ScfSupplierPushDetail supplierPushDetail){
+    public boolean send(Long sendCustNo,Long targetCustNo,ScfSupplierPushDetail supplierPushDetail){
+        boolean bool=false;
         final CustInfo sendCustomer = accountService.findCustInfo(sendCustNo);
         supplierPushDetail.setCustName(sendCustomer.getCustName());
         final CustOperatorInfo sendOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(sendCustNo));
         final CustOperatorInfo targetOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(targetCustNo));
-        supplierPushDetail.setTragetCustName(accountService.queryCustName(targetCustNo));
-        supplierPushDetail.setAcceptor(findBillAcceptor(supplierPushDetail.getOrderId()).getAcceptor());
-        supplierPushDetail.setBillNo(findBillAcceptor(supplierPushDetail.getOrderId()).getBillNo());
-        final Builder builder = NotificationModel.newBuilder("商业汇票开立通知", sendCustomer, sendOperator);
-        builder.addParam("tragetCustName", supplierPushDetail.getTragetCustName());
-        builder.addParam("custName", supplierPushDetail.getCustName());
-        builder.addParam("acceptor", supplierPushDetail.getAcceptor());
-        builder.addParam("billNo", supplierPushDetail.getBillNo());
-        builder.addParam("disMoney", supplierPushDetail.getDisMoney());
-        builder.addParam("disDate", supplierPushDetail.getDisDate());
-        builder.addReceiver(targetCustNo, targetOperator.getId());  // 接收人
-        notificationSendService.sendNotification(builder.build());
+        if(sendOperator!=null && targetOperator!=null){
+            supplierPushDetail.setTragetCustName(accountService.queryCustName(targetCustNo));
+            supplierPushDetail.setAcceptor(findBillAcceptor(supplierPushDetail.getOrderId()).getAcceptor());
+            supplierPushDetail.setBillNo(findBillAcceptor(supplierPushDetail.getOrderId()).getBillNo());
+            final Builder builder = NotificationModel.newBuilder("商业汇票开立通知", sendCustomer, sendOperator);
+            builder.addParam("tragetCustName", supplierPushDetail.getTragetCustName());
+            builder.addParam("custName", supplierPushDetail.getCustName());
+            builder.addParam("acceptor", supplierPushDetail.getAcceptor());
+            builder.addParam("billNo", supplierPushDetail.getBillNo());
+            builder.addParam("disMoney", supplierPushDetail.getDisMoney());
+            builder.addParam("disDate", supplierPushDetail.getDisDate());
+            builder.addReceiver(targetCustNo, targetOperator.getId());  // 接收人
+            notificationSendService.sendNotification(builder.build());
+            bool=true;
+        }
+        return bool;
     }
     
     /***
