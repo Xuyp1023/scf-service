@@ -9,28 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
-import com.betterjr.common.utils.BetterStringUtils;
-import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.common.web.AjaxObject;
-import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.account.service.CustAccountService;
-import com.betterjr.modules.agreement.service.ScfAgreementService;
-import com.betterjr.modules.credit.entity.ScfCreditInfo;
-import com.betterjr.modules.credit.service.ScfCreditDetailService;
 import com.betterjr.modules.enquiry.service.ScfOfferService;
 import com.betterjr.modules.loan.IScfWechatRequestService;
 import com.betterjr.modules.loan.entity.ScfRequest;
-import com.betterjr.modules.loan.helper.RequestTradeStatus;
-import com.betterjr.modules.loan.service.WechatRequestService;
-import com.betterjr.modules.loan.service.ScfRequestSchemeService;
 import com.betterjr.modules.loan.service.ScfRequestService;
+import com.betterjr.modules.loan.service.WechatRequestService;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 import com.betterjr.modules.workflow.IFlowService;
-import com.betterjr.modules.workflow.data.FlowCommand;
 import com.betterjr.modules.workflow.data.FlowInput;
-import com.betterjr.modules.workflow.data.FlowStatus;
 import com.betterjr.modules.workflow.data.FlowType;
 
 @Service(interfaceClass = IScfWechatRequestService.class)
