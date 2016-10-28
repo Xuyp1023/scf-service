@@ -16,6 +16,7 @@ import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.enquiry.service.ScfOfferService;
 import com.betterjr.modules.loan.IScfWechatRequestService;
 import com.betterjr.modules.loan.entity.ScfRequest;
+import com.betterjr.modules.loan.helper.RequestTradeStatus;
 import com.betterjr.modules.loan.service.ScfRequestService;
 import com.betterjr.modules.loan.service.WechatRequestService;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
@@ -43,6 +44,13 @@ public class WechatRequestDubboService implements IScfWechatRequestService {
         logger.debug("微信版-新增票据融资申请，入参：" + anMap);
         ScfRequest request = (ScfRequest) RuleServiceDubboFilterInvoker.getInputObj();
         request = wechatRequestService.saveRequest(request);
+        
+        //启动流程
+        startFlow(request.getRequestNo());
+        
+        //修改申请状态---为“出具保理方案”
+        updateRequestTradeStauts(request.getRequestNo(), RequestTradeStatus.OFFER_SCHEME.getCode());
+        
         return AjaxObject.newOk(this.webFindRequestByNo(request.getRequestNo())).toJson();
     }
 
@@ -50,16 +58,18 @@ public class WechatRequestDubboService implements IScfWechatRequestService {
     public String webQueryRequestList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
         logger.debug("分页查询票据融资申请，入参：" + anMap);
         anMap = (Map) RuleServiceDubboFilterInvoker.getInputObj();
-        
+        fillDefaultUser(anMap);
+        return AjaxObject.newOkWithPage("分页查询融资申请成功",
+                wechatRequestService.queryRequestList(anMap, anFlag, anPageNum, anPageSize)).toJson();
+    }
+
+    private void fillDefaultUser(Map<String, Object> anMap) {
         if(UserUtils.supplierUser() || UserUtils.sellerUser()){
             anMap.put("custNo", UserUtils.getDefCustInfo().getCustNo());
         }
         else if(UserUtils.factorUser()){
             anMap.put("factorNo", UserUtils.getDefCustInfo().getCustNo());
         }
-        
-        return AjaxObject.newOkWithPage("分页查询融资申请成功",
-                wechatRequestService.queryRequestList(anMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     @Override

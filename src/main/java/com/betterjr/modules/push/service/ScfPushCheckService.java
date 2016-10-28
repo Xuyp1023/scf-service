@@ -226,7 +226,7 @@ public class ScfPushCheckService {
         final CustInfo sendCustomer = accountService.findCustInfo(Long.parseLong(anMap.get("sendCustNo").toString()));
         final CustOperatorInfo sendOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(Long.parseLong(anMap.get("sendCustNo").toString())));
         final CustInfo targetCustomer = accountService.findCustInfo(Long.parseLong(anMap.get("accCustNo").toString()));
-        final CustOperatorInfo targetOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(Long.parseLong(anMap.get("sendCustNo").toString())));
+        final CustOperatorInfo targetOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(Long.parseLong(anMap.get("accCustNo").toString())));
         if(sendOperator!=null && targetOperator!=null){
             final Builder builder = NotificationModel.newBuilder("询价单答复通知", sendCustomer, sendOperator);
             builder.addParam("appId", wechatClientService.getAppId());

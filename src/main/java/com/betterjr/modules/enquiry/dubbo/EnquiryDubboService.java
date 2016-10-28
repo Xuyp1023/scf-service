@@ -24,24 +24,23 @@ import com.betterjr.modules.enquiry.service.ScfEnquiryOfferReplyService;
 import com.betterjr.modules.enquiry.service.ScfEnquiryService;
 import com.betterjr.modules.enquiry.service.ScfOfferService;
 import com.betterjr.modules.order.entity.ScfOrder;
+import com.betterjr.modules.push.service.ScfSupplierPushService;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 
 @Service(interfaceClass = IScfEnquiryService.class)
 public class EnquiryDubboService implements IScfEnquiryService {
     @Autowired
     private ScfEnquiryService enquiryService;
-    
     @Autowired
     private ScfOfferService offerService;
-    
     @Autowired
     private ScfEnquiryOfferReplyService offerReplyService;
-    
     @Autowired
     private ScfEnquiryObjectService enquiryObjectService;
-    
     @Autowired
     private ScfAcceptBillService acceptBillService;
+    @Autowired
+    private ScfSupplierPushService supplierPushService;
     
     protected final Logger logger = LoggerFactory.getLogger(EnquiryDubboService.class);
     
@@ -96,10 +95,7 @@ public class EnquiryDubboService implements IScfEnquiryService {
     public String webAddOffer(Map<String, Object> anMap) {
         logger.debug("新增报价,入参："+ anMap);
         ScfOffer offer = offerService.addOffer((ScfOffer) RuleServiceDubboFilterInvoker.getInputObj());
-        
-        //发送报价消息
-        sentOfferMsg(offer);
-        
+        sentOfferMsg(offer.getId());
         return AjaxObject.newOk(offer).toJson();
     }
     
@@ -193,27 +189,27 @@ public class EnquiryDubboService implements IScfEnquiryService {
      * 发送报价消息
      * @param offer
      */
-    private void sentOfferMsg(ScfOffer offer){
-        Map<String, Object> msgMap = new HashMap<String, Object>();
-        ScfEnquiry enquiry = enquiryService.selectByPrimaryKey(offer.getEnquiryNo());
-        ScfAcceptBill bill = acceptBillService.findAcceptBill(Long.parseLong(enquiry.getOrders()));
-        if(null != bill){
-            List<ScfOrder> orderList = bill.getOrderList();
+    @Override
+    public void sentOfferMsg(Long offerId){
+        ScfOffer offer = offerService.selectByPrimaryKey(offerId);
+        Map<String, String> msgMap = new HashMap<String, String>();
+        ScfEnquiry enquiry = enquiryService.findEnquiryByNo(offer.getEnquiryNo());
+        ScfAcceptBill acceptBill = acceptBillService.findAcceptBill(Long.parseLong(enquiry.getOrders()));
+        if(null != acceptBill){
+            List<ScfOrder> orderList = acceptBill.getOrderList();
             if(!Collections3.isEmpty(orderList)){
                 ScfOrder order = Collections3.getFirst(orderList);
-                msgMap.put("productName", order.getGoodsName()+ " " + order.getUnit());
+                msgMap.put("productName", order.getGoodsName()+ "-" + order.getUnit());
             }
         }
         
         msgMap.put("enquiryNo", offer.getEnquiryNo());
         msgMap.put("offerTime", offer.getRegDate() + " " +offer.getRegTime());
-        msgMap.put("balance", offer.getBalance());
+        msgMap.put("balance", offer.getBalance().toString());
         msgMap.put("description", offer.getDescription());
-        msgMap.put("sendCustNo", offer.getCustNo());
-        msgMap.put("accCustNo", offer.getFactorNo());
-        logger.debug(msgMap.toString());
-        
-        //调用发送接口
+        msgMap.put("sendCustNo", offer.getFactorNo().toString());
+        msgMap.put("accCustNo", offer.getCustNo().toString());
+        supplierPushService.pushScfEnquiryInfo(msgMap);
     }
     
 }
