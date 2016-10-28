@@ -603,7 +603,7 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         }
         return true;
     }
-    
+
     /**
      * 检查核心企业中票据的唯一性
      * @param anCoreCustNo
@@ -616,5 +616,11 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         termMap.put("billNo", anBillNo);
  
         return Collections3.getFirst(this.selectByProperty(termMap));
-    }    
+    }
+
+    public boolean saveSingleFileLink(Long anId, Long anFileId) {
+        ScfAcceptBill anAcceptBill = this.selectByPrimaryKey(anId);
+        BTAssert.notNull(anAcceptBill, "无法获取汇票信息");
+        return custFileDubboService.updateFileItems(anAcceptBill.getBatchNo(), anFileId);
+    }
 }
