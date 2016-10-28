@@ -15,6 +15,7 @@ import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.agreement.entity.ScfRequestNotice;
 import com.betterjr.modules.agreement.entity.ScfRequestOpinion;
 import com.betterjr.modules.agreement.utils.SupplyChainUtil;
+import com.betterjr.modules.push.service.ScfSupplierPushService;
 
 /**
  * 核心企业应收账款确认书管理
@@ -34,6 +35,9 @@ public class ScfRequestOpinionService extends BaseService<ScfRequestOpinionMappe
 
     @Autowired
     private ScfElecAgreementService elecAgreementService;
+    
+    @Autowired
+    private ScfSupplierPushService pushService;
 
     /**
      * 更新核心企业确认书的协议信息
@@ -76,6 +80,8 @@ public class ScfRequestOpinionService extends BaseService<ScfRequestOpinionMappe
             elecAgreement.setFactorNo(anOpinion.getFactorNo());
             elecAgreement.setSupplier(anSupplier);
             elecAgreementService.addElecAgreementInfo(elecAgreement, Arrays.asList(anOpinion.getBuyerNo()));
+            // 调用融资签约提醒功能
+            pushService.pushSignInfo(elecAgreement);
         }
 
         return result;
