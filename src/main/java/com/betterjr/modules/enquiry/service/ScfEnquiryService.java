@@ -63,14 +63,14 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
             enquiryObjectService.add(object);
         }
 
-        // 保存询价所关联的订单关系
+        /*// 保存询价所关联的订单关系
         List<String> orderList = BetterStringUtils.splitTrim(anEnquiry.getOrders());
         for (String orderId : orderList) {
             ScfEnquiryOrder scfEnquiryOrder = new ScfEnquiryOrder();
             scfEnquiryOrder.setEnquiryNo(anEnquiry.getEnquiryNo());
             scfEnquiryOrder.setOrderId(Long.parseLong(orderId));
             scfEnquiryOrder.setOrderType(anEnquiry.getRequestType());
-        }
+        }*/
 
         return anEnquiry;
     }
@@ -142,10 +142,20 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
     }
 
     private void fillBusinStatus(ScfEnquiry enquiry) {
+       /* Map<String, Object> anMap = new HashMap<String, Object>();
+        anMap.put("enquiryNo", enquiry.getEnquiryNo());
+        //anMap.put("businStatus", "1");
+        
+        int offerCount = 0;
+        List<ScfOffer> list = offerService.findOfferList(anMap);
+        if(false == Collections3.isEmpty(list)){
+            offerCount = list.size();
+        }*/
+        
         //状态：-2：已融资，-1：放弃，0：未报价，1：已报价
         switch (enquiry.getBusinStatus()) {
             case "1":
-                enquiry.setBusinStatusText(enquiry.getOfferCount()+"个报价");
+                enquiry.setBusinStatusText(enquiry.getOfferCount() + "个报价");
                 break;
             case "0":
                 enquiry.setBusinStatusText("未报价");

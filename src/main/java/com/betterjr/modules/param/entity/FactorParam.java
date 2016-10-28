@@ -23,7 +23,7 @@ public class FactorParam {
     private BigDecimal advanceRepaymentRatio;
     
     //是否自动发布询价 1:是， 2:否
-    private BigDecimal autoEnquiry;
+    private int autoEnquiry;
     
     //平台：0模式，1：接口模式
     private int remoting;
@@ -95,11 +95,11 @@ public class FactorParam {
         this.advanceRepaymentRatio = advanceRepaymentRatio;
     }
 
-    public BigDecimal getAutoEnquiry() {
+    public int getAutoEnquiry() {
         return autoEnquiry;
     }
 
-    public void setAutoEnquiry(BigDecimal autoEnquiry) {
+    public void setAutoEnquiry(int autoEnquiry) {
         this.autoEnquiry = autoEnquiry;
     }
 

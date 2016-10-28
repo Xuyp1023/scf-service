@@ -146,32 +146,22 @@ public class EnquiryDubboService implements IScfEnquiryService {
     }
     
     @Override
-    public String webCustDropOffer(String anEnquiryNo, Long offerId) {
-        logger.debug("询价企业放弃某个资金方的报价,入参：factorNo:"+ anEnquiryNo + " -offerId:"+offerId);
-        ScfOffer offer = new ScfOffer();
-        offer.setEnquiryNo(anEnquiryNo);
+    public String webCustDropOffer(Long enquiryNo, Long offerId, String dropReason, String description) {
+        logger.debug("询价企业放弃某个资金方的报价,入参：offerId:"+ offerId);
+        ScfOffer offer = offerService.selectByPrimaryKey(offerId);
         offer.setId(offerId);
+        offer.setDescription(description);
         offer.setBusinStatus("-1");
+        offer.setDropReason(dropReason);
         
         //同时将询价对象中的状态也改为放弃
         Map<String, Object> anMap = new HashMap<String, Object>();
-        anMap.put("enquiryNo", anEnquiryNo);
         anMap.put("offerId", offerId);
+        anMap.put("enquiryNo", enquiryNo);
         ScfEnquiryObject object = enquiryObjectService.find(anMap );
         object.setBusinStatus("-1");
         enquiryObjectService.saveModify(object);
         
-        return AjaxObject.newOk("保存成功", offerService.saveModifyOffer(offer, offerId)).toJson();
-    }
-
-    @Override
-    public String webCustDropEnquiry(Long offerId, String dropReason, String description) {
-        logger.debug("询价企业放询价,入参：offerId:"+ offerId);
-        ScfOffer offer = new ScfOffer();
-        offer.setId(offerId);
-        //offer.setDropReason(dropReason);
-        offer.setDescription(description);
-        offer.setBusinStatus("-1");
         return AjaxObject.newOk(offerService.saveModifyOffer(offer, offerId)).toJson();
     }
 
