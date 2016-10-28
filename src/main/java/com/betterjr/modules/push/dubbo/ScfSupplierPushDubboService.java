@@ -21,5 +21,9 @@ public class ScfSupplierPushDubboService implements IScfSupplierPushService {
             return AjaxObject.newError("推送失败").toJson();
         }
     }
+    
+    public void webAddPushSign(String anAppNo){
+        scfSupplierPushService.testPushSign(anAppNo);
+    }
 
 }

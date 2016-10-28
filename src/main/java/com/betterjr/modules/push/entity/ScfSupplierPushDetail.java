@@ -1,7 +1,6 @@
 package com.betterjr.modules.push.entity;
 
 import java.math.BigDecimal;
-import java.util.Map;
 
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDecimalJsonSerializer;
@@ -19,8 +18,8 @@ public class ScfSupplierPushDetail implements BetterjrEntity {
     @Column(name = "ID",  columnDefinition="INTEGER" )
     private Long id;
 
-    @Column(name = "C_ORDERID",  columnDefinition="INTEGER" )
-    private Long orderId;
+    @Column(name = "C_ORDERID",  columnDefinition="VARCHAR" )
+    private String orderId;
 
     @Column(name = "C_BUSIN_TYPE",  columnDefinition="VARCHAR" )
     private String businType;
@@ -54,6 +53,15 @@ public class ScfSupplierPushDetail implements BetterjrEntity {
 
     @Column(name = "T_MODIFY_TIME",  columnDefinition="VARCHAR" )
     private String modifyTime;
+    
+    @Column(name = "C_SENDNO",  columnDefinition="VARCHAR" )
+    private String sendNo;
+    
+    @Column(name = "C_RECEIVENO",  columnDefinition="VARCHAR" )
+    private String receiveNo;
+    
+    @Column(name = "C_REMARK",  columnDefinition="VARCHAR" )
+    private String remark;    
 
     @Transient
     private String custName;
@@ -78,11 +86,11 @@ public class ScfSupplierPushDetail implements BetterjrEntity {
         this.id = id;
     }
 
-    public Long getOrderId() {
+    public String getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Long orderId) {
+    public void setOrderId(String orderId) {
         this.orderId = orderId;
     }
 
@@ -222,6 +230,30 @@ public class ScfSupplierPushDetail implements BetterjrEntity {
         this.billNo = anBillNo;
     }
 
+    public String getSendNo() {
+        return this.sendNo;
+    }
+
+    public void setSendNo(String anSendNo) {
+        this.sendNo = anSendNo;
+    }
+
+    public String getReceiveNo() {
+        return this.receiveNo;
+    }
+
+    public void setReceiveNo(String anReceiveNo) {
+        this.receiveNo = anReceiveNo;
+    }
+
+    public String getRemark() {
+        return this.remark;
+    }
+
+    public void setRemark(String anRemark) {
+        this.remark = anRemark;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -296,12 +328,23 @@ public class ScfSupplierPushDetail implements BetterjrEntity {
 
     public void initDefValue(ScfAcceptBill scfAcceptBill){
         this.id=SerialGenerator.getLongValue("pushDetail.id");
-        this.orderId=scfAcceptBill.getId();
-        this.businType="1";// 0:订单，1票据，2应收账款
+        this.orderId=scfAcceptBill.getId()+"";
+        this.businType="1";// 0:订单，1票据，2应收账款，3签约提醒
         this.beginDate=scfAcceptBill.getInvoiceDate();
         this.endDate=scfAcceptBill.getEndDate();
         this.money=scfAcceptBill.getBalance();
         this.costRate=scfAcceptBill.getRatio().toString();
+        this.businStatus="1";
+        this.regDate=BetterDateUtils.getNumDate();
+        this.regTime=BetterDateUtils.getNumTime();
+        this.modifyDate=BetterDateUtils.getNumDate();
+        this.modifyTime=BetterDateUtils.getNumTime();
+    }
+    
+    public void initValue(String anOrderId,String anBusinType){
+        this.id=SerialGenerator.getLongValue("pushDetail.id");
+        this.orderId=anOrderId;
+        this.businType=anBusinType;
         this.businStatus="1";
         this.regDate=BetterDateUtils.getNumDate();
         this.regTime=BetterDateUtils.getNumTime();
