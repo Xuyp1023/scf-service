@@ -1,6 +1,9 @@
 package com.betterjr.modules.push.service;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,7 +110,7 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
     
     public void testPushSign(String anAppNo){
         pushSignInfo(scfElecAgreementService.findOneElecAgreement(anAppNo));
-        pushOrderInfo(requestService.findRequestDetail(anAppNo));
+//        pushOrderInfo(requestService.findRequestDetail(anAppNo));
     }
     
     
@@ -159,14 +162,29 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
         }
         supplierPushDetailService.addPushDetail(supplierPushDetail);// 添加明细
     }
-    
+
     /***
      * 推送询价状态通知
      */
-    public void pushScfEnquiryInfo(){
-        
+    public void pushScfEnquiryInfo(Map<String, String> anMap){        
+        ScfSupplierPushDetail supplierPushDetail=new ScfSupplierPushDetail();
+        try {
+            supplierPushDetail.initValue(anMap.get("enquiryNo").toString(), "4");
+            supplierPushDetail.setSendNo((String)anMap.get("sendCustNo"));
+            supplierPushDetail.setReceiveNo((String)anMap.get("accCustNo"));
+            if(pushCheckService.pushEnquirySend(anMap)){
+                supplierPushDetail.setRemark("询价通知推送成功!");
+            }else{
+                supplierPushDetail.setRemark("询价通知推送失败!");
+                supplierPushDetail.setBusinStatus("0");
+            }
+        }
+        catch (Exception e) {
+            supplierPushDetail.setBusinStatus("0");
+            supplierPushDetail.setRemark("询价状态推送异常，原因："+e.getMessage());
+        }
+        supplierPushDetailService.addPushDetail(supplierPushDetail);// 添加明细
     }
-    
     
     
 }
