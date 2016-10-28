@@ -209,10 +209,40 @@ public class ScfPushCheckService {
             builder.addParam("requestDate", getDisDate(anRequest.getRegDate()));
             builder.addParam("balance", getDisMoney(anRequest.getBalance()));
             builder.addParam("tradeStatus", RequestTradeStatusType.checking(anRequest.getTradeStatus()).getTitle());
-            builder.addReceiver(anRequest.getCustNo(), targetOperator.getId());  // 接收人
+            builder.addReceiver(targetCustomer.getCustNo(), targetOperator.getId());  // 接收人
             notificationSendService.sendNotification(builder.build());
             bool=true;
         }
+        return bool;
+    }
+    
+    /****
+     * 询价答复通知
+     * @param anMap
+     * @return
+     */
+    public boolean pushEnquirySend(Map<String,String> anMap){
+        boolean bool=false;
+        final CustInfo sendCustomer = accountService.findCustInfo(Long.parseLong(anMap.get("sendCustNo").toString()));
+        final CustOperatorInfo sendOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(Long.parseLong(anMap.get("sendCustNo").toString())));
+        final CustInfo targetCustomer = accountService.findCustInfo(Long.parseLong(anMap.get("accCustNo").toString()));
+        final CustOperatorInfo targetOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(Long.parseLong(anMap.get("sendCustNo").toString())));
+        if(sendOperator!=null && targetOperator!=null){
+            final Builder builder = NotificationModel.newBuilder("询价单答复通知", sendCustomer, sendOperator);
+            builder.addParam("appId", wechatClientService.getAppId());
+            builder.addParam("wechatUrl", wechatClientService.getWechatUrl());
+            builder.addParam("enquiryNo", anMap.get("enquiryNo"));
+            builder.addParam("productName", anMap.get("productName"));
+            builder.addParam("description", anMap.get("description"));
+            String balance=BetterStringUtils.isNotBlank(anMap.get("balance"))?getDisMoney(new BigDecimal(anMap.get("balance").toString())):"";
+            builder.addParam("balance",balance);
+            String offerTime=BetterStringUtils.isNotBlank(anMap.get("offerTime"))?getDisDate(anMap.get("offerTime").toString()):"";
+            builder.addParam("offerTime",offerTime);
+            builder.addReceiver(targetCustomer.getCustNo(), targetOperator.getId());  // 接收人
+            notificationSendService.sendNotification(builder.build());
+            bool=true;
+        }
+        
         return bool;
     }
     
