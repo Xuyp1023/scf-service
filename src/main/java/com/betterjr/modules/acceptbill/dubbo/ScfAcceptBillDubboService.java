@@ -68,4 +68,10 @@ public class ScfAcceptBillDubboService implements IScfAcceptBillService {
         
         return AjaxObject.newOk("汇票信息详情查询", scfAcceptBillService.findAcceptBillDetailsById(anId)).toJson();
     }
+    
+    @Override
+    public String webSaveSingleFileLink(Long anId, Long anFileId) {
+        
+        return AjaxObject.newOk("汇票信息详情查询", scfAcceptBillService.saveSingleFileLink(anId, anFileId)).toJson();
+    }
 }

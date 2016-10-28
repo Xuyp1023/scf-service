@@ -597,4 +597,9 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         return true;
     }
     
+    public boolean saveSingleFileLink(Long anId, Long anFileId) {
+        ScfAcceptBill anAcceptBill = this.selectByPrimaryKey(anId);
+        BTAssert.notNull(anAcceptBill, "无法获取汇票信息");
+        return custFileDubboService.updateFileItems(anAcceptBill.getBatchNo(), anFileId);
+    }
 }
