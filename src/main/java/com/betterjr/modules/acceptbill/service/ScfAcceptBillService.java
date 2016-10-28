@@ -137,7 +137,7 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
             // 已审核
             anMap.put("aduit", "1");
         }
-        Page<ScfAcceptBill> anAcceptBillList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "businStatus,billNo");
+        Page<ScfAcceptBill> anAcceptBillList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "aduit,businStatus,billNo");
         // 补全关联信息
         for (ScfAcceptBill anAcceptBill : anAcceptBillList) {
             //核心企业名称
