@@ -1,6 +1,7 @@
 package com.betterjr.modules.enquiry.dubbo;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -9,7 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.betterjr.common.utils.BetterStringUtils;
+import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.web.AjaxObject;
+import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
+import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
 import com.betterjr.modules.enquiry.IScfEnquiryService;
 import com.betterjr.modules.enquiry.entity.ScfEnquiry;
 import com.betterjr.modules.enquiry.entity.ScfEnquiryObject;
@@ -19,6 +23,7 @@ import com.betterjr.modules.enquiry.service.ScfEnquiryObjectService;
 import com.betterjr.modules.enquiry.service.ScfEnquiryOfferReplyService;
 import com.betterjr.modules.enquiry.service.ScfEnquiryService;
 import com.betterjr.modules.enquiry.service.ScfOfferService;
+import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 
 @Service(interfaceClass = IScfEnquiryService.class)
@@ -35,6 +40,9 @@ public class EnquiryDubboService implements IScfEnquiryService {
     @Autowired
     private ScfEnquiryObjectService enquiryObjectService;
     
+    @Autowired
+    private ScfAcceptBillService acceptBillService;
+    
     protected final Logger logger = LoggerFactory.getLogger(EnquiryDubboService.class);
     
     public String webQueryEnquiryList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
@@ -50,8 +58,7 @@ public class EnquiryDubboService implements IScfEnquiryService {
 
     public String webAddEnquiry(Map<String, Object> anMap) {
         logger.debug("新增询价,入参："+ anMap);
-        ScfEnquiry enquiry = (ScfEnquiry) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk(enquiryService.addEnquiry(enquiry)).toJson();
+        return AjaxObject.newOk(enquiryService.addEnquiry((ScfEnquiry) RuleServiceDubboFilterInvoker.getInputObj())).toJson();
     }
 
     public String webFindEnquiryDetail(Long anId) {
@@ -88,7 +95,12 @@ public class EnquiryDubboService implements IScfEnquiryService {
     
     public String webAddOffer(Map<String, Object> anMap) {
         logger.debug("新增报价,入参："+ anMap);
-        return AjaxObject.newOk(offerService.addOffer((ScfOffer) RuleServiceDubboFilterInvoker.getInputObj())).toJson();
+        ScfOffer offer = offerService.addOffer((ScfOffer) RuleServiceDubboFilterInvoker.getInputObj());
+        
+        //发送报价消息
+        sentOfferMsg(offer);
+        
+        return AjaxObject.newOk(offer).toJson();
     }
     
     public String webFindOfferDetail(Long factorNo, String enquiryNo) {
@@ -162,6 +174,11 @@ public class EnquiryDubboService implements IScfEnquiryService {
         object.setBusinStatus("-1");
         enquiryObjectService.saveModify(object);
         
+        //报价数量减少
+        ScfEnquiry enquiry = enquiryService.selectByPrimaryKey(enquiryNo);
+        enquiry.setOfferCount(enquiry.getOfferCount()-1);
+        enquiryService.saveUpdate(enquiry);
+        
         return AjaxObject.newOk(offerService.saveModifyOffer(offer, offerId)).toJson();
     }
 
@@ -171,5 +188,32 @@ public class EnquiryDubboService implements IScfEnquiryService {
         map.put("enquiryNo", enquiryNo);
         return AjaxObject.newOk(offerService.findOfferList(map)).toJson();
     }
-
+    
+    /**
+     * 发送报价消息
+     * @param offer
+     */
+    private void sentOfferMsg(ScfOffer offer){
+        Map<String, Object> msgMap = new HashMap<String, Object>();
+        ScfEnquiry enquiry = enquiryService.selectByPrimaryKey(offer.getEnquiryNo());
+        ScfAcceptBill bill = acceptBillService.findAcceptBill(Long.parseLong(enquiry.getOrders()));
+        if(null != bill){
+            List<ScfOrder> orderList = bill.getOrderList();
+            if(!Collections3.isEmpty(orderList)){
+                ScfOrder order = Collections3.getFirst(orderList);
+                msgMap.put("productName", order.getGoodsName()+ " " + order.getUnit());
+            }
+        }
+        
+        msgMap.put("enquiryNo", offer.getEnquiryNo());
+        msgMap.put("offerTime", offer.getRegDate() + " " +offer.getRegTime());
+        msgMap.put("balance", offer.getBalance());
+        msgMap.put("description", offer.getDescription());
+        msgMap.put("sendCustNo", offer.getCustNo());
+        msgMap.put("accCustNo", offer.getFactorNo());
+        logger.debug(msgMap.toString());
+        
+        //调用发送接口
+    }
+    
 }
