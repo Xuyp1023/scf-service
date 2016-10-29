@@ -50,6 +50,9 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
         // 获取当前登录操作员信息
         map.put("operOrg", UserUtils.findOperOrg());
         SupplyChainUtil.addCondition(anParam, map);
+        if(UserUtils.factorUser()){ // 如果当前登录是保理公司，则需要增加保理客户号的查询条件
+            map.put("factorNo", UserUtils.getDefCustInfo().getCustNo());
+        }
         Page<CustAgreement> agreements = this.selectPropertyByPage(map, anPageNum, anPageSize, "1".equals(anParam.get("flag")));
 
         return agreements;
@@ -73,6 +76,38 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
         // 保存客户合同信息
         this.insert(anCustAgreement);
         return anCustAgreement;
+    }
+    
+    /*****
+     * 添加系统默认的贸易合同信息
+     * @param anCoreCustNo 核心企业客户号
+     * @param anSupplierNo 供应商客户号
+     * @param anFactorNo   保理公司客户号
+     * @param anFileList   附件列表(多附件以,号分隔)
+     * @return 贸易合同信息
+     */
+    public CustAgreement addSysCustAgreement(Long anCoreCustNo,Long anSupplierNo,Long anFactorNo, String anFileList){
+        Map<String, Object> anMap = new HashMap();
+        anMap.put("buyerNo", anCoreCustNo);
+        anMap.put("supplierNo", anSupplierNo);
+        anMap.put("factorNo", anFactorNo);
+        anMap.put("status", "0");
+        CustAgreement custAgreement=findCustAgreement(anMap);
+        if(custAgreement==null){
+            custAgreement=new CustAgreement();
+            custAgreement.initSysValue(UserUtils.getOperatorInfo(), anCoreCustNo, custAccoService.queryCustName(anCoreCustNo), anSupplierNo, custAccoService.queryCustName(anSupplierNo), anFactorNo);// 保存合同附件信息
+            if(BetterStringUtils.isNotBlank(anFileList)){
+                custAgreement.setBatchNo(custFileService.updateCustFileItemInfo(anFileList, custAgreement.getBatchNo()));
+            }
+            // 保存客户合同信息
+            this.insert(custAgreement);
+        }
+        return custAgreement;
+    }
+    
+    public CustAgreement findCustAgreement(Map<String, Object> anMap){
+        List<CustAgreement> custAgreementList=this.selectByProperty(anMap);
+        return Collections3.getFirst(custAgreementList);
     }
 
     /**
