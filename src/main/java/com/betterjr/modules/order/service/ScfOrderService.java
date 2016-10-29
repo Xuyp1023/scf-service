@@ -651,7 +651,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
                     fileIdList.add(anFile.getId());
                 }
             }
-            CustAgreement anAgree = addSysCustAgreement(anAcceptBill.getCoreCustNo(), anAcceptBill.getCustNo(), anFactorNo, StringUtils.collectionToDelimitedString(fileIdList, ","));
+            CustAgreement anAgree = custAgreementService.addSysCustAgreement(anAcceptBill.getCoreCustNo(), anAcceptBill.getCustNo(), anFactorNo, StringUtils.collectionToDelimitedString(fileIdList, ","));
             orderRelationService.addOrderRelation(ScfOrderRelationType.ACCEPTBILL.getCode(), anAcceptBillId, ScfOrderRelationType.AGGREMENT.getCode(), anAgree.getId().toString());
         }
     }
