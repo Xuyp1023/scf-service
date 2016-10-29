@@ -8,6 +8,8 @@ import com.betterjr.common.mapper.CustDateJsonSerializer;
 //import com.betterjr.common.mapper.CustDecimalJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.BetterStringUtils;
+import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -200,7 +202,29 @@ public class CustAgreement implements BetterjrEntity {
     @Column(name = "N_BATCHNO",  columnDefinition="INTEGER" )
     @MetaData( value="上传的批次号", comments = "上传的批次号，对应fileinfo中的ID")
     private Long batchNo;
-
+    
+    /**
+     * 实际的买方（甲方）
+     */
+    @Column(name = "C_REAL_BUYER",  columnDefinition="VARCHAR" )
+    @MetaData( value="实际买方", comments = "实际的买方")
+    private String realBuyer;
+    
+    /**
+     * 实际的供应商（乙方）
+     */
+    @Column(name = "C_REAL_SUPPLIER",  columnDefinition="VARCHAR" )
+    @MetaData( value="实际供应商", comments = "实际供应商")
+    private String realSupplier;
+    
+    /**
+     * 保理公司编号
+     */
+    @Column(name = "L_FACTORNO",  columnDefinition="INTEGER" )
+    @MetaData( value="保理公司客户号", comments = "保理公司客户号")
+    private Long factorNo;
+    
+    
     private static final long serialVersionUID = 1458113450523L;
 
     public Long getId() {
@@ -415,6 +439,30 @@ public class CustAgreement implements BetterjrEntity {
         this.batchNo = batchNo;
     }
 
+    public String getRealBuyer() {
+        return this.realBuyer;
+    }
+
+    public void setRealBuyer(String anRealBuyer) {
+        this.realBuyer = anRealBuyer;
+    }
+
+    public String getRealSupplier() {
+        return this.realSupplier;
+    }
+
+    public void setRealSupplier(String anRealSupplier) {
+        this.realSupplier = anRealSupplier;
+    }
+
+    public Long getFactorNo() {
+        return this.factorNo;
+    }
+
+    public void setFactorNo(Long anFactorNo) {
+        this.factorNo = anFactorNo;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -447,6 +495,9 @@ public class CustAgreement implements BetterjrEntity {
         sb.append(", operName=").append(operName);
         sb.append(", operOrg=").append(operOrg);
         sb.append(", batchNo=").append(batchNo);
+        sb.append(", realBuyer=").append(realBuyer);
+        sb.append(", realSupplier=").append(realSupplier);
+        sb.append(", factorNo=").append(factorNo);
         sb.append("]");
         return sb.toString();
     }
@@ -533,8 +584,6 @@ public class CustAgreement implements BetterjrEntity {
         this.status = anAgree.getStatus();
         this.modiDate = BetterDateUtils.getNumDate();
         this.batchNo = anAgree.getBatchNo();
-//        this.supplierNo=anAgree.getSupplierNo();
-//        this.supplier=anAgree.getSupplier();
         this.operOrg = anAgree.getOperOrg();
         this.operCode = anAgree.getOperCode();
         this.operName = anAgree.getOperName();
@@ -556,6 +605,31 @@ public class CustAgreement implements BetterjrEntity {
         this.buyer = anBuyer;
         this.buyerNo=buyerNo;
         this.supplier = anSupplier;
+        if (BetterStringUtils.isBlank(this.realBuyer)){
+            this.realBuyer = this.buyer;
+        }
+        if (BetterStringUtils.isBlank(this.realSupplier)){
+           this.realSupplier = this.supplier; 
+        }
+        if(UserUtils.factorUser()){ // 如果登录的是保理公司，则设置当前保理客户号
+            this.factorNo=UserUtils.getDefCustInfo().getCustNo();
+        }
+    }
+    
+    public void initSysValue(CustOperatorInfo anCustOperInfo,Long buyerNo, String anBuyer,Long anSupplierNo,String anSupplier,Long anFactorNo) {
+        this.id = SerialGenerator.getLongValue("CustAgreement.id");
+        this.agreeName=anSupplier+BetterDateUtils.getNumDate()+"贸易合同";
+        this.regDate = BetterDateUtils.getNumDate();
+        this.modiDate = BetterDateUtils.getNumDate();
+        this.status = "0";
+        this.operOrg = anCustOperInfo.getOperOrg();
+        this.operCode = anCustOperInfo.getOperCode();
+        this.operName = anCustOperInfo.getName();
+        this.buyer = anBuyer;
+        this.buyerNo=buyerNo;
+        this.supplier = anSupplier;
+        this.factorNo=anFactorNo;
+        this.supplierNo=anSupplierNo;
     }
     
 }
