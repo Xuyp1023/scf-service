@@ -120,7 +120,6 @@ public class ScfAgreementService {
      */
     public String transNotice(ScfRequestNotice anNoticeRequest){
         logger.info("转让通知书："+anNoticeRequest);
-        BTAssert.notNull(anNoticeRequest.getFactorPost(), "邮政编码不能为空");
         BTAssert.notNull(anNoticeRequest.getBankAccount(), "银行账户不能为空");
         ScfRequest request = requestService.findRequestDetail(anNoticeRequest.getRequestNo());
         anNoticeRequest.fillInfo(request);

@@ -87,7 +87,13 @@ public class ScfPushCheckService {
         }
         // 微信发送
         for(CustRelationData relationData:supplierRelationDataList){
-            if(!billSend(anCoreCustNo,relationData.getCustNo(),supplierPushDetail)){
+            Long custNo=null;
+            if(BetterStringUtils.equalsIgnoreCase(relationData.getRelateType(), "2")){
+                custNo=relationData.getRelateCustno();
+            }else if(BetterStringUtils.equalsIgnoreCase(relationData.getRelateType(), "0")){
+                custNo=relationData.getCustNo();
+            }
+            if(!billSend(anCoreCustNo,custNo,supplierPushDetail)){
                 supplierRelationDataList=new ArrayList<CustRelationData>();
                 break;
             }
@@ -232,7 +238,7 @@ public class ScfPushCheckService {
             builder.addParam("appId", wechatClientService.getAppId());
             builder.addParam("wechatUrl", wechatClientService.getWechatUrl());
             builder.addParam("enquiryNo", anMap.get("enquiryNo"));
-            builder.addParam("productName", anMap.get("productName"));
+            builder.addParam("productName",anMap.get("productName"));
             builder.addParam("description", anMap.get("description"));
             String balance=BetterStringUtils.isNotBlank(anMap.get("balance"))?getDisMoney(new BigDecimal(anMap.get("balance").toString())):"";
             builder.addParam("balance",balance);

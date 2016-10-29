@@ -1,7 +1,6 @@
 package com.betterjr.modules.push.service;
 
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -109,8 +108,9 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
     }
     
     public void testPushSign(String anAppNo){
-        pushSignInfo(scfElecAgreementService.findOneElecAgreement(anAppNo));
-//        pushOrderInfo(requestService.findRequestDetail(anAppNo));
+//        pushSignInfo(scfElecAgreementService.findOneElecAgreement(anAppNo));
+        pushOrderInfo(requestService.findRequestDetail(anAppNo));
+//        pushScfEnquiryInfo(null);
     }
     
     
@@ -166,12 +166,12 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
     /***
      * 推送询价状态通知
      */
-    public void pushScfEnquiryInfo(Map<String, String> anMap){        
+    public void pushScfEnquiryInfo(Map<String, String> anMap){  
         ScfSupplierPushDetail supplierPushDetail=new ScfSupplierPushDetail();
         try {
-            supplierPushDetail.initValue(anMap.get("enquiryNo").toString(), "4");
-            supplierPushDetail.setSendNo((String)anMap.get("sendCustNo"));
-            supplierPushDetail.setReceiveNo((String)anMap.get("accCustNo"));
+            supplierPushDetail.initValue(anMap.get("enquiryNo"), "4");
+            supplierPushDetail.setSendNo(anMap.get("sendCustNo"));
+            supplierPushDetail.setReceiveNo(anMap.get("accCustNo"));
             if(pushCheckService.pushEnquirySend(anMap)){
                 supplierPushDetail.setRemark("询价通知推送成功!");
             }else{
