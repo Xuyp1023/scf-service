@@ -64,4 +64,9 @@ public class ScfOrderDubboService implements IScfOrderService{
     public String webCheckInfoCompleted(String anIdList, String anRequestType) {
         return AjaxObject.newOk("资料检查成功", scfOrderService.checkInfoCompleted(anIdList, anRequestType)? "0":"1").toJson();
     }
+    
+    @Override
+    public String webCheckAgreementStatus(Long anAcceptBillId){
+        return AjaxObject.newOk("合同状态检查成功", scfOrderService.checkAgreementStatus(anAcceptBillId)).toJson();
+    }
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterTradeException;
@@ -634,5 +635,39 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         }
         
         return true;
+    } 
+    
+    /**
+     * 根据requestNo检查是否关联贸易合同，若未关联，生成默认贸易合同
+     */
+    public void checkAndGenerateTradeAgreement(Long anAcceptBillId, Long anFactorNo) {
+        ScfAcceptBill anAcceptBill = acceptBillService.findAcceptBillDetailsById(anAcceptBillId);
+        if (Collections3.isEmpty(anAcceptBill.getAgreementList())) {
+            //查询汇票附件中的合同附件
+            List<CustFileItem> fileList = custFileDubboService.findCustFiles(anAcceptBill.getBatchNo());
+            List<Long> fileIdList = new ArrayList<Long>();
+            for (CustFileItem anFile : fileList) {
+                if(BetterStringUtils.equals("agreeAccessory", anFile.getFileInfoType())) {
+                    fileIdList.add(anFile.getId());
+                }
+            }
+            CustAgreement anAgree = custAgreementService.addSysCustAgreement(anAcceptBill.getCoreCustNo(), anAcceptBill.getCustNo(), anFactorNo, StringUtils.collectionToDelimitedString(fileIdList, ","));
+            orderRelationService.addOrderRelation(ScfOrderRelationType.ACCEPTBILL.getCode(), anAcceptBillId, ScfOrderRelationType.AGGREMENT.getCode(), anAgree.getId().toString());
+        }
+    }
+    
+    /**
+     * 查出贸易合同不为1,未启用的贸易合同名称
+     */
+    public List<String> checkAgreementStatus(Long anAcceptBillId) {
+        //未启用的合同编号
+        List<String> agreeNameList = new ArrayList<String>();
+        ScfAcceptBill anAcceptBill = acceptBillService.findAcceptBillDetailsById(anAcceptBillId);
+        for(CustAgreement anAgree : anAcceptBill.getAgreementList()) {
+            if(!BetterStringUtils.equals("1", anAgree.getStatus())) {
+                agreeNameList.add(anAgree.getAgreeName());
+            }
+        }
+        return agreeNameList;
     }
 }
