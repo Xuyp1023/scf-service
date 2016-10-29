@@ -1255,6 +1255,7 @@ public class ScfRequest implements BetterjrEntity {
     }
     
     private void fillBalance(ScfRequest request){
+        request.period = (null ==request.period)?0:request.period;
         request.confirmBalance = MathExtend.defaultValue(request.confirmBalance, BigDecimal.ZERO);
         request.loanBalance = MathExtend.defaultValue(request.loanBalance, BigDecimal.ZERO);
         request.creditMoney = MathExtend.defaultValue(request.creditMoney, BigDecimal.ZERO);

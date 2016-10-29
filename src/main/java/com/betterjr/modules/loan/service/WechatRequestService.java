@@ -1,5 +1,6 @@
 package com.betterjr.modules.loan.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +14,9 @@ import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
+import com.betterjr.modules.enquiry.entity.ScfEnquiryObject;
 import com.betterjr.modules.enquiry.entity.ScfOffer;
+import com.betterjr.modules.enquiry.service.ScfEnquiryObjectService;
 import com.betterjr.modules.enquiry.service.ScfEnquiryService;
 import com.betterjr.modules.enquiry.service.ScfOfferService;
 import com.betterjr.modules.loan.dao.ScfRequestMapper;
@@ -42,6 +45,8 @@ public class WechatRequestService extends BaseService<ScfRequestMapper, ScfReque
     private ScfOfferService offerService;
     @Autowired
     private ScfEnquiryService enquiryService;
+    @Autowired
+    private ScfEnquiryObjectService enquiryObjectService;
     
     /**
      * 新增融资申请
@@ -70,6 +75,15 @@ public class WechatRequestService extends BaseService<ScfRequestMapper, ScfReque
             
             ScfOffer offer = offerService.selectByPrimaryKey(anRequest.getOfferId());
             //从报价过来的要改变报价状态
+            Map<String, Object> anMap = new HashMap<String, Object>();
+            anMap.put("enquiryNo", offer.getEnquiryNo());
+            anMap.put("offerId", offer.getId());
+            ScfEnquiryObject enquiryObj = enquiryObjectService.find(anMap);
+            if(null != enquiryObj){
+                enquiryObj.setBusinStatus("-2");
+                enquiryObjectService.saveModify(enquiryObj);
+            }
+           
             enquiryService.saveUpdateBusinStatus(offer.getEnquiryNo(), "-2");
         }
 
