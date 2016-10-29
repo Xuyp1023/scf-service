@@ -95,7 +95,7 @@ public class EnquiryDubboService implements IScfEnquiryService {
     public String webAddOffer(Map<String, Object> anMap) {
         logger.debug("新增报价,入参："+ anMap);
         ScfOffer offer = offerService.addOffer((ScfOffer) RuleServiceDubboFilterInvoker.getInputObj());
-        sentOfferMsg(offer.getId());
+       // sentOfferMsg(offer.getId());
         return AjaxObject.newOk(offer).toJson();
     }
     
@@ -171,8 +171,11 @@ public class EnquiryDubboService implements IScfEnquiryService {
         enquiryObjectService.saveModify(object);
         
         //报价数量减少
-        ScfEnquiry enquiry = enquiryService.selectByPrimaryKey(enquiryNo);
+        ScfEnquiry enquiry = enquiryService.findEnquiryByNo(enquiryNo.toString());
         enquiry.setOfferCount(enquiry.getOfferCount()-1);
+        if(null == enquiry.getOfferCount() || 0== enquiry.getOfferCount()){
+            enquiry.setBusinStatus("0");
+        }
         enquiryService.saveUpdate(enquiry);
         
         return AjaxObject.newOk(offerService.saveModifyOffer(offer, offerId)).toJson();

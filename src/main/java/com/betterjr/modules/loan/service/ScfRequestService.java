@@ -598,26 +598,22 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     }
 
     public List<ScfRequestCredit> getCreditList(ScfRequest anRequest){
-        List<CustAgreement> agreementList = (List)orderService.findRelationInfo(anRequest.getRequestNo(), ScfOrderRelationType.AGGREMENT);
-        CustAgreement agreement = Collections3.getFirst(agreementList);
-        BTAssert.notNull(agreement, "发起融资背景确认失败：没有找到贸易合同！");
-        
         List<ScfRequestCredit> creditList = new ArrayList<ScfRequestCredit>();
         String type = anRequest.getRequestType();
         if(BetterStringUtils.equals(RequestType.ORDER.getCode(), type) || BetterStringUtils.equals(RequestType.SELLER.getCode(), type)){
             List<ScfOrder> list = (List)orderService.findInfoListByRequest(anRequest.getRequestNo(), RequestType.ORDER.getCode());
             for (ScfOrder order : list) {
-                creditList = setInvoice(anRequest, order.getInvoiceList(), order.getBalance(), order.getOrderNo(),agreement);
+                creditList = setInvoice(anRequest, order.getInvoiceList(), order.getBalance(), order.getOrderNo());
             }
         }else if(BetterStringUtils.equals(RequestType.BILL.getCode(), type)){
             List<ScfAcceptBill> list = (List)orderService.findInfoListByRequest(anRequest.getRequestNo(), RequestType.BILL.getCode());
             for (ScfAcceptBill bill : list) {
-                creditList = setInvoice(anRequest, bill.getInvoiceList(), bill.getBalance(), bill.getBillNo() ,agreement);
+                creditList = setInvoice(anRequest, bill.getInvoiceList(), bill.getBalance(), bill.getBillNo());
             }
         }else if(BetterStringUtils.equals(RequestType.RECEIVABLE.getCode(), type)){
             List<ScfReceivable> list = (List)orderService.findInfoListByRequest(anRequest.getRequestNo(), RequestType.RECEIVABLE.getCode());
             for (ScfReceivable receivable : list) {
-                creditList = setInvoice(anRequest, receivable.getInvoiceList(), receivable.getBalance(), receivable.getReceivableNo(), agreement);
+                creditList = setInvoice(anRequest, receivable.getInvoiceList(), receivable.getBalance(), receivable.getReceivableNo());
             }
         }
         return creditList;
@@ -632,7 +628,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
      * @param anAgreement
      * @return
      */
-    private List<ScfRequestCredit> setInvoice(ScfRequest request, List<ScfInvoice> anInvoiceList, BigDecimal anBalance, String anObjectNo, CustAgreement anAgreement){
+    private List<ScfRequestCredit> setInvoice(ScfRequest request, List<ScfInvoice> anInvoiceList, BigDecimal anBalance, String anObjectNo){
         List<ScfRequestCredit> creditList = new ArrayList<ScfRequestCredit>();
         for (ScfInvoice invoice : anInvoiceList) {
             ScfRequestCredit credit = new ScfRequestCredit();

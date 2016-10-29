@@ -63,13 +63,11 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
     }
 
     public ScfOffer saveUpdateTradeStatus(Long anId, String tradeStatus){
-        ScfOffer offer = new ScfOffer();
-        if(null == anId){
-            return offer;
-        }
+        ScfOffer offer = selectByPrimaryKey(anId);
+        BTAssert.notNull(offer, "没有找到该报价");
         
         offer.setBusinStatus(tradeStatus);
-        return this.saveModifyOffer(offer , anId);
+        return this.saveModifyOffer(offer, anId);
     }
     
     
@@ -174,15 +172,12 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
         }
         
         for (ScfEnquiryObject object : list) {
-            qyOfferMap = new HashMap<String, Object>();
-            qyOfferMap.put("enquiryNo", object.getEnquiryNo());
-            qyOfferMap.put("factorNo", object.getFactorNo());
-            qyOfferMap.put("businStatus", new String[]{"1", "-1"});
-            
             //如果查到了给出最近一次报价的信息
             if(null != object.getOfferId()){
                 ScfOffer offer = this.selectByPrimaryKey(object.getOfferId());
-                object.setOffer(offer);
+                if(null != offer && BetterStringUtils.equals("1", offer.getBusinStatus())){
+                    object.setOffer(offer);
+                }
             }
             
             object.setFactorName(accountService.queryCustName(object.getFactorNo()));
@@ -202,8 +197,8 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
         anMap.put("enquiryNo", anEnquiryNo);
         anMap.put("businStatus", "1");
         List<ScfOffer> offerList =  this.selectByProperty(anMap);
-        if(Collections3.isEmpty(offerList) || offerList.size() == 0){
-            new ScfOffer();
+        if(Collections3.isEmpty(offerList)){
+           return new ScfOffer();
         }
         
         ScfOffer offer = Collections3.getFirst(offerList);
