@@ -231,8 +231,10 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         // 检查用户是否有权限编辑
 //        checkOperator(anOrder.getOperOrg(), "当前操作员不能修改该订单");
         // 检查应收账款状态 0:可用 1:过期 2:冻结
-        checkStatus(anOrder.getBusinStatus(), "1", true, "当前订单已过期,不允许被编辑");
-        checkStatus(anOrder.getBusinStatus(), "2", true, "当前订单已冻结,不允许被编辑");
+        if(!UserUtils.factorUser()) {
+            checkStatus(anOrder.getBusinStatus(), "1", true, "当前订单已过期,不允许被编辑");
+            checkStatus(anOrder.getBusinStatus(), "2", true, "当前订单已冻结,不允许被编辑");
+        }
         // 应收账款信息变更迁移初始化
         anModiOrder.setId(anOrder.getId());
         anModiOrder.initModifyValue(UserUtils.getOperatorInfo());

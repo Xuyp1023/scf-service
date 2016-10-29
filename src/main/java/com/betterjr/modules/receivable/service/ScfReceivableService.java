@@ -59,8 +59,10 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
         //检查用户是否有权限编辑
 //        checkOperator(anReceivable.getOperOrg(), "当前操作员不能修改该应收账款");
         //检查应收账款状态 0:可用 1:过期 2:冻结
-        checkStatus(anReceivable.getBusinStatus(), "1", true, "当前应收账款已过期,不允许被编辑");
-        checkStatus(anReceivable.getBusinStatus(), "2", true, "当前应收账款已冻结,不允许被编辑");
+        if(!UserUtils.factorUser()) {
+            checkStatus(anReceivable.getBusinStatus(), "1", true, "当前应收账款已过期,不允许被编辑");
+            checkStatus(anReceivable.getBusinStatus(), "2", true, "当前应收账款已冻结,不允许被编辑");
+        }
         //应收账款信息变更迁移初始化
         anMoidReceivable.setId(anId);
         anMoidReceivable.initModifyValue(UserUtils.getOperatorInfo());
