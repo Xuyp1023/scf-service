@@ -128,6 +128,8 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
     public List<ScfOrder> findOrderList(String anCustNo, String anIsOnlyNormal) {
         Map<String, Object> anMap = new HashMap<String, Object>();
         anMap.put("custNo", anCustNo);
+        //只查询数据非自动生成的数据来源
+        anMap.put("dataSource", "1");
         if(BetterStringUtils.equals(anIsOnlyNormal, "1")) {
             anMap.put("businStatus", "0");
         }
