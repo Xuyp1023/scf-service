@@ -34,6 +34,7 @@ import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.service.ScfRequestService;
+import com.betterjr.modules.order.helper.ScfOrderRelationType;
 import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.product.service.ScfProductService;
 
@@ -137,8 +138,8 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
      * @param anRequestNo
      * @return
      */
-    public ScfAcceptBill getBillInfoByRequestNo(String anRequestNo){
-        List billList=orderService.findInfoListByRequest(anRequestNo, "2");
+    public ScfAcceptBill findBillInfoByRequestNo(String anRequestNo){
+        List billList=orderService.findInfoListByRequest(anRequestNo, ScfOrderRelationType.ACCEPTBILL.getCode());
         return (ScfAcceptBill)Collections3.getFirst(billList);
     }
     
@@ -506,7 +507,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         elecAgree.setFactorName(DictUtils.getDictLabel("ScfAgencyGroup", elecAgree.getFactorNo()));
         elecAgree.setProductName(getProductNameByRequestNo(elecAgree.getRequestNo()));
         // 加入票据属性
-        ScfAcceptBill bill=getBillInfoByRequestNo(elecAgree.getRequestNo());
+        ScfAcceptBill bill=findBillInfoByRequestNo(elecAgree.getRequestNo());
         if(bill!=null){
             elecAgree.setBillMode(bill.getBillMode());
             elecAgree.setBillNo(bill.getBillNo());
