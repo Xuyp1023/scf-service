@@ -63,6 +63,9 @@ public class ScfSupplierPushDetail implements BetterjrEntity {
     @Column(name = "C_REMARK",  columnDefinition="VARCHAR" )
     private String remark;    
 
+    @Column(name = "L_PUSHID",  columnDefinition="INTEGER" )
+    private Long pushId;
+    
     @Transient
     private String custName;
     @Transient
@@ -252,6 +255,14 @@ public class ScfSupplierPushDetail implements BetterjrEntity {
 
     public void setRemark(String anRemark) {
         this.remark = anRemark;
+    }
+
+    public Long getPushId() {
+        return this.pushId;
+    }
+
+    public void setPushId(Long anPushId) {
+        this.pushId = anPushId;
     }
 
     @Override

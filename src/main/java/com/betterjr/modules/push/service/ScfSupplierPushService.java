@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.service.BaseService;
+import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
@@ -46,30 +46,20 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
         try {
             // 获取票据信息
             ScfAcceptBill scfAcceptBill=scfAcceptBillService.findAcceptBillDetailsById(anBillId);
+            ScfSupplierPush supplierPush=new ScfSupplierPush();
+            supplierPush.initDefValue(scfAcceptBill.getCoreCustNo(),scfAcceptBill.getSupplierNo());
+            this.insert(supplierPush);
             ScfSupplierPushDetail supplierPushDetail=new ScfSupplierPushDetail();
             supplierPushDetail.initDefValue(scfAcceptBill);
-            String factors="";
-            int i=0;
+            supplierPushDetail.setRemark("票据信息推送");
+            supplierPushDetail.setPushId(supplierPush.getId());
             // 添加发送记录
-            for(CustRelationData custRelationData:pushCheckService.pushData(scfAcceptBill.getCoreCustNo(),scfAcceptBill.getSupplierNo(),supplierPushDetail)){
-                if(i==0){
-                    factors=custRelationData.getRelateCustno().toString();
-                }else{
-                    factors=","+custRelationData.getRelateCustno().toString();
-                }
-                supplierPushDetail.setAgencyNo(custRelationData.getRelateCustno().toString());
-                supplierPushDetail.setRemark("票据信息推送");
+            String factors = pushCheckService.pushData(scfAcceptBill.getCoreCustNo(),scfAcceptBill.getSupplierNo(),supplierPushDetail);
+            supplierPushDetail.setAgencyNo(factors);
+            supplierPushDetailService.addPushDetail(supplierPushDetail);
 
-                if(supplierPushDetailService.addPushDetail(supplierPushDetail)){
-                    ScfSupplierPush supplierPush=new ScfSupplierPush();
-                    supplierPush.initDefValue(scfAcceptBill.getCoreCustNo(),scfAcceptBill.getSupplierNo(),supplierPushDetail.getId());
-//                    this.insert(supplierPush);
-                    bool=true;
-                }
-                i++;
-            }
-            if(bool){
-                // 推送成功后调询价接口
+            // 推送成功后调询价接口
+            if(BetterStringUtils.isNotBlank(factors)){
                 ScfEnquiry scfEnquiry=new ScfEnquiry();
                 scfEnquiry.setCustNo(scfAcceptBill.getCoreCustNo());
                 scfEnquiry.setFactors(factors);

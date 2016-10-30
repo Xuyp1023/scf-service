@@ -20,9 +20,6 @@ public class ScfSupplierPush implements BetterjrEntity {
     @Column(name = "C_SUPPLIERNO",  columnDefinition="INTEGER" )
     private Long supplierNo;
 
-    @Column(name = "C_PUSH_DETAILID",  columnDefinition="INTEGER" )
-    private Long pushDetailId;
-
     @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
     private String businStatus;
 
@@ -68,14 +65,6 @@ public class ScfSupplierPush implements BetterjrEntity {
 
     public void setSupplierNo(Long supplierNo) {
         this.supplierNo = supplierNo;
-    }
-
-    public Long getPushDetailId() {
-        return pushDetailId;
-    }
-
-    public void setPushDetailId(Long pushDetailId) {
-        this.pushDetailId = pushDetailId;
     }
 
     public String getBusinStatus() {
@@ -143,7 +132,6 @@ public class ScfSupplierPush implements BetterjrEntity {
         sb.append(", id=").append(id);
         sb.append(", custCoreNo=").append(custCoreNo);
         sb.append(", supplierNo=").append(supplierNo);
-        sb.append(", pushDetailId=").append(pushDetailId);
         sb.append(", businStatus=").append(businStatus);
         sb.append(", remark=").append(remark);
         sb.append(", remarkId=").append(remarkId);
@@ -171,7 +159,6 @@ public class ScfSupplierPush implements BetterjrEntity {
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getCustCoreNo() == null ? other.getCustCoreNo() == null : this.getCustCoreNo().equals(other.getCustCoreNo()))
             && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
-            && (this.getPushDetailId() == null ? other.getPushDetailId() == null : this.getPushDetailId().equals(other.getPushDetailId()))
             && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
             && (this.getRemark() == null ? other.getRemark() == null : this.getRemark().equals(other.getRemark()))
             && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
@@ -187,7 +174,6 @@ public class ScfSupplierPush implements BetterjrEntity {
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         result = prime * result + ((getCustCoreNo() == null) ? 0 : getCustCoreNo().hashCode());
         result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
-        result = prime * result + ((getPushDetailId() == null) ? 0 : getPushDetailId().hashCode());
         result = prime * result + ((getBusinStatus() == null) ? 0 : getBusinStatus().hashCode());
         result = prime * result + ((getRemark() == null) ? 0 : getRemark().hashCode());
         result = prime * result + ((getRegDate() == null) ? 0 : getRegDate().hashCode());
@@ -197,11 +183,10 @@ public class ScfSupplierPush implements BetterjrEntity {
         return result;
     }
     
-    public void initDefValue(Long custCoreNo,Long supplierNo,Long detailId){
+    public void initDefValue(Long custCoreNo,Long supplierNo){
         this.id=SerialGenerator.getLongValue("push.id");
         this.custCoreNo=custCoreNo;
         this.supplierNo=supplierNo;
-        this.pushDetailId=detailId;
         this.businStatus="1";
         this.regDate=BetterDateUtils.getNumDate();
         this.regTime=BetterDateUtils.getNumTime();
