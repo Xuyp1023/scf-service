@@ -21,8 +21,10 @@ import com.betterjr.common.web.AjaxObject;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.account.service.CustAccountService;
+import com.betterjr.modules.agreement.data.ScfElecAgreementInfo;
 import com.betterjr.modules.agreement.entity.ScfRequestNotice;
 import com.betterjr.modules.agreement.service.ScfAgreementService;
+import com.betterjr.modules.agreement.service.ScfElecAgreementService;
 import com.betterjr.modules.credit.entity.ScfCreditInfo;
 import com.betterjr.modules.credit.service.ScfCreditDetailService;
 import com.betterjr.modules.enquiry.service.ScfOfferService;
@@ -71,6 +73,8 @@ public class RequestDubboService implements IScfRequestService {
     private ScfCreditDetailService  creditDetailService;
     @Autowired
     private ScfSupplierPushService supplierPushService;
+    @Autowired
+    private ScfElecAgreementService elecAgreementService;
 
     @Reference(interfaceClass = IFlowService.class)
     private IFlowService flowService;
@@ -148,6 +152,7 @@ public class RequestDubboService implements IScfRequestService {
         logger.debug("一般审批，入参anRequestNo:" + anRequestNo + "approvalResult：" + anApprovalResult  + "-returnNode:" + anReturnNode  + "-description:" + anDescription);
         //
         BigDecimal balance = requestService.selectByPrimaryKey(anRequestNo).getBalance();
+        
         // 执行流程
         execFlow(anRequestNo, balance, anApprovalResult, anReturnNode, anDescription);
         return AjaxObject.newOk("操作成功").toJson();
@@ -161,6 +166,15 @@ public class RequestDubboService implements IScfRequestService {
         if (BetterStringUtils.equals(anApprovalResult, APPROVALRESULT_0)) {
             //保存融资方案
             scheme = requestService.saveOfferScheme(scheme);
+            
+            //如果是 微信端的申请 并为 票据融资 则需要发送消息
+            ScfRequest request = requestService.selectByPrimaryKey(scheme.getRequestNo());
+            if (BetterStringUtils.equals("2", request.getRequestFrom()) && BetterStringUtils.equals(RequestType.BILL.getCode(), request.getRequestType())) {
+                List<ScfElecAgreementInfo> list = elecAgreementService.findElecAgreeByOrderNo(scheme.getRequestNo(), "0");
+                if(false == Collections3.isEmpty(list)){
+                    supplierPushService.pushSignInfo(Collections3.getFirst(list));
+                }
+            }
         }
 
         // 执行流程
@@ -186,6 +200,15 @@ public class RequestDubboService implements IScfRequestService {
        
         // 保存发起状态
         ScfRequestScheme scheme =requestService.saveRequestTradingBackgrand(anRequestNo, anApprovalResult, anSmsCode);
+        
+        //如果是 微信端的申请 并为 票据融资 则需要发送消息
+        ScfRequest request = requestService.selectByPrimaryKey(scheme.getRequestNo());
+        if (BetterStringUtils.equals("2", request.getRequestFrom()) && BetterStringUtils.equals(RequestType.BILL.getCode(), request.getRequestType())) {
+            List<ScfElecAgreementInfo> list = elecAgreementService.findElecAgreeByOrderNo(scheme.getRequestNo(), "1");
+            if(false == Collections3.isEmpty(list)){
+                supplierPushService.pushSignInfo(Collections3.getFirst(list));
+            }
+        }
         
         // 执行流程
         execFlow(anRequestNo, scheme.getApprovedBalance(), anApprovalResult, anReturnNode, anDescription);
@@ -348,7 +371,9 @@ public class RequestDubboService implements IScfRequestService {
             orderService.unForzenInfoes(anRequestNo, null);
             
             //改为可用状态
-            offerService.saveUpdateTradeStatus(request.getOfferId(), "1");
+            if(null != request.getOfferId()){
+                offerService.saveUpdateTradeStatus(request.getOfferId(), "1");
+            }
             
             request.setTradeStatus(RequestTradeStatus.CLOSED.getCode());
             
@@ -390,19 +415,19 @@ public class RequestDubboService implements IScfRequestService {
             request.setFlowStatus("3");
         }
 
-        // 修改-当前融资申请单（融资审批状态，流程状态）
         try {
+            // 修改-当前融资申请单（融资审批状态，流程状态）
             request = requestService.saveModifyRequest(request, request.getRequestNo());
+            
+            // 如果是微信发起的流程---发送微信提醒
+            if(BetterStringUtils.equals("2", request.getRequestFrom())){
+                supplierPushService.pushOrderInfo(request);
+            }
         }
         catch (Exception e) {
             input.setRollbackNodeId(anReturnNode);
             input.setCommand(FlowCommand.Rollback);
             flowService.exec(input);
-        }
-        
-        // 如果是微信发起的流程---发送微信提醒
-        if(BetterStringUtils.equals("2", request.getRequestFrom())){
-            supplierPushService.pushOrderInfo(request);
         }
     }
 
