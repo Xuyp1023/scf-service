@@ -71,8 +71,6 @@ public class ScfRequestNoticeService extends BaseService<ScfRequestNoticeMapper,
             elecAgreement.setFactorNo(anRequest.getFactorNo());
             elecAgreement.setSupplier(anSuppiler);
             elecAgreeService.addElecAgreementInfo(elecAgreement, Arrays.asList(elecAgreement.getSupplierNo()));
-            // 调用融资签约提醒功能
-            pushService.pushSignInfo(elecAgreement);
             return elecAgreement.getAgreeNo();
         }
         return null;
