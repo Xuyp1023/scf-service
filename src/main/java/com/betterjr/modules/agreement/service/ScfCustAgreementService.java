@@ -324,7 +324,7 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
     public void checkInfoExist(Long anId, String anOperOrg) {
         Map<String,Object> anMap=new HashMap<String, Object>();
         anMap.put("id", anId);
-        anMap.put("operOrg", anOperOrg);
+//        anMap.put("operOrg", anOperOrg);
         List<CustAgreement> custAgreementList=this.selectByProperty(anMap);
         if (Collections3.isEmpty(custAgreementList)) {
             logger.error("不存在相对应合同编号,操作机构的合同");
