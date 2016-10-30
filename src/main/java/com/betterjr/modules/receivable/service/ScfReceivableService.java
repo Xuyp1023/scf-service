@@ -82,10 +82,12 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
     public Page<ScfReceivable> queryReceivable(Map<String, Object> anMap, String anIsOnlyNormal,  String anFlag, int anPageNum, int anPageSize) {
         //操作员只能查询本机构数据
 //        anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+        if(!UserUtils.coreUser()) {
+            // 已审核
+               anMap.put("aduit", "1");
+           }
         if(BetterStringUtils.equals(anIsOnlyNormal, "1")) {
             anMap.put("businStatus", "0");
-            // 已审核
-            anMap.put("aduit", "1");
         }
         //应收账款模糊查询
         anMap = Collections3.fuzzyMap(anMap, new String[]{"receivableNo"}); 

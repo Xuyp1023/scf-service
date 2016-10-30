@@ -129,13 +129,15 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         // 操作员只能查询本机构数据
 //        anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
         // 构造custNo查询条件
+        if(!UserUtils.coreUser()) {
+         // 已审核
+            anMap.put("aduit", "1");
+        }
         anMap.put("holderNo", anMap.get("custNo"));
         anMap.remove("custNo");
         // 仅查询正常未融资数据
         if (BetterStringUtils.equals(anIsOnlyNormal, "1")) {
             anMap.put("businStatus", new String[] { "0", "1" });
-            // 已审核
-            anMap.put("aduit", "1");
         }
         Page<ScfAcceptBill> anAcceptBillList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "aduit,businStatus,billNo");
         // 补全关联信息
@@ -265,9 +267,11 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
 //        checkOperator(anAcceptBill.getOperOrg(), "当前操作员不能修改该票据");
 
         // 检查状态,仅未处理和未融资状态允许修改汇票信息
-        checkStatus(anAcceptBill.getBusinStatus(), "2", true, "当前票据已融资,不允许修改");
-        checkStatus(anAcceptBill.getBusinStatus(), "3", true, "当前票据已过期,不允许修改");
-        checkStatus(anAcceptBill.getFinanceFlag(), "0", false, "当前票据已融资,不允许修改");
+        if(!UserUtils.factorUser()) {
+            checkStatus(anAcceptBill.getBusinStatus(), "2", true, "当前票据已融资,不允许修改");
+            checkStatus(anAcceptBill.getBusinStatus(), "3", true, "当前票据已过期,不允许修改");
+            checkStatus(anAcceptBill.getFinanceFlag(), "0", false, "当前票据已融资,不允许修改");
+        }
         // 数据编辑初始化
         anModiAcceptBill.setId(anId);
         anModiAcceptBill.initModifyValue(UserUtils.getOperatorInfo());
@@ -429,7 +433,6 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     public void checkInfoExist(Long anId, String anOperOrg) {
         Map<String, Object> anMap = new HashMap<String, Object>();
         anMap.put("id", anId);
-        anMap.put("operOrg", anOperOrg);
         anMap.put("businStatus", new String[]{ "0", "1" });
         // 查询每个状态数据
         List<ScfAcceptBill> acceptBillList = this.selectByProperty(anMap);
