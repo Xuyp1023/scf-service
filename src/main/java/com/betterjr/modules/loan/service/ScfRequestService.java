@@ -370,7 +370,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         }
         
         // 修改核心企业确认状态
-        scheme.setCoreCustAduit(anApprovalResult);
+        scheme.setCoreCustAduit("1");
         return schemeService.saveModifyScheme(scheme);
     }
 
@@ -406,18 +406,20 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         anLoan.setFactorNo(request.getFactorNo());
         loanService.addLoan(anLoan);
 
-        //占用授信额度
-        ScfCreditInfo anCreditInfo = new ScfCreditInfo();
-        anCreditInfo.setBusinFlag(request.getRequestType());
-        anCreditInfo.setBalance(request.getApprovedBalance());
-        anCreditInfo.setBusinId(anLoan.getId());
-        anCreditInfo.setCoreCustNo(request.getCoreCustNo());
-        anCreditInfo.setCustNo(request.getCustNo());
-        anCreditInfo.setFactorNo(request.getFactorNo());
-        anCreditInfo.setCreditMode(request.getCreditMode());
-        anCreditInfo.setRequestNo(request.getRequestNo());
-        anCreditInfo.setDescription(request.getDescription());
-        creditDetailService.saveOccupyCredit(anCreditInfo);
+        //占用授信额度(如果是微信端融资则不检查授信)
+        if(BetterStringUtils.equals("2", request.getRequestFrom())){
+            ScfCreditInfo anCreditInfo = new ScfCreditInfo();
+            anCreditInfo.setBusinFlag(request.getRequestType());
+            anCreditInfo.setBalance(request.getApprovedBalance());
+            anCreditInfo.setBusinId(anLoan.getId());
+            anCreditInfo.setCoreCustNo(request.getCoreCustNo());
+            anCreditInfo.setCustNo(request.getCustNo());
+            anCreditInfo.setFactorNo(request.getFactorNo());
+            anCreditInfo.setCreditMode(request.getCreditMode());
+            anCreditInfo.setRequestNo(request.getRequestNo());
+            anCreditInfo.setDescription(request.getDescription());
+            creditDetailService.saveOccupyCredit(anCreditInfo);
+        }
         
         return request;
     }
