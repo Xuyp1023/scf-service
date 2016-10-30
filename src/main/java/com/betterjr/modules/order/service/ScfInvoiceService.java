@@ -127,8 +127,9 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
         Map<String, Object> anMap = new HashMap<String, Object>();
         String[] anBusinStatusList = {"1"};
         anMap.put("id", anId);
-        anMap.put("operOrg", anOperOrg);
-        anMap.put("businStatus", anBusinStatusList);
+        if(!(UserUtils.factorUser()||UserUtils.platformUser())) {
+            anMap.put("businStatus", anBusinStatusList);
+        }
         List<ScfInvoice> invoiceList = this.selectByClassProperty(ScfInvoice.class, anMap);
         if (Collections3.isEmpty(invoiceList)) {
             logger.warn("不存在相对应id,操作机构,业务状态的发票");

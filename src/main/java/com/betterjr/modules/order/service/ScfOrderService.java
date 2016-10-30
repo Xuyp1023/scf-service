@@ -282,7 +282,9 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         String[] anBusinStatusList = { "0" };
         anMap.put("id", anId);
         anMap.put("operOrg", anOperOrg);
-        anMap.put("businStatus", anBusinStatusList);
+        if(!(UserUtils.factorUser()||UserUtils.platformUser())) {
+            anMap.put("businStatus", anBusinStatusList);
+        }
         // 查询每个状态数据
         List<ScfOrder> orderList = this.selectByClassProperty(ScfOrder.class, anMap);
         if (Collections3.isEmpty(orderList)) {

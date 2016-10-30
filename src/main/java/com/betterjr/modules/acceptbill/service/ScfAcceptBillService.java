@@ -432,8 +432,11 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
      */
     public void checkInfoExist(Long anId, String anOperOrg) {
         Map<String, Object> anMap = new HashMap<String, Object>();
+        String[] anBusinStatusList = { "0", "1" };
         anMap.put("id", anId);
-        anMap.put("businStatus", new String[]{ "0", "1" });
+        if (!(UserUtils.factorUser()||UserUtils.platformUser())) {
+            anMap.put("businStatus", anBusinStatusList);
+        }
         // 查询每个状态数据
         List<ScfAcceptBill> acceptBillList = this.selectByProperty(anMap);
         if (Collections3.isEmpty(acceptBillList)) {
