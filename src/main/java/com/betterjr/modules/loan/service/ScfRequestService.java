@@ -209,7 +209,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
      * @return
      */
     public Page<ScfRequest> queryRequestList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
-        Page<ScfRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
+        Page<ScfRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag, "regDate desc,regTime desc");
         for (ScfRequest scfRequest : page) {
             fillCustName(scfRequest);
         }
@@ -407,7 +407,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         loanService.addLoan(anLoan);
 
         //占用授信额度(如果是微信端融资则不检查授信)
-        if(BetterStringUtils.equals("2", request.getRequestFrom())){
+        if(BetterStringUtils.equals("2", request.getRequestFrom()) == false){
             ScfCreditInfo anCreditInfo = new ScfCreditInfo();
             anCreditInfo.setBusinFlag(request.getRequestType());
             anCreditInfo.setBalance(request.getApprovedBalance());
