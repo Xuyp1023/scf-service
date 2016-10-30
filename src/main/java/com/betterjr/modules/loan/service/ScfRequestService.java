@@ -223,8 +223,8 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
      * @return
      */
     public ScfRequest findRequestDetail(String anRequestNo) {
-        BTAssert.notNull(anRequestNo, " 查询融资申详情失败-requestNo不能为空");
         ScfRequest request = this.selectByPrimaryKey(anRequestNo);
+        BTAssert.notNull(request, " 查询融资申详情失败-requestNo不能为空");
         if (null == request) {
             logger.debug("没查到相关数据！");
             return new ScfRequest();
