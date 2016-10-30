@@ -68,38 +68,49 @@ public class ScfPushCheckService {
      * @param anCoreCustNo 核心企业客户号
      * @param anSupplierCustNo 供应商企业客户号
      */
-    public List<CustRelationData> pushData(Long anCoreCustNo,Long anSupplierCustNo,ScfSupplierPushDetail supplierPushDetail){
-        // 得到核心企业与保理机构的关系信息
-        List<CustRelationData> custRelationDataList=custRelationService.webQueryCustRelationData(anCoreCustNo,"2");
-        logger.info("relationDataList:"+custRelationDataList);
-        // 得到核心企业设置的机构信息
-        String agencyCustNo=paramService.queryCoreParam(anCoreCustNo.toString(),supplierPushDetail.getEndDate());
-        if(BetterStringUtils.isNotBlank(agencyCustNo)){
-            custRelationDataList=compareCust(custRelationDataList,agencyCustNo);
-        }else{
-            custRelationDataList=new ArrayList<CustRelationData>();
-        }
-        // 再取供应商关系客户信息
-        List<CustRelationData> supplierRelationDataList=custRelationService.webQueryCustRelationData(anSupplierCustNo,"0");
-        // 判断该供应商接不接收资金方消息推送，允许则可推送有设置的信息
-        if(paramService.checkSupplierParam(anSupplierCustNo.toString())){
-            supplierRelationDataList.addAll(custRelationDataList);
-        }
-        // 微信发送
-        for(CustRelationData relationData:supplierRelationDataList){
-            Long custNo=null;
-            if(BetterStringUtils.equalsIgnoreCase(relationData.getRelateType(), "2")){
-                custNo=relationData.getRelateCustno();
-            }else if(BetterStringUtils.equalsIgnoreCase(relationData.getRelateType(), "0")){
-                custNo=relationData.getCustNo();
-            }
-            if(!billSend(anCoreCustNo,custNo,supplierPushDetail)){
-                supplierRelationDataList=new ArrayList<CustRelationData>();
-                break;
-            }
-        }
-        return supplierRelationDataList;
+    public String pushData(Long anCoreCustNo,Long anSupplierCustNo,ScfSupplierPushDetail supplierPushDetail){
+       // 得到核心企业设置的机构信息
+        billSend(anCoreCustNo,anSupplierCustNo,supplierPushDetail);
+        return paramService.queryCoreParam(anCoreCustNo.toString(),supplierPushDetail.getEndDate());
     }
+    
+//    /***
+//     * 推送数据
+//     * @param anCoreCustNo 核心企业客户号
+//     * @param anSupplierCustNo 供应商企业客户号
+//     */
+//    public List<CustRelationData> pushData(Long anCoreCustNo,Long anSupplierCustNo,ScfSupplierPushDetail supplierPushDetail){
+//        // 得到核心企业与保理机构的关系信息
+//        List<CustRelationData> custRelationDataList=custRelationService.webQueryCustRelationData(anCoreCustNo,"2");
+//        logger.info("relationDataList:"+custRelationDataList);
+//        // 得到核心企业设置的机构信息
+//        String agencyCustNo=paramService.queryCoreParam(anCoreCustNo.toString(),supplierPushDetail.getEndDate());
+//        if(BetterStringUtils.isNotBlank(agencyCustNo)){
+//            custRelationDataList=compareCust(custRelationDataList,agencyCustNo);
+//        }else{
+//            custRelationDataList=new ArrayList<CustRelationData>();
+//        }
+//        // 再取供应商关系客户信息
+//        List<CustRelationData> supplierRelationDataList=custRelationService.webQueryCustRelationData(anSupplierCustNo,"0");
+//        // 判断该供应商接不接收资金方消息推送，允许则可推送有设置的信息
+//        if(paramService.checkSupplierParam(anSupplierCustNo.toString())){
+//            supplierRelationDataList.addAll(custRelationDataList);
+//        }
+//        // 微信发送
+//        for(CustRelationData relationData:supplierRelationDataList){
+//            Long custNo=null;
+//            if(BetterStringUtils.equalsIgnoreCase(relationData.getRelateType(), "2")){
+//                custNo=relationData.getRelateCustno();
+//            }else if(BetterStringUtils.equalsIgnoreCase(relationData.getRelateType(), "0")){
+//                custNo=relationData.getCustNo();
+//            }
+//            if(!billSend(anCoreCustNo,custNo,supplierPushDetail)){
+//                supplierRelationDataList=new ArrayList<CustRelationData>();
+//                break;
+//            }
+//        }
+//        return supplierRelationDataList;
+//    }
     
     /***
      * 比较设置需要推送的机构信息
@@ -141,7 +152,7 @@ public class ScfPushCheckService {
             builder.addParam("billNo", supplierPushDetail.getBillNo());
             builder.addParam("disMoney", supplierPushDetail.getDisMoney());
             builder.addParam("disDate", supplierPushDetail.getDisDate());
-            builder.addReceiver(targetCustNo, targetOperator.getId());  // 接收人
+            builder.addReceiver(targetCustNo, null);  // 接收人
             notificationSendService.sendNotification(builder.build());
             bool=true;
         }
@@ -183,7 +194,7 @@ public class ScfPushCheckService {
                 builder.addParam("agreeName", elecAgreement.getAgreeName());
                 builder.addParam("endDate", getDisDate(BetterDateUtils.addStrDays(elecAgreement.getRegDate(),3)));
                 
-                builder.addReceiver(elecAgreement.getSupplierNo(), targetOperator.getId());  // 接收人
+                builder.addReceiver(elecAgreement.getSupplierNo(), null);  // 接收人
                 notificationSendService.sendNotification(builder.build());
                 bool=true;
             }
@@ -214,7 +225,7 @@ public class ScfPushCheckService {
             builder.addParam("requestDate", getDisDate(anRequest.getRegDate()));
             builder.addParam("balance", getDisMoney(anRequest.getBalance()));
             builder.addParam("tradeStatus", RequestTradeStatusType.checking(anRequest.getTradeStatus()).getTitle());
-            builder.addReceiver(targetCustomer.getCustNo(), targetOperator.getId());  // 接收人
+            builder.addReceiver(targetCustomer.getCustNo(), null);  // 接收人
             notificationSendService.sendNotification(builder.build());
             bool=true;
         }
@@ -243,7 +254,7 @@ public class ScfPushCheckService {
             builder.addParam("balance",balance);
             String offerTime=BetterStringUtils.isNotBlank(anMap.get("offerTime"))?getDisDate(anMap.get("offerTime").toString()):"";
             builder.addParam("offerTime",offerTime);
-            builder.addReceiver(targetCustomer.getCustNo(), targetOperator.getId());  // 接收人
+            builder.addReceiver(targetCustomer.getCustNo(), null);  // 接收人
             notificationSendService.sendNotification(builder.build());
             bool=true;
         }
