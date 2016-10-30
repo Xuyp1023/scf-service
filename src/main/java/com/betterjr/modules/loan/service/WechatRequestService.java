@@ -64,6 +64,8 @@ public class WechatRequestService extends BaseService<ScfRequestMapper, ScfReque
         
         //保存申请
         requestService.addRequest(anRequest);
+        //检查合同（微信端申请时可能没有合同，检查一下，如果没有的话默认生成一个）
+        orderService.checkAndGenerateTradeAgreement(Long.parseLong(anRequest.getOrders()), anRequest.getFactorNo());
         // 关联订单
         orderService.saveInfoRequestNo(anRequest.getRequestType(), anRequest.getRequestNo(), anRequest.getOrders());
         // 冻结订单

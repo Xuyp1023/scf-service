@@ -19,6 +19,8 @@ import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
 import com.betterjr.modules.loan.service.ScfRequestService;
 import com.betterjr.modules.loan.service.WechatRequestService;
+import com.betterjr.modules.order.service.ScfOrderService;
+import com.betterjr.modules.push.service.ScfSupplierPushService;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 import com.betterjr.modules.workflow.IFlowService;
 import com.betterjr.modules.workflow.data.FlowInput;
@@ -36,6 +38,11 @@ public class WechatRequestDubboService implements IScfWechatRequestService {
     private ScfRequestService requestService;
     @Autowired
     private CustAccountService custAccountService;
+    @Autowired
+    private ScfSupplierPushService supplierPushService;
+    @Autowired
+    private ScfOrderService orderService;
+    
     @Reference(interfaceClass = IFlowService.class)
     private IFlowService flowService;
 
@@ -51,6 +58,10 @@ public class WechatRequestDubboService implements IScfWechatRequestService {
         //修改申请状态---为“出具保理方案”
         updateRequestTradeStauts(request.getRequestNo(), RequestTradeStatus.OFFER_SCHEME.getCode());
         
+        request = requestService.findRequestDetail(request.getRequestNo());
+        
+        //消息-融资申请进度推送
+        supplierPushService.pushOrderInfo(request);
         return AjaxObject.newOk(this.webFindRequestByNo(request.getRequestNo())).toJson();
     }
 
@@ -96,23 +107,6 @@ public class WechatRequestDubboService implements IScfWechatRequestService {
         CustInfo coreCustInfo = custAccountService.selectByPrimaryKey(request.getCoreCustNo());
         input.setCoreOperOrg(coreCustInfo.getOperOrg());
         flowService.start(input);
-        return anRequestNo;
-    }
-    
-    /**
-     * 执行流程
-     * @param anRequestNo 申请编号
-     * @return
-     */
-    public String execFlow(String anRequestNo){
-        // 启动流程
-        ScfRequest request = requestService.findRequestDetail(anRequestNo);
-        FlowInput input = new FlowInput();
-        input.setBusinessId(Long.parseLong(request.getRequestNo()));
-        input.setMoney(request.getBalance());
-        input.setOperator(UserUtils.getPrincipal().getId().toString());
-        input.setFinancerOperOrg(UserUtils.getOperatorInfo().getOperOrg());
-        input.setType(FlowType.Trade);
         return anRequestNo;
     }
     

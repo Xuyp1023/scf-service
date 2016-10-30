@@ -36,6 +36,7 @@ import com.betterjr.modules.loan.service.ScfPayPlanService;
 import com.betterjr.modules.loan.service.ScfRequestSchemeService;
 import com.betterjr.modules.loan.service.ScfRequestService;
 import com.betterjr.modules.order.service.ScfOrderService;
+import com.betterjr.modules.push.service.ScfSupplierPushService;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 import com.betterjr.modules.workflow.IFlowService;
 import com.betterjr.modules.workflow.data.CustFlowNodeData;
@@ -68,6 +69,8 @@ public class RequestDubboService implements IScfRequestService {
     private ScfRequestSchemeService schemeService;
     @Autowired
     private ScfCreditDetailService  creditDetailService;
+    @Autowired
+    private ScfSupplierPushService supplierPushService;
 
     @Reference(interfaceClass = IFlowService.class)
     private IFlowService flowService;
@@ -395,6 +398,11 @@ public class RequestDubboService implements IScfRequestService {
             input.setRollbackNodeId(anReturnNode);
             input.setCommand(FlowCommand.Rollback);
             flowService.exec(input);
+        }
+        
+        // 如果是微信发起的流程---发送微信提醒
+        if(BetterStringUtils.equals("2", request.getRequestFrom())){
+            supplierPushService.pushOrderInfo(request);
         }
     }
 
