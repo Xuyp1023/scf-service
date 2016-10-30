@@ -139,7 +139,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
      * @return
      */
     public ScfAcceptBill findBillInfoByRequestNo(String anRequestNo){
-        List billList=orderService.findInfoListByRequest(anRequestNo, ScfOrderRelationType.ACCEPTBILL.getCode());
+        List billList=orderService.findInfoListByRequest(anRequestNo, "2");
         return (ScfAcceptBill)Collections3.getFirst(billList);
     }
     
