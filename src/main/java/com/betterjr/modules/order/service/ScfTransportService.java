@@ -67,7 +67,6 @@ public class ScfTransportService extends BaseService<ScfTransportMapper, ScfTran
     public void checkInfoExist(Long anId, String anOperOrg) {
         Map<String, Object> anMap = new HashMap<String, Object>();
         anMap.put("id", anId);
-//        anMap.put("operOrg", anOperOrg);
         List<ScfTransport> transportList = this.selectByClassProperty(ScfTransport.class, anMap);
         if(Collections3.isEmpty(transportList)) {
             logger.warn("不存在相对应id,操作机构,业务状态的运输单据");
