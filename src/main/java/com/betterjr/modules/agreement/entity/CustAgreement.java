@@ -587,6 +587,7 @@ public class CustAgreement implements BetterjrEntity {
         this.operOrg = anAgree.getOperOrg();
         this.operCode = anAgree.getOperCode();
         this.operName = anAgree.getOperName();
+        this.factorNo=anAgree.getFactorNo();
     }
     
     public void updateStatus(String anStatus){
