@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
@@ -58,10 +59,11 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
                 }
                 supplierPushDetail.setAgencyNo(custRelationData.getRelateCustno().toString());
                 supplierPushDetail.setRemark("票据信息推送");
+
                 if(supplierPushDetailService.addPushDetail(supplierPushDetail)){
                     ScfSupplierPush supplierPush=new ScfSupplierPush();
                     supplierPush.initDefValue(scfAcceptBill.getCoreCustNo(),scfAcceptBill.getSupplierNo(),supplierPushDetail.getId());
-                    this.insert(supplierPush);
+//                    this.insert(supplierPush);
                     bool=true;
                 }
                 i++;
