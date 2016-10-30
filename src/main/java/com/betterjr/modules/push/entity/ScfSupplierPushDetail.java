@@ -339,6 +339,8 @@ public class ScfSupplierPushDetail implements BetterjrEntity {
         this.regTime=BetterDateUtils.getNumTime();
         this.modifyDate=BetterDateUtils.getNumDate();
         this.modifyTime=BetterDateUtils.getNumTime();
+        this.acceptor=scfAcceptBill.getAcceptor();
+        this.billNo=scfAcceptBill.getBillNo();
     }
     
     public void initValue(String anOrderId,String anBusinType){
