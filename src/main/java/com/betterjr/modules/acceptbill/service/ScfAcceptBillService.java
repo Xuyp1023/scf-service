@@ -170,6 +170,16 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         this.insert(anAcceptBill);
         return anAcceptBill;
     }
+    
+    /**
+     * 汇票信息无分页查询 ,包含所有下属信息
+     * 
+     * @param anIsOnlyNormal
+     *            是否过滤，仅查询正常未融资数据 1：未融资 0：查询所有
+     */
+    public List<ScfAcceptBill> findAcceptBillList(String anCustNo) {
+        return this.findAcceptBill(QueryTermBuilder.newInstance().put("holderNo", anCustNo).build());
+    }
 
     /**
      * 汇票信息无分页查询 ,包含所有下属信息

@@ -50,6 +50,7 @@ public class WechatRequestDubboService implements IScfWechatRequestService {
     public String webAddRequest(Map<String, Object> anMap) {
         logger.debug("微信版-新增票据融资申请，入参：" + anMap);
         ScfRequest request = (ScfRequest) RuleServiceDubboFilterInvoker.getInputObj();
+        request.setRequestFrom("2");
         request = wechatRequestService.saveRequest(request);
         
         //启动流程
