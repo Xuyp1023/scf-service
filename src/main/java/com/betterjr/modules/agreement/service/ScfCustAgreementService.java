@@ -46,12 +46,13 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
      */
     public Page<CustAgreement> queryCustAgreementsByPage(Map<String, Object> anParam, int anPageNum, int anPageSize) {
         logger.info("Begin get customer agreement list." + anParam);
-        Map<String, Object> map = new HashMap();
-        // 获取当前登录操作员信息
-        map.put("operOrg", UserUtils.findOperOrg());
+        Map<String, Object> map = new HashMap();    
         SupplyChainUtil.addCondition(anParam, map);
         if(UserUtils.factorUser()){ // 如果当前登录是保理公司，则需要增加保理客户号的查询条件
             map.put("factorNo", UserUtils.getDefCustInfo().getCustNo());
+        }else{
+            // 获取当前登录操作员信息
+            map.put("operOrg", UserUtils.findOperOrg());
         }
         Page<CustAgreement> agreements = this.selectPropertyByPage(map, anPageNum, anPageSize, "1".equals(anParam.get("flag")));
 

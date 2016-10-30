@@ -131,12 +131,11 @@ public class ScfPushCheckService {
         final CustOperatorInfo targetOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(targetCustNo));
         if(sendOperator!=null && targetOperator!=null){
             supplierPushDetail.setTragetCustName(accountService.queryCustName(targetCustNo));
-            supplierPushDetail.setAcceptor(findBillAcceptor(Long.parseLong(supplierPushDetail.getOrderId())).getAcceptor());
-            supplierPushDetail.setBillNo(findBillAcceptor(Long.parseLong(supplierPushDetail.getOrderId())).getBillNo());
             final Builder builder = NotificationModel.newBuilder("商业汇票开立通知", sendCustomer, sendOperator);
             builder.addParam("appId", wechatClientService.getAppId());
             builder.addParam("wechatUrl", wechatClientService.getWechatUrl());
             builder.addParam("tragetCustName", supplierPushDetail.getTragetCustName());
+            builder.addParam("billId", supplierPushDetail.getOrderId());
             builder.addParam("custName", supplierPushDetail.getCustName());
             builder.addParam("acceptor", supplierPushDetail.getAcceptor());
             builder.addParam("billNo", supplierPushDetail.getBillNo());
