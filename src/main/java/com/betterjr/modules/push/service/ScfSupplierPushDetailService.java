@@ -13,7 +13,8 @@ public class ScfSupplierPushDetailService extends BaseService<ScfSupplierPushDet
     private static final Logger logger = LoggerFactory.getLogger(ScfSupplierPushDetailService.class);
     
     public boolean addPushDetail(ScfSupplierPushDetail scfPushDetail){
-      return this.insert(scfPushDetail)>0;  
+        return true;
+//      return this.insert(scfPushDetail)>0;  
     }
     
 }
