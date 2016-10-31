@@ -407,7 +407,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         loanService.addLoan(anLoan);
 
         //占用授信额度(如果是微信端融资则不检查授信)
-        if(BetterStringUtils.equals("2", request.getRequestFrom()) == false){
+        /*if(BetterStringUtils.equals("2", request.getRequestFrom()) == false){
             ScfCreditInfo anCreditInfo = new ScfCreditInfo();
             anCreditInfo.setBusinFlag(request.getRequestType());
             anCreditInfo.setBalance(request.getApprovedBalance());
@@ -419,7 +419,25 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
             anCreditInfo.setRequestNo(request.getRequestNo());
             anCreditInfo.setDescription(request.getDescription());
             creditDetailService.saveOccupyCredit(anCreditInfo);
+        }*/
+        // 占用授信额度
+        ScfCreditInfo anCreditInfo = new ScfCreditInfo();
+        anCreditInfo.setBalance(request.getApprovedBalance());
+        anCreditInfo.setBusinId(anLoan.getId());
+        anCreditInfo.setCoreCustNo(request.getCoreCustNo());
+        anCreditInfo.setCustNo(request.getCustNo());
+        anCreditInfo.setFactorNo(request.getFactorNo());
+        anCreditInfo.setRequestNo(request.getRequestNo());
+        anCreditInfo.setDescription(request.getDescription());
+        // 微信
+        if(BetterStringUtils.equals("2", request.getRequestFrom())){
+            anCreditInfo.setBusinFlag("2");//业务类型(1:应收账款融资;2:应收账款票据质押融资;3:预付款融资;)
+            anCreditInfo.setCreditMode("1");//授信方式(1:信用授信(循环);2:信用授信(一次性);3:担保信用(循环);4:担保授信(一次性);)
+        }else{//PC端
+            anCreditInfo.setBusinFlag(request.getRequestType());
+            anCreditInfo.setCreditMode(request.getCreditMode());
         }
+        creditDetailService.saveOccupyCredit(anCreditInfo);
         
         return request;
     }

@@ -182,12 +182,17 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
 
         // 占用额度
         BigDecimal occupyBalance = anCreditInfo.getBalance();
+        String custName = custAccountService.queryCustName(anCreditInfo.getCustNo());
+        String coreCustName = custAccountService.queryCustName(anCreditInfo.getCoreCustNo());
 
         // 获取客户授信记录
         ScfCredit custCredit = scfCreditService.findCredit(anCreditInfo.getCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),
                 anCreditInfo.getCreditMode());
         
         if (custCredit != null){
+            // 检查客户授信余额是否充足
+            checkCreditBalance(custCredit.getCreditBalance(), occupyBalance,
+                    "业务发生额: " + occupyBalance + "超过" + custName + "授信余额: " + custCredit.getCreditBalance());
             // 处理客户冻结和占用的授信额度
             saveFreezeAndOccupyData(anCreditInfo, custCredit, occupyBalance);
         }
@@ -196,6 +201,10 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         ScfCredit coreCredit = scfCreditService.findCredit(anCreditInfo.getCoreCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),
                 anCreditInfo.getCreditMode());
 
+        // 检查核心企业授信余额是否充足
+        checkCreditBalance(coreCredit.getCreditBalance(), occupyBalance,
+                "业务发生额: " + occupyBalance + "超过" + coreCustName + "授信余额: " + coreCredit.getCreditBalance());
+        
         // 处理核心企业冻结和占用的授信额度
         saveFreezeAndOccupyData(anCreditInfo, coreCredit, occupyBalance);
     }
@@ -203,57 +212,76 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
     private void saveFreezeAndOccupyData(ScfCreditInfo anCreditInfo, ScfCredit anCredit, BigDecimal anOccupyBalance) {
         // 获取授信额度冻结记录
         ScfCreditDetail freezeCreditDetail = findCreditDetail(anCreditInfo, anCredit);
-
-        // 冻结金额
-        BigDecimal freezeBalance = freezeCreditDetail.getBalance();
-
-        // 实际占用额度与冻结额度的差额
-        BigDecimal balance = MathExtend.subtract(freezeBalance, anOccupyBalance);
-        if (balance.longValue() != 0) {
-            if (balance.longValue() < 0) {// 冻结额度小于当前占用额度,需要额外占用多出来的额度
-                // 更新授信额度累计使用,授信余额
-                anCredit.occupyCreditBalance(anCredit.getCreditUsed(), anCredit.getCreditBalance(), balance.abs());
-
-                // 数据存盘,回写授信余额信息
-                scfCreditService.updateByPrimaryKeySelective(anCredit);
-
-                // 生成本次授信额度占用的记录
-                ScfCreditDetail creditDetail = createCreditDetail(anCreditInfo, anCredit.getId(), CreditConstants.CREDIT_DIRECTION_EXPEND);
-                creditDetail.setBalance(freezeBalance);
-                creditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_DONE);
-                creditDetail.setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",占用额度:￥" + freezeBalance);
-                this.insert(creditDetail);
-
-                // 生成本次授信额度额外占用的记录
-                ScfCreditDetail extraCreditDetail = createCreditDetail(anCreditInfo, anCredit.getId(), CreditConstants.CREDIT_DIRECTION_EXPEND);
-                extraCreditDetail.setBalance(balance.abs());
-                extraCreditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_DONE);
-                extraCreditDetail.setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",追加占用:￥" + balance.abs());
-                this.insert(extraCreditDetail);
+        
+        if (freezeCreditDetail != null){
+            // 冻结金额
+            BigDecimal freezeBalance = freezeCreditDetail.getBalance();
+            
+            // 实际占用额度与冻结额度的差额
+            BigDecimal balance = MathExtend.subtract(freezeBalance, anOccupyBalance);
+            if (balance.longValue() != 0) {
+                if (balance.longValue() < 0) {// 冻结额度小于当前占用额度,需要额外占用多出来的额度
+                    // 更新授信额度累计使用,授信余额
+                    anCredit.occupyCreditBalance(anCredit.getCreditUsed(), anCredit.getCreditBalance(), balance.abs());
+                    
+                    // 数据存盘,回写授信余额信息
+                    scfCreditService.updateByPrimaryKeySelective(anCredit);
+                    
+                    // 生成本次授信额度占用的记录
+                    ScfCreditDetail creditDetail = createCreditDetail(anCreditInfo, anCredit.getId(), CreditConstants.CREDIT_DIRECTION_EXPEND);
+                    creditDetail.setBalance(freezeBalance);
+                    creditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_DONE);
+                    creditDetail.setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",占用额度:￥" + freezeBalance);
+                    this.insert(creditDetail);
+                    
+                    // 生成本次授信额度额外占用的记录
+                    ScfCreditDetail extraCreditDetail = createCreditDetail(anCreditInfo, anCredit.getId(), CreditConstants.CREDIT_DIRECTION_EXPEND);
+                    extraCreditDetail.setBalance(balance.abs());
+                    extraCreditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_DONE);
+                    extraCreditDetail.setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",追加占用:￥" + balance.abs());
+                    this.insert(extraCreditDetail);
+                }
+                if (balance.longValue() > 0) {// 冻结额度大于当前占用额度,需要释放多出来的额度
+                    // 更新授信额度累计使用,授信余额
+                    anCredit.releaseCreditBalance(anCredit.getCreditUsed(), anCredit.getCreditBalance(), balance.abs());
+                    
+                    // 数据存盘,回写授信余额信息
+                    scfCreditService.updateByPrimaryKeySelective(anCredit);
+                    
+                    // 生成本次授信额度占用的记录
+                    ScfCreditDetail creditDetail = createCreditDetail(anCreditInfo, anCredit.getId(), CreditConstants.CREDIT_DIRECTION_EXPEND);
+                    creditDetail.setBalance(anOccupyBalance);
+                    creditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_DONE);
+                    creditDetail.setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",占用额度:￥" + anOccupyBalance);
+                    this.insert(creditDetail);
+                    
+                    // 生成本次授信额度释放的记录
+                    ScfCreditDetail extraCreditDetail = createCreditDetail(anCreditInfo, anCredit.getId(), CreditConstants.CREDIT_DIRECTION_INCOME);
+                    extraCreditDetail.setBalance(balance.abs());
+                    extraCreditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_DONE);
+                    extraCreditDetail.setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",释放额度:￥" + balance.abs());
+                    this.insert(extraCreditDetail);
+                }
             }
-            if (balance.longValue() > 0) {// 冻结额度大于当前占用额度,需要释放多出来的额度
-                // 更新授信额度累计使用,授信余额
-                anCredit.releaseCreditBalance(anCredit.getCreditUsed(), anCredit.getCreditBalance(), balance.abs());
-
-                // 数据存盘,回写授信余额信息
-                scfCreditService.updateByPrimaryKeySelective(anCredit);
-
-                // 生成本次授信额度占用的记录
+            else {
+                // 数据存盘,授信额度变动信息
                 ScfCreditDetail creditDetail = createCreditDetail(anCreditInfo, anCredit.getId(), CreditConstants.CREDIT_DIRECTION_EXPEND);
                 creditDetail.setBalance(anOccupyBalance);
                 creditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_DONE);
                 creditDetail.setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",占用额度:￥" + anOccupyBalance);
                 this.insert(creditDetail);
-
-                // 生成本次授信额度释放的记录
-                ScfCreditDetail extraCreditDetail = createCreditDetail(anCreditInfo, anCredit.getId(), CreditConstants.CREDIT_DIRECTION_INCOME);
-                extraCreditDetail.setBalance(balance.abs());
-                extraCreditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_DONE);
-                extraCreditDetail.setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",释放额度:￥" + balance.abs());
-                this.insert(extraCreditDetail);
             }
-        }
-        else {
+            
+            // 删除冻结记录
+            this.delete(freezeCreditDetail);
+            
+        }else{
+            // 更新授信额度累计使用,授信余额
+            anCredit.occupyCreditBalance(anCredit.getCreditUsed(), anCredit.getCreditBalance(), anOccupyBalance);
+            
+            // 数据存盘,回写授信余额信息
+            scfCreditService.updateByPrimaryKeySelective(anCredit);
+            
             // 数据存盘,授信额度变动信息
             ScfCreditDetail creditDetail = createCreditDetail(anCreditInfo, anCredit.getId(), CreditConstants.CREDIT_DIRECTION_EXPEND);
             creditDetail.setBalance(anOccupyBalance);
@@ -261,9 +289,6 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
             creditDetail.setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",占用额度:￥" + anOccupyBalance);
             this.insert(creditDetail);
         }
-
-        // 删除冻结记录
-        this.delete(freezeCreditDetail);
     }
 
     /**
