@@ -512,15 +512,21 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         }
         
         ScfCreditInfo anCreditInfo = new ScfCreditInfo();
-        anCreditInfo.setBusinFlag(anRequest.getRequestType());
         anCreditInfo.setBalance(anReleaseBalance);
         anCreditInfo.setBusinId(anRecord.getId());
         anCreditInfo.setCoreCustNo(anRequest.getCoreCustNo());
         anCreditInfo.setCustNo(anRequest.getCustNo());
         anCreditInfo.setFactorNo(anRequest.getFactorNo());
-        anCreditInfo.setCreditMode(anRequest.getCreditMode());
         anCreditInfo.setRequestNo(anRequest.getRequestNo());
         anCreditInfo.setDescription(anRequest.getDescription());
+        // 微信
+        if(BetterStringUtils.equals("2", anRequest.getRequestFrom())){
+            anCreditInfo.setBusinFlag("2");//业务类型(1:应收账款融资;2:应收账款票据质押融资;3:预付款融资;)
+            anCreditInfo.setCreditMode("1");//授信方式(1:信用授信(循环);2:信用授信(一次性);3:担保信用(循环);4:担保授信(一次性);)
+        }else{//PC端
+            anCreditInfo.setBusinFlag(anRequest.getRequestType());
+            anCreditInfo.setCreditMode(anRequest.getCreditMode());
+        }
         creditDetailService.saveReleaseCredit(anCreditInfo);
     }
     
