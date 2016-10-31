@@ -54,7 +54,7 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
             // 获取当前登录操作员信息
             map.put("operOrg", UserUtils.findOperOrg());
         }
-        Page<CustAgreement> agreements = this.selectPropertyByPage(map, anPageNum, anPageSize, "1".equals(anParam.get("flag")));
+        Page<CustAgreement> agreements = this.selectPropertyByPage(map, anPageNum, anPageSize, "1".equals(anParam.get("flag")),"regDate desc");
 
         return agreements;
     }
