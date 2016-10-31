@@ -320,7 +320,7 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
             if (BetterStringUtils.equals(anCreditInfo.getCreditMode(), CreditConstants.CREDIT_MODE_CYCLE_GENERAL) == true
                     || BetterStringUtils.equals(anCreditInfo.getCreditMode(), CreditConstants.CREDIT_MODE_CYCLE_GUARANTEE) == true) {
                 // 更新客户授信额度累计使用,授信余额
-                custCredit.occupyCreditBalance(custCredit.getCreditUsed(), custCredit.getCreditBalance(), releaseBalance);
+                custCredit.releaseCreditBalance(custCredit.getCreditUsed(), custCredit.getCreditBalance(), releaseBalance);
 
                 // 数据存盘,回写客户授信余额
                 scfCreditService.updateByPrimaryKeySelective(custCredit);
@@ -342,7 +342,7 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         if (BetterStringUtils.equals(anCreditInfo.getCreditMode(), CreditConstants.CREDIT_MODE_CYCLE_GENERAL) == true
                 || BetterStringUtils.equals(anCreditInfo.getCreditMode(), CreditConstants.CREDIT_MODE_CYCLE_GUARANTEE) == true) {
             // 更新核心企业授信额度累计使用,授信余额
-            coreCredit.occupyCreditBalance(coreCredit.getCreditUsed(), coreCredit.getCreditBalance(), releaseBalance);
+            coreCredit.releaseCreditBalance(coreCredit.getCreditUsed(), coreCredit.getCreditBalance(), releaseBalance);
 
             // 数据存盘,回写核心企业授信余额
             scfCreditService.updateByPrimaryKeySelective(coreCredit);
