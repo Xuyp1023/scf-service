@@ -502,9 +502,9 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
     //释放授信额度 
     private void saveReleaseCredit(ScfRequest anRequest, ScfPayRecord anRecord){
         //如果是微信端融资则不检查授信
-        if(BetterStringUtils.equals("2", anRequest.getRequestFrom())){
+        /*if(BetterStringUtils.equals("2", anRequest.getRequestFrom())){
             return;
-        }
+        }*/
         
         BigDecimal anReleaseBalance = anRecord.getPrincipalBalance();
         if(false == MathExtend.compareToZero(anReleaseBalance)){
