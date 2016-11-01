@@ -40,8 +40,6 @@ public class WechatRequestDubboService implements IScfWechatRequestService {
     private CustAccountService custAccountService;
     @Autowired
     private ScfSupplierPushService supplierPushService;
-    @Autowired
-    private ScfOrderService orderService;
     
     @Reference(interfaceClass = IFlowService.class)
     private IFlowService flowService;

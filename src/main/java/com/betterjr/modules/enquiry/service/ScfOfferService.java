@@ -11,6 +11,7 @@ import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
+import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.enquiry.dao.ScfOfferMapper;
@@ -62,10 +63,15 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
         return anOffer;
     }
 
+    /**
+     * 修改报价状态
+     * @param anId
+     * @param tradeStatus
+     * @return
+     */
     public ScfOffer saveUpdateTradeStatus(Long anId, String tradeStatus){
         ScfOffer offer = selectByPrimaryKey(anId);
-        BTAssert.notNull(offer, "没有找到该报价");
-        
+        BTAssert.notNull(offer, "修改报价失败，没有找到该报价！");
         offer.setBusinStatus(tradeStatus);
         return this.saveModifyOffer(offer, anId);
     }
@@ -113,21 +119,25 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
      */
     public Page<ScfOffer> queryOfferList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
        if(anMap.get("businStatus") == null || BetterStringUtils.isEmpty(anMap.get("businStatus").toString())){
-           anMap.put("businStatus", new String[]{"1", "2"});
+           anMap.put("businStatus", new String[]{"1", "3"});
        }
         
        Page<ScfOffer> offerList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1==anFlag);
-       //设置保理公司名称
        for (ScfOffer offer : offerList) {
-           offer.setFactorName(custAccountService.queryCustName(offer.getFactorNo()));
-           offer.setCustName(custAccountService.queryCustName(offer.getCustNo()));
-           offer.setEnquiry(enquiryService.findEnquiryByNo(offer.getEnquiryNo()));
+           //设置保理公司名称
+           fillInfo(offer);
        }
        return offerList;
     }
+
+    private void fillInfo(ScfOffer anOffer) {
+        anOffer.setFactorName(custAccountService.queryCustName(anOffer.getFactorNo()));
+        anOffer.setCustName(custAccountService.queryCustName(anOffer.getCustNo()));
+        anOffer.setEnquiry(enquiryService.findEnquiryByNo(anOffer.getEnquiryNo()));
+    }
     
     /**
-     * 查询报价列表
+     * 无分页查询报价列表
      * @param anMap
      * @param anFlag
      * @param anPageNum
@@ -136,15 +146,13 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
      */
     public List<ScfOffer> searchOfferList(Map<String, Object> anMap) {
        if(anMap.get("businStatus") == null || BetterStringUtils.isEmpty(anMap.get("businStatus").toString())){
-           anMap.put("businStatus", new String[]{"1", "2"});
+           anMap.put("businStatus", new String[]{"1", "3"});
        }
         
        List<ScfOffer> offerList = this.selectByClassProperty(ScfOffer.class, anMap);
-       //设置保理公司名称
        for (ScfOffer offer : offerList) {
-           offer.setFactorName(custAccountService.queryCustName(offer.getFactorNo()));
-           offer.setCustName(custAccountService.queryCustName(offer.getCustNo()));
-           offer.setCoreCustName(custAccountService.queryCustName(offer.getCoreCustNo()));
+           //设置保理公司名称
+           fillInfo(offer);
            offer.setEnquiry(enquiryService.findEnquiryByNo(offer.getEnquiryNo()));
        }
        return offerList;
@@ -155,29 +163,25 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
      * @return
      */
     public List<ScfEnquiryObject> queryOfferByEnquiryObject(String enquriyNo){
-        Map<String, Object> qyObjectMap = new HashMap<String, Object>();
-        
-        List<ScfEnquiryObject> list = null;
-        Map<String, Object> qyOfferMap = null;
         ScfEnquiry enquiry = enquiryService.findSingleOrderEnquiryDetail(enquriyNo);
-        qyObjectMap.put("enquiryNo", enquiry.getEnquiryNo());
-                
+        Map<String, Object> qyObjectMap = QueryTermBuilder.newInstance().put("enquiryNo", enquiry.getEnquiryNo()).build();
+        List<ScfEnquiryObject> list = null;
         if(BetterStringUtils.equals("2", enquiry.getEnquiryMethod())){
             //主动报价
             list = scfEnquiryObjectService.selectByClassProperty(ScfEnquiryObject.class, qyObjectMap);
-        }else{
+        }
+        else{
             //自动报价(只查有报价的企业)
             qyObjectMap.put("businStatus", new String[]{"1", "-3"});
-            list = scfEnquiryObjectService.selectByClassProperty(ScfEnquiryObject.class,qyObjectMap);
+            list = scfEnquiryObjectService.selectByClassProperty(ScfEnquiryObject.class, qyObjectMap);
         }
         
         for (ScfEnquiryObject object : list) {
-            //如果查到了给出最近一次报价的信息
             if(null != object.getOfferId()){
                 ScfOffer offer = this.selectByPrimaryKey(object.getOfferId());
-                if(null != offer && BetterStringUtils.equals("1", offer.getBusinStatus())){
+                //if(null != offer && BetterStringUtils.equals("1", offer.getBusinStatus())){
                     object.setOffer(offer);
-                }
+                //}
             }
             
             object.setFactorName(accountService.queryCustName(object.getFactorNo()));
@@ -192,19 +196,14 @@ public class ScfOfferService extends BaseService<ScfOfferMapper, ScfOffer> {
      * @return
      */
     public ScfOffer findOfferDetail(Long anFactorNo, String anEnquiryNo) {
-        Map<String, Object> anMap = new HashMap<String, Object>();
-        anMap.put("factorNo", anFactorNo);
-        anMap.put("enquiryNo", anEnquiryNo);
-        anMap.put("businStatus", "1");
-        List<ScfOffer> offerList =  this.selectByProperty(anMap);
+        Map<String, Object> qyMap = QueryTermBuilder.newInstance().put("factorNo", anFactorNo).put("enquiryNo", anEnquiryNo).put("businStatus", new String[]{"1", "3"}).build();
+        List<ScfOffer> offerList =  this.selectByProperty(qyMap);
         if(Collections3.isEmpty(offerList)){
            return new ScfOffer();
         }
         
         ScfOffer offer = Collections3.getFirst(offerList);
-        offer.setCustName(custAccountService.queryCustName(offer.getCustNo()));
-        offer.setFactorName(custAccountService.queryCustName(offer.getFactorNo()));
-        offer.setEnquiry(enquiryService.findEnquiryByNo(offer.getEnquiryNo()));
+        fillInfo(offer);
         return offer;
     }
     

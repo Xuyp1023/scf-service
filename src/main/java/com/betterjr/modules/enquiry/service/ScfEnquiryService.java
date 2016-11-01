@@ -359,7 +359,7 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
             // 查询我的报价
             Map<String, Object> qyOfferMap = new HashMap<String, Object>();
             qyOfferMap.put("factorNo", anMap.get("factorNo"));
-            qyOfferMap.put("businStatus", 1);
+            qyOfferMap.put("businStatus", new String[]{"1", "3"});
             qyOfferMap.put("enquiryNo", scfEnquiry.getEnquiryNo());
             List<ScfOffer> offerList = offerService.selectByClassProperty(ScfOffer.class, qyOfferMap);
             scfEnquiry.setOfferList(offerList);
