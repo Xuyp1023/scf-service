@@ -66,8 +66,6 @@ public class RequestDubboService implements IScfRequestService {
     @Autowired
     private ScfOfferService offerService;
     @Autowired
-    private ScfAgreementService agreementService;
-    @Autowired
     private ScfRequestSchemeService schemeService;
     @Autowired
     private ScfCreditDetailService  creditDetailService;
@@ -84,6 +82,21 @@ public class RequestDubboService implements IScfRequestService {
         logger.debug("2.0版-新增融资申请，入参：" + anMap);
         ScfRequest request = requestService.saveStartRequest((ScfRequest) RuleServiceDubboFilterInvoker.getInputObj());
         
+        //启动流程
+        this.startFlow(request);
+        
+        // 修改融资状态
+        FlowStatus flow = new FlowStatus();
+        flow.setBusinessId(Long.parseLong(request.getRequestNo()));
+        Page<FlowStatus> list = flowService.queryCurrentWorkTask(null, flow);
+        if (!Collections3.isEmpty(list)) {
+            request.setTradeStatus(Collections3.getFirst(list).getCurrentNodeId().toString());
+            request = requestService.saveModifyRequest(request, request.getRequestNo());
+        }
+        return AjaxObject.newOk(request).toJson();
+    }
+
+    private void startFlow(ScfRequest request) {
         // 启动流程
         FlowInput input = new FlowInput();
         input.setBusinessId(Long.parseLong(request.getRequestNo()));
@@ -95,16 +108,6 @@ public class RequestDubboService implements IScfRequestService {
         CustInfo coreCustInfo = custAccountService.selectByPrimaryKey(request.getCoreCustNo());
         input.setCoreOperOrg(coreCustInfo.getOperOrg());
         flowService.start(input);
-        
-        // 修改融资状态
-        FlowStatus search = new FlowStatus();
-        search.setBusinessId(Long.parseLong(request.getRequestNo()));
-        Page<FlowStatus> list = flowService.queryCurrentWorkTask(null, search);
-        if (!Collections3.isEmpty(list)) {
-            request.setTradeStatus(Collections3.getFirst(list).getCurrentNodeId().toString());
-            request = requestService.saveModifyRequest(request, request.getRequestNo());
-        }
-        return AjaxObject.newOk(request).toJson();
     }
 
     @Override
@@ -167,9 +170,9 @@ public class RequestDubboService implements IScfRequestService {
             //保存融资方案
             scheme = requestService.saveOfferScheme(scheme);
             
-            //如果是 微信端的申请 并为 票据融资 则需要发送消息
+            //如果是 微信端的申请  则需要发送消息
             ScfRequest request = requestService.selectByPrimaryKey(scheme.getRequestNo());
-            if (BetterStringUtils.equals("2", request.getRequestFrom()) && BetterStringUtils.equals(RequestType.BILL.getCode(), request.getRequestType())) {
+            if (BetterStringUtils.equals("2", request.getRequestFrom())) {
                 List<ScfElecAgreementInfo> list = elecAgreementService.findElecAgreeByOrderNo(scheme.getRequestNo(), "0");
                 if(false == Collections3.isEmpty(list)){
                     supplierPushService.pushSignInfo(Collections3.getFirst(list));
@@ -250,18 +253,18 @@ public class RequestDubboService implements IScfRequestService {
 
     @Override
     public String webGetServiecFee(String anRequestNo, BigDecimal anLoanBalance) {
-        Map<String, Object> anMap = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<String, Object>();
         ScfRequest request = requestService.findRequestDetail(anRequestNo);
-        anMap.put("servicefeeBalance",anLoanBalance.multiply(request.getServicefeeRatio()).divide(new BigDecimal(1000)));
-        return AjaxObject.newOk("操作成功", anMap).toJson();
+        map.put("servicefeeBalance", MathExtend.divide(MathExtend.multiply(anLoanBalance, request.getServicefeeRatio()), new BigDecimal(1000)));
+        return AjaxObject.newOk("操作成功", map).toJson();
     }
 
     @Override
     public String webGetEndDate(String anRequestNo, String anStartDate) {
-        Map<String, Object> anMap = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<String, Object>();
         ScfRequest request = requestService.findRequestDetail(anRequestNo);
-        anMap.put("endDate", payPlanService.getEndDate(anStartDate, request.getApprovedPeriod(), request.getApprovedPeriodUnit()));
-        return AjaxObject.newOk("操作成功", anMap).toJson();
+        map.put("endDate", payPlanService.getEndDate(anStartDate, request.getApprovedPeriod(), request.getApprovedPeriodUnit()));
+        return AjaxObject.newOk("操作成功", map).toJson();
     }
 
     @Override
@@ -277,8 +280,7 @@ public class RequestDubboService implements IScfRequestService {
     @Override
     public String webQueryWorkTask(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
         anMap = (Map) RuleServiceDubboFilterInvoker.getInputObj();
-        String[] queryTerm = new String[] {"taskType","tradeStatus", "GTErequestDate", "LTErequestDate", "requestNo", "requestType"};
-        anMap = Collections3.filterMap(anMap, queryTerm);
+        anMap = Collections3.filterMap(anMap, new String[] {"taskType","tradeStatus", "GTErequestDate", "LTErequestDate", "requestNo", "requestType"});
         Map<String, Object> qyRequestMap = new HashMap<>();
         
         // 查询当前用户任务列表
@@ -288,8 +290,7 @@ public class RequestDubboService implements IScfRequestService {
             page = flowService.queryCurrentUserWorkTask(null, null);
             qyRequestMap.put("LTtradeStatus", "160");
         }
-        else
-        {
+        else{
             // 已办
             page = flowService.queryCurrentUserHistoryWorkTask(null, null);
         }
@@ -367,28 +368,32 @@ public class RequestDubboService implements IScfRequestService {
             // 拒绝
             input.setCommand(FlowCommand.Exit);
 
-            // 解除订单关联
+            // 当融资流程终止时 ，解除订单关联
             orderService.unForzenInfoes(anRequestNo, null);
             
-            //改为可用状态
+            // 当融资流程终止时 ，将使用的报价改为可用状态
             if(null != request.getOfferId()){
                 offerService.saveUpdateTradeStatus(request.getOfferId(), "1");
             }
             
+            //修申请单状态为关闭
             request.setTradeStatus(RequestTradeStatus.CLOSED.getCode());
             
-            // 当融资流程终止时,对冻结的授信额度进行解冻 add by Liusq 2016-10-20
-            ScfCreditInfo anCreditInfo = new ScfCreditInfo();
-            anCreditInfo.setBusinFlag(request.getRequestType());
-            anCreditInfo.setBalance(request.getBalance());
-            anCreditInfo.setBusinId(Long.valueOf(request.getRequestNo()));
-            anCreditInfo.setCoreCustNo(request.getCoreCustNo());
-            anCreditInfo.setCustNo(request.getCustNo());
-            anCreditInfo.setFactorNo(request.getFactorNo());
-            anCreditInfo.setCreditMode(request.getCreditMode());
-            anCreditInfo.setRequestNo(request.getRequestNo());
-            anCreditInfo.setDescription(request.getDescription());
-            creditDetailService.saveUnfreezeCredit(anCreditInfo);
+            if(BetterStringUtils.equals("2", request.getRequestFrom())){
+                // 当融资流程终止时,对冻结的授信额度进行解冻 add by Liusq 2016-10-20
+                ScfCreditInfo anCreditInfo = new ScfCreditInfo();
+                anCreditInfo.setBusinFlag(request.getRequestType());
+                anCreditInfo.setBalance(request.getBalance());
+                anCreditInfo.setBusinId(Long.valueOf(request.getRequestNo()));
+                anCreditInfo.setCoreCustNo(request.getCoreCustNo());
+                anCreditInfo.setCustNo(request.getCustNo());
+                anCreditInfo.setFactorNo(request.getFactorNo());
+                anCreditInfo.setCreditMode(request.getCreditMode());
+                anCreditInfo.setRequestNo(request.getRequestNo());
+                anCreditInfo.setDescription(request.getDescription());
+                creditDetailService.saveUnfreezeCredit(anCreditInfo);
+            }
+           
         }
 
         // 执行流程
@@ -409,8 +414,7 @@ public class RequestDubboService implements IScfRequestService {
                 request.setTradeStatus(RequestTradeStatus.CLOSED.getCode());
             }
             
-        }
-        else {
+        }else {
             // 流程-结束
             request.setFlowStatus("3");
         }
@@ -440,8 +444,8 @@ public class RequestDubboService implements IScfRequestService {
     @Override
     public String webQueryPendingRequest(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
         logger.debug("分页查询待批融资，入参：" + anMap);
-        Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOkWithPage("查询待批融资成功", requestService.queryPendingRequest(anQueryConditionMap, anFlag, anPageNum, anPageSize)).toJson();
+        Map<String, Object> queryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOkWithPage("查询待批融资成功", requestService.queryPendingRequest(queryConditionMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     @Override
@@ -455,52 +459,49 @@ public class RequestDubboService implements IScfRequestService {
     @Override
     public String webQueryCompletedRequest(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
         logger.debug("分页查询历史融资，入参：" + anMap);
-        Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOkWithPage("查询历史融资成功", requestService.queryCompletedRequest(anQueryConditionMap, anFlag, anPageNum, anPageSize))
+        Map<String, Object> queryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOkWithPage("查询历史融资成功", requestService.queryCompletedRequest(queryConditionMap, anFlag, anPageNum, anPageSize))
                 .toJson();
     }
 
     @Override
     public String webQueryCoreEnterpriseRequest(Map<String, Object> anMap, String anRequestType, String anFlag, int anPageNum, int anPageSize) {
         logger.debug("分页查询融资，入参：" + anMap);
-        Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        Map<String, Object> queryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
         return AjaxObject.newOkWithPage("查询融资成功",
-                requestService.queryCoreEnterpriseRequest(anQueryConditionMap, anRequestType, anFlag, anPageNum, anPageSize)).toJson();
+                requestService.queryCoreEnterpriseRequest(queryConditionMap, anRequestType, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     @Override
     public String webFindPayPlan(Long anId) {
         logger.debug("查询还款计划详情，入参：" + anId);
-        Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        Map<String, Object> queryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
         return AjaxObject.newOk("查询还款计划详情", payPlanService.findPayPlanDetail(anId)).toJson();
     }
 
     @Override
-    public String webQuerySupplierRequestByCore(Map<String, Object> anMap, String anBusinStatus, String anFlag, int anPageNum, int anPageSize) {
+    public String webQuerySupplierRequestByCore(Map<String, Object> anMap, String anTradeStatus, String anFlag, int anPageNum, int anPageSize) {
         logger.debug("分页查询融资，入参：" + anMap);
-        Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        Map<String, Object> queryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
         return AjaxObject.newOkWithPage("查询融资成功",
-                requestService.querySupplierRequestByCore(anQueryConditionMap, anBusinStatus, anFlag, anPageNum, anPageSize)).toJson();
+                requestService.querySupplierRequestByCore(queryConditionMap, anTradeStatus, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     @Override
-    public String webQuerySellerRequestByCore(Map<String, Object> anMap, String anBusinStatus, String anFlag, int anPageNum, int anPageSize) {
+    public String webQuerySellerRequestByCore(Map<String, Object> anMap, String anTradeStatus, String anFlag, int anPageNum, int anPageSize) {
         logger.debug("分页查询融资，入参：" + anMap);
-        Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        Map<String, Object> queryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
         return AjaxObject.newOkWithPage("查询融资成功",
-                requestService.querySellerRequestByCore(anQueryConditionMap, anBusinStatus, anFlag, anPageNum, anPageSize)).toJson();
+                requestService.querySellerRequestByCore(queryConditionMap, anTradeStatus, anFlag, anPageNum, anPageSize)).toJson();
     }
     
     public List<Long> findVoucherBatchNo(String anRequest) {
-        // TODO Auto-generated method stub
         return this.requestService.findVoucherBatchNo(anRequest);
     }
 
     @Override
     public void updateAndSendRequestStatus(String anRequestNo, String anStatus) {
-        // TODO Auto-generated method stub
         this.requestService.updateAndSendRequestStatus(anRequestNo, anStatus);
-
     }
     
     private void updateScheme(String anRequestNo, String anApprovalResult, String anReturnNode) {
