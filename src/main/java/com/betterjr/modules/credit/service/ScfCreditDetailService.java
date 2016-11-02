@@ -184,6 +184,7 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         BigDecimal occupyBalance = anCreditInfo.getBalance();
         String custName = custAccountService.queryCustName(anCreditInfo.getCustNo());
         String coreCustName = custAccountService.queryCustName(anCreditInfo.getCoreCustNo());
+        String factorName = custAccountService.queryCustName(anCreditInfo.getFactorNo());
 
         // 获取客户授信记录
         ScfCredit custCredit = scfCreditService.findCredit(anCreditInfo.getCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),
@@ -200,6 +201,8 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         // 获取核心企业授信记录
         ScfCredit coreCredit = scfCreditService.findCredit(anCreditInfo.getCoreCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),
                 anCreditInfo.getCreditMode());
+        
+        BTAssert.notNull(coreCredit, "当前业务将占用" + coreCustName + "该类型的授信额度，该企业未获得" + factorName + "该类型的授信，请等待授信结束后继续办理业务！");
 
         // 检查核心企业授信余额是否充足
         checkCreditBalance(coreCredit.getCreditBalance(), occupyBalance,
