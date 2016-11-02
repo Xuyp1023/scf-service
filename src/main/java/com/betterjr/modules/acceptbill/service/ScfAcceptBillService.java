@@ -177,7 +177,7 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
      * @param anIsOnlyNormal
      *            是否过滤，仅查询正常未融资数据 1：未融资 0：查询所有
      */
-    public List<ScfAcceptBill> findAcceptBillList(String anCustNo) {
+    public List<ScfAcceptBill> findAcceptBillListByCustNo(String anCustNo) {
         return this.findAcceptBill(QueryTermBuilder.newInstance().put("holderNo", anCustNo).build());
     }
 
