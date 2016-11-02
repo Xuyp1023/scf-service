@@ -11,6 +11,7 @@ import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
+import com.betterjr.modules.customer.entity.CustMechBankAccount;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.persistence.*;
@@ -223,6 +224,11 @@ public class CustAgreement implements BetterjrEntity {
     @Column(name = "L_FACTORNO",  columnDefinition="INTEGER" )
     @MetaData( value="保理公司客户号", comments = "保理公司客户号")
     private Long factorNo;
+    
+    
+    @Column(name = "C_DEFAULT",  columnDefinition="VARCHAR" )
+    @MetaData( value="标识", comments = "0系统加入，1前端加入")
+    private String defaultFlag;
     
     
     private static final long serialVersionUID = 1458113450523L;
@@ -463,6 +469,14 @@ public class CustAgreement implements BetterjrEntity {
         this.factorNo = anFactorNo;
     }
 
+    public String getDefaultFlag() {
+        return this.defaultFlag;
+    }
+
+    public void setDefaultFlag(String anDefaultFlag) {
+        this.defaultFlag = anDefaultFlag;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -498,6 +512,7 @@ public class CustAgreement implements BetterjrEntity {
         sb.append(", realBuyer=").append(realBuyer);
         sb.append(", realSupplier=").append(realSupplier);
         sb.append(", factorNo=").append(factorNo);
+        sb.append(", defaultFlag=").append(defaultFlag);
         sb.append("]");
         return sb.toString();
     }
@@ -605,6 +620,7 @@ public class CustAgreement implements BetterjrEntity {
         this.operName = anCustOperInfo.getName();
         this.buyer = anBuyer;
         this.buyerNo=buyerNo;
+        this.defaultFlag="1";
         this.supplier = anSupplier;
         if (BetterStringUtils.isBlank(this.realBuyer)){
             this.realBuyer = this.buyer;
@@ -617,9 +633,8 @@ public class CustAgreement implements BetterjrEntity {
         }
     }
     
-    public void initSysValue(CustOperatorInfo anCustOperInfo,Long buyerNo, String anBuyer,Long anSupplierNo,String anSupplier,Long anFactorNo) {
+    public void initSysValue(CustOperatorInfo anCustOperInfo,Long buyerNo, String anBuyer,Long anSupplierNo,String anSupplier,Long anFactorNo,CustMechBankAccount bankAccount) {
         this.id = SerialGenerator.getLongValue("CustAgreement.id");
-        this.agreeName=anSupplier+BetterDateUtils.getNumDate()+"贸易合同";
         this.regDate = BetterDateUtils.getNumDate();
         this.modiDate = BetterDateUtils.getNumDate();
         this.status = "0";
@@ -629,8 +644,14 @@ public class CustAgreement implements BetterjrEntity {
         this.buyer = anBuyer;
         this.buyerNo=buyerNo;
         this.supplier = anSupplier;
+        this.realBuyer=anBuyer;
+        this.realSupplier=anSupplier;
         this.factorNo=anFactorNo;
         this.supplierNo=anSupplierNo;
+        this.bankAccount=bankAccount.getBankAcco();
+        this.bankAccountName=bankAccount.getBankAccoName();
+        this.bankName=bankAccount.getBankName();
+        this.defaultFlag="0";
     }
     
 }

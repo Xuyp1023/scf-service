@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.modules.agreement.entity.ScfRequestCredit;
@@ -120,6 +121,9 @@ public class ScfAgreementService {
      */
     public String transNotice(ScfRequestNotice anNoticeRequest){
         logger.info("转让通知书："+anNoticeRequest);
+        if(BetterStringUtils.isBlank(anNoticeRequest.getFactorPost())){
+            anNoticeRequest.setFactorPost("000000");
+        }
         BTAssert.notNull(anNoticeRequest.getBankAccount(), "银行账户不能为空");
         ScfRequest request = requestService.findRequestDetail(anNoticeRequest.getRequestNo());
         anNoticeRequest.fillInfo(request);

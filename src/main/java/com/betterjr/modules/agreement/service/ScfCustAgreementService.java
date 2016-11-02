@@ -21,6 +21,8 @@ import com.betterjr.modules.agreement.dao.CustAgreementMapper;
 import com.betterjr.modules.agreement.data.ScfSupplierAgreement;
 import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.agreement.utils.SupplyChainUtil;
+import com.betterjr.modules.customer.ICustMechBankAccountService;
+import com.betterjr.modules.customer.entity.CustMechBankAccount;
 import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
@@ -37,6 +39,8 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
     private CustAccountService custAccoService;
     @Reference(interfaceClass=ICustFileService.class)
     private ICustFileService custFileService;
+    @Reference(interfaceClass=ICustMechBankAccountService.class)
+    private ICustMechBankAccountService custMechBankAccountService;
     
     /**
      * 查询用户合同分页信息
@@ -68,7 +72,6 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
      */
     public CustAgreement addCustAgreement(CustAgreement anCustAgreement, String anFileList) {
         //初始化合同默认值
-//        Long supplierNo = Collections3.getFirst(UserUtils.findCustNoList());
         anCustAgreement.initDefValue(UserUtils.getOperatorInfo(),anCustAgreement.getBuyerNo(), custAccoService.queryCustName(anCustAgreement.getBuyerNo()), custAccoService.queryCustName(anCustAgreement.getSupplierNo()));
 
         // 保存合同附件信息
@@ -96,7 +99,9 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
         CustAgreement custAgreement=findCustAgreement(anMap);
         if(custAgreement==null){
             custAgreement=new CustAgreement();
-            custAgreement.initSysValue(UserUtils.getOperatorInfo(), anCoreCustNo, custAccoService.queryCustName(anCoreCustNo), anSupplierNo, custAccoService.queryCustName(anSupplierNo), anFactorNo);// 保存合同附件信息
+            // 获取客户银行账号信息
+            CustMechBankAccount bankAccount=custMechBankAccountService.findDefaultBankAccount(anFactorNo);
+            custAgreement.initSysValue(UserUtils.getOperatorInfo(), anCoreCustNo, custAccoService.queryCustName(anCoreCustNo), anSupplierNo, custAccoService.queryCustName(anSupplierNo), anFactorNo,bankAccount);// 保存合同附件信息
             if(BetterStringUtils.isNotBlank(anFileList)){
                 custAgreement.setBatchNo(custFileService.updateCustFileItemInfo(anFileList, custAgreement.getBatchNo()));
             }
