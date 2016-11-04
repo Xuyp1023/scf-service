@@ -1,5 +1,6 @@
 package com.betterjr.modules.order.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -17,11 +18,14 @@ import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.account.service.CustAccountService;
+import com.betterjr.modules.customer.ICustMechBaseService;
 import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.order.dao.ScfInvoiceMapper;
 import com.betterjr.modules.order.data.ScfInvoiceAndAccess;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfInvoiceItem;
+import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
 
 @Service
@@ -29,9 +33,16 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
 
     @Autowired
     private ScfInvoiceItemService invoiceItemService;
+    @Autowired
+    private ScfOrderService orderService;
+    @Autowired
+    private CustAccountService custAccountService;
     
     @Reference(interfaceClass = ICustFileService.class)
     private ICustFileService custFileDubboService;
+    
+    @Reference(interfaceClass = ICustMechBaseService.class)
+    private ICustMechBaseService baseService;
     
     /**
      * 订单发票信息录入
@@ -59,11 +70,14 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
     public Page<ScfInvoice> queryInvoice(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
         // 限定操作员查询本机构数据
         anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
-        //仅显示可用发票
-        anMap.put("businStatus", "1");
-
+        if (!(UserUtils.factorUser() || UserUtils.platformUser())) {
+            //如果不为平台或者保理公司仅显示可用发票
+            anMap.put("businStatus", "1");
+        }
         Page<ScfInvoice> anInvoiceList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
-        
+        for(ScfInvoice anInvoice : anInvoiceList) {
+            anInvoice.setCustName(custAccountService.queryCustName(anInvoice.getCustNo()));
+        }
         fillInvoiceItem(anInvoiceList);
 
         return anInvoiceList;
@@ -233,5 +247,44 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
         this.deleteByPrimaryKey(anId);
         invoiceItemService.deleteByProperty("invoiceId", anId);
         return anInvoice;
+    }
+
+    /**
+     * 系统在融资申请默认生成发票,可关联关系后冻结，不然在检查是否存在时会报错
+     */
+    public ScfInvoice addSysInvoice(Long anCustNo, String anFileList) {
+        ScfInvoice anInvoice = new ScfInvoice();
+        anInvoice.initAddValue();
+        anInvoice.setBusinStatus("1");
+        anInvoice.setCustNo(anCustNo);
+        anInvoice.setOperOrg(baseService.findBaseInfo(anCustNo).getOperOrg());
+        anInvoice.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anInvoice.getBatchNo()));
+        this.insert(anInvoice);
+        return anInvoice;
+    }
+    
+    /**
+     * 查询出具保理方案下的发票,用于完善资料
+     * 出具保理方案 - 110
+     * 融资方确认方案 - 120
+     * 发起融资背景确认 - 130
+     * 核心企业确认背景 - 140
+     * 放款确认 - 150
+     * 完成融资 - 160
+     * 放款完成 - 170
+     */
+    public Page<ScfInvoice> queryIncompletedInvoice(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+        List<ScfInvoice> invoiceList = new ArrayList<ScfInvoice>();
+        //增加融资状态条件
+        anMap.put("GTEtradeStatus", "110");
+        anMap.put("LTEtradeStatus", "110");
+        List<ScfOrder> orderList = orderService.findOrderListByRequest(anMap);
+        for(ScfOrder anOrder : orderList) {
+            invoiceList.addAll(anOrder.getInvoiceList());
+        }
+        for(ScfInvoice anInvoice : invoiceList) {
+            anInvoice.setCustName(custAccountService.queryCustName(anInvoice.getCustNo()));
+        }
+        return Page.listToPage(invoiceList);
     }
 }

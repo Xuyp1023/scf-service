@@ -27,7 +27,9 @@ import com.betterjr.modules.agreement.service.ScfCustAgreementService;
 import com.betterjr.modules.customer.ICustMechBaseService;
 import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.document.entity.CustFileItem;
+import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.helper.RequestType;
+import com.betterjr.modules.loan.service.ScfRequestService;
 import com.betterjr.modules.order.dao.ScfOrderMapper;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
@@ -56,6 +58,9 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
 
     @Autowired
     private CustAccountService custAccountService;
+    
+    @Autowired
+    private ScfRequestService requestService;
 
     @Reference(interfaceClass = ICustFileService.class)
     private ICustFileService custFileDubboService;
@@ -281,7 +286,6 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         Map<String, Object> anMap = new HashMap<String, Object>();
         String[] anBusinStatusList = { "0" };
         anMap.put("id", anId);
-        anMap.put("operOrg", anOperOrg);
         if(!(UserUtils.factorUser()||UserUtils.platformUser())) {
             anMap.put("businStatus", anBusinStatusList);
         }
@@ -654,23 +658,37 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
     }
 
     /**
-     * 根据requestNo检查是否关联贸易合同，若未关联，生成默认贸易合同
+     * 根据requestNo检查是否关联贸易合同和发票，若未关联，生成默认贸易合同和发票
      */
     public void checkAndGenerateTradeAgreement(Long anAcceptBillId, Long anFactorNo) {
         ScfAcceptBill anAcceptBill = acceptBillService.findAcceptBillDetailsById(anAcceptBillId);
-        if (Collections3.isEmpty(anAcceptBill.getAgreementList())) {
-            // 查询汇票附件中的合同附件
-            List<CustFileItem> fileList = custFileDubboService.findCustFiles(anAcceptBill.getBatchNo());
-            List<Long> fileIdList = new ArrayList<Long>();
-            for (CustFileItem anFile : fileList) {
-                if (BetterStringUtils.equals("agreeAccessory", anFile.getFileInfoType())) {
-                    fileIdList.add(anFile.getId());
-                }
+        
+        List<CustFileItem> fileList = custFileDubboService.findCustFiles(anAcceptBill.getBatchNo());
+        // 查询汇票附件中的合同附件和发票附件
+        List<Long> agreeFileIdList = new ArrayList<Long>();
+        List<Long> invoiceFileIdList = new ArrayList<Long>();
+        for (CustFileItem anFile : fileList) {
+            if (BetterStringUtils.equals("agreeAccessory", anFile.getFileInfoType())) {
+                agreeFileIdList.add(anFile.getId());
             }
+            if (BetterStringUtils.equals("invoiceFile", anFile.getFileInfoType())) {
+                invoiceFileIdList.add(anFile.getId());
+            }
+        }
+        
+        //生成相关数据
+        if (Collections3.isEmpty(anAcceptBill.getAgreementList())) {
             CustAgreement anAgree = custAgreementService.addSysCustAgreement(anAcceptBill.getCoreCustNo(), anAcceptBill.getCustNo(), anFactorNo,
-                    StringUtils.collectionToDelimitedString(fileIdList, ","));
+                    StringUtils.collectionToDelimitedString(agreeFileIdList, ","));
             orderRelationService.addOrderRelation(ScfOrderRelationType.ACCEPTBILL.getCode(), anAcceptBillId, ScfOrderRelationType.AGGREMENT.getCode(),
                     anAgree.getId().toString());
+        }
+        if (Collections3.isEmpty(anAcceptBill.getInvoiceList())) {
+            ScfInvoice anInvoice = invoiceService.addSysInvoice(anAcceptBill.getCustNo(), StringUtils.collectionToDelimitedString(invoiceFileIdList, ","));
+            orderRelationService.addOrderRelation(ScfOrderRelationType.ACCEPTBILL.getCode(), anAcceptBillId, ScfOrderRelationType.INVOICE.getCode(),
+                    anInvoice.getId().toString());
+            //冻结发票
+            invoiceService.saveForzenInvoice(anInvoice.getId());
         }
     }
 
@@ -688,5 +706,22 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
             }
         }
         return agreeNameList;
+    }
+    
+    /**
+     * 查询相应融资条件下的资料
+     * 出具保理方案 - 110
+     * 融资方确认方案 - 120
+     * 发起融资背景确认 - 130
+     * 核心企业确认背景 - 140
+     * 放款确认 - 150
+     * 完成融资 - 160
+     * 放款完成 - 170
+     */
+    public List<ScfOrder> findOrderListByRequest(Map<String, Object> anMap) {
+        List<ScfRequest> requestList = requestService.selectByProperty(anMap);
+        List<String> requestNoList = Collections3.extractToList(requestList, "requestNo");
+        Map<String, Object> queryMap = QueryTermBuilder.newInstance().put("requestNo", requestNoList.toArray()).build();
+        return this.findOrder(queryMap);
     }
 }
