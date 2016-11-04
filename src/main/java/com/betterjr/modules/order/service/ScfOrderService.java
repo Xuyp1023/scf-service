@@ -699,7 +699,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         // 未启用的合同编号
         List<String> agreeNameList = new ArrayList<String>();
         ScfAcceptBill anAcceptBill = acceptBillService.findAcceptBillDetailsById(anAcceptBillId);
-        BTAssert.notNull(anAcceptBill, "无法获取订单信息");
+        BTAssert.notNull(anAcceptBill, "无法获取票据信息");
         for (CustAgreement anAgree : anAcceptBill.getAgreementList()) {
             if (!BetterStringUtils.equals("1", anAgree.getStatus())) {
                 agreeNameList.add(anAgree.getAgreeName());
@@ -723,5 +723,36 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         List<String> requestNoList = Collections3.extractToList(requestList, "requestNo");
         Map<String, Object> queryMap = QueryTermBuilder.newInstance().put("requestNo", requestNoList.toArray()).build();
         return this.findOrder(queryMap);
+    }
+    
+    /**
+     * 根据融资类型和资料id串判断资料中的合同是否有未启用的
+     * 1:订单，2:票据;3:应收款
+     */
+    public void checkRequestCustAgreementEnable(String anInfoIdList, String anRequestType) {
+        List<CustAgreement> agreeList = new ArrayList<>();
+        switch (anRequestType) {
+        case "1":
+            List<ScfOrder> orderList = this.findOrder(QueryTermBuilder.newInstance().put("id", anInfoIdList.split(",")).build());
+            for(ScfOrder anOrder : orderList) {
+                agreeList.addAll(anOrder.getAgreementList());
+            }
+            break;
+        case "2":
+            List<ScfAcceptBill> acceptBillList = acceptBillService.findAcceptBill(QueryTermBuilder.newInstance().put("id", anInfoIdList.split(",")).build());
+            for(ScfAcceptBill anBill : acceptBillList) {
+                agreeList.addAll(anBill.getAgreementList());
+            }
+        case "3":
+            List<ScfReceivable> receivableList = receivableService.findReceivable(QueryTermBuilder.newInstance().put("id", anInfoIdList.split(",")).build());
+            for(ScfReceivable anReceivable : receivableList) {
+                agreeList.addAll(anReceivable.getAgreementList());
+            }
+        default:
+            break;
+        }
+        for (CustAgreement anAgree : agreeList) {
+            BTAssert.isTrue(BetterStringUtils.equals("1", anAgree.getStatus()), "资料中存在未启用合同，请先启用合同！");
+        }
     }
 }
