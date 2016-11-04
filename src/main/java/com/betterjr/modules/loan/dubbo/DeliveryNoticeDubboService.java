@@ -36,13 +36,16 @@ public class DeliveryNoticeDubboService implements IScfDeliveryNoticeService {
     @Override
     public String webAddDeliveryNotice(Map<String, Object> anMap) {
         logger.debug("新增发货通知，入参："+anMap);
-        return AjaxObject.newOk(deliveryNoticeService.addDeliveryNotice((ScfDeliveryNotice) RuleServiceDubboFilterInvoker.getInputObj())).toJson();
+        String fillList = anMap.get("fileList")==null?"":anMap.get("fileList").toString();
+        return AjaxObject.newOk(deliveryNoticeService.addDeliveryNotice((ScfDeliveryNotice) RuleServiceDubboFilterInvoker.getInputObj(), fillList)).toJson();
     }
     
     @Override
     public String webSaveModifyDeliveryNotice(Map<String, Object> anMap, Long anId) {
         logger.debug("修改发货通知，入参："+anMap);
-        return AjaxObject.newOk(deliveryNoticeService.saveModifyEnquiry((ScfDeliveryNotice) RuleServiceDubboFilterInvoker.getInputObj(), anId)).toJson();
+        logger.debug("新增发货通知，入参："+anMap);
+        String fillList = anMap.get("fileList")==null?"":anMap.get("fileList").toString();
+        return AjaxObject.newOk(deliveryNoticeService.saveModifyEnquiry((ScfDeliveryNotice) RuleServiceDubboFilterInvoker.getInputObj(), anId, fillList)).toJson();
     }
     
 }
