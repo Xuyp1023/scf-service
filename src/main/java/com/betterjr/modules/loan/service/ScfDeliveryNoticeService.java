@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterException;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
@@ -15,19 +16,27 @@ import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.loan.dao.ScfDeliveryNoticeMapper;
 import com.betterjr.modules.loan.entity.ScfDeliveryNotice;
 
 @Service
 public class ScfDeliveryNoticeService extends BaseService<ScfDeliveryNoticeMapper, ScfDeliveryNotice> {
 
+    @Reference(interfaceClass = ICustFileService.class)
+    private ICustFileService custFileDubboService;
+    
     /**
      * 保存修改改
      * @param anNotice
      * @return
      */
-    public ScfDeliveryNotice saveModifyEnquiry(ScfDeliveryNotice anNotice, Long anId) {
+    public ScfDeliveryNotice saveModifyEnquiry(ScfDeliveryNotice anNotice, Long anId, String anFileList) {
         BTAssert.notNull(anNotice, "修改通知单失败-anNotice不能为空");
+        
+        if(false == BetterStringUtils.isBlank(anFileList)){
+        	anNotice.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, null).toString());
+        }
         
         //检查该数据据是否合法
         Map<String, Object> map = new HashMap<String, Object>();
@@ -52,7 +61,8 @@ public class ScfDeliveryNoticeService extends BaseService<ScfDeliveryNoticeMappe
      * @return
      */
     public Page<ScfDeliveryNotice> queryDeliveryNoticeList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
-        if(BetterStringUtils.isEmpty(anMap.get("businStatus").toString())){
+		anMap = Collections3.filterMap(anMap, new String[] {"businStatus","custNo", "noticeNo", "GTEregDate", "LTEregDate"});
+    	if(BetterStringUtils.isEmpty(anMap.get("businStatus").toString())){
             anMap.put("businStatus", new String[]{"1","0"});
         }
         return this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1==anFlag);
@@ -85,9 +95,12 @@ public class ScfDeliveryNoticeService extends BaseService<ScfDeliveryNoticeMappe
      * @param anNotice
      * @return
      */
-     public ScfDeliveryNotice addDeliveryNotice(ScfDeliveryNotice anNotice) {
+     public ScfDeliveryNotice addDeliveryNotice(ScfDeliveryNotice anNotice, String anFileList) {
          BTAssert.notNull(anNotice, "新增通知单失败anNotice不能为空");
          anNotice.init();
+         if(false == BetterStringUtils.isBlank(anFileList)){
+         	anNotice.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, null).toString());
+         }
          this.insert(anNotice);
          return anNotice;
      }
@@ -102,7 +115,7 @@ public class ScfDeliveryNoticeService extends BaseService<ScfDeliveryNoticeMappe
              
              delivery.setRequestNo(anRequestNo);
              delivery.setBusinStatus("1");
-             saveModifyEnquiry(delivery, Long.parseLong(id));
+             saveModifyEnquiry(delivery, Long.parseLong(id), null);
         }
      }
      
