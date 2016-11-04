@@ -18,7 +18,6 @@ import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.enquiry.dao.ScfEnquiryMapper;
 import com.betterjr.modules.enquiry.entity.ScfEnquiry;
 import com.betterjr.modules.enquiry.entity.ScfEnquiryObject;
-import com.betterjr.modules.enquiry.entity.ScfEnquiryOrder;
 import com.betterjr.modules.enquiry.entity.ScfOffer;
 import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.receivable.service.ScfReceivableService;
@@ -39,8 +38,6 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
     private ScfReceivableService receivableService;
     @Autowired
     private ScfOrderService scfOrderService;
-    @Autowired
-    private ScfEnquiryOrderService enquiryOrderService;
 
     /**
      * 新增询价
@@ -62,15 +59,6 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
             object.setCustNo(anEnquiry.getCustNo());
             enquiryObjectService.add(object);
         }
-
-        /*// 保存询价所关联的订单关系
-        List<String> orderList = BetterStringUtils.splitTrim(anEnquiry.getOrders());
-        for (String orderId : orderList) {
-            ScfEnquiryOrder scfEnquiryOrder = new ScfEnquiryOrder();
-            scfEnquiryOrder.setEnquiryNo(anEnquiry.getEnquiryNo());
-            scfEnquiryOrder.setOrderId(Long.parseLong(orderId));
-            scfEnquiryOrder.setOrderType(anEnquiry.getRequestType());
-        }*/
 
         return anEnquiry;
     }
@@ -142,16 +130,6 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
     }
 
     private void fillBusinStatus(ScfEnquiry enquiry) {
-       /* Map<String, Object> anMap = new HashMap<String, Object>();
-        anMap.put("enquiryNo", enquiry.getEnquiryNo());
-        //anMap.put("businStatus", "1");
-        
-        int offerCount = 0;
-        List<ScfOffer> list = offerService.findOfferList(anMap);
-        if(false == Collections3.isEmpty(list)){
-            offerCount = list.size();
-        }*/
-        
         //状态：-2：已融资，-1：放弃，0：未报价，1：已报价
         switch (enquiry.getBusinStatus()) {
             case "1":
@@ -238,10 +216,6 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
             updateObjectRelation(enquiry, sourceEnquiry);
         }
 
-        // 如果原意向订单ids与修改后的值不同则要修改
-        if (BetterStringUtils.equals(sourceEnquiry.getOrders(), enquiry.getOrders()) == false) {
-            updateOrderRelation(enquiry, sourceEnquiry);
-        }
         return saveUpdate(enquiry);
     }
 
@@ -298,32 +272,6 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
             enquiryObjectService.add(object);
         }
         return qyObjectCondition;
-    }
-
-    /**
-     * 修改询价与相关订单关系
-     * @param anEnquiry
-     * @param sourceEnquiry
-     * @return
-     */
-    private void updateOrderRelation(ScfEnquiry anEnquiry, ScfEnquiry sourceEnquiry) {
-        // 删除原有的关联订单
-        Map<String, Object> qyOrderCondition = new HashMap<String, Object>();
-        qyOrderCondition.put("enquiryNo", sourceEnquiry.getEnquiryNo());
-        List<ScfEnquiryOrder> orderList = enquiryOrderService.selectByClassProperty(ScfEnquiryOrder.class, qyOrderCondition);
-        for (ScfEnquiryOrder object : orderList) {
-            enquiryOrderService.delete(object);
-        }
-
-        // 保存新选的关联订单
-        List<String> orders = BetterStringUtils.splitTrim(anEnquiry.getFactors());
-        for (String orderId : orders) {
-            ScfEnquiryOrder order = new ScfEnquiryOrder();
-            order.setOrderId(Long.parseLong(orderId));
-            order.setEnquiryNo(sourceEnquiry.getEnquiryNo());
-            order.setOrderType(anEnquiry.getRequestType());
-            enquiryOrderService.add(order);
-        }
     }
 
     /**
