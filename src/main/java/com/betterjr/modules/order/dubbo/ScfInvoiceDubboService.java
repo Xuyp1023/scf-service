@@ -52,4 +52,10 @@ public class ScfInvoiceDubboService implements IScfInvoiceService {
         return AjaxObject.newOk("删除发票信息成功", scfInvoiceService.saveDeleteInvoice(anId)).toJson();
     }
 
+    @Override
+    public String webQueryIncompletedInvoice(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+        Map<String, Object> queryMap = RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOkWithPage("查询补录发票成功", scfInvoiceService.queryIncompletedInvoice(queryMap, anFlag, anPageNum, anPageSize)).toJson();
+    }
+
 }

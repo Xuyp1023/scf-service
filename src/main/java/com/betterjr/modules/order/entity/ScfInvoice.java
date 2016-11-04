@@ -184,6 +184,12 @@ public class ScfInvoice implements BetterjrEntity {
      */
     @Transient
     private List<ScfInvoiceItem> invoiceItemList;
+    
+    /**
+     * 客户名称
+     */
+    @Transient
+    private String custName;
 
     private static final long serialVersionUID = 1469428023697L;
 
@@ -361,6 +367,14 @@ public class ScfInvoice implements BetterjrEntity {
 
     public void setInvoiceItemList(List<ScfInvoiceItem> anInvoiceItemList) {
         this.invoiceItemList = anInvoiceItemList;
+    }
+
+    public String getCustName() {
+        return this.custName;
+    }
+
+    public void setCustName(String anCustName) {
+        this.custName = anCustName;
     }
 
     @Override

@@ -633,6 +633,9 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         return Collections3.getFirst(this.selectByProperty(termMap));
     }
 
+    /**
+     * 根据汇票id和文件id关联附件信息
+     */
     public boolean saveSingleFileLink(Long anId, Long anFileId) {
         ScfAcceptBill anAcceptBill = this.selectByPrimaryKey(anId);
         BTAssert.notNull(anAcceptBill, "无法获取汇票信息");
@@ -640,4 +643,5 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         
         return this.updateByPrimaryKey(anAcceptBill) ==1; 
     }
+    
 }
