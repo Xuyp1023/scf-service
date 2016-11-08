@@ -34,7 +34,6 @@ import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.service.ScfRequestService;
-import com.betterjr.modules.order.helper.ScfOrderRelationType;
 import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.product.service.ScfProductService;
 
@@ -101,7 +100,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
             termMap.put("supplierNo", anParam.get("custNo"));
         }else if(UserUtils.sellerUser()){
             termMap.put("agreeType", Arrays.asList("2"));
-            termMap.put("buyerNo", anParam.get("custNo"));
+            termMap.put("supplierNo", anParam.get("custNo"));
         }
         List<Long> custNoList = UserUtils.findCustNoList();
         if (logger.isInfoEnabled()){

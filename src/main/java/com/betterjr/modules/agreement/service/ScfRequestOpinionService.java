@@ -80,8 +80,6 @@ public class ScfRequestOpinionService extends BaseService<ScfRequestOpinionMappe
             elecAgreement.setFactorNo(anOpinion.getFactorNo());
             elecAgreement.setSupplier(anSupplier);
             elecAgreementService.addElecAgreementInfo(elecAgreement, Arrays.asList(anOpinion.getBuyerNo()));
-            // 调用融资签约提醒功能
-            //pushService.pushSignInfo(elecAgreement);
         }
 
         return result;

@@ -50,7 +50,6 @@ public class ScfRequestProtacalService extends BaseService<ScfRequestProtacalMap
         }
         ScfElecAgreement elecAgreement = ScfElecAgreement.createByProtacal(protacal.getAgreeName(), protacal.getProtocalNo(),anBalance);
         elecAgreement.setRequestNo(protacal.getRequestNo());
-        elecAgreementService.addElecAgreementInfo(elecAgreement);
         elecAgreement.setSupplierNo(protacal.getThreeNo());
         elecAgreement.setRequestNo(protacal.getRequestNo());
         elecAgreement.setBuyerNo(protacal.getSecondNo());

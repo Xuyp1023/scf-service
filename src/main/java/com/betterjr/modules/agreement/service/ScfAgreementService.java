@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
@@ -127,7 +128,15 @@ public class ScfAgreementService {
         BTAssert.notNull(anNoticeRequest.getBankAccount(), "银行账户不能为空");
         ScfRequest request = requestService.findRequestDetail(anNoticeRequest.getRequestNo());
         anNoticeRequest.fillInfo(request);
-        return requestNoticeService.updateTransNotice(anNoticeRequest,request.getCustName(),request.getApprovedBalance());
+        String agreeNo="";
+        try {
+            agreeNo=requestNoticeService.updateTransNotice(anNoticeRequest,request.getCustName(),request.getApprovedBalance());
+        }
+        catch (Exception e) {
+            logger.error("转让通知书生成失败，原因："+e.getMessage());
+            throw new BytterTradeException("转让通知书生成失败");
+        }
+        return agreeNo;
     }
     
     /***
@@ -139,7 +148,15 @@ public class ScfAgreementService {
         logger.info("意见确认书："+anOpinion);
         ScfRequest request = requestService.findRequestDetail(anOpinion.getRequestNo());
         anOpinion.fillInfo(request);
-        return requestOpinionService.updateOpinionInfo(anOpinion,request.getCustName(),request.getApprovedBalance());
+        boolean bool=false;
+        try {
+            bool=requestOpinionService.updateOpinionInfo(anOpinion,request.getCustName(),request.getApprovedBalance());
+        }
+        catch (Exception e) {
+            logger.error("意见确认书生成失败，原因："+e.getMessage());
+            throw new BytterTradeException("意见确认书生成失败");
+        }
+        return bool;
     }
 
     /***
@@ -169,7 +186,15 @@ public class ScfAgreementService {
         ScfRequest request = requestService.findRequestDetail(protacal.getRequestNo());
         protacal.initProtacal();
         BTAssert.notNull(request, "三方协议申请单不存在");
-        return requestProtacalService.updateProtacalInfo(protacal,request.getApprovedBalance());
+        boolean bool=false;
+        try {
+            bool=requestProtacalService.updateProtacalInfo(protacal,request.getApprovedBalance());   
+        }
+        catch (Exception e) {
+            logger.error("三方协议书生成失败，原因："+e.getMessage());
+            throw new BytterTradeException("三方协议书生成失败");
+        }
+        return bool;
     }
     
     public CustFileItem findPdfFileInfo(String appNo){
