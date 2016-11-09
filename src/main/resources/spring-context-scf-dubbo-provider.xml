@@ -28,6 +28,7 @@
 		com.betterjr.modules.acceptbill;
 		com.betterjr.modules.cert.service;
         com.betterjr.modules.discount;
+        com.betterjr.modules.document.service;
         com.betterjr.modules.push;
         com.betterjr.modules.wechat.service;
         com.betterjr.modules.operator.service;
@@ -233,7 +234,10 @@
      <property name="trustStoreFile" value="${trustStore.File}" />
      <property name="trustStorePass" value="${trustStore.Pass}" />
     </bean>
-   
+ 
+   <!-- 
+    <bean id="dataStoreService" class="com.betterjr.modules.document.service.DataStoreService" scope="singleton" />   
+   -->
    
     <bean id="farFaceService" class="com.betterjr.modules.remote.service.FarFaceService" scope="singleton" lazy-init="false">
     </bean>
