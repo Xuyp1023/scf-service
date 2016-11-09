@@ -28,6 +28,7 @@ import com.betterjr.modules.agreement.entity.ScfRequestNotice;
 import com.betterjr.modules.agreement.entity.ScfRequestOpinion;
 import com.betterjr.modules.agreement.entity.ScfRequestProtacal;
 import com.betterjr.modules.agreement.service.ScfAgreementService;
+import com.betterjr.modules.agreement.service.ScfFactorRemoteHelper;
 import com.betterjr.modules.credit.entity.ScfCredit;
 import com.betterjr.modules.credit.entity.ScfCreditInfo;
 import com.betterjr.modules.credit.service.ScfCreditDetailService;
@@ -49,7 +50,6 @@ import com.betterjr.modules.loan.entity.ScfRequestScheme;
 import com.betterjr.modules.loan.entity.ScfServiceFee;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
 import com.betterjr.modules.loan.helper.RequestType;
-import com.betterjr.modules.loan.helper.ScfFactorRemoteHelper;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.helper.ScfOrderRelationType;
@@ -100,8 +100,8 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     @Reference(interfaceClass = ICustMechBankAccountService.class)
     private ICustMechBankAccountService mechBankAccountService;
 
-    private ScfFactorRemoteHelper factorRemoteHelper=new ScfFactorRemoteHelper();
-
+    @Autowired
+    private ScfFactorRemoteHelper factorRemoteHelper ;
     
     public ScfRequest saveStartRequest(ScfRequest anRequest){
         //检查核心企业 在 该保理公司的授信情况

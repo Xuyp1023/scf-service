@@ -27,7 +27,7 @@ import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.entity.ScfTransport;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
-import com.betterjr.modules.supplychain.data.ScfClientDataParentFace;
+import com.betterjr.modules.client.data.ScfClientDataParentFace;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 

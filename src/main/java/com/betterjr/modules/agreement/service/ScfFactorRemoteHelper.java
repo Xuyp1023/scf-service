@@ -9,21 +9,32 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
+
+import com.alibaba.dubbo.config.annotation.Reference;
+import com.betterjr.common.exception.BytterTradeException;
+import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
+import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.DictUtils;
 import com.betterjr.common.utils.MathExtend;
+import com.betterjr.modules.account.data.SaleRequestFace;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
+import com.betterjr.modules.account.entity.SaleAccoRequestInfo;
 import com.betterjr.modules.agreement.entity.FaceTradeResult;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.remote.entity.RemoteResultInfo;
 import com.betterjr.modules.remote.helper.RemoteProxyFactory;
 import com.betterjr.modules.agreement.utils.SupplyChainUtil;
+import com.betterjr.modules.customer.ICustRelationService;
+import com.betterjr.modules.customer.entity.CustRelation;
 import com.betterjr.modules.loan.entity.ScfRequest;
+import com.betterjr.modules.param.entity.FactorParam;
 import com.betterjr.modules.product.entity.ScfProduct;
 import com.betterjr.modules.product.service.ScfProductService;
 
 /**
- * 提供调用保理和沃通的远程接口辅助工具类。
- *  lipeijie@kukahome.com
+ * 提供调用保理和沃通的远程接口辅助工具类。 lipeijie@kukahome.com
+ * 
  * @author zhoucy
  *
  */
@@ -37,6 +48,9 @@ public class ScfFactorRemoteHelper extends Thread {
 
     @Autowired
     private ScfProductService scfProductService;
+
+    @Reference(interfaceClass = ICustRelationService.class)
+    private ICustRelationService relationService;
 
     /**
      * 发送获取验证码请求
@@ -110,7 +124,7 @@ public class ScfFactorRemoteHelper extends Thread {
     }
 
     private boolean sendSmsInfo(String requestNo, Long custNo, String vcode) {
-        ScfRemoteService remoteService=RemoteProxyFactory.createService("wos", ScfRemoteService.class);
+        ScfRemoteService remoteService = RemoteProxyFactory.createService("wos", ScfRemoteService.class);
         RemoteResultInfo remoteResult;
         FaceTradeResult result;
         try {
@@ -130,7 +144,7 @@ public class ScfFactorRemoteHelper extends Thread {
             return false;
         }
     }
-    
+
     /**
      * 查找签署方的信息
      * 
@@ -141,7 +155,99 @@ public class ScfFactorRemoteHelper extends Thread {
         anElecAgreement.setSignerlist(this.elecAgreeStubService.findSignerForWosign(anElecAgreement.getAppNo()));
         return anElecAgreement;
     }
-    
+
+    /**
+     * 查询客户开户状态信息，轮询方式
+     */
+    public void dealRelationStatus() {
+
+        dealRelationStatus(false);
+    }
+
+    // 每天查询一次
+    public void dealCoreCustRelationStatus() {
+
+        dealRelationStatus(true);
+    }
+
+    public Map<String, Object> dealAccoRequest(SaleAccoRequestInfo request, CustRelation custRelation, CustOperatorInfo anOperator) {
+        RemoteResultInfo<FaceTradeResult> remoteResult;
+        FaceTradeResult result;
+        String agencyNo = request.getAgencyNo();
+        ScfRemoteService scfService = RemoteProxyFactory.createService(agencyNo, ScfRemoteService.class);
+        Map<String, Object> resultData = new HashMap();
+        if ("08".equals(request.getBusinFlag())) {
+            remoteResult = scfService.mechOpenAcco(request);
+        }
+        else {
+            remoteResult = scfService.mechModifyAcco(request);
+        }
+        if (remoteResult.isSucess()) {
+            result = (FaceTradeResult) remoteResult.getResult();
+            resultData.put("status", result.getStatus());
+            resultData.put("saleCustNo", result.getSaleCustNo());
+            if ("0".equals(result.getStatus()) == false) {
+                if (custRelation != null) {
+                    // 申请中
+                    if ("1".equals(result.getStatus())) {
+                        custRelation.setBusinStatus("2");
+                    } // 审批中
+                    else if ("2".equals(result.getStatus())) {
+                        custRelation.setBusinStatus("2");
+                    } // 已经开户
+                    else if ("3".equals(result.getStatus())) {
+                        custRelation.setBusinStatus("3");
+                    }
+                    else {
+                        logger.warn("request CustRelation is null");
+                    }
+                    this.relationService.saveFactorRelationInfo(custRelation.getId(), result.getSaleCustNo(), custRelation.getBusinStatus());
+                }
+            }
+            logger.info(result.toString());
+        }
+
+        return resultData;
+    }
+
+    private void dealRelationStatus(boolean anCoreCustNo) {
+        Map<String, String> agencyGroup = SupplyChainUtil.findFactorCorpInfo();
+        RemoteResultInfo<FaceTradeResult> remoteResult;
+        FaceTradeResult result;
+        for (String agencyNo : agencyGroup.keySet()) {
+            List<CustRelation> dataList = null;
+            if (anCoreCustNo) {
+                dataList = this.relationService.findFactorRelaByCoreCustNo(agencyNo);
+            }
+            else {
+                dataList = this.relationService.findFactorRelaByRough(agencyNo);
+            }
+            if (Collections3.isEmpty(dataList) == false) {
+                ScfRemoteService remoteService = RemoteProxyFactory.createService(agencyNo, ScfRemoteService.class);
+                for (CustRelation scfFactorRel : dataList) {
+                    FactorParam param = DictUtils.loadObject("FactorParam", String.valueOf(scfFactorRel.getRelateCustno()), FactorParam.class);
+                    if(param == null || (param.getRemoting() == 0)){
+                        
+                       continue;
+                    }
+                    
+                    logger.info("Query Relation Info :" + scfFactorRel);
+                    remoteResult = remoteService.queryMechAcco(scfFactorRel);
+                    if (remoteResult.isSucess()){
+                        result = (FaceTradeResult) remoteResult.getResult();
+                        if ("0".equals(result.getStatus()) == false){
+                            this.relationService.saveFactorRelationInfo(scfFactorRel.getId(),scfFactorRel.getPartnerCustNo(), "3");
+                        }
+                        
+                        //表示有授信信息
+                        if (MathExtend.smallValue(result.getShares())== false){
+                            //TODO 暂时不处理授权信息
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * 查询供应链金融保理方的产品信息
@@ -188,7 +294,8 @@ public class ScfFactorRemoteHelper extends Thread {
 
     protected ScfRequest dealFactorAppRequest(ScfRequest anRequest, boolean anWorkApp) {
         logger.info("dealFactorAppRequest :" + anRequest);
-        ScfRemoteService remoteService=RemoteProxyFactory.createService(DictUtils.getDictCode("ScfFactorGroup", String.valueOf(anRequest.getFactorNo())), ScfRemoteService.class);
+        ScfRemoteService remoteService = RemoteProxyFactory
+                .createService(DictUtils.getDictCode("ScfFactorGroup", String.valueOf(anRequest.getFactorNo())), ScfRemoteService.class);
         RemoteResultInfo remoteResult;
         ScfRequest result;
         try {
@@ -233,5 +340,5 @@ public class ScfFactorRemoteHelper extends Thread {
 
         return anRequest;
     }
-    
+
 }

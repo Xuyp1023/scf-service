@@ -16,7 +16,7 @@ import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.MathExtend;
-import com.betterjr.modules.supplychain.data.ScfClientDataParentFace;
+import com.betterjr.modules.client.data.ScfClientDataParentFace;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
