@@ -13,10 +13,12 @@ import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.agreement.data.ScfElecAgreementInfo;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.document.entity.CustFileItem;
-import com.betterjr.modules.document.utils.CustFileClientUtils;
+import com.betterjr.modules.document.service.DataStoreService;
 import com.betterjr.modules.document.utils.CustFileUtils;
 import com.betterjr.modules.sys.service.SysConfigService;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.*;
 
 import org.slf4j.Logger;
@@ -36,23 +38,28 @@ public abstract class ScfElecAgreeLocalService {
     protected FreemarkerService freeMarkerService;
     protected ScfFactorRemoteHelper remoteHelper;
 
+    protected DataStoreService dataStoreService;
+
+    private final String WOSIGN_SIGN_FILE = "signFile";
+
     protected void init(ScfElecAgreementService anElecAgreeService, ScfElecAgreement anElecAgree) {
         this.elecAgree = anElecAgree;
         this.elecAgreeService = anElecAgreeService;
         this.freeMarkerService = SpringContextHolder.getBean(FreemarkerService.class);
         this.remoteHelper = SpringContextHolder.getBean(ScfFactorRemoteHelper.class);
+        this.dataStoreService = SpringContextHolder.getBean(DataStoreService.class);
         subInit();
     }
-    
-    public ScfElecAgreement getElecagree(){
+
+    public ScfElecAgreement getElecagree() {
         return elecAgree;
     }
 
-    protected void putService(ScfElecAgreementService anElecAgreeService){
-        
-        this.elecAgreeService = anElecAgreeService; 
+    protected void putService(ScfElecAgreementService anElecAgreeService) {
+
+        this.elecAgreeService = anElecAgreeService;
     }
-    
+
     /**
      * 子类的初始化
      */
@@ -73,7 +80,7 @@ public abstract class ScfElecAgreeLocalService {
         }
         return BetterDateUtils.formatDispay(tmpDate);
     }
-    
+
     /**
      * 检查PDF文件是否创建
      * 
@@ -83,13 +90,12 @@ public abstract class ScfElecAgreeLocalService {
         CustFileItem fileItem = null;
         if (MathExtend.smallValue(this.elecAgree.getBatchNo())) {
             StringBuffer buffer = createOutHtmlInfo();
-            KeyAndValueObject fileInfo = FileUtils.findFilePathWithParent(ParamNames.CONTRACT_PATH);
-            logger.info("work file info " + fileInfo);
-            if (CustFileClientUtils.exportPDF(buffer, fileInfo)) {
-                fileItem = CustFileUtils.createSignDocFileItem(fileInfo, "signFile", this.elecAgree.getAgreeName().concat(".pdf"));
-                if (anSave) {
-                    elecAgreeService.saveSignFileInfo(elecAgree, fileItem, false);
-                }
+            ByteArrayOutputStream bOut = new ByteArrayOutputStream(1024 * 1024);
+            CustFileUtils.exportPDF(buffer, bOut);
+            fileItem = this.dataStoreService.saveStreamToStoreWithBatchNo(new ByteArrayInputStream(bOut.toByteArray()), WOSIGN_SIGN_FILE,
+                    this.elecAgree.getAgreeName().concat(".pdf"));
+            if (fileItem != null) {
+                elecAgreeService.saveSignFileInfo(this.elecAgree, fileItem);
             }
         }
 

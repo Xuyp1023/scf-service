@@ -197,7 +197,8 @@
 	<aop:config>
 		<aop:pointcut id="appService"
 			expression="execution(* com.betterjr..service.*Service.*(..)) 
-			or execution(* com.betterjr..dubbo.*Service.*(..))" />
+			or execution(* com.betterjr..dubbo.*Service.*(..))
+            or execution(* com.betterjr..handler.*HandlerService.*(..))" />
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="appService" />
 	</aop:config>
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
@@ -246,6 +247,6 @@
     </bean>
 
 	<import resource="scf-dubbo-provider.xml" />
-	<!-- <import resource="job-config.xml"/> -->
-
+    <import resource="mq-config.xml"/>
+	<import resource="job-config.xml"/>
 </beans>

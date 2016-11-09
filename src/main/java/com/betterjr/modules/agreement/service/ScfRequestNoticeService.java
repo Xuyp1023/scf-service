@@ -15,7 +15,6 @@ import com.betterjr.modules.agreement.dao.ScfRequestNoticeMapper;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.agreement.entity.ScfRequestNotice;
 import com.betterjr.modules.agreement.utils.SupplyChainUtil;
-import com.betterjr.modules.push.service.ScfSupplierPushService;
 
 /**
  * 应收账款转让通知书管理
@@ -35,8 +34,6 @@ public class ScfRequestNoticeService extends BaseService<ScfRequestNoticeMapper,
     private ScfElecAgreementService elecAgreeService;
     @Autowired
     private CustAccountService custAccountService;
-    @Autowired
-    private ScfSupplierPushService pushService;
 
     /**
      * 更新转让通知书信息，只有未签署合同的转让通知书才能更新
@@ -71,6 +68,7 @@ public class ScfRequestNoticeService extends BaseService<ScfRequestNoticeMapper,
             elecAgreement.setFactorNo(anRequest.getFactorNo());
             elecAgreement.setSupplier(anSuppiler);
             elecAgreeService.addElecAgreementInfo(elecAgreement, Arrays.asList(elecAgreement.getSupplierNo()));
+
             return elecAgreement.getAgreeNo();
         }
         return null;

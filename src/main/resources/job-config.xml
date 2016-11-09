@@ -20,4 +20,10 @@
 		class="com.betterjr.modules.loan.job.PayPlanJob"
 		registry-center-ref="scfCenter" cron="0 0 0 1/1 * ?"
 		sharding-total-count="1" sharding-item-parameters="0=A" />
+
+   <job:simple id="queryProductJob"
+    class="com.betterjr.modules.supplychain.job.QueryProductInfoJob"
+    registry-center-ref="scfCenter" cron="0 0 0 1/1 * ?"
+    sharding-total-count="1" sharding-item-parameters="0=A" />
+    
 </beans>

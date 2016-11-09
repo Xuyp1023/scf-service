@@ -168,12 +168,17 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         return elecAgreeList;
     }
     
-    public boolean saveSignFileInfo(String anAppNo, CustFileItem anFileItem, boolean anSignedFile) {
+    private boolean saveSignFileInfo(String anAppNo, CustFileItem anFileItem, boolean anSignedFile) {
         ScfElecAgreement tmpElecAgree = this.selectByPrimaryKey(anAppNo);
         return saveSignFileInfo(tmpElecAgree, anFileItem, anSignedFile);
     }
     
-    public boolean saveSignFileInfo(ScfElecAgreement tmpElecAgree, CustFileItem anFileItem, boolean anSignedFile) {
+    public boolean saveSignFileInfo(ScfElecAgreement tmpElecAgree, CustFileItem anFileItem){
+        
+        return saveSignFileInfo(tmpElecAgree, anFileItem, false);
+    }
+    
+    private boolean saveSignFileInfo(ScfElecAgreement tmpElecAgree, CustFileItem anFileItem, boolean anSignedFile) {
         if (tmpElecAgree != null) {
             String tmpStatus = null;
             if (anSignedFile) {
@@ -186,7 +191,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
             }
             tmpElecAgree.fillElecAgreeStatus(tmpStatus);
             this.updateByPrimaryKey(tmpElecAgree);
-            custFileService.webSaveAndUpdateFileItem(anFileItem.getFilePath(),anFileItem.getFileLength(),anFileItem.getFileInfoType(),anFileItem.getFileName());
+            //custFileService.webSaveAndUpdateFileItem(anFileItem.getFilePath(),anFileItem.getFileLength(),anFileItem.getFileInfoType(),anFileItem.getFileName());
         }
 
         return true;

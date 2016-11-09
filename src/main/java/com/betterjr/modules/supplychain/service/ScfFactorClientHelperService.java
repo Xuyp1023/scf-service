@@ -26,7 +26,7 @@ import com.betterjr.modules.customer.ICustRelationService;
 import com.betterjr.modules.supplychain.data.CoreCustInfo;
 import com.betterjr.modules.supplychain.data.ScfClientDataDetail;
 import com.betterjr.modules.supplychain.data.ScfClientDataInfo;
-import com.betterjr.modules.supplychain.data.ScfClientDataParentFace;
+import com.betterjr.modules.client.data.ScfClientDataParentFace;
 import com.betterjr.modules.supplychain.entity.CustTempEnrollInfo;
 import com.betterjr.modules.supplychain.entity.ScfSupplierBank;
 

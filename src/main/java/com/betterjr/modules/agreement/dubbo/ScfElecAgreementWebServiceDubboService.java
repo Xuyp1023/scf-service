@@ -1,6 +1,7 @@
 package com.betterjr.modules.agreement.dubbo;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
@@ -13,19 +14,19 @@ import com.betterjr.common.annotation.AnnotRuleService;
 import com.betterjr.common.config.ParamNames;
 import com.betterjr.common.data.KeyAndValueObject;
 import com.betterjr.common.mapper.JsonMapper;
+import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.FileUtils;
 import com.betterjr.modules.agreement.IScfElecAgreementService;
 import com.betterjr.modules.agreement.IScfElecAgreementWebService;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.customer.ICustRelationService;
 import com.betterjr.modules.document.entity.CustFileItem;
-import com.betterjr.modules.document.utils.CustFileClientUtils;
+import com.betterjr.modules.document.service.DataStoreService;
 import com.betterjr.modules.document.utils.CustFileUtils;
 import com.betterjr.modules.loan.IScfRequestService;
 import com.betterjr.modules.remote.entity.SignRequestInfo;
 import com.betterjr.modules.rule.annotation.AnnotRuleFunc;
 import com.betterjr.modules.rule.entity.RuleFuncType;
-
 
 /**
  * 电子合同webservice服务
@@ -33,24 +34,30 @@ import com.betterjr.modules.rule.entity.RuleFuncType;
  * @author zhoucy
  *
  */
-@Service(interfaceClass=IScfElecAgreementWebService.class)
+@Service(interfaceClass = IScfElecAgreementWebService.class)
 
-public class ScfElecAgreementWebServiceDubboService implements IScfElecAgreementWebService{
+public class ScfElecAgreementWebServiceDubboService implements IScfElecAgreementWebService {
     private static Logger logger = LoggerFactory.getLogger(ScfElecAgreementWebServiceDubboService.class);
-    
-    @Reference(interfaceClass=IScfRequestService.class)
+
+    @Reference(interfaceClass = IScfRequestService.class)
     private IScfRequestService requestService;
 
-    @Reference(interfaceClass=ICustRelationService.class)
+    @Reference(interfaceClass = ICustRelationService.class)
     private ICustRelationService factorRelService;
 
-    @Reference(interfaceClass=IScfElecAgreementService.class)
+    @Reference(interfaceClass = IScfElecAgreementService.class)
     private IScfElecAgreementService elecAgreementService;
+
+    @Autowired
+    private DataStoreService dataStoreService;
+
+    @Autowired
+    private static final String WOSIGNED_FILE_TYPE = "signedFile";
 
     /**
      * 沃通推送文件接口
      */
-    
+
     public String pushSignedDoc(SignRequestInfo input) {
         logger.warn("service input:" + JsonMapper.toNonNullJson(input));
         ScfElecAgreement elecAgreement = this.elecAgreementService.findOneElecAgreement(input.getRequestNo());
@@ -58,10 +65,9 @@ public class ScfElecAgreementWebServiceDubboService implements IScfElecAgreement
         if (elecAgreement != null) {
             workStatus = "1".equals(input.getStatus());
             if (workStatus) {
-                KeyAndValueObject tmpFileInfo = FileUtils.findFilePathWithParent(ParamNames.CONTRACT_PATH);
-                if (CustFileClientUtils.saveFileStream(tmpFileInfo, new ByteArrayInputStream(Base64.decodeBase64(input.getSignedContent())))) {
-                    CustFileItem fileItem = CustFileUtils.createSignDocFileItem(tmpFileInfo, "signedFile",
-                            elecAgreement.getAgreeName().concat(".pdf"));
+                InputStream inData = new ByteArrayInputStream(Base64.decodeBase64(input.getSignedContent()));
+                CustFileItem fileItem = dataStoreService.saveStreamToStore(inData, WOSIGNED_FILE_TYPE, elecAgreement.getAgreeName().concat(".pdf"));
+                if (fileItem != null) {
                     this.elecAgreementService.saveSignedFile(input.getRequestNo(), fileItem);
                 }
             }
@@ -72,11 +78,11 @@ public class ScfElecAgreementWebServiceDubboService implements IScfElecAgreement
             // 如果是核心企业确认信息，则发送确认状态给到保理公司
             String outStatus = null;
             if ("1".equals(elecAgreement.getAgreeType())) {
-                
+
                 outStatus = workStatus ? "3" : "4";
             }
             else if ("0".equals(elecAgreement.getAgreeType())) {
-                
+
                 outStatus = workStatus ? "5" : "6";
             }
             requestService.updateAndSendRequestStatus(elecAgreement.getRequestNo(), outStatus);
@@ -88,7 +94,7 @@ public class ScfElecAgreementWebServiceDubboService implements IScfElecAgreement
     /**
      * 沃通推送身份验证结果
      */
-    
+
     public String pushValidation(SignRequestInfo anInput) {
         logger.debug("service input:" + JsonMapper.toNonNullJson(anInput));
 
@@ -99,5 +105,5 @@ public class ScfElecAgreementWebServiceDubboService implements IScfElecAgreement
             return "0";
         }
     }
-    
+
 }
