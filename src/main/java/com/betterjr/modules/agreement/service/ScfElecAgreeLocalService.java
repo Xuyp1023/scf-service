@@ -94,7 +94,7 @@ public abstract class ScfElecAgreeLocalService {
             CustFileUtils.exportPDF(buffer, bOut);
             fileItem = this.dataStoreService.saveStreamToStoreWithBatchNo(new ByteArrayInputStream(bOut.toByteArray()), WOSIGN_SIGN_FILE,
                     this.elecAgree.getAgreeName().concat(".pdf"));
-            if (fileItem != null) {
+            if (fileItem != null && anSave ) {
                 elecAgreeService.saveSignFileInfo(this.elecAgree, fileItem);
             }
         }
