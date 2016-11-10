@@ -237,6 +237,22 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         
         return request;
     }
+    
+    /**
+     * 根据申请单号查询申请单信息
+     * 
+     * @param anRequestNo
+     * @return
+     */
+    public ScfRequest findRequestByRequestNo(String anRequestNo) {
+        ScfRequest request = this.selectByPrimaryKey(anRequestNo);
+        if (null == request) {
+            logger.debug("没查到相关数据！");
+            return new ScfRequest();
+        }
+        return request;
+    }
+    
 
     private void fillCustName(ScfRequest request) {
         // 设置相关名称
