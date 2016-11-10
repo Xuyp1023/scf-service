@@ -11,6 +11,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
+import com.betterjr.common.data.BaseRemoteEntity;
 import com.betterjr.common.data.BetterBaseEntity;
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
@@ -23,7 +24,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "T_SCF_PRODUCT")
-public class ScfProduct extends BetterBaseEntity  implements BetterjrEntity {
+public class ScfProduct extends BetterBaseEntity  implements BetterjrEntity,BaseRemoteEntity {
     /**
      * 产品流水号
      */
