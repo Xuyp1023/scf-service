@@ -101,6 +101,9 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         }else if(UserUtils.sellerUser()){
             termMap.put("agreeType", Arrays.asList("2"));
             termMap.put("supplierNo", anParam.get("custNo"));
+        }else if(UserUtils.factorUser()){
+            termMap.put("agreeType", Arrays.asList("0","1","2"));
+            termMap.put("factorNo", anParam.get("custNo"));
         }
         List<Long> custNoList = UserUtils.findCustNoList();
         if (logger.isInfoEnabled()){
@@ -110,7 +113,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
                 "1".equals(anParam.get("flag")));
         Set<Long> custNoSet = new HashSet(custNoList);
         for (ScfElecAgreementInfo elecAgree : elecAgreeList) {
-            initAgreemtnBill(elecAgree, custNoSet);
+            findAgreemtnBill(elecAgree, custNoSet);
         }
         logger.info("this is findScfElecAgreementList result count :" + elecAgreeList.size());
         return elecAgreeList;
@@ -121,10 +124,12 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
      * @param requestNo
      * @return
      */
-    public String getProductNameByRequestNo(String requestNo){
+    public String findProductNameByRequestNo(String requestNo){
         try {
-            ScfRequest request=requestService.findRequestDetail(requestNo);
-            return productService.findProductById(request.getProductId()).getProductName();            
+            ScfRequest request=requestService.findRequestByRequestNo(requestNo);
+            if(request.getProductId()!=null){
+                return productService.findProductById(request.getProductId()).getProductName();
+            }
         }
         catch (Exception e) {
             logger.error("getProductNameByRequestNo 异常："+e.getMessage());
@@ -139,7 +144,11 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
      */
     public ScfAcceptBill findBillInfoByRequestNo(String anRequestNo){
         List billList=orderService.findInfoListByRequest(anRequestNo, "2");
-        return (ScfAcceptBill)Collections3.getFirst(billList);
+        ScfAcceptBill scfAcceptBill=null;
+        if(billList!=null && billList.size()>0){
+            scfAcceptBill=(ScfAcceptBill)Collections3.getFirst(billList);
+        }
+        return scfAcceptBill;
     }
     
     
@@ -162,7 +171,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         List<ScfElecAgreementInfo> elecAgreeList=this.selectByClassProperty(ScfElecAgreementInfo.class, workCondition);
         Set<Long> custNoSet = new HashSet(custNoList);
         for (ScfElecAgreementInfo elecAgree : elecAgreeList) {
-            initAgreemtnBill(elecAgree,custNoSet);
+            findAgreemtnBill(elecAgree,custNoSet);
         }
         return elecAgreeList;
     }
@@ -505,11 +514,11 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
      * @param anRequestNo
      * @return
      */
-    public void initAgreemtnBill(ScfElecAgreementInfo elecAgree,Set<Long> custNoSet){
+    public void findAgreemtnBill(ScfElecAgreementInfo elecAgree,Set<Long> custNoSet){
         elecAgree.putStubInfos(scfElecAgreeStubService.findSignerList(elecAgree.getAppNo(),custAccoService), custNoSet);
         elecAgree.setBuyer(custAccoService.queryCustName(elecAgree.getBuyerNo()));
         elecAgree.setFactorName(DictUtils.getDictLabel("ScfAgencyGroup", elecAgree.getFactorNo()));
-        elecAgree.setProductName(getProductNameByRequestNo(elecAgree.getRequestNo()));
+        elecAgree.setProductName(findProductNameByRequestNo(elecAgree.getRequestNo()));
         // 加入票据属性
         ScfAcceptBill bill=findBillInfoByRequestNo(elecAgree.getRequestNo());
         if(bill!=null){
@@ -652,8 +661,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         Set<Long> custNoSet = new HashSet(custNoList);
         ScfElecAgreementInfo elecAgree=new ScfElecAgreementInfo();
         BeanMapper.copy(this.selectByPrimaryKey(anAppNo),elecAgree);
-        initAgreemtnBill(elecAgree, custNoSet);
-        System.out.println("elecAgree:"+elecAgree);
+        findAgreemtnBill(elecAgree, custNoSet);
         return elecAgree;
     }
 }
