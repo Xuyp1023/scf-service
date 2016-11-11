@@ -376,20 +376,21 @@ public class RequestDubboService implements IScfRequestService {
             //修申请单状态为关闭
             request.setTradeStatus(RequestTradeStatus.CLOSED.getCode());
             
-            if(BetterStringUtils.equals("2", request.getRequestFrom())){
-                // 当融资流程终止时,对冻结的授信额度进行解冻 add by Liusq 2016-10-20
-                ScfCreditInfo anCreditInfo = new ScfCreditInfo();
-                anCreditInfo.setBusinFlag(request.getRequestType());
-                anCreditInfo.setBalance(request.getBalance());
-                anCreditInfo.setBusinId(Long.valueOf(request.getRequestNo()));
-                anCreditInfo.setCoreCustNo(request.getCoreCustNo());
-                anCreditInfo.setCustNo(request.getCustNo());
-                anCreditInfo.setFactorNo(request.getFactorNo());
-                anCreditInfo.setCreditMode(request.getCreditMode());
-                anCreditInfo.setRequestNo(request.getRequestNo());
-                anCreditInfo.setDescription(request.getDescription());
-                creditDetailService.saveUnfreezeCredit(anCreditInfo);
-            }
+            // modify by Liusq 2016-11-11 去掉if条件限制
+            /*if(BetterStringUtils.equals("2", request.getRequestFrom())){
+            }*/
+            // 当融资流程终止时,对冻结的授信额度进行解冻 add by Liusq 2016-10-20
+            ScfCreditInfo anCreditInfo = new ScfCreditInfo();
+            anCreditInfo.setBusinFlag(request.getRequestType());
+            anCreditInfo.setBalance(request.getBalance());
+            anCreditInfo.setBusinId(Long.valueOf(request.getRequestNo()));
+            anCreditInfo.setCoreCustNo(request.getCoreCustNo());
+            anCreditInfo.setCustNo(request.getCustNo());
+            anCreditInfo.setFactorNo(request.getFactorNo());
+            anCreditInfo.setCreditMode(request.getCreditMode());
+            anCreditInfo.setRequestNo(request.getRequestNo());
+            anCreditInfo.setDescription(request.getDescription());
+            creditDetailService.saveUnfreezeCredit(anCreditInfo);
            
         }
 
