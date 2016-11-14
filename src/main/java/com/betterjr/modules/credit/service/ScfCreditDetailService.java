@@ -225,6 +225,10 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
             // 冻结金额
             BigDecimal freezeBalance = freezeCreditDetail.getBalance();
 
+            // 检查是否超过授信可用余额
+            BigDecimal validBalance = MathExtend.add(freezeBalance, anCredit.getCreditBalance());
+            checkCreditBalance(validBalance, anOccupyBalance, "业务发生额: " + anOccupyBalance + " 超过当前客户授信可用余额: " + validBalance);
+
             // 实际占用额度与冻结额度的差额
             BigDecimal balance = MathExtend.subtract(freezeBalance, anOccupyBalance);
             if (balance.longValue() != 0) {
@@ -375,7 +379,7 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
     private ScfCreditDetail findCreditDetail(ScfCreditInfo anCreditInfo, ScfCredit anCredit) {
         Map<String, Object> anMap = QueryTermBuilder.newInstance().put("creditId", anCredit.getId()).put("custNo", anCreditInfo.getCustNo())
                 .put("requestNo", anCreditInfo.getRequestNo()).put("businFlag", anCreditInfo.getBusinFlag()).put("businId", anCreditInfo.getBusinId())
-                .put("requestNo", anCreditInfo.getRequestNo()).put("businStatus", CreditConstants.CREDIT_CHANGE_STATUS_FREEZE).build();
+                .put("businStatus", CreditConstants.CREDIT_CHANGE_STATUS_FREEZE).build();
 
         return Collections3.getFirst(this.selectByProperty(anMap));
     }
