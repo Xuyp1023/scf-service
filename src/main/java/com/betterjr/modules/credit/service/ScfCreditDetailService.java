@@ -131,7 +131,7 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         if (custCredit != null) {
             // 检查授信有效期
             checkCreditValidDate(custCredit, custName);
-            
+
             // 检查客户授信余额是否充足
             checkCreditBalance(custCredit.getCreditBalance(), freezeBalance,
                     "业务发生额: " + freezeBalance + "超过" + custName + "授信余额: " + custCredit.getCreditBalance());
@@ -200,7 +200,7 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         if (custCredit != null) {
             // 检查授信有效期
             checkCreditValidDate(custCredit, custName);
-            
+
             // 处理客户冻结和占用的授信额度
             saveFreezeAndOccupyData(anCreditInfo, custCredit, occupyBalance);
         }
@@ -374,8 +374,8 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
 
     private ScfCreditDetail findCreditDetail(ScfCreditInfo anCreditInfo, ScfCredit anCredit) {
         Map<String, Object> anMap = QueryTermBuilder.newInstance().put("creditId", anCredit.getId()).put("custNo", anCreditInfo.getCustNo())
-                .put("requestNo", anCreditInfo.getRequestNo()).put("businFlag", anCreditInfo.getBusinFlag())
-                .put("businStatus", CreditConstants.CREDIT_CHANGE_STATUS_FREEZE).build();
+                .put("requestNo", anCreditInfo.getRequestNo()).put("businFlag", anCreditInfo.getBusinFlag()).put("businId", anCreditInfo.getBusinId())
+                .put("requestNo", anCreditInfo.getRequestNo()).put("businStatus", CreditConstants.CREDIT_CHANGE_STATUS_FREEZE).build();
 
         return Collections3.getFirst(this.selectByProperty(anMap));
     }
