@@ -201,9 +201,6 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
             // 检查授信有效期
             checkCreditValidDate(custCredit, custName);
             
-            // 检查客户授信余额是否充足
-            checkCreditBalance(custCredit.getCreditBalance(), occupyBalance,
-                    "业务发生额: " + occupyBalance + "超过" + custName + "授信余额: " + custCredit.getCreditBalance());
             // 处理客户冻结和占用的授信额度
             saveFreezeAndOccupyData(anCreditInfo, custCredit, occupyBalance);
         }
@@ -215,10 +212,6 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
 
         // 检查授信有效期
         checkCreditValidDate(coreCredit, coreCustName);
-
-        // 检查核心企业授信余额是否充足
-        checkCreditBalance(coreCredit.getCreditBalance(), occupyBalance,
-                "业务发生额: " + occupyBalance + "超过" + coreCustName + "授信余额: " + coreCredit.getCreditBalance());
 
         // 处理核心企业冻结和占用的授信额度
         saveFreezeAndOccupyData(anCreditInfo, coreCredit, occupyBalance);
