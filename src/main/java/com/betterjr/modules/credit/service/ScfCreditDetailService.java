@@ -378,7 +378,7 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
 
     private ScfCreditDetail findCreditDetail(ScfCreditInfo anCreditInfo, ScfCredit anCredit) {
         Map<String, Object> anMap = QueryTermBuilder.newInstance().put("creditId", anCredit.getId()).put("custNo", anCreditInfo.getCustNo())
-                .put("requestNo", anCreditInfo.getRequestNo()).put("businFlag", anCreditInfo.getBusinFlag()).put("businId", anCreditInfo.getBusinId())
+                .put("requestNo", anCreditInfo.getRequestNo()).put("businFlag", anCreditInfo.getBusinFlag())
                 .put("businStatus", CreditConstants.CREDIT_CHANGE_STATUS_FREEZE).build();
 
         return Collections3.getFirst(this.selectByProperty(anMap));
