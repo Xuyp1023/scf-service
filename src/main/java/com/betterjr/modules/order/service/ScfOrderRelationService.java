@@ -175,7 +175,7 @@ public class ScfOrderRelationService extends BaseService<ScfOrderRelationMapper,
             List<ScfOrderRelation> anInfoRelationList = this.selectByProperty(anInfoMap); 
             for(ScfOrderRelation anEnterRelation : anEnterRelationList) {
                 for(ScfOrderRelation anInfoRelation : anInfoRelationList) {
-                    if(anEnterRelation.getOrderId() == anInfoRelation.getOrderId()) {
+                    if(anEnterRelation.getOrderId().longValue() == anInfoRelation.getOrderId().longValue()) {
                         this.delete(anInfoRelation);
                         count ++;
                     }
