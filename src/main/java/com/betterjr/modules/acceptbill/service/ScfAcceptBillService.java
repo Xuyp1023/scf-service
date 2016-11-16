@@ -281,12 +281,12 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
             checkStatus(anAcceptBill.getBusinStatus(), "2", true, "当前票据已融资,不允许修改");
             checkStatus(anAcceptBill.getBusinStatus(), "3", true, "当前票据已过期,不允许修改");
             checkStatus(anAcceptBill.getFinanceFlag(), "0", false, "当前票据已融资,不允许修改");
+            anModiAcceptBill.setBusinStatus("1");
         }
         // 数据编辑初始化
         anModiAcceptBill.setId(anId);
         anModiAcceptBill.initModifyValue(UserUtils.getOperatorInfo());
         // 设置汇票状态(businStatus:1-完善资料)
-        anModiAcceptBill.setBusinStatus("1");
         // 数据存盘
         //保存附件信息
         anModiAcceptBill.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anFileList, anAcceptBill.getBatchNo()));
