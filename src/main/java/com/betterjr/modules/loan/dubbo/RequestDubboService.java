@@ -252,6 +252,9 @@ public class RequestDubboService implements IScfRequestService {
     public String webGetServiecFee(String anRequestNo, BigDecimal anLoanBalance) {
         Map<String, Object> map = new HashMap<String, Object>();
         ScfRequest request = requestService.findRequestDetail(anRequestNo);
+        if(request.getRequestType().equals(RequestType.SELLER.getCode())){
+        	anLoanBalance = MathExtend.subtract(anLoanBalance, request.getBondBalance());
+        }
         map.put("servicefeeBalance", MathExtend.divide(MathExtend.multiply(anLoanBalance, request.getServicefeeRatio()), new BigDecimal(1000)));
         return AjaxObject.newOk("操作成功", map).toJson();
     }
@@ -268,6 +271,11 @@ public class RequestDubboService implements IScfRequestService {
     public String webGetInsterest(String anRequestNo, BigDecimal anLoanBalance, String loanDate, String endDate) {
         Map<String, Object> anMap = new HashMap<String, Object>();
         ScfRequest request = requestService.findRequestDetail(anRequestNo);
+        
+        if(request.getRequestType().equals(RequestType.SELLER.getCode())){
+        	anLoanBalance = MathExtend.subtract(anLoanBalance, request.getBondBalance());
+        }
+        
         anMap.put("interestBalance", payPlanService.getFee(request.getFactorNo(), anLoanBalance, request.getApprovedRatio(), loanDate, endDate));
         anMap.put("managementBalance", payPlanService.getFee(request.getFactorNo(), anLoanBalance, request.getManagementRatio(), loanDate, endDate));
         anMap.put("serviceBalance", MathExtend.divide(MathExtend.multiply(anLoanBalance, request.getServicefeeRatio()), new BigDecimal(1000)));

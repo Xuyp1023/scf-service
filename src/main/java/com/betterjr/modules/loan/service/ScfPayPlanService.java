@@ -241,11 +241,13 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
      * @param anType
      *            1：管理费，2：手续费，3：利息
      * @param endDate 
-     * @param loanDate 
+     * @param startDate 
      * @return
      */
-    public BigDecimal getFee(Long factorNo, BigDecimal anBalance, BigDecimal ratio, String loanDate, String endDate) {
-        int days = getDaysBetween(loanDate, endDate);
+    public BigDecimal getFee(Long factorNo, BigDecimal anBalance, BigDecimal ratio, String startDate, String endDate) {
+    	//计算贷款暂用天数，开始日期和结束日期都是暂用所以要加一天
+        int days = getDaysBetween(startDate, endDate) + 1;
+        
         FactorParam param = DictUtils.loadObject("FactorParam", factorNo.toString(), FactorParam.class);
         Assert.notNull(param, "获取费用失败-请先设置系统参数");
         //金额 X 年利率 / 一年的天数  X 实现融资天数  / 100

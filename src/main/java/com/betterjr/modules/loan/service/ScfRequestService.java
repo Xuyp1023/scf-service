@@ -422,23 +422,9 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         anLoan.setFactorNo(request.getFactorNo());
         loanService.addLoan(anLoan);
 
-        //占用授信额度(如果是微信端融资则不检查授信)
-        /*if(BetterStringUtils.equals("2", request.getRequestFrom()) == false){
-            ScfCreditInfo anCreditInfo = new ScfCreditInfo();
-            anCreditInfo.setBusinFlag(request.getRequestType());
-            anCreditInfo.setBalance(request.getApprovedBalance());
-            anCreditInfo.setBusinId(anLoan.getId());
-            anCreditInfo.setCoreCustNo(request.getCoreCustNo());
-            anCreditInfo.setCustNo(request.getCustNo());
-            anCreditInfo.setFactorNo(request.getFactorNo());
-            anCreditInfo.setCreditMode(request.getCreditMode());
-            anCreditInfo.setRequestNo(request.getRequestNo());
-            anCreditInfo.setDescription(request.getDescription());
-            creditDetailService.saveOccupyCredit(anCreditInfo);
-        }*/
         // 占用授信额度
         ScfCreditInfo anCreditInfo = new ScfCreditInfo();
-        anCreditInfo.setBalance(request.getApprovedBalance());
+        anCreditInfo.setBalance(request.getLoanBalance());
         anCreditInfo.setBusinId(anLoan.getId());
         anCreditInfo.setCoreCustNo(request.getCoreCustNo());
         anCreditInfo.setCustNo(request.getCustNo());
