@@ -3,6 +3,7 @@ package com.betterjr.modules.agreement.service;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.service.BaseService;
+import com.betterjr.common.utils.BTAssert;
 import com.betterjr.modules.agreement.dao.ScfRequestCreditMapper;
 import com.betterjr.modules.agreement.entity.ScfRequestCredit;
 import com.betterjr.modules.loan.entity.ScfRequest;
@@ -30,6 +31,7 @@ public class ScfRequestCreditService extends BaseService<ScfRequestCreditMapper,
     public boolean updateCreditList(ScfRequest anRequest,String anNoticNo, List<ScfRequestCredit> anList,String anAgreeNo){
         this.deleteByProperty("requestNo", anRequest.getRequestNo());
         for(ScfRequestCredit credit : anList){
+           BTAssert.notNull(credit.getInvoiceNo(),"请完善发票信息");
            credit.fillInfo(anRequest);
            credit.setConfirmNo(anNoticNo);
            credit.setAgreeNo(anAgreeNo);
