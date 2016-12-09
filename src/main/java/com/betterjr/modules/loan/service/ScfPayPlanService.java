@@ -643,7 +643,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
 
     public void fillPayPlan(ScfPayRecord anRecord, ScfPayPlan anPlan) {
         // 剩余金额
-        anPlan.setSurplusTotalBalance(MathExtend.subtract(anPlan.getSurplusTotalBalance(), anRecord.getTotalBalance()));
+        anPlan.setSurplusTotalBalance(MathExtend.subtract(anPlan.getSurplusTotalBalance(), MathExtend.subtract(anRecord.getTotalBalance(), anRecord.getServicefeeBalance())));
         anPlan.setSurplusPrincipalBalance(MathExtend.subtract(anPlan.getSurplusPrincipalBalance(), anRecord.getPrincipalBalance()));
         anPlan.setSurplusInterestBalance(MathExtend.subtract(anPlan.getSurplusInterestBalance(), anRecord.getInterestBalance()));
         anPlan.setSurplusManagementBalance(MathExtend.subtract(anPlan.getSurplusManagementBalance(), anRecord.getManagementBalance()));
