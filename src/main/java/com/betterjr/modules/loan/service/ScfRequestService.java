@@ -320,9 +320,9 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         //电子合同类型，0：应收账款债权转让通知书，1：买方确认意见，2三方协议书
         String  agreeType = BetterStringUtils.equals(RequestType.SELLER.getCode(), request.getRequestType()) ? "2" :"0";
         if (BetterStringUtils.equals("0", anApprovalResult)) {
-            if(false == agreementService.sendValidCodeByRequestNo(anRequestNo, agreeType, anSmsCode)){
+            //if(false == agreementService.sendValidCodeByRequestNo(anRequestNo, agreeType, anSmsCode)){
                 //return AjaxObject.newError("操作失败：短信验证码错误").toJson();
-            }
+            //}
         }
         else{
             //取消签约
@@ -345,9 +345,9 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
             if (BetterStringUtils.equals(RequestType.SELLER.getCode(), request.getRequestType())) {
                 
                 //签署三方协议
-                if(false == agreementService.sendValidCodeByRequestNo(anRequestNo, "2", anSmsCode)){
+               // if(false == agreementService.sendValidCodeByRequestNo(anRequestNo, "2", anSmsCode)){
                     //return AjaxObject.newError("操作失败：短信验证码错误").toJson();
-                }
+                //}
             }
             else{
                //生成-应收账款转让确认意见确认书
