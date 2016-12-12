@@ -90,6 +90,10 @@ public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice>
         //保存发票信息
         ScfInvoice anInvoice = this.selectByPrimaryKey(anModiInvoice.getId());
         BTAssert.notNull(anInvoice, "无法获取发票信息");
+        if (BetterStringUtils.isBlank(anFileList)) {
+            logger.error("发票附件信息不能为空");
+            throw new BytterTradeException(40001, "发票附件信息不能为空");
+        }
         anModiInvoice.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anFileList, anInvoice.getBatchNo()));
         anModiInvoice.setId(anInvoice.getId());
         anModiInvoice.initModifyValue(UserUtils.getOperatorInfo());

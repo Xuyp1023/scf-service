@@ -18,6 +18,7 @@ import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.MathExtend;
+import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
@@ -583,6 +584,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
      * anBusinStatus - 1：未放款，2：还款中  3.已还款
      */
     public Page<ScfRequest> queryCoreEnterpriseRequest(Map<String, Object> anMap, String anBusinStatus, String anFlag, int anPageNum, int anPageSize) {
+        anMap = Collections3.fuzzyMap(anMap, new String[]{"coreCustNo", "custNo"});
         if (BetterStringUtils.isBlank(anBusinStatus)) {
             Page<ScfRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
             for (ScfRequest request : page) {
