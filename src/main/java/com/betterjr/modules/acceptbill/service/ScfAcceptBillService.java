@@ -158,7 +158,7 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
      * 新增汇票信息
      */
     public ScfAcceptBill addAcceptBill(ScfAcceptBill anAcceptBill, String anFileList, String anOtherFileList) {
-        anAcceptBill.initAddValue(UserUtils.getOperatorInfo(), anAcceptBill);
+        anAcceptBill.initAddValue(UserUtils.getOperatorInfo());
         // 补充供应商客户号和持票人信息
         anAcceptBill.setHolder(anAcceptBill.getSupplier());
         anAcceptBill.setHolderNo(anAcceptBill.getSupplierNo());

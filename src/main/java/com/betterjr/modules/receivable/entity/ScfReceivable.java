@@ -565,7 +565,14 @@ public class ScfReceivable implements BetterjrEntity {
     public void initAddValue(CustOperatorInfo anOperatorInfo) {
         this.id = SerialGenerator.getLongValue("ScfReceivable.id");
         this.businStatus = "0";
-        this.aduit = "0";
+        //核心企业添加需审核
+        if (UserUtils.coreUser()) {
+            this.aduit = "0";
+        }
+        //供应商、经销商新增时不需要核心企业再审核
+        if(UserUtils.supplierUser() || UserUtils.sellerUser()) {
+            this.setAduit("1");
+        }
         if (null != anOperatorInfo) {
             this.modiOperId = anOperatorInfo.getId();
             this.modiOperName = anOperatorInfo.getName();
