@@ -1231,13 +1231,20 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
     /**
      * 汇票信息添加
      */
-    public void initAddValue(CustOperatorInfo anOperInfo, ScfAcceptBill anAcceptBill) {
+    public void initAddValue(CustOperatorInfo anOperInfo) {
         this.id = SerialGenerator.getLongValue("ScfAcceptBill.id");
         this.businStatus = "0";
         this.financeFlag = "0";
         //数据来源：核心企业手工
         if (UserUtils.findInnerRules().contains(PlatformBaseRuleType.CORE_USER)) {
             this.dataSource = "01";
+            //未审核
+            this.aduit = "0";
+        }
+        //供应商、经销商新增时不需要核心企业再审核
+        if(UserUtils.supplierUser() || UserUtils.sellerUser()) {
+            this.setAduit("1");
+            this.setDataSource("10");
         }
         this.regDate = BetterDateUtils.getNumDate();
         if (anOperInfo != null){
@@ -1247,10 +1254,8 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         }
         //默认自开库存
         this.billFrom = "0";
-        //未审核
-        this.aduit = "0";
         //默认前手为付款方
-        this.preHand = anAcceptBill.getBuyer();
+        this.preHand = this.getBuyer();
     }
     
     /**
