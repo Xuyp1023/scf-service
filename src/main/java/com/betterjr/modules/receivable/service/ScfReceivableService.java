@@ -280,9 +280,9 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
         //操作机构设置为供应商
         anReceivable.setOperOrg(baseService.findBaseInfo(anReceivable.getCustNo()).getOperOrg());
         //保存附件信息
-        anReceivable.setBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anReceivable.getBatchNo()));
+        anReceivable.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anReceivable.getBatchNo()));
         //保存其他文件信息
-        anReceivable.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anReceivable.getOtherBatchNo()));
+        anReceivable.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anReceivable.getOtherBatchNo()));
         this.insert(anReceivable);
         return anReceivable;
     }

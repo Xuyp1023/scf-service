@@ -267,9 +267,9 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         // 操作机构设置为供应商
         anOrder.setOperOrg(baseService.findBaseInfo(anOrder.getCustNo()).getOperOrg());
         // 保存附件信息
-        anOrder.setBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anOrder.getBatchNo()));
+        anOrder.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anOrder.getBatchNo()));
         // 保存其他文件信息
-        anOrder.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anOrder.getOtherBatchNo()));
+        anOrder.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anOrder.getOtherBatchNo()));
         this.insert(anOrder);
         return anOrder;
     }
