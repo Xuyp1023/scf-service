@@ -100,7 +100,7 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
         if(custAgreement==null){
             custAgreement=new CustAgreement();
             // 获取客户银行账号信息
-            CustMechBankAccount bankAccount=custMechBankAccountService.findDefaultBankAccount(anFactorNo);
+            CustMechBankAccount bankAccount=custMechBankAccountService.findDefaultBankAccount(anSupplierNo);
             custAgreement.initSysValue(UserUtils.getOperatorInfo(), anCoreCustNo, custAccoService.queryCustName(anCoreCustNo), anSupplierNo, custAccoService.queryCustName(anSupplierNo), anFactorNo,bankAccount);// 保存合同附件信息
             if(BetterStringUtils.isNotBlank(anFileList)){
                 custAgreement.setBatchNo(custFileService.updateCustFileItemInfo(anFileList, custAgreement.getBatchNo()));
