@@ -2,12 +2,15 @@ package com.betterjr.modules.approval.seller;
 
 import java.util.Map;
 
+import org.springframework.stereotype.Service;
+
 import com.betterjr.common.utils.BTAssert;
-import com.betterjr.modules.approval.BaseNode;
+import com.betterjr.modules.approval.BaseNodeService;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
 
-public class EndFlow extends BaseNode{
+@Service
+public class SellerEndFlowService extends BaseNodeService{
 	
 	/**
 	 * 流程中止-非正常

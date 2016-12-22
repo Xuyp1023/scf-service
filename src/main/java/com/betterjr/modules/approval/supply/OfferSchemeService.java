@@ -1,27 +1,29 @@
-package com.betterjr.modules.approval.seller;
+package com.betterjr.modules.approval.supply;
 
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.modules.agreement.data.ScfElecAgreementInfo;
 import com.betterjr.modules.agreement.service.ScfElecAgreementService;
-import com.betterjr.modules.approval.BaseNode;
+import com.betterjr.modules.approval.BaseNodeService;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
 import com.betterjr.modules.push.service.ScfSupplierPushService;
 
-public class OfferScheme extends BaseNode{
+@Service
+public class OfferSchemeService extends BaseNodeService{
     @Autowired
     private ScfSupplierPushService supplierPushService;
     @Autowired
     private ScfElecAgreementService elecAgreementService;
 	 
-    public void processPass(ScfRequestScheme scheme){
+	public void processPass(ScfRequestScheme scheme){
         //保存融资方案
         requestService.saveOfferScheme(scheme);
         this.pushSingInfo(scheme);

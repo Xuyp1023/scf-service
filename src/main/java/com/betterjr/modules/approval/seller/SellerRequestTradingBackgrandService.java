@@ -1,30 +1,18 @@
 package com.betterjr.modules.approval.seller;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import com.betterjr.common.utils.BetterStringUtils;
-import com.betterjr.common.utils.Collections3;
-import com.betterjr.modules.agreement.data.ScfElecAgreementInfo;
 import com.betterjr.modules.agreement.service.ScfAgreementService;
-import com.betterjr.modules.agreement.service.ScfElecAgreementService;
-import com.betterjr.modules.approval.BaseNode;
+import com.betterjr.modules.approval.BaseNodeService;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
-import com.betterjr.modules.loan.helper.RequestType;
 import com.betterjr.modules.loan.service.ScfRequestSchemeService;
-import com.betterjr.modules.loan.service.ScfRequestService;
-import com.betterjr.modules.push.service.ScfSupplierPushService;
 
-public class RequestTradingBackgrand extends BaseNode{
-	@Autowired
-    private ScfRequestService requestService;
-    @Autowired
-    private ScfElecAgreementService elecAgreementService;  
-    @Autowired
-    private ScfSupplierPushService supplierPushService;
+@Service
+public class SellerRequestTradingBackgrandService extends BaseNodeService{
     @Autowired
     private ScfRequestSchemeService schemeService;
     @Autowired
@@ -47,7 +35,5 @@ public class RequestTradingBackgrand extends BaseNode{
 		// TODO Auto-generated method stub
 		
 	}
-
-
 
 }

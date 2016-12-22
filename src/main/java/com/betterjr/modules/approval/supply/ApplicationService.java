@@ -1,11 +1,13 @@
-package com.betterjr.modules.approval.seller;
+package com.betterjr.modules.approval.supply;
 
-import com.betterjr.modules.approval.BaseNode;
+import org.springframework.stereotype.Service;
+
+import com.betterjr.modules.approval.BaseNodeService;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
 
-public class Application extends BaseNode{
-    
+@Service
+public class ApplicationService extends BaseNodeService{
 	public ScfRequest execute(ScfRequest request){
 		request = requestService.addRequest(request);
         this.updateAndSendRequestStatus(request.getRequestNo(), RequestTradeStatus.OFFER_SCHEME.getCode());

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
@@ -11,7 +12,7 @@ import com.betterjr.common.utils.Collections3;
 import com.betterjr.modules.agreement.data.ScfElecAgreementInfo;
 import com.betterjr.modules.agreement.service.ScfAgreementService;
 import com.betterjr.modules.agreement.service.ScfElecAgreementService;
-import com.betterjr.modules.approval.BaseNode;
+import com.betterjr.modules.approval.BaseNodeService;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
@@ -19,7 +20,8 @@ import com.betterjr.modules.loan.helper.RequestType;
 import com.betterjr.modules.loan.service.ScfRequestSchemeService;
 import com.betterjr.modules.push.service.ScfSupplierPushService;
 
-public class RequestTradingBackgrand extends BaseNode{
+@Service
+public class RequestTradingBackgrandService extends BaseNodeService{
     @Autowired
     private ScfElecAgreementService elecAgreementService;  
     @Autowired

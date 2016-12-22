@@ -4,16 +4,16 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
-import com.betterjr.common.utils.BTAssert;
-import com.betterjr.modules.approval.supply.Application;
-import com.betterjr.modules.approval.supply.ConfirmLoan;
-import com.betterjr.modules.approval.supply.ConfirmScheme;
-import com.betterjr.modules.approval.supply.ConfirmTradingBackgrand;
-import com.betterjr.modules.approval.supply.EndFlow;
-import com.betterjr.modules.approval.supply.OfferScheme;
-import com.betterjr.modules.approval.supply.RequestTradingBackgrand;
+import com.betterjr.modules.approval.supply.ApplicationService;
+import com.betterjr.modules.approval.supply.ConfirmLoanService;
+import com.betterjr.modules.approval.supply.ConfirmSchemeService;
+import com.betterjr.modules.approval.supply.ConfirmTradingBackgrandService;
+import com.betterjr.modules.approval.supply.EndFlowService;
+import com.betterjr.modules.approval.supply.OfferSchemeService;
+import com.betterjr.modules.approval.supply.RequestTradingBackgrandService;
 import com.betterjr.modules.loan.entity.ScfLoan;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
@@ -24,83 +24,84 @@ public class SupplyApprovalDubboService implements IScfSupplyApprovalService {
 	private static final int PROCESS_PASS = 1;
 	protected final Logger logger = LoggerFactory.getLogger(SupplyApprovalDubboService.class);
 	
+	@Autowired
+	private ApplicationService applicationService;
+	@Autowired
+	private OfferSchemeService offerSchemeService;
+	@Autowired
+	private ConfirmSchemeService confirmSchemeService;
+	@Autowired
+	private ConfirmTradingBackgrandService confirmTradingBackgrandService;
+	@Autowired
+	private RequestTradingBackgrandService requestTradingBackgrandService;
+	@Autowired
+	private ConfirmLoanService confirmLoanService;
+	@Autowired
+	private EndFlowService endFlowService;
+	
 	@Override
 	public Map<String, Object> application(Map<String, Object> anContext) {
-		Application application = (Application) NodeFactory.getSupplyNode(1);
-		BTAssert.notNull(application);
-		ScfRequest request = application.execute((ScfRequest)RuleServiceDubboFilterInvoker.getInputObj());
+		ScfRequest request = applicationService.execute((ScfRequest)RuleServiceDubboFilterInvoker.getInputObj());
 		anContext.put("requestNo", request.getRequestNo());
 		return anContext;
 	}
 
 	@Override
 	public Map<String, Object> offerScheme(Map<String, Object> anContext, int resultType) {
-		OfferScheme offerScheme = (OfferScheme) NodeFactory.getSupplyNode(2);
-		BTAssert.notNull(offerScheme);
 		if (PROCESS_PASS == resultType) {
-			offerScheme.processPass((ScfRequestScheme) RuleServiceDubboFilterInvoker.getInputObj());
+			offerSchemeService.processPass((ScfRequestScheme) RuleServiceDubboFilterInvoker.getInputObj());
 		} else {
-			offerScheme.processReject(anContext);
+			offerSchemeService.processReject(anContext);
 		}
 		return anContext;
 	}
 
 	@Override
 	public void confirmScheme(Map<String, Object> anContext, int resultType) {
-		ConfirmScheme confirmScheme = (ConfirmScheme) NodeFactory.getSupplyNode(3);
-		BTAssert.notNull(confirmScheme);
 		anContext = RuleServiceDubboFilterInvoker.getInputObj();
 		if (PROCESS_PASS == resultType) {
-			confirmScheme.processPass(anContext);
+			confirmSchemeService.processPass(anContext);
 		} else {
-			confirmScheme.processReject(anContext);
+			confirmSchemeService.processReject(anContext);
 		}
 	}
 
 	@Override
 	public void requestTradingBackgrand(Map<String, Object> anContext, int resultType) {
-		RequestTradingBackgrand requestTradingBackgrand = (RequestTradingBackgrand) NodeFactory.getSupplyNode(4);
-		BTAssert.notNull(requestTradingBackgrand);
 		anContext = RuleServiceDubboFilterInvoker.getInputObj();
 		if (PROCESS_PASS == resultType) {
-			requestTradingBackgrand.processPass(anContext);
+			requestTradingBackgrandService.processPass(anContext);
 		} else {
-			requestTradingBackgrand.processReject(anContext);
+			requestTradingBackgrandService.processReject(anContext);
 		}
 	}
 
 	@Override
 	public void confirmTradingBackgrand(Map<String, Object> anContext, int resultType) {
-		ConfirmTradingBackgrand confirmTradingBackgrand = (ConfirmTradingBackgrand) NodeFactory.getSupplyNode(5);
-		BTAssert.notNull(confirmTradingBackgrand);
 		anContext = RuleServiceDubboFilterInvoker.getInputObj();
 		if (PROCESS_PASS == resultType) {
-			confirmTradingBackgrand.processPass(anContext);
+			confirmTradingBackgrandService.processPass(anContext);
 		} else {
-			confirmTradingBackgrand.processReject(anContext);
+			confirmTradingBackgrandService.processReject(anContext);
 		}
 	}
 
 	@Override
 	public void confirmLoan(Map<String, Object> anContext, int resultType) {
-		ConfirmLoan confirmLoan = (ConfirmLoan) NodeFactory.getSupplyNode(6);
-		BTAssert.notNull(confirmLoan);
 		if (PROCESS_PASS == resultType) {
-			confirmLoan.processPass((ScfLoan) RuleServiceDubboFilterInvoker.getInputObj());
+			confirmLoanService.processPass((ScfLoan) RuleServiceDubboFilterInvoker.getInputObj());
 		} else {
-			confirmLoan.processReject(anContext);
+			confirmLoanService.processReject(anContext);
 		}
 	}
 
 	@Override
 	public void endFlow(Map<String, Object> anContext, int resultType) {
-		EndFlow endFlow = (EndFlow) NodeFactory.getSupplyNode(7);
-		BTAssert.notNull(endFlow);
 		anContext = RuleServiceDubboFilterInvoker.getInputObj();
 		if (PROCESS_PASS == resultType) {
-			endFlow.processCancel(anContext);
+			endFlowService.processCancel(anContext);
 		} else {
-			endFlow.processEnd(anContext);
+			endFlowService.processEnd(anContext);
 		}
 	}
 
