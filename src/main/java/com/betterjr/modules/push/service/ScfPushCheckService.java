@@ -194,7 +194,7 @@ public class ScfPushCheckService {
                 builder.addParam("agreeName", elecAgreement.getAgreeName());
                 builder.addParam("endDate", getDisDate(BetterDateUtils.addStrDays(elecAgreement.getRegDate(),3)));
                 
-                builder.addReceiver(elecAgreement.getSupplierNo(), null);  // 接收人
+                builder.addReceiver(targetCustomer.getCustNo(), null);  // 接收人
                 notificationSendService.sendNotification(builder.build());
                 bool=true;
             }
