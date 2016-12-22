@@ -140,7 +140,7 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
         try {
             supplierPushDetail.initValue(anRequest.getRequestNo(), "0");
             supplierPushDetail.setSendNo(""+anRequest.getFactorNo());
-            supplierPushDetail.setReceiveNo(""+anRequest.getSupplierNo());
+            supplierPushDetail.setReceiveNo(""+anRequest.getCustNo());
             if(pushCheckService.orderStatusSend(anRequest)){
                 supplierPushDetail.setRemark("融资进度推送成功，状态："+anRequest.getTradeStatus());
             }else{
