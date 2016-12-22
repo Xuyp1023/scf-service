@@ -14,6 +14,8 @@ import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
+import com.betterjr.modules.credit.entity.ScfCreditInfo;
+import com.betterjr.modules.credit.service.ScfCreditDetailService;
 import com.betterjr.modules.enquiry.entity.ScfEnquiryObject;
 import com.betterjr.modules.enquiry.entity.ScfOffer;
 import com.betterjr.modules.enquiry.service.ScfEnquiryObjectService;
@@ -47,6 +49,8 @@ public class WechatRequestService extends BaseService<ScfRequestMapper, ScfReque
     private ScfEnquiryService enquiryService;
     @Autowired
     private ScfEnquiryObjectService enquiryObjectService;
+    @Autowired
+    private ScfCreditDetailService  creditDetailService;
     
     /**
      * 新增融资申请
@@ -88,6 +92,19 @@ public class WechatRequestService extends BaseService<ScfRequestMapper, ScfReque
            
             enquiryService.saveUpdateBusinStatus(offer.getEnquiryNo(), "-2");
         }
+        
+        // 当融资流程启动时,冻结授信额度 
+        ScfCreditInfo anCreditInfo = new ScfCreditInfo();
+        anCreditInfo.setBusinFlag(anRequest.getRequestType());
+        anCreditInfo.setBalance(anRequest.getBalance());
+        anCreditInfo.setBusinId(Long.valueOf(anRequest.getRequestNo()));
+        anCreditInfo.setCoreCustNo(anRequest.getCoreCustNo());
+        anCreditInfo.setCustNo(anRequest.getCustNo());
+        anCreditInfo.setFactorNo(anRequest.getFactorNo());
+        anCreditInfo.setCreditMode("1");
+        anCreditInfo.setRequestNo(anRequest.getRequestNo());
+        anCreditInfo.setDescription(anRequest.getDescription());
+        creditDetailService.saveFreezeCredit(anCreditInfo);
 
         return anRequest;
     }

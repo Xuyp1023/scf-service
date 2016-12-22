@@ -377,9 +377,9 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         String  agreeType = BetterStringUtils.equals(RequestType.SELLER.getCode(), request.getRequestType()) ? "2" :"1";
         if (BetterStringUtils.equals(anApprovalResult, "0")) {
             //签署协议
-            if(false == agreementService.sendValidCodeByRequestNo(anRequestNo, agreeType, anSmsCode)){
+            //if(false == agreementService.sendValidCodeByRequestNo(anRequestNo, agreeType, anSmsCode)){
                // return AjaxObject.newError("操作失败：短信验证码错误").toJson();
-            }
+            //}
         }
         else{
             //取消签约
