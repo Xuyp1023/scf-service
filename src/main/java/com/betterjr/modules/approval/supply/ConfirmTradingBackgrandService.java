@@ -41,7 +41,7 @@ public class ConfirmTradingBackgrandService extends BaseNodeService{
 		scheme.setCoreCustAduit("1");
 		schemeService.saveModifyScheme(scheme);
 		
-		this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.CONFIRM_LOAN.getCode());
+		this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.CONFIRM_LOAN.getCode(), "2");
 		this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
 	}
 

@@ -23,8 +23,8 @@ public class SellerOfferSchemeService extends BaseNodeService{
     public void processPass(ScfRequestScheme scheme){
         //保存融资方案
         requestService.saveOfferScheme(scheme);
+        this.updateAndSendRequestStatus(scheme.getRequestNo(), RequestTradeStatus.CONFIRM_SCHEME.getCode(), "2");
         this.pushSingInfo(scheme);
-        this.updateAndSendRequestStatus(scheme.getRequestNo(), RequestTradeStatus.CONFIRM_SCHEME.getCode());
         this.pushOrderInfo(requestService.findRequestByRequestNo(scheme.getRequestNo()));
 	}
 

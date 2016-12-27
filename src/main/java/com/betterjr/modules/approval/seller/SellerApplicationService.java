@@ -10,7 +10,7 @@ import com.betterjr.modules.loan.helper.RequestTradeStatus;
 public class SellerApplicationService extends BaseNodeService{
 	public ScfRequest execute(ScfRequest request){
 		request = requestService.addRequest(request);
-        this.updateAndSendRequestStatus(request.getRequestNo(), RequestTradeStatus.OFFER_SCHEME.getCode());
+        this.updateAndSendRequestStatus(request.getRequestNo(), RequestTradeStatus.OFFER_SCHEME.getCode(), "1");
         this.pushOrderInfo(requestService.findRequestByRequestNo(request.getRequestNo()));
 		return request;
 	}

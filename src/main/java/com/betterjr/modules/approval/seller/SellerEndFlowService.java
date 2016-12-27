@@ -21,7 +21,7 @@ public class SellerEndFlowService extends BaseNodeService{
 		BTAssert.notNull(requestNo);
 		ScfRequest request = requestService.findRequestByRequestNo(requestNo);
 		this.releaseSource(request);
-		this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.CLOSED.getCode());
+		this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.CLOSED.getCode(), "0");
 		this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
 	}
 
@@ -32,7 +32,7 @@ public class SellerEndFlowService extends BaseNodeService{
 	public void processEnd(Map<String, Object> anContext) {
 		String requestNo  = anContext.get("requestNo").toString();
 		BTAssert.notNull(requestNo);
-		this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.FINISH_LOAN.getCode());
+		this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.FINISH_LOAN.getCode(), "3");
 		this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
 	}
 }

@@ -41,7 +41,7 @@ public class SupplyApprovalDubboService implements IScfSupplyApprovalService {
 	
 	@Override
 	public Map<String, Object> application(Map<String, Object> anContext) {
-		ScfRequest request = applicationService.execute((ScfRequest)RuleServiceDubboFilterInvoker.getInputObj());
+		ScfRequest request = applicationService.application((ScfRequest)RuleServiceDubboFilterInvoker.getInputObj());
 		anContext.put("requestNo", request.getRequestNo());
 		return anContext;
 	}

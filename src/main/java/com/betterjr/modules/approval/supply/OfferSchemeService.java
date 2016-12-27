@@ -27,7 +27,7 @@ public class OfferSchemeService extends BaseNodeService{
         //保存融资方案
         requestService.saveOfferScheme(scheme);
         this.pushSingInfo(scheme);
-        this.updateAndSendRequestStatus(scheme.getRequestNo(), RequestTradeStatus.CONFIRM_SCHEME.getCode());
+        this.updateAndSendRequestStatus(scheme.getRequestNo(), RequestTradeStatus.CONFIRM_SCHEME.getCode(), "2");
         this.pushOrderInfo(requestService.findRequestByRequestNo(scheme.getRequestNo()));
 	}
 

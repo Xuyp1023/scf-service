@@ -14,9 +14,9 @@ public class ConfirmLoanService extends BaseNodeService{
 	
 	public void processPass(ScfLoan loan){
 		BTAssert.notNull(loan, "放款信息不能为空！");
-        requestService.saveConfirmLoan(loan);
+        //requestService.saveConfirmLoan(loan);
+        this.updateAndSendRequestStatus(loan.getRequestNo(), RequestTradeStatus.FINISH_LOAN.getCode(), "4");
         this.pushOrderInfo(requestService.findRequestByRequestNo(loan.getRequestNo()));
-        this.updateAndSendRequestStatus(loan.getRequestNo(), RequestTradeStatus.FINISH_LOAN.getCode());
 	}
 	
 	public void processReject(Map<String, Object> anContext) {

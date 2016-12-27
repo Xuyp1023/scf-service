@@ -33,9 +33,7 @@ public class RequestTradingBackgrandService extends BaseNodeService{
     
 	public void processPass(Map<String, Object> anContext){
 		String requestNo = anContext.get("requestNo").toString();
-		String smsCode = anContext.get("smsCode").toString();
 		BTAssert.notNull(requestNo, "申请编号不能为空！");
-		BTAssert.notNull(smsCode, "短信验证码不能为空！");
         ScfRequest request = requestService.findRequestByRequestNo(requestNo);
         
         //生成-应收账款转让确认意见确认书
@@ -47,7 +45,7 @@ public class RequestTradingBackgrandService extends BaseNodeService{
         schemeService.saveModifyScheme(scheme);
         
         this.pushSingInof(request, scheme);
-        this.updateAndSendRequestStatus(scheme.getRequestNo(), RequestTradeStatus.CONFIRM_TRADING.getCode());
+        this.updateAndSendRequestStatus(scheme.getRequestNo(), RequestTradeStatus.CONFIRM_TRADING.getCode(),  "2");
         this.pushOrderInfo(requestService.findRequestByRequestNo(scheme.getRequestNo()));
 	}
 

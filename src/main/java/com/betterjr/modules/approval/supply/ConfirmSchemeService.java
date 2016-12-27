@@ -40,7 +40,7 @@ public class ConfirmSchemeService extends BaseNodeService {
 		scheme.setCustAduit("1");
 		schemeService.saveModifyScheme(scheme);
 		
-		this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.REQUEST_TRADING.getCode());
+		this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.REQUEST_TRADING.getCode(), "2");
 		this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
 	}
 

@@ -8,9 +8,10 @@ import com.betterjr.modules.loan.helper.RequestTradeStatus;
 
 @Service
 public class ApplicationService extends BaseNodeService{
-	public ScfRequest execute(ScfRequest request){
+	public ScfRequest application(ScfRequest request){
 		request = requestService.addRequest(request);
-        this.updateAndSendRequestStatus(request.getRequestNo(), RequestTradeStatus.OFFER_SCHEME.getCode());
+        this.updateAndSendRequestStatus(request.getRequestNo(), RequestTradeStatus.OFFER_SCHEME.getCode(), "1");
+        this.forzenSource(request);
         this.pushOrderInfo(requestService.findRequestByRequestNo(request.getRequestNo()));
 		return request;
 	}
