@@ -493,14 +493,6 @@ public class RequestDubboService implements IScfRequestService {
                 requestService.querySupplierRequestByCore(queryConditionMap, anTradeStatus, anFlag, anPageNum, anPageSize)).toJson();
     }
 
-    @Override
-    public String webQuerySellerRequestByCore(Map<String, Object> anMap, String anTradeStatus, String anFlag, int anPageNum, int anPageSize) {
-        logger.debug("分页查询融资，入参：" + anMap);
-        Map<String, Object> queryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOkWithPage("查询融资成功",
-                requestService.querySellerRequestByCore(queryConditionMap, anTradeStatus, anFlag, anPageNum, anPageSize)).toJson();
-    }
-    
     public List<Long> findVoucherBatchNo(String anRequest) {
         return this.requestService.findVoucherBatchNo(anRequest);
     }
@@ -512,7 +504,6 @@ public class RequestDubboService implements IScfRequestService {
     
     private void updateScheme(String anRequestNo, String anApprovalResult, String anReturnNode) {
         ScfRequestScheme scheme = schemeService.findSchemeDetail(anRequestNo);
-        
         int returnNode = Integer.parseInt(anReturnNode);
         if(returnNode>120 && returnNode <= 130){
             scheme.setCoreCustAduit("-1");
@@ -521,6 +512,23 @@ public class RequestDubboService implements IScfRequestService {
             scheme.setCoreCustAduit("0");
         }
         schemeService.saveModifyScheme(scheme);
+    }
+    
+    @Override
+    public String webCustQueryRequest(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+        logger.debug("分页查询融资列表，入参：" + anMap);
+        Map<String, Object> queryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOkWithPage("查询融资列表成功",
+                requestService.custQueryRequest(queryConditionMap, anFlag, anPageNum, anPageSize)).toJson();
+    }
+    
+    @Override
+    public String webLoan(Map<String, Object> anMap) {
+    	ScfLoan loan = (ScfLoan) RuleServiceDubboFilterInvoker.getInputObj();
+    	ScfRequest request = requestService.saveConfirmLoan(loan);
+    	request.setLastStatus("4");
+    	requestService.saveModifyRequest(request,request.getRequestNo());
+        return AjaxObject.newOk("操作成功", request).toJson();
     }
 
 }

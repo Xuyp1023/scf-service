@@ -144,7 +144,7 @@ public class ScfRequest implements BetterjrEntity {
     @MetaData( value="申请状态（100 申请", comments = "申请状态（100 申请，110 出具保理方案 ，120 融资方确认方案 ，130 融资背景确认，140 核心企业确认背景，150 放款确认 ，160 放款完成，170 逾期，180 展期，190 还款完成）")
     private String tradeStatus;
 
-    @Column(name = "C_LAST_STATUS",  columnDefinition="VARCHAR" )
+    @Column(name = "C_LAST_STATUS",  columnDefinition="VARCHAR" )//0中止，1 申请中，2审批中，3放款中，4还款中， 5逾期，6 展期，7坏帐，8 结清,
     @MetaData( value="", comments = "")
     private String lastStatus;
 
