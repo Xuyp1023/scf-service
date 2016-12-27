@@ -879,7 +879,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
      * 申请企业查询融资信息
      */
     public Page<ScfRequest> custQueryRequest(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
-    	String[] queryTerm = new String[] {"lastStatus", "custNo","factorNo", "GTErequestDate","LTErequestDate","GTEactualDate","LTEactualDate","requestType"};
+    	String[] queryTerm = new String[] {"lastStatus", "custNo","factorNo", "GTErequestDate","LTErequestDate","GTEactualDate","LTEactualDate","requestType","custType"};
     	anMap = Collections3.filterMap(anMap, queryTerm);
     	if(UserUtils.supplierUser() || UserUtils.sellerUser()){
     		anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
