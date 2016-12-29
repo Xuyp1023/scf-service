@@ -13,6 +13,7 @@ import com.betterjr.modules.agreement.service.ScfElecAgreementService;
 import com.betterjr.modules.approval.BaseNodeService;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
+import com.betterjr.modules.loan.helper.RequestLastStatus;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
 
 @Service
@@ -23,7 +24,7 @@ public class SellerOfferSchemeService extends BaseNodeService{
     public void processPass(ScfRequestScheme scheme){
         //保存融资方案
         requestService.saveOfferScheme(scheme);
-        this.updateAndSendRequestStatus(scheme.getRequestNo(), RequestTradeStatus.CONFIRM_SCHEME.getCode(), "2");
+        this.updateAndSendRequestStatus(scheme.getRequestNo(), RequestTradeStatus.CONFIRM_SCHEME.getCode(), RequestLastStatus.APPROVE.getCode());
         this.pushSingInfo(scheme);
         this.pushOrderInfo(requestService.findRequestByRequestNo(scheme.getRequestNo()));
 	}
