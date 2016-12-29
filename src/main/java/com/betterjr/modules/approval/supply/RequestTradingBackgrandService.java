@@ -15,6 +15,7 @@ import com.betterjr.modules.agreement.service.ScfElecAgreementService;
 import com.betterjr.modules.approval.BaseNodeService;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
+import com.betterjr.modules.loan.helper.RequestLastStatus;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
 import com.betterjr.modules.loan.helper.RequestType;
 import com.betterjr.modules.loan.service.ScfRequestSchemeService;
@@ -45,7 +46,7 @@ public class RequestTradingBackgrandService extends BaseNodeService{
         schemeService.saveModifyScheme(scheme);
         
         this.pushSingInof(request, scheme);
-        this.updateAndSendRequestStatus(scheme.getRequestNo(), RequestTradeStatus.CONFIRM_TRADING.getCode(),  "2");
+        this.updateAndSendRequestStatus(scheme.getRequestNo(), RequestTradeStatus.CONFIRM_TRADING.getCode(), RequestLastStatus.APPROVE.getCode());
         this.pushOrderInfo(requestService.findRequestByRequestNo(scheme.getRequestNo()));
 	}
 

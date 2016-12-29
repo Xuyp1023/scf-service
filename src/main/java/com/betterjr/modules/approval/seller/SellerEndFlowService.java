@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.modules.approval.BaseNodeService;
 import com.betterjr.modules.loan.entity.ScfRequest;
+import com.betterjr.modules.loan.helper.RequestLastStatus;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
 
 @Service
@@ -21,7 +22,7 @@ public class SellerEndFlowService extends BaseNodeService{
 		BTAssert.notNull(requestNo);
 		ScfRequest request = requestService.findRequestByRequestNo(requestNo);
 		this.releaseSource(request);
-		this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.CLOSED.getCode(), "0");
+		this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.CLOSED.getCode(), RequestLastStatus.CLOSED.getCode());
 		this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
 	}
 
@@ -32,7 +33,7 @@ public class SellerEndFlowService extends BaseNodeService{
 	public void processEnd(Map<String, Object> anContext) {
 		String requestNo  = anContext.get("requestNo").toString();
 		BTAssert.notNull(requestNo);
-		this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.FINISH_LOAN.getCode(), "3");
+		this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.FINISH_LOAN.getCode(), RequestLastStatus.LOAN.getCode());
 		this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
 	}
 }

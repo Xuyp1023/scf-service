@@ -95,7 +95,7 @@ public class EnquiryDubboService implements IScfEnquiryService {
     public String webAddOffer(Map<String, Object> anMap) {
         logger.debug("新增报价,入参："+ anMap);
         ScfOffer offer = offerService.addOffer((ScfOffer) RuleServiceDubboFilterInvoker.getInputObj());
-       // sentOfferMsg(offer.getId());
+        sentOfferMsg(offer.getId());
         return AjaxObject.newOk(offer).toJson();
     }
     

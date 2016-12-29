@@ -29,6 +29,7 @@ import com.betterjr.modules.loan.IScfRequestService;
 import com.betterjr.modules.loan.entity.ScfLoan;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
+import com.betterjr.modules.loan.helper.RequestLastStatus;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
 import com.betterjr.modules.loan.helper.RequestType;
 import com.betterjr.modules.loan.service.ScfPayPlanService;
@@ -526,7 +527,7 @@ public class RequestDubboService implements IScfRequestService {
     public String webLoan(Map<String, Object> anMap) {
     	ScfLoan loan = (ScfLoan) RuleServiceDubboFilterInvoker.getInputObj();
     	ScfRequest request = requestService.saveConfirmLoan(loan);
-    	request.setLastStatus("4");
+    	request.setLastStatus(RequestLastStatus.REPLAYMENT.getCode());
     	requestService.saveModifyRequest(request,request.getRequestNo());
         return AjaxObject.newOk("操作成功", request).toJson();
     }

@@ -9,6 +9,7 @@ import com.betterjr.common.utils.BTAssert;
 import com.betterjr.modules.agreement.service.ScfAgreementService;
 import com.betterjr.modules.approval.BaseNodeService;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
+import com.betterjr.modules.loan.helper.RequestLastStatus;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
 import com.betterjr.modules.loan.service.ScfRequestSchemeService;
 
@@ -41,7 +42,7 @@ public class ConfirmTradingBackgrandService extends BaseNodeService{
 		scheme.setCoreCustAduit("1");
 		schemeService.saveModifyScheme(scheme);
 		
-		this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.CONFIRM_LOAN.getCode(), "2");
+		this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.CONFIRM_LOAN.getCode(), RequestLastStatus.APPROVE.getCode());
 		this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
 	}
 
