@@ -10,7 +10,7 @@ import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.modules.agreement.data.ScfElecAgreementInfo;
 import com.betterjr.modules.agreement.service.ScfElecAgreementService;
-import com.betterjr.modules.approval.BaseNodeService;
+import com.betterjr.modules.approval.ScfBaseApprovalService;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
 import com.betterjr.modules.loan.helper.RequestLastStatus;
@@ -18,7 +18,7 @@ import com.betterjr.modules.loan.helper.RequestTradeStatus;
 import com.betterjr.modules.push.service.ScfSupplierPushService;
 
 @Service
-public class OfferSchemeService extends BaseNodeService{
+public class ScfSupplyOfferSchemeService extends ScfBaseApprovalService{
     @Autowired
     private ScfSupplierPushService supplierPushService;
     @Autowired

@@ -61,6 +61,7 @@ public class WechatRequestService extends BaseService<ScfRequestMapper, ScfReque
     public ScfRequest saveRequest(ScfRequest anRequest) {
         BTAssert.notNull(anRequest, "新增融资申请失败-anRequest不能为空");
         //anRequest.setRequestType(RequestType.BILL.getCode());
+        anRequest.setRequestFrom("2");
         anRequest.setTradeStatus(RequestTradeStatus.REQUEST.getCode());
         anRequest.setCreditMode("1");
         anRequest.setPeriodUnit(1);
