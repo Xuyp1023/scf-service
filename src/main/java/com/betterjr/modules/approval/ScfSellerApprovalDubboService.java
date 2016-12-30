@@ -7,36 +7,36 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
-import com.betterjr.modules.approval.seller.SellerApplicationService;
-import com.betterjr.modules.approval.seller.SellerConfirmLoanService;
-import com.betterjr.modules.approval.seller.SellerConfirmSchemeService;
-import com.betterjr.modules.approval.seller.SellerConfirmTradingBackgrandService;
-import com.betterjr.modules.approval.seller.SellerEndFlowService;
-import com.betterjr.modules.approval.seller.SellerOfferSchemeService;
-import com.betterjr.modules.approval.seller.SellerRequestTradingBackgrandService;
+import com.betterjr.modules.approval.seller.ScfSellerApplicationService;
+import com.betterjr.modules.approval.seller.ScfSellerConfirmLoanService;
+import com.betterjr.modules.approval.seller.ScfSellerConfirmSchemeService;
+import com.betterjr.modules.approval.seller.ScfSellerConfirmTradingBackgrandService;
+import com.betterjr.modules.approval.seller.ScfSellerEndFlowService;
+import com.betterjr.modules.approval.seller.ScfSellerOfferSchemeService;
+import com.betterjr.modules.approval.seller.ScfSellerRequestTradingBackgrandService;
 import com.betterjr.modules.loan.entity.ScfLoan;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 
 @Service(interfaceClass = IScfSellerApprovalService.class)
-public class SellerApprovalDubboService implements IScfSellerApprovalService {
+public class ScfSellerApprovalDubboService implements IScfSellerApprovalService {
 	private static final int PROCESS_PASS = 1;
-	protected final Logger logger = LoggerFactory.getLogger(SellerApprovalDubboService.class);
+	protected final Logger logger = LoggerFactory.getLogger(ScfSellerApprovalDubboService.class);
 	@Autowired
-	private SellerApplicationService applicationService;
+	private ScfSellerApplicationService applicationService;
 	@Autowired
-	private SellerOfferSchemeService sellerOfferSchemeService;
+	private ScfSellerOfferSchemeService sellerOfferSchemeService;
 	@Autowired
-	private SellerConfirmSchemeService sellerConfirmSchemeService;
+	private ScfSellerConfirmSchemeService sellerConfirmSchemeService;
 	@Autowired
-	private SellerConfirmTradingBackgrandService sellerConfirmTradingBackgrandService;
+	private ScfSellerConfirmTradingBackgrandService sellerConfirmTradingBackgrandService;
 	@Autowired
-	private SellerRequestTradingBackgrandService sellerRequestTradingBackgrandService;
+	private ScfSellerRequestTradingBackgrandService sellerRequestTradingBackgrandService;
 	@Autowired
-	private SellerConfirmLoanService sellerConfirmLoanServiceService;
+	private ScfSellerConfirmLoanService sellerConfirmLoanServiceService;
 	@Autowired
-	private SellerEndFlowService sellerEndFlowService;
+	private ScfSellerEndFlowService sellerEndFlowService;
 	@Override
 	public Map<String, Object> application(Map<String, Object> anContext) {
 		ScfRequest request = applicationService.execute((ScfRequest)RuleServiceDubboFilterInvoker.getInputObj());

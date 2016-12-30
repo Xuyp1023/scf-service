@@ -6,13 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.modules.agreement.service.ScfAgreementService;
-import com.betterjr.modules.approval.BaseApprovalService;
+import com.betterjr.modules.approval.ScfBaseApprovalService;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
 import com.betterjr.modules.loan.service.ScfRequestSchemeService;
 
 @Service
-public class SellerRequestTradingBackgrandService extends BaseApprovalService{
+public class ScfSellerRequestTradingBackgrandService extends ScfBaseApprovalService{
     @Autowired
     private ScfRequestSchemeService schemeService;
     @Autowired

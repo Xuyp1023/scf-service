@@ -7,13 +7,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
-import com.betterjr.modules.approval.supply.ApplicationService;
-import com.betterjr.modules.approval.supply.ConfirmLoanService;
-import com.betterjr.modules.approval.supply.ConfirmSchemeService;
-import com.betterjr.modules.approval.supply.ConfirmTradingBackgrandService;
-import com.betterjr.modules.approval.supply.EndFlowService;
-import com.betterjr.modules.approval.supply.OfferSchemeService;
-import com.betterjr.modules.approval.supply.RequestTradingBackgrandService;
+import com.betterjr.modules.approval.supply.ScfSupplyApplicationService;
+import com.betterjr.modules.approval.supply.ScfSupplyConfirmLoanService;
+import com.betterjr.modules.approval.supply.ScfSupplyConfirmSchemeService;
+import com.betterjr.modules.approval.supply.ScfSupplyConfirmTradingBackgrandService;
+import com.betterjr.modules.approval.supply.ScfSupplyEndFlowService;
+import com.betterjr.modules.approval.supply.ScfSupplyOfferSchemeService;
+import com.betterjr.modules.approval.supply.ScfSupplyRequestTradingBackgrandService;
 import com.betterjr.modules.loan.entity.ScfLoan;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
@@ -21,24 +21,24 @@ import com.betterjr.modules.loan.service.ScfRequestService;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 
 @Service(interfaceClass = IScfSupplyApprovalService.class)
-public class SupplyApprovalDubboService implements IScfSupplyApprovalService {
+public class ScfSupplyApprovalDubboService implements IScfSupplyApprovalService {
 	private static final int PROCESS_PASS = 1;
-	protected final Logger logger = LoggerFactory.getLogger(SupplyApprovalDubboService.class);
+	protected final Logger logger = LoggerFactory.getLogger(ScfSupplyApprovalDubboService.class);
 	
 	@Autowired
-	private ApplicationService applicationService;
+	private ScfSupplyApplicationService applicationService;
 	@Autowired
-	private OfferSchemeService offerSchemeService;
+	private ScfSupplyOfferSchemeService offerSchemeService;
 	@Autowired
-	private ConfirmSchemeService confirmSchemeService;
+	private ScfSupplyConfirmSchemeService confirmSchemeService;
 	@Autowired
-	private ConfirmTradingBackgrandService confirmTradingBackgrandService;
+	private ScfSupplyConfirmTradingBackgrandService confirmTradingBackgrandService;
 	@Autowired
-	private RequestTradingBackgrandService requestTradingBackgrandService;
+	private ScfSupplyRequestTradingBackgrandService requestTradingBackgrandService;
 	@Autowired
-	private ConfirmLoanService confirmLoanService;
+	private ScfSupplyConfirmLoanService confirmLoanService;
 	@Autowired
-	private EndFlowService endFlowService;
+	private ScfSupplyEndFlowService endFlowService;
 	@Autowired
 	private ScfRequestService requestService;
 	

@@ -16,7 +16,7 @@ import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.push.service.ScfSupplierPushService;
 
 @Service
-public class BaseApprovalService {
+public class ScfBaseApprovalService {
 
 	/**
 	 * 应收账款转让通知书/ 应收账款转让确认书/ 三方协议
