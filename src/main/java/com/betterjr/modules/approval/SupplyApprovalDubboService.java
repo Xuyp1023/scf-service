@@ -17,6 +17,7 @@ import com.betterjr.modules.approval.supply.RequestTradingBackgrandService;
 import com.betterjr.modules.loan.entity.ScfLoan;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
+import com.betterjr.modules.loan.service.ScfRequestService;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 
 @Service(interfaceClass = IScfSupplyApprovalService.class)
@@ -38,6 +39,8 @@ public class SupplyApprovalDubboService implements IScfSupplyApprovalService {
 	private ConfirmLoanService confirmLoanService;
 	@Autowired
 	private EndFlowService endFlowService;
+	@Autowired
+	private ScfRequestService requestService;
 	
 	@Override
 	public Map<String, Object> application(Map<String, Object> anContext) {
@@ -103,6 +106,12 @@ public class SupplyApprovalDubboService implements IScfSupplyApprovalService {
 		} else {
 			endFlowService.processEnd(anContext);
 		}
+	}
+	
+	@Override
+	public void releaseSource(String anRequestNo) {
+		ScfRequest request = requestService.findRequestByRequestNo(anRequestNo);
+		applicationService.releaseSource(request);
 	}
 
 }

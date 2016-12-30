@@ -7,12 +7,12 @@ import org.springframework.stereotype.Service;
 
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.modules.agreement.service.ScfAgreementService;
-import com.betterjr.modules.approval.BaseNodeService;
+import com.betterjr.modules.approval.BaseApprovalService;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
 import com.betterjr.modules.loan.service.ScfRequestSchemeService;
 
 @Service
-public class SellerConfirmSchemeService extends BaseNodeService {
+public class SellerConfirmSchemeService extends BaseApprovalService {
 
 	@Autowired
 	private ScfRequestSchemeService schemeService;

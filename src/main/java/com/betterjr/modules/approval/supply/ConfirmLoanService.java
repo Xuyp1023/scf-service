@@ -5,13 +5,13 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.utils.BTAssert;
-import com.betterjr.modules.approval.BaseNodeService;
+import com.betterjr.modules.approval.BaseApprovalService;
 import com.betterjr.modules.loan.entity.ScfLoan;
 import com.betterjr.modules.loan.helper.RequestLastStatus;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
 
 @Service
-public class ConfirmLoanService extends BaseNodeService{
+public class ConfirmLoanService extends BaseApprovalService{
 	
 	public void processPass(ScfLoan loan){
 		BTAssert.notNull(loan, "放款信息不能为空！");

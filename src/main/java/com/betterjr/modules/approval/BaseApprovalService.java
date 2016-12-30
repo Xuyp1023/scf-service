@@ -3,7 +3,6 @@ package com.betterjr.modules.approval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.modules.credit.entity.ScfCreditInfo;
 import com.betterjr.modules.credit.service.ScfCreditDetailService;
@@ -17,14 +16,17 @@ import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.push.service.ScfSupplierPushService;
 
 @Service
-public class BaseNodeService {
+public class BaseApprovalService {
 
 	/**
-	 * 应收账款转让通知书 应收账款转让确认书 三方协议
+	 * 应收账款转让通知书/ 应收账款转让确认书/ 三方协议
 	 */
 	public static final String AGREEMENT_TYPE_NOTICE = "0";
 	public static final String AGREEMENT_TYPE_CONFIRMATION = "1";
 	public static final String AGREEMENT_TYPE_PROTOCOL = "2";
+	
+	public static final String REQUEST_CUST_TYPE_SUPPLY = "1";
+	public static final String REQUEST_CUST_TYPE_SELLER = "2";
 	@Autowired
 	public ScfRequestService requestService;
 	@Autowired

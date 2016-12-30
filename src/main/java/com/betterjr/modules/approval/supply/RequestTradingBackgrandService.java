@@ -12,7 +12,7 @@ import com.betterjr.common.utils.Collections3;
 import com.betterjr.modules.agreement.data.ScfElecAgreementInfo;
 import com.betterjr.modules.agreement.service.ScfAgreementService;
 import com.betterjr.modules.agreement.service.ScfElecAgreementService;
-import com.betterjr.modules.approval.BaseNodeService;
+import com.betterjr.modules.approval.BaseApprovalService;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
 import com.betterjr.modules.loan.helper.RequestLastStatus;
@@ -22,7 +22,7 @@ import com.betterjr.modules.loan.service.ScfRequestSchemeService;
 import com.betterjr.modules.push.service.ScfSupplierPushService;
 
 @Service
-public class RequestTradingBackgrandService extends BaseNodeService{
+public class RequestTradingBackgrandService extends BaseApprovalService{
     @Autowired
     private ScfElecAgreementService elecAgreementService;  
     @Autowired
