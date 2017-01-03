@@ -29,7 +29,7 @@ public class ScfAgreementTypeService extends BaseService<ScfAgreementTypeMapper,
      */
     public ScfAgreementType addAgreementType(ScfAgreementType anAgreementType) {
         logger.info("合同类型登记");
-        BTAssert.isTrue(UserUtils.platformUser(), "仅平台有权限操作合同类型！");
+        BTAssert.isTrue(UserUtils.platformUser(), "无权限进行操作！");
         anAgreementType.initAddValue(UserUtils.getOperatorInfo());
         this.insert(anAgreementType);
         return anAgreementType;
@@ -40,10 +40,11 @@ public class ScfAgreementTypeService extends BaseService<ScfAgreementTypeMapper,
      */
     public Page<ScfAgreementType> queryRegisteredAgreementType(int anPageNum, int anPageSize, String anFlag) {
         Map<String, Object> anMap = QueryTermBuilder.newInstance().build();
+        //状态  0登记 1生效
         anMap.put("businStatus", "0");
-        // 手动录入
+        // 数据来源:0:默认,1:手动录入
         anMap.put("dataSource", "1");
-        return this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
+        return this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "agreementTypeNo");
     }
 
     /**
@@ -51,16 +52,15 @@ public class ScfAgreementTypeService extends BaseService<ScfAgreementTypeMapper,
      */
     public ScfAgreementType saveModifyAgreementType(ScfAgreementType anModiAgreementType, Long anId) {
         ScfAgreementType anAgreementType = this.selectByPrimaryKey(anId);
-        checkOperator(anAgreementType.getOperOrg(), "当前操作员无法编辑合同类型");
-        BTAssert.notNull(anAgreementType, "无法获取对应合同类型");
+        checkOperator(anAgreementType.getOperOrg(), "无权限进行操作！");
+        BTAssert.notNull(anAgreementType, "无法获取对应合同类型！");
         // 仅登记状态下可以编辑
         if (!BetterStringUtils.equals("0", anAgreementType.getBusinStatus())) {
-            throw new BytterTradeException(40001, "仅登记状态下的合同可编辑！");
+            throw new BytterTradeException(40001, "无权限进行操作！！");
         }
-        anModiAgreementType.setId(anId);
-        anModiAgreementType.initModifyValue(UserUtils.getOperatorInfo());
-        this.updateByPrimaryKeySelective(anModiAgreementType);
-        return anModiAgreementType;
+        anAgreementType.initModifyValue(anModiAgreementType, UserUtils.getOperatorInfo());
+        this.updateByPrimaryKeySelective(anAgreementType);
+        return anAgreementType;
     }
 
     /**
@@ -68,11 +68,11 @@ public class ScfAgreementTypeService extends BaseService<ScfAgreementTypeMapper,
      */
     public int saveDeleteAgreementType(Long anId) {
         ScfAgreementType anAgreementType = this.selectByPrimaryKey(anId);
-        BTAssert.notNull(anAgreementType, "无法获取对应合同类型");
-        checkOperator(anAgreementType.getOperOrg(), "当前操作员无法删除合同类型");
+        BTAssert.notNull(anAgreementType, "无法获取对应合同类型！");
+        checkOperator(anAgreementType.getOperOrg(), "无权限进行操作！");
         // 仅登记状态下可以编辑
         if (!BetterStringUtils.equals("0", anAgreementType.getBusinStatus())) {
-            throw new BytterTradeException(40001, "仅登记状态下的合同可删除！");
+            throw new BytterTradeException(40001, "无权限进行操作！");
         }
         return this.delete(anAgreementType);
     }
@@ -82,10 +82,11 @@ public class ScfAgreementTypeService extends BaseService<ScfAgreementTypeMapper,
      */
     public Page<ScfAgreementType> queryUnEnableAgreementType(int anPageNum, int anPageSize, String anFlag) {
         Map<String, Object> anMap = QueryTermBuilder.newInstance().build();
+        //状态  0登记 1生效
         anMap.put("businStatus", "0");
-        // 手动录入
+        // 数据来源:0:默认,1:手动录入
         anMap.put("dataSource", "1");
-        return this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
+        return this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "businStatus, agreementTypeNo");
     }
     
     /**
@@ -93,6 +94,7 @@ public class ScfAgreementTypeService extends BaseService<ScfAgreementTypeMapper,
      */
     public List<ScfAgreementType> findEnableAgreementType() {
         Map<String, Object> anMap = QueryTermBuilder.newInstance().build();
+        //状态  0登记 1生效
         anMap.put("businStatus", "1");
         return this.selectByProperty(anMap);
     }
@@ -102,9 +104,9 @@ public class ScfAgreementTypeService extends BaseService<ScfAgreementTypeMapper,
      */
     public ScfAgreementType saveEnableAgreementType(Long anId) {
         ScfAgreementType anAgreementType = this.selectByPrimaryKey(anId);
-        BTAssert.notNull(anAgreementType, "无法获取对应合同类型");
-        checkOperator(anAgreementType.getOperOrg(), "当前操作员无法启用合同类型");
-        //设置状态启用
+        BTAssert.notNull(anAgreementType, "无法获取对应合同类型！");
+        checkOperator(anAgreementType.getOperOrg(), "无权限进行操作！");
+        //设置状态启用, 0登记 1生效
         anAgreementType.setBusinStatus("1");
         this.updateByPrimaryKeySelective(anAgreementType);
         return anAgreementType;
@@ -114,7 +116,7 @@ public class ScfAgreementTypeService extends BaseService<ScfAgreementTypeMapper,
      * 检查用户是否有权限操作数据
      */
     private void checkOperator(String anOperOrg, String anMessage) {
-        BTAssert.isTrue(UserUtils.platformUser(), "仅平台有权限操作合同类型！");
+        BTAssert.isTrue(UserUtils.platformUser(), "无权限进行操作！");
         if (BetterStringUtils.equals(UserUtils.getOperatorInfo().getOperOrg(), anOperOrg) == false) {
             logger.warn(anMessage);
             throw new BytterTradeException(40001, anMessage);
@@ -126,6 +128,6 @@ public class ScfAgreementTypeService extends BaseService<ScfAgreementTypeMapper,
      */
     public Page<ScfAgreementType> queryAgreementType(Map<String, Object> anMap, int anPageNum, int anPageSize, String anFlag) {
         Map<String, Object> queryMap = Collections3.fuzzyMap(anMap, new String[]{"businStatus"});
-        return this.selectPropertyByPage(queryMap, anPageNum, anPageSize, "1".equals(anFlag));
+        return this.selectPropertyByPage(queryMap, anPageNum, anPageSize, "1".equals(anFlag), "agreementTypeNo");
     }
 }

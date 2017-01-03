@@ -34,7 +34,7 @@ public class ScfAgreementStandardService extends BaseService<ScfAgreementStandar
      */
     public ScfAgreementStandard addAgreementStandard(ScfAgreementStandard anAgreementStandard) {
         logger.info("标准合同登记");
-        BTAssert.isTrue(UserUtils.platformUser(), "仅平台有权限添加标准合同！");
+        BTAssert.isTrue(UserUtils.platformUser(), "无权限进行操作！");
         anAgreementStandard.initAddValue(UserUtils.getOperatorInfo());
         this.insert(anAgreementStandard);
         return anAgreementStandard;
@@ -45,8 +45,9 @@ public class ScfAgreementStandardService extends BaseService<ScfAgreementStandar
      */
     public Page<ScfAgreementStandard> queryRegisteredAgreementStandard(int anPageNum, int anPageSize, String anFlag) {
         Map<String, Object> anMap = QueryTermBuilder.newInstance().build();
+        //状态  0登记 1生效
         anMap.put("businStatus", "0");
-        Page<ScfAgreementStandard> resultList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
+        Page<ScfAgreementStandard> resultList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "agreementStandardNo");
         //填充合同类型名称
         for(ScfAgreementStandard anAgreement : resultList) {
             ScfAgreementType anAgreementType = agreementTypeService.selectByPrimaryKey(anAgreement.getAgreementTypeId());
@@ -61,15 +62,14 @@ public class ScfAgreementStandardService extends BaseService<ScfAgreementStandar
     public ScfAgreementStandard saveModifyAgreementStandard(ScfAgreementStandard anModiAgreementStandard, Long anId) {
         ScfAgreementStandard anAgreementStandard = this.selectByPrimaryKey(anId);
         BTAssert.notNull(anAgreementStandard, "无法获取对应标准合同");
-        checkOperator(anAgreementStandard.getOperOrg(), "当前操作员无法编辑合同");
+        checkOperator(anAgreementStandard.getOperOrg(), "无权限进行操作！");
         // 仅登记状态下可以编辑
         if (!BetterStringUtils.equals("0", anAgreementStandard.getBusinStatus())) {
-            throw new BytterTradeException(40001, "仅登记状态下的合同可编辑！");
+            throw new BytterTradeException(40001, "无权限进行操作！");
         }
-        anModiAgreementStandard.setId(anId);
-        anModiAgreementStandard.initModifyValue(UserUtils.getOperatorInfo());
-        this.updateByPrimaryKeySelective(anModiAgreementStandard);
-        return anModiAgreementStandard;
+        anAgreementStandard.initModifyValue(anModiAgreementStandard, UserUtils.getOperatorInfo());
+        this.updateByPrimaryKeySelective(anAgreementStandard);
+        return anAgreementStandard;
     }
 
     /**
@@ -78,10 +78,10 @@ public class ScfAgreementStandardService extends BaseService<ScfAgreementStandar
     public int saveDeleteAgreementStandard(Long anId) {
         ScfAgreementStandard agreementStandard = this.selectByPrimaryKey(anId);
         BTAssert.notNull(agreementStandard, "无法获取对应标准合同");
-        checkOperator(agreementStandard.getOperOrg(), "当前操作员无法删除标准合同");
+        checkOperator(agreementStandard.getOperOrg(), "无权限进行操作！");
         // 仅登记状态下可以编辑
         if (!BetterStringUtils.equals("0", agreementStandard.getBusinStatus())) {
-            throw new BytterTradeException(40001, "仅登记状态下的合同可删除！");
+            throw new BytterTradeException(40001, "无权限进行操作！");
         }
         return this.delete(agreementStandard);
     }
@@ -91,9 +91,10 @@ public class ScfAgreementStandardService extends BaseService<ScfAgreementStandar
      */
     public Page<ScfAgreementStandard> queryAgreementStandardByStatus(String anBusinStatus,int anPageNum, int anPageSize, String anFlag) {
         Map<String, Object> anMap = QueryTermBuilder.newInstance().build();
+        //状态  0登记 1生效
         anMap.put("businStatus", anBusinStatus);
         anMap = Collections3.fuzzyMap(anMap, new String[]{"businStatus"});
-        Page<ScfAgreementStandard> resultList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
+        Page<ScfAgreementStandard> resultList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag),"businStatus,agreementStandardNo");
         //填充合同类型名称
         for(ScfAgreementStandard anAgreement : resultList) {
             ScfAgreementType anAgreementType = agreementTypeService.selectByPrimaryKey(anAgreement.getAgreementTypeId());
@@ -108,13 +109,13 @@ public class ScfAgreementStandardService extends BaseService<ScfAgreementStandar
     public ScfAgreementStandard saveEnableAgreementStandard(Long anId) {
         ScfAgreementStandard agreementStandard = this.selectByPrimaryKey(anId);
         BTAssert.notNull(agreementStandard, "无法获取对应标准合同");
-        checkOperator(agreementStandard.getOperOrg(), "当前操作员无法启用标准合同");
+        checkOperator(agreementStandard.getOperOrg(), "无权限进行操作！");
         // 仅登记、停用状态下可以编辑
         if (!BetterStringUtils.equals("0", agreementStandard.getBusinStatus())
                 && !BetterStringUtils.equals("2", agreementStandard.getBusinStatus())) {
-            throw new BytterTradeException(40001, "仅登记和停用状态下的合同可启用！");
+            throw new BytterTradeException(40001, "无权限进行操作！");
         }
-        // 设置状态启用
+        // 设置状态启用,状态  0登记 1生效
         agreementStandard.setBusinStatus("1");
         //审核日期
         agreementStandard.initAuditValue(UserUtils.getOperatorInfo());
@@ -128,12 +129,12 @@ public class ScfAgreementStandardService extends BaseService<ScfAgreementStandar
     public ScfAgreementStandard saveDisableAgreementStandard(Long anId) {
         ScfAgreementStandard agreementStandard = this.selectByPrimaryKey(anId);
         BTAssert.notNull(agreementStandard, "无法获取对应标准合同");
-        checkOperator(agreementStandard.getOperOrg(), "当前操作员无法停用标准合同");
+        checkOperator(agreementStandard.getOperOrg(), "无权限进行操作！");
         // 仅登记、停用状态下可以编辑
         if (!BetterStringUtils.equals("1", agreementStandard.getBusinStatus())) {
-            throw new BytterTradeException(40001, "仅启用状态下的标准合同可停用！");
+            throw new BytterTradeException(40001, "无权限进行操作！");
         }
-        // 设置状态启用
+        // 设置状态启用   状态  0登记 1生效
         agreementStandard.setBusinStatus("2");
         agreementStandard.initDisableValue(UserUtils.getOperatorInfo());
         this.updateByPrimaryKeySelective(agreementStandard);
@@ -145,7 +146,7 @@ public class ScfAgreementStandardService extends BaseService<ScfAgreementStandar
      */
     public Page<ScfAgreementStandard> queryAgreementStandard(Map<String, Object> anMap, int anPageNum, int anPageSize, String anFlag) {
         Map<String, Object> queryMap = Collections3.fuzzyMap(anMap, new String[]{"businStatus", "agreementTypeId"});
-        Page<ScfAgreementStandard> resultList = this.selectPropertyByPage(queryMap, anPageNum, anPageSize, "1".equals(anFlag));
+        Page<ScfAgreementStandard> resultList = this.selectPropertyByPage(queryMap, anPageNum, anPageSize, "1".equals(anFlag),"agreementStandardNo");
         //填充合同类型名称
         for(ScfAgreementStandard anAgreement : resultList) {
             ScfAgreementType anAgreementType = agreementTypeService.selectByPrimaryKey(anAgreement.getAgreementTypeId());
@@ -158,7 +159,7 @@ public class ScfAgreementStandardService extends BaseService<ScfAgreementStandar
      * 检查用户是否有权限操作数据
      */
     private void checkOperator(String anOperOrg, String anMessage) {
-        BTAssert.isTrue(UserUtils.platformUser(), "仅平台有权限操作标准合同！");
+        BTAssert.isTrue(UserUtils.platformUser(), "无权限进行操作！");
         if (BetterStringUtils.equals(UserUtils.getOperatorInfo().getOperOrg(), anOperOrg) == false) {
             logger.warn(anMessage);
             throw new BytterTradeException(40001, anMessage);

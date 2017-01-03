@@ -412,7 +412,10 @@ public class ScfAgreementType implements BetterjrEntity {
         this.regTime = BetterDateUtils.getTime();
     }
 
-    public void initModifyValue(CustOperatorInfo anOperatorInfo) {
+    public void initModifyValue(ScfAgreementType anModiAgreementType, CustOperatorInfo anOperatorInfo) {
+        this.agreementTypeName = anModiAgreementType.getAgreementTypeName();
+        this.description = anModiAgreementType.getDescription();
+        
         if (null != anOperatorInfo) {
             this.modiOperId = anOperatorInfo.getId();
             this.modiOperName = anOperatorInfo.getName();
