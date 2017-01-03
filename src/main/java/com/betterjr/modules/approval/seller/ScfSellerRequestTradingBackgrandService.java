@@ -20,15 +20,17 @@ public class ScfSellerRequestTradingBackgrandService extends ScfBaseApprovalServ
     
 	public void processPass(Map<String, Object> anContext){
 		String requestNo = anContext.get("requestNo").toString();
-        ScfRequest request = requestService.findRequestByRequestNo(requestNo);
+		String smsCode = anContext.get("smsCode").toString();
         
-        //生成-应收账款转让确认意见确认书
-        agreementService.transOpinion(requestService.getOption(request));
-        
+        //签署三方协议
+         /*if(false == agreementService.sendValidCodeByRequestNo(requestNo, AGREEMENT_TYPE_PROTOCOL, smsCode)){
+             return AjaxObject.newError("操作失败：短信验证码错误").toJson();
+         }*/
+         
         //修改融资方案--核心企业确认状态（待确认）
-        ScfRequestScheme scheme = schemeService.findSchemeDetail2(requestNo);
-        scheme.setCoreCustAduit("0");
-        schemeService.saveModifyScheme(scheme);
+        //ScfRequestScheme scheme = schemeService.findSchemeDetail2(requestNo);
+        //scheme.setCoreCustAduit("0");
+        //schemeService.saveModifyScheme(scheme);
 	}
 
 	public void processReject(Map<String, Object> anContext) {

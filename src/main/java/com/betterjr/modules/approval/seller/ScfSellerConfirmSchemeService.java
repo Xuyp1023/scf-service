@@ -31,8 +31,8 @@ public class ScfSellerConfirmSchemeService extends ScfBaseApprovalService {
         //}
 	        
 		//修改融资方案确认状态
-        scheme.setCustAduit("1");
-        schemeService.saveModifyScheme(scheme);
+        //scheme.setCustAduit("1");
+        //schemeService.saveModifyScheme(scheme);
 	}
 	
 	public void processReject(Map<String, Object> anContext) {
@@ -45,8 +45,8 @@ public class ScfSellerConfirmSchemeService extends ScfBaseApprovalService {
 		BTAssert.notNull(scheme);
 		
 		//修改融资方案确认状态
-		scheme.setCustAduit("2");
-		schemeService.saveModifyScheme(scheme);
+		//scheme.setCustAduit("2");
+		//schemeService.saveModifyScheme(scheme);
 	}
 	
 
