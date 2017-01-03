@@ -46,12 +46,13 @@ public class ScfSupplyApprovalDubboService implements IScfSupplyApprovalService 
 	public Map<String, Object> application(Map<String, Object> anContext) {
 		ScfRequest request = applicationService.application((ScfRequest)RuleServiceDubboFilterInvoker.getInputObj());
 		anContext.put("requestNo", request.getRequestNo());
+		anContext.put("balance", request.getBalance());
 		return anContext;
 	}
 
 	@Override
-	public Map<String, Object> offerScheme(Map<String, Object> anContext, int resultType) {
-		if (PROCESS_PASS == resultType) {
+	public Map<String, Object> offerScheme(Map<String, Object> anContext, int anResultType) {
+		if (PROCESS_PASS == anResultType) {
 			offerSchemeService.processPass((ScfRequestScheme) RuleServiceDubboFilterInvoker.getInputObj());
 		} else {
 			offerSchemeService.processReject(anContext);
@@ -60,9 +61,9 @@ public class ScfSupplyApprovalDubboService implements IScfSupplyApprovalService 
 	}
 
 	@Override
-	public void confirmScheme(Map<String, Object> anContext, int resultType) {
+	public void confirmScheme(Map<String, Object> anContext, int anResultType) {
 		anContext = RuleServiceDubboFilterInvoker.getInputObj();
-		if (PROCESS_PASS == resultType) {
+		if (PROCESS_PASS == anResultType) {
 			confirmSchemeService.processPass(anContext);
 		} else {
 			confirmSchemeService.processReject(anContext);
@@ -70,9 +71,9 @@ public class ScfSupplyApprovalDubboService implements IScfSupplyApprovalService 
 	}
 
 	@Override
-	public void requestTradingBackgrand(Map<String, Object> anContext, int resultType) {
+	public void requestTradingBackgrand(Map<String, Object> anContext, int anResultType) {
 		anContext = RuleServiceDubboFilterInvoker.getInputObj();
-		if (PROCESS_PASS == resultType) {
+		if (PROCESS_PASS == anResultType) {
 			requestTradingBackgrandService.processPass(anContext);
 		} else {
 			requestTradingBackgrandService.processReject(anContext);
@@ -80,9 +81,9 @@ public class ScfSupplyApprovalDubboService implements IScfSupplyApprovalService 
 	}
 
 	@Override
-	public void confirmTradingBackgrand(Map<String, Object> anContext, int resultType) {
+	public void confirmTradingBackgrand(Map<String, Object> anContext, int anResultType) {
 		anContext = RuleServiceDubboFilterInvoker.getInputObj();
-		if (PROCESS_PASS == resultType) {
+		if (PROCESS_PASS == anResultType) {
 			confirmTradingBackgrandService.processPass(anContext);
 		} else {
 			confirmTradingBackgrandService.processReject(anContext);
@@ -90,8 +91,8 @@ public class ScfSupplyApprovalDubboService implements IScfSupplyApprovalService 
 	}
 
 	@Override
-	public void confirmLoan(Map<String, Object> anContext, int resultType) {
-		if (PROCESS_PASS == resultType) {
+	public void confirmLoan(Map<String, Object> anContext, int anResultType) {
+		if (PROCESS_PASS == anResultType) {
 			confirmLoanService.processPass((ScfLoan) RuleServiceDubboFilterInvoker.getInputObj());
 		} else {
 			confirmLoanService.processReject(anContext);
@@ -99,9 +100,9 @@ public class ScfSupplyApprovalDubboService implements IScfSupplyApprovalService 
 	}
 
 	@Override
-	public void endFlow(Map<String, Object> anContext, int resultType) {
+	public void endFlow(Map<String, Object> anContext, int anResultType) {
 		anContext = RuleServiceDubboFilterInvoker.getInputObj();
-		if (PROCESS_PASS == resultType) {
+		if (PROCESS_PASS == anResultType) {
 			endFlowService.processCancel(anContext);
 		} else {
 			endFlowService.processEnd(anContext);
@@ -112,6 +113,7 @@ public class ScfSupplyApprovalDubboService implements IScfSupplyApprovalService 
 	public void releaseSource(String anRequestNo) {
 		ScfRequest request = requestService.findRequestByRequestNo(anRequestNo);
 		applicationService.releaseSource(request);
+		requestService.delete(request);
 	}
 
 }

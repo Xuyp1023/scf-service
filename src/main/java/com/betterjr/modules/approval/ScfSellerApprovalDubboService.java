@@ -17,6 +17,7 @@ import com.betterjr.modules.approval.seller.ScfSellerRequestTradingBackgrandServ
 import com.betterjr.modules.loan.entity.ScfLoan;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
+import com.betterjr.modules.loan.service.ScfRequestService;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 
 @Service(interfaceClass = IScfSellerApprovalService.class)
@@ -37,10 +38,14 @@ public class ScfSellerApprovalDubboService implements IScfSellerApprovalService 
 	private ScfSellerConfirmLoanService sellerConfirmLoanServiceService;
 	@Autowired
 	private ScfSellerEndFlowService sellerEndFlowService;
+	@Autowired
+	private ScfRequestService requestService;
+	
 	@Override
 	public Map<String, Object> application(Map<String, Object> anContext) {
 		ScfRequest request = applicationService.execute((ScfRequest)RuleServiceDubboFilterInvoker.getInputObj());
 		anContext.put("requestNo", request.getRequestNo());
+		anContext.put("balance", request.getBalance());
 		return anContext;
 	}
 	
@@ -99,4 +104,10 @@ public class ScfSellerApprovalDubboService implements IScfSellerApprovalService 
 		}
 	}
 
+	@Override
+	public void releaseSource(String anRequestNo) {
+		ScfRequest request = requestService.findRequestByRequestNo(anRequestNo);
+		applicationService.releaseSource(request);
+		requestService.delete(request);
+	}
 }

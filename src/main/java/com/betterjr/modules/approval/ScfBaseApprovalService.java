@@ -25,8 +25,12 @@ public class ScfBaseApprovalService {
 	public static final String AGREEMENT_TYPE_CONFIRMATION = "1";
 	public static final String AGREEMENT_TYPE_PROTOCOL = "2";
 	
+	/**
+	 * 客户类型
+	 */
 	public static final String REQUEST_CUST_TYPE_SUPPLY = "1";
 	public static final String REQUEST_CUST_TYPE_SELLER = "2";
+	
 	@Autowired
 	public ScfRequestService requestService;
 	@Autowired

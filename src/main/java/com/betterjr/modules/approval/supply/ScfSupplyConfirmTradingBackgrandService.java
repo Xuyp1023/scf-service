@@ -52,10 +52,10 @@ public class ScfSupplyConfirmTradingBackgrandService extends ScfBaseApprovalServ
 		//agreementService.cancelElecAgreement(requestNo, "1", "");
 		
 		// 修改核心企业确认状态
-		ScfRequestScheme scheme = schemeService.findSchemeDetail2(requestNo);
-		BTAssert.notNull(scheme);
-		scheme.setCoreCustAduit("2");
-		schemeService.saveModifyScheme(scheme);
+		//ScfRequestScheme scheme = schemeService.findSchemeDetail2(requestNo);
+		//BTAssert.notNull(scheme);
+		//scheme.setCoreCustAduit("2");
+		//schemeService.saveModifyScheme(scheme);
 	}
 
 }

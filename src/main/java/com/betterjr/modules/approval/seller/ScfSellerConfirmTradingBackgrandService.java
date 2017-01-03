@@ -30,8 +30,8 @@ public class ScfSellerConfirmTradingBackgrandService extends ScfBaseApprovalServ
 		//}
 
 		// 修改核心企业确认状态
-		scheme.setCoreCustAduit("1");
-		schemeService.saveModifyScheme(scheme);
+		//scheme.setCoreCustAduit("1");
+		//schemeService.saveModifyScheme(scheme);
 	}
 
 	public void processReject(Map<String, Object> anContext) {
@@ -44,8 +44,8 @@ public class ScfSellerConfirmTradingBackgrandService extends ScfBaseApprovalServ
 		BTAssert.notNull(scheme);
 		
 		// 修改核心企业确认状态
-		scheme.setCoreCustAduit("2");
-		schemeService.saveModifyScheme(scheme);
+		//scheme.setCoreCustAduit("2");
+		//schemeService.saveModifyScheme(scheme);
 	}
 
 }

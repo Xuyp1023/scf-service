@@ -41,13 +41,13 @@ public class ScfSupplyRequestTradingBackgrandService extends ScfBaseApprovalServ
         agreementService.transOpinion(requestService.getOption(request));
         
         //修改融资方案--核心企业确认状态（待确认）
-        ScfRequestScheme scheme = schemeService.findSchemeDetail2(requestNo);
-        scheme.setCoreCustAduit("0");
-        schemeService.saveModifyScheme(scheme);
+        //ScfRequestScheme scheme = schemeService.findSchemeDetail2(requestNo);
+        //scheme.setCoreCustAduit("0");
+        //schemeService.saveModifyScheme(scheme);
         
-        this.pushSingInof(request, scheme);
-        this.updateAndSendRequestStatus(scheme.getRequestNo(), RequestTradeStatus.CONFIRM_TRADING.getCode(), RequestLastStatus.APPROVE.getCode());
-        this.pushOrderInfo(requestService.findRequestByRequestNo(scheme.getRequestNo()));
+        this.pushSingInof(request);
+        this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.CONFIRM_TRADING.getCode(), RequestLastStatus.APPROVE.getCode());
+        this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
 	}
 
 	public void processReject(Map<String, Object> anContext) {
@@ -60,9 +60,9 @@ public class ScfSupplyRequestTradingBackgrandService extends ScfBaseApprovalServ
 	 * @param request
 	 * @param scheme
 	 */
-	private void pushSingInof(ScfRequest request, ScfRequestScheme scheme) {
+	private void pushSingInof(ScfRequest request) {
         if (BetterStringUtils.equals("2", request.getRequestFrom()) && BetterStringUtils.equals(RequestType.BILL.getCode(), request.getRequestType())) {
-            List<ScfElecAgreementInfo> list = elecAgreementService.findElecAgreeByOrderNo(scheme.getRequestNo(), "1");
+            List<ScfElecAgreementInfo> list = elecAgreementService.findElecAgreeByOrderNo(request.getRequestNo(), "1");
             if(false == Collections3.isEmpty(list)){
                 supplierPushService.pushSignInfo(Collections3.getFirst(list));
             }
