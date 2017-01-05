@@ -1,4 +1,4 @@
-package com.betterjr.modules.approval;
+package com.betterjr.modules.approval.dubbo;
 
 import java.util.Map;
 
@@ -7,13 +7,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
-import com.betterjr.modules.approval.supply.ScfSupplyApplicationService;
-import com.betterjr.modules.approval.supply.ScfSupplyConfirmLoanService;
-import com.betterjr.modules.approval.supply.ScfSupplyConfirmSchemeService;
-import com.betterjr.modules.approval.supply.ScfSupplyConfirmTradingBackgrandService;
-import com.betterjr.modules.approval.supply.ScfSupplyEndFlowService;
-import com.betterjr.modules.approval.supply.ScfSupplyOfferSchemeService;
-import com.betterjr.modules.approval.supply.ScfSupplyRequestTradingBackgrandService;
+import com.betterjr.modules.approval.IScfSupplyApprovalService;
+import com.betterjr.modules.approval.service.supply.ScfSupplyApplicationService;
+import com.betterjr.modules.approval.service.supply.ScfSupplyConfirmLoanService;
+import com.betterjr.modules.approval.service.supply.ScfSupplyConfirmSchemeService;
+import com.betterjr.modules.approval.service.supply.ScfSupplyConfirmTradingBackgrandService;
+import com.betterjr.modules.approval.service.supply.ScfSupplyEndFlowService;
+import com.betterjr.modules.approval.service.supply.ScfSupplyOfferSchemeService;
+import com.betterjr.modules.approval.service.supply.ScfSupplyRequestTradingBackgrandService;
 import com.betterjr.modules.loan.entity.ScfLoan;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
@@ -44,7 +45,7 @@ public class ScfSupplyApprovalDubboService implements IScfSupplyApprovalService 
 	
 	@Override
 	public Map<String, Object> application(Map<String, Object> anContext) {
-		ScfRequest request = applicationService.application((ScfRequest)RuleServiceDubboFilterInvoker.getInputObj());
+		ScfRequest request = applicationService.savApplication((ScfRequest)RuleServiceDubboFilterInvoker.getInputObj());
 		anContext.put("requestNo", request.getRequestNo());
 		anContext.put("balance", request.getBalance());
 		return anContext;

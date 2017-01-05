@@ -1,17 +1,17 @@
-package com.betterjr.modules.approval.supply;
+package com.betterjr.modules.approval.service.seller;
 
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.utils.BTAssert;
-import com.betterjr.modules.approval.ScfBaseApprovalService;
+import com.betterjr.modules.approval.service.ScfBaseApprovalService;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.helper.RequestLastStatus;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
 
 @Service
-public class ScfSupplyEndFlowService extends ScfBaseApprovalService{
+public class ScfSellerEndFlowService extends ScfBaseApprovalService{
 	
 	/**
 	 * 流程中止-非正常

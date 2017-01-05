@@ -1,4 +1,4 @@
-package com.betterjr.modules.approval;
+package com.betterjr.modules.approval.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

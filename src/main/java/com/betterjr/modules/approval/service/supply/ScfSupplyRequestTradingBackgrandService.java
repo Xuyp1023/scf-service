@@ -1,4 +1,4 @@
-package com.betterjr.modules.approval.supply;
+package com.betterjr.modules.approval.service.supply;
 
 import java.util.List;
 import java.util.Map;
@@ -12,7 +12,7 @@ import com.betterjr.common.utils.Collections3;
 import com.betterjr.modules.agreement.data.ScfElecAgreementInfo;
 import com.betterjr.modules.agreement.service.ScfAgreementService;
 import com.betterjr.modules.agreement.service.ScfElecAgreementService;
-import com.betterjr.modules.approval.ScfBaseApprovalService;
+import com.betterjr.modules.approval.service.ScfBaseApprovalService;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
 import com.betterjr.modules.loan.helper.RequestLastStatus;
