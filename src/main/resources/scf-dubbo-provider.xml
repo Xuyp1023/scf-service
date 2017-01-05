@@ -18,6 +18,7 @@
 		com.betterjr.modules.product,
 		com.betterjr.modules.credit,
 		com.betterjr.modules.loan,
+		com.betterjr.modules.approval,
 		com.betterjr.modules.param,
 		com.betterjr.modules.enquiry,
 		com.betterjr.modules.order,
@@ -30,6 +31,8 @@
         com.betterjr.modules.discount,
         com.betterjr.modules.push,
         com.betterjr.modules.wechat.dubboclient,
+        com.betterjr.modules.supplychain.handler,        
+        com.betterjr.modules.customer,
 		com.betterjr.dubbo.extend.filter" />
 	<!-- 提供方应用信息，用于计算依赖关系 -->
 	<dubbo:application name="${dubbo.application}" />

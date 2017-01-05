@@ -2,6 +2,7 @@ package com.betterjr.modules.agreement.dubbo;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import com.betterjr.modules.agreement.IScfElecAgreementService;
 import com.betterjr.modules.agreement.IScfElecAgreementWebService;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.customer.ICustRelationService;
+import com.betterjr.modules.document.data.DownloadFileInfo;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.document.service.DataStoreService;
 import com.betterjr.modules.document.utils.CustFileUtils;
@@ -97,13 +99,19 @@ public class ScfElecAgreementWebServiceDubboService implements IScfElecAgreement
 
     public String pushValidation(SignRequestInfo anInput) {
         logger.debug("service input:" + JsonMapper.toNonNullJson(anInput));
-
-        if (this.factorRelService.saveFactorRelationStatus(Long.parseLong(anInput.getCustNo()), anInput.getCustNo(), anInput.getStatus(), "wos")) {
+        String tmpStatus = anInput.getStatus();
+        if ("1".equals(tmpStatus)){
+           tmpStatus = "3"; 
+        }
+        else{
+            tmpStatus = "4";
+        }
+        if (this.factorRelService.saveFactorRelationStatus(Long.parseLong(anInput.getCustNo()), anInput.getCustNo(), tmpStatus, "wos")) {
             return "1";
         }
         else {
             return "0";
         }
     }
-
+ 
 }
