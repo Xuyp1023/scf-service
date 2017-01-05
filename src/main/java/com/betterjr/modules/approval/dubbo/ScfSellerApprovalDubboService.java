@@ -1,4 +1,4 @@
-package com.betterjr.modules.approval;
+package com.betterjr.modules.approval.dubbo;
 
 import java.util.Map;
 
@@ -7,13 +7,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
-import com.betterjr.modules.approval.seller.ScfSellerApplicationService;
-import com.betterjr.modules.approval.seller.ScfSellerConfirmLoanService;
-import com.betterjr.modules.approval.seller.ScfSellerConfirmSchemeService;
-import com.betterjr.modules.approval.seller.ScfSellerConfirmTradingBackgrandService;
-import com.betterjr.modules.approval.seller.ScfSellerEndFlowService;
-import com.betterjr.modules.approval.seller.ScfSellerOfferSchemeService;
-import com.betterjr.modules.approval.seller.ScfSellerRequestTradingBackgrandService;
+import com.betterjr.modules.approval.IScfSellerApprovalService;
+import com.betterjr.modules.approval.service.seller.ScfSellerApplicationService;
+import com.betterjr.modules.approval.service.seller.ScfSellerConfirmLoanService;
+import com.betterjr.modules.approval.service.seller.ScfSellerConfirmSchemeService;
+import com.betterjr.modules.approval.service.seller.ScfSellerConfirmTradingBackgrandService;
+import com.betterjr.modules.approval.service.seller.ScfSellerEndFlowService;
+import com.betterjr.modules.approval.service.seller.ScfSellerOfferSchemeService;
+import com.betterjr.modules.approval.service.seller.ScfSellerRequestTradingBackgrandService;
 import com.betterjr.modules.loan.entity.ScfLoan;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
@@ -43,7 +44,7 @@ public class ScfSellerApprovalDubboService implements IScfSellerApprovalService 
 	
 	@Override
 	public Map<String, Object> application(Map<String, Object> anContext) {
-		ScfRequest request = applicationService.execute((ScfRequest)RuleServiceDubboFilterInvoker.getInputObj());
+		ScfRequest request = applicationService.saveApplication((ScfRequest)RuleServiceDubboFilterInvoker.getInputObj());
 		anContext.put("requestNo", request.getRequestNo());
 		anContext.put("balance", request.getBalance());
 		return anContext;
