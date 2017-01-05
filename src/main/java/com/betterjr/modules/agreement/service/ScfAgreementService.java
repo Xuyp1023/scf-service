@@ -12,6 +12,7 @@ import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.web.AjaxObject;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.agreement.entity.ScfRequestCredit;
 import com.betterjr.modules.agreement.entity.ScfRequestNotice;
 import com.betterjr.modules.agreement.entity.ScfRequestOpinion;
@@ -110,9 +111,10 @@ public class ScfAgreementService {
      * @return
      */
     public boolean sendValidCodeByRequestNo(String anRequestNo, String anAgreeType, String vCode){
-        String appNo=scfElecAgreementService.findElecAgreeByRequestNo(anRequestNo, anAgreeType);
-        ScfElecAgreeLocalService localService = ScfElecAgreementFactory.create(appNo);
-        return localService.saveAndSendValidSMS(appNo, vCode);
+//        String appNo=scfElecAgreementService.findElecAgreeByRequestNo(anRequestNo, anAgreeType);
+//        ScfElecAgreeLocalService localService = ScfElecAgreementFactory.create(appNo);
+//        return localService.saveAndSendValidSMS(appNo, vCode);
+        return true;
     }
     
     /***
@@ -121,6 +123,7 @@ public class ScfAgreementService {
      * @return
      */
     public String transNotice(ScfRequestNotice anNoticeRequest){
+              
         logger.info("转让通知书："+anNoticeRequest);
         if(BetterStringUtils.isBlank(anNoticeRequest.getFactorPost())){
             anNoticeRequest.setFactorPost("000000");

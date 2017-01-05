@@ -664,4 +664,25 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         findAgreemtnBill(elecAgree, custNoSet);
         return elecAgree;
     }
+    
+    /***
+     * 根据供应商客户号查询保理合同信息，返回合同对象
+     * @param anCustNo 客户号 
+     * @param anFactorNo 保理公司编号
+     * @param anCoreCustNo 核心企业编号
+     * @param anAgreeType 合同类型
+     * @return
+     */
+    public ScfElecAgreement findFactorAgreementBySupplierNo(Long anCustNo,Long anFactorNo,String anAgreeType){
+        Map<String,Object> anMap=new HashMap<String,Object>();
+        anMap.put("supplierNo", anCustNo);
+        anMap.put("factorNo", anFactorNo);
+        anMap.put("agreeType", anAgreeType);
+        anMap.put("signStatus", Arrays.asList("1"));
+        return Collections3.getFirst(this.selectByProperty(anMap));
+    }
+    
+    public List findBillListByRequestNo(String anRequestNo){
+        return orderService.findInfoListByRequest(anRequestNo, "2");
+    }
 }
