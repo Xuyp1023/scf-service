@@ -35,6 +35,7 @@ import com.betterjr.modules.loan.entity.ScfPayRecord;
 import com.betterjr.modules.loan.entity.ScfPayRecordDetail;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfServiceFee;
+import com.betterjr.modules.loan.helper.RequestLastStatus;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
 import com.betterjr.modules.loan.helper.RequestType;
 import com.betterjr.modules.notification.INotificationSendService;
@@ -482,6 +483,7 @@ public class ScfPayPlanService extends BaseService<ScfPayPlanMapper, ScfPayPlan>
         if (false == MathExtend.compareToZero(plan.getSurplusPrincipalBalance())) {
             request.setCleanDate(plan.getPayDate());
             request.setTradeStatus(RequestTradeStatus.CLEAN.getCode());
+            request.setLastStatus(RequestLastStatus.CLEAN.getCode());
             requestService.saveModifyRequest(request, plan.getRequestNo());
             return plan;
         }
