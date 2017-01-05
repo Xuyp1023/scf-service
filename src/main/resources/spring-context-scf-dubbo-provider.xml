@@ -29,6 +29,7 @@
 		com.betterjr.modules.acceptbill;
 		com.betterjr.modules.cert.service;
         com.betterjr.modules.discount;
+        com.betterjr.modules.supplychain.handler;
         com.betterjr.modules.document.service;
         com.betterjr.modules.push;
         com.betterjr.modules.wechat.service;
@@ -38,6 +39,8 @@
 		com.betterjr.modules.rule.service;
 		com.betterjr.modules.rule.validator;
 		com.betterjr.modules.sys.service;
+        com.betterjr.modules.customer;
+        com.betterjr.modules.agreement.service;
 		com.betterjr.common" />
 	<!-- <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" 
 		p:host-name="192.168.2.49" p:port="6379" /> <bean id="stringRedisSerializer" 
