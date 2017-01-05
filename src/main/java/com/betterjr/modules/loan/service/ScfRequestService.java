@@ -628,17 +628,17 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         if(BetterStringUtils.equals(RequestType.ORDER.getCode(), type) || BetterStringUtils.equals(RequestType.SELLER.getCode(), type)){
             List<ScfOrder> list = (List)orderService.findInfoListByRequest(anRequest.getRequestNo(), RequestType.ORDER.getCode());
             for (ScfOrder order : list) {
-                creditList = setInvoice(anRequest, order.getInvoiceList(), order.getBalance(), order.getOrderNo());
+                creditList.addAll(setInvoice(anRequest, order.getInvoiceList(), order.getBalance(), order.getOrderNo(),order.getEndDate(),order.getAgreementList()));
             }
         }else if(BetterStringUtils.equals(RequestType.BILL.getCode(), type)){
             List<ScfAcceptBill> list = (List)orderService.findInfoListByRequest(anRequest.getRequestNo(), RequestType.BILL.getCode());
             for (ScfAcceptBill bill : list) {
-                creditList = setInvoice(anRequest, bill.getInvoiceList(), bill.getBalance(), bill.getBillNo());
+                creditList.addAll(setInvoice(anRequest, bill.getInvoiceList(), bill.getBalance(), bill.getBillNo(),bill.getEndDate(),bill.getAgreementList()));
             }
         }else if(BetterStringUtils.equals(RequestType.RECEIVABLE.getCode(), type)){
             List<ScfReceivable> list = (List)orderService.findInfoListByRequest(anRequest.getRequestNo(), RequestType.RECEIVABLE.getCode());
             for (ScfReceivable receivable : list) {
-                creditList = setInvoice(anRequest, receivable.getInvoiceList(), receivable.getBalance(), receivable.getReceivableNo());
+                creditList.addAll(setInvoice(anRequest, receivable.getInvoiceList(), receivable.getBalance(), receivable.getReceivableNo(),receivable.getEndDate(),receivable.getAgreementList()));
             }
         }
         return creditList;
@@ -653,7 +653,8 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
      * @param anAgreement
      * @return
      */
-    private List<ScfRequestCredit> setInvoice(ScfRequest request, List<ScfInvoice> anInvoiceList, BigDecimal anBalance, String anObjectNo){
+    private List<ScfRequestCredit> setInvoice(ScfRequest request, List<ScfInvoice> anInvoiceList, BigDecimal anBalance, String anObjectNo,String anEndDate,List<CustAgreement> custAgreementList){
+        CustAgreement custAgreement=Collections3.getFirst(custAgreementList);// 暂时都取第一个贸易合同信息
         List<ScfRequestCredit> creditList = new ArrayList<ScfRequestCredit>();
         for (ScfInvoice invoice : anInvoiceList) {
             ScfRequestCredit credit = new ScfRequestCredit();
@@ -662,7 +663,10 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
             credit.setBalance(anBalance);
             credit.setInvoiceNo(invoice.getInvoiceNo());
             credit.setInvoiceBalance(invoice.getBalance());
-            credit.setEndDate(invoice.getInvoiceDate());
+            credit.setEndDate(anEndDate);
+            if(custAgreement!=null){
+                credit.setAgreeNo(custAgreement.getAgreeNo());
+            }
             creditList.add(credit);
         }
         return creditList;
@@ -682,7 +686,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         ScfRequestNotice noticeRequest = new ScfRequestNotice();
         noticeRequest.setRequestNo(anRequest.getRequestNo());
         noticeRequest.setAgreeName(anRequest.getCustName() + "应收账款转让申请书");
-        noticeRequest.setNoticeNo(noticeNo);
+//        noticeRequest.setNoticeNo(noticeNo);
         noticeRequest.setBuyer(anRequest.getCoreCustName());
         noticeRequest.setFactorRequestNo(noticeNo);
         noticeRequest.setBankAccount(bankAccount.getBankAcco());
@@ -690,8 +694,8 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         noticeRequest.setFactorAddr(custBase.getAddress());
         noticeRequest.setFactorPost(custBase.getZipCode());
         
-        CustMechLaw custMechLaw = mechLawService.findLawInfo(anRequest.getCustNo());
-        noticeRequest.setFactorLinkMan(custMechLaw.getName());
+//        CustMechLaw custMechLaw = mechLawService.findLawInfo(anRequest.getCustNo());
+//        noticeRequest.setFactorLinkMan(custMechLaw.getName());
         return noticeRequest;
     }
 

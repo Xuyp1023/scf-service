@@ -41,13 +41,15 @@ public class ScfElecNoticeLocalService extends ScfElecAgreeLocalService {
     public Map<String, Object> findViewModeData() {
         Map<String, Object> result = new HashMap();
         String requestNo = this.elecAgree.getRequestNo();
+        logger.info("notice requestNo:"+requestNo);
         ScfRequestNotice noticeInfo = requestNoticeService.selectByPrimaryKey(requestNo);
         if (null == noticeInfo) {
             logger.error("Can't get notice information with request no:" + requestNo);
             throw new BytterTradeException(40001, "无法获取通知书信息");
         }
+        noticeInfo=requestNoticeService.findFactorAgreement(noticeInfo);
         result.put("noticeInfo", noticeInfo);
-        List<ScfRequestCredit> reqCredits = requestCreditService.findByRequestNo(requestNo);
+        Map<String, Object> reqCredits = requestCreditService.findByRequestNo(requestNo);
         // 获取应收账款信息
         if (Collections3.isEmpty(reqCredits)) {
             logger.error("Can't get credit information with request no:" + requestNo);
@@ -55,6 +57,11 @@ public class ScfElecNoticeLocalService extends ScfElecAgreeLocalService {
         }
         result.put("creditInfos", reqCredits);
         result.put("signDate", findSignDate());
+        
+        // 查询发票信息
+        Map<String, Object> billMap=requestNoticeService.findBillListByRequestNo(requestNo);
+        logger.info("notice billMap:"+billMap);
+        result.put("billMap", billMap);
 
         return result;
     }

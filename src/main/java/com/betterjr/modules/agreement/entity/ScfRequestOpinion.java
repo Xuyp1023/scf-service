@@ -3,6 +3,7 @@ package com.betterjr.modules.agreement.entity;
 import com.betterjr.common.annotation.*;
 import com.betterjr.common.data.BaseRemoteEntity;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.modules.loan.entity.ScfRequest;
 
@@ -117,6 +118,34 @@ public class ScfRequestOpinion implements BetterjrEntity, BaseRemoteEntity  {
     @Column(name = "C_NOTICENO",  columnDefinition="VARCHAR" )
     @MetaData( value="转让通知书编号", comments = "转让通知书编号")
     private String noticeNo;
+    
+
+    /**
+     * 联系人
+     */
+    @Column(name = "C_LINKNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "联系人", comments = "联系人")
+    private String linkName;
+    
+    /**
+     * 电子邮箱
+     */
+    @Column(name = "C_EMAIL", columnDefinition = "VARCHAR")
+    @MetaData(value = "电子邮箱", comments = "电子邮箱")
+    private String email;
+    
+    /**
+     * 联系电话
+     */
+    @Column(name = "C_PHONE", columnDefinition = "VARCHAR")
+    @MetaData(value = "联系电话", comments = "联系电话")
+    private String phone;
+    
+    /***
+     * 买方名称
+     */
+    @Transient
+    private String buyerName;
 
     private static final long serialVersionUID = 1459952422046L;
 
@@ -240,6 +269,38 @@ public class ScfRequestOpinion implements BetterjrEntity, BaseRemoteEntity  {
         this.noticeNo = anNoticeNo;
     }
 
+    public String getLinkName() {
+        return this.linkName;
+    }
+
+    public void setLinkName(String anLinkName) {
+        this.linkName = anLinkName;
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+
+    public void setEmail(String anEmail) {
+        this.email = anEmail;
+    }
+
+    public String getPhone() {
+        return this.phone;
+    }
+
+    public void setPhone(String anPhone) {
+        this.phone = anPhone;
+    }
+
+    public String getBuyerName() {
+        return this.buyerName;
+    }
+
+    public void setBuyerName(String anBuyerName) {
+        this.buyerName = anBuyerName;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -261,6 +322,9 @@ public class ScfRequestOpinion implements BetterjrEntity, BaseRemoteEntity  {
         sb.append(", factorRequestNo=").append(factorRequestNo);
         sb.append(", regDate=").append(regDate);
         sb.append(", noticeNo=").append(noticeNo);
+        sb.append(", linkName=").append(linkName);
+        sb.append(", email=").append(email);
+        sb.append(", phone=").append(phone);
         sb.append("]");
         return sb.toString();
     }
@@ -318,6 +382,7 @@ public class ScfRequestOpinion implements BetterjrEntity, BaseRemoteEntity  {
     
     
     public void fillInfo(ScfRequest anRequest){
+        this.confirmNo = String.valueOf(SerialGenerator.findAppNoWithDayAndType(102202019l,"QEQHTZQR"));
         this.productCode = anRequest.getProductCode();
         this.buyerNo = anRequest.getCoreCustNo()==null?0:anRequest.getCoreCustNo();
         this.supplierNo = anRequest.getCustNo();

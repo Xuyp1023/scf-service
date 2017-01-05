@@ -1,15 +1,26 @@
 package com.betterjr.modules.agreement.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.betterjr.common.data.SimpleDataEntity;
+import com.betterjr.common.mapper.CustDecimalJsonSerializer;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.service.FreemarkerService;
+import com.betterjr.common.utils.BetterStringUtils;
+import com.betterjr.common.utils.Collections3;
+import com.betterjr.common.utils.MathExtend;
+import com.betterjr.common.utils.NumberToCN;
+import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.agreement.dao.ScfRequestNoticeMapper;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
@@ -46,10 +57,11 @@ public class ScfRequestNoticeService extends BaseService<ScfRequestNoticeMapper,
         boolean result = true;
         if (tmpNotice == null) {
             anRequest.setBuyer(custAccountService.queryCustName(anRequest.getBuyerNo()));
-            anRequest.setFactorName(SupplyChainUtil.findFactorNameByNo(anRequest.getFactorNo()));
+            anRequest.setFactorName(custAccountService.queryCustName(Long.parseLong(anRequest.getFactorNo())));
             this.insert(anRequest);
         }
         else if ("0".equals(tmpNotice.getTransStatus())) {
+            anRequest.setBuyer(custAccountService.queryCustName(anRequest.getBuyerNo()));
             anRequest.setFactorName(tmpNotice.getFactorName());
             this.updateByPrimaryKey(anRequest);
         }
@@ -97,6 +109,49 @@ public class ScfRequestNoticeService extends BaseService<ScfRequestNoticeMapper,
      */
     public ScfRequestNotice findTransNotice(String requestNo){
         return this.selectByPrimaryKey(requestNo);
+    }
+    
+    /***
+     * 查询设置保理合同信息
+     * @param noticeInfo
+     * @return
+     */
+    public ScfRequestNotice findFactorAgreement(ScfRequestNotice noticeInfo){
+        ScfElecAgreement elecAgreement= elecAgreeService.findFactorAgreementBySupplierNo(noticeInfo.getSupplierNo(), Long.parseLong(noticeInfo.getFactorNo()), "3");
+        if(elecAgreement!=null){
+            noticeInfo.setFactorAgreementNo(elecAgreement.getAgreeNo());
+            noticeInfo.setFactorAgreementName(elecAgreement.getAgreeName());
+        }
+        noticeInfo.setSupplierName(custAccountService.queryCustName(noticeInfo.getSupplierNo()));
+        if(BetterStringUtils.isBlank(noticeInfo.getBuyer())){
+            noticeInfo.setBuyer(custAccountService.queryCustName(noticeInfo.getBuyerNo()));
+        }
+        return noticeInfo;
+    }
+    
+    /***
+     * 查询汇票信息
+     * @param anRequestNo
+     * @return
+     */
+    public Map<String, Object> findBillListByRequestNo(String anRequestNo){
+        Map<String, Object> map = new HashMap();
+        List<Map<String, Object>> billList=new ArrayList<Map<String,Object>>();
+        List list=elecAgreeService.findBillListByRequestNo(anRequestNo);
+        BigDecimal totalBalance=new BigDecimal(0);// 总金额 
+        for(int i=0;i<list.size();i++){
+            Map<String, Object> billMap=new HashMap<String, Object>();
+            ScfAcceptBill scfAcceptBill=(ScfAcceptBill)list.get(i);
+            billMap.put("billNo", scfAcceptBill.getBillNo());
+            billMap.put("balance", CustDecimalJsonSerializer.format(scfAcceptBill.getBalance()));
+            billMap.put("CapitalBalance", NumberToCN.number2CNMontrayUnit(scfAcceptBill.getBalance()));
+            totalBalance=MathExtend.add(totalBalance,scfAcceptBill.getBalance());
+            billList.add(billMap);
+        }
+        map.put("billList", billList);
+        map.put("totalBalance", CustDecimalJsonSerializer.format(totalBalance));
+        map.put("CapitalTotalBalance", NumberToCN.number2CNMontrayUnit(totalBalance));
+        return map;
     }
 
 }

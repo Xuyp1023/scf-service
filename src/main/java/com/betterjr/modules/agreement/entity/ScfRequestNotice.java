@@ -1,9 +1,13 @@
 package com.betterjr.modules.agreement.entity;
 
+
 import com.betterjr.common.annotation.*;
 import com.betterjr.common.data.BaseRemoteEntity;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.UserUtils;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.loan.entity.ScfRequest;
 
 import javax.persistence.*;
@@ -138,6 +142,36 @@ public class ScfRequestNotice implements BetterjrEntity,BaseRemoteEntity {
     @Column(name = "C_BANKACCO", columnDefinition = "VARCHAR")
     @MetaData(value = "保理公司银行账户", comments = "保理公司银行账户")
     private String bankAccount;
+    
+    /**
+     * 电子邮箱
+     */
+    @Column(name = "C_EMAIL", columnDefinition = "VARCHAR")
+    @MetaData(value = "电子邮箱", comments = "电子邮箱")
+    private String email;
+    
+    /**
+     * 联系电话
+     */
+    @Column(name = "C_PHONE", columnDefinition = "VARCHAR")
+    @MetaData(value = "联系电话", comments = "联系电话")
+    private String phone;
+    
+    /***
+     * 保理合同编号 
+     */
+    @Transient
+    private String factorAgreementNo;
+    /***
+     * 保理合同名称
+     */
+    @Transient
+    private String factorAgreementName;
+    /***
+     * 供应商名称
+     */
+    @Transient
+    private String supplierName;
     
     private static final long serialVersionUID = 1459952422046L;
 
@@ -285,6 +319,46 @@ public class ScfRequestNotice implements BetterjrEntity,BaseRemoteEntity {
         this.bankAccount = anBankAccount;
     }
 
+    public String getEmail() {
+        return this.email;
+    }
+
+    public void setEmail(String anEmail) {
+        this.email = anEmail;
+    }
+
+    public String getPhone() {
+        return this.phone;
+    }
+
+    public void setPhone(String anPhone) {
+        this.phone = anPhone;
+    }
+
+    public String getFactorAgreementNo() {
+        return this.factorAgreementNo;
+    }
+
+    public void setFactorAgreementNo(String anFactorAgreementNo) {
+        this.factorAgreementNo = anFactorAgreementNo;
+    }
+
+    public String getFactorAgreementName() {
+        return this.factorAgreementName;
+    }
+
+    public void setFactorAgreementName(String anFactorAgreementName) {
+        this.factorAgreementName = anFactorAgreementName;
+    }
+
+    public String getSupplierName() {
+        return this.supplierName;
+    }
+
+    public void setSupplierName(String anSupplierName) {
+        this.supplierName = anSupplierName;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -309,6 +383,8 @@ public class ScfRequestNotice implements BetterjrEntity,BaseRemoteEntity {
         sb.append(", regDate=").append(regDate);
         sb.append(", transStatus=").append(transStatus);
         sb.append(", bankAccount=").append(bankAccount);
+        sb.append(", email=").append(email);
+        sb.append(", phone=").append(phone);
         sb.append("]");
         return sb.toString();
     }
@@ -369,6 +445,7 @@ public class ScfRequestNotice implements BetterjrEntity,BaseRemoteEntity {
     }
     
     public void fillInfo(ScfRequest anRequest){
+        this.noticeNo = String.valueOf(SerialGenerator.findAppNoWithDayAndType(102202019l,"QEQHTZTZ"));
         this.productCode = anRequest.getProductCode();
         this.buyerNo = anRequest.getCoreCustNo()==null?0:anRequest.getCoreCustNo();
         this.supplierNo = anRequest.getCustNo();
@@ -376,5 +453,11 @@ public class ScfRequestNotice implements BetterjrEntity,BaseRemoteEntity {
         this.transStatus ="0";
         this.regDate = BetterDateUtils.getNumDate();
         this.modiDate = BetterDateUtils.getNumDate();
+        CustOperatorInfo operator = UserUtils.getOperatorInfo();
+        if (operator != null){
+            this.factorLinkMan=operator.getName();
+            this.email=operator.getEmail();
+            this.phone=operator.getMobileNo();
+        }
      }
 }
