@@ -41,6 +41,7 @@ public class ScfElecOpinionLocalService  extends ScfElecAgreeLocalService {
             logger.error("Can't get opinion information with request no:"+requestNo);
             throw new BytterTradeException(40001, "无法获取确认书信息");
         }
+        opinionInfo.setBuyerName(requestOpinionService.queryCustName(opinionInfo.getBuyerNo()));
         result.put("opinionInfo", opinionInfo);
  
         //取当前服务器日期作为签署日期

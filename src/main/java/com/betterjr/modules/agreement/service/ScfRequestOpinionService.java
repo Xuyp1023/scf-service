@@ -8,13 +8,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.service.FreemarkerService;
+import com.betterjr.modules.account.entity.CustInfo;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
+import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.agreement.dao.ScfRequestOpinionMapper;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.agreement.entity.ScfRequestNotice;
 import com.betterjr.modules.agreement.entity.ScfRequestOpinion;
 import com.betterjr.modules.agreement.utils.SupplyChainUtil;
+import com.betterjr.modules.operator.dubbo.IOperatorService;
 import com.betterjr.modules.push.service.ScfSupplierPushService;
 
 /**
@@ -38,6 +43,12 @@ public class ScfRequestOpinionService extends BaseService<ScfRequestOpinionMappe
     
     @Autowired
     private ScfSupplierPushService pushService;
+    
+    @Autowired
+    private CustAccountService custAccountService;
+    
+    @Reference(interfaceClass=IOperatorService.class)
+    private IOperatorService operatorService;
 
     /**
      * 更新核心企业确认书的协议信息
@@ -57,13 +68,22 @@ public class ScfRequestOpinionService extends BaseService<ScfRequestOpinionMappe
             anOpinion.setNoticeNo(notice.getNoticeNo());
         }
 
+        // 设置企业经办人信息
+        CustInfo custInfo=custAccountService.findCustInfo(anOpinion.getBuyerNo());// 查询企业基本信息  
+        CustOperatorInfo custOperator =operatorService.findCustClerkMan(custInfo.getOperOrg(),"1");
+        if(custOperator==null){
+            custOperator =operatorService.findCustClerkMan(custInfo.getOperOrg(),"0");
+        }
+        anOpinion.setLinkName(custOperator.getName());
+        anOpinion.setEmail(custOperator.getEmail());
+        anOpinion.setPhone(custOperator.getMobileNo());
+        anOpinion.setFactorName(SupplyChainUtil.findFactorNameByNo(anOpinion.getFactorNo()));
+        
         boolean result = true;
         if (tmpOpinion == null) {
-            anOpinion.setFactorName(SupplyChainUtil.findFactorNameByNo(anOpinion.getFactorNo()));
             this.insert(anOpinion);
         }
         else if ("0".equals(tmpOpinion.getOpinionStatus())) {
-            anOpinion.setFactorName(tmpOpinion.getFactorName());
             this.updateByPrimaryKey(anOpinion);
         }
         else {
@@ -83,5 +103,9 @@ public class ScfRequestOpinionService extends BaseService<ScfRequestOpinionMappe
         }
 
         return result;
+    }
+    
+    public String queryCustName(Long anCustNo){
+        return custAccountService.queryCustName(anCustNo);
     }
 }
