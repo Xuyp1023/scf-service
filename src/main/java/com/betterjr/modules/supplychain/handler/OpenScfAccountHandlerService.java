@@ -88,7 +88,11 @@ public class OpenScfAccountHandlerService {
     }
     
     public void testData(){
-        CustRelation custRelation = this.relationService.findByRelationId(3111L);
+        if (this.relationService == null){
+            logger.warn("relationService is null");
+            return ;
+        }
+        CustRelation custRelation = this.relationService.findByRelationId(3110L);
         SaleAccoRequestInfo accoRequest = createOpenAccountRequestData(custRelation);
         factorRemoteHelper.dealAccoRequest(accoRequest, custRelation, null);
     }

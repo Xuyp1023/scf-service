@@ -64,7 +64,7 @@ public class FileWebServiceDubboService implements IFileWebService{
         List<Long> fileBatchList = null;
         List<String> fileTypeBusinList = authFileGroupService.composeList(anFactorNo, anBusinType);
         if (BetterStringUtils.isBlank(anRequestNo)) {
-            CustRelation factorRel = factorRelService.findOneRelation(anCustNo, Long.parseLong(anFactorNo), anScfId);
+            CustRelation factorRel = factorRelService.findRelationWithCustCorp(anCustNo, anScfId,  anFactorNo);
             logger.info(factorRel.toString());
             fileBatchList = fileService.findBatchNo(anCustNo, fileTypeBusinList);
         }
@@ -78,7 +78,7 @@ public class FileWebServiceDubboService implements IFileWebService{
             }
             else if("cfgy".equalsIgnoreCase(anFactorNo)){
                 List<String> fileTypeBusinList02=null;
-                CustRelation factorRel = factorRelService.findOneRelation(anCustNo, Long.parseLong(anFactorNo), anScfId);
+                CustRelation factorRel = factorRelService.findRelationWithCustCorp(anCustNo, anScfId, anFactorNo);
                 fileTypeBusinList = authFileGroupService.composeList(anFactorNo, "01");// 这里是财富共盈处理特殊方式，01代表除发票，合同，票据的其它所有文件
                 fileBatchList = fileService.findBatchNo(anCustNo, fileTypeBusinList);
                 List<Long> billBatchList = requestService.findVoucherBatchNo(anRequestNo); // 根据申请单查询发票，合同，票据附件

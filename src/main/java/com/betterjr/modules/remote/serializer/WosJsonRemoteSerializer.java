@@ -43,7 +43,7 @@ public class WosJsonRemoteSerializer extends RemoteBaseSerializer {
         map.put(actiontypePara, this.func.getFunCode());
         
         String tmpData = JsonMapper.toJsonString(map);
-        logger.debug("wos request real data ="+tmpData);
+        logger.info("wos request real data ="+tmpData);
         
         
         String encryptedData=tmpData;

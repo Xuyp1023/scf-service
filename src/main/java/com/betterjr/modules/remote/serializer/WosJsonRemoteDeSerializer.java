@@ -47,7 +47,7 @@ public class WosJsonRemoteDeSerializer extends RemoteBaseDeSerializer {
         logger.debug("data:"+dataStr);
         logger.debug("sign:"+signStr);
         String decodedData=this.func.getWorkFace().getCryptService().decrypt(dataStr);
-        logger.debug("decoded data:"+decodedData);
+        logger.info("decoded data:"+decodedData);
         boolean verified=this.func.getWorkFace().getSignService().verifySign(decodedData, signStr);
         if(!verified){
             logger.error("response verify sign failed!!");
