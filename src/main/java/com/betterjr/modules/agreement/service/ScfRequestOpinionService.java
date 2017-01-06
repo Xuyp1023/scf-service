@@ -58,7 +58,7 @@ public class ScfRequestOpinionService extends BaseService<ScfRequestOpinionMappe
      * @return
      */
     public boolean updateOpinionInfo(ScfRequestOpinion anOpinion, String anSupplier,BigDecimal anBalance) {
-        anOpinion.setAgreeName(anSupplier + "买方确认意见");
+        anOpinion.setAgreeName(anSupplier + "应收账款债权转让通知确认");
         ScfRequestOpinion tmpOpinion = this.selectByPrimaryKey(anOpinion.getRequestNo());
         ScfRequestNotice notice = scfRequestNoticeService.selectByPrimaryKey(anOpinion.getRequestNo());
         if (notice == null) {

@@ -684,12 +684,12 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         String noticeNo = BetterDateUtils.getDate("yyyyMMdd") + anRequest.getRequestNo();
         ScfRequestNotice noticeRequest = new ScfRequestNotice();
         noticeRequest.setRequestNo(anRequest.getRequestNo());
-        noticeRequest.setAgreeName(anRequest.getCustName() + "应收账款转让申请书");
+        noticeRequest.setAgreeName(anRequest.getCustName() + "应收账款债权转让通知书");
 //        noticeRequest.setNoticeNo(noticeNo);
         noticeRequest.setBuyer(anRequest.getCoreCustName());
         noticeRequest.setFactorRequestNo(noticeNo);
         noticeRequest.setBankAccount(bankAccount.getBankAcco());
-        CustMechBase custBase = mechBaseService.findBaseInfo(anRequest.getCustNo());
+        CustMechBase custBase = mechBaseService.findBaseInfo(anRequest.getFactorNo());
         noticeRequest.setFactorAddr(custBase.getAddress());
         noticeRequest.setFactorPost(custBase.getZipCode());
         
