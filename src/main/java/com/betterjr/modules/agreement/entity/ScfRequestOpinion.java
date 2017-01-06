@@ -382,7 +382,7 @@ public class ScfRequestOpinion implements BetterjrEntity, BaseRemoteEntity  {
     
     
     public void fillInfo(ScfRequest anRequest){
-        this.confirmNo = String.valueOf(SerialGenerator.findAppNoWithDayAndType(102202019l,"QEQHTZQR"));
+        this.confirmNo = String.valueOf(SerialGenerator.findAppNoWithDayAndType(anRequest.getFactorNo(),"QEQHTZQR"));
         this.productCode = anRequest.getProductCode();
         this.buyerNo = anRequest.getCoreCustNo()==null?0:anRequest.getCoreCustNo();
         this.supplierNo = anRequest.getCustNo();

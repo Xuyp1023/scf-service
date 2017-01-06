@@ -20,7 +20,9 @@ import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.MathExtend;
 import com.betterjr.common.utils.NumberToCN;
+import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.agreement.dao.ScfRequestNoticeMapper;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
@@ -55,6 +57,7 @@ public class ScfRequestNoticeService extends BaseService<ScfRequestNoticeMapper,
     public String updateTransNotice(ScfRequestNotice anRequest, String anSuppiler,BigDecimal anBalance) {
         ScfRequestNotice tmpNotice = this.selectByPrimaryKey(anRequest.getRequestNo());
         boolean result = true;
+
         if (tmpNotice == null) {
             anRequest.setBuyer(custAccountService.queryCustName(anRequest.getBuyerNo()));
             anRequest.setFactorName(custAccountService.queryCustName(Long.parseLong(anRequest.getFactorNo())));

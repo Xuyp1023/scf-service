@@ -19,7 +19,6 @@ import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.MathExtend;
 import com.betterjr.common.utils.QueryTermBuilder;
-import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
@@ -685,12 +684,12 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         String noticeNo = BetterDateUtils.getDate("yyyyMMdd") + anRequest.getRequestNo();
         ScfRequestNotice noticeRequest = new ScfRequestNotice();
         noticeRequest.setRequestNo(anRequest.getRequestNo());
-        noticeRequest.setAgreeName(anRequest.getCustName() + "应收账款转让申请书");
+        noticeRequest.setAgreeName(anRequest.getCustName() + "应收账款债权转让通知书");
 //        noticeRequest.setNoticeNo(noticeNo);
         noticeRequest.setBuyer(anRequest.getCoreCustName());
         noticeRequest.setFactorRequestNo(noticeNo);
         noticeRequest.setBankAccount(bankAccount.getBankAcco());
-        CustMechBase custBase = mechBaseService.findBaseInfo(anRequest.getCustNo());
+        CustMechBase custBase = mechBaseService.findBaseInfo(anRequest.getFactorNo());
         noticeRequest.setFactorAddr(custBase.getAddress());
         noticeRequest.setFactorPost(custBase.getZipCode());
         
@@ -878,47 +877,4 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         }
 
     }
-    
-    /**
-     * 申请企业查询融资信息
-     */
-    public Page<ScfRequest> custQueryRequest(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
-    	String[] queryTerm = new String[] {"lastStatus", "custNo","factorNo", "coreCustNo", "GTErequestDate","LTErequestDate","GTEactualDate","LTEactualDate","requestType","custType"};
-    	anMap = Collections3.filterMap(anMap, queryTerm);
-    	if(UserUtils.supplierUser() || UserUtils.sellerUser()){
-    		anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
-    	}else if(UserUtils.coreUser()){
-    		anMap.put("coreCustNo", UserUtils.getDefCustInfo().getCustNo());
-    	}else if(UserUtils.factorUser()){
-    		if(null == anMap.get("factorNo")){
-    			anMap.put("factorNo", UserUtils.getDefCustInfo().getCustNo());
-    		}
-    	}else{
-    		return null;
-    	}
-    	return this.selectRequest(anMap, anFlag, anPageNum, anPageSize);
-    }
-
-    /**
-     * 查询申请列表
-     * @param anMap
-     * @param anFlag
-     * @param anPageNum
-     * @param anPageSize
-     * @return
-     */
-	private Page<ScfRequest> selectRequest(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
-		if(null != anMap.get("lastStatus") && BetterStringUtils.isNotEmpty(anMap.get("lastStatus").toString())){
-    		anMap.put("lastStatus", anMap.get("lastStatus").toString().split(","));
-    	}
-		Page<ScfRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
-        for (ScfRequest scfRequest : page) {
-            this.fillCustName(scfRequest);
-            // 如果已放款，设置还款计划
-            if(Integer.parseInt(scfRequest.getLastStatus()) >3){
-            	scfRequest.setPayPlan(payPlanService.findPayPlanByRequest(scfRequest.getRequestNo()));
-            }
-        }
-		return page;
-	}
 }
