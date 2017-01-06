@@ -616,7 +616,7 @@ public class CustAgreement implements BetterjrEntity {
         this.modiDate = BetterDateUtils.getNumDate();
         this.status = "0";
         this.operOrg = anCustOperInfo.getOperOrg();
-        this.operCode = anCustOperInfo.getOperCode();
+        this.operCode = anCustOperInfo.getId().toString();
         this.operName = anCustOperInfo.getName();
         this.buyer = anBuyer;
         this.buyerNo=buyerNo;
@@ -639,7 +639,7 @@ public class CustAgreement implements BetterjrEntity {
         this.modiDate = BetterDateUtils.getNumDate();
         this.status = "0";
         this.operOrg = anCustOperInfo.getOperOrg();
-        this.operCode = anCustOperInfo.getOperCode();
+        this.operCode =  anCustOperInfo.getId().toString();
         this.operName = anCustOperInfo.getName();
         this.buyer = anBuyer;
         this.buyerNo=buyerNo;
