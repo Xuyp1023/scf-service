@@ -28,9 +28,9 @@ public class ScfAcceptBillDubboService implements IScfAcceptBillService {
     }
 
     @Override
-    public String webFindAcceptBillList(final String anCustNo, final String anIsOnlyNormal) {
-
-        return AjaxObject.newOk("汇票信息查询成功", scfAcceptBillService.findAcceptBillList(anCustNo, anIsOnlyNormal)).toJson();
+    public String webFindAcceptBillList(final Map<String, Object> anMap, final String anIsOnlyNormal) {
+        Map<String, Object> queryMap = RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOk("汇票信息查询成功", scfAcceptBillService.findAcceptBillList(queryMap, anIsOnlyNormal)).toJson();
     }
 
     @Override

@@ -107,9 +107,7 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
      * 应收账款无分页查询
      * anIsOnlyNormal 是否过滤，仅查询正常未融资数据 1：未融资 0：查询所有
      */
-    public List<ScfReceivable> findReceivableList(String anCustNo, String anIsOnlyNormal) {
-        Map<String, Object> anMap = new HashMap<String, Object>();
-        anMap.put("custNo", anCustNo);
+    public List<ScfReceivable> findReceivableList(Map<String, Object> anMap, String anIsOnlyNormal) {
         if(BetterStringUtils.equals(anIsOnlyNormal, "1")) {
             anMap.put("businStatus", "0");
         }

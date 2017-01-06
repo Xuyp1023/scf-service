@@ -135,9 +135,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
      * @param anIsOnlyNormal
      *            是否过滤，仅查询正常未融资数据 1：未融资 0：查询所有
      */
-    public List<ScfOrder> findOrderList(String anCustNo, String anIsOnlyNormal) {
-        Map<String, Object> anMap = new HashMap<String, Object>();
-        anMap.put("custNo", anCustNo);
+    public List<ScfOrder> findOrderList(Map<String, Object> anMap, String anIsOnlyNormal) {
         // 只查询数据非自动生成的数据来源
         anMap.put("dataSource", "1");
         if (BetterStringUtils.equals(anIsOnlyNormal, "1")) {
