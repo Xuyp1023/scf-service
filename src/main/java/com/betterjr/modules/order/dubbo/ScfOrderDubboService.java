@@ -35,8 +35,9 @@ public class ScfOrderDubboService implements IScfOrderService{
     }
     
     @Override
-    public String webFindOrderList(String anCustNo, String anIsOnlyNormal) {
-        return AjaxObject.newOk("订单信息查询成功", scfOrderService.findOrderList(anCustNo, anIsOnlyNormal)).toJson();
+    public String webFindOrderList(Map<String, Object> anMap, String anIsOnlyNormal) {
+        Map<String, Object> queryMap = RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOk("订单信息查询成功", scfOrderService.findOrderList(queryMap, anIsOnlyNormal)).toJson();
     }
     
     @Override
