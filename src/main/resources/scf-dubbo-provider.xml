@@ -29,6 +29,7 @@
         com.betterjr.modules.document,
 		com.betterjr.modules.account.dubbo,
         com.betterjr.modules.discount,
+        com.betterjr.modules.remote.dubbo,
         com.betterjr.modules.push,
         com.betterjr.modules.wechat.dubboclient,
         com.betterjr.modules.supplychain.handler,        

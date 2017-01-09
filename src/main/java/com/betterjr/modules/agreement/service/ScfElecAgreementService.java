@@ -190,11 +190,11 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         if (tmpElecAgree != null) {
             String tmpStatus = null;
             if (anSignedFile) {
-                tmpElecAgree.setSignBatchNo(anFileItem.getBatchNo());
+                tmpElecAgree.setSignBatchNo(this.fileItemService.updateCustFileItemInfo(Long.toString( anFileItem.getId()), anFileItem.getBatchNo()));
                 tmpStatus = "1";
             }
             else {
-                tmpElecAgree.setBatchNo(anFileItem.getBatchNo());
+                tmpElecAgree.setBatchNo(this.fileItemService.updateCustFileItemInfo(Long.toString( anFileItem.getId()), anFileItem.getBatchNo()));
                 tmpStatus = "2";
             }
             tmpElecAgree.fillElecAgreeStatus(tmpStatus);
