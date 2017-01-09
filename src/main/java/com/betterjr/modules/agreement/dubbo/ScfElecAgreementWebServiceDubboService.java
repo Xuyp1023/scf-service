@@ -83,11 +83,11 @@ public class ScfElecAgreementWebServiceDubboService implements IScfElecAgreement
 
                 outStatus = workStatus ? "3" : "4";
             }
-            else if ("0".equals(elecAgreement.getAgreeType())) {
+            else if ("0".equals(elecAgreement.getAgreeType())){
 
                 outStatus = workStatus ? "5" : "6";
             }
-            requestService.updateAndSendRequestStatus(elecAgreement.getRequestNo(), outStatus);
+            //requestService.updateAndSendRequestStatus(elecAgreement.getRequestNo(), outStatus);
             return "1";
         }
         return "0";
