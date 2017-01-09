@@ -152,7 +152,7 @@ public class ScfFactorRemoteHelper extends Thread {
      * @return
      */
     private ScfElecAgreement findSignerlist(ScfElecAgreement anElecAgreement) {
-        anElecAgreement.setSignerlist(this.elecAgreeStubService.findSignerForWosign(anElecAgreement.getAppNo()));
+        anElecAgreement.setSignerList(this.elecAgreeStubService.findSignerForWosign(anElecAgreement.getAppNo()));
         return anElecAgreement;
     }
 

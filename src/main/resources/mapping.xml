@@ -253,4 +253,13 @@
   </field> 
  </mapping>
  
+  <mapping wildcard="true" map-null="false" trim-strings="true" map-empty-string="false">
+  <class-a>com.betterjr.modules.agreement.entity.ScfElecAgreement</class-a>
+  <class-b>java.util.Map</class-b>
+  <field copy-by-reference="true">
+   <a>signerList</a>
+   <b>signerList</b>
+  </field>
+ </mapping>
+ 
 </mappings>

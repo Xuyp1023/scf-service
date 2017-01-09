@@ -74,10 +74,12 @@ public class OpenScfAccountHandlerService {
     @RocketMQListener(topic = CustomerConstants.CUSTOMER_OPEN_SCF_ACCOUNT , consumer = "betterConsumer")
     public void processNotification(final Object anMessage){
        MQMessage message = (MQMessage) anMessage;
+       logger.info("processNotification :" + message);
        CustRelation custRelation = (CustRelation) message.getObject();
+       logger.info("processNotification custRelation :" + custRelation);
        FactorParam param = DictUtils.loadObject("FactorParam", String.valueOf(custRelation.getRelateCustno()), FactorParam.class);
        if(param == null || (param.getRemoting() == 0)){
-           
+          logger.warn("not find FactorParam " + custRelation.getRelateCustname()); 
           return;
        }
        
