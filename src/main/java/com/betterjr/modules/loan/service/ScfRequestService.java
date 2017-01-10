@@ -584,7 +584,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
      * anBusinStatus - 1：未放款，2：还款中  3.已还款
      */
     public Page<ScfRequest> queryCoreEnterpriseRequest(Map<String, Object> anMap, String anBusinStatus, String anFlag, int anPageNum, int anPageSize) {
-        anMap = Collections3.fuzzyMap(anMap, new String[]{"coreCustNo", "custNo"});
+        anMap = Collections3.fuzzyMap(anMap, new String[]{"coreCustNo", "custNo", "factorNo"});
         if (BetterStringUtils.isBlank(anBusinStatus)) {
             Page<ScfRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
             for (ScfRequest request : page) {
