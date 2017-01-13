@@ -424,4 +424,14 @@ public class ScfAgreementType implements BetterjrEntity {
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
     }
+
+    public void initAuditValue(CustOperatorInfo anOperatorInfo) {
+        this.businStatus = "1";
+        this.auditDate = BetterDateUtils.getNumDate();
+        this.auditTime = BetterDateUtils.getNumTime();
+        if (null != anOperatorInfo) {
+            this.auditOperId = anOperatorInfo.getId();
+            this.auditOperName = anOperatorInfo.getName();
+        }
+    }
 }

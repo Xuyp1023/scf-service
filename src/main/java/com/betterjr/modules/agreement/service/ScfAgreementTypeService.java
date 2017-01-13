@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.QueryTermBuilder;
@@ -108,6 +109,7 @@ public class ScfAgreementTypeService extends BaseService<ScfAgreementTypeMapper,
         checkOperator(anAgreementType.getOperOrg(), "无权限进行操作！");
         //设置状态启用, 0登记 1生效
         anAgreementType.setBusinStatus("1");
+        anAgreementType.initAuditValue(UserUtils.getOperatorInfo());
         this.updateByPrimaryKeySelective(anAgreementType);
         return anAgreementType;
     }
