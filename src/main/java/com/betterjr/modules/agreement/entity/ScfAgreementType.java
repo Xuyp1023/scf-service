@@ -399,6 +399,7 @@ public class ScfAgreementType implements BetterjrEntity {
 
     public void initAddValue(CustOperatorInfo anOperatorInfo) {
         this.id = SerialGenerator.getLongValue("ScfAgreementType.id");
+        this.agreementTypeNo = this.id.toString();
         //状态：登记
         this.businStatus = "0";
         //数据来源：手工录入
