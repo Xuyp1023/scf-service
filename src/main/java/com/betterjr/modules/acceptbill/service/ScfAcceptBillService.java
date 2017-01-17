@@ -192,7 +192,8 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         if (BetterStringUtils.equals(anIsOnlyNormal, "1")) {
             anMap.put("businStatus", new String[] { "0", "1" });
         }
-        
+        //处理查询条件custNo
+        anMap.put("holderNo", anMap.get("custNo"));
         //查询当前用户未融资的汇票
         List<ScfAcceptBill> retList = new ArrayList<>();
         List<ScfAcceptBill> billList = this.findAcceptBill(anMap);
