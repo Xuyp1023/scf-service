@@ -9,12 +9,13 @@ import com.betterjr.modules.loan.helper.RequestTradeStatus;
 
 @Service
 public class ScfSellerApplicationService extends ScfBaseApprovalService{
-	public ScfRequest saveApplication(ScfRequest request){
-		request.setCustType(REQUEST_CUST_TYPE_SELLER);
-		request = requestService.addRequest(request);
-        this.updateAndSendRequestStatus(request.getRequestNo(), RequestTradeStatus.OFFER_SCHEME.getCode(), RequestLastStatus.REQUEST.getCode());
-        this.pushOrderInfo(requestService.findRequestByRequestNo(request.getRequestNo()));
-		return request;
+	public ScfRequest saveApplication(ScfRequest anRequest){
+		anRequest.setCustType(REQUEST_CUST_TYPE_SELLER);
+		anRequest = requestService.addRequest(anRequest);
+        this.updateAndSendRequestStatus(anRequest.getRequestNo(), RequestTradeStatus.OFFER_SCHEME.getCode(), RequestLastStatus.REQUEST.getCode());
+        this.forzenSource(anRequest);
+        this.pushOrderInfo(requestService.findRequestByRequestNo(anRequest.getRequestNo()));
+		return anRequest;
 	}
 
 }
