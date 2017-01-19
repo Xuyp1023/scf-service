@@ -6,7 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
+import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.modules.approval.IScfSupplyApprovalService;
 import com.betterjr.modules.approval.service.supply.ScfSupplyApplicationService;
 import com.betterjr.modules.approval.service.supply.ScfSupplyConfirmLoanService;
@@ -15,6 +17,7 @@ import com.betterjr.modules.approval.service.supply.ScfSupplyConfirmTradingBackg
 import com.betterjr.modules.approval.service.supply.ScfSupplyEndFlowService;
 import com.betterjr.modules.approval.service.supply.ScfSupplyOfferSchemeService;
 import com.betterjr.modules.approval.service.supply.ScfSupplyRequestTradingBackgrandService;
+import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.loan.entity.ScfLoan;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
@@ -43,9 +46,21 @@ public class ScfSupplyApprovalDubboService implements IScfSupplyApprovalService 
 	@Autowired
 	private ScfRequestService requestService;
 	
+	@Reference(interfaceClass = ICustFileService.class)
+	private ICustFileService custFileService;
+	
 	@Override
 	public Map<String, Object> application(Map<String, Object> anContext) {
-		ScfRequest request = applicationService.savApplication((ScfRequest)RuleServiceDubboFilterInvoker.getInputObj());
+		ScfRequest request = (ScfRequest)RuleServiceDubboFilterInvoker.getInputObj();
+		
+		//保存上存的文件
+		String fileList = (String)anContext.get("fileList");
+		if(BetterStringUtils.isNotBlank(fileList)){
+			Long batchNo = custFileService.updateCustFileItemInfo(fileList, null);
+			request.setBatchNo(batchNo.intValue());
+		}
+		
+		request= applicationService.savApplication(request);
 		anContext.put("requestNo", request.getRequestNo());
 		anContext.put("balance", request.getBalance());
 		return anContext;

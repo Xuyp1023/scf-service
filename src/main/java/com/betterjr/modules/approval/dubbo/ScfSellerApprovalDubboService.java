@@ -6,7 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
+import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.modules.approval.IScfSellerApprovalService;
 import com.betterjr.modules.approval.service.seller.ScfSellerApplicationService;
 import com.betterjr.modules.approval.service.seller.ScfSellerConfirmLoanService;
@@ -15,6 +17,7 @@ import com.betterjr.modules.approval.service.seller.ScfSellerConfirmTradingBackg
 import com.betterjr.modules.approval.service.seller.ScfSellerEndFlowService;
 import com.betterjr.modules.approval.service.seller.ScfSellerOfferSchemeService;
 import com.betterjr.modules.approval.service.seller.ScfSellerRequestTradingBackgrandService;
+import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.loan.entity.ScfLoan;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
@@ -42,9 +45,21 @@ public class ScfSellerApprovalDubboService implements IScfSellerApprovalService 
 	@Autowired
 	private ScfRequestService requestService;
 	
+	@Reference(interfaceClass = ICustFileService.class)
+	private ICustFileService custFileService;
+	 
 	@Override
 	public Map<String, Object> application(Map<String, Object> anContext) {
-		ScfRequest request = applicationService.saveApplication((ScfRequest)RuleServiceDubboFilterInvoker.getInputObj());
+		ScfRequest request = (ScfRequest)RuleServiceDubboFilterInvoker.getInputObj();
+		
+		//保存上存的文件
+		String fileList = (String)anContext.get("fileList");
+		if(BetterStringUtils.isNotBlank(fileList)){
+			Long batchNo = custFileService.updateCustFileItemInfo(fileList, null);
+			request.setBatchNo(batchNo.intValue());
+		}
+		
+		request= applicationService.saveApplication(request);
 		anContext.put("requestNo", request.getRequestNo());
 		anContext.put("balance", request.getBalance());
 		return anContext;

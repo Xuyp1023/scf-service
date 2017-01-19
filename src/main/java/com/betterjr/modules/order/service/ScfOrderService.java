@@ -753,4 +753,22 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
             BTAssert.isTrue(BetterStringUtils.equals("1", anAgree.getStatus()), "资料中存在未启用合同，请先启用合同！");
         }
     }
+
+   /** 
+    * 
+    */
+   public List getSubjectMaster(String anId, String anType) {
+       List agreeList = new ArrayList<>();
+       //1,s订单，2:票据;3:应收款
+       if(BetterStringUtils.equals("1", anType)) {
+    	   agreeList = this.findOrder(QueryTermBuilder.newInstance().put("id", anId.split(",")).build());
+       }
+       else if(BetterStringUtils.equals("2", anType)) {
+    	   agreeList = acceptBillService.findAcceptBill(QueryTermBuilder.newInstance().put("id", anId.split(",")).build());
+       }
+       else if(BetterStringUtils.equals("3", anType)) {
+    	   agreeList = receivableService.findReceivable(QueryTermBuilder.newInstance().put("id", anId.split(",")).build());
+       }
+       return agreeList;
+   }
 }

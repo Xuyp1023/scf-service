@@ -1,12 +1,15 @@
 package com.betterjr.modules.credit.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.betterjr.common.data.SimpleDataEntity;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
@@ -263,6 +266,46 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         anMap.put("businStatus", CreditConstants.CREDIT_STATUS_EFFECTIVE);// 授信状态:0-未生效;1-已生效;2-已失效;
 
         return Collections3.getFirst(this.selectByProperty(anMap));
+    }
+    
+    public ScfCredit findCreditList(Long anCustNo, Long anCoreCustNo, Long anFactorNo) {
+        BTAssert.notNull(anCustNo, "请选择客户!");
+        BTAssert.notNull(anCoreCustNo, "请选择核心企业!");
+        BTAssert.notNull(anFactorNo, "请选择保理公司!");
+        Map<String, Object> anMap = new HashMap<String, Object>();
+        anMap.put("custNo", anCustNo);
+        anMap.put("coreCustNo", anCoreCustNo);
+        anMap.put("factorNo", anFactorNo);
+        anMap.put("businStatus", CreditConstants.CREDIT_STATUS_EFFECTIVE);// 授信状态:0-未生效;1-已生效;2-已失效;
+
+        return Collections3.getFirst(this.selectByProperty(anMap));
+    }
+    
+    public List<SimpleDataEntity> findCreditSimpleData(Long anCustNo, Long anCoreCustNo, Long anFactorNo) {
+        BTAssert.notNull(anCustNo, "请选择客户!");
+        BTAssert.notNull(anCoreCustNo, "请选择核心企业!");
+        BTAssert.notNull(anFactorNo, "请选择保理公司!");
+        Map<String, Object> anMap = new HashMap<String, Object>();
+        anMap.put("custNo", anCustNo);
+        anMap.put("coreCustNo", anCoreCustNo);
+        anMap.put("factorNo", anFactorNo);
+        anMap.put("businStatus", CreditConstants.CREDIT_STATUS_EFFECTIVE);// 授信状态:0-未生效;1-已生效;2-已失效;
+        List<ScfCredit> list = this.selectByProperty(anMap);
+        
+        List<SimpleDataEntity> dataList = new ArrayList<SimpleDataEntity>();
+        for (ScfCredit scfCredit : list) {
+        	//授信方式(1:信用授信(循环);2:信用授信(一次性);3:担保信用(循环);4:担保授信(一次性);)
+        	if(BetterStringUtils.equals("1", scfCredit.getCreditMode())){
+        		dataList.add(new SimpleDataEntity("信用授信(循环)/"+scfCredit.getCreditBalance(), scfCredit.getCreditMode()));
+        	}else if(BetterStringUtils.equals("2", scfCredit.getCreditMode())){
+        		dataList.add(new SimpleDataEntity("信用授信(一次性)/"+scfCredit.getCreditBalance(), scfCredit.getCreditMode()));
+        	}else if(BetterStringUtils.equals("3", scfCredit.getCreditMode())){
+        		dataList.add(new SimpleDataEntity("担保信用(循环)/"+scfCredit.getCreditBalance(), scfCredit.getCreditMode()));
+        	}else {
+        		dataList.add(new SimpleDataEntity("担保授信(循环)/"+scfCredit.getCreditBalance(), scfCredit.getCreditMode()));
+        	}
+		}
+        return dataList;
     }
 
     public Map<String, Object> findCreditSumByCustNo(Long anCustNo) {

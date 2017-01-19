@@ -49,8 +49,19 @@ public class ScfCreditDubboService implements IScfCreditService {
 
     @Override
     public String webFindCredit(Long anCustNo, Long anCoreCustNo, Long anFactorNo, String anCreditMode) {
-
-        return AjaxObject.newOk("授信额度信息查询成功", scfCreditService.findCredit(anCustNo, anCoreCustNo, anFactorNo, anCreditMode)).toJson();
+    	
+    	return AjaxObject.newOk("授信额度信息查询成功", scfCreditService.findCredit(anCustNo, anCoreCustNo, anFactorNo, anCreditMode)).toJson();
+    }
+    
+    @Override
+    public String webFindCreditSimpleData(Long anCustNo, Long anCoreCustNo, Long anFactorNo) {
+    	
+    	return AjaxObject.newOk("授信额度信息查询成功", scfCreditService.findCreditSimpleData(anCustNo, anCoreCustNo, anFactorNo)).toJson();
+    }
+    
+    @Override
+    public String webFindCreditList(Long anCustNo, Long anCoreCustNo, Long anFactorNo) {
+        return AjaxObject.newOk("授信额度信息查询成功", scfCreditService.findCreditList(anCustNo, anCoreCustNo, anFactorNo)).toJson();
     }
 
     @Override
