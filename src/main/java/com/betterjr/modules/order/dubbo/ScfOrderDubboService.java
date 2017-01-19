@@ -70,4 +70,9 @@ public class ScfOrderDubboService implements IScfOrderService{
     public String webCheckAgreementStatus(Long anAcceptBillId){
         return AjaxObject.newOk("合同状态检查成功", scfOrderService.checkAgreementStatus(anAcceptBillId)).toJson();
     }
+
+    @Override
+    public String webFindSubjectMaster(String anId, String anType){
+        return AjaxObject.newOk("查询标的物", scfOrderService.getSubjectMaster(anId, anType)).toJson();
+    }
 }
