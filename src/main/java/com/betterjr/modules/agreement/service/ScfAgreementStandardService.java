@@ -94,7 +94,7 @@ public class ScfAgreementStandardService extends BaseService<ScfAgreementStandar
         //状态  0登记 1生效
         anMap.put("businStatus", anBusinStatus);
         anMap = Collections3.fuzzyMap(anMap, new String[]{"businStatus"});
-        Page<ScfAgreementStandard> resultList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag),"businStatus,agreementStandardNo");
+        Page<ScfAgreementStandard> resultList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag),"agreementStandardNo");
         //填充合同类型名称
         for(ScfAgreementStandard anAgreement : resultList) {
             ScfAgreementType anAgreementType = agreementTypeService.selectByPrimaryKey(anAgreement.getAgreementTypeId());
