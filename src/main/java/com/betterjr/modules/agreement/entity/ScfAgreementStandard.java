@@ -149,7 +149,6 @@ public class ScfAgreementStandard implements BetterjrEntity {
      */
     @Column(name = "T_AUDIT_TIME",  columnDefinition="VARCHAR" )
     @MetaData( value="审核时间", comments = "审核时间")
-    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String auditTime;
 
     @Transient
