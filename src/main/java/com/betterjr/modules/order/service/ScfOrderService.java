@@ -771,4 +771,25 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
        }
        return agreeList;
    }
+   
+   /**
+    * 根据资料id和资料类型查询融资实体
+    */
+   public ScfRequest findRequestByInfoId(Long anInfoId, String anInfoType) {
+       Long orderId = null;
+
+       if (BetterStringUtils.equals(ScfOrderRelationType.ORDER.getCode(), anInfoType)) {
+           orderId = anInfoId;
+       }
+       else {
+           Map<String, Object> anMap = QueryTermBuilder.newInstance().put("infoType", anInfoType).put("infoId", anInfoId).build();
+           ScfOrderRelation relation = Collections3.getFirst(orderRelationService.selectByProperty(anMap));
+           orderId = relation.getOrderId();
+       }
+       ScfOrder order = this.selectByPrimaryKey(orderId);
+       ScfRequest request = requestService.selectByPrimaryKey(order.getRequestNo());
+       return request;
+   }
+
+   
 }
