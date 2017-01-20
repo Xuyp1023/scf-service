@@ -194,6 +194,7 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         }
         //处理查询条件custNo
         anMap.put("holderNo", anMap.get("custNo"));
+        anMap.remove("custNo");
         //查询当前用户未融资的汇票
         List<ScfAcceptBill> retList = new ArrayList<>();
         List<ScfAcceptBill> billList = this.findAcceptBill(anMap);
