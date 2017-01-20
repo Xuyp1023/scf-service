@@ -87,7 +87,7 @@ public class ScfAgreementTypeService extends BaseService<ScfAgreementTypeMapper,
         anMap.put("businStatus", "0");
         // 数据来源:0:默认,1:手动录入
         anMap.put("dataSource", "1");
-        return this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "businStatus, agreementTypeNo");
+        return this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "agreementTypeNo");
     }
     
     /**

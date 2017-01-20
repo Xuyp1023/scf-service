@@ -2,9 +2,11 @@ package com.betterjr.modules.agreement.entity;
 
 import com.betterjr.common.annotation.*;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.persistence.*;
 
@@ -81,6 +83,7 @@ public class ScfAgreementStandard implements BetterjrEntity {
      */
     @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="创建日期", comments = "创建日期")
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
 
     /**
@@ -109,6 +112,7 @@ public class ScfAgreementStandard implements BetterjrEntity {
      */
     @Column(name = "D_MODI_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="修改日期", comments = "修改日期")
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String modiDate;
 
     /**
@@ -137,6 +141,7 @@ public class ScfAgreementStandard implements BetterjrEntity {
      */
     @Column(name = "D_AUDIT_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="审核日期", comments = "审核日期")
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String auditDate;
 
     /**
@@ -144,6 +149,7 @@ public class ScfAgreementStandard implements BetterjrEntity {
      */
     @Column(name = "T_AUDIT_TIME",  columnDefinition="VARCHAR" )
     @MetaData( value="审核时间", comments = "审核时间")
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String auditTime;
 
     @Transient
