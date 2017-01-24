@@ -901,7 +901,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
 		return page;
 	}
 
-	public Page<ScfRequest> custQueryRequest(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+	public Page<ScfRequest> queryRequest(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
 		String[] queryTerm = new String[] { "lastStatus", "custNo", "factorNo", "coreCustNo", "GTErequestDate",
 				"LTErequestDate", "GTEactualDate", "LTEactualDate", "requestType", "custType" };
 		anMap = Collections3.filterMap(anMap, queryTerm);

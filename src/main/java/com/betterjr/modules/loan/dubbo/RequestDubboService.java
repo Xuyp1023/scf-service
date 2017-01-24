@@ -520,7 +520,7 @@ public class RequestDubboService implements IScfRequestService {
         logger.debug("分页查询融资列表，入参：" + anMap);
         Map<String, Object> queryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
         return AjaxObject.newOkWithPage("查询融资列表成功",
-                requestService.custQueryRequest(queryConditionMap, anFlag, anPageNum, anPageSize)).toJson();
+                requestService.queryRequest(queryConditionMap, anFlag, anPageNum, anPageSize)).toJson();
     }
     
     @Override
