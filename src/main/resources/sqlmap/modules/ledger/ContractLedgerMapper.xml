@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.ledger.dao.ContractLedgerMapper" >
+  <resultMap id="BaseResultMap" type="com.betterjr.modules.ledger.entity.ContractLedger" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="c_agreename" property="agreeName" jdbcType="VARCHAR" />
+    <result column="c_agreeno" property="agreeNo" jdbcType="VARCHAR" />
+    <result column="c_supplier" property="supplier" jdbcType="VARCHAR" />
+    <result column="c_buyer" property="buyer" jdbcType="VARCHAR" />
+    <result column="f_balance" property="balance" jdbcType="DECIMAL" />
+    <result column="d_delivery_date" property="deliveryDate" jdbcType="VARCHAR" />
+    <result column="c_delivery_addr" property="deliveryAddr" jdbcType="VARCHAR" />
+    <result column="c_check_accept" property="checkAccept" jdbcType="VARCHAR" />
+    <result column="c_objection_period" property="objectionPeriod" jdbcType="VARCHAR" />
+    <result column="d_agree_start_date" property="agreeStartDate" jdbcType="VARCHAR" />
+    <result column="d_agree_end_date" property="agreeEndDate" jdbcType="VARCHAR" />
+    <result column="d_regdate" property="regDate" jdbcType="VARCHAR" />
+    <result column="d_regtime" property="regTime" jdbcType="VARCHAR" />
+    <result column="d_modidate" property="modiDate" jdbcType="VARCHAR" />
+    <result column="d_moditime" property="modiTime" jdbcType="VARCHAR" />
+    <result column="c_busin_status" property="businStatus" jdbcType="VARCHAR" />
+    <result column="l_buyer_no" property="buyerNo" jdbcType="INTEGER" />
+    <result column="l_supplier_no" property="supplierNo" jdbcType="INTEGER" />
+    <result column="c_operId" property="operId" jdbcType="INTEGER" />
+    <result column="c_opername" property="operName" jdbcType="VARCHAR" />
+    <result column="c_operorg" property="operOrg" jdbcType="VARCHAR" />
+    <result column="n_batchno" property="batchNo" jdbcType="INTEGER" />
+    <result column="c_default" property="defaultFlag" jdbcType="VARCHAR" />
+    <result column="c_describe" property="des" jdbcType="VARCHAR" />
+    <result column="d_signdate" property="signDate" jdbcType="VARCHAR" />
+    <result column="c_sign_addr" property="signAddr" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>
