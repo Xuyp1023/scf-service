@@ -3,6 +3,7 @@ package com.betterjr.modules.credit.service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +17,7 @@ import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.MathExtend;
+import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.service.CustAccountService;
@@ -290,21 +292,24 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         anMap.put("coreCustNo", anCoreCustNo);
         anMap.put("factorNo", anFactorNo);
         anMap.put("businStatus", CreditConstants.CREDIT_STATUS_EFFECTIVE);// 授信状态:0-未生效;1-已生效;2-已失效;
-        List<ScfCredit> list = this.selectByProperty(anMap);
         
         List<SimpleDataEntity> dataList = new ArrayList<SimpleDataEntity>();
-        for (ScfCredit scfCredit : list) {
-        	//授信方式(1:信用授信(循环);2:信用授信(一次性);3:担保信用(循环);4:担保授信(一次性);)
-        	if(BetterStringUtils.equals("1", scfCredit.getCreditMode())){
-        		dataList.add(new SimpleDataEntity("信用授信(循环)/"+scfCredit.getCreditBalance(), scfCredit.getCreditMode()));
-        	}else if(BetterStringUtils.equals("2", scfCredit.getCreditMode())){
-        		dataList.add(new SimpleDataEntity("信用授信(一次性)/"+scfCredit.getCreditBalance(), scfCredit.getCreditMode()));
-        	}else if(BetterStringUtils.equals("3", scfCredit.getCreditMode())){
-        		dataList.add(new SimpleDataEntity("担保信用(循环)/"+scfCredit.getCreditBalance(), scfCredit.getCreditMode()));
-        	}else {
-        		dataList.add(new SimpleDataEntity("担保授信(循环)/"+scfCredit.getCreditBalance(), scfCredit.getCreditMode()));
+        HashMap<String, String> creditType = new HashMap<String, String>();
+        creditType.put("1", "信用授信(循环)");
+        creditType.put("2", "信用授信(一次性)");
+        creditType.put("3", "担保信用(循环)");
+        creditType.put("4", "担保授信(循环)");
+        
+        for (Map.Entry<String, String> entry : creditType.entrySet()) { 
+        	anMap.put("creditMode", entry.getKey());
+        	List<ScfCredit> list = this.selectByProperty(anMap);
+        	String value = entry.getValue();
+        	if(Collections3.isEmpty(list)){
+        		value = entry.getValue() + "/余额"+ list.get(0).getCreditBalance();
         	}
-		}
+        	dataList.add(new SimpleDataEntity(value, entry.getKey()));
+        }
+        
         return dataList;
     }
 
