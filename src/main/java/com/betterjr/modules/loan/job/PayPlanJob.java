@@ -18,11 +18,11 @@ public class PayPlanJob extends AbstractSimpleElasticJob {
     
     @Override
     public void process(JobExecutionMultipleShardingContext anParamJobExecutionMultipleShardingContext) {
-       /* logger.info("*********定时任务：开始计算利息!");
+        logger.info("*********定时任务：开始计算利息!");
         logger.info("*********定时任务：开始计算利息!");
         payPlanService.saveAutoUpdateOverDue();
         logger.info("*********定时任务：计算利息结束!");
-        logger.info("*********定时任务：计算利息结束!");*/
+        logger.info("*********定时任务：计算利息结束!");
     }
 
 }
