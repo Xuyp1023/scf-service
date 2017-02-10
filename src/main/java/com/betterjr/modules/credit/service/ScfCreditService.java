@@ -304,7 +304,7 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         	anMap.put("creditMode", entry.getKey());
         	List<ScfCredit> list = this.selectByProperty(anMap);
         	String value = entry.getValue();
-        	if(Collections3.isEmpty(list)){
+        	if(!Collections3.isEmpty(list)){
         		value = entry.getValue() + "/余额"+ list.get(0).getCreditBalance();
         	}
         	dataList.add(new SimpleDataEntity(value, entry.getKey()));
