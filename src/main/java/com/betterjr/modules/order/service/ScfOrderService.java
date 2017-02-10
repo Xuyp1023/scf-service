@@ -602,6 +602,13 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
             result.addAll(custFileDubboService.findCustFiles(receivable.getBatchNo()));
             result.addAll(custFileDubboService.findCustFiles(receivable.getOtherBatchNo()));
         }
+
+        //微信申请时 传上的附件
+        ScfRequest request = requestService.findRequestDetail(anRequestNo);
+        if(null != request.getBatchNo()){
+        	result.addAll(custFileDubboService.findCustFiles(Long.parseLong(request.getBatchNo().toString())));
+        }
+        
         // 对文件信息去重
         HashSet<CustFileItem> tempSet = new HashSet<CustFileItem>(result);
         result.clear();
