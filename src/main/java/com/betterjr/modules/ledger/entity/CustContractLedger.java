@@ -55,6 +55,9 @@ public class CustContractLedger implements BetterjrEntity {
     
     @Column(name = "c_bankAccountName",  columnDefinition="VARCHAR" )
     private String bankAccountName;
+
+    @Column(name = "c_zipCode",  columnDefinition="VARCHAR" )
+    private String zipCode;
     
     private static final long serialVersionUID = 1482311479891L;
 
@@ -178,6 +181,14 @@ public class CustContractLedger implements BetterjrEntity {
         this.bankAccountName = anBankAccountName;
     }
 
+    public String getZipCode() {
+        return this.zipCode;
+    }
+
+    public void setZipCode(String anZipCode) {
+        this.zipCode = anZipCode;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -196,6 +207,7 @@ public class CustContractLedger implements BetterjrEntity {
         sb.append(", address=").append(address);
         sb.append(", email=").append(email);
         sb.append(", businStatus=").append(businStatus);
+        sb.append(", zipCode=").append(zipCode);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
