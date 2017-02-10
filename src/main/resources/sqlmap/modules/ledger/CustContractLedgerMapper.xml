@@ -19,5 +19,6 @@
     <result column="c_busin_status" property="businStatus" jdbcType="VARCHAR" />
     <result column="c_reg_date" property="regDate" jdbcType="VARCHAR" />
     <result column="c_reg_time" property="regTime" jdbcType="VARCHAR" />
+    <result column="c_zipCode" property="zipCode" jdbcType="VARCHAR" />
   </resultMap>
 </mapper>

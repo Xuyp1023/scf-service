@@ -11,7 +11,6 @@ import com.betterjr.modules.ledger.IContractLedgerService;
 import com.betterjr.modules.ledger.entity.ContractLedger;
 import com.betterjr.modules.ledger.entity.CustContractLedger;
 import com.betterjr.modules.ledger.service.ContractLedgerService;
-import com.betterjr.modules.ledger.utils.ContractLedgerUtils;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 
 @Service(interfaceClass=IContractLedgerService.class)
