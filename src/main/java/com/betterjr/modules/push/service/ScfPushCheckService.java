@@ -135,11 +135,15 @@ public class ScfPushCheckService {
      * @param targetCustNo 接收客户
      */
     public boolean billSend(Long sendCustNo,Long targetCustNo,ScfSupplierPushDetail supplierPushDetail){
+        logger.info("sendCustNo:"+sendCustNo+",targetCustNo:"+targetCustNo+",supplierPushDetail:"+supplierPushDetail);
         boolean bool=false;
         final CustInfo sendCustomer = accountService.findCustInfo(sendCustNo);
+        logger.info("sendCustomer:"+sendCustomer);
         supplierPushDetail.setCustName(sendCustomer.getCustName());
         final CustOperatorInfo sendOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(sendCustNo));
+        logger.info("sendOperator:"+sendOperator);
         final CustOperatorInfo targetOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(targetCustNo));
+        logger.info("targetOperator:"+targetOperator);
         if(sendOperator!=null && targetOperator!=null){
             supplierPushDetail.setTragetCustName(accountService.queryCustName(targetCustNo));
             final Builder builder = NotificationModel.newBuilder("商业汇票开立通知", sendCustomer, sendOperator);
@@ -153,9 +157,11 @@ public class ScfPushCheckService {
             builder.addParam("disMoney", supplierPushDetail.getDisMoney());
             builder.addParam("disDate", supplierPushDetail.getDisDate());
             builder.addReceiver(targetCustNo, null);  // 接收人
+            logger.info("builder:"+builder);
             notificationSendService.sendNotification(builder.build());
             bool=true;
         }
+        logger.info("发送成功");
         return bool;
     }
     

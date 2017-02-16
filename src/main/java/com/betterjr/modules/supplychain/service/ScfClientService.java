@@ -92,6 +92,7 @@ public class ScfClientService {
 
     public static CoreCustInfo findCoreCustInfoByOperOrg(String anOperOrg) {
         DictItemInfo itemInfo = DictUtils.getDictItem(FACTOR_CORE_CUSTINFO, anOperOrg);
+        logger.info("findCoreCustInfoByOperOrg-itemInfo:"+itemInfo);
         CoreCustInfo custInfo = new CoreCustInfo();
         if (itemInfo != null) {
             custInfo.setOperOrg(anOperOrg);
@@ -99,6 +100,7 @@ public class ScfClientService {
             custInfo.setCustNo(Long.parseLong(itemInfo.getItemCode()));
             custInfo.setPartnerCode(itemInfo.getSubject());
         }
+        logger.info("findCoreCustInfoByOperOrg-custInfo:"+custInfo);
         return custInfo;
     }
     
@@ -236,11 +238,14 @@ public class ScfClientService {
         ScfClientDataDetail detail;
         int workCount = 0;
         Map<String, Object> obj = (Map) anMap.get("data");
+        logger.info("processData-obj:"+obj);
         String processType;
         String operOrg = (String)anMap.get(ATTACH_DATA);
+        logger.info("processData-operOrg:"+operOrg);
         CoreCustInfo  coreCustInfo = findCoreCustInfoByOperOrg(operOrg);
         for (Map.Entry ent : obj.entrySet()) {
             Collection tmpList = (Collection) ent.getValue();
+            logger.info("processData-tmpList:"+tmpList);
             dataCover = coverterMap.get(ent.getKey());
             processType = (String) ent.getKey();
             for (Object objx : tmpList) {

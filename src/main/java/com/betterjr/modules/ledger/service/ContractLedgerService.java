@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
+import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
@@ -20,6 +21,7 @@ import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.ledger.dao.ContractLedgerMapper;
 import com.betterjr.modules.ledger.entity.ContractLedger;
 import com.betterjr.modules.ledger.entity.CustContractLedger;
+import com.betterjr.modules.wechat.ICustWeChatService;
 
 /***
  * 合同台账服务类
@@ -37,7 +39,8 @@ public class ContractLedgerService  extends BaseService<ContractLedgerMapper, Co
     private CustContractLedgerService custContractLedgerService;
     @Autowired
     private ContractLedgerRecodeService contractLedgerRecodeService;
-    
+    @Reference(interfaceClass=ICustWeChatService.class)
+    private ICustWeChatService custWeChatService;
     
     /****
      * 分页查询合同台账信息
@@ -64,7 +67,7 @@ public class ContractLedgerService  extends BaseService<ContractLedgerMapper, Co
         }
         logger.info("分页查询合同台账信息 queryContractLedgerByPage-anMap:"+map);
         String flag=(String)anMap.get("flag");
-        return this.selectPropertyByPage(map, anPageNum, anPageSize, "1".equals(flag),"regDate desc");
+        return this.selectPropertyByPage(map, anPageNum, anPageSize, "1".equals(flag),"regDate desc,regTime desc");
     }
     
     /***
@@ -74,7 +77,7 @@ public class ContractLedgerService  extends BaseService<ContractLedgerMapper, Co
      * @return
      */
     public ContractLedger addContractLedger(ContractLedger anContractLedger,CustContractLedger anBuyerCustContractLedger,CustContractLedger anSupplierCustContractLedger,String anFileList){
-        anContractLedger.initValue();
+        anContractLedger.initValue();   
         logger.info("anContractLedger:"+anContractLedger);
         logger.info("anBuyerCustContractLedger:"+anBuyerCustContractLedger);
         logger.info("anSupplierCustContractLedger:"+anSupplierCustContractLedger);
@@ -224,5 +227,86 @@ public class ContractLedgerService  extends BaseService<ContractLedgerMapper, Co
             map.put("buyerNo",UserUtils.getDefCustInfo().getCustNo());
         }
         return map;
+    }
+    
+    /***
+     * 添加合同台账
+     * @param anContractLedger 合同台账对象
+     * @return
+     */
+    public ContractLedger addContractLedger(ContractLedger anContractLedger){
+        anContractLedger.initValue();
+        logger.info("anContractLedger:"+anContractLedger);
+        this.insert(anContractLedger);
+        // 添加台账记录
+        addContractLedgerRecode(anContractLedger.getId(),anContractLedger.getBusinStatus());
+        return anContractLedger;
+    }
+    
+    /***
+     * 保存合同台账附件
+     * @param id 合同台账id
+     * @param fileTypeName 文件类型名称
+     * @param fileMediaId  文件
+     * @return
+     */
+    public CustFileItem saveContractLedgerFile(Long anId,String anFileTypeName,String anFileMediaId){
+        ContractLedger contractLedger=this.selectByPrimaryKey(anId);
+        CustFileItem fileItem = (CustFileItem)custWeChatService.fileUpload(anFileTypeName, anFileMediaId);
+        logger.info("custFileItem:"+fileItem);
+        if(fileItem!=null){
+            fileItem.setBatchNo(custFileService.updateCustFileItemInfo(fileItem.getId().toString(), contractLedger.getBatchNo()));
+            contractLedger.setBatchNo(fileItem.getBatchNo());
+            this.updateByPrimaryKey(contractLedger);
+        }else{
+            fileItem=new CustFileItem();
+        }
+        return fileItem;
+    }
+    
+    /***
+     * 修改合同信息-微信端
+     * @param anContractLedger 合同信息
+     * @return
+     */
+    public ContractLedger saveContractLedger(ContractLedger anContractLedger){
+        ContractLedger contractLedger=this.selectByPrimaryKey(anContractLedger.getId());
+        if ("0".equals(contractLedger.getBusinStatus()) == false) {
+            throw new BytterTradeException(40001, "已生效或废止的合同不能修改！");
+        }
+        ContractLedger reqContractLedger=anContractLedger;
+        reqContractLedger.modifyContractLedger(contractLedger);
+        this.updateByPrimaryKey(reqContractLedger);
+        // 添加台账记录
+        addContractLedgerRecode(anContractLedger.getId(),anContractLedger.getBusinStatus());
+        return reqContractLedger;
+    }
+    
+    /***
+     * 根据合同id查询文件信息
+     * @param anContractId
+     * @return
+     */
+    public ContractLedger findFileByContractId(Long anContractId){
+        ContractLedger contractLedger=this.selectByPrimaryKey(anContractId);
+        contractLedger.setCustFileList(custFileService.findCustFiles(contractLedger.getBatchNo()));
+        return contractLedger;
+    }
+    
+    /***
+     * 根据id 删除合同台账
+     * @param anContractId
+     * @return
+     */
+    public boolean deleteContractById(Long anContractId){
+        return this.deleteByPrimaryKey(anContractId)>0;
+    }
+    
+    /**
+     * 微信，删除附件
+     */
+    public boolean deleteContractFile(Long anFileId) {
+        CustFileItem anFile = custFileService.findOne(anFileId);
+        return custFileService.deleteFileItem(anFile.getId(),anFile.getBatchNo());
     }
 }

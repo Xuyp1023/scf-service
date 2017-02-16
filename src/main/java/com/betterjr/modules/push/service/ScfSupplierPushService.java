@@ -44,8 +44,10 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
     public boolean pushSupplierInfo(Long anBillId){
         boolean bool=false;
         try {
+            logger.info("anBillId:"+anBillId);
             // 获取票据信息
             ScfAcceptBill scfAcceptBill=scfAcceptBillService.findAcceptBillDetailsById(anBillId);
+            logger.info("scfAcceptBill:"+scfAcceptBill);
             ScfSupplierPush supplierPush=new ScfSupplierPush();
             supplierPush.initDefValue(scfAcceptBill.getCoreCustNo(),scfAcceptBill.getSupplierNo());
             this.insert(supplierPush);
@@ -57,7 +59,7 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
             String factors = pushCheckService.pushData(scfAcceptBill.getCoreCustNo(),scfAcceptBill.getSupplierNo(),supplierPushDetail);
             supplierPushDetail.setAgencyNo(factors);
             supplierPushDetailService.addPushDetail(supplierPushDetail);
-
+            logger.info("添加推送信息,factors:"+factors);
             // 推送成功后调询价接口
             if(BetterStringUtils.isNotBlank(factors)){
                 ScfEnquiry scfEnquiry=new ScfEnquiry();
@@ -66,11 +68,12 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
                 scfEnquiry.setOrders(supplierPushDetail.getOrderId().toString());
                 scfEnquiry.setRequestType("2");
                 scfEnquiry.setEnquiryMethod("1");
+                logger.info("调用询价："+scfEnquiry);
                 scfEnquiryService.addEnquiry(scfEnquiry);
             }
         }
         catch (Exception e) {
-            logger.error("异常："+e.getMessage());
+            logger.error("异常：",e);
             bool=false;
         }
         return bool;
@@ -93,7 +96,7 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
             return this.updateByPrimaryKey(supplierPush)>0;
         }
         catch (Exception e) {
-            logger.error("异常："+e.getMessage());
+            logger.error("异常：",e);
             bool=false;
         }
         return bool;
@@ -125,7 +128,7 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
             }
             catch (Exception e) {
                 supplierPushDetail.setBusinStatus("0");
-                supplierPushDetail.setRemark("签约提醒推送异常，原因："+e.getMessage());
+                supplierPushDetail.setRemark("签约提醒推送异常，原因："+e);
             }
             supplierPushDetailService.addPushDetail(supplierPushDetail);// 添加明细
         }
@@ -150,7 +153,7 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
         }
         catch (Exception e) {
             supplierPushDetail.setBusinStatus("0");
-            supplierPushDetail.setRemark("融资进度推送异常，原因："+e.getMessage());
+            supplierPushDetail.setRemark("融资进度推送异常，原因："+e);
         }
         supplierPushDetailService.addPushDetail(supplierPushDetail);// 添加明细
     }
@@ -173,7 +176,7 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
         }
         catch (Exception e) {
             supplierPushDetail.setBusinStatus("0");
-            supplierPushDetail.setRemark("询价状态推送异常，原因："+e.getMessage());
+            supplierPushDetail.setRemark("询价状态推送异常，原因："+e);
         }
         supplierPushDetailService.addPushDetail(supplierPushDetail);// 添加明细
     }
