@@ -55,5 +55,12 @@ public class ScfCustAgreementDubboService implements IScfCustAgreementService{
         scfCustAgreementService.saveCustAgreementStatus(anAgreeId, anType);
     }
     
+    public String webDeleteContractAgree(Long anAgreeId){
+        if(scfCustAgreementService.deleteContractAgree(anAgreeId)){
+            return AjaxObject.newOk("删除合同成功").toJson();
+        }else{
+            return AjaxObject.newError("删除合同失败").toJson();
+        }
+    }
 
 }

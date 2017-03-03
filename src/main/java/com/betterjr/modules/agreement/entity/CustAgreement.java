@@ -227,9 +227,11 @@ public class CustAgreement implements BetterjrEntity {
     
     
     @Column(name = "C_DEFAULT",  columnDefinition="VARCHAR" )
-    @MetaData( value="标识", comments = "0系统加入，1前端加入")
+    @MetaData( value="标识", comments = "0系统加入，1前端加入，2可删除")
     private String defaultFlag;
     
+    @Transient
+    private String isDeleted;
     
     private static final long serialVersionUID = 1458113450523L;
 
@@ -475,6 +477,14 @@ public class CustAgreement implements BetterjrEntity {
 
     public void setDefaultFlag(String anDefaultFlag) {
         this.defaultFlag = anDefaultFlag;
+    }
+
+    public String getIsDeleted() {
+        return this.isDeleted;
+    }
+
+    public void setIsDeleted(String anIsDeleted) {
+        this.isDeleted = anIsDeleted;
     }
 
     @Override
