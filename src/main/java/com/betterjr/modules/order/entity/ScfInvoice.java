@@ -180,6 +180,13 @@ public class ScfInvoice implements BetterjrEntity {
     private String description;
     
     /**
+     * 是否可删除标识
+     */
+    @Column(name = "C_DELETED_FLAG",  columnDefinition="VARCHAR" )
+    @MetaData( value="删除标识", comments = "删除标识,2已删除，1默认")
+    private String isDeleted;
+    
+    /**
      * 发票项目详情
      */
     @Transient
@@ -377,6 +384,14 @@ public class ScfInvoice implements BetterjrEntity {
         this.custName = anCustName;
     }
 
+    public String getIsDeleted() {
+        return this.isDeleted;
+    }
+
+    public void setIsDeleted(String anIsDeleted) {
+        this.isDeleted = anIsDeleted;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -404,6 +419,7 @@ public class ScfInvoice implements BetterjrEntity {
         sb.append(", batchNo=").append(batchNo);
         sb.append(", businStatus=").append(businStatus);
         sb.append(", description=").append(description);
+        sb.append(", isDeleted=").append(isDeleted);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

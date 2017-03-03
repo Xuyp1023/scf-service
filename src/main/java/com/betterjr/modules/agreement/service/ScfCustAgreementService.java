@@ -73,7 +73,9 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
     public CustAgreement addCustAgreement(CustAgreement anCustAgreement, String anFileList) {
         //初始化合同默认值
         anCustAgreement.initDefValue(UserUtils.getOperatorInfo(),anCustAgreement.getBuyerNo(), custAccoService.queryCustName(anCustAgreement.getBuyerNo()), custAccoService.queryCustName(anCustAgreement.getSupplierNo()));
-
+        if(BetterStringUtils.isNotBlank(anCustAgreement.getIsDeleted())){
+            anCustAgreement.setDefaultFlag(anCustAgreement.getIsDeleted());
+        }
         // 保存合同附件信息
         anCustAgreement.setBatchNo(custFileService.updateCustFileItemInfo(anFileList, anCustAgreement.getBatchNo()));
 
@@ -142,6 +144,10 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
         }
         
         this.custFileService.deleteFileItem(anId, agree.getBatchNo());
+    }
+    
+    public boolean deleteContractAgree(Long anAgreeId){
+        return this.deleteByPrimaryKey(anAgreeId)>0;
     }
     
     /**
