@@ -75,6 +75,7 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
         anCustAgreement.initDefValue(UserUtils.getOperatorInfo(),anCustAgreement.getBuyerNo(), custAccoService.queryCustName(anCustAgreement.getBuyerNo()), custAccoService.queryCustName(anCustAgreement.getSupplierNo()));
         if(BetterStringUtils.isNotBlank(anCustAgreement.getIsDeleted())){
             anCustAgreement.setDefaultFlag(anCustAgreement.getIsDeleted());
+            anCustAgreement.setStatus("1");// 当从初录添加的贸易合同，默认为已启用状态
         }
         // 保存合同附件信息
         anCustAgreement.setBatchNo(custFileService.updateCustFileItemInfo(anFileList, anCustAgreement.getBatchNo()));
