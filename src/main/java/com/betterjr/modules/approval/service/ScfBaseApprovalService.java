@@ -133,9 +133,9 @@ public class ScfBaseApprovalService {
 	 */
 	public void pushOrderInfo(ScfRequest anRequest) {
 		// 如果是微信发起的流程---发送微信提醒
-		if (BetterStringUtils.equals("2", anRequest.getRequestFrom())) {
+		//if (BetterStringUtils.equals("2", anRequest.getRequestFrom())) {
 			supplierPushService.pushOrderInfo(anRequest);
-		}
+		//}
 	}
 
 }
