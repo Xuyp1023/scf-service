@@ -194,6 +194,11 @@ public class ScfReceivable implements BetterjrEntity {
     @MetaData( value="是否审核，0未审核，1已审核", comments = "是否审核，0未审核，1已审核")
     private String aduit;
     
+    @Transient
+    private String custName;
+    @Transient
+    private String coreCustName;    
+    
     public String getAduit() {
         return this.aduit;
     }
@@ -415,6 +420,22 @@ public class ScfReceivable implements BetterjrEntity {
 
     public void setAgreementList(List<CustAgreement> anAgreementList) {
         this.agreementList = anAgreementList;
+    }
+
+    public String getCustName() {
+        return this.custName;
+    }
+
+    public void setCustName(String anCustName) {
+        this.custName = anCustName;
+    }
+
+    public String getCoreCustName() {
+        return this.coreCustName;
+    }
+
+    public void setCoreCustName(String anCoreCustName) {
+        this.coreCustName = anCoreCustName;
     }
 
     @Override

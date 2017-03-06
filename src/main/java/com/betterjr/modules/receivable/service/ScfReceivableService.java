@@ -19,6 +19,7 @@ import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
+import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.customer.ICustMechBaseService;
 import com.betterjr.modules.document.ICustFileService;
@@ -47,6 +48,9 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
     
     @Reference(interfaceClass = ICustMechBaseService.class)
     private ICustMechBaseService baseService;
+    
+    @Autowired
+    private CustAccountService custAccountService;
     
     /**
      * 应收账款编辑
@@ -156,6 +160,8 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
         anReceivable.setTransportList(new ArrayList<ScfTransport>());
         anReceivable.setInvoiceList(new ArrayList<ScfInvoice>());
         anReceivable.setAcceptBillList(new ArrayList<ScfAcceptBill>());
+        anReceivable.setCustName(custAccountService.queryCustName(anReceivable.getCustNo()));
+        anReceivable.setCoreCustName(custAccountService.queryCustName(anReceivable.getCoreCustNo()));
         for(ScfOrderRelation anOrderRelation : anOrderRelationList) {
             Map<String, Object> queryMap = new HashMap<String, Object>();
             queryMap.put("id", anOrderRelation.getOrderId());
