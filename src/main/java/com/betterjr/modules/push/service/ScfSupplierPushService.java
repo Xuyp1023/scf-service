@@ -151,6 +151,7 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
         catch (Exception e) {
             supplierPushDetail.setBusinStatus("0");
             supplierPushDetail.setRemark("融资进度推送异常，原因："+e.getMessage());
+            e.printStackTrace();
         }
         supplierPushDetailService.addPushDetail(supplierPushDetail);// 添加明细
     }

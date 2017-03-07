@@ -34,6 +34,6 @@ public class ScfSupplyEndFlowService extends ScfBaseApprovalService{
 		String requestNo  = anContext.get("requestNo").toString();
 		BTAssert.notNull(requestNo);
 		this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.FINISH_LOAN.getCode(), RequestLastStatus.LOAN.getCode());
-		this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
+		//this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
 	}
 }
