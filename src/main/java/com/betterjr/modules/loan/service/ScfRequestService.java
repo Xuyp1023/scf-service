@@ -58,6 +58,8 @@ import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.product.entity.ScfProduct;
 import com.betterjr.modules.product.service.ScfProductService;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
+import com.betterjr.modules.template.entity.ScfContractTemplate;
+import com.betterjr.modules.template.service.ScfContractTemplateService;
 import com.betterjr.modules.workflow.data.CustFlowNodeData;
 
 @Service
@@ -93,6 +95,8 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
     private ScfCreditService scfCreditService;
     @Autowired
     private ScfAgreementService agreementService;
+    @Autowired
+    private ScfContractTemplateService contractTemplateService;
     
     @Reference(interfaceClass = ICustMechLawService.class)
     private ICustMechLawService mechLawService;
@@ -917,5 +921,15 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
 			return null;
 		}
 		return this.selectRequest(anMap, anFlag, anPageNum, anPageSize);
+	}
+	
+	public ScfContractTemplate getFactoryContactTemplate(String requestNo, String tempType){
+		 //获取融资信息
+        ScfRequest request = findRequestDetail(requestNo);
+        if (null == request) {
+            logger.error("Can't get request information with request no:" + requestNo);
+            throw new BytterTradeException(40001, "无法获取融资信息");
+        }
+        return contractTemplateService.findTemplateByType(request.getFactorNo(), tempType);
 	}
 }

@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.SpringContextHolder;
 import com.betterjr.modules.agreement.entity.ScfRequestOpinion;
-import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.service.ScfRequestService;
+import com.betterjr.modules.template.service.ScfContractTemplateService;
 
 /**
  * 融资合同管理之核心企业确认书管理
@@ -26,10 +26,12 @@ public class ScfElecOpinionLocalService  extends ScfElecAgreeLocalService {
 
     private ScfRequestOpinionService requestOpinionService = null;
     private ScfRequestService requestService  = null;
+    private ScfContractTemplateService contractTemplateService = null;
 
     protected void subInit(){
        this.requestOpinionService = SpringContextHolder.getBean(ScfRequestOpinionService.class);
        this.requestService = SpringContextHolder.getBean(ScfRequestService.class);
+       this.contractTemplateService = SpringContextHolder.getBean(ScfContractTemplateService.class);
     }
 
     @Override
@@ -46,7 +48,10 @@ public class ScfElecOpinionLocalService  extends ScfElecAgreeLocalService {
  
         //取当前服务器日期作为签署日期
         result.put("signDate", findSignDate());
-
+        
+        //获取保理公司自定义模板
+        result.put("template", requestService.getFactoryContactTemplate(requestNo, getViewModeFile()));
+        
         return result;
     }
 

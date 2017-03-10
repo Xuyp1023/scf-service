@@ -197,7 +197,7 @@ public class EnquiryDubboService implements IScfEnquiryService {
         ScfOffer offer = offerService.selectByPrimaryKey(offerId);
         Map<String, String> msgMap = new HashMap<String, String>();
         ScfEnquiry enquiry = enquiryService.findEnquiryByNo(offer.getEnquiryNo());
-        ScfAcceptBill acceptBill = acceptBillService.findAcceptBill(Long.parseLong(enquiry.getOrders()));
+        ScfAcceptBill acceptBill = acceptBillService.findAcceptBill(Long.parseLong(enquiry.getOrders().split(",")[0]));
         if(null != acceptBill){
             List<ScfOrder> orderList = acceptBill.getOrderList();
             if(!Collections3.isEmpty(orderList)){

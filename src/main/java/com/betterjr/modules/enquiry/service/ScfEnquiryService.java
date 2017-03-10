@@ -186,7 +186,7 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
         if(null != enquiry){
             enquiry.setCustName(custAccountService.queryCustName(enquiry.getCustNo()));
             if(false == BetterStringUtils.isBlank(enquiry.getOrders())){
-                enquiry.setOrder(billService.findAcceptBill(Long.parseLong(enquiry.getOrders())));
+                enquiry.setOrder(billService.findAcceptBill(Long.parseLong(enquiry.getOrders().split(",")[0])));
             }
         }
         return enquiry;
