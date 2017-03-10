@@ -1,28 +1,34 @@
 package com.betterjr.modules.agreement.service;
 
-import com.betterjr.common.config.ParamNames;
-import com.betterjr.common.data.KeyAndValueObject;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.betterjr.common.exception.BytterTradeException;
+import com.betterjr.common.exception.ServiceException;
+import com.betterjr.common.mapper.CustDecimalJsonSerializer;
 import com.betterjr.common.service.FreemarkerService;
 import com.betterjr.common.service.SpringContextHolder;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
-import com.betterjr.common.utils.FileUtils;
+import com.betterjr.common.utils.DictUtils;
 import com.betterjr.common.utils.MathExtend;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.agreement.data.ScfElecAgreementInfo;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
+import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.document.service.DataStoreService;
 import com.betterjr.modules.document.utils.CustFileUtils;
-import com.betterjr.modules.sys.service.SysConfigService;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.betterjr.modules.template.entity.ScfContractTemplate;
 
 /**
  * 融资合同管理，实现电子合同的签署和拒绝等操作，在服务的WEB端
@@ -33,6 +39,7 @@ import org.slf4j.LoggerFactory;
 public abstract class ScfElecAgreeLocalService {
     private static final Logger logger = LoggerFactory.getLogger(ScfElecAgreeLocalService.class);
     protected ScfElecAgreementService elecAgreeService;
+    
 
     protected ScfElecAgreement elecAgree;
     protected FreemarkerService freeMarkerService;
@@ -41,10 +48,13 @@ public abstract class ScfElecAgreeLocalService {
     protected DataStoreService dataStoreService;
 
     private final String WOSIGN_SIGN_FILE = "signFile";
+    private final String SIGN_TEMPLATE_FILE = "signTemplateFile";
+    
 
     protected void init(ScfElecAgreementService anElecAgreeService, ScfElecAgreement anElecAgree) {
         this.elecAgree = anElecAgree;
         this.elecAgreeService = anElecAgreeService;
+        
         this.freeMarkerService = SpringContextHolder.getBean(FreemarkerService.class);
         this.remoteHelper = SpringContextHolder.getBean(ScfFactorRemoteHelper.class);
         this.dataStoreService = SpringContextHolder.getBean(DataStoreService.class);
@@ -131,11 +141,20 @@ public abstract class ScfElecAgreeLocalService {
      */
     public StringBuffer createOutHtmlInfo() {
         Map<String, Object> param = findViewModeData();
-
+        
+        //使用保理公司自定义模板
+        if(null != param.get("template")){
+            logger.info("生成合同---使用保理公司自定义模板");
+            ScfContractTemplate template = (ScfContractTemplate)param.get("template");
+            InputStream  is = dataStoreService.loadFromStoreByBatchNo(template.getBatchNo());
+            return freeMarkerService.processTemplateByFactory(getViewModeFile(), param, "supplychain", is);
+        }
+        
+        //使用系统模板
+        logger.info("生成合同---使用系统默认模板");
         return freeMarkerService.processTemplateByFileNameUnderModule(getViewModeFile(), param, "supplychain");
     }
     
-
     /**
      * 获得输出的模板文件
      * 

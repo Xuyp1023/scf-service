@@ -24,6 +24,7 @@
 		com.betterjr.modules.approval;
 		com.betterjr.modules.param;
 		com.betterjr.modules.enquiry;
+		com.betterjr.modules.template;
 		com.betterjr.modules.order;
 		com.betterjr.modules.receivable;
 		com.betterjr.modules.acceptbill;

@@ -111,10 +111,9 @@ public class ScfAgreementService {
      * @return
      */
     public boolean sendValidCodeByRequestNo(String anRequestNo, String anAgreeType, String vCode){
-//        String appNo=scfElecAgreementService.findElecAgreeByRequestNo(anRequestNo, anAgreeType);
-//        ScfElecAgreeLocalService localService = ScfElecAgreementFactory.create(appNo);
-//        return localService.saveAndSendValidSMS(appNo, vCode);
-        return true;
+        String appNo=scfElecAgreementService.findElecAgreeByRequestNo(anRequestNo, anAgreeType);
+        ScfElecAgreeLocalService localService = ScfElecAgreementFactory.create(appNo);
+        return localService.saveAndSendValidSMS(appNo, vCode);
     }
     
     /***

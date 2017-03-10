@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.SpringContextHolder;
 import com.betterjr.modules.agreement.entity.ScfRequestProtacal;
-import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.service.ScfRequestService;
+import com.betterjr.modules.template.service.ScfContractTemplateService;
 
 /***
  * 三方协议书
@@ -26,10 +26,12 @@ public class ScfElecProtacalLocalService  extends ScfElecAgreeLocalService {
 
     private ScfRequestProtacalService requestProtacalService = null;
     private ScfRequestService requestService  = null;
+    private ScfContractTemplateService contractTemplateService = null;
 
     protected void subInit(){
        this.requestProtacalService = SpringContextHolder.getBean(ScfRequestProtacalService.class);
        this.requestService = SpringContextHolder.getBean(ScfRequestService.class);
+       this.contractTemplateService = SpringContextHolder.getBean(ScfContractTemplateService.class);
     }
 
     @Override
@@ -44,7 +46,10 @@ public class ScfElecProtacalLocalService  extends ScfElecAgreeLocalService {
         result.put("protacalInfo", protacalInfo);
         //取当前服务器日期作为签署日期
         result.put("signDate", findSignDate());
-
+        
+        //获取保理公司自定义模板
+        result.put("template", requestService.getFactoryContactTemplate(requestNo, getViewModeFile()));
+        
         return result;
     }
 

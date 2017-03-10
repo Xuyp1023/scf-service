@@ -1,7 +1,6 @@
 package com.betterjr.modules.agreement.service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -12,10 +11,9 @@ import org.springframework.stereotype.Service;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.SpringContextHolder;
 import com.betterjr.common.utils.Collections3;
-import com.betterjr.modules.agreement.entity.ScfRequestCredit;
 import com.betterjr.modules.agreement.entity.ScfRequestNotice;
-import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.service.ScfRequestService;
+import com.betterjr.modules.template.service.ScfContractTemplateService;
 
 /**
  * 融资合同的转让协议书管理
@@ -30,11 +28,13 @@ public class ScfElecNoticeLocalService extends ScfElecAgreeLocalService {
     private ScfRequestNoticeService requestNoticeService = null;
     private ScfRequestService requestService = null;
     private ScfRequestCreditService requestCreditService;
+    private ScfContractTemplateService contractTemplateService = null;
 
     protected void subInit() {
         this.requestNoticeService = SpringContextHolder.getBean(ScfRequestNoticeService.class);
         this.requestService = SpringContextHolder.getBean(ScfRequestService.class);
         this.requestCreditService = SpringContextHolder.getBean(ScfRequestCreditService.class);
+        this.contractTemplateService = SpringContextHolder.getBean(ScfContractTemplateService.class);
     }
 
     @Override
@@ -63,6 +63,9 @@ public class ScfElecNoticeLocalService extends ScfElecAgreeLocalService {
         logger.info("notice billMap:"+billMap);
         result.put("billMap", billMap);
 
+        //获取保理公司自定义模板
+        result.put("template", requestService.getFactoryContactTemplate(requestNo, getViewModeFile()));
+        
         return result;
     }
 
