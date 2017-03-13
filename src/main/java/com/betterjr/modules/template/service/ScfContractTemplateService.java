@@ -40,6 +40,7 @@ public class ScfContractTemplateService extends BaseService<ScfContractTemplateM
         Map<String, Object> anPropValue = new HashMap<String, Object>();
         anPropValue.put("templateType", anType);
         anPropValue.put("factorNo", anFactorNo);
+        anPropValue.put("templateStatus", "1");
         
         List<ScfContractTemplate> list = this.selectByClassProperty(ScfContractTemplate.class, anPropValue);
         if (Collections3.isEmpty(list) || list.size() == 0) {
@@ -66,8 +67,11 @@ public class ScfContractTemplateService extends BaseService<ScfContractTemplateM
         BTAssert.notNull(anId, "修改数据失败-id不能为空");
         BTAssert.notNull(this.selectByPrimaryKey(anId), "修改数据失败-没找到对应的模板数据");
         
-        this.saveFile(anTemplate, anFileList);
-           
+        if(anFileList.length() > 0){
+        	this.saveFile(anTemplate, anFileList);
+        }
+        
+        anTemplate.setId(anId);
         this.updateByPrimaryKeySelective(anTemplate);
         return anTemplate;
     }
@@ -84,7 +88,8 @@ public class ScfContractTemplateService extends BaseService<ScfContractTemplateM
 	}
 
     public Page<ScfContractTemplate> queryTemplate(Map anMap, int anFlag, int anPageNum, int anPageSize) {
-    	System.out.println(anMap);
+    	String[] dt = new String[]{"factorNo", "templateType", "templateStatue"};
+    	anMap = Collections3.filterMap(anMap, dt);
     	Page<ScfContractTemplate> tempPage = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
     	for (ScfContractTemplate template : tempPage) {
     		String factorName = custAccountService.queryCustName(template.getFactorNo());
