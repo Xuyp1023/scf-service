@@ -23,7 +23,7 @@ import junit.framework.Assert;
  * @author hewei
  *
  */
-public class WosWebserviceTestMain extends BasicServiceTest{
+public class DHRDWebserviceTestMain extends BasicServiceTest{
 
     protected CustKeyManager keyManager ;
     protected String bytterCode;
@@ -39,7 +39,7 @@ public class WosWebserviceTestMain extends BasicServiceTest{
         keyManager = new CustKeyManager("/keys/partner/private.pfx", "123456", "/keys/partner/public.cer");
         bytterCode = "bytter";
         bytterToken = "bytter123456789";
-        custCode = "wos";
+        custCode = "DHRD";
         custToken = "93bdcd8c-aaea-4684-9103-b6bb88e2dd91";
         isHttpCall = true;
     }
