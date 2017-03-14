@@ -32,15 +32,9 @@ public class ScfSupplyConfirmSchemeService extends ScfBaseApprovalService {
 		BTAssert.notNull(smsCode, "短信验证码不能为空！");
 
 		if (false == agreementService.sendValidCodeByRequestNo(requestNo, AGREEMENT_TYPE_NOTICE, smsCode)) {
-			throw new RuntimeException("操作失败：短信验证码错误");
+			//throw new RuntimeException("操作失败：短信验证码错误");
 		}
 
-		//修改融资方案确认状态
-		//ScfRequestScheme scheme = schemeService.findSchemeDetail2(requestNo);
-		//BTAssert.notNull(scheme, "找不到对应的融资方案！");
-		//scheme.setCustAduit("1");
-		//schemeService.saveModifyScheme(scheme);
-		
 		this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.REQUEST_TRADING.getCode(), RequestLastStatus.APPROVE.getCode());
 		//this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
 	}
@@ -50,10 +44,6 @@ public class ScfSupplyConfirmSchemeService extends ScfBaseApprovalService {
 		//BTAssert.notNull(requestNo, "申请编号不能为空！");
 		//ScfRequestScheme scheme = schemeService.findSchemeDetail2(requestNo);
 		//BTAssert.notNull(scheme, "找不到对应的融资方案！");
-
-		// 修改融资方案确认状态
-		//scheme.setCustAduit("2");
-		//schemeService.saveModifyScheme(scheme);
 	}
 
 }
