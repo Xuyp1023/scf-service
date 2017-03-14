@@ -65,13 +65,13 @@ public class RemoteBaseDeSerializer extends RemoteAlgorithmService implements Re
 
     /**
      * 将列表中的子元素合并到一个MAP中
-     * 
+     *
      * @param 处理
      *            的列表信息
      * @param 返回的结果
      */
-    public static void mergeMap(Collection<Object> anData, Map<String, Object> anResult) {
-        for (Object obj : anData) {
+    public static void mergeMap(final Collection<Object> anData, final Map<String, Object> anResult) {
+        for (final Object obj : anData) {
             if (obj instanceof Map) {
                 mergeMap((Map) obj, anResult);
             }
@@ -83,13 +83,13 @@ public class RemoteBaseDeSerializer extends RemoteAlgorithmService implements Re
 
     /**
      * 将Map中的子元素合并到一个Map中
-     * 
+     *
      * @param 需要处理的Map
      * @param 返回的结果
      */
-    public static void mergeMap(Map<String, Object> anData, Map<String, Object> anResult) {
-        for (Map.Entry<String, Object> ent : anData.entrySet()) {
-            Object obj = ent.getValue();
+    public static void mergeMap(final Map<String, Object> anData, final Map<String, Object> anResult) {
+        for (final Map.Entry<String, Object> ent : anData.entrySet()) {
+            final Object obj = ent.getValue();
             if (obj instanceof Map) {
 
                 mergeMap((Map) obj, anResult);
@@ -105,7 +105,7 @@ public class RemoteBaseDeSerializer extends RemoteAlgorithmService implements Re
     }
 
     @Override
-    public void init(WorkFarFunction anFunc, RemoteConnection anConn, Map<String, FarConfigInfo> anConfigInfo, CustKeyManager anKeyManager) {
+    public void init(final WorkFarFunction anFunc, final RemoteConnection anConn, final Map<String, FarConfigInfo> anConfigInfo, final CustKeyManager anKeyManager) {
         initParameter(anConfigInfo, anKeyManager);
         this.func = anFunc;
         if (anFunc == null) {
@@ -115,32 +115,34 @@ public class RemoteBaseDeSerializer extends RemoteAlgorithmService implements Re
         this.data = anConn.readStream().toString();
     }
 
+    @Override
     public List<Map<String, Object>> readResult() {
 
         return null;
     }
 
     @Override
-    public WSInfo readInput(Map<String, String> formPara, WorkFarFaceInfo faceInfo) {
+    public WSInfo readInput(final Map<String, String> formPara, final WorkFarFaceInfo faceInfo) {
         try {
-            String globalToken = formPara.get(WSInfo.RequestFieldTokenString);
+            final String globalToken = formPara.get(WSInfo.RequestFieldTokenString);
 
-            String configGlobalToken = this.getString("partnerToken");
+            final String configGlobalToken = this.getString("partnerToken");
             if (!globalToken.equalsIgnoreCase(configGlobalToken)) {
                 return WSInfo.buildErrOutput(WebServiceErrorCode.E1001, faceInfo);
             }
             // 先根据partnerCode定义合作伙伴，token可以定时更换，大家约定一致，避免外部攻击。
 
-            String partnerCode = formPara.get(WSInfo.RequestFieldPartnerCodeString);
-            String sign = formPara.get(WSInfo.RequestFieldSignString);
-            String reqData = formPara.get(WSInfo.RequestFieldDataString);
+            final String partnerCode = formPara.get(WSInfo.RequestFieldPartnerCodeString);
+            final String sign = formPara.get(WSInfo.RequestFieldSignString);
+            final String reqData = formPara.get(WSInfo.RequestFieldDataString);
+            final String cert = formPara.get(WSInfo.RequestFieldCertString);
 
             String decodedData = null;
             if (this.getBoolean("encrypt_use", true)) {
                 try {
                     decodedData = this.keyManager.decrypt(reqData);
                 }
-                catch (Exception ex) {
+                catch (final Exception ex) {
                     logger.error("decrypt data has error");
                     return WSInfo.buildErrOutput(WebServiceErrorCode.E1007, faceInfo);
                 }
@@ -149,21 +151,21 @@ public class RemoteBaseDeSerializer extends RemoteAlgorithmService implements Re
                 decodedData = reqData;
             }
             if (this.getBoolean("sign_Data", true)) {
-                boolean verifyResult = this.keyManager.verifySign(decodedData, sign);
+                final boolean verifyResult = this.keyManager.verifySign(decodedData, sign);
                 if (verifyResult == false) {
                     return WSInfo.buildErrOutput(WebServiceErrorCode.E1002, faceInfo);
                 }
             }
             logger.debug("reqData=" + decodedData);
 
-            Map<String, Object> objMap = prepareInputDataMap(decodedData);
-            String opType = (String) objMap.get(WSInfo.RequestDataOptypeString);
-            Object data = objMap.get(WSInfo.RequestDataDataString);
-            String token = (String) objMap.get(WSInfo.RequestDataTokenString);
+            final Map<String, Object> objMap = prepareInputDataMap(decodedData);
+            final String opType = (String) objMap.get(WSInfo.RequestDataOptypeString);
+            final Object data = objMap.get(WSInfo.RequestDataDataString);
+            final String token = (String) objMap.get(WSInfo.RequestDataTokenString);
             try {
                 this.func = faceInfo.findFuncWithFace(opType);
             }
-            catch (Exception ex) {
+            catch (final Exception ex) {
                 logger.error("get function failed!:", ex);
                 return WSInfo.buildErrOutput(WebServiceErrorCode.E1003, faceInfo);
             }
@@ -172,11 +174,14 @@ public class RemoteBaseDeSerializer extends RemoteAlgorithmService implements Re
 
                 return WSInfo.buildErrOutput(WebServiceErrorCode.E1003, faceInfo);
             }
-            
+
             if (data instanceof Map) {
-                String attachData = this.getString(ATTACH_DATA, null);
+                final String attachData = this.getString(ATTACH_DATA, null);
                 if (BetterStringUtils.isNotBlank(attachData)){
                     ((Map) data).put(ATTACH_DATA, attachData);
+                }
+                if (BetterStringUtils.isNotBlank(cert)) {
+                    ((Map) data).put("cert", cert);
                 }
             }
             ParamValueHelper.init(faceInfo, func, data);
@@ -184,8 +189,8 @@ public class RemoteBaseDeSerializer extends RemoteAlgorithmService implements Re
             Object inputObj = null;
             if (this.getBoolean("process_Input", true)) {
                 if (data instanceof Collection) {
-                    List list = new ArrayList();
-                    for (Object obj : ((Collection) data)) {
+                    final List list = new ArrayList();
+                    for (final Object obj : ((Collection) data)) {
                         list.add(this.processInput(obj));
                     }
                     inputObj = list;
@@ -200,30 +205,30 @@ public class RemoteBaseDeSerializer extends RemoteAlgorithmService implements Re
 
             return WSInfo.buildInput(globalToken, partnerCode, objMap, opType, token, inputObj);
         }
-        catch (Exception ex) {
+        catch (final Exception ex) {
             logger.error("not declare error ", ex);
             return WSInfo.buildErrOutput(WebServiceErrorCode.E9999, faceInfo);
         }
     }
 
-    protected Map<String, Object> prepareInputDataMap(String decodedData) {
-        Map<String, Object> objMap = JsonMapper.parserJson(decodedData);
+    protected Map<String, Object> prepareInputDataMap(final String decodedData) {
+        final Map<String, Object> objMap = JsonMapper.parserJson(decodedData);
         return objMap;
     }
 
-    protected Object processInput(Object input) {
+    protected Object processInput(final Object input) {
 
         if (!Map.class.isInstance(input)) {
             throw new BytterException(305068, "json invalid, Please Check");
         }
 
-        DataConverterService converter = new DataConverterService(this.func.getWorkFace().getInConvertMap());
-        BetterjrBaseInputHelper inputHelper = new BetterjrBaseInputHelper((Map) input, converter);
+        final DataConverterService converter = new DataConverterService(this.func.getWorkFace().getInConvertMap());
+        final BetterjrBaseInputHelper inputHelper = new BetterjrBaseInputHelper((Map) input, converter);
 
         Class inputCls = func.getWorkReturnClass();
         inputCls = BTObjectUtils.defaultIfNull(inputCls, Map.class);
 
-        Object obj = inputHelper.readObject(inputCls, func.getPropMap());
+        final Object obj = inputHelper.readObject(inputCls, func.getPropMap());
         logger.info("processInput " + obj);
         return obj;
     }
