@@ -27,33 +27,40 @@ public class ScfContractTemplateService extends BaseService<ScfContractTemplateM
     private CustAccountService custAccountService;
     
     public ScfContractTemplate addTemplate(ScfContractTemplate anTemplate, String anFileList){
+    	Map<String, Object> anPropValue = new HashMap<String, Object>();
+        anPropValue.put("templateType", anTemplate.getTemplateType());
+        anPropValue.put("factorNo", anTemplate.getFactorNo());
+    	BTAssert.isNull(findTemplate(anPropValue), "该企业自定义模板中已存在此类模板，不允许重复添加！");
+    	
         this.saveFile(anTemplate, anFileList);
-		
         anTemplate.initValue();
         this.insert(anTemplate);
         return anTemplate;
     }
     
-    public ScfContractTemplate findTemplateByType(Long anFactorNo, String anType){
+    public ScfContractTemplate findTemplateByType(Long anFactorNo, String anType, String anStatus){
         BTAssert.notNull(anFactorNo, "核心企业编号不允许为空！");
         BTAssert.notNull(anType, "模板类型不允许为空！");
         Map<String, Object> anPropValue = new HashMap<String, Object>();
         anPropValue.put("templateType", anType);
         anPropValue.put("factorNo", anFactorNo);
-        anPropValue.put("templateStatus", "1");
+        anPropValue.put("templateStatus", anStatus);
         
-        List<ScfContractTemplate> list = this.selectByClassProperty(ScfContractTemplate.class, anPropValue);
-        if (Collections3.isEmpty(list) || list.size() == 0) {
-            logger.debug("没有查到模板数据！");
-            return null;
-        }
-
-        return Collections3.getFirst(list);
+        return findTemplate(anPropValue);
     }
     
     public ScfContractTemplate findTemplate(Long anId){
         BTAssert.notNull(anId, "id不能为空！");
         return this.selectByPrimaryKey(anId);
+    }
+    
+    private ScfContractTemplate findTemplate(Map<String, Object> anPropValue){
+    	List<ScfContractTemplate> list = this.selectByClassProperty(ScfContractTemplate.class, anPropValue);
+        if (Collections3.isEmpty(list) || list.size() == 0) {
+            logger.debug("没有查到模板数据！");
+            return null;
+        }
+        return Collections3.getFirst(list);
     }
     
      /**

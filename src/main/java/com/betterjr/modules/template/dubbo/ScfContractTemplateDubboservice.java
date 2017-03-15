@@ -19,7 +19,7 @@ public class ScfContractTemplateDubboservice implements IContractTemplateService
     
     @Override
     public String webFindTemplateByType(Long anFactorNo, String anType){
-        return AjaxObject.newOk("合同模板-查询 成功", contractTemplateService.findTemplateByType(anFactorNo, anType)).toJson();
+        return AjaxObject.newOk("合同模板-查询 成功", contractTemplateService.findTemplateByType(anFactorNo, anType, "1")).toJson();
     }
 
     @Override
