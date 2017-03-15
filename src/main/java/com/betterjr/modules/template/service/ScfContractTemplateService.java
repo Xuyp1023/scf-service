@@ -27,6 +27,7 @@ public class ScfContractTemplateService extends BaseService<ScfContractTemplateM
     private CustAccountService custAccountService;
     
     public ScfContractTemplate addTemplate(ScfContractTemplate anTemplate, String anFileList){
+    	//重复检查
     	Map<String, Object> anPropValue = new HashMap<String, Object>();
         anPropValue.put("templateType", anTemplate.getTemplateType());
         anPropValue.put("factorNo", anTemplate.getFactorNo());
@@ -83,8 +84,12 @@ public class ScfContractTemplateService extends BaseService<ScfContractTemplateM
         return anTemplate;
     }
 
+    /**
+     * 保存上存的文件
+     * @param anTemplate
+     * @param anFileList
+     */
 	private void saveFile(ScfContractTemplate anTemplate, String anFileList) {
-		//保存上存的文件
 		Long batchNo = custFileService.updateCustFileItemInfo(anFileList, null);
 		anTemplate.setBatchNo(batchNo);
 		
