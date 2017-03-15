@@ -39,6 +39,8 @@ import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.modules.cert.entity.CustCertInfo;
 import com.betterjr.modules.cert.service.CustCertService;
 import com.betterjr.modules.fund.IFundClientWebService;
+import com.betterjr.modules.supplychain.data.CoreCustInfo;
+import com.betterjr.modules.supplychain.service.ScfClientService;
 
 /**
  * @author liuwl
@@ -47,6 +49,8 @@ import com.betterjr.modules.fund.IFundClientWebService;
 @Service(interfaceClass = IFundClientWebService.class)
 public class FundClientWebServiceDubboService implements IFundClientWebService {
     private final static Logger logger = LoggerFactory.getLogger(FundClientWebServiceDubboService.class);
+
+    protected static final String ATTACH_DATA = "attachData";
 
     @Autowired
     private CustCertService certService;
@@ -116,11 +120,14 @@ public class FundClientWebServiceDubboService implements IFundClientWebService {
 
         final String data = this.custKeyManager.decrypt(anData);
 
-        if (SignHelper.verifySign(data, anSign, cert)) {
+        final String operOrg = (String)anMap.get(ATTACH_DATA);
+        final CoreCustInfo  coreCustInfo = ScfClientService.findCoreCustInfoByOperOrg(operOrg);
+
+        if (coreCustInfo != null && SignHelper.verifySign(data, anSign, cert)) {
             final Map<String, Object> param = JsonMapper.parserJson(data);
 
             final String requestNo = (String) param.get("requestNo");
-            final String custNo = (String) param.get("custNo");
+            final String custNo = coreCustInfo.getCustNo().toString();
 
             final Map<String, String> anParam = new HashMap<String, String>();
             anParam.put("token", SpringPropertyResourceReader.getProperty("fund.token", "12345678"));
@@ -156,11 +163,15 @@ public class FundClientWebServiceDubboService implements IFundClientWebService {
 
         final String data = this.custKeyManager.decrypt(anData);
 
-        if (SignHelper.verifySign(data, anSign, cert)) {
+        final String operOrg = (String)anMap.get(ATTACH_DATA);
+        final CoreCustInfo  coreCustInfo = ScfClientService.findCoreCustInfoByOperOrg(operOrg);
+
+        if (coreCustInfo != null && SignHelper.verifySign(data, anSign, cert)) {
             final Map<String, Object> param = JsonMapper.parserJson(data);
 
             final String requestNo = (String) param.get("requestNo");
-            final String custNo = (String) param.get("custNo");
+            final String custNo = coreCustInfo.getCustNo().toString();
+
             final Map<String, String> anParam = new HashMap<String, String>();
             anParam.put("token", SpringPropertyResourceReader.getProperty("fund.token", "12345678"));
             anParam.put("requestNo", requestNo);
@@ -194,11 +205,15 @@ public class FundClientWebServiceDubboService implements IFundClientWebService {
 
         final String data = this.custKeyManager.decrypt(anData);
 
-        if (SignHelper.verifySign(data, anSign, cert)) {
+        final String operOrg = (String)anMap.get(ATTACH_DATA);
+        final CoreCustInfo  coreCustInfo = ScfClientService.findCoreCustInfoByOperOrg(operOrg);
+
+        if (coreCustInfo != null && SignHelper.verifySign(data, anSign, cert)) {
             final Map<String, Object> param = JsonMapper.parserJson(data);
 
+            final String custNo = coreCustInfo.getCustNo().toString();
+
             final String requestNo = (String) param.get("requestNo");
-            final String custNo = (String) param.get("custNo");
             final String noticeType = (String) param.get("noticeType");
             final String aduitStatus = (String) param.get("aduitStatus");
             final String businFlag = (String) param.get("businFlag");
