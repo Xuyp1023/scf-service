@@ -147,7 +147,7 @@ public abstract class ScfElecAgreeLocalService {
             logger.info("生成合同---使用保理公司自定义模板");
             ScfContractTemplate template = (ScfContractTemplate)param.get("template");
             InputStream  is = dataStoreService.loadFromStoreByBatchNo(template.getBatchNo());
-            return freeMarkerService.processTemplateByFactory(getViewModeFile(), param, "supplychain", is);
+            return freeMarkerService.processTemplateByFactory(getViewModeFile()+ "_" + template.getFactorNo(), param, "supplychain", is);
         }
         
         //使用系统模板
