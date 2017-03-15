@@ -930,6 +930,6 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
             logger.error("Can't get request information with request no:" + requestNo);
             throw new BytterTradeException(40001, "无法获取融资信息");
         }
-        return contractTemplateService.findTemplateByType(request.getFactorNo(), tempType);
+        return contractTemplateService.findTemplateByType(request.getFactorNo(), tempType, "1");
 	}
 }
