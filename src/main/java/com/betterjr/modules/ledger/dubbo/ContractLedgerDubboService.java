@@ -107,5 +107,73 @@ public class ContractLedgerDubboService implements IContractLedgerService{
         return AjaxObject.newOk("查询合同台账记录",contractLedgerService.findContractLedgerRecode(anContractId)).toJson();
     }
     
+    /***
+     * 微信端添加合同台账信息
+     * @param anMap
+     * @return
+     */
+    public String webWechatAddContractLedger(Map<String, Object> anMap){
+//        ContractLedger contractLedger=(ContractLedger)RuleServiceDubboFilterInvoker.getInputObj();
+        ContractLedger contractLedger=new ContractLedger();
+        BeanMapper.copy(anMap, contractLedger);
+        return AjaxObject.newOk("添加合同台账",contractLedgerService.addContractLedger(contractLedger)).toJson();
+    }
     
+    /***
+     * 保存合同台账附件
+     * @param id 合同台账id
+     * @param fileTypeName 文件类型名称
+     * @param fileMediaId  文件
+     * @return
+     */
+    public String webSaveContractLedgerFile(Long anId,String anFileTypeName,String anFileMediaId){
+        return AjaxObject.newOk("保存合同台账附件",contractLedgerService.saveContractLedgerFile(anId,anFileTypeName,anFileMediaId)).toJson();
+    }
+    
+    /***
+     * 修改微信端合同台账
+     * @param anMap
+     * @return
+     */
+    public String webWechatSaveContractLedger(Map<String, Object> anMap){
+//        ContractLedger contractLedger=(ContractLedger)RuleServiceDubboFilterInvoker.getInputObj();
+        ContractLedger contractLedger=new ContractLedger();
+        BeanMapper.copy(anMap, contractLedger);
+        return AjaxObject.newOk("添加合同台账",contractLedgerService.saveContractLedger(contractLedger)).toJson();
+    }
+    
+    /***
+     * 根据合同编号查询合同附件信息
+     * @param anContractId
+     * @return
+     */
+    public String webFindFileByContractId(Long anContractId){
+        return AjaxObject.newOk("根据合同编号查询合同附件信息",contractLedgerService.findFileByContractId(anContractId)).toJson();
+    }
+    
+    /***
+     * 删除合同台账
+     * @param anContractId
+     * @return
+     */
+    public String webDeleteContractById(Long anContractId){
+        if(contractLedgerService.deleteContractById(anContractId)){
+            return AjaxObject.newOk("删除成功").toJson();
+        }else{
+            return AjaxObject.newError("删除失败").toJson();
+        }
+    }
+    
+    /***
+     * 删除合同附件
+     * @param anContractId
+     * @return
+     */
+    public String webDeleteContractFile(Long anFileId){
+        if(contractLedgerService.deleteContractFile(anFileId)){
+            return AjaxObject.newOk("删除成功").toJson();
+        }else{
+            return AjaxObject.newError("删除失败").toJson();
+        }
+    }
 }

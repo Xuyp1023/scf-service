@@ -1,11 +1,15 @@
 package com.betterjr.modules.ledger.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
+import com.betterjr.modules.document.entity.CustFileItem;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.persistence.*;
@@ -101,6 +105,8 @@ public class ContractLedger  implements BetterjrEntity {
     
     @Column(name = "c_sign_addr",  columnDefinition="VARCHAR" )
     private String signAddr;
+    
+    private List<CustFileItem> custFileList=new ArrayList<CustFileItem>();
 
     private static final long serialVersionUID = -2337760108713768519L;
 
@@ -318,6 +324,14 @@ public class ContractLedger  implements BetterjrEntity {
 
     public void setSignAddr(String anSignAddr) {
         this.signAddr = anSignAddr;
+    }
+
+    public List<CustFileItem> getCustFileList() {
+        return this.custFileList;
+    }
+
+    public void setCustFileList(List<CustFileItem> anCustFileList) {
+        this.custFileList = anCustFileList;
     }
 
     @Override
