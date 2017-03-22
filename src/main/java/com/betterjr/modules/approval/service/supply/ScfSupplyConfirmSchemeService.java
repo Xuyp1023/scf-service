@@ -36,7 +36,7 @@ public class ScfSupplyConfirmSchemeService extends ScfBaseApprovalService {
 		}
 
 		this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.REQUEST_TRADING.getCode(), RequestLastStatus.APPROVE.getCode());
-		//this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
+		this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
 	}
 
 	public void processReject(Map<String, Object> anContext) {
