@@ -779,6 +779,25 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
        return agreeList;
    }
    
+   public Long getCoreCustNoByMaster(String anId, String anType){
+	   List list = getSubjectMaster(anId, anType);
+	   if(Collections3.isEmpty(list)){
+		   return null;
+	   }
+	   
+	   if(BetterStringUtils.equals("1", anType)) {
+    	   return ((ScfOrder)list.get(0)).getCoreCustNo();
+       }
+       else if(BetterStringUtils.equals("2", anType)) {
+    	   return ((ScfAcceptBill)list.get(0)).getCoreCustNo();
+       }
+       else if(BetterStringUtils.equals("3", anType)) {
+    	   return ((ScfReceivable)list.get(0)).getCoreCustNo();
+       }
+	   
+	   return null;
+   }
+   
    /**
     * 根据资料id和资料类型查询融资实体
     */
