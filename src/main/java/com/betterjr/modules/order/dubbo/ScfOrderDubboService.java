@@ -77,6 +77,11 @@ public class ScfOrderDubboService implements IScfOrderService{
     }
     
     @Override
+    public String webFindCoreCustNo(String anId, String anType){
+        return AjaxObject.newOk("查询标的物", scfOrderService.getCoreCustNoByMaster(anId, anType)).toJson();
+    }
+    
+    @Override
     public String webFindRequestByInfoId(Long anInfoId, String anInfoType){
         return AjaxObject.newOk("根据资料id和资料类型查询融资实体", scfOrderService.findRequestByInfoId(anInfoId, anInfoType)).toJson();
     }
