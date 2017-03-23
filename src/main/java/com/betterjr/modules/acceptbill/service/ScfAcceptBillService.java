@@ -48,6 +48,7 @@ import com.betterjr.modules.order.service.ScfOrderRelationService;
 import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.push.service.ScfSupplierPushService;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
+import com.betterjr.modules.wechat.ICustWeChatService;
 
 @Service
 public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAcceptBill> implements IScfOrderInfoCheckService {
@@ -80,6 +81,12 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
     
     @Autowired
     private ScfSupplierPushService supplierPushService; 
+    
+    @Reference(interfaceClass=ICustWeChatService.class)
+    private ICustWeChatService custWeChatService;
+    
+    @Reference(interfaceClass=ICustFileService.class)
+    private ICustFileService custFileService;
     
     /**
      * 批量获取票据对应的相关文件信息
@@ -643,6 +650,20 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         anAcceptBill.setBatchNo(custFileDubboService.updateCustFileItemInfo( anFileId.toString(),anAcceptBill.getBatchNo()));
         
         return this.updateByPrimaryKey(anAcceptBill) ==1; 
+    }
+    
+    public CustFileItem saveBillFile(Long anBillId,String anFileTypeName,String anFileMediaId){
+        ScfAcceptBill anAcceptBill = this.selectByPrimaryKey(anBillId);
+        CustFileItem fileItem = (CustFileItem)custWeChatService.fileUpload(anFileTypeName, anFileMediaId);
+        logger.info("custFileItem:"+fileItem);
+        if(fileItem!=null){
+            fileItem.setBatchNo(custFileService.updateCustFileItemInfo(fileItem.getId().toString(), anAcceptBill.getBatchNo()));
+            anAcceptBill.setBatchNo(fileItem.getBatchNo());
+            this.updateByPrimaryKey(anAcceptBill);
+        }else{
+            fileItem=new CustFileItem();
+        }
+        return fileItem;
     }
     
 }
