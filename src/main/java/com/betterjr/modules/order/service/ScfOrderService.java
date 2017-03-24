@@ -88,10 +88,10 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         Page<ScfOrder> anOrderList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "businStatus,orderNo");
 
         for (ScfOrder anOrder : anOrderList) {
-            anOrder.setCustName(custAccountService.queryCustName(anOrder.getCustNo()));
-            anOrder.setCoreCustName(custAccountService.queryCustName(anOrder.getCoreCustNo()));
+            anOrder.setCustName(custAccountService.queryCustName(anOrder.getCustNo()));//通过T_SCF_ORDER的客户Id查询客户名称
+            anOrder.setCoreCustName(custAccountService.queryCustName(anOrder.getCoreCustNo()));//通过T_SCF_ORDER的核心客户Id查询客户名称
             Map<String, Object> orderIdMap = new HashMap<String, Object>();
-            orderIdMap.put("orderId", anOrder.getId());
+            orderIdMap.put("orderId", anOrder.getId());//通过订单表id查询与订单关系表相关联的流水信息
             List<ScfOrderRelation> orderRelationList = orderRelationService.findOrderRelation(orderIdMap);
             fillOrderInfo(anOrder, orderRelationList);
         }

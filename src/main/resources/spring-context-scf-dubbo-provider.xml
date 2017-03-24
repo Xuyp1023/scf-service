@@ -43,6 +43,7 @@
         com.betterjr.modules.customer;
         com.betterjr.modules.agreement.service;
         com.betterjr.modules.ledger;
+        com.betterjr.modules.version;
 		com.betterjr.common" />
 	<!-- <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" 
 		p:host-name="192.168.2.49" p:port="6379" /> <bean id="stringRedisSerializer" 
