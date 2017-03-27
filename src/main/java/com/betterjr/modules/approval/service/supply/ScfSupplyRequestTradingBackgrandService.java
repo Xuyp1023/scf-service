@@ -14,11 +14,9 @@ import com.betterjr.modules.agreement.service.ScfAgreementService;
 import com.betterjr.modules.agreement.service.ScfElecAgreementService;
 import com.betterjr.modules.approval.service.ScfBaseApprovalService;
 import com.betterjr.modules.loan.entity.ScfRequest;
-import com.betterjr.modules.loan.entity.ScfRequestScheme;
 import com.betterjr.modules.loan.helper.RequestLastStatus;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
 import com.betterjr.modules.loan.helper.RequestType;
-import com.betterjr.modules.loan.service.ScfRequestSchemeService;
 import com.betterjr.modules.push.service.ScfSupplierPushService;
 
 @Service
@@ -27,8 +25,6 @@ public class ScfSupplyRequestTradingBackgrandService extends ScfBaseApprovalServ
     private ScfElecAgreementService elecAgreementService;  
     @Autowired
     private ScfSupplierPushService supplierPushService;
-    @Autowired
-    private ScfRequestSchemeService schemeService;
     @Autowired
     private ScfAgreementService agreementService;
     
@@ -39,11 +35,6 @@ public class ScfSupplyRequestTradingBackgrandService extends ScfBaseApprovalServ
         
         //生成-应收账款转让确认意见确认书
         agreementService.transOpinion(requestService.getOption(request));
-        
-        //修改融资方案--核心企业确认状态（待确认）
-        //ScfRequestScheme scheme = schemeService.findSchemeDetail2(requestNo);
-        //scheme.setCoreCustAduit("0");
-        //schemeService.saveModifyScheme(scheme);
         
         this.pushSingInof(request);
         this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.CONFIRM_TRADING.getCode(), RequestLastStatus.APPROVE.getCode());

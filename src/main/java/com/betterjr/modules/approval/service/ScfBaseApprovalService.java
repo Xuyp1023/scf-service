@@ -1,11 +1,8 @@
 package com.betterjr.modules.approval.service;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.modules.credit.entity.ScfCreditInfo;
 import com.betterjr.modules.credit.service.ScfCreditDetailService;
 import com.betterjr.modules.enquiry.entity.ScfOffer;

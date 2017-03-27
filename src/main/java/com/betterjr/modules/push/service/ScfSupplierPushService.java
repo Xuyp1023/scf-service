@@ -14,7 +14,6 @@ import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.agreement.service.ScfElecAgreementService;
-import com.betterjr.modules.customer.data.CustRelationData;
 import com.betterjr.modules.enquiry.entity.ScfEnquiry;
 import com.betterjr.modules.enquiry.service.ScfEnquiryService;
 import com.betterjr.modules.loan.entity.ScfRequest;
