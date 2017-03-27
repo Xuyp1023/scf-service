@@ -39,12 +39,12 @@ public class ScfSellerOfferSchemeService extends ScfBaseApprovalService{
 	 */
 	private void pushSingInfo(ScfRequestScheme scheme) {
 		ScfRequest request = requestService.selectByPrimaryKey(scheme.getRequestNo());
-        if (BetterStringUtils.equals("2", request.getRequestFrom())) {
+        //if (BetterStringUtils.equals("2", request.getRequestFrom())) {
             List<ScfElecAgreementInfo> list = elecAgreementService.findElecAgreeByOrderNo(scheme.getRequestNo(), "0");
             if(false == Collections3.isEmpty(list)){
                 supplierPushService.pushSignInfo(Collections3.getFirst(list));
             }
-        }
+       // }
 	}
 	
 }

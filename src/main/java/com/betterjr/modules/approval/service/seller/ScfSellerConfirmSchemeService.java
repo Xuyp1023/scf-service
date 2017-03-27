@@ -26,9 +26,9 @@ public class ScfSellerConfirmSchemeService extends ScfBaseApprovalService {
         ScfRequestScheme scheme = schemeService.findSchemeDetail2(requestNo);
         BTAssert.notNull(scheme);
        
-        //if(false == agreementService.sendValidCodeByRequestNo(requestNo, AGREEMENT_TYPE_PROTOCOL, smsCode)){
+        if(false == agreementService.sendValidCodeByRequestNo(requestNo, AGREEMENT_TYPE_PROTOCOL, smsCode)){
         	//throw new RuntimeException("操作失败：短信验证码错误");
-        //}
+        }
 	        
 		//修改融资方案确认状态
         //scheme.setCustAduit("1");
