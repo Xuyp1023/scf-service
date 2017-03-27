@@ -17,6 +17,8 @@ import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.MathExtend;
 import com.betterjr.modules.account.dubbo.interfaces.ICustInfoService;
+import com.betterjr.modules.customer.ICustMechBankAccountService;
+import com.betterjr.modules.customer.entity.CustMechBankAccount;
 import com.betterjr.modules.rule.service.BusinRuleService;
 import com.betterjr.modules.supplychain.dao.CustTempEnrollInfoMapper;
 import com.betterjr.modules.supplychain.entity.CoreSupplierInfo;
@@ -36,9 +38,11 @@ public class SupplyAccoRequestService extends BaseService<CustTempEnrollInfoMapp
     @Autowired
     private BusinRuleService businRuleService;
 
-    @Autowired
     @Reference(interfaceClass = ICustInfoService.class)
     private ICustInfoService accountService;
+
+    @Reference(interfaceClass = ICustMechBankAccountService.class)
+    ICustMechBankAccountService custMechBankAccountService;
 
     /**
      * 添加供应商客户账户
@@ -235,5 +239,14 @@ public class SupplyAccoRequestService extends BaseService<CustTempEnrollInfoMapp
             tmpEnroll.initDefOpenAccoValue();
             this.insert(tmpEnroll);
         }
+    }
+
+    /**
+     * @param anTmpAccoName
+     * @param anTmpAcco
+     * @param anCoreOperOrg
+     */
+    public CustMechBankAccount findCustMechBankAccount(final String anTmpAccoName, final String anTmpAcco) {
+        return custMechBankAccountService.findCustMechBankAccount(anTmpAcco, anTmpAccoName);
     }
 }

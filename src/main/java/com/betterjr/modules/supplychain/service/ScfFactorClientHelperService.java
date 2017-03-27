@@ -26,6 +26,7 @@ import com.betterjr.common.utils.reflection.ReflectionUtils;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
 import com.betterjr.modules.client.data.ScfClientDataParentFace;
 import com.betterjr.modules.customer.ICustRelationService;
+import com.betterjr.modules.customer.entity.CustMechBankAccount;
 import com.betterjr.modules.supplychain.data.ScfClientDataDetail;
 import com.betterjr.modules.supplychain.data.ScfClientDataInfo;
 import com.betterjr.modules.supplychain.entity.CustCoreCorpInfo;
@@ -224,11 +225,17 @@ public class ScfFactorClientHelperService {
                     if (tempEnroll == null){
                         tmpAcco = clientData.getBankAccount();
                         tmpAccoName = clientData.findBankAccountName();
+                        tempEnroll = supplyAccoService.findUnRegisterAccount(tmpAccoName, tmpAcco, false);
                     }
-                    tempEnroll = supplyAccoService.findUnRegisterAccount(tmpAccoName, tmpAcco, false);
                     if (tempEnroll != null){
                         clientData.setCustNo(tempEnroll.getCustNo());
                         clientData.setOperOrg(tempEnroll.getOperOrg());
+                    } else {
+                        final CustMechBankAccount bankAccount = supplyAccoService.findCustMechBankAccount(tmpAccoName, tmpAcco);
+                        if (bankAccount != null) {
+                            clientData.setCustNo(bankAccount.getCustNo());
+                            clientData.setOperOrg(bankAccount.getOperOrg());
+                        }
                     }
                 }
             } // 其它情况不能处理，不属于处理的范围
