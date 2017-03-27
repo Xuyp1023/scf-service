@@ -2,15 +2,21 @@ package com.betterjr.modules.supplychain.entity;
 
 import java.util.Map;
 
-import com.betterjr.common.annotation.*;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.mapper.BeanMapper;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.MathExtend;
 import com.betterjr.modules.client.data.ScfClientDataParentFace;
-
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -64,8 +70,8 @@ public class ScfSupplierBank implements ScfClientDataParentFace {
      */
     @Column(name = "C_BANKACCONAME",  columnDefinition="VARCHAR" )
     @MetaData( value="银行户名", comments = "银行户名")
-    private String bankAccountName;   
-    
+    private String bankAccountName;
+
 
     /**
      * 联行号
@@ -151,21 +157,29 @@ public class ScfSupplierBank implements ScfClientDataParentFace {
     @MetaData( value="客户在资金管理系统中的客户号", comments = "客户在资金管理系统中的客户号")
     private String btNo;
 
+    @JsonIgnore
+    @Column(name = "C_CORE_OPERORG", columnDefinition = "VARCHAR")
+    @MetaData(value = "操作员所在机构", comments = "数据所属核心企业")
+    private String coreOperOrg;
+
+
     private static final long serialVersionUID = 5567237665659725591L;
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
+    @Override
     public Long getCustNo() {
         return custNo;
     }
 
-    public void setCustNo(Long custNo) {
+    @Override
+    public void setCustNo(final Long custNo) {
         this.custNo = custNo;
     }
 
@@ -173,23 +187,25 @@ public class ScfSupplierBank implements ScfClientDataParentFace {
         return custName;
     }
 
-    public void setCustName(String custName) {
+    public void setCustName(final String custName) {
         this.custName = custName == null ? null : custName.trim();
     }
- 
+
     public Long getCoreCustNo() {
         return this.coreCustNo;
     }
 
-    public void setCoreCustNo(Long anCoreCustNo) {
+    @Override
+    public void setCoreCustNo(final Long anCoreCustNo) {
         this.coreCustNo = anCoreCustNo;
     }
 
+    @Override
     public String getBankAccount() {
         return bankAccount;
     }
 
-    public void setBankAccount(String bankAccount) {
+    public void setBankAccount(final String bankAccount) {
         this.bankAccount = bankAccount == null ? null : bankAccount.trim();
     }
 
@@ -197,7 +213,7 @@ public class ScfSupplierBank implements ScfClientDataParentFace {
         return bankAccountName;
     }
 
-    public void setBankAccountName(String bankAccountName) {
+    public void setBankAccountName(final String bankAccountName) {
         this.bankAccountName = bankAccountName == null ? null : bankAccountName.trim();
     }
 
@@ -205,7 +221,7 @@ public class ScfSupplierBank implements ScfClientDataParentFace {
         return bankSourceCode;
     }
 
-    public void setBankSourceCode(String bankSourceCode) {
+    public void setBankSourceCode(final String bankSourceCode) {
         this.bankSourceCode = bankSourceCode == null ? null : bankSourceCode.trim();
     }
 
@@ -213,7 +229,7 @@ public class ScfSupplierBank implements ScfClientDataParentFace {
         return bankTypeCode;
     }
 
-    public void setBankTypeCode(String bankTypeCode) {
+    public void setBankTypeCode(final String bankTypeCode) {
         this.bankTypeCode = bankTypeCode == null ? null : bankTypeCode.trim();
     }
 
@@ -221,7 +237,7 @@ public class ScfSupplierBank implements ScfClientDataParentFace {
         return provinceName;
     }
 
-    public void setProvinceName(String provinceName) {
+    public void setProvinceName(final String provinceName) {
         this.provinceName = provinceName == null ? null : provinceName.trim();
     }
 
@@ -229,7 +245,7 @@ public class ScfSupplierBank implements ScfClientDataParentFace {
         return cityName;
     }
 
-    public void setCityName(String cityName) {
+    public void setCityName(final String cityName) {
         this.cityName = cityName == null ? null : cityName.trim();
     }
 
@@ -237,7 +253,7 @@ public class ScfSupplierBank implements ScfClientDataParentFace {
         return signAccount;
     }
 
-    public void setSignAccount(Boolean signAccount) {
+    public void setSignAccount(final Boolean signAccount) {
         this.signAccount = signAccount;
     }
 
@@ -245,7 +261,7 @@ public class ScfSupplierBank implements ScfClientDataParentFace {
         return defaultAccount;
     }
 
-    public void setDefaultAccount(Boolean defaultAccount) {
+    public void setDefaultAccount(final Boolean defaultAccount) {
         this.defaultAccount = defaultAccount;
     }
 
@@ -253,7 +269,7 @@ public class ScfSupplierBank implements ScfClientDataParentFace {
         return regDate;
     }
 
-    public void setRegDate(String regDate) {
+    public void setRegDate(final String regDate) {
         this.regDate = regDate == null ? null : regDate.trim();
     }
 
@@ -261,7 +277,7 @@ public class ScfSupplierBank implements ScfClientDataParentFace {
         return accountStatus;
     }
 
-    public void setAccountStatus(String accountStatus) {
+    public void setAccountStatus(final String accountStatus) {
         this.accountStatus = accountStatus == null ? null : accountStatus.trim();
     }
 
@@ -269,7 +285,8 @@ public class ScfSupplierBank implements ScfClientDataParentFace {
         return modiDate;
     }
 
-    public void setModiDate(String modiDate) {
+    @Override
+    public void setModiDate(final String modiDate) {
         this.modiDate = modiDate == null ? null : modiDate.trim();
     }
 
@@ -277,23 +294,26 @@ public class ScfSupplierBank implements ScfClientDataParentFace {
         return custType;
     }
 
-    public void setCustType(String custType) {
+    public void setCustType(final String custType) {
         this.custType = custType == null ? null : custType.trim();
     }
 
+    @Override
     public String getOperOrg() {
         return operOrg;
     }
 
-    public void setOperOrg(String operOrg) {
+    @Override
+    public void setOperOrg(final String operOrg) {
         this.operOrg = operOrg == null ? null : operOrg.trim();
     }
 
+    @Override
     public String getBtNo() {
         return btNo;
     }
 
-    public void setBtNo(String btNo) {
+    public void setBtNo(final String btNo) {
         this.btNo = btNo == null ? null : btNo.trim();
     }
 
@@ -301,13 +321,23 @@ public class ScfSupplierBank implements ScfClientDataParentFace {
         return this.bankName;
     }
 
-    public void setBankName(String anBankName) {
+    public void setBankName(final String anBankName) {
         this.bankName = anBankName;
     }
 
     @Override
+    public String getCoreOperOrg() {
+        return coreOperOrg;
+    }
+
+    @Override
+    public void setCoreOperOrg(final String coreOperOrg) {
+        this.coreOperOrg = coreOperOrg == null ? null : coreOperOrg.trim();
+    }
+
+    @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
@@ -330,12 +360,13 @@ public class ScfSupplierBank implements ScfClientDataParentFace {
         sb.append(", operOrg=").append(operOrg);
         sb.append(", btNo=").append(btNo);
         sb.append(", bankName=").append(bankName);
+        sb.append(", coreOperOrg=").append(coreOperOrg);
         sb.append("]");
         return sb.toString();
     }
 
     @Override
-    public boolean equals(Object that) {
+    public boolean equals(final Object that) {
         if (this == that) {
             return true;
         }
@@ -345,26 +376,27 @@ public class ScfSupplierBank implements ScfClientDataParentFace {
         if (getClass() != that.getClass()) {
             return false;
         }
-        ScfSupplierBank other = (ScfSupplierBank) that;
+        final ScfSupplierBank other = (ScfSupplierBank) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-            && (this.getCustName() == null ? other.getCustName() == null : this.getCustName().equals(other.getCustName()))
-            && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
-            && (this.getBankAccount() == null ? other.getBankAccount() == null : this.getBankAccount().equals(other.getBankAccount()))
-            && (this.getBankAccountName() == null ? other.getBankAccountName() == null : this.getBankAccountName().equals(other.getBankAccountName()))
-            && (this.getBankSourceCode() == null ? other.getBankSourceCode() == null : this.getBankSourceCode().equals(other.getBankSourceCode()))
-            && (this.getBankTypeCode() == null ? other.getBankTypeCode() == null : this.getBankTypeCode().equals(other.getBankTypeCode()))
-            && (this.getProvinceName() == null ? other.getProvinceName() == null : this.getProvinceName().equals(other.getProvinceName()))
-            && (this.getCityName() == null ? other.getCityName() == null : this.getCityName().equals(other.getCityName()))
-            && (this.getSignAccount() == null ? other.getSignAccount() == null : this.getSignAccount().equals(other.getSignAccount()))
-            && (this.getDefaultAccount() == null ? other.getDefaultAccount() == null : this.getDefaultAccount().equals(other.getDefaultAccount()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-            && (this.getAccountStatus() == null ? other.getAccountStatus() == null : this.getAccountStatus().equals(other.getAccountStatus()))
-            && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-            && (this.getCustType() == null ? other.getCustType() == null : this.getCustType().equals(other.getCustType()))
-            && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
-            && (this.getBankName() == null ? other.getBankName() == null : this.getBankName().equals(other.getBankName()))
-            && (this.getBtNo() == null ? other.getBtNo() == null : this.getBtNo().equals(other.getBtNo()));
+                && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
+                && (this.getCustName() == null ? other.getCustName() == null : this.getCustName().equals(other.getCustName()))
+                && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
+                && (this.getBankAccount() == null ? other.getBankAccount() == null : this.getBankAccount().equals(other.getBankAccount()))
+                && (this.getBankAccountName() == null ? other.getBankAccountName() == null : this.getBankAccountName().equals(other.getBankAccountName()))
+                && (this.getBankSourceCode() == null ? other.getBankSourceCode() == null : this.getBankSourceCode().equals(other.getBankSourceCode()))
+                && (this.getBankTypeCode() == null ? other.getBankTypeCode() == null : this.getBankTypeCode().equals(other.getBankTypeCode()))
+                && (this.getProvinceName() == null ? other.getProvinceName() == null : this.getProvinceName().equals(other.getProvinceName()))
+                && (this.getCityName() == null ? other.getCityName() == null : this.getCityName().equals(other.getCityName()))
+                && (this.getSignAccount() == null ? other.getSignAccount() == null : this.getSignAccount().equals(other.getSignAccount()))
+                && (this.getDefaultAccount() == null ? other.getDefaultAccount() == null : this.getDefaultAccount().equals(other.getDefaultAccount()))
+                && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
+                && (this.getAccountStatus() == null ? other.getAccountStatus() == null : this.getAccountStatus().equals(other.getAccountStatus()))
+                && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
+                && (this.getCustType() == null ? other.getCustType() == null : this.getCustType().equals(other.getCustType()))
+                && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
+                && (this.getBankName() == null ? other.getBankName() == null : this.getBankName().equals(other.getBankName()))
+                && (this.getCoreOperOrg() == null ? other.getCoreOperOrg() == null : this.getCoreOperOrg().equals(other.getCoreOperOrg()))
+                && (this.getBtNo() == null ? other.getBtNo() == null : this.getBtNo().equals(other.getBtNo()));
     }
 
     @Override
@@ -390,28 +422,30 @@ public class ScfSupplierBank implements ScfClientDataParentFace {
         result = prime * result + ((getOperOrg() == null) ? 0 : getOperOrg().hashCode());
         result = prime * result + ((getBankName() == null) ? 0 : getBankName().hashCode());
         result = prime * result + ((getBtNo() == null) ? 0 : getBtNo().hashCode());
-       return result;
+        result = prime * result + ((getCoreOperOrg() == null) ? 0 : getCoreOperOrg().hashCode());
+        return result;
     }
-    
+
+    @Override
     public void fillDefaultValue(){
-       this.id = SerialGenerator.getLongValue("ScfSupplierBank.id");
-       this.custType = "0";
-       this.regDate = BetterDateUtils.getNumDate();
-       this.modiDate = BetterDateUtils.getNumDateTime();
-       this.accountStatus = "1";
-       this.custNo = MathExtend.defaultLongZero(custNo);
-       this.operOrg = BetterStringUtils.defaultIfEmpty(this.operOrg, " ");
+        this.id = SerialGenerator.getLongValue("ScfSupplierBank.id");
+        this.custType = "0";
+        this.regDate = BetterDateUtils.getNumDate();
+        this.modiDate = BetterDateUtils.getNumDateTime();
+        this.accountStatus = "1";
+        this.custNo = MathExtend.defaultLongZero(custNo);
+        this.operOrg = BetterStringUtils.defaultIfEmpty(this.operOrg, " ");
     }
 
     @Override
     public void modifytValue(){
-        
-       this.modiDate = BetterDateUtils.getNumDateTime();        
+
+        this.modiDate = BetterDateUtils.getNumDateTime();
     }
-    
+
     public Map<String, Object> converToTmpDataMap(){
-        Map<String, Object> tmpMap = BeanMapper.map(this, Map.class);
-        
+        final Map<String, Object> tmpMap = BeanMapper.map(this, Map.class);
+
         return tmpMap;
     }
 

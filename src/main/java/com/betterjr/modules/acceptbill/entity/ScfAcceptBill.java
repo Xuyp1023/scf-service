@@ -23,11 +23,11 @@ import com.betterjr.common.utils.MathExtend;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.agreement.entity.CustAgreement;
+import com.betterjr.modules.client.data.ScfClientDataParentFace;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.entity.ScfTransport;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
-import com.betterjr.modules.client.data.ScfClientDataParentFace;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -35,7 +35,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @Entity
 @Table(name = "T_SCF_ACCEPT_BILL")
 public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
-    
+
     /**
      * 流水号
      */
@@ -88,15 +88,15 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
     @Column(name = "C_INVOICE_CORP",  columnDefinition="VARCHAR" )
     @MetaData( value="开票单位", comments = "开票单位")
     private String invoiceCorp;
-    
+
     /**
      * 开票人在资金管理系统中的企业编号
      */
     @Column(name = "C_DRAWERID",  columnDefinition="VARCHAR" )
     @MetaData( value="开票人在资金管理系统中的企业编号", comments = "开票人在资金管理系统中的企业编号")
     private String drawerId;
-    
-    
+
+
     /**
      * 到期日期
      */
@@ -119,35 +119,35 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
     @Column(name = "C_HOLDER",  columnDefinition="VARCHAR" )
     @MetaData( value="持票人", comments = "持票人")
     private String holder ;
-    
+
     /**
      * 持票人客户号
      */
     @Column(name = "L_HOLDER_NO",  columnDefinition="BIGINT" )
     @MetaData( value="持票人客户号", comments = "持票人客户号")
     private Long holderNo;
-    
+
     /**
      * 持票人帐号
      */
     @Column(name = "C_HOLDER_ACCOUNT",  columnDefinition="VARCHAR" )
     @MetaData( value="持票人帐号", comments = "持票人帐号")
     private String holderBankAccount;
-    
+
     /**
      * 承兑人
      */
     @Column(name = "C_ACCEPTOR",  columnDefinition="VARCHAR" )
     @MetaData( value="承兑人", comments = "承兑人")
     private String acceptor;
-    
+
     /**
      * 承兑人银行账户
      */
     @Column(name = "C_ACCEPTOR_ACCOUNT",  columnDefinition="VARCHAR" )
     @MetaData( value="承兑人银行账户", comments = "承兑人银行账户")
     private String acceptorBankAccount;
-    
+
     /**
      * 收款人名称
      */
@@ -210,7 +210,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
     @Column(name = "C_FINANCE_FLAG", columnDefinition = "VARCHAR")
     @MetaData(value = "融资标志", comments = "融资标志，0未融资，1已融资，2收款，3已还款，4融资失败")
     private String financeFlag;
-    
+
     /**
      * 票据来源，0库存票据，1背书转让
      */
@@ -271,7 +271,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
     @MetaData(value = "买方客户号", comments = "买方客户号")
     private Long buyerNo;
 
-/*    @Transient
+    /*    @Transient
     private String buyerName;*/
 
     /**
@@ -336,7 +336,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
     @Column(name = "L_AGREEID", columnDefinition = "INTEGER")
     @MetaData(value = "合同ID号", comments = "合同ID号")
     private Long agreeId;
-    
+
     /**
      * 实际融资金额
      */
@@ -350,7 +350,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
     @Column(name = "F_LOAN_BALANCE", columnDefinition = "DOUBLE")
     @MetaData(value = "实际放款金额", comments = "实际放款金额")
     private BigDecimal loanBalance;
-    
+
     /**
      * 利率
      */
@@ -365,7 +365,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
     @MetaData(value = "保理用途", comments = "保理用途")
     private String description;
 
-    
+
     /**
      * 核心企业客户号
      */
@@ -393,7 +393,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
     @Column(name = "T_MODI_TIME", columnDefinition = "VARCHAR")
     @MetaData(value = "修改时间", comments = "修改时间")
     private String modiTime;
-    
+
     /**
      * 数据来源；00：核心企业自动，01：核心企业手工，10：供应商手工，11：供应商自动
      */
@@ -414,7 +414,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
     @Column(name = "C_NEXT_HAND_NO",  columnDefinition="VARCHAR" )
     @MetaData( value="后手客户号", comments = "后手客户号")
     private Long nextHandNo;
-    
+
     /**
      * 背书转让来源票据流水号
      */
@@ -422,44 +422,46 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
     @MetaData( value="背书转让来源票据流水号", comments = "背书转让来源票据流水号")
     private Long transferId;
 
+
+    @JsonIgnore
+    @Column(name = "C_CORE_OPERORG", columnDefinition = "VARCHAR")
+    @MetaData(value = "操作员所在机构", comments = "数据所属核心企业")
+    private String coreOperOrg;
+
     @Transient
     private String coreCustName;
-    
+
     /**
      * 合同列表
      */
     @Transient
     private List<CustAgreement> agreementList;
-    
+
     @Transient
     private List<ScfOrder> orderList;
-    
+
     @Transient
     private List<ScfInvoice> invoiceList;
-    
+
     @Transient
     private List<ScfTransport> transportList;
-    
+
     @Transient
     private List<ScfReceivable> receivableList;
-  
+
     /**
      * 发票总金额
      */
     @Transient
     private BigDecimal invoiceBalanceSum;
-    
-    @Transient
-    private String coreOperOrg;
-     
-     
+
     private static final long serialVersionUID = 1458262605550L;
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -467,7 +469,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return billNo;
     }
 
-    public void setBillNo(String billNo) {
+    public void setBillNo(final String billNo) {
         this.billNo = billNo == null ? null : billNo.trim();
     }
 
@@ -475,7 +477,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return billType;
     }
 
-    public void setBillType(String billType) {
+    public void setBillType(final String billType) {
         this.billType = billType == null ? null : billType.trim();
     }
 
@@ -483,7 +485,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return billMode;
     }
 
-    public void setBillMode(String billMode) {
+    public void setBillMode(final String billMode) {
         this.billMode = billMode == null ? null : billMode.trim();
     }
 
@@ -492,7 +494,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return balance;
     }
 
-    public void setBalance(BigDecimal balance) {
+    public void setBalance(final BigDecimal balance) {
         this.balance = balance;
     }
 
@@ -500,7 +502,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return invoiceDate;
     }
 
-    public void setInvoiceDate(String invoiceDate) {
+    public void setInvoiceDate(final String invoiceDate) {
         this.invoiceDate = invoiceDate == null ? null : invoiceDate.trim();
     }
 
@@ -508,7 +510,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return endDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(final String endDate) {
         this.endDate = endDate == null ? null : endDate.trim();
     }
 
@@ -516,7 +518,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return cashDate;
     }
 
-    public void setCashDate(String cashDate) {
+    public void setCashDate(final String cashDate) {
         this.cashDate = cashDate == null ? null : cashDate.trim();
     }
 
@@ -524,7 +526,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return supplier;
     }
 
-    public void setSupplier(String supplier) {
+    public void setSupplier(final String supplier) {
         this.supplier = supplier == null ? null : supplier.trim();
     }
 
@@ -532,7 +534,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return suppBankAccount;
     }
 
-    public void setSuppBankAccount(String suppBankAccount) {
+    public void setSuppBankAccount(final String suppBankAccount) {
         this.suppBankAccount = suppBankAccount == null ? null : suppBankAccount.trim();
     }
 
@@ -540,7 +542,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return suppBankName;
     }
 
-    public void setSuppBankName(String suppBankName) {
+    public void setSuppBankName(final String suppBankName) {
         this.suppBankName = suppBankName == null ? null : suppBankName.trim();
     }
 
@@ -548,7 +550,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return buyer;
     }
 
-    public void setBuyer(String anBuyer) {
+    public void setBuyer(final String anBuyer) {
         this.buyer = anBuyer == null ? null : anBuyer.trim();
     }
 
@@ -556,7 +558,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return realBuyer;
     }
 
-    public void setRealBuyer(String realBuyer) {
+    public void setRealBuyer(final String realBuyer) {
         this.realBuyer = realBuyer == null ? null : realBuyer.trim();
     }
 
@@ -564,7 +566,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return buyerBankAccount;
     }
 
-    public void setBuyerBankAccount(String buyerBankAccount) {
+    public void setBuyerBankAccount(final String buyerBankAccount) {
         this.buyerBankAccount = buyerBankAccount == null ? null : buyerBankAccount.trim();
     }
 
@@ -572,15 +574,15 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return buyerBankName;
     }
 
-    public void setBuyerBankName(String buyerBankName) {
+    public void setBuyerBankName(final String buyerBankName) {
         this.buyerBankName = buyerBankName == null ? null : buyerBankName.trim();
     }
- 
+
     public String getBusinStatus() {
         return this.businStatus;
     }
 
-    public void setBusinStatus(String anBusinStatus) {
+    public void setBusinStatus(final String anBusinStatus) {
         this.businStatus = anBusinStatus;
     }
 
@@ -588,7 +590,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return financeFlag;
     }
 
-    public void setFinanceFlag(String financeFlag) {
+    public void setFinanceFlag(final String financeFlag) {
         this.financeFlag = financeFlag == null ? null : financeFlag.trim();
     }
 
@@ -596,7 +598,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return regDate;
     }
 
-    public void setRegDate(String regDate) {
+    public void setRegDate(final String regDate) {
         this.regDate = regDate == null ? null : regDate.trim();
     }
 
@@ -604,7 +606,8 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return modiDate;
     }
 
-    public void setModiDate(String modiDate) {
+    @Override
+    public void setModiDate(final String modiDate) {
         this.modiDate = modiDate == null ? null : modiDate.trim();
     }
 
@@ -612,7 +615,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return btBillNo;
     }
 
-    public void setBtBillNo(String btBillNo) {
+    public void setBtBillNo(final String btBillNo) {
         this.btBillNo = btBillNo == null ? null : btBillNo.trim();
     }
 
@@ -620,7 +623,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return buyerNo;
     }
 
-    public void setBuyerNo(Long buyerNo) {
+    public void setBuyerNo(final Long buyerNo) {
         this.buyerNo = buyerNo;
     }
 
@@ -628,7 +631,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return supplierNo;
     }
 
-    public void setSupplierNo(Long supplierNo) {
+    public void setSupplierNo(final Long supplierNo) {
         this.supplierNo = supplierNo;
     }
 
@@ -636,15 +639,15 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return agreeNo;
     }
 
-    public void setAgreeNo(String agreeNo) {
+    public void setAgreeNo(final String agreeNo) {
         this.agreeNo = agreeNo == null ? null : agreeNo.trim();
     }
- 
+
     public Long getOperId() {
         return this.operId;
     }
 
-    public void setOperId(Long anOperId) {
+    public void setOperId(final Long anOperId) {
         this.operId = anOperId;
     }
 
@@ -652,15 +655,17 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return operName;
     }
 
-    public void setOperName(String operName) {
+    public void setOperName(final String operName) {
         this.operName = operName == null ? null : operName.trim();
     }
 
+    @Override
     public String getOperOrg() {
         return operOrg;
     }
 
-    public void setOperOrg(String operOrg) {
+    @Override
+    public void setOperOrg(final String operOrg) {
         this.operOrg = operOrg == null ? null : operOrg.trim();
     }
 
@@ -668,7 +673,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return batchNo;
     }
 
-    public void setBatchNo(Long batchNo) {
+    public void setBatchNo(final Long batchNo) {
         this.batchNo = batchNo;
     }
 
@@ -676,7 +681,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.description;
     }
 
-    public void setDescription(String anDescription) {
+    public void setDescription(final String anDescription) {
         this.description = anDescription;
     }
 
@@ -685,7 +690,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return MathExtend.divide(this.getConfirmBalance(), this.getBalance(), 4);
     }
 
-    public void setFactorPercent(BigDecimal anFactorPercent) {
+    public void setFactorPercent(final BigDecimal anFactorPercent) {
 
     }
 
@@ -694,7 +699,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.confirmBalance;
     }
 
-    public void setConfirmBalance(BigDecimal anConfirmBalance) {
+    public void setConfirmBalance(final BigDecimal anConfirmBalance) {
         this.confirmBalance = anConfirmBalance;
     }
 
@@ -702,7 +707,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.agreeId;
     }
 
-    public void setAgreeId(Long anAgreeId) {
+    public void setAgreeId(final Long anAgreeId) {
         this.agreeId = anAgreeId;
     }
 
@@ -710,15 +715,16 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.invoiceBalanceSum;
     }
 
-    public void setInvoiceBalanceSum(BigDecimal anInvoiceBalanceSum) {
+    public void setInvoiceBalanceSum(final BigDecimal anInvoiceBalanceSum) {
         this.invoiceBalanceSum = anInvoiceBalanceSum;
     }
- 
+
     public Long getCoreCustNo() {
         return this.coreCustNo;
     }
 
-    public void setCoreCustNo(Long anCoreCustNo) {
+    @Override
+    public void setCoreCustNo(final Long anCoreCustNo) {
         this.coreCustNo = anCoreCustNo;
     }
 
@@ -726,31 +732,34 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.loanBalance;
     }
 
-    public void setLoanBalance(BigDecimal anLoanBalance) {
+    public void setLoanBalance(final BigDecimal anLoanBalance) {
         this.loanBalance = anLoanBalance;
     }
 
+    @Override
     public String getCoreOperOrg() {
-        return this.coreOperOrg;
+        return coreOperOrg;
     }
 
-    public void setCoreOperOrg(String anCoreOperOrg) {
-        this.coreOperOrg = anCoreOperOrg;
+    @Override
+    public void setCoreOperOrg(final String coreOperOrg) {
+        this.coreOperOrg = coreOperOrg == null ? null : coreOperOrg.trim();
     }
-    
+
+
     public Long getTransferId() {
         return transferId;
     }
 
-    public void setTransferId(Long transferId) {
+    public void setTransferId(final Long transferId) {
         this.transferId = transferId;
     }
-    
+
     public List<ScfOrder> getOrderList() {
         return this.orderList;
     }
 
-    public void setOrderList(List<ScfOrder> anOrderList) {
+    public void setOrderList(final List<ScfOrder> anOrderList) {
         this.orderList = anOrderList;
     }
 
@@ -758,7 +767,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.invoiceList;
     }
 
-    public void setInvoiceList(List<ScfInvoice> anInvoiceList) {
+    public void setInvoiceList(final List<ScfInvoice> anInvoiceList) {
         this.invoiceList = anInvoiceList;
     }
 
@@ -766,7 +775,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.transportList;
     }
 
-    public void setTransportList(List<ScfTransport> anTransportList) {
+    public void setTransportList(final List<ScfTransport> anTransportList) {
         this.transportList = anTransportList;
     }
 
@@ -774,7 +783,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.receivableList;
     }
 
-    public void setReceivableList(List<ScfReceivable> anReceivableList) {
+    public void setReceivableList(final List<ScfReceivable> anReceivableList) {
         this.receivableList = anReceivableList;
     }
 
@@ -782,13 +791,13 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.agreementList;
     }
 
-    public void setAgreementList(List<CustAgreement> anAgreementList) {
+    public void setAgreementList(final List<CustAgreement> anAgreementList) {
         this.agreementList = anAgreementList;
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
@@ -844,6 +853,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         sb.append(", preHandNo=").append(preHandNo);
         sb.append(", nextHandNo=").append(nextHandNo);
         sb.append(", transferId=").append(transferId);
+        sb.append(", coreOperOrg=").append(coreOperOrg);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -853,7 +863,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.billFrom;
     }
 
-    public void setBillFrom(String anBillFrom) {
+    public void setBillFrom(final String anBillFrom) {
         this.billFrom = anBillFrom;
     }
 
@@ -861,7 +871,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.preHand;
     }
 
-    public void setPreHand(String anPreHand) {
+    public void setPreHand(final String anPreHand) {
         this.preHand = anPreHand;
     }
 
@@ -869,7 +879,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.nextHand;
     }
 
-    public void setNextHand(String anNextHand) {
+    public void setNextHand(final String anNextHand) {
         this.nextHand = anNextHand;
     }
 
@@ -877,7 +887,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.aduit;
     }
 
-    public void setAduit(String anAduit) {
+    public void setAduit(final String anAduit) {
         this.aduit = anAduit;
     }
 
@@ -885,7 +895,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.otherBatchNo;
     }
 
-    public void setOtherBatchNo(Long anOtherBatchNo) {
+    public void setOtherBatchNo(final Long anOtherBatchNo) {
         this.otherBatchNo = anOtherBatchNo;
     }
 
@@ -893,7 +903,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.modiOperId;
     }
 
-    public void setModiOperId(Long anModiOperId) {
+    public void setModiOperId(final Long anModiOperId) {
         this.modiOperId = anModiOperId;
     }
 
@@ -901,7 +911,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.modiOperName;
     }
 
-    public void setModiOperName(String anModiOperName) {
+    public void setModiOperName(final String anModiOperName) {
         this.modiOperName = anModiOperName;
     }
 
@@ -909,16 +919,16 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.modiTime;
     }
 
-    public void setModiTime(String anModiTime) {
+    public void setModiTime(final String anModiTime) {
         this.modiTime = anModiTime;
     }
- 
+
 
     public String getDataSource() {
         return this.dataSource;
     }
 
-    public void setDataSource(String anDataSource) {
+    public void setDataSource(final String anDataSource) {
         this.dataSource = anDataSource;
     }
 
@@ -926,7 +936,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.preHandNo;
     }
 
-    public void setPreHandNo(Long anPreHandNo) {
+    public void setPreHandNo(final Long anPreHandNo) {
         this.preHandNo = anPreHandNo;
     }
 
@@ -934,7 +944,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.nextHandNo;
     }
 
-    public void setNextHandNo(Long anNextHandNo) {
+    public void setNextHandNo(final Long anNextHandNo) {
         this.nextHandNo = anNextHandNo;
     }
 
@@ -942,15 +952,15 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.coreCustName;
     }
 
-    public void setCoreCustName(String anCoreCustName) {
+    public void setCoreCustName(final String anCoreCustName) {
         this.coreCustName = anCoreCustName;
     }
- 
+
     public String getInvoiceCorp() {
         return this.invoiceCorp;
     }
 
-    public void setInvoiceCorp(String anInvoiceCorp) {
+    public void setInvoiceCorp(final String anInvoiceCorp) {
         this.invoiceCorp = anInvoiceCorp;
     }
 
@@ -958,7 +968,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.drawerId;
     }
 
-    public void setDrawerId(String anDrawerId) {
+    public void setDrawerId(final String anDrawerId) {
         this.drawerId = anDrawerId;
     }
 
@@ -966,7 +976,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.holder;
     }
 
-    public void setHolder(String anHolder) {
+    public void setHolder(final String anHolder) {
         this.holder = anHolder;
     }
 
@@ -974,7 +984,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.holderNo;
     }
 
-    public void setHolderNo(Long anHolderNo) {
+    public void setHolderNo(final Long anHolderNo) {
         this.holderNo = anHolderNo;
     }
 
@@ -982,7 +992,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.holderBankAccount;
     }
 
-    public void setHolderBankAccount(String anHolderBankAccount) {
+    public void setHolderBankAccount(final String anHolderBankAccount) {
         this.holderBankAccount = anHolderBankAccount;
     }
 
@@ -990,7 +1000,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.acceptor;
     }
 
-    public void setAcceptor(String anAcceptor) {
+    public void setAcceptor(final String anAcceptor) {
         this.acceptor = anAcceptor;
     }
 
@@ -998,11 +1008,11 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.acceptorBankAccount;
     }
 
-    public void setAcceptorBankAccount(String anAcceptorBankAccount) {
+    public void setAcceptorBankAccount(final String anAcceptorBankAccount) {
         this.acceptorBankAccount = anAcceptorBankAccount;
     }
     @Override
-    public boolean equals(Object that) {
+    public boolean equals(final Object that) {
         if (this == that) {
             return true;
         }
@@ -1012,59 +1022,60 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         if (getClass() != that.getClass()) {
             return false;
         }
-        ScfAcceptBill other = (ScfAcceptBill) that;
+        final ScfAcceptBill other = (ScfAcceptBill) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getBillNo() == null ? other.getBillNo() == null : this.getBillNo().equals(other.getBillNo()))
-            && (this.getBillType() == null ? other.getBillType() == null : this.getBillType().equals(other.getBillType()))
-            && (this.getBillMode() == null ? other.getBillMode() == null : this.getBillMode().equals(other.getBillMode()))
-            && (this.getBalance() == null ? other.getBalance() == null : this.getBalance().equals(other.getBalance()))
-            && (this.getInvoiceDate() == null ? other.getInvoiceDate() == null : this.getInvoiceDate().equals(other.getInvoiceDate()))
-            && (this.getInvoiceCorp() == null ? other.getInvoiceCorp() == null : this.getInvoiceCorp().equals(other.getInvoiceCorp()))
-            && (this.getDrawerId() == null ? other.getDrawerId() == null : this.getDrawerId().equals(other.getDrawerId()))
-            && (this.getEndDate() == null ? other.getEndDate() == null : this.getEndDate().equals(other.getEndDate()))
-            && (this.getCashDate() == null ? other.getCashDate() == null : this.getCashDate().equals(other.getCashDate()))
-            && (this.getHolder () == null ? other.getHolder () == null : this.getHolder ().equals(other.getHolder ()))
-            && (this.getHolderNo() == null ? other.getHolderNo() == null : this.getHolderNo().equals(other.getHolderNo()))
-            && (this.getHolderBankAccount() == null ? other.getHolderBankAccount() == null : this.getHolderBankAccount().equals(other.getHolderBankAccount()))
-            && (this.getAcceptor() == null ? other.getAcceptor() == null : this.getAcceptor().equals(other.getAcceptor()))
-            && (this.getAcceptorBankAccount() == null ? other.getAcceptorBankAccount() == null : this.getAcceptorBankAccount().equals(other.getAcceptorBankAccount()))
-            && (this.getSupplier() == null ? other.getSupplier() == null : this.getSupplier().equals(other.getSupplier()))
-            && (this.getSuppBankAccount() == null ? other.getSuppBankAccount() == null : this.getSuppBankAccount().equals(other.getSuppBankAccount()))
-            && (this.getSuppBankName() == null ? other.getSuppBankName() == null : this.getSuppBankName().equals(other.getSuppBankName()))
-            && (this.getBuyer() == null ? other.getBuyer() == null : this.getBuyer().equals(other.getBuyer()))
-            && (this.getRealBuyer() == null ? other.getRealBuyer() == null : this.getRealBuyer().equals(other.getRealBuyer()))
-            && (this.getBuyerBankAccount() == null ? other.getBuyerBankAccount() == null : this.getBuyerBankAccount().equals(other.getBuyerBankAccount()))
-            && (this.getBuyerBankName() == null ? other.getBuyerBankName() == null : this.getBuyerBankName().equals(other.getBuyerBankName()))
-            && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
-            && (this.getFinanceFlag() == null ? other.getFinanceFlag() == null : this.getFinanceFlag().equals(other.getFinanceFlag()))
-            && (this.getBillFrom() == null ? other.getBillFrom() == null : this.getBillFrom().equals(other.getBillFrom()))
-            && (this.getPreHand() == null ? other.getPreHand() == null : this.getPreHand().equals(other.getPreHand()))
-            && (this.getNextHand() == null ? other.getNextHand() == null : this.getNextHand().equals(other.getNextHand()))
-            && (this.getAduit() == null ? other.getAduit() == null : this.getAduit().equals(other.getAduit()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-            && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-            && (this.getBtBillNo() == null ? other.getBtBillNo() == null : this.getBtBillNo().equals(other.getBtBillNo()))
-            && (this.getBuyerNo() == null ? other.getBuyerNo() == null : this.getBuyerNo().equals(other.getBuyerNo()))
-            && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
-            && (this.getAgreeNo() == null ? other.getAgreeNo() == null : this.getAgreeNo().equals(other.getAgreeNo()))
-            && (this.getOperId() == null ? other.getOperId() == null : this.getOperId().equals(other.getOperId()))
-            && (this.getOperName() == null ? other.getOperName() == null : this.getOperName().equals(other.getOperName()))
-            && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
-            && (this.getBatchNo() == null ? other.getBatchNo() == null : this.getBatchNo().equals(other.getBatchNo()))
-            && (this.getOtherBatchNo() == null ? other.getOtherBatchNo() == null : this.getOtherBatchNo().equals(other.getOtherBatchNo()))
-            && (this.getAgreeId() == null ? other.getAgreeId() == null : this.getAgreeId().equals(other.getAgreeId()))
-            && (this.getConfirmBalance() == null ? other.getConfirmBalance() == null : this.getConfirmBalance().equals(other.getConfirmBalance()))
-            && (this.getLoanBalance() == null ? other.getLoanBalance() == null : this.getLoanBalance().equals(other.getLoanBalance()))
-            && (this.getRatio() == null ? other.getRatio() == null : this.getRatio().equals(other.getRatio()))
-            && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()))
-            && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
-            && (this.getModiOperId() == null ? other.getModiOperId() == null : this.getModiOperId().equals(other.getModiOperId()))
-            && (this.getModiOperName() == null ? other.getModiOperName() == null : this.getModiOperName().equals(other.getModiOperName()))
-            && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()))
-            && (this.getDataSource() == null ? other.getDataSource() == null : this.getDataSource().equals(other.getDataSource()))
-            && (this.getPreHandNo() == null ? other.getPreHandNo() == null : this.getPreHandNo().equals(other.getPreHandNo()))
-            && (this.getNextHandNo() == null ? other.getNextHandNo() == null : this.getNextHandNo().equals(other.getNextHandNo()))
-            && (this.getTransferId() == null ? other.getTransferId() == null : this.getTransferId().equals(other.getTransferId()));
+                && (this.getBillNo() == null ? other.getBillNo() == null : this.getBillNo().equals(other.getBillNo()))
+                && (this.getBillType() == null ? other.getBillType() == null : this.getBillType().equals(other.getBillType()))
+                && (this.getBillMode() == null ? other.getBillMode() == null : this.getBillMode().equals(other.getBillMode()))
+                && (this.getBalance() == null ? other.getBalance() == null : this.getBalance().equals(other.getBalance()))
+                && (this.getInvoiceDate() == null ? other.getInvoiceDate() == null : this.getInvoiceDate().equals(other.getInvoiceDate()))
+                && (this.getInvoiceCorp() == null ? other.getInvoiceCorp() == null : this.getInvoiceCorp().equals(other.getInvoiceCorp()))
+                && (this.getDrawerId() == null ? other.getDrawerId() == null : this.getDrawerId().equals(other.getDrawerId()))
+                && (this.getEndDate() == null ? other.getEndDate() == null : this.getEndDate().equals(other.getEndDate()))
+                && (this.getCashDate() == null ? other.getCashDate() == null : this.getCashDate().equals(other.getCashDate()))
+                && (this.getHolder () == null ? other.getHolder () == null : this.getHolder ().equals(other.getHolder ()))
+                && (this.getHolderNo() == null ? other.getHolderNo() == null : this.getHolderNo().equals(other.getHolderNo()))
+                && (this.getHolderBankAccount() == null ? other.getHolderBankAccount() == null : this.getHolderBankAccount().equals(other.getHolderBankAccount()))
+                && (this.getAcceptor() == null ? other.getAcceptor() == null : this.getAcceptor().equals(other.getAcceptor()))
+                && (this.getAcceptorBankAccount() == null ? other.getAcceptorBankAccount() == null : this.getAcceptorBankAccount().equals(other.getAcceptorBankAccount()))
+                && (this.getSupplier() == null ? other.getSupplier() == null : this.getSupplier().equals(other.getSupplier()))
+                && (this.getSuppBankAccount() == null ? other.getSuppBankAccount() == null : this.getSuppBankAccount().equals(other.getSuppBankAccount()))
+                && (this.getSuppBankName() == null ? other.getSuppBankName() == null : this.getSuppBankName().equals(other.getSuppBankName()))
+                && (this.getBuyer() == null ? other.getBuyer() == null : this.getBuyer().equals(other.getBuyer()))
+                && (this.getRealBuyer() == null ? other.getRealBuyer() == null : this.getRealBuyer().equals(other.getRealBuyer()))
+                && (this.getBuyerBankAccount() == null ? other.getBuyerBankAccount() == null : this.getBuyerBankAccount().equals(other.getBuyerBankAccount()))
+                && (this.getBuyerBankName() == null ? other.getBuyerBankName() == null : this.getBuyerBankName().equals(other.getBuyerBankName()))
+                && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
+                && (this.getFinanceFlag() == null ? other.getFinanceFlag() == null : this.getFinanceFlag().equals(other.getFinanceFlag()))
+                && (this.getBillFrom() == null ? other.getBillFrom() == null : this.getBillFrom().equals(other.getBillFrom()))
+                && (this.getPreHand() == null ? other.getPreHand() == null : this.getPreHand().equals(other.getPreHand()))
+                && (this.getNextHand() == null ? other.getNextHand() == null : this.getNextHand().equals(other.getNextHand()))
+                && (this.getAduit() == null ? other.getAduit() == null : this.getAduit().equals(other.getAduit()))
+                && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
+                && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
+                && (this.getBtBillNo() == null ? other.getBtBillNo() == null : this.getBtBillNo().equals(other.getBtBillNo()))
+                && (this.getBuyerNo() == null ? other.getBuyerNo() == null : this.getBuyerNo().equals(other.getBuyerNo()))
+                && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
+                && (this.getAgreeNo() == null ? other.getAgreeNo() == null : this.getAgreeNo().equals(other.getAgreeNo()))
+                && (this.getOperId() == null ? other.getOperId() == null : this.getOperId().equals(other.getOperId()))
+                && (this.getOperName() == null ? other.getOperName() == null : this.getOperName().equals(other.getOperName()))
+                && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
+                && (this.getBatchNo() == null ? other.getBatchNo() == null : this.getBatchNo().equals(other.getBatchNo()))
+                && (this.getOtherBatchNo() == null ? other.getOtherBatchNo() == null : this.getOtherBatchNo().equals(other.getOtherBatchNo()))
+                && (this.getAgreeId() == null ? other.getAgreeId() == null : this.getAgreeId().equals(other.getAgreeId()))
+                && (this.getConfirmBalance() == null ? other.getConfirmBalance() == null : this.getConfirmBalance().equals(other.getConfirmBalance()))
+                && (this.getLoanBalance() == null ? other.getLoanBalance() == null : this.getLoanBalance().equals(other.getLoanBalance()))
+                && (this.getRatio() == null ? other.getRatio() == null : this.getRatio().equals(other.getRatio()))
+                && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()))
+                && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
+                && (this.getModiOperId() == null ? other.getModiOperId() == null : this.getModiOperId().equals(other.getModiOperId()))
+                && (this.getModiOperName() == null ? other.getModiOperName() == null : this.getModiOperName().equals(other.getModiOperName()))
+                && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()))
+                && (this.getDataSource() == null ? other.getDataSource() == null : this.getDataSource().equals(other.getDataSource()))
+                && (this.getPreHandNo() == null ? other.getPreHandNo() == null : this.getPreHandNo().equals(other.getPreHandNo()))
+                && (this.getNextHandNo() == null ? other.getNextHandNo() == null : this.getNextHandNo().equals(other.getNextHandNo()))
+                && (this.getCoreOperOrg() == null ? other.getCoreOperOrg() == null : this.getCoreOperOrg().equals(other.getCoreOperOrg()))
+                && (this.getTransferId() == null ? other.getTransferId() == null : this.getTransferId().equals(other.getTransferId()));
     }
 
     @Override
@@ -1123,11 +1134,12 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         result = prime * result + ((getPreHandNo() == null) ? 0 : getPreHandNo().hashCode());
         result = prime * result + ((getNextHandNo() == null) ? 0 : getNextHandNo().hashCode());
         result = prime * result + ((getTransferId() == null) ? 0 : getTransferId().hashCode());
+        result = prime * result + ((getCoreOperOrg() == null) ? 0 : getCoreOperOrg().hashCode());
         return result;
     }
 
 
-    public void initFactorInfo(ScfAcceptBill anBill) {
+    public void initFactorInfo(final ScfAcceptBill anBill) {
         this.description = anBill.getDescription();
         this.confirmBalance = anBill.getConfirmBalance();
         this.ratio = anBill.getRatio();
@@ -1144,7 +1156,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         return this.ratio;
     }
 
-    public void setRatio(BigDecimal anRatio) {
+    public void setRatio(final BigDecimal anRatio) {
         this.ratio = anRatio;
     }
 
@@ -1152,17 +1164,17 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
 
     }
 
-    public void modifyValue(ScfAcceptBill anBill){
+    public void modifyValue(final ScfAcceptBill anBill){
         this.id = anBill.id;
         this.regDate = anBill.regDate;
     }
-    
-    public void initDefOperInfo(Long anOperId, String anName) {
+
+    public void initDefOperInfo(final Long anOperId, final String anName) {
         this.operId = anOperId;
         this.operName = anName;
     }
 
-    public void initModifyValue(String anAgreeNo, String anAgreeId) {
+    public void initModifyValue(final String anAgreeNo, final String anAgreeId) {
         if (BetterStringUtils.isNotBlank(anAgreeNo)) {
             this.agreeId = Long.parseLong(anAgreeId);
             this.agreeNo = anAgreeNo;
@@ -1170,23 +1182,24 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         this.modiDate = BetterDateUtils.getNumDate();
     }
 
-    public void initStatus(Long anBillId, String anStatus, String anFinanceFlag){
+    public void initStatus(final Long anBillId, final String anStatus, final String anFinanceFlag){
         this.id = anBillId;
         this.businStatus = anStatus;
-        this.financeFlag  = anFinanceFlag;        
+        this.financeFlag  = anFinanceFlag;
     }
-    
+
     /**
      * 更新票据的基本信息
-     * 
+     *
      * @param anBill
      */
-    public void modifyDfaultValue(ScfAcceptBill anBill) {
+    public void modifyDfaultValue(final ScfAcceptBill anBill) {
         this.id = anBill.id;
         this.billFrom = anBill.billFrom;
         this.dataSource = anBill.dataSource;
         this.aduit = anBill.aduit;
         this.regDate = anBill.regDate;
+        this.coreOperOrg = anBill.coreOperOrg;
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
         this.setHolderNo( anBill.getSupplierNo());
@@ -1202,17 +1215,18 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         this.buyerNo = this.coreCustNo;
         this.confirmBalance = BigDecimal.ZERO;
         this.ratio = BigDecimal.ZERO;
-        
+
         //如果实际支付人信息为null，则给出核心企业开发方信息
         if (BetterStringUtils.isBlank(this.realBuyer) || (this.realBuyer.trim().length() < 3)){
-           this.realBuyer = this.buyer; 
+            this.realBuyer = this.buyer;
         }
-        
+
         this.financeFlag="0";
     }
 
+    @Override
     public void fillDefaultValue(){
-        String tmpStatus = this.businStatus;
+        final String tmpStatus = this.businStatus;
         this.billFrom = "0";
         this.dataSource ="00";
         this.aduit ="1";
@@ -1224,14 +1238,14 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
             this.businStatus = "0";
         }
         else{
-            this.businStatus = "9"; 
+            this.businStatus = "9";
         }
     }
 
     /**
      * 汇票信息添加
      */
-    public void initAddValue(CustOperatorInfo anOperInfo) {
+    public void initAddValue(final CustOperatorInfo anOperInfo) {
         this.id = SerialGenerator.getLongValue("ScfAcceptBill.id");
         this.businStatus = "0";
         this.financeFlag = "0";
@@ -1257,11 +1271,11 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         //默认前手为付款方
         this.preHand = this.getBuyer();
     }
-    
+
     /**
      * 汇票信息变更初始化
      */
-    public void initModifyValue(CustOperatorInfo anOperInfo) {
+    public void initModifyValue(final CustOperatorInfo anOperInfo) {
         this.modiDate = BetterDateUtils.getNumDate();
         if (anOperInfo != null){
             this.modiOperId = anOperInfo.getId();
@@ -1270,7 +1284,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         this.modiTime = BetterDateUtils.getNumTime();
     }
 
-   public void initTransferValue() {
+    public void initTransferValue() {
         //背书来源id
         this.transferId = this.id;
         //生成新的流水号
@@ -1287,10 +1301,10 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
         this.businStatus = "0";
         this.financeFlag = "0";
     }
-    
+
     /**
      * 检查票据是否过期
-     * 
+     *
      * @return
      */
     public boolean hasInvalid() {
@@ -1300,7 +1314,7 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
 
     /**
      * 检查是否可以修改，在已融资或已过期的情况下，不能修改。
-     * 
+     *
      * @return
      */
     public boolean permitModify() {
@@ -1309,38 +1323,38 @@ public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
     }
 
     @Override
-    public void setCustNo(Long anCustNo) {
-        
-        this.supplierNo = anCustNo;        
+    public void setCustNo(final Long anCustNo) {
+
+        this.supplierNo = anCustNo;
     }
 
     @Override
     public String getBtNo(){
-        
+
         return null;
     }
 
     @Override
     public String getBankAccount() {
-        
+
         return this.suppBankAccount;
     }
 
     @Override
     public Long getCustNo() {
-        
+
         return this.supplierNo;
     }
 
     @Override
     public void modifytValue() {
-        
-        this.modiDate = BetterDateUtils.getNumDate(); 
+
+        this.modiDate = BetterDateUtils.getNumDate();
     }
 
     @Override
     public String findBankAccountName() {
-        
+
         return this.supplier;
     }
 

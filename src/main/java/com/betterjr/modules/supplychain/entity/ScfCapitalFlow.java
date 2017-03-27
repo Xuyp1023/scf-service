@@ -2,14 +2,20 @@ package com.betterjr.modules.supplychain.entity;
 
 import java.math.BigDecimal;
 
-import com.betterjr.common.annotation.*;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.MathExtend;
 import com.betterjr.modules.client.data.ScfClientDataParentFace;
-
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -170,13 +176,18 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
     @MetaData(value = "操作员所在机构", comments = "操作员所在机构，证书登录，则是证书的企业名称O字段")
     private String operOrg;
 
+    @JsonIgnore
+    @Column(name = "C_CORE_OPERORG", columnDefinition = "VARCHAR")
+    @MetaData(value = "操作员所在机构", comments = "数据所属核心企业")
+    private String coreOperOrg;
+
     private static final long serialVersionUID = -4262616032648201451L;
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -184,7 +195,7 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         return supplier;
     }
 
-    public void setSupplier(String supplier) {
+    public void setSupplier(final String supplier) {
         this.supplier = supplier == null ? null : supplier.trim();
     }
 
@@ -192,7 +203,7 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         return buyerNo;
     }
 
-    public void setBuyerNo(Long buyerNo) {
+    public void setBuyerNo(final Long buyerNo) {
         this.buyerNo = buyerNo;
     }
 
@@ -200,7 +211,7 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         return suppBankAccount;
     }
 
-    public void setSuppBankAccount(String suppBankAccount) {
+    public void setSuppBankAccount(final String suppBankAccount) {
         this.suppBankAccount = suppBankAccount == null ? null : suppBankAccount.trim();
     }
 
@@ -208,7 +219,7 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         return suppBankName;
     }
 
-    public void setSuppBankName(String suppBankName) {
+    public void setSuppBankName(final String suppBankName) {
         this.suppBankName = suppBankName == null ? null : suppBankName.trim();
     }
 
@@ -216,7 +227,7 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         return buyer;
     }
 
-    public void setBuyer(String buyer) {
+    public void setBuyer(final String buyer) {
         this.buyer = buyer == null ? null : buyer.trim();
     }
 
@@ -224,7 +235,7 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         return supplierNo;
     }
 
-    public void setSupplierNo(Long supplierNo) {
+    public void setSupplierNo(final Long supplierNo) {
         this.supplierNo = supplierNo;
     }
 
@@ -232,7 +243,7 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         return buyerBankAccount;
     }
 
-    public void setBuyerBankAccount(String buyerBankAccount) {
+    public void setBuyerBankAccount(final String buyerBankAccount) {
         this.buyerBankAccount = buyerBankAccount == null ? null : buyerBankAccount.trim();
     }
 
@@ -240,7 +251,7 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         return buyerBankName;
     }
 
-    public void setBuyerBankName(String buyerBankName) {
+    public void setBuyerBankName(final String buyerBankName) {
         this.buyerBankName = buyerBankName == null ? null : buyerBankName.trim();
     }
 
@@ -248,7 +259,7 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         return this.btInnerId;
     }
 
-    public void setBtInnerId(String anBtInnerId) {
+    public void setBtInnerId(final String anBtInnerId) {
         this.btInnerId = anBtInnerId;
     }
 
@@ -256,7 +267,7 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         return balance;
     }
 
-    public void setBalance(BigDecimal balance) {
+    public void setBalance(final BigDecimal balance) {
         this.balance = balance;
     }
 
@@ -264,7 +275,7 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         return requestDate;
     }
 
-    public void setRequestDate(String requestDate) {
+    public void setRequestDate(final String requestDate) {
         this.requestDate = requestDate == null ? null : requestDate.trim();
     }
 
@@ -272,7 +283,7 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         return requestTime;
     }
 
-    public void setRequestTime(String requestTime) {
+    public void setRequestTime(final String requestTime) {
         this.requestTime = requestTime == null ? null : requestTime.trim();
     }
 
@@ -280,7 +291,7 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         return purpose;
     }
 
-    public void setPurpose(String purpose) {
+    public void setPurpose(final String purpose) {
         this.purpose = purpose == null ? null : purpose.trim();
     }
 
@@ -288,7 +299,7 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description == null ? null : description.trim();
     }
 
@@ -296,7 +307,7 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(final String status) {
         this.status = status == null ? null : status.trim();
     }
 
@@ -304,7 +315,7 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         return regDate;
     }
 
-    public void setRegDate(String regDate) {
+    public void setRegDate(final String regDate) {
         this.regDate = regDate == null ? null : regDate.trim();
     }
 
@@ -312,7 +323,8 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         return modiDate;
     }
 
-    public void setModiDate(String modiDate) {
+    @Override
+    public void setModiDate(final String modiDate) {
         this.modiDate = modiDate == null ? null : modiDate.trim();
     }
 
@@ -320,7 +332,7 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         return payMode;
     }
 
-    public void setPayMode(String payMode) {
+    public void setPayMode(final String payMode) {
         this.payMode = payMode == null ? null : payMode.trim();
     }
 
@@ -328,7 +340,7 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         return requestNo;
     }
 
-    public void setRequestNo(String requestNo) {
+    public void setRequestNo(final String requestNo) {
         this.requestNo = requestNo == null ? null : requestNo.trim();
     }
 
@@ -336,13 +348,24 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         return this.coreCustNo;
     }
 
-    public void setCoreCustNo(Long anCoreCustNo) {
+    @Override
+    public void setCoreCustNo(final Long anCoreCustNo) {
         this.coreCustNo = anCoreCustNo;
     }
 
     @Override
+    public String getCoreOperOrg() {
+        return coreOperOrg;
+    }
+
+    @Override
+    public void setCoreOperOrg(final String coreOperOrg) {
+        this.coreOperOrg = coreOperOrg == null ? null : coreOperOrg.trim();
+    }
+
+    @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append(" id=").append(id);
@@ -367,12 +390,13 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         sb.append(", requestNo=").append(requestNo);
         sb.append(", coreCustNo=").append(coreCustNo);
         sb.append(", operOrg=").append(operOrg);
+        sb.append(", coreOperOrg=").append(coreOperOrg);
         sb.append("]");
         return sb.toString();
     }
 
     @Override
-    public boolean equals(Object that) {
+    public boolean equals(final Object that) {
         if (this == that) {
             return true;
         }
@@ -382,7 +406,7 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         if (getClass() != that.getClass()) {
             return false;
         }
-        ScfCapitalFlow other = (ScfCapitalFlow) that;
+        final ScfCapitalFlow other = (ScfCapitalFlow) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
                 && (this.getSupplier() == null ? other.getSupplier() == null : this.getSupplier().equals(other.getSupplier()))
                 && (this.getBuyerNo() == null ? other.getBuyerNo() == null : this.getBuyerNo().equals(other.getBuyerNo()))
@@ -405,6 +429,7 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
                 && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
                 && (this.getPayMode() == null ? other.getPayMode() == null : this.getPayMode().equals(other.getPayMode()))
                 && (this.getRequestNo() == null ? other.getRequestNo() == null : this.getRequestNo().equals(other.getRequestNo()))
+                && (this.getCoreOperOrg() == null ? other.getCoreOperOrg() == null : this.getCoreOperOrg().equals(other.getCoreOperOrg()))
                 && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()));
     }
 
@@ -433,24 +458,28 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         result = prime * result + ((getPayMode() == null) ? 0 : getPayMode().hashCode());
         result = prime * result + ((getRequestNo() == null) ? 0 : getRequestNo().hashCode());
         result = prime * result + ((getCoreCustNo() == null) ? 0 : getCoreCustNo().hashCode());
+        result = prime * result + ((getCoreOperOrg() == null) ? 0 : getCoreOperOrg().hashCode());
         return result;
     }
 
+    @Override
     public String getOperOrg() {
         return this.operOrg;
     }
 
-    public void setOperOrg(String anOperOrg) {
+    @Override
+    public void setOperOrg(final String anOperOrg) {
 
         this.operOrg = anOperOrg;
     }
 
     @Override
-    public void setCustNo(Long anCustNo) {
+    public void setCustNo(final Long anCustNo) {
 
         this.supplierNo = anCustNo;
     }
 
+    @Override
     public void fillDefaultValue() {
         this.id = SerialGenerator.getLongValue("ScfCapitalFlow.id");
         this.regDate = BetterDateUtils.getNumDate();
@@ -485,19 +514,19 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
 
     @Override
     public Long getCustNo() {
-        
+
         return this.supplierNo;
     }
 
     @Override
     public void modifytValue() {
-        
-        this.modiDate = BetterDateUtils.getNumDate(); 
+
+        this.modiDate = BetterDateUtils.getNumDate();
     }
-    
+
     @Override
     public String findBankAccountName() {
-        
+
         return this.supplier;
     }
 
