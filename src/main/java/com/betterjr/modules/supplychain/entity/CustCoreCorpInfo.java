@@ -1,11 +1,17 @@
 package com.betterjr.modules.supplychain.entity;
 
-import com.betterjr.common.annotation.*;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.data.BetterBaseEntity;
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.selectkey.SerialGenerator;
-
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -138,13 +144,29 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
     @MetaData( value="修改时间", comments = "修改时间")
     private String modiTime;
 
+    /**
+     * 操作机构
+     */
+    @JsonIgnore
+    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
+    @MetaData( value="操作机构", comments = "操作机构")
+    private String operOrg;
+
+    /**
+     * 资金系统内部id
+     */
+    @JsonIgnore
+    @Column(name = "C_CORPID",  columnDefinition="VARCHAR" )
+    @MetaData( value="资金系统内部id", comments = "资金系统内部id")
+    private String corpId;
+
     private static final long serialVersionUID = 8300178519489076446L;
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -152,7 +174,7 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
         return coreCustNo;
     }
 
-    public void setCoreCustNo(Long coreCustNo) {
+    public void setCoreCustNo(final Long coreCustNo) {
         this.coreCustNo = coreCustNo;
     }
 
@@ -160,7 +182,7 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
         return custNo;
     }
 
-    public void setCustNo(Long custNo) {
+    public void setCustNo(final Long custNo) {
         this.custNo = custNo;
     }
 
@@ -168,7 +190,7 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
         return custName;
     }
 
-    public void setCustName(String custName) {
+    public void setCustName(final String custName) {
         this.custName = custName == null ? null : custName.trim();
     }
 
@@ -176,7 +198,7 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
         return corpNo;
     }
 
-    public void setCorpNo(String corpNo) {
+    public void setCorpNo(final String corpNo) {
         this.corpNo = corpNo == null ? null : corpNo.trim();
     }
 
@@ -184,7 +206,7 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
         return corpCode;
     }
 
-    public void setCorpCode(String corpCode) {
+    public void setCorpCode(final String corpCode) {
         this.corpCode = corpCode == null ? null : corpCode.trim();
     }
 
@@ -192,7 +214,7 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
         return corpName;
     }
 
-    public void setCorpName(String corpName) {
+    public void setCorpName(final String corpName) {
         this.corpName = corpName == null ? null : corpName.trim();
     }
 
@@ -200,7 +222,7 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
         return busiLicence;
     }
 
-    public void setBusiLicence(String busiLicence) {
+    public void setBusiLicence(final String busiLicence) {
         this.busiLicence = busiLicence == null ? null : busiLicence.trim();
     }
 
@@ -208,15 +230,17 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
         return parentCorpNo;
     }
 
-    public void setParentCorpNo(String parentCorpNo) {
+    public void setParentCorpNo(final String parentCorpNo) {
         this.parentCorpNo = parentCorpNo == null ? null : parentCorpNo.trim();
     }
 
+    @Override
     public Long getRegOperId() {
         return regOperId;
     }
 
-    public void setRegOperId(Long regOperId) {
+    @Override
+    public void setRegOperId(final Long regOperId) {
         this.regOperId = regOperId;
     }
 
@@ -224,31 +248,37 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
         return businStatus;
     }
 
-    public void setBusinStatus(String businStatus) {
+    public void setBusinStatus(final String businStatus) {
         this.businStatus = businStatus == null ? null : businStatus.trim();
     }
 
+    @Override
     public String getRegOperName() {
         return regOperName;
     }
 
-    public void setRegOperName(String regOperName) {
+    @Override
+    public void setRegOperName(final String regOperName) {
         this.regOperName = regOperName == null ? null : regOperName.trim();
     }
 
+    @Override
     public String getRegDate() {
         return regDate;
     }
 
-    public void setRegDate(String regDate) {
+    @Override
+    public void setRegDate(final String regDate) {
         this.regDate = regDate == null ? null : regDate.trim();
     }
 
+    @Override
     public String getRegTime() {
         return regTime;
     }
 
-    public void setRegTime(String regTime) {
+    @Override
+    public void setRegTime(final String regTime) {
         this.regTime = regTime == null ? null : regTime.trim();
     }
 
@@ -256,7 +286,8 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
         return modiOperId;
     }
 
-    public void setModiOperId(Long modiOperId) {
+    @Override
+    public void setModiOperId(final Long modiOperId) {
         this.modiOperId = modiOperId;
     }
 
@@ -264,7 +295,8 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
         return modiOperName;
     }
 
-    public void setModiOperName(String modiOperName) {
+    @Override
+    public void setModiOperName(final String modiOperName) {
         this.modiOperName = modiOperName == null ? null : modiOperName.trim();
     }
 
@@ -272,7 +304,8 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
         return modiDate;
     }
 
-    public void setModiDate(String modiDate) {
+    @Override
+    public void setModiDate(final String modiDate) {
         this.modiDate = modiDate == null ? null : modiDate.trim();
     }
 
@@ -280,26 +313,43 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
         return modiTime;
     }
 
-    public void setModiTime(String modiTime) {
+    @Override
+    public void setModiTime(final String modiTime) {
         this.modiTime = modiTime == null ? null : modiTime.trim();
     }
 
-    public void initDefValue(Long anCoreCustNo){
+    public String getOperOrg() {
+        return operOrg;
+    }
+
+    public void setOperOrg(final String operOrg) {
+        this.operOrg = operOrg == null ? null : operOrg.trim();
+    }
+    public String getCorpId() {
+        return corpId;
+    }
+
+    public void setCorpId(final String corpId) {
+        this.corpId = corpId == null ? null : corpId.trim();
+    }
+
+    public void initDefValue(final String anOperOrg){
         this.id = SerialGenerator.getLongValue("CustCoreCorpInfo.id");
         this.businStatus="1";
-        this.coreCustNo = anCoreCustNo;
+        this.operOrg = anOperOrg;
     }
-    
-    public void modifyDefValue(CustCoreCorpInfo anCoreCorp){
+
+
+    public void modifyDefValue(final CustCoreCorpInfo anCoreCorp){
         this.id = anCoreCorp.getId();
         this.custNo = anCoreCorp.getCustNo();
         this.custName = anCoreCorp.getCustName();
         this.coreCustNo = anCoreCorp.getCoreCustNo();
     }
-    
+
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
@@ -321,13 +371,15 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
         sb.append(", modiOperName=").append(modiOperName);
         sb.append(", modiDate=").append(modiDate);
         sb.append(", modiTime=").append(modiTime);
+        sb.append(", operOrg=").append(operOrg);
+        sb.append(", corpId=").append(corpId);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
     }
 
     @Override
-    public boolean equals(Object that) {
+    public boolean equals(final Object that) {
         if (this == that) {
             return true;
         }
@@ -337,25 +389,27 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
         if (getClass() != that.getClass()) {
             return false;
         }
-        CustCoreCorpInfo other = (CustCoreCorpInfo) that;
+        final CustCoreCorpInfo other = (CustCoreCorpInfo) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
-            && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-            && (this.getCustName() == null ? other.getCustName() == null : this.getCustName().equals(other.getCustName()))
-            && (this.getCorpNo() == null ? other.getCorpNo() == null : this.getCorpNo().equals(other.getCorpNo()))
-            && (this.getCorpCode() == null ? other.getCorpCode() == null : this.getCorpCode().equals(other.getCorpCode()))
-            && (this.getCorpName() == null ? other.getCorpName() == null : this.getCorpName().equals(other.getCorpName()))
-            && (this.getBusiLicence() == null ? other.getBusiLicence() == null : this.getBusiLicence().equals(other.getBusiLicence()))
-            && (this.getParentCorpNo() == null ? other.getParentCorpNo() == null : this.getParentCorpNo().equals(other.getParentCorpNo()))
-            && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
-            && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
-            && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-            && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
-            && (this.getModiOperId() == null ? other.getModiOperId() == null : this.getModiOperId().equals(other.getModiOperId()))
-            && (this.getModiOperName() == null ? other.getModiOperName() == null : this.getModiOperName().equals(other.getModiOperName()))
-            && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-            && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()));
+                && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
+                && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
+                && (this.getCustName() == null ? other.getCustName() == null : this.getCustName().equals(other.getCustName()))
+                && (this.getCorpNo() == null ? other.getCorpNo() == null : this.getCorpNo().equals(other.getCorpNo()))
+                && (this.getCorpCode() == null ? other.getCorpCode() == null : this.getCorpCode().equals(other.getCorpCode()))
+                && (this.getCorpName() == null ? other.getCorpName() == null : this.getCorpName().equals(other.getCorpName()))
+                && (this.getBusiLicence() == null ? other.getBusiLicence() == null : this.getBusiLicence().equals(other.getBusiLicence()))
+                && (this.getParentCorpNo() == null ? other.getParentCorpNo() == null : this.getParentCorpNo().equals(other.getParentCorpNo()))
+                && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
+                && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
+                && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
+                && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
+                && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
+                && (this.getModiOperId() == null ? other.getModiOperId() == null : this.getModiOperId().equals(other.getModiOperId()))
+                && (this.getModiOperName() == null ? other.getModiOperName() == null : this.getModiOperName().equals(other.getModiOperName()))
+                && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
+                && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
+                && (this.getCorpId() == null ? other.getCorpId() == null : this.getCorpId().equals(other.getCorpId()))
+                && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()));
     }
 
     @Override
@@ -380,6 +434,8 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
         result = prime * result + ((getModiOperName() == null) ? 0 : getModiOperName().hashCode());
         result = prime * result + ((getModiDate() == null) ? 0 : getModiDate().hashCode());
         result = prime * result + ((getModiTime() == null) ? 0 : getModiTime().hashCode());
+        result = prime * result + ((getOperOrg() == null) ? 0 : getOperOrg().hashCode());
+        result = prime * result + ((getCorpId() == null) ? 0 : getCorpId().hashCode());
         return result;
     }
 }
