@@ -156,7 +156,14 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
 
         // 检查当前操作员是否能修改该授信记录
         checkOperator(anCredit.getOperOrg(), "当前操作员不能修改该授信记录");
-
+        
+        // 检查是否已授信
+        checkCreditExists(anModiCredit);
+        // 设置核心企业名称
+        anModiCredit.setCoreName(custAccountService.queryCustName(anModiCredit.getCoreCustNo()));
+        // 设置客户名称
+        anModiCredit.setCustName(custAccountService.queryCustName(anModiCredit.getCustNo()));
+        
         // 检查授信状态,不允许修改已生效的授信记录
         checkStatus(anCredit.getBusinStatus(), CreditConstants.CREDIT_STATUS_EFFECTIVE, true, "授信记录已生效,不允许修改");
 
