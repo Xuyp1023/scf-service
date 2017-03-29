@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.betterjr.common.dao.SqlMapper;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.mapper.common.Mapper;
+import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.mapper.pagehelper.PageHelper;
 import com.betterjr.modules.version.constant.VersionConstantCollentions;
 import com.betterjr.modules.version.entity.BaseVersionEntity;
 
@@ -102,6 +104,17 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
     }
     
     /**
+     * 带版本查询一条记录
+     */
+    public T selectOneWithVersion(T arg0) {
+        List<T> lists = selectWithLatest(arg0);
+        if(lists !=null && lists.size()>0){
+            return lists.get(0);
+        }
+        return null;
+    }
+    
+    /**
      * 类似selectAll
      */
     public List<T> selectAllWithVersion() {
@@ -126,6 +139,22 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
         
     }
     
+    public List selectByClassPropertyWithVersion (Class arg0, Map<String, Object> arg1) {
+        return this.selectByClassPropertyWithVersion(arg0, (Map) arg1, (String) null);
+    }
+    
+    /**
+     * selectByClassProperty  通过指定条件和实体类查询最新版本的数据信息
+     * @param arg0
+     * @param arg1
+     * @param arg2
+     * @return
+     */
+    public List selectByClassPropertyWithVersion(Class arg0, Map<String, Object> arg1, String arg2) {
+        arg1.put("isLatest", VersionConstantCollentions.IS_LATEST);
+        return this.selectByClassProperty(arg0, arg1, arg2);
+    }
+    
     /**
      * 类似 selectByProperty
      */
@@ -135,6 +164,25 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
         
     }
     
+    public Page<T> selectPropertyByPageWithVersion (Map<String, Object> paramMap, int anPageNum, int anPageSize, boolean arg3) {
+        //PageHelper.startPage(arg1, arg2, arg3);
+        return selectPropertyByPageWithVersion(paramMap, anPageNum, anPageSize, arg3, null);
+    }
+
+    /**
+     * 根据分页查询带版本的符合条件的数据
+     * @param paramMap 查询条件
+     * @param arg1   当前页数
+     * @param arg2   每页的输了
+     * @param arg3   是否跳过查询总的条数
+     * @param arg4   排序字段
+     * @return
+     */
+    public Page<T> selectPropertyByPageWithVersion (Map<String, Object> paramMap, int arg1, int arg2, boolean arg3, String arg4) {
+        paramMap.put("isLatest", VersionConstantCollentions.IS_LATEST);
+        PageHelper.startPage(arg1, arg2, arg3);
+        return (Page) this.selectByProperty(paramMap, arg4);
+    }
     
     /**
      * 类似selectCount
