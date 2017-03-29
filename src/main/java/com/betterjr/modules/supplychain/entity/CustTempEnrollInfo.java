@@ -178,6 +178,7 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
     @MetaData(value = "操作员所在机构", comments = "操作员所在机构，证书登录，则是证书的企业名称字段")
     private String operOrg;
 
+
     /**
      * 客户在资金管理系统中的客户号
      */
@@ -218,7 +219,7 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -226,7 +227,7 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return custType;
     }
 
-    public void setCustType(String custType) {
+    public void setCustType(final String custType) {
         this.custType = custType == null ? null : custType.trim();
     }
 
@@ -234,7 +235,7 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return custName;
     }
 
-    public void setCustName(String custName) {
+    public void setCustName(final String custName) {
         this.custName = custName == null ? null : custName.trim();
     }
 
@@ -242,7 +243,7 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return identType;
     }
 
-    public void setIdentType(String identType) {
+    public void setIdentType(final String identType) {
         this.identType = identType == null ? null : identType.trim();
     }
 
@@ -250,7 +251,7 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return identNo;
     }
 
-    public void setIdentNo(String identNo) {
+    public void setIdentNo(final String identNo) {
         this.identNo = identNo == null ? null : identNo.trim();
     }
 
@@ -258,7 +259,7 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return shortName;
     }
 
-    public void setShortName(String shortName) {
+    public void setShortName(final String shortName) {
         this.shortName = shortName == null ? null : shortName.trim();
     }
 
@@ -266,7 +267,7 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return nickName;
     }
 
-    public void setNickName(String nickName) {
+    public void setNickName(final String nickName) {
         this.nickName = nickName == null ? null : nickName.trim();
     }
 
@@ -274,15 +275,16 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return bankName;
     }
 
-    public void setBankName(String bankName) {
+    public void setBankName(final String bankName) {
         this.bankName = bankName == null ? null : bankName.trim();
     }
 
+    @Override
     public String getBankAccount() {
         return bankAccount;
     }
 
-    public void setBankAccount(String bankAccount) {
+    public void setBankAccount(final String bankAccount) {
         this.bankAccount = bankAccount == null ? null : bankAccount.trim();
     }
 
@@ -290,15 +292,17 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return this.bankAcountName;
     }
 
-    public void setBankAcountName(String anBankAcountName) {
+    public void setBankAcountName(final String anBankAcountName) {
         this.bankAcountName = anBankAcountName;
     }
 
+    @Override
     public Long getCustNo() {
         return custNo;
     }
 
-    public void setCustNo(Long custNo) {
+    @Override
+    public void setCustNo(final Long custNo) {
         this.custNo = custNo;
     }
 
@@ -306,7 +310,7 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return contName;
     }
 
-    public void setContName(String contName) {
+    public void setContName(final String contName) {
         this.contName = contName == null ? null : contName.trim();
     }
 
@@ -314,7 +318,7 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return contIdentType;
     }
 
-    public void setContIdentType(String contIdentType) {
+    public void setContIdentType(final String contIdentType) {
         this.contIdentType = contIdentType == null ? null : contIdentType.trim();
     }
 
@@ -322,7 +326,7 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return contIdentNo;
     }
 
-    public void setContIdentNo(String contIdentNo) {
+    public void setContIdentNo(final String contIdentNo) {
         this.contIdentNo = contIdentNo == null ? null : contIdentNo.trim();
     }
 
@@ -330,7 +334,7 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return contPhone;
     }
 
-    public void setContPhone(String contPhone) {
+    public void setContPhone(final String contPhone) {
         this.contPhone = contPhone == null ? null : contPhone.trim();
     }
 
@@ -338,7 +342,7 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return contMobileNo;
     }
 
-    public void setContMobileNo(String contMobileNo) {
+    public void setContMobileNo(final String contMobileNo) {
         this.contMobileNo = contMobileNo == null ? null : contMobileNo.trim();
     }
 
@@ -346,7 +350,7 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return contEmail;
     }
 
-    public void setContEmail(String contEmail) {
+    public void setContEmail(final String contEmail) {
         this.contEmail = contEmail == null ? null : contEmail.trim();
     }
 
@@ -354,7 +358,7 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(final String status) {
         this.status = status == null ? null : status.trim();
     }
 
@@ -362,7 +366,7 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description == null ? null : description.trim();
     }
 
@@ -370,7 +374,7 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return regDate;
     }
 
-    public void setRegDate(String regDate) {
+    public void setRegDate(final String regDate) {
         this.regDate = regDate == null ? null : regDate.trim();
     }
 
@@ -378,23 +382,36 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return modiDate;
     }
 
-    public void setModiDate(String modiDate) {
+    @Override
+    public void setModiDate(final String modiDate) {
         this.modiDate = modiDate == null ? null : modiDate.trim();
     }
 
+    @Override
     public String getOperOrg() {
         return operOrg;
     }
 
-    public void setOperOrg(String operOrg) {
+    @Override
+    public void setOperOrg(final String operOrg) {
         this.operOrg = operOrg == null ? null : operOrg.trim();
+    }
+
+    @Override
+    public String getCoreOperOrg() {
+        return null;
+    }
+
+    @Override
+    public void setCoreOperOrg(final String coreOperOrg) {
+
     }
 
     public Long getBatchNo() {
         return batchNo;
     }
 
-    public void setBatchNo(Long batchNo) {
+    public void setBatchNo(final Long batchNo) {
         this.batchNo = batchNo;
     }
 
@@ -402,7 +419,7 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return premisesAddress;
     }
 
-    public void setPremisesAddress(String premisesAddress) {
+    public void setPremisesAddress(final String premisesAddress) {
         this.premisesAddress = premisesAddress == null ? null : premisesAddress.trim();
     }
 
@@ -410,13 +427,13 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return coreCustName;
     }
 
-    public void setCoreCustName(String anCoreCustName) {
+    public void setCoreCustName(final String anCoreCustName) {
         coreCustName = anCoreCustName;
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("id=").append(id);
@@ -451,7 +468,7 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
     }
 
     @Override
-    public boolean equals(Object that) {
+    public boolean equals(final Object that) {
         if (this == that) {
             return true;
         }
@@ -461,7 +478,7 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         if (getClass() != that.getClass()) {
             return false;
         }
-        CustTempEnrollInfo other = (CustTempEnrollInfo) that;
+        final CustTempEnrollInfo other = (CustTempEnrollInfo) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
                 && (this.getCustType() == null ? other.getCustType() == null : this.getCustType().equals(other.getCustType()))
                 && (this.getCustName() == null ? other.getCustName() == null : this.getCustName().equals(other.getCustName()))
@@ -486,10 +503,11 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
                 && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
                 && (this.getBtNo() == null ? other.getBtNo() == null : this.getBtNo().equals(other.getBtNo()))
                 && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
+                && (this.getCoreOperOrg() == null ? other.getCoreOperOrg() == null : this.getCoreOperOrg().equals(other.getCoreOperOrg()))
                 && (this.getBatchNo() == null ? other.getBatchNo() == null : this.getBatchNo().equals(other.getBatchNo()))
                 && (this.getCoreCustName() == null ? other.getCoreCustName() == null : this.getCoreCustName().equals(other.getCoreCustName()))
                 && (this.getPremisesAddress() == null ? other.getPremisesAddress() == null
-                        : this.getPremisesAddress().equals(other.getPremisesAddress()));
+                : this.getPremisesAddress().equals(other.getPremisesAddress()));
     }
 
     @Override
@@ -518,6 +536,7 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         result = prime * result + ((getRegDate() == null) ? 0 : getRegDate().hashCode());
         result = prime * result + ((getModiDate() == null) ? 0 : getModiDate().hashCode());
         result = prime * result + ((getOperOrg() == null) ? 0 : getOperOrg().hashCode());
+        result = prime * result + ((getCoreOperOrg() == null) ? 0 : getCoreOperOrg().hashCode());
         result = prime * result + ((getBatchNo() == null) ? 0 : getBatchNo().hashCode());
         result = prime * result + ((getCoreCustName() == null) ? 0 : getCoreCustName().hashCode());
         result = prime * result + ((getPremisesAddress() == null) ? 0 : getPremisesAddress().hashCode());
@@ -563,13 +582,13 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return this.coreCustNo;
     }
 
-    public void setBtNo(String anBtNo) {
+    public void setBtNo(final String anBtNo) {
 
         this.btNo = anBtNo;
     }
 
     @Override
-    public void setCoreCustNo(Long anCoreCustNo) {
+    public void setCoreCustNo(final Long anCoreCustNo) {
 
         this.coreCustNo = anCoreCustNo;
     }
@@ -580,7 +599,7 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return this.btNo;
     }
 
-    public void modifyStatus(String anOperOrg, Long anCoreCustNo, String anBtNo, Long anCustNo) {
+    public void modifyStatus(final String anOperOrg, final Long anCoreCustNo, final String anBtNo, final Long anCustNo) {
         this.operOrg = anOperOrg;
         this.coreCustNo = anCoreCustNo;
         this.btNo = anBtNo;
@@ -601,7 +620,7 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
     }
 
     public Map<String, Object> converToTmpDataMap() {
-        Map<String, Object> tmpMap = BeanMapper.map(this, Map.class);
+        final Map<String, Object> tmpMap = BeanMapper.map(this, Map.class);
 
         return tmpMap;
     }

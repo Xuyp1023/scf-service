@@ -1,12 +1,19 @@
 package com.betterjr.modules.supplychain.entity;
 
-import com.betterjr.common.annotation.*;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.MathExtend;
 import com.betterjr.modules.client.data.ScfClientDataParentFace;
-
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -174,6 +181,11 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
     @MetaData( value="操作员所在机构", comments = "操作员所在机构，证书登录，则是证书的企业名称O字段")
     private String operOrg;
 
+    @JsonIgnore
+    @Column(name = "C_CORE_OPERORG", columnDefinition = "VARCHAR")
+    @MetaData(value = "操作员所在机构", comments = "数据所属核心企业")
+    private String coreOperOrg;
+
     @Transient
     private String bankAccount;
 
@@ -186,23 +198,26 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
+    @Override
     public String getBtNo() {
         return btNo;
     }
 
-    public void setBtNo(String btNo) {
+    public void setBtNo(final String btNo) {
         this.btNo = btNo == null ? null : btNo.trim();
     }
 
+    @Override
     public Long getCustNo() {
         return custNo;
     }
 
-    public void setCustNo(Long custNo) {
+    @Override
+    public void setCustNo(final Long custNo) {
         this.custNo = custNo;
     }
 
@@ -210,7 +225,7 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         return custName;
     }
 
-    public void setCustName(String custName) {
+    public void setCustName(final String custName) {
         this.custName = custName == null ? null : custName.trim();
     }
 
@@ -218,7 +233,7 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         return corpNo;
     }
 
-    public void setCorpNo(String corpNo) {
+    public void setCorpNo(final String corpNo) {
         this.corpNo = corpNo == null ? null : corpNo.trim();
     }
 
@@ -226,16 +241,16 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         return corpName;
     }
 
-    public void setCorpName(String corpName) {
+    public void setCorpName(final String corpName) {
         this.corpName = corpName == null ? null : corpName.trim();
     }
- 
+
 
     public String getProvinceName() {
         return provinceName;
     }
 
-    public void setProvinceName(String provinceName) {
+    public void setProvinceName(final String provinceName) {
         this.provinceName = provinceName == null ? null : provinceName.trim();
     }
 
@@ -243,7 +258,7 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         return cityName;
     }
 
-    public void setCityName(String cityName) {
+    public void setCityName(final String cityName) {
         this.cityName = cityName == null ? null : cityName.trim();
     }
 
@@ -251,7 +266,7 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         return contName;
     }
 
-    public void setContName(String contName) {
+    public void setContName(final String contName) {
         this.contName = contName == null ? null : contName.trim();
     }
 
@@ -259,7 +274,7 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         return contIdentType;
     }
 
-    public void setContIdentType(String contIdentType) {
+    public void setContIdentType(final String contIdentType) {
         this.contIdentType = contIdentType == null ? null : contIdentType.trim();
     }
 
@@ -267,7 +282,7 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         return contIdentNo;
     }
 
-    public void setContIdentNo(String contIdentNo) {
+    public void setContIdentNo(final String contIdentNo) {
         this.contIdentNo = contIdentNo == null ? null : contIdentNo.trim();
     }
 
@@ -275,7 +290,7 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         return contPhone;
     }
 
-    public void setContPhone(String contPhone) {
+    public void setContPhone(final String contPhone) {
         this.contPhone = contPhone == null ? null : contPhone.trim();
     }
 
@@ -283,7 +298,7 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         return faxNo;
     }
 
-    public void setFaxNo(String faxNo) {
+    public void setFaxNo(final String faxNo) {
         this.faxNo = faxNo == null ? null : faxNo.trim();
     }
 
@@ -291,7 +306,7 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         return contMobileNo;
     }
 
-    public void setContMobileNo(String contMobileNo) {
+    public void setContMobileNo(final String contMobileNo) {
         this.contMobileNo = contMobileNo == null ? null : contMobileNo.trim();
     }
 
@@ -299,7 +314,7 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         return contEmail;
     }
 
-    public void setContEmail(String contEmail) {
+    public void setContEmail(final String contEmail) {
         this.contEmail = contEmail == null ? null : contEmail.trim();
     }
 
@@ -307,7 +322,7 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(final String address) {
         this.address = address == null ? null : address.trim();
     }
 
@@ -315,7 +330,7 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         return userStatus;
     }
 
-    public void setUserStatus(String userStatus) {
+    public void setUserStatus(final String userStatus) {
         this.userStatus = userStatus == null ? null : userStatus.trim();
     }
 
@@ -323,7 +338,7 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         return userFlag;
     }
 
-    public void setUserFlag(String userFlag) {
+    public void setUserFlag(final String userFlag) {
         this.userFlag = userFlag == null ? null : userFlag.trim();
     }
 
@@ -331,23 +346,26 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         return regDate;
     }
 
-    public void setRegDate(String regDate) {
+    public void setRegDate(final String regDate) {
         this.regDate = regDate == null ? null : regDate.trim();
     }
-  
+
     public Long getCoreCustNo() {
         return this.coreCustNo;
     }
 
-    public void setCoreCustNo(Long anCoreCustNo) {
+    @Override
+    public void setCoreCustNo(final Long anCoreCustNo) {
         this.coreCustNo = anCoreCustNo;
     }
 
+    @Override
     public String getOperOrg() {
         return this.operOrg;
     }
 
-    public void setOperOrg(String anOperOrg) {
+    @Override
+    public void setOperOrg(final String anOperOrg) {
         this.operOrg = anOperOrg;
     }
 
@@ -355,7 +373,8 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         return this.modiDate;
     }
 
-    public void setModiDate(String anModiDate) {
+    @Override
+    public void setModiDate(final String anModiDate) {
         this.modiDate = anModiDate;
     }
 
@@ -363,7 +382,7 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         return this.serviceClass;
     }
 
-    public void setServiceClass(String anServiceClass) {
+    public void setServiceClass(final String anServiceClass) {
         this.serviceClass = anServiceClass;
     }
 
@@ -371,17 +390,28 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         return this.bankAccountName;
     }
 
-    public void setBankAccountName(String anBankAccountName) {
+    public void setBankAccountName(final String anBankAccountName) {
         this.bankAccountName = anBankAccountName;
     }
 
-    public void setBankAccount(String anBankAccount) {
+    public void setBankAccount(final String anBankAccount) {
         this.bankAccount = anBankAccount;
     }
 
     @Override
+    public String getCoreOperOrg() {
+        return coreOperOrg;
+    }
+
+    @Override
+    public void setCoreOperOrg(final String coreOperOrg) {
+        this.coreOperOrg = coreOperOrg == null ? null : coreOperOrg.trim();
+    }
+
+
+    @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
@@ -409,12 +439,13 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         sb.append(", modiDate=").append(modiDate);
         sb.append(", bankAccountName=").append(bankAccountName);
         sb.append(", bankAccount=").append(bankAccount);
+        sb.append(", coreOperOrg=").append(coreOperOrg);
         sb.append("]");
         return sb.toString();
     }
 
     @Override
-    public boolean equals(Object that) {
+    public boolean equals(final Object that) {
         if (this == that) {
             return true;
         }
@@ -424,7 +455,7 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         if (getClass() != that.getClass()) {
             return false;
         }
-        CoreSupplierInfo other = (CoreSupplierInfo) that;
+        final CoreSupplierInfo other = (CoreSupplierInfo) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
                 && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
                 && (this.getBtNo() == null ? other.getBtNo() == null : this.getBtNo().equals(other.getBtNo()))
@@ -445,6 +476,7 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
                 && (this.getAddress() == null ? other.getAddress() == null : this.getAddress().equals(other.getAddress()))
                 && (this.getUserStatus() == null ? other.getUserStatus() == null : this.getUserStatus().equals(other.getUserStatus()))
                 && (this.getUserFlag() == null ? other.getUserFlag() == null : this.getUserFlag().equals(other.getUserFlag()))
+                && (this.getCoreOperOrg() == null ? other.getCoreOperOrg() == null : this.getCoreOperOrg().equals(other.getCoreOperOrg()))
                 && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()));
     }
 
@@ -473,14 +505,16 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         result = prime * result + ((getUserStatus() == null) ? 0 : getUserStatus().hashCode());
         result = prime * result + ((getUserFlag() == null) ? 0 : getUserFlag().hashCode());
         result = prime * result + ((getRegDate() == null) ? 0 : getRegDate().hashCode());
+        result = prime * result + ((getCoreOperOrg() == null) ? 0 : getCoreOperOrg().hashCode());
         return result;
     }
 
-    public void modifyDefaultValue(CoreSupplierInfo anSupplier) {
+    public void modifyDefaultValue(final CoreSupplierInfo anSupplier) {
         this.id = anSupplier.id;
         this.modiDate = BetterDateUtils.getNumDateTime();
     }
 
+    @Override
     public void fillDefaultValue() {
         this.id = SerialGenerator.getLongValue("CoreSupplierInfo.id");
         this.regDate = BetterDateUtils.getNumDate();
@@ -491,19 +525,19 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
 
     @Override
     public String getBankAccount() {
-        
+
         return this.bankAccount;
     }
 
     @Override
     public String findBankAccountName() {
-        
+
         return this.bankAccountName;
     }
-    
+
     @Override
     public void modifytValue() {
-        
-        this.modiDate = BetterDateUtils.getNumDate(); 
+
+        this.modiDate = BetterDateUtils.getNumDate();
     }
 }

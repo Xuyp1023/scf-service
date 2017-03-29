@@ -86,4 +86,9 @@ public class ScfAcceptBillDubboService implements IScfAcceptBillService {
         final ScfAcceptBill bill = scfAcceptBillService.findAcceptBillDetailsById(anBillId);
         return bill != null ? bill.getBusinStatus() : null;
     }
+    
+    @Override
+    public String webSaveBillFile(Long anBillId,String anFileTypeName,String anFileMediaId){
+        return AjaxObject.newOk("保存票据附件",scfAcceptBillService.saveBillFile(anBillId,anFileTypeName,anFileMediaId)).toJson();
+    }
 }

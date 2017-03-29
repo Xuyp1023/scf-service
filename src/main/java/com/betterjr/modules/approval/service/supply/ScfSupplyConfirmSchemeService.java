@@ -8,16 +8,12 @@ import org.springframework.stereotype.Service;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.modules.agreement.service.ScfAgreementService;
 import com.betterjr.modules.approval.service.ScfBaseApprovalService;
-import com.betterjr.modules.loan.entity.ScfRequestScheme;
 import com.betterjr.modules.loan.helper.RequestLastStatus;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
-import com.betterjr.modules.loan.service.ScfRequestSchemeService;
 
 @Service
 public class ScfSupplyConfirmSchemeService extends ScfBaseApprovalService {
 
-	@Autowired
-	private ScfRequestSchemeService schemeService;
 	@Autowired
 	private ScfAgreementService agreementService;
 
@@ -36,7 +32,7 @@ public class ScfSupplyConfirmSchemeService extends ScfBaseApprovalService {
 		}
 
 		this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.REQUEST_TRADING.getCode(), RequestLastStatus.APPROVE.getCode());
-		//this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
+		this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
 	}
 
 	public void processReject(Map<String, Object> anContext) {

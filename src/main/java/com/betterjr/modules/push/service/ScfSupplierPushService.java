@@ -14,7 +14,6 @@ import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.agreement.service.ScfElecAgreementService;
-import com.betterjr.modules.customer.data.CustRelationData;
 import com.betterjr.modules.enquiry.entity.ScfEnquiry;
 import com.betterjr.modules.enquiry.service.ScfEnquiryService;
 import com.betterjr.modules.loan.entity.ScfRequest;
@@ -42,34 +41,39 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
     private ScfRequestService requestService;
     
     public boolean pushSupplierInfo(Long anBillId){
-        boolean bool=false;
+        boolean bool=true;
         try {
             logger.info("anBillId:"+anBillId);
             // 获取票据信息
             ScfAcceptBill scfAcceptBill=scfAcceptBillService.findAcceptBillDetailsById(anBillId);
             logger.info("scfAcceptBill:"+scfAcceptBill);
-            ScfSupplierPush supplierPush=new ScfSupplierPush();
-            supplierPush.initDefValue(scfAcceptBill.getCoreCustNo(),scfAcceptBill.getSupplierNo());
-            this.insert(supplierPush);
-            ScfSupplierPushDetail supplierPushDetail=new ScfSupplierPushDetail();
-            supplierPushDetail.initDefValue(scfAcceptBill);
-            supplierPushDetail.setRemark("票据信息推送");
-            supplierPushDetail.setPushId(supplierPush.getId());
-            // 添加发送记录
-            String factors = pushCheckService.pushData(scfAcceptBill.getCoreCustNo(),scfAcceptBill.getSupplierNo(),supplierPushDetail);
-            supplierPushDetail.setAgencyNo(factors);
-            supplierPushDetailService.addPushDetail(supplierPushDetail);
-            logger.info("添加推送信息,factors:"+factors);
-            // 推送成功后调询价接口
-            if(BetterStringUtils.isNotBlank(factors)){
-                ScfEnquiry scfEnquiry=new ScfEnquiry();
-                scfEnquiry.setCustNo(scfAcceptBill.getCoreCustNo());
-                scfEnquiry.setFactors(factors);
-                scfEnquiry.setOrders(supplierPushDetail.getOrderId().toString());
-                scfEnquiry.setRequestType("2");
-                scfEnquiry.setEnquiryMethod("1");
-                logger.info("调用询价："+scfEnquiry);
-                scfEnquiryService.addEnquiry(scfEnquiry);
+            if(scfAcceptBill!=null && scfAcceptBill.getCoreCustNo()!=null && scfAcceptBill.getSupplierNo()!=null){
+                ScfSupplierPush supplierPush=new ScfSupplierPush();
+                supplierPush.initDefValue(scfAcceptBill.getCoreCustNo(),scfAcceptBill.getSupplierNo());
+                this.insert(supplierPush);
+                ScfSupplierPushDetail supplierPushDetail=new ScfSupplierPushDetail();
+                supplierPushDetail.initDefValue(scfAcceptBill);
+                supplierPushDetail.setRemark("票据信息推送");
+                supplierPushDetail.setPushId(supplierPush.getId());
+                // 添加发送记录
+                String factors = pushCheckService.pushData(scfAcceptBill.getCoreCustNo(),scfAcceptBill.getSupplierNo(),supplierPushDetail);
+                supplierPushDetail.setAgencyNo(factors);
+                supplierPushDetailService.addPushDetail(supplierPushDetail);
+                logger.info("添加推送信息,factors:"+factors);
+                // 推送成功后调询价接口
+                if(BetterStringUtils.isNotBlank(factors)){
+                    ScfEnquiry scfEnquiry=new ScfEnquiry();
+                    scfEnquiry.setCustNo(scfAcceptBill.getCoreCustNo());
+                    scfEnquiry.setFactors(factors);
+                    scfEnquiry.setOrders(supplierPushDetail.getOrderId().toString());
+                    scfEnquiry.setRequestType("2");
+                    scfEnquiry.setEnquiryMethod("1");
+                    logger.info("调用询价："+scfEnquiry);
+                    scfEnquiryService.addEnquiry(scfEnquiry);
+                }
+            }else{
+                logger.info("推送票据时没有核心企业，推送票据的ID为："+anBillId);
+                bool=false;
             }
         }
         catch (Exception e) {
