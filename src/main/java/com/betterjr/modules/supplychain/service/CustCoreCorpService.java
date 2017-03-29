@@ -36,13 +36,9 @@ public class CustCoreCorpService extends BaseService<CustCoreCorpInfoMapper, Cus
         }
     }
 
-    private CustCoreCorpInfo findByCorpNo(final String anOperOrg, final String anCorpNo){
+    public CustCoreCorpInfo findByCorpNo(final String anOperOrg, final String anCorpNo){
         final Map<String, Object> termMap = QueryTermBuilder.newInstance().put("operOrg", anOperOrg).put("corpNo", anCorpNo).build();
         return Collections3.getFirst( selectByProperty(termMap));
     }
 
-    public CustCoreCorpInfo findByCorpId(final String anOperOrg, final String anCorpId) {
-        final Map<String, Object> termMap = QueryTermBuilder.newInstance().put("operOrg", anOperOrg).put("corpId", anCorpId).build();
-        return Collections3.getFirst(selectByProperty(termMap) );
-    }
 }

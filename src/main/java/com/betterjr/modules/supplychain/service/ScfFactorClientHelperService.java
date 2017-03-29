@@ -268,7 +268,7 @@ public class ScfFactorClientHelperService {
                 continue;
             }
 
-            final CustCoreCorpInfo coreCorpInfo = coreCorpService.findByCorpId(anCoreOperOrg, coreCorpId);
+            final CustCoreCorpInfo coreCorpInfo = coreCorpService.findByCorpNo(anCoreOperOrg, coreCorpId);
             if (coreCorpInfo == null) {
                 logger.info("资金系统 供应商信息 对应核心企业 为空:" + workValue);
                 continue;
