@@ -86,7 +86,7 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
             T arg1 = arg0;
             arg1.setIsLatest(VersionConstantCollentions.IS_NOT_LATEST);
             this.updateByPrimaryKeySelective(arg1);
-            return this.insertVersion(arg1);
+            return this.insertVersionSelective(arg1);
         }
         
         return null;
@@ -96,7 +96,7 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
     /**
      * 通过对象查询相似的对象 类似 select方法
      */
-    public List<T> selectIsLatest(T arg0) {
+    public List<T> selectWithLatest(T arg0) {
         arg0.setIsLatest(VersionConstantCollentions.IS_LATEST);
         return this.select(arg0);
     }
@@ -104,12 +104,12 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
     /**
      * 类似selectAll
      */
-    public List<T> selectAll() {
+    public List<T> selectAllWithVersion() {
         Class<T> findGenericClass = findGenericClass();
        try {
              T t = findGenericClass.newInstance();
              //t.setIsLatest(VersionConstantCollentions.IS_LATEST);
-             return this.selectIsLatest(t);
+             return this.selectWithLatest(t);
         }
         catch (Exception e) {
         }
@@ -117,9 +117,29 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
     }
     
     /**
+     * 类似 selectByProperty
+     */
+    public List<T> selectByMapPropertyWithVersion(Map<String, Object> paramMap, String orderBy) {
+      
+        paramMap.put("isLatest", VersionConstantCollentions.IS_LATEST);
+        return this.selectByProperty(paramMap, orderBy);
+        
+    }
+    
+    /**
+     * 类似 selectByProperty
+     */
+    public List<T> selectByMapPropertyWithVersion(Map<String, Object> paramMap) {
+      
+        return selectByMapPropertyWithVersion(paramMap, (String) null);
+        
+    }
+    
+    
+    /**
      * 类似selectCount
      */
-    public int selectCount(T arg0) {
+    public int selectCountWithVersion(T arg0) {
         arg0.setIsLatest(VersionConstantCollentions.IS_LATEST);
         return this.selectCount(arg0);
     }
@@ -127,7 +147,7 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
     /**
      * 类似selectCountByProperty
      */
-    public int selectCountByProperty(Map<String, Object> arg0) {
+    public int selectCountByPropertyWithVersion(Map<String, Object> arg0) {
         arg0.put("isLatest", "1");
         Class arg1 = this.findGenericClass();
         return this.selectCountByClassProperty(arg1, arg0);
