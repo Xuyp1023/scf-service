@@ -606,7 +606,7 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
                     logger.info("资金系统 票据 drawerId 为空:" + scfAccept);
                 }
 
-                final CustCoreCorpInfo coreCorpInfo = coreCorpService.findByCorpId(anCoreOperOrg, coreCorpId);
+                final CustCoreCorpInfo coreCorpInfo = coreCorpService.findByCorpNo(anCoreOperOrg, coreCorpId);
                 if (coreCorpInfo == null) {
                     logger.info("资金系统 票据 drawerId 对应核心企业 为空:" + scfAccept);
                 } else {
