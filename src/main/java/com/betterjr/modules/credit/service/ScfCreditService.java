@@ -139,6 +139,21 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
             throw new BytterTradeException(40001, "当前客户已存在该授信类型的记录,不允许重复授信");
         }
     }
+    private ScfCredit checkModifyCreditExists(ScfCredit anCredit) {
+        Map<String, Object> anMap = new HashMap<String, Object>();
+        anMap.put("custNo", anCredit.getCustNo());
+        anMap.put("factorNo", anCredit.getFactorNo());
+        anMap.put("coreCustNo", anCredit.getCoreCustNo());
+        anMap.put("creditMode", anCredit.getCreditMode());
+        // 授信状态:0-未生效;1-已生效;2-已失效;
+        anMap.put("businStatus", new String[] { CreditConstants.CREDIT_STATUS_INEFFECTIVE, CreditConstants.CREDIT_STATUS_EFFECTIVE });
+        List<ScfCredit> list = this.selectByProperty(anMap);
+        if (list!=null && list.size()>0) {
+            return list.get(0);
+        }else{
+            return null;
+        }
+    }
 
     /**
      * 授信记录修改
@@ -158,7 +173,10 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         checkOperator(anCredit.getOperOrg(), "当前操作员不能修改该授信记录");
         
         // 检查是否已授信
-        checkCreditExists(anModiCredit);
+        ScfCredit conditCredit = checkModifyCreditExists(anModiCredit);//通过核心企业，保理公司，授信模式获取对象
+        if(conditCredit !=null &&!conditCredit.getId().equals(anId) ){
+            checkCreditExists(anModiCredit);
+        }
         // 设置核心企业名称
         anModiCredit.setCoreName(custAccountService.queryCustName(anModiCredit.getCoreCustNo()));
         // 设置客户名称

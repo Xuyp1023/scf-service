@@ -152,6 +152,14 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
     @MetaData( value="操作机构", comments = "操作机构")
     private String operOrg;
 
+    /**
+     * 资金系统内部id
+     */
+    @JsonIgnore
+    @Column(name = "C_CORPID",  columnDefinition="VARCHAR" )
+    @MetaData( value="资金系统内部id", comments = "资金系统内部id")
+    private String corpId;
+
     private static final long serialVersionUID = 8300178519489076446L;
 
     public Long getId() {
@@ -317,6 +325,13 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
     public void setOperOrg(final String operOrg) {
         this.operOrg = operOrg == null ? null : operOrg.trim();
     }
+    public String getCorpId() {
+        return corpId;
+    }
+
+    public void setCorpId(final String corpId) {
+        this.corpId = corpId == null ? null : corpId.trim();
+    }
 
     public void initDefValue(final String anOperOrg){
         this.id = SerialGenerator.getLongValue("CustCoreCorpInfo.id");
@@ -357,6 +372,7 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
         sb.append(", modiDate=").append(modiDate);
         sb.append(", modiTime=").append(modiTime);
         sb.append(", operOrg=").append(operOrg);
+        sb.append(", corpId=").append(corpId);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -392,6 +408,7 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
                 && (this.getModiOperName() == null ? other.getModiOperName() == null : this.getModiOperName().equals(other.getModiOperName()))
                 && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
                 && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
+                && (this.getCorpId() == null ? other.getCorpId() == null : this.getCorpId().equals(other.getCorpId()))
                 && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()));
     }
 
@@ -418,6 +435,7 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
         result = prime * result + ((getModiDate() == null) ? 0 : getModiDate().hashCode());
         result = prime * result + ((getModiTime() == null) ? 0 : getModiTime().hashCode());
         result = prime * result + ((getOperOrg() == null) ? 0 : getOperOrg().hashCode());
+        result = prime * result + ((getCorpId() == null) ? 0 : getCorpId().hashCode());
         return result;
     }
 }

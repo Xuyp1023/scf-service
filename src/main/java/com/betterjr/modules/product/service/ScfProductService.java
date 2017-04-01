@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,11 +56,6 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         if (null == businStatus || businStatus.toString().isEmpty()) {
             anMap.put("businStatus",
                     new String[] { ProductConstants.PRO_STATUS_REG, ProductConstants.PRO_STATUS_SHELVES, ProductConstants.PRO_STATUS_OFFLINE });
-        }
-        //核心企业选择全部
-        Object coreCustNo = anMap.get("coreCustNo");
-        if (null == coreCustNo || StringUtils.isBlank(coreCustNo.toString())) {
-            anMap.remove("coreCustNo");
         }
         // 操作员只能查询所属机构的融资产品信息
         anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
