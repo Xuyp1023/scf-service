@@ -43,6 +43,7 @@
         com.betterjr.modules.customer;
         com.betterjr.modules.agreement.service;
         com.betterjr.modules.ledger;
+        com.betterjr.modules.generator;
 		com.betterjr.common" />
 	<!-- <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" 
 		p:host-name="192.168.2.49" p:port="6379" /> <bean id="stringRedisSerializer" 
@@ -235,6 +236,9 @@
 
 	<bean id="serialGenerator" class="com.betterjr.common.selectkey.SerialGenerator"
 		init-method="init" scope="singleton" lazy-init="false" />
+		
+	<bean id="sequenceFactory" class="com.betterjr.modules.generator.SequenceFactory"
+        init-method="init" scope="singleton" lazy-init="false"></bean>
 
     <bean id="remoteProxyFactory" class="com.betterjr.modules.remote.helper.RemoteProxyFactory" init-method="init" scope="singleton">
      <property name="trustStoreFile" value="${trustStore.File}" />
