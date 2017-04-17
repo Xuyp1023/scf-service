@@ -8,6 +8,8 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.modules.acceptbill.IScfAcceptBillService;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
+import com.betterjr.modules.acceptbill.entity.ScfAcceptBillDO;
+import com.betterjr.modules.acceptbill.service.ScfAcceptBillDOService;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 
@@ -17,6 +19,9 @@ public class ScfAcceptBillDubboService implements IScfAcceptBillService {
     @Autowired
     private ScfAcceptBillService scfAcceptBillService;
 
+    @Autowired
+    private ScfAcceptBillDOService acceptBillService;
+    
     @Override
     public String webQueryAcceptBill(final Map<String, Object> anMap, final String anIsOnlyNormal, final String anFlag, final int anPageNum,
             final int anPageSize) {
@@ -47,6 +52,14 @@ public class ScfAcceptBillDubboService implements IScfAcceptBillService {
         return AjaxObject.newOk("汇票信息登记成功", scfAcceptBillService.addAcceptBill(anAcceptBill, anFileList, anOtherFileList)).toJson();
     }
 
+    @Override
+    public String webAddAcceptBillDO(Map<String, Object> anMap, String anFileList, boolean anConfirmFlag) {
+        
+        ScfAcceptBillDO anAcceptBill = (ScfAcceptBillDO) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOk("汇票信息登记成功", acceptBillService.addAcceptBill(anAcceptBill, anFileList,anConfirmFlag)).toJson();
+   
+    }
+    
     @Override
     public String webSaveAduitAcceptBill(final Long anId) {
 
@@ -91,4 +104,6 @@ public class ScfAcceptBillDubboService implements IScfAcceptBillService {
     public String webSaveBillFile(Long anBillId,String anFileTypeName,String anFileMediaId){
         return AjaxObject.newOk("保存票据附件",scfAcceptBillService.saveBillFile(anBillId,anFileTypeName,anFileMediaId)).toJson();
     }
+
+    
 }

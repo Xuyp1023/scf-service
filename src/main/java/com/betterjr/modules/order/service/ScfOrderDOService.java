@@ -81,7 +81,7 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
          order.setCoreCustName(custAccountService.queryCustName(anModiOrder.getCoreCustNo()));
          order=anModiOrder.initModifyValue(order);
          // 保存附件信息
-         order.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo("", order.getBatchNo()));
+         order.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anFileList, order.getBatchNo()));
          // 初始版本更改 直接返回
          if(order.getBusinStatus().equals(VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE)&&
                  order.getDocStatus().equals(VersionConstantCollentions.DOC_STATUS_DRAFT)){

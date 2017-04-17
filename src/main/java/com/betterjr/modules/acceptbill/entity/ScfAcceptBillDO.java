@@ -7,8 +7,15 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
+import com.betterjr.common.selectkey.SerialGenerator;
+import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
+import com.betterjr.modules.version.constant.VersionConstantCollentions;
 import com.betterjr.modules.version.entity.BaseVersionEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -52,7 +59,7 @@ public class ScfAcceptBillDO extends BaseVersionEntity {
     private BigDecimal balance;
 
     /**
-     * 开票日期
+     * 出票日期
      */
     @Column(name = "D_INVOICE_DATE", columnDefinition = "VARCHAR")
     @MetaData(value = "开票日期", comments = "开票日期")
@@ -93,21 +100,21 @@ public class ScfAcceptBillDO extends BaseVersionEntity {
     private String cashDate;
 
     /**
-     * 持票人 (债权人)供应商
+     * 持票人 (债权人)供应商 默认为收款方名称
      */
     @Column(name = "C_HOLDER",  columnDefinition="VARCHAR" )
     @MetaData( value="持票人", comments = "持票人")
     private String holder ;
 
     /**
-     * 持票人客户号
+     * 持票人客户号 默认为收款人
      */
     @Column(name = "L_HOLDER_NO",  columnDefinition="BIGINT" )
     @MetaData( value="持票人客户号", comments = "持票人客户号")
     private Long holderNo;
 
     /**
-     * 持票人帐号
+     * 持票人帐号 默认为收款帐号
      */
     @Column(name = "C_HOLDER_ACCOUNT",  columnDefinition="VARCHAR" )
     @MetaData( value="持票人帐号", comments = "持票人帐号")
@@ -127,6 +134,22 @@ public class ScfAcceptBillDO extends BaseVersionEntity {
     @MetaData( value="承兑人银行账户", comments = "承兑人银行账户")
     private String acceptorBankAccount;
 
+    /**
+     * 卖方客户号 默认是收款人
+     */
+    @Column(name = "L_SUPPLIER_NO", columnDefinition = "INTEGER")
+    @MetaData(value = "卖方客户号", comments = "卖方客户号")
+    private Long supplierNo;
+
+    /*@Transient
+    private String supplierName;*/
+    /**
+     * 卖方客户名称 默认是收款方名称
+     */
+    @Column(name = "C_SUPPLIER_NAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "卖方客户名称", comments = "卖方客户名称")
+    private String supplierName;
+    
     /**
      * 收款人名称
      */
@@ -148,6 +171,23 @@ public class ScfAcceptBillDO extends BaseVersionEntity {
     @MetaData(value = "收款方银行全称", comments = "收款方银行全称")
     private String suppBankName;
 
+    /**
+     * 买方客户号 开票单位
+     */
+    @Column(name = "L_BUYER_NO", columnDefinition = "INTEGER")
+    @MetaData(value = "买方客户号", comments = "买方客户号")
+    private Long buyerNo;
+
+    /*    @Transient
+    private String buyerName;*/
+    
+    /**
+     * 买方客户名称 付款放名称
+     */
+    @Column(name = "C_BUYER_NAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "买方客户名称", comments = "买方客户名称")
+    private String buyerName;
+    
     /**
      * 付款人名称
      */
@@ -209,42 +249,7 @@ public class ScfAcceptBillDO extends BaseVersionEntity {
     private String btBillNo;
 
     /**
-     * 买方客户号
-     */
-    @Column(name = "L_BUYER_NO", columnDefinition = "INTEGER")
-    @MetaData(value = "买方客户号", comments = "买方客户号")
-    private Long buyerNo;
-
-    /*    @Transient
-    private String buyerName;*/
-    
-    /**
-     * 买方客户名称
-     */
-    @Column(name = "C_BUYER_NAME", columnDefinition = "VARCHAR")
-    @MetaData(value = "买方客户名称", comments = "买方客户名称")
-    private String buyerName;
-
-    /**
-     * 卖方客户号
-     */
-    @Column(name = "L_SUPPLIER_NO", columnDefinition = "INTEGER")
-    @MetaData(value = "卖方客户号", comments = "卖方客户号")
-    private Long supplierNo;
-
-    /*@Transient
-    private String supplierName;*/
-    /**
-     * 卖方客户名称
-     */
-    @Column(name = "C_SUPPLIER_NAME", columnDefinition = "VARCHAR")
-    @MetaData(value = "卖方客户名称", comments = "卖方客户名称")
-    private String supplierName;
-    
-    
-
-    /**
-     * 合同编号
+     * 合同编号 交易合同号
      */
     @Column(name = "C_AGREENO", columnDefinition = "VARCHAR")
     @MetaData(value = "合同编号", comments = "合同编号")
@@ -280,14 +285,6 @@ public class ScfAcceptBillDO extends BaseVersionEntity {
     @Column(name = "N_BATCHNO", columnDefinition = "INTEGER")
     @MetaData(value = "上传的批次号", comments = "上传的批次号，对应fileinfo中的ID")
     private Long batchNo;
-
-
-    /**
-     * 合同ID号
-     */
-    @Column(name = "L_AGREEID", columnDefinition = "INTEGER")
-    @MetaData(value = "合同ID号", comments = "合同ID号")
-    private Long agreeId;
 
     /**
      * 备注
@@ -352,6 +349,13 @@ public class ScfAcceptBillDO extends BaseVersionEntity {
     @Column(name = "C_CORE_CUSTNAME", columnDefinition = "VARCHAR")
     @MetaData(value = "操作员所在企业名称", comments = "操作员所在企业名称")
     private String coreCustName;
+    
+    /**
+     * 出票人
+     */
+    @Column(name = "C_BILL_NAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "出票人", comments = "出票人")
+    private String invoicer;
 
     public String getBillNo() {
         return this.billNo;
@@ -625,14 +629,6 @@ public class ScfAcceptBillDO extends BaseVersionEntity {
         this.batchNo = anBatchNo;
     }
 
-    public Long getAgreeId() {
-        return this.agreeId;
-    }
-
-    public void setAgreeId(Long anAgreeId) {
-        this.agreeId = anAgreeId;
-    }
-
     public String getDescription() {
         return this.description;
     }
@@ -705,25 +701,33 @@ public class ScfAcceptBillDO extends BaseVersionEntity {
         this.coreCustName = anCoreCustName;
     }
 
+    public String getInvoicer() {
+        return this.invoicer;
+    }
+
+    public void setInvoicer(String anInvoicer) {
+        this.invoicer = anInvoicer;
+    }
+
     @Override
     public String toString() {
         return "ScfAcceptBillDO [billNo=" + this.billNo + ", billType=" + this.billType + ", billMode=" + this.billMode + ", balance=" + this.balance
                 + ", invoiceDate=" + this.invoiceDate + ", invoiceCorp=" + this.invoiceCorp + ", drawerId=" + this.drawerId + ", endDate="
                 + this.endDate + ", cashDate=" + this.cashDate + ", holder=" + this.holder + ", holderNo=" + this.holderNo + ", holderBankAccount="
-                + this.holderBankAccount + ", acceptor=" + this.acceptor + ", acceptorBankAccount=" + this.acceptorBankAccount + ", supplier="
-                + this.supplier + ", suppBankAccount=" + this.suppBankAccount + ", suppBankName=" + this.suppBankName + ", buyer=" + this.buyer
-                + ", realBuyer=" + this.realBuyer + ", buyerBankAccount=" + this.buyerBankAccount + ", buyerBankName=" + this.buyerBankName
-                + ", billFrom=" + this.billFrom + ", regDate=" + this.regDate + ", modiDate=" + this.modiDate + ", btBillNo=" + this.btBillNo
-                + ", buyerNo=" + this.buyerNo + ", buyerName=" + this.buyerName + ", supplierNo=" + this.supplierNo + ", supplierName="
-                + this.supplierName + ", agreeNo=" + this.agreeNo + ", operId=" + this.operId + ", operName=" + this.operName + ", operOrg="
-                + this.operOrg + ", batchNo=" + this.batchNo + ", agreeId=" + this.agreeId + ", description=" + this.description + ", coreCustNo="
+                + this.holderBankAccount + ", acceptor=" + this.acceptor + ", acceptorBankAccount=" + this.acceptorBankAccount + ", supplierNo="
+                + this.supplierNo + ", supplierName=" + this.supplierName + ", supplier=" + this.supplier + ", suppBankAccount="
+                + this.suppBankAccount + ", suppBankName=" + this.suppBankName + ", buyerNo=" + this.buyerNo + ", buyerName=" + this.buyerName
+                + ", buyer=" + this.buyer + ", realBuyer=" + this.realBuyer + ", buyerBankAccount=" + this.buyerBankAccount + ", buyerBankName="
+                + this.buyerBankName + ", billFrom=" + this.billFrom + ", regDate=" + this.regDate + ", modiDate=" + this.modiDate + ", btBillNo="
+                + this.btBillNo + ", agreeNo=" + this.agreeNo + ", operId=" + this.operId + ", operName=" + this.operName + ", operOrg="
+                + this.operOrg + ", batchNo=" + this.batchNo  + ", description=" + this.description + ", coreCustNo="
                 + this.coreCustNo + ", modiOperId=" + this.modiOperId + ", modiOperName=" + this.modiOperName + ", modiTime=" + this.modiTime
                 + ", dataSource=" + this.dataSource + ", transferId=" + this.transferId + ", coreOperOrg=" + this.coreOperOrg + ", coreCustName="
-                + this.coreCustName + ", getRefNo()=" + this.getRefNo() + ", getVersion()=" + this.getVersion() + ", getIsLatest()="
-                + this.getIsLatest() + ", getBusinStatus()=" + this.getBusinStatus() + ", getLockedStatus()=" + this.getLockedStatus()
-                + ", getDocStatus()=" + this.getDocStatus() + ", getAuditOperId()=" + this.getAuditOperId() + ", getAuditOperName()="
-                + this.getAuditOperName() + ", getAuditData()=" + this.getAuditData() + ", getAuditTime()=" + this.getAuditTime() + ", getId()="
-                + this.getId() + "]";
+                + this.coreCustName + ", invoicer=" + this.invoicer + ", getRefNo()=" + this.getRefNo() + ", getVersion()=" + this.getVersion()
+                + ", getIsLatest()=" + this.getIsLatest() + ", getBusinStatus()=" + this.getBusinStatus() + ", getLockedStatus()="
+                + this.getLockedStatus() + ", getDocStatus()=" + this.getDocStatus() + ", getAuditOperId()=" + this.getAuditOperId()
+                + ", getAuditOperName()=" + this.getAuditOperName() + ", getAuditData()=" + this.getAuditData() + ", getAuditTime()="
+                + this.getAuditTime() + ", getId()=" + this.getId() + "]";
     }
 
     public ScfAcceptBillDO() {
@@ -736,7 +740,6 @@ public class ScfAcceptBillDO extends BaseVersionEntity {
         int result = 1;
         result = prime * result + ((this.acceptor == null) ? 0 : this.acceptor.hashCode());
         result = prime * result + ((this.acceptorBankAccount == null) ? 0 : this.acceptorBankAccount.hashCode());
-        result = prime * result + ((this.agreeId == null) ? 0 : this.agreeId.hashCode());
         result = prime * result + ((this.agreeNo == null) ? 0 : this.agreeNo.hashCode());
         result = prime * result + ((this.balance == null) ? 0 : this.balance.hashCode());
         result = prime * result + ((this.batchNo == null) ? 0 : this.batchNo.hashCode());
@@ -795,10 +798,6 @@ public class ScfAcceptBillDO extends BaseVersionEntity {
             if (other.acceptorBankAccount != null) return false;
         }
         else if (!this.acceptorBankAccount.equals(other.acceptorBankAccount)) return false;
-        if (this.agreeId == null) {
-            if (other.agreeId != null) return false;
-        }
-        else if (!this.agreeId.equals(other.agreeId)) return false;
         if (this.agreeNo == null) {
             if (other.agreeNo != null) return false;
         }
@@ -966,5 +965,45 @@ public class ScfAcceptBillDO extends BaseVersionEntity {
         return true;
     }
 
+    
+    /**
+     * 汇票信息添加
+     */
+    public void initAddValue(final CustOperatorInfo anOperInfo,boolean confirmFlag) {
+        
+        this.setId(SerialGenerator.getLongValue("ScfAcceptBillDO.id"));
+        this.setBusinStatus(VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE);
+        this.setDocStatus(VersionConstantCollentions.DOC_STATUS_DRAFT);
+        this.setLockedStatus(VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
+        if(confirmFlag){
+            this.setDocStatus(VersionConstantCollentions.DOC_STATUS_CONFIRM);
+        }
+        //数据来源：核心企业手工
+        this.dataSource = "01";
+        this.regDate = BetterDateUtils.getNumDate();
+        if (anOperInfo != null){
+            this.operId = anOperInfo.getId();
+            this.operName = anOperInfo.getName();
+            this.operOrg = anOperInfo.getOperOrg();
+            this.coreOperOrg=anOperInfo.getOperOrg();
+        }
+        //默认自开库存
+        this.billFrom = "0";
+        
+        this.holderNo=this.supplierNo;//supplierNo 存放收款人
+        this.supplierName=this.supplier;
+        this.holderBankAccount=this.suppBankAccount;
+        this.holder=this.supplier;
+        
+        this.buyerName=this.buyer;
+        this.realBuyer=this.buyer;
+        this.buyerNo=this.coreCustNo; //coreCustNo 存放开票单位
+        //this.coreCustName=this.buyer;
+        //this.invoiceCorp=this.buyer;
+        if(StringUtils.isBlank(this.acceptor)){
+            this.acceptor=this.invoiceCorp;
+        }
+        this.acceptorBankAccount=this.buyerBankAccount;
+    }
     
 }
