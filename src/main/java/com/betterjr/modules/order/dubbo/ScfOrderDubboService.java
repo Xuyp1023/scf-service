@@ -8,6 +8,8 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.modules.order.IScfOrderService;
 import com.betterjr.modules.order.entity.ScfOrder;
+import com.betterjr.modules.order.entity.ScfOrderDO;
+import com.betterjr.modules.order.service.ScfOrderDOService;
 import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 
@@ -16,17 +18,47 @@ public class ScfOrderDubboService implements IScfOrderService{
     
     @Autowired
     private ScfOrderService scfOrderService;
+    
+    @Autowired
+    private ScfOrderDOService orderService;
 
     @Override
     public String webSaveModifyOrder(Map<String, Object> anMap, Long anId, String anFileList, String anOtherFileList) {
         ScfOrder anOrder = (ScfOrder) RuleServiceDubboFilterInvoker.getInputObj();
         return AjaxObject.newOk("订单信息编辑成功", scfOrderService.saveModifyOrder(anOrder, anId, anFileList, anOtherFileList)).toJson();
     }
+    
+    @Override
+    public String webSaveModifyOrderDO(Map<String, Object> anMap, String anFileList, boolean confirmFlag) {
+        ScfOrderDO anOrder = (ScfOrderDO) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOk("订单信息编辑成功", orderService.saveModifyOrder(anOrder, anFileList, confirmFlag)).toJson();
+    }
 
     @Override
     public String webQueryOrder(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize) {
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
         return AjaxObject.newOkWithPage("订单信息查询成功", scfOrderService.queryOrder(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize)).toJson();
+    }
+    
+    @Override
+    public String webQueryOrderDO (Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize) {
+        Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOkWithPage("订单信息查询成功", orderService.queryOrder(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize)).toJson();
+    }
+    
+    @Override
+    public String webQueryIneffectiveOrderDO(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize,
+            boolean anIsAudit) {
+        Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOkWithPage("订单信息查询成功", orderService.queryIneffectiveOrder(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize,anIsAudit)).toJson();
+   
+    }
+
+    @Override
+    public String webQueryEffectiveOrderDO(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize,
+            boolean anIsCust) {
+        Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOkWithPage("订单信息查询成功", orderService.queryEffectiveOrder(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize,anIsCust)).toJson();
     }
     
     @Override
@@ -49,6 +81,12 @@ public class ScfOrderDubboService implements IScfOrderService{
     public String webAddOrder(Map<String, Object> anMap, String anFileList, String anOtherFileList) {
         ScfOrder anOrder = (ScfOrder) RuleServiceDubboFilterInvoker.getInputObj();
         return AjaxObject.newOk("订单信息新增成功", scfOrderService.addOrder(anOrder, anFileList, anOtherFileList)).toJson();
+    }
+    
+    @Override
+    public String webAddOrderDO(Map<String, Object> anMap, String anFileList, boolean confirmFlag) {
+        ScfOrderDO anOrder = (ScfOrderDO) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOk("订单信息新增成功", orderService.addOrder(anOrder, anFileList, confirmFlag)).toJson();
     }
 
     @Override
@@ -85,4 +123,5 @@ public class ScfOrderDubboService implements IScfOrderService{
     public String webFindRequestByInfoId(Long anInfoId, String anInfoType){
         return AjaxObject.newOk("根据资料id和资料类型查询融资实体", scfOrderService.findRequestByInfoId(anInfoId, anInfoType)).toJson();
     }
+
 }

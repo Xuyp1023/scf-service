@@ -13,7 +13,7 @@ public class Provider {
         Log4jConfigurer.initLogging(url.getFile());
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[] { "spring-context-scf-dubbo-provider.xml" });
         context.start();
-
+        System.out.println("scf-service 已经启动");
         System.in.read();
         context.close();
         System.exit(0);

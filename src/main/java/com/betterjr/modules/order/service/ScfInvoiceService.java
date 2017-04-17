@@ -27,9 +27,10 @@ import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfInvoiceItem;
 import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
+import com.betterjr.modules.version.service.BaseVersionService;
 
 @Service
-public class ScfInvoiceService extends BaseService<ScfInvoiceMapper, ScfInvoice> implements IScfOrderInfoCheckService {
+public class ScfInvoiceService extends BaseVersionService<ScfInvoiceMapper, ScfInvoice> implements IScfOrderInfoCheckService {
 
     @Autowired
     private ScfInvoiceItemService invoiceItemService;

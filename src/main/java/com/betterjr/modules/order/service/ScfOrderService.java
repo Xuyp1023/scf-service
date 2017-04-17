@@ -12,7 +12,6 @@ import org.springframework.util.StringUtils;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterTradeException;
-import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
@@ -39,9 +38,11 @@ import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
 import com.betterjr.modules.order.helper.ScfOrderRelationType;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
 import com.betterjr.modules.receivable.service.ScfReceivableService;
+import com.betterjr.modules.version.constant.VersionConstantCollentions;
+import com.betterjr.modules.version.service.BaseVersionService;
 
 @Service
-public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> implements IScfOrderInfoCheckService {
+public class ScfOrderService extends BaseVersionService<ScfOrderMapper, ScfOrder> implements IScfOrderInfoCheckService {
 
     @Autowired
     private ScfOrderRelationService orderRelationService;
@@ -816,6 +817,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
        ScfRequest request = requestService.selectByPrimaryKey(order.getRequestNo());
        return request;
    }
-
+   
+   
    
 }

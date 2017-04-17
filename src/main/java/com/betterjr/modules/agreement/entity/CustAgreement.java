@@ -12,6 +12,7 @@ import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.customer.entity.CustMechBankAccount;
+import com.betterjr.modules.version.entity.BaseVersionEntity;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.persistence.*;
@@ -19,7 +20,7 @@ import javax.persistence.*;
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "T_CUST_AGREEMENT")
-public class CustAgreement implements BetterjrEntity {
+public class CustAgreement extends BaseVersionEntity {
     /**
      * 流水号
      */

@@ -14,13 +14,14 @@ import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
+import com.betterjr.modules.version.entity.BaseVersionEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "T_SCF_TRANSPORT")
-public class ScfTransport implements BetterjrEntity {
+public class ScfTransport extends BaseVersionEntity{
     /**
      * 流水号
      */

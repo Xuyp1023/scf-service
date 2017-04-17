@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterTradeException;
-import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
@@ -34,9 +33,10 @@ import com.betterjr.modules.order.service.ScfOrderRelationService;
 import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.receivable.dao.ScfReceivableMapper;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
+import com.betterjr.modules.version.service.BaseVersionService;
 
 @Service
-public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfReceivable> implements IScfOrderInfoCheckService  {
+public class ScfReceivableService extends BaseVersionService<ScfReceivableMapper, ScfReceivable> implements IScfOrderInfoCheckService  {
    
     @Autowired
     private ScfOrderRelationService orderRelationService;
