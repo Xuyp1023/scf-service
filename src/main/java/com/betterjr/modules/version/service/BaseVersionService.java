@@ -151,9 +151,9 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
      * 只通过refno,version查询
      */
     public T selectOneWithVersion(String refNo,String version) {
+        
         Map<String,Object> paramMap= QueryTermBuilder.newInstance().put("refNo", refNo).put("version", version).build();
         List<T> lists = selectByProperty(paramMap);
-        
         return Collections3.getFirst(lists);
     }
     

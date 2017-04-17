@@ -13,7 +13,9 @@ import org.apache.commons.lang3.StringUtils;
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
+import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.version.constant.VersionConstantCollentions;
 import com.betterjr.modules.version.entity.BaseVersionEntity;
@@ -971,6 +973,7 @@ public class ScfAcceptBillDO extends BaseVersionEntity {
      */
     public void initAddValue(final CustOperatorInfo anOperInfo,boolean confirmFlag) {
         
+        BTAssert.notNull(anOperInfo,"票据登记失败，原因：无法获取登录信息");
         this.setId(SerialGenerator.getLongValue("ScfAcceptBillDO.id"));
         this.setBusinStatus(VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE);
         this.setDocStatus(VersionConstantCollentions.DOC_STATUS_DRAFT);
@@ -1004,6 +1007,56 @@ public class ScfAcceptBillDO extends BaseVersionEntity {
             this.acceptor=this.invoiceCorp;
         }
         this.acceptorBankAccount=this.buyerBankAccount;
+    }
+
+    public ScfAcceptBillDO initModifyValue(ScfAcceptBillDO anBill,boolean confirmFlag) {
+        
+        this.setId(anBill.getId());
+        this.setRefNo(anBill.getRefNo());
+        this.setVersion(anBill.getVersion());
+        this.setBusinStatus(VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE);
+        this.setDocStatus(VersionConstantCollentions.DOC_STATUS_DRAFT);
+        this.setLockedStatus(VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
+        if(confirmFlag){
+            this.setDocStatus(VersionConstantCollentions.DOC_STATUS_CONFIRM);
+        }
+        
+        //数据来源：核心企业手工
+        this.dataSource = anBill.getDataSource();
+        this.regDate = anBill.getRegDate();
+       
+        this.operId = anBill.getOperId();
+        this.operName = anBill.getOperName();
+        this.operOrg = anBill.getOperOrg();
+        this.coreOperOrg=anBill.getCoreOperOrg();
+        
+        this.modiDate=BetterDateUtils.getNumDate();
+        this.modiOperId=UserUtils.getOperatorInfo().getId();
+        this.modiOperName=UserUtils.getOperatorInfo().getName();
+        this.modiTime=BetterDateUtils.getNumTime();
+        this.drawerId=anBill.getDrawerId();
+        this.cashDate=anBill.getCashDate();
+        this.btBillNo=anBill.getBtBillNo();
+        this.transferId=anBill.getTransferId();
+        //默认自开库存
+        this.billFrom = "0";
+        
+        this.holderNo=this.supplierNo;//supplierNo 存放收款人
+        this.supplierName=this.supplier;
+        this.holderBankAccount=this.suppBankAccount;
+        this.holder=this.supplier;
+        
+        this.buyerName=this.buyer;
+        this.realBuyer=this.buyer;
+        this.buyerNo=this.coreCustNo; //coreCustNo 存放开票单位
+        //this.coreCustName=this.buyer;
+        //this.invoiceCorp=this.buyer;
+        if(StringUtils.isBlank(this.acceptor)){
+            this.acceptor=this.invoiceCorp;
+        }
+        this.acceptorBankAccount=this.buyerBankAccount;
+        
+        return this;
     }
     
 }

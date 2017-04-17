@@ -44,6 +44,13 @@ public class ScfAcceptBillDubboService implements IScfAcceptBillService {
         final ScfAcceptBill anAcceptBill = (ScfAcceptBill) RuleServiceDubboFilterInvoker.getInputObj();
         return AjaxObject.newOk("汇票信息修改成功", scfAcceptBillService.saveModifyAcceptBill(anAcceptBill, anId, anFileList, anOtherFileList)).toJson();
     }
+    
+    @Override
+    public String webSaveModifyAcceptBillDO(Map<String, Object> anMap, String anFileList, boolean anConfirmFlag) {
+      
+         ScfAcceptBillDO anAcceptBill = (ScfAcceptBillDO) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOk("汇票信息修改成功", acceptBillService.saveModifyAcceptBill(anAcceptBill, anFileList,anConfirmFlag )).toJson();
+    }
 
     @Override
     public String webAddAcceptBill(final Map<String, Object> anMap, final String anFileList, final String anOtherFileList) {
@@ -56,7 +63,7 @@ public class ScfAcceptBillDubboService implements IScfAcceptBillService {
     public String webAddAcceptBillDO(Map<String, Object> anMap, String anFileList, boolean anConfirmFlag) {
         
         ScfAcceptBillDO anAcceptBill = (ScfAcceptBillDO) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk("汇票信息登记成功", acceptBillService.addAcceptBill(anAcceptBill, anFileList,anConfirmFlag)).toJson();
+        return AjaxObject.newOk("票据登记成功", acceptBillService.addAcceptBill(anAcceptBill, anFileList,anConfirmFlag)).toJson();
    
     }
     
@@ -104,6 +111,26 @@ public class ScfAcceptBillDubboService implements IScfAcceptBillService {
     public String webSaveBillFile(Long anBillId,String anFileTypeName,String anFileMediaId){
         return AjaxObject.newOk("保存票据附件",scfAcceptBillService.saveBillFile(anBillId,anFileTypeName,anFileMediaId)).toJson();
     }
+
+    @Override
+    public String webSaveAnnulAcceptBill(String anRefNo, String anVersion) {
+        
+        return AjaxObject.newOk("票据废止成功", acceptBillService.annulBill(anRefNo, anVersion)).toJson();
+    }
+
+    @Override
+    public String webFindAcceptBillDOByRefNoVersion(String anRefNo, String anVersion) {
+        
+        return AjaxObject.newOk("票据查询成功", acceptBillService.findBill(anRefNo, anVersion)).toJson();
+    }
+
+    @Override
+    public String webSaveAuditBillDOByRefNoVersion(String anRefNo, String anVersion) {
+        
+        return AjaxObject.newOk("票据查询成功", acceptBillService.saveAuditBill(anRefNo, anVersion)).toJson();
+    }
+
+   
 
     
 }

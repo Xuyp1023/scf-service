@@ -113,7 +113,7 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
       * @param version
       * @return
       */
-     public ScfOrderDO annulOrder(String refNo,String version){
+     public ScfOrderDO annulBill(String refNo,String version){
          
          BTAssert.notNull(refNo, "订单凭证单号为空!操作失败");
          BTAssert.notNull(version, "操作异常为空!操作失败");
