@@ -5,13 +5,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.acceptbill.entity.ScfAcceptBillDO;
 import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.customer.ICustMechBaseService;
@@ -81,7 +84,11 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
          order.setCoreCustName(custAccountService.queryCustName(anModiOrder.getCoreCustNo()));
          order=anModiOrder.initModifyValue(order);
          // 保存附件信息
-         order.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anFileList, order.getBatchNo()));
+         if(StringUtils.isNotBlank(anFileList)){
+             order.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anFileList, order.getBatchNo()));
+         }else{
+             order.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo("", order.getBatchNo())); 
+         }
          // 初始版本更改 直接返回
          if(order.getBusinStatus().equals(VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE)&&
                  order.getDocStatus().equals(VersionConstantCollentions.DOC_STATUS_DRAFT)){
@@ -113,7 +120,7 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
       * @param version
       * @return
       */
-     public ScfOrderDO annulBill(String refNo,String version){
+     public ScfOrderDO saveAnnulOrder(String refNo,String version){
          
          BTAssert.notNull(refNo, "订单凭证单号为空!操作失败");
          BTAssert.notNull(version, "操作异常为空!操作失败");
@@ -151,6 +158,11 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
          BTAssert.notNull(anVersion, "操作异常为空!操作失败");
          ScfOrderDO order = this.selectOneWithVersion(anRefNo, anVersion);
          BTAssert.notNull(order, "此订单异常!操作失败");
+         Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
+         BTAssert.notNull(custInfos, "获取当前企业失败!操作失败");
+         if(! getCustNoList(custInfos).contains(order.getCoreCustNo())){
+             BTAssert.notNull(order, "您没有审核权限!操作失败"); 
+         }
          this.auditOperator(UserUtils.getOperatorInfo(), order);
          return order;
          
@@ -273,5 +285,34 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
          return custNos;
          
      }
+
+     /**
+      * 查询能够作废的单据列表
+      * @param anAnQueryConditionMap
+      * @param anIsOnlyNormal
+      * @param anFlag
+      * @param anPageNum
+      * @param anPageSize
+      * @return
+      */
+    public Page<ScfOrderDO> queryCanAnnulBill(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize) {
+        BTAssert.notNull(anMap, "查询条件为空!操作失败");
+        // 操作员只能查询本机构数据
+        // anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+        // 只查询数据非自动生成的数据来源
+        if("1".equals(anIsOnlyNormal)){
+            anMap.put("dataSource", "1");
+        }
+        
+        if (! anMap.containsKey("coreCustNo") ||  anMap.get("coreCustNo") ==null || StringUtils.isBlank(anMap.get("coreCustNo").toString())) {
+            
+            Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
+            anMap.put("coreCustNo", getCustNoList(custInfos));
+        }
+        
+        Page<ScfOrderDO> orderList = this.selectPropertyCanAunulByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo");
+        
+        return orderList;
+    }
 
 }

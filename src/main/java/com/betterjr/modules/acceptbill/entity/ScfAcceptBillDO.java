@@ -982,11 +982,13 @@ public class ScfAcceptBillDO extends BaseVersionEntity {
             this.setDocStatus(VersionConstantCollentions.DOC_STATUS_CONFIRM);
         }
         //数据来源：核心企业手工
-        this.dataSource = "01";
+        this.dataSource = "1";
         this.regDate = BetterDateUtils.getNumDate();
         if (anOperInfo != null){
             this.operId = anOperInfo.getId();
             this.operName = anOperInfo.getName();
+            this.setModiOperId(anOperInfo.getId());
+            this.setModiOperName(anOperInfo.getName());
             this.operOrg = anOperInfo.getOperOrg();
             this.coreOperOrg=anOperInfo.getOperOrg();
         }

@@ -1,17 +1,24 @@
 package com.betterjr.modules.acceptbill.service;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
 import org.springframework.stereotype.Service;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
+import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.dao.ScfAcceptBillDOMapper;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBillDO;
+import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.customer.ICustMechBaseService;
 import com.betterjr.modules.document.ICustFileService;
-import com.betterjr.modules.order.entity.ScfOrderDO;
 import com.betterjr.modules.version.constant.VersionConstantCollentions;
 import com.betterjr.modules.version.service.BaseVersionService;
 
@@ -101,12 +108,12 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
     }
     
     /**
-     * 作废当前票据
+     * 作废当前票据(当前创建者作废)
      * @param refNo
      * @param version
      * @return
      */
-    public ScfAcceptBillDO annulBill(String refNo,String version){
+    public ScfAcceptBillDO saveAnnulBill(String refNo,String version){
         
         BTAssert.notNull(refNo, "凭证单号为空!操作失败");
         BTAssert.notNull(version, "数据版本为空!操作失败");
@@ -115,6 +122,30 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
         BTAssert.notNull(bill, "此票据异常!操作失败");
         bill=this.annulOperator(UserUtils.getOperatorInfo(), bill);
         logger.info("success to aunul bill"+UserUtils.getOperatorInfo().getName());
+        return bill;
+    }
+    
+    /**
+     * 作废当前票据(同一个公司可以作废) 票据回收作废
+     * @param refNo
+     * @param version
+     * @return
+     */
+    public ScfAcceptBillDO saveCoreCustAnnulBill(String refNo,String version){
+        
+        BTAssert.notNull(refNo, "凭证单号为空!操作失败");
+        BTAssert.notNull(version, "数据版本为空!操作失败");
+        logger.info("begin to saveCoreCustAnnulBill bill"+UserUtils.getOperatorInfo().getName());
+        ScfAcceptBillDO bill = this.selectOneWithVersion(refNo, version);
+        BTAssert.notNull(bill, "此票据异常!操作失败");
+        Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
+        List<Long> coreCustNoList = getCustNoList(custInfos);
+        //bill.getCoreCustNo().
+        if(! coreCustNoList.contains(bill.getCoreCustNo())){
+            BTAssert.notNull(null, "你没有相应的权限!操作失败");
+        }
+        bill=this.annulEffectiveOperator(bill);
+        logger.info("success to saveCoreCustAnnulBill bill"+UserUtils.getOperatorInfo().getName());
         return bill;
     }
     
@@ -136,6 +167,12 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
     }
     
     
+    /**
+     * 票据核准
+     * @param anRefNo
+     * @param anVersion
+     * @return
+     */
     public ScfAcceptBillDO saveAuditBill(String anRefNo,String anVersion){
         
         BTAssert.notNull(anRefNo, "凭证单号为空!操作失败");
@@ -143,10 +180,144 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
         logger.info("begin to audit bill"+UserUtils.getOperatorInfo().getName());
         ScfAcceptBillDO bill = this.selectOneWithVersion(anRefNo, anVersion);
         BTAssert.notNull(bill, "此票据异常!操作失败");
+        checkStatus(UserUtils.getOperatorInfo().getOperOrg(), bill.getCoreOperOrg(), false, "您没有审核权限!操作失败");
         this.auditOperator(UserUtils.getOperatorInfo(), bill);
         logger.info("success to audit bill"+UserUtils.getOperatorInfo().getName());
         return bill;
         
     }
+    
+    /**
+     * 查询未生效的票据信息
+     * @param anMap 查询条件
+     * @param anIsOnlyNormal 是否只查询用户登入的数据
+     * @param anFlag 是否需要查询总的页数
+     * @param anPageNum 当前页数
+     * @param anPageSize 每页显示的数量
+     * anAuditFlag true 是核准数据的查询  false 是登入列表的查询
+     * @return
+     */
+    public Page<ScfAcceptBillDO> queryIneffectiveBill(Map<String, Object> anMap,String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize,boolean anAuditFlag) {
+        
+        BTAssert.notNull(anMap, "查询条件为空!操作失败");
+        // 操作员只能查询本机构数据
+        // anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+        // 只查询数据非自动生成的数据来源
+        if("1".equals(anIsOnlyNormal)){
+            anMap.put("dataSource", "1");
+        }
+        // 模糊查询
+        anMap = Collections3.fuzzyMap(anMap, new String[] { "billNo"});
+        
+        anMap.put("coreOperOrg", UserUtils.getOperatorInfo().getOperOrg());
+        
+        if(anAuditFlag){
+            
+            if (! anMap.containsKey("coreCustNo") ||  anMap.get("coreCustNo") ==null || StringUtils.isBlank(anMap.get("coreCustNo").toString())) {
+                
+                Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
+                anMap.put("coreCustNo", getCustNoList(custInfos));
+            }
+            anMap.put("docStatus", VersionConstantCollentions.DOC_STATUS_CONFIRM);
+        }else{
+            
+            anMap.put("operId", UserUtils.getOperatorInfo().getId());
+        }
+        
+        Page<ScfAcceptBillDO> billList = this.selectPropertyIneffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo");
+        
+        return billList;
+    }
+    
+    /**
+     * 将给定的企业集合中提取企业的id
+     * @param custInfos
+     * @return
+     */
+    private List<Long> getCustNoList(Collection<CustInfo> custInfos) {
+        
+        List<Long> custNos=new ArrayList<>();
+        for (CustInfo custInfo : custInfos) {
+            custNos.add(custInfo.getCustNo());
+       }
+        
+        return custNos;
+        
+    }
+    
+    /**
+     * 查询已经生效的票据信息
+     * @param anMap 查询条件
+     * @param anIsOnlyNormal 数据来源是否只查询用户登入的数据
+     * @param anFlag  是否查询总的数据量
+     * @param anPageNum 每页显示的数据量
+     * @param anPageSize 总的页数
+     * @param anIsCust true 是供应商的已经生效的查询    false 是核心企业的已经生效的查询
+     * @return
+     */
+    public Page<ScfAcceptBillDO> queryEffectiveBill(Map<String, Object> anMap,String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize,boolean anIsCust) {
+        
+        BTAssert.notNull(anMap, "查询条件为空!操作失败");
+        // 操作员只能查询本机构数据
+        // anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+        // 只查询数据非自动生成的数据来源
+        if("1".equals(anIsOnlyNormal)){
+            anMap.put("dataSource", "1");
+        }
+        // 模糊查询
+        anMap = Collections3.fuzzyMap(anMap, new String[] { "billNo"});
+        
+        Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
+        if(anIsCust){
+            
+            anMap.put("supplierNo", getCustNoList(custInfos));
+            
+        }else{
+            
+            if (! anMap.containsKey("coreCustNo") ||  anMap.get("coreCustNo") ==null || StringUtils.isBlank(anMap.get("coreCustNo").toString())) {
+                anMap.put("coreCustNo", getCustNoList(custInfos));
+            }
+            anMap.put("coreOperOrg", UserUtils.getOperatorInfo().getOperOrg());
+            
+        }
+        
+        Page<ScfAcceptBillDO> billList = this.selectPropertyEffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo");
+        
+        return billList;
+    }
+    
+    /**
+     * 根据当前公司废止当前单据内容
+     * @param anMap 查询条件
+     * @param anIsOnlyNormal 1 只查询当前系统登入的数据
+     * @param anFlag 是否需要查询总的数量
+     * @param anPageNum 当前页数
+     * @param anPageSize 每页显示的数据量
+     * @return
+     */
+    
+    public Page<ScfAcceptBillDO> queryCanAnnulBill(Map<String, Object> anMap,String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize) {
+        
+        BTAssert.notNull(anMap, "查询条件为空!操作失败");
+        // 操作员只能查询本机构数据
+        // anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+        // 只查询数据非自动生成的数据来源
+        if("1".equals(anIsOnlyNormal)){
+            anMap.put("dataSource", "1");
+        }
+        // 模糊查询
+        anMap = Collections3.fuzzyMap(anMap, new String[] { "billNo"});
+        
+        if (! anMap.containsKey("coreCustNo") ||  anMap.get("coreCustNo") ==null || StringUtils.isBlank(anMap.get("coreCustNo").toString())) {
+            
+            Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
+            anMap.put("coreCustNo", getCustNoList(custInfos));
+        }
+        
+        Page<ScfAcceptBillDO> billList = this.selectPropertyCanAunulByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo");
+        
+        return billList;
+    }
+
     
 }

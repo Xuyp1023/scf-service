@@ -307,16 +307,6 @@ public class ScfOrderService extends BaseVersionService<ScfOrderMapper, ScfOrder
     }
 
     /**
-     * 检查状态信息
-     */
-    private void checkStatus(String anBusinStatus, String anTargetStatus, boolean anFlag, String anMessage) {
-        if (BetterStringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
-            logger.warn(anMessage);
-            throw new BytterTradeException(40001, anMessage);
-        }
-    }
-
-    /**
      * 变更订单状态 0:可用 1:过期 2:冻结
      * 
      * @param anId

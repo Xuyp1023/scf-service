@@ -124,4 +124,27 @@ public class ScfOrderDubboService implements IScfOrderService{
         return AjaxObject.newOk("根据资料id和资料类型查询融资实体", scfOrderService.findRequestByInfoId(anInfoId, anInfoType)).toJson();
     }
 
+    @Override
+    public String webQueryCanAnnulOrder(Map<String, Object> anAnMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize) {
+        Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        
+        return AjaxObject
+                .newOkWithPage("汇票信息查询成功", orderService.queryCanAnnulBill(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize))
+                .toJson();
+    }
+
+    @Override
+    public String webSaveAnnulOrder(String anRefNo, String anVersion) {
+        
+        
+        return AjaxObject.newOk("票据废止成功", orderService.saveAnnulOrder(anRefNo, anVersion)).toJson();
+    }
+
+    @Override
+    public String webSaveAuditOrderByRefNoVersion(String anRefNo, String anVersion) {
+       
+        
+        return AjaxObject.newOk("票据审核成功", orderService.saveAuditOrder(anRefNo, anVersion)).toJson();
+    }
+
 }

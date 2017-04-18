@@ -478,15 +478,6 @@ public class ScfAcceptBillService extends BaseVersionService<ScfAcceptBillMapper
         }
     }
 
-    /**
-     * 检查状态信息
-     */
-    private void checkStatus(final String anBusinStatus, final String anTargetStatus, final boolean anFlag, final String anMessage) {
-        if (BetterStringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
-            logger.warn(anMessage);
-            throw new BytterTradeException(40001, anMessage);
-        }
-    }
 
     /**
      * 变更融资标志

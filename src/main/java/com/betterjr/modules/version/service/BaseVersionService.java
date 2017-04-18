@@ -1,7 +1,6 @@
 package com.betterjr.modules.version.service;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -271,6 +270,16 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
         return (Page) this.selectByProperty(anParamMap, arg4);
     }
     
+    public Page<T> selectPropertyCanAunulByPageWithVersion (Map<String, Object> anParamMap, int arg1, int arg2, boolean arg3, String arg4) {
+        
+        anParamMap.put("isLatest", VersionConstantCollentions.IS_LATEST);
+        anParamMap.put("businStatus", VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE);
+        anParamMap.put("docStatus", VersionConstantCollentions.DOC_STATUS_CONFIRM);
+        anParamMap.put("lockedStatus", VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
+        PageHelper.startPage(arg1, arg2, arg3);
+        return (Page) this.selectByProperty(anParamMap, arg4);
+    }
+    
     /**
      * 类似selectCount
      */
@@ -367,7 +376,7 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
      /**
       * 检查状态信息
       */
-     private void checkStatus(String anBusinStatus, String anTargetStatus, boolean anFlag, String anMessage) {
+     public void checkStatus(String anBusinStatus, String anTargetStatus, boolean anFlag, String anMessage) {
          if (BetterStringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
              logger.warn(anMessage);
              throw new BytterTradeException(40001, anMessage);
@@ -391,6 +400,38 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
      }
      
      /**
+      * 对已经生效的单据进行废止 操作
+      * @param arg0
+      * @return
+      */
+     public T annulEffectiveOperator(T arg0){
+         
+         checkEffectiveStatus(arg0);
+         arg0.setDocStatus(VersionConstantCollentions.DOC_STATUS_ANNUL);
+         arg0.setBusinStatus(VersionConstantCollentions.BUSIN_STATUS_ANNUL);
+         int result = this.updateByPrimaryKey(arg0);
+         return result == VersionConstantCollentions.MODIFY_SUCCESS ? arg0 : null;
+         
+     }
+     
+     /**
+      * 检查票据生效的状态
+      * @param anArg0
+      */
+     private void checkEffectiveStatus(T anArg0) {
+         
+         checkStatus(anArg0.getIsLatest(), VersionConstantCollentions.IS_NOT_LATEST, true, "当前单据已不是最新版本,不允许被废止");
+         checkStatus(anArg0.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE, true, "当前单据未生效,只能由创建者废止");
+         checkStatus(anArg0.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true, "当前单据已经转让,不允许被废止");
+         checkStatus(anArg0.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_ANNUL, true, "当前单据已经废止,不允许被废止");
+         checkStatus(anArg0.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EXPIRE, true, "当前单据已经过期,不允许被废止");
+         checkStatus(anArg0.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true, "当前单据已经冻结,不允许被废止");
+         checkStatus(anArg0.getDocStatus(), VersionConstantCollentions.DOC_STATUS_ANNUL, true, "当前单据已经废止,不允许被废止");
+         checkStatus(anArg0.getDocStatus(), VersionConstantCollentions.DOC_STATUS_DRAFT, true, "当前单据草稿状态,只能由创建者废止");
+        
+    }
+
+    /**
       * 对单据进行核准
       * @param anOperatorInfo
       * @param arg0
