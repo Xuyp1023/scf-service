@@ -129,7 +129,7 @@ public class ScfOrderDubboService implements IScfOrderService{
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
         
         return AjaxObject
-                .newOkWithPage("汇票信息查询成功", orderService.queryCanAnnulBill(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize))
+                .newOkWithPage("订单信息查询成功", orderService.queryCanAnnulBill(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize))
                 .toJson();
     }
 
@@ -137,14 +137,34 @@ public class ScfOrderDubboService implements IScfOrderService{
     public String webSaveAnnulOrder(String anRefNo, String anVersion) {
         
         
-        return AjaxObject.newOk("票据废止成功", orderService.saveAnnulOrder(anRefNo, anVersion)).toJson();
+        return AjaxObject.newOk("订单废止成功", orderService.saveAnnulOrder(anRefNo, anVersion)).toJson();
     }
 
     @Override
     public String webSaveAuditOrderByRefNoVersion(String anRefNo, String anVersion) {
        
         
-        return AjaxObject.newOk("票据审核成功", orderService.saveAuditOrder(anRefNo, anVersion)).toJson();
+        return AjaxObject.newOk("订单审核成功", orderService.saveAuditOrder(anRefNo, anVersion)).toJson();
+    }
+
+    @Override
+    public String webQueryIneffectiveOrder(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize,
+            boolean anIsAudit) {
+        Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOk("订单查询成功", orderService.queryIneffectiveOrder(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize, anIsAudit)).toJson();
+    }
+
+    @Override
+    public String webQueryEffectiveOrder(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize,
+            boolean anIsCust) {
+        Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOk("订单查询成功", orderService.queryEffectiveOrder(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize, anIsCust)).toJson();
+    }
+
+    @Override
+    public String webfindOrderDetail(String anRefNo, String anVersion) {
+       
+        return AjaxObject.newOk("订单查询成功", orderService.findOrder(anRefNo, anVersion)).toJson();
     }
 
 }

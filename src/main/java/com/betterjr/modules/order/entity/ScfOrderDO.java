@@ -8,7 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
@@ -595,7 +594,5 @@ public class ScfOrderDO extends BaseVersionEntity{
         return anOrder;
         
     }
-    
-    
 
 }

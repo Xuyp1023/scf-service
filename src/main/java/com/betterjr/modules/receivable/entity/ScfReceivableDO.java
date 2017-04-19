@@ -9,6 +9,11 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
+import com.betterjr.common.selectkey.SerialGenerator;
+import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
+import com.betterjr.modules.version.constant.VersionConstantCollentions;
 import com.betterjr.modules.version.entity.BaseVersionEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -24,7 +29,7 @@ public class ScfReceivableDO extends BaseVersionEntity{
     private static final long serialVersionUID = 1047920079499004982L;
     
     /**
-     * 应收账款编号
+     * 应收账款编号(账款编号)
      */
     @Column(name = "C_RECEIVABLE_NO",  columnDefinition="VARCHAR" )
     @MetaData( value="应收账款编号", comments = "应收账款编号")
@@ -39,28 +44,28 @@ public class ScfReceivableDO extends BaseVersionEntity{
     private String btNo;
 
     /**
-     * 核心企业编号
+     * 核心企业编号(债务公司)
      */
     @Column(name = "L_CORE_CUSTNO",  columnDefinition="INTEGER" )
     @MetaData( value="核心企业编号", comments = "核心企业编号")
     private Long coreCustNo;
     
     /**
-     * 核心企业名称
+     * 核心企业名称(债务公司名称)
      */
     @Column(name = "C_CORE_CUSTNAME",  columnDefinition="VARCHAR" )
     @MetaData( value="核心企业名称", comments = "核心企业名称")
     private String coreCustName;  
 
     /**
-     * 客户号
+     * 客户号(债权公司)
      */
     @Column(name = "L_CUSTNO",  columnDefinition="INTEGER" )
     @MetaData( value="客户号", comments = "客户号")
     private Long custNo;
 
     /**
-     * 客户名称
+     * 客户名称(债权公司名称)
      */
     @Column(name = "C_CUSTNAME",  columnDefinition="VARCHAR" )
     @MetaData( value="客户名称", comments = "客户名称")
@@ -81,14 +86,14 @@ public class ScfReceivableDO extends BaseVersionEntity{
     private String debtor;
 
     /**
-     * 金额
+     * 金额（应付账款金额）
      */
     @Column(name = "F_BALANCE",  columnDefinition="DOUBLE" )
     @MetaData( value="金额", comments = "金额")
     private BigDecimal balance;
     
     /**
-     * 余额
+     * 余额(应付账款余额)
      */
     @Column(name = "F_SURPLUS_BALANCE",  columnDefinition="DOUBLE" )
     @MetaData( value="余额", comments = "余额")
@@ -102,7 +107,7 @@ public class ScfReceivableDO extends BaseVersionEntity{
     private BigDecimal deductionBalance ;
     
     /**
-     * 结算金额
+     * 结算金额(已结算金额)
      */
     @Column(name = "F_STATEMENT_BALANCE",  columnDefinition="DOUBLE" )
     @MetaData( value="结算金额", comments = "结算金额")
@@ -123,7 +128,7 @@ public class ScfReceivableDO extends BaseVersionEntity{
     private String invoiceNo;
     
     /**
-     * 付款到期日期
+     * 付款到期日期（应付账款结算日）
      */
     @Column(name = "D_END_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="付款到期日期", comments = "付款到期日期")
@@ -156,7 +161,7 @@ public class ScfReceivableDO extends BaseVersionEntity{
     private String modiOperName;
 
     /**
-     * 操作机构
+     * 操作机构(拥有机构)
      */
     @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
     @MetaData( value="操作机构", comments = "操作机构")
@@ -187,7 +192,7 @@ public class ScfReceivableDO extends BaseVersionEntity{
     private Long batchNo;
     
     /**
-     * 备注
+     * 备注(描述)
      */
     @Column(name = "C_DESCRIPTION",  columnDefinition="VARCHAR" )
     @MetaData( value="备注", comments = "备注")
@@ -525,6 +530,52 @@ public class ScfReceivableDO extends BaseVersionEntity{
 
     public ScfReceivableDO() {
         super();
+    }
+
+    public void initAddValue(CustOperatorInfo anOperatorInfo, boolean anConfirmFlag) {
+        
+        BTAssert.notNull(anOperatorInfo,"无法获取登录信息,操作失败");
+        double operValue = this.surplusBalance.add(this.deductionBalance).add(this.statementBalance).doubleValue();
+        if(this.balance.doubleValue()!=operValue){
+            BTAssert.notNull(null,"应付账款金额 = 应付账款余额 + 抵扣金额 + 已结算金额!保存失败"); 
+        }
+        this.setId(SerialGenerator.getLongValue("ScfReceivableDO.id"));
+        this.setBusinStatus(VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE);
+        this.setLockedStatus(VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
+        this.setDocStatus(VersionConstantCollentions.DOC_STATUS_DRAFT);
+        if(anConfirmFlag){
+            this.setDocStatus(VersionConstantCollentions.DOC_STATUS_CONFIRM);
+        }
+        this.creditor=this.custNo+"";
+        this.debtor=this.coreCustNo+"";
+        this.regDate = BetterDateUtils.getNumDate();
+        if (null != anOperatorInfo) {
+            this.setModiOperId(anOperatorInfo.getId());
+            this.modiOperName = anOperatorInfo.getName();
+            this.operOrg = anOperatorInfo.getOperOrg();
+        }
+        
+    }
+
+    public ScfReceivableDO initModifyValue(ScfReceivableDO anReceivable) {
+        
+        double operValue = this.surplusBalance.add(this.deductionBalance).add(this.statementBalance).doubleValue();
+        if(this.balance.doubleValue()!=operValue){
+            BTAssert.notNull(null,"应付账款金额 = 应付账款余额 + 抵扣金额 + 已结算金额!保存失败"); 
+        }
+        this.setBusinStatus(VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE);
+        this.setLockedStatus(VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
+        this.creditor=this.custNo+"";
+        this.debtor=this.coreCustNo+"";
+        this.setModiOperId(anReceivable.getModiOperId());
+        this.modiOperName = anReceivable.getModiOperName();
+        this.operOrg = anReceivable.getOperOrg();
+        this.btNo=anReceivable.getBtNo();
+        this.modiDate=BetterDateUtils.getNumDate();
+        this.modiTime=BetterDateUtils.getNumTime();
+        this.setId(anReceivable.getId());
+        this.regDate=anReceivable.getRegDate();
+        return this;
     }
     
 

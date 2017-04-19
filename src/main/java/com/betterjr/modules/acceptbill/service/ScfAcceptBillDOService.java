@@ -83,8 +83,14 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
         anModiBill.setCoreCustName(custAccountService.queryCustName(anModiBill.getCoreCustNo()));
         anModiBill.setInvoiceCorp(anModiBill.getCoreCustName());
         anModiBill.initModifyValue(bill,anConfirmFlag);
+        //操作机构设置为供应商
+        anModiBill.setOperOrg(baseService.findBaseInfo(anModiBill.getSupplierNo()).getOperOrg());
         // 保存附件信息
-        anModiBill.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anFileList, bill.getBatchNo()));
+        if(StringUtils.isNotBlank(anFileList)){
+            anModiBill.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anFileList, anModiBill.getBatchNo()));
+        }else{
+            anModiBill.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo("", anModiBill.getBatchNo())); 
+        }
         // 初始版本更改 直接返回
         if(bill.getBusinStatus().equals(VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE)&&
                 bill.getDocStatus().equals(VersionConstantCollentions.DOC_STATUS_DRAFT)){

@@ -1,13 +1,23 @@
 package com.betterjr.modules.order.entity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
+import com.betterjr.common.selectkey.SerialGenerator;
+import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
+import com.betterjr.modules.version.constant.VersionConstantCollentions;
 import com.betterjr.modules.version.entity.BaseVersionEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -37,38 +47,38 @@ public class ScfInvoiceDO extends BaseVersionEntity {
     private String invoiceNo;
 
     /**
-     * 客户编号
+     * 客户编号（销售方id）
      */
     @Column(name = "L_CUSTNO",  columnDefinition="INTEGER" )
     @MetaData( value="客户编号", comments = "客户编号")
     private Long custNo;
 
     /**
-     * 客户名称
+     * 客户名称（销售方id）
      */
     @Column(name = "L_CUSTNAME",  columnDefinition="VARCHAR" )
     @MetaData( value="客户名称", comments = "客户名称")
     private String custName;
     
     /**
-     * 购买方纳税人识别号
+     * 纳税人识别号（销售方id）
      */
     @Column(name = "C_CUST_TAXPAYERNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="购买方纳税人识别号", comments = "购买方纳税人识别号")
+    @MetaData( value="销售方纳税人识别号", comments = "销售方纳税人识别号")
     private String custTaxpayerNo;
     
     /**
-     * 购买方手机号码
+     * 方手机号码
      */
     @Column(name = "C_CUST_PHONE",  columnDefinition="VARCHAR" )
-    @MetaData( value="购买方手机号码", comments = "购买方手机号码")
+    @MetaData( value="销售方手机号码", comments = "销售方手机号码")
     private String custPhone;
     
     /**
-     * 购买方开户行及账号
+     * 开户行及账号
      */
     @Column(name = "C_CUST_ACCOUNT",  columnDefinition="VARCHAR" )
-    @MetaData( value="购买方开户行及账号", comments = "购买方开户行及账号")
+    @MetaData( value="销售方开户行及账号", comments = "销售方开户行及账号")
     private String custAccount;
     
     
@@ -109,14 +119,6 @@ public class ScfInvoiceDO extends BaseVersionEntity {
     @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
     @MetaData( value="创建时间", comments = "创建时间")
     private String regTime;
-
-    /**
-     * 编辑操作员编码
-     */
-    @Column(name = "L_MODI_OPERID",  columnDefinition="INTEGER" )
-    @MetaData( value="编辑操作员编码", comments = "编辑操作员编码")
-    @JsonIgnore
-    private Long modiOperId ;
 
     /**
      * 编辑操作员名字
@@ -186,40 +188,43 @@ public class ScfInvoiceDO extends BaseVersionEntity {
     
 
     /**
-     * 核心企业编号
+     * 核心企业编号(购买方id)
      */
     @Column(name = "L_CORE_CUSTNO",  columnDefinition="INTEGER" )
     @MetaData( value="核心企业编号", comments = "核心企业编号")
     private Long coreCustNo;
 
     /**
-     * 核心企业名称
+     * 核心企业名称(购买方企业名称)
      */
     @Column(name = "L_CORE_CUSTNAME",  columnDefinition="VARCHAR" )
     @MetaData( value="核心企业名称", comments = "核心企业名称")
     private String coreCustName;
     
     /**
-     * 销售方纳税人识别号
+     * (购买方企业)纳税人识别号
      */
     @Column(name = "C_CORECUST_TAXPAYERNO",  columnDefinition="VARCHAR" )
     @MetaData( value="销售方纳税人识别号", comments = "销售方纳税人识别号")
     private String coreCustTaxpayerNo;
     
     /**
-     * 销售方手机号码
+     * (购买方企业)手机号码
      */
     @Column(name = "C_CORECUST_PHONE",  columnDefinition="VARCHAR" )
     @MetaData( value="销售方手机号码", comments = "销售方手机号码")
     private String coreCustPhone;
     
     /**
-     * 销售方开户行及帐号
+     * (购买方企业)开户行及帐号
      */
     @Column(name = "C_CORECUST_ACCOUNT",  columnDefinition="VARCHAR" )
     @MetaData( value="销售方开户行及帐号", comments = "销售方开户行及帐号")
     private String coreCustAccount;
 
+    @Transient
+    private List<ScfInvoiceDODetail> InvoiceDetailList=new ArrayList<>();
+    
     public String getInvoiceCode() {
         return this.invoiceCode;
     }
@@ -314,14 +319,6 @@ public class ScfInvoiceDO extends BaseVersionEntity {
 
     public void setRegTime(String anRegTime) {
         this.regTime = anRegTime;
-    }
-
-    public Long getModiOperId() {
-        return this.modiOperId;
-    }
-
-    public void setModiOperId(Long anModiOperId) {
-        this.modiOperId = anModiOperId;
     }
 
     public String getModiOperName() {
@@ -436,6 +433,14 @@ public class ScfInvoiceDO extends BaseVersionEntity {
         this.coreCustAccount = anCoreCustAccount;
     }
 
+    public List<ScfInvoiceDODetail> getInvoiceDetailList() {
+        return this.InvoiceDetailList;
+    }
+
+    public void setInvoiceDetailList(List<ScfInvoiceDODetail> anInvoiceDetailList) {
+        this.InvoiceDetailList = anInvoiceDetailList;
+    }
+
     public ScfInvoiceDO() {
         super();
     }
@@ -463,7 +468,6 @@ public class ScfInvoiceDO extends BaseVersionEntity {
         result = prime * result + ((this.invoiceDate == null) ? 0 : this.invoiceDate.hashCode());
         result = prime * result + ((this.invoiceNo == null) ? 0 : this.invoiceNo.hashCode());
         result = prime * result + ((this.modiDate == null) ? 0 : this.modiDate.hashCode());
-        result = prime * result + ((this.modiOperId == null) ? 0 : this.modiOperId.hashCode());
         result = prime * result + ((this.modiOperName == null) ? 0 : this.modiOperName.hashCode());
         result = prime * result + ((this.modiTime == null) ? 0 : this.modiTime.hashCode());
         result = prime * result + ((this.operOrg == null) ? 0 : this.operOrg.hashCode());
@@ -556,10 +560,6 @@ public class ScfInvoiceDO extends BaseVersionEntity {
             if (other.modiDate != null) return false;
         }
         else if (!this.modiDate.equals(other.modiDate)) return false;
-        if (this.modiOperId == null) {
-            if (other.modiOperId != null) return false;
-        }
-        else if (!this.modiOperId.equals(other.modiOperId)) return false;
         if (this.modiOperName == null) {
             if (other.modiOperName != null) return false;
         }
@@ -596,7 +596,7 @@ public class ScfInvoiceDO extends BaseVersionEntity {
         return "ScfInvoiceDO [invoiceCode=" + this.invoiceCode + ", invoiceNo=" + this.invoiceNo + ", custNo=" + this.custNo + ", custName="
                 + this.custName + ", custTaxpayerNo=" + this.custTaxpayerNo + ", custPhone=" + this.custPhone + ", custAccount=" + this.custAccount
                 + ", regOperId=" + this.regOperId + ", regOperName=" + this.regOperName + ", operOrg=" + this.operOrg + ", regDate=" + this.regDate
-                + ", regTime=" + this.regTime + ", modiOperId=" + this.modiOperId + ", modiOperName=" + this.modiOperName + ", modiDate="
+                + ", regTime=" + this.regTime + ", modiOperId=" + this.getModiOperId() + ", modiOperName=" + this.modiOperName + ", modiDate="
                 + this.modiDate + ", modiTime=" + this.modiTime + ", corpVocate=" + this.corpVocate + ", invoiceDate=" + this.invoiceDate
                 + ", balance=" + this.balance + ", drawer=" + this.drawer + ", batchNo=" + this.batchNo + ", description=" + this.description
                 + ", coreCustNo=" + this.coreCustNo + ", coreCustName=" + this.coreCustName + ", coreCustTaxpayerNo=" + this.coreCustTaxpayerNo
@@ -606,7 +606,50 @@ public class ScfInvoiceDO extends BaseVersionEntity {
                 + this.getAuditOperId() + ", getAuditOperName()=" + this.getAuditOperName() + ", getAuditData()=" + this.getAuditData()
                 + ", getAuditTime()=" + this.getAuditTime() + ", getId()=" + this.getId() + "]";
     }
-    
-    
+
+    public void initAddValue(CustOperatorInfo anOperatorInfo, boolean anConfirmFlag) {
+        
+        BTAssert.notNull(anOperatorInfo,"无法获取登录信息,操作失败");
+        this.setId(SerialGenerator.getLongValue("ScfInvoiceDO.id"));
+        this.setBusinStatus(VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE);
+        this.setLockedStatus(VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
+        this.setDocStatus(VersionConstantCollentions.DOC_STATUS_DRAFT);
+        if(anConfirmFlag){
+            this.setDocStatus(VersionConstantCollentions.DOC_STATUS_CONFIRM);
+        }
+        if (null != anOperatorInfo) {
+            this.setModiOperId(anOperatorInfo.getId());
+            this.modiOperName = anOperatorInfo.getName();
+            this.operOrg = anOperatorInfo.getOperOrg();
+            this.regOperId=anOperatorInfo.getId();
+            this.regOperName=anOperatorInfo.getName();
+        }
+        this.regDate = BetterDateUtils.getNumDate();
+        this.regTime=BetterDateUtils.getNumTime();
+    }
+
+    public void initModifyValue(ScfInvoiceDO anInvoice) {
+        
+        this.setId(anInvoice.getId());
+        this.setBusinStatus(VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE);
+        this.setLockedStatus(VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
+        this.setDocStatus(VersionConstantCollentions.DOC_STATUS_DRAFT);
+        this.modiDate=BetterDateUtils.getNumDate();
+        this.modiTime=BetterDateUtils.getNumTime();
+        this.operOrg=anInvoice.getOperOrg();
+        this.regOperId=anInvoice.getRegOperId();
+        this.regOperName=anInvoice.getRegOperName();
+        this.modiOperName=anInvoice.getModiTime();
+        this.setModiOperId(anInvoice.getModiOperId());
+        this.custPhone=anInvoice.getCustPhone();
+        this.custAccount=anInvoice.getCustAccount();
+        this.custName=anInvoice.getCustName();
+        this.custTaxpayerNo=anInvoice.getCustTaxpayerNo();
+        this.coreCustAccount=anInvoice.getCoreCustAccount();
+        this.coreCustName=anInvoice.getCoreCustName();
+        this.coreCustPhone=anInvoice.getCoreCustPhone();
+        this.coreCustTaxpayerNo=anInvoice.getCoreCustTaxpayerNo();
+        this.corpVocate=anInvoice.getCorpVocate();
+    }
 
 }

@@ -989,7 +989,7 @@ public class ScfAcceptBillDO extends BaseVersionEntity {
             this.operName = anOperInfo.getName();
             this.setModiOperId(anOperInfo.getId());
             this.setModiOperName(anOperInfo.getName());
-            this.operOrg = anOperInfo.getOperOrg();
+            //this.operOrg = anOperInfo.getOperOrg();
             this.coreOperOrg=anOperInfo.getOperOrg();
         }
         //默认自开库存

@@ -11,10 +11,8 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.utils.BTAssert;
-import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
-import com.betterjr.modules.acceptbill.entity.ScfAcceptBillDO;
 import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.customer.ICustMechBaseService;
@@ -82,6 +80,8 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
          //anModiOrder.setId(anOrder.getId());
          order.setCustName(custAccountService.queryCustName(anModiOrder.getCustNo()));
          order.setCoreCustName(custAccountService.queryCustName(anModiOrder.getCoreCustNo()));
+         // 操作机构设置为供应商
+         order.setOperOrg(baseService.findBaseInfo(order.getCustNo()).getOperOrg());
          order=anModiOrder.initModifyValue(order);
          // 保存附件信息
          if(StringUtils.isNotBlank(anFileList)){
@@ -120,11 +120,11 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
       * @param version
       * @return
       */
-     public ScfOrderDO saveAnnulOrder(String refNo,String version){
+     public ScfOrderDO saveAnnulOrder(String anRefNo,String anVersion){
          
-         BTAssert.notNull(refNo, "订单凭证单号为空!操作失败");
-         BTAssert.notNull(version, "操作异常为空!操作失败");
-         ScfOrderDO order = this.selectOneWithVersion(refNo, version);
+         BTAssert.notNull(anRefNo, "订单凭证单号为空!操作失败");
+         BTAssert.notNull(anVersion, "操作异常为空!操作失败");
+         ScfOrderDO order = this.selectOneWithVersion(anRefNo, anVersion);
          BTAssert.notNull(order, "此订单异常!操作失败");
          order=this.annulOperator(UserUtils.getOperatorInfo(), order);
          return order;
@@ -219,25 +219,28 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
          if("1".equals(anIsOnlyNormal)){
              anMap.put("dataSource", "1");
          }
-        
-         anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
          
          if(anIsAudit){
-             Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
-             anMap.put("custNo", getCustNoList(custInfos));
+             
+             if (! anMap.containsKey("coreCustNo") ||  anMap.get("coreCustNo") ==null || StringUtils.isBlank(anMap.get("coreCustNo").toString())) {
+                 
+                 Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
+                 anMap.put("coreCustNo", getCustNoList(custInfos));
+             }
+             anMap.put("docStatus", VersionConstantCollentions.DOC_STATUS_CONFIRM);
+             
          }else{
              anMap.put("modiOperId", UserUtils.getOperatorInfo().getId());
          }
          
-         Page<ScfOrderDO> anOrderList = this.selectPropertyIneffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo");
+         Page<ScfOrderDO> orderList = this.selectPropertyIneffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo");
          
-         return anOrderList;
+         return orderList;
      }
      
      /**
       * 订单信息已生效分页查询
-      * isCustNo true 核心企业查询已生效 已使用，已过期，已废止的订单 
-      * isCustNo false 供应商查询与自己有关的已生效，已使用，已过期，已废止的订单
+      * isCustNo true 是供应商的已经生效的查询    false 是核心企业的已经生效的查询
       * 是查询需要审核的订单   必须是自己公司的订单
       * @param anMap 查询条件封装
       * @param anFlag 是否需要查询总的数量。1 需要       不为1： 为不需要
@@ -258,11 +261,18 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
          }
          
          Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
+         
          if(anIsCust){
+             
              anMap.put("custNo", getCustNoList(custInfos));
              anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+             
          }else{
-             anMap.put("coreCustNo", getCustNoList(custInfos));
+             
+             if (! anMap.containsKey("coreCustNo") ||  anMap.get("coreCustNo") ==null || StringUtils.isBlank(anMap.get("coreCustNo").toString())) {
+                 anMap.put("coreCustNo", getCustNoList(custInfos));
+             }
+             //anMap.put("coreCustNo", getCustNoList(custInfos));
          }
          
          Page<ScfOrderDO> anOrderList = this.selectPropertyEffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo");
