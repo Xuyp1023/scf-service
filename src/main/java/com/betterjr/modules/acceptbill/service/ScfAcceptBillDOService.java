@@ -276,7 +276,10 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
         Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
         if(anIsCust){
             
-            anMap.put("supplierNo", getCustNoList(custInfos));
+            if (! anMap.containsKey("supplierNo") ||  anMap.get("supplierNo") ==null || StringUtils.isBlank(anMap.get("supplierNo").toString())) {
+                anMap.put("supplierNo", getCustNoList(custInfos));
+            }
+            //anMap.put("supplierNo", getCustNoList(custInfos));
             
         }else{
             

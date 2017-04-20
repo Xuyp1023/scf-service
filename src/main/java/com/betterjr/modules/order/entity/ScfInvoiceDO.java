@@ -634,12 +634,14 @@ public class ScfInvoiceDO extends BaseVersionEntity {
         this.setBusinStatus(VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE);
         this.setLockedStatus(VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
         this.setDocStatus(VersionConstantCollentions.DOC_STATUS_DRAFT);
+        this.regDate=anInvoice.getRegDate();
+        this.regTime=anInvoice.getRegTime();
         this.modiDate=BetterDateUtils.getNumDate();
         this.modiTime=BetterDateUtils.getNumTime();
         this.operOrg=anInvoice.getOperOrg();
         this.regOperId=anInvoice.getRegOperId();
         this.regOperName=anInvoice.getRegOperName();
-        this.modiOperName=anInvoice.getModiTime();
+        this.modiOperName=anInvoice.getModiOperName();
         this.setModiOperId(anInvoice.getModiOperId());
         this.custPhone=anInvoice.getCustPhone();
         this.custAccount=anInvoice.getCustAccount();

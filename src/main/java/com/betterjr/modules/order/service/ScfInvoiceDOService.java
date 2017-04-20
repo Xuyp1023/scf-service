@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.UserUtils;
@@ -20,7 +18,6 @@ import com.betterjr.modules.customer.ICustMechBusinLicenceService;
 import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.order.dao.ScfInvoiceDOMapper;
 import com.betterjr.modules.order.entity.ScfInvoiceDO;
-import com.betterjr.modules.order.entity.ScfOrderDO;
 import com.betterjr.modules.version.constant.VersionConstantCollentions;
 import com.betterjr.modules.version.service.BaseVersionService;
 
@@ -43,6 +40,7 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
     
     @Reference(interfaceClass = ICustMechBaseService.class)
     private ICustMechBaseService custMechBaseService;
+    
     /**
      * 新增发票信息
      * @param anInvoice
@@ -76,7 +74,7 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
     * @param anConfirmFlag  true: 确认并修改     false: 修改
     * @return
     */
-    public ScfInvoiceDO saveModifyOrder(ScfInvoiceDO anModiInvoice,String anFileList,boolean anConfirmFlag) {
+    public ScfInvoiceDO saveModifyInvoice(ScfInvoiceDO anModiInvoice,String anFileList,boolean anConfirmFlag) {
         
         BTAssert.notNull(anModiInvoice,"发票为空,操作失败");
         BTAssert.notNull(anModiInvoice.getRefNo(),"凭证编号为空,操作失败");
@@ -199,6 +197,15 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
         return custNos;
     }
     
+    /**
+     * 查询未生效的发票信息
+     * @param anMap
+     * @param anFlag 是否需要查询总的数量
+     * @param anPageNum  当前页数
+     * @param anPageSize 每页显示的数量
+     * @param anIsAudit true  是审核界面的数据来源     false   不是审核界面的数据来源
+     * @return
+     */
     public Page<ScfInvoiceDO> queryIneffectiveInvoice(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize,boolean anIsAudit) {
         
         BTAssert.notNull(anMap, "查询条件为空!操作失败");
@@ -206,10 +213,10 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
         
         if(anIsAudit){
             
-            if (! anMap.containsKey("coreCustNo") ||  anMap.get("coreCustNo") ==null || StringUtils.isBlank(anMap.get("coreCustNo").toString())) {
+            if (! anMap.containsKey("custNo") ||  anMap.get("custNo") ==null || StringUtils.isBlank(anMap.get("custNo").toString())) {
                 
                 Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
-                anMap.put("coreCustNo", getCustNoList(custInfos));
+                anMap.put("custNo", getCustNoList(custInfos));
             }
             anMap.put("docStatus", VersionConstantCollentions.DOC_STATUS_CONFIRM);
             
@@ -220,5 +227,82 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
         Page<ScfInvoiceDO> invoiceList = this.selectPropertyIneffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo");
         
         return invoiceList;
+    }
+    
+    
+    /**
+     * 查询已经生效的发票信息
+     * @param anMap
+     * @param anFlag
+     * @param anPageNum
+     * @param anPageSize
+     * @param anIsCust true  供应商来查询   false 不是供应商来查询
+     * @return
+     */
+    public Page<ScfInvoiceDO> queryEffectiveInvoice(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize,boolean anIsCust) {
+        
+        BTAssert.notNull(anMap, "查询条件为空!操作失败");
+        // 操作员只能查询本机构数据
+        Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
+        
+        if(anIsCust){
+            
+            if (! anMap.containsKey("custNo") ||  anMap.get("custNo") ==null || StringUtils.isBlank(anMap.get("custNo").toString())) {
+                anMap.put("custNo", getCustNoList(custInfos));
+            }
+            anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+            
+        }else{
+            
+            if (! anMap.containsKey("coreCustNo") ||  anMap.get("coreCustNo") ==null || StringUtils.isBlank(anMap.get("coreCustNo").toString())) {
+                anMap.put("coreCustNo", getCustNoList(custInfos));
+            }
+            //anMap.put("coreCustNo", getCustNoList(custInfos));
+        }
+        
+        Page<ScfInvoiceDO> invoiceList = this.selectPropertyEffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo");
+        
+        return invoiceList;
+    }
+
+    public Object queryRecycleInvoice(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+        
+        BTAssert.notNull(anMap, "查询条件为空!操作失败");
+        // 操作员只能查询本机构数据
+        Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
+
+        if (! anMap.containsKey("custNo") ||  anMap.get("custNo") ==null || StringUtils.isBlank(anMap.get("custNo").toString())) {
+            anMap.put("custNo", getCustNoList(custInfos));
+        }
+        anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+        Page<ScfInvoiceDO> invoiceList = this.selectPropertyByPageWithStatus(anMap, anPageNum, anPageSize,"1".equals(anFlag), "refNo", VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, VersionConstantCollentions.DOC_STATUS_CONFIRM, VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
+        
+        Page<ScfInvoiceDO> invoiceList2 = this.selectPropertyByPageWithStatus(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo",VersionConstantCollentions.BUSIN_STATUS_USED,VersionConstantCollentions.DOC_STATUS_CONFIRM,VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
+        invoiceList.addAll(invoiceList2);
+        return invoiceList;
+    }
+    
+    /**
+     * 已经生效的发票进行废止操作
+     * @param anRefNo
+     * @param anVersion
+     * @return
+     */
+    public ScfInvoiceDO saveCustAnnulInvoice(String anRefNo,String anVersion){
+        
+        BTAssert.notNull(anRefNo, "凭证单号为空!操作失败");
+        BTAssert.notNull(anVersion, "数据版本为空!操作失败");
+        logger.info("begin to saveCustAnnulInvoice invoice"+UserUtils.getOperatorInfo().getName());
+        ScfInvoiceDO invoice = this.selectOneWithVersion(anRefNo, anVersion);
+        BTAssert.notNull(invoice, "此发票异常!操作失败");
+        Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
+        List<Long> custNoList = getCustNoList(custInfos);
+        //bill.getCoreCustNo().
+        if(! custNoList.contains(invoice.getCustNo())){
+            BTAssert.notNull(null, "你没有相应的权限!操作失败");
+        }
+        invoice=this.annulEffectiveOperator(invoice);
+        logger.info("success to saveCustAnnulInvoice invoice"+UserUtils.getOperatorInfo().getName());
+        return invoice;
     }
 }

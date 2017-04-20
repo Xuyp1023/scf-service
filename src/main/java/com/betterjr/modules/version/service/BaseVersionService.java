@@ -113,8 +113,6 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
             }
             try {
                 long id = SerialGenerator.getLongValue(anT.getClass().getSimpleName()+".id");
-                //Method method = arg1.getClass().getMethod("setId", Long.class);
-                //method.invoke(arg1,id);
                 anT.setId(id);
             }catch (Exception e) {
                 logger.info("初始化插入对象Id出错！"+e.getMessage());
@@ -270,6 +268,28 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
         return (Page) this.selectByProperty(anParamMap, arg4);
     }
     
+    /**
+     * 根据状态 查询符合条件的数据
+     * @param anParamMap
+     * @param arg1
+     * @param arg2
+     * @param arg3
+     * @param arg4
+     * @param businStatus
+     * @param docStatus
+     * @param lockedStatus
+     * @return
+     */
+    public Page<T> selectPropertyByPageWithStatus (Map<String, Object> anParamMap, int arg1, int arg2, boolean arg3, String arg4,String businStatus,String docStatus,String lockedStatus) {
+        
+        anParamMap.put("isLatest", VersionConstantCollentions.IS_LATEST);
+        anParamMap.put("businStatus", businStatus);
+        anParamMap.put("docStatus", docStatus);
+        anParamMap.put("lockedStatus", lockedStatus);
+        PageHelper.startPage(arg1, arg2, arg3);
+        return (Page) this.selectByProperty(anParamMap, arg4);
+    }
+    
     public Page<T> selectPropertyCanAunulByPageWithVersion (Map<String, Object> anParamMap, int arg1, int arg2, boolean arg3, String arg4) {
         
         anParamMap.put("isLatest", VersionConstantCollentions.IS_LATEST);
@@ -353,25 +373,6 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
         
         return null;
     }
-
-    /**
-     * 单据修改校验
-     * @param anOperatorInfo 当前登陆的用户信息
-     * @param T 需要校验的订单信息
-     * 修改者必须是新建的用户
-     * businStatus=0，1，2，lockedStatus=0 docStatus=0，1 ，isLatest=1这些状态才能修改
-     */
-     public void checkOperatorModifyStatus(CustOperatorInfo anOperatorInfo, T anAnOrder) {
-         
-         checkStatus(anAnOrder.getIsLatest(), VersionConstantCollentions.IS_NOT_LATEST, true, "当前单据已不是最新版本,不允许被编辑");
-         checkStatus(anOperatorInfo.getId()+"", anAnOrder.getModiOperId()+"", false, "你没有操作权限!请联系创建人修改此单据");
-         checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true, "当前单据已经转让,不允许被编辑");
-         checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_ANNUL, true, "当前单据已经废止,不允许被编辑");
-         checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EXPIRE, true, "当前单据已经过期,不允许被编辑");
-         checkStatus(anAnOrder.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true, "当前单据已经冻结,不允许被编辑");
-         checkStatus(anAnOrder.getDocStatus(), VersionConstantCollentions.DOC_STATUS_ANNUL, true, "当前单据已经废止,不允许被编辑");
-     }
-     
      
      /**
       * 检查状态信息
@@ -430,7 +431,25 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
          checkStatus(anArg0.getDocStatus(), VersionConstantCollentions.DOC_STATUS_DRAFT, true, "当前单据草稿状态,只能由创建者废止");
         
     }
-
+     
+     /**
+      * 单据修改校验
+      * @param anOperatorInfo 当前登陆的用户信息
+      * @param T 需要校验的订单信息
+      * 修改者必须是新建的用户
+      * businStatus=0，1，2，lockedStatus=0 docStatus=0，1 ，isLatest=1这些状态才能修改
+      */
+      public void checkOperatorModifyStatus(CustOperatorInfo anOperatorInfo, T anAnOrder) {
+          
+          checkStatus(anAnOrder.getIsLatest(), VersionConstantCollentions.IS_NOT_LATEST, true, "当前单据已不是最新版本,不允许被编辑");
+          checkStatus(anOperatorInfo.getId()+"", anAnOrder.getModiOperId()+"", false, "你没有操作权限!请联系创建人修改此单据");
+          checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true, "当前单据已经转让,不允许被编辑");
+          checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_ANNUL, true, "当前单据已经废止,不允许被编辑");
+          checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EXPIRE, true, "当前单据已经过期,不允许被编辑");
+          checkStatus(anAnOrder.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true, "当前单据已经冻结,不允许被编辑");
+          checkStatus(anAnOrder.getDocStatus(), VersionConstantCollentions.DOC_STATUS_ANNUL, true, "当前单据已经废止,不允许被编辑");
+      }
+      
     /**
       * 对单据进行核准
       * @param anOperatorInfo

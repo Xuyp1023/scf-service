@@ -264,7 +264,10 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
          
          if(anIsCust){
              
-             anMap.put("custNo", getCustNoList(custInfos));
+             if (! anMap.containsKey("custNo") ||  anMap.get("custNo") ==null || StringUtils.isBlank(anMap.get("custNo").toString())) {
+                 anMap.put("custNo", getCustNoList(custInfos));
+             }
+             //anMap.put("custNo", getCustNoList(custInfos));
              anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
              
          }else{
@@ -275,9 +278,9 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
              //anMap.put("coreCustNo", getCustNoList(custInfos));
          }
          
-         Page<ScfOrderDO> anOrderList = this.selectPropertyEffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo");
+         Page<ScfOrderDO> orderList = this.selectPropertyEffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo");
          
-         return anOrderList;
+         return orderList;
      }
      
      /**

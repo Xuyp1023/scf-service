@@ -222,7 +222,10 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
         
         if(anIsCust){
             //供应商查询已经生效的数据
-            anMap.put("custNo", getCustNoList(custInfos));
+            if (! anMap.containsKey("custNo") ||  anMap.get("custNo") ==null || StringUtils.isBlank(anMap.get("custNo").toString())) {
+                anMap.put("custNo", getCustNoList(custInfos));
+            }
+            //anMap.put("custNo", getCustNoList(custInfos));
             anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
             
         }else{
