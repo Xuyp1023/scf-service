@@ -20,6 +20,7 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.mapper.pagehelper.PageHelper;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
+import com.betterjr.modules.generator.SequenceFactory;
 import com.betterjr.modules.version.constant.VersionConstantCollentions;
 import com.betterjr.modules.version.entity.BaseVersionEntity;
 
@@ -352,19 +353,14 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
         
         try {
             
-            //Method method = arg0.getClass().getMethod("getId", null);
-            //Object id = method.invoke(arg0,null);
-            Long id=arg0.getId();
-            BTAssert.notNull(id,"Id为空");
             String simpleName = arg0.getClass().getSimpleName();
             String prefix="ScfOrderDO".equals(simpleName)?"PO":"ScfInvoiceDO".equals(simpleName)?"BI":"ScfAcceptBillDO".equals(simpleName)?"TA":"ScfReceivableDO".equals(simpleName)?"RP":"FR";
-            BTAssert.notLessThan(id.toString().length(), 14, "序号太长，请稍后重试");
-            String idString=id.toString();
-            for(int i=id.toString().length();i<14;i++){
-                idString="0"+idString;
+            String pattern=prefix+"#{Date:yy}#{Seq:14}";
+            String generateRefNo = SequenceFactory.generate("PLAT_"+arg0.getClass().getSimpleName(), pattern);
+            if(BetterStringUtils.isBlank(generateRefNo)){
+                BTAssert.notNull(null,"获取凭证编号失败!");
             }
-            
-            return prefix+BetterDateUtils.getYear().substring(2)+idString;
+            return generateRefNo;
         }
         catch (Exception e) {
             e.printStackTrace();

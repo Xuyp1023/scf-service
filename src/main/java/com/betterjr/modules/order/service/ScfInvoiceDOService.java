@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.Collections3;
+import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustInfo;
@@ -18,6 +20,7 @@ import com.betterjr.modules.customer.ICustMechBusinLicenceService;
 import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.order.dao.ScfInvoiceDOMapper;
 import com.betterjr.modules.order.entity.ScfInvoiceDO;
+import com.betterjr.modules.order.entity.ScfInvoiceDOItem;
 import com.betterjr.modules.version.constant.VersionConstantCollentions;
 import com.betterjr.modules.version.service.BaseVersionService;
 
@@ -41,6 +44,9 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
     @Reference(interfaceClass = ICustMechBaseService.class)
     private ICustMechBaseService custMechBaseService;
     
+    @Autowired
+    private ScfInvoiceDOItemService invoiceItemService;
+    
     /**
      * 新增发票信息
      * @param anInvoice
@@ -48,9 +54,11 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
      * @param anConfirmFlag true  新增并确认发票状态      false  新增发票信息
      * @return
      */
-    public ScfInvoiceDO addInvoice(ScfInvoiceDO anInvoice, String anFileList,boolean anConfirmFlag) {
+    public ScfInvoiceDO addInvoice(ScfInvoiceDO anInvoice, String anFileList,boolean anConfirmFlag,List<ScfInvoiceDOItem> anInvoiceItemList) {
         
-        BTAssert.notNull(anInvoice,"插入订单为空,操作失败");
+        BTAssert.notNull(anInvoice,"插入发票为空,操作失败");
+        BTAssert.notNull(anInvoice.getInvoiceNo(),"插入发票号码为空,操作失败");
+        checkInvoiceNoIsExist(anInvoice.getInvoiceNo());
         logger.info("Begin to add order"+UserUtils.getOperatorInfo().getName());
         anInvoice.initAddValue(UserUtils.getOperatorInfo(),anConfirmFlag);
         // 操作机构设置为供应商
@@ -62,19 +70,46 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
         anInvoice.setCoreCustTaxpayerNo(custMechBusinLicenceService.findBusinLicenceTaxNo(anInvoice.getCoreCustNo()));
         // 保存附件信息
         anInvoice.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anInvoice.getBatchNo()));
+        //保存发票明细项
+        if(anInvoiceItemList !=null && !anInvoiceItemList.isEmpty()){
+            invoiceItemService.saveAddInvoiceItem(anInvoiceItemList, anInvoice.getId());
+        }
         anInvoice=this.insertVersion(anInvoice);
         logger.info("success to add order"+UserUtils.getOperatorInfo().getName());
+        anInvoice.setInvoiceItemList(anInvoiceItemList);
         return anInvoice;
     }
     
-   /**
+    /**
+     * 校验当前发票是否存在，如果已经存在不允许再次插入
+     * @param anInvoiceNo
+     */
+   private void checkInvoiceNoIsExist(String anInvoiceNo) {
+        
+       List<String> businStatusList=new ArrayList<>();
+       businStatusList.add(VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE);
+       businStatusList.add(VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE);
+       businStatusList.add(VersionConstantCollentions.BUSIN_STATUS_USED);
+       List<String> docStatusList=new ArrayList<>();
+       docStatusList.add(VersionConstantCollentions.DOC_STATUS_DRAFT);
+       docStatusList.add(VersionConstantCollentions.DOC_STATUS_CONFIRM);
+       Map<String,Object> map=QueryTermBuilder.newInstance().put("invoiceNo", anInvoiceNo).put("businStatus", businStatusList).put("docStatus", docStatusList).put("isLatest", VersionConstantCollentions.IS_LATEST).build();
+       List<ScfInvoiceDO> invoiceList = this.selectByClassProperty(ScfInvoiceDO.class, map);
+       BTAssert.notNull(invoiceList,"当前发票已经登记,操作失败"); 
+       if(Collections3.isEmpty(invoiceList)){
+           BTAssert.notNull(null,"当前发票已经登记,操作失败"); 
+       }
+    }
+
+/**
     * 发票信息编辑
     * @param anModiInvoice
     * @param anFileList  文件上传批次号
     * @param anConfirmFlag  true: 确认并修改     false: 修改
+ * @param anInvoiceItemList 
     * @return
     */
-    public ScfInvoiceDO saveModifyInvoice(ScfInvoiceDO anModiInvoice,String anFileList,boolean anConfirmFlag) {
+    public ScfInvoiceDO saveModifyInvoice(ScfInvoiceDO anModiInvoice,String anFileList,boolean anConfirmFlag, List<ScfInvoiceDOItem> anInvoiceItemList) {
         
         BTAssert.notNull(anModiInvoice,"发票为空,操作失败");
         BTAssert.notNull(anModiInvoice.getRefNo(),"凭证编号为空,操作失败");
@@ -86,7 +121,6 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
         checkOperatorModifyStatus(UserUtils.getOperatorInfo(),invoice);
         // 应收账款信息变更迁移初始化
         anModiInvoice.initModifyValue(invoice);
-        //anModiOrder.setId(anOrder.getId());
         if(! invoice.getCustNo().equals(anModiInvoice.getCustNo())){
             anModiInvoice.setCustName(custAccountService.queryCustName(anModiInvoice.getCustNo()));
             // 操作机构设置为供应商
@@ -103,16 +137,6 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
         }else{
             anModiInvoice.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo("", anModiInvoice.getBatchNo())); 
         }
-        // 初始版本更改 直接返回
-        if(invoice.getBusinStatus().equals(VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE)&&
-                invoice.getDocStatus().equals(VersionConstantCollentions.DOC_STATUS_DRAFT)){
-            if(anConfirmFlag){
-                anModiInvoice.setDocStatus(VersionConstantCollentions.DOC_STATUS_CONFIRM); 
-            }
-             // 数据存盘
-            this.updateByPrimaryKeySelective(anModiInvoice);
-            return anModiInvoice;
-        }
         // 需要升级版本的修改
         anModiInvoice.setIsLatest(VersionConstantCollentions.IS_NOT_LATEST);
         anModiInvoice.setLockedStatus(VersionConstantCollentions.LOCKED_STATUS_LOCKED);
@@ -124,6 +148,13 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
         //ScfOrderDO order2 = this.selectOneWithVersion(order.getRefNo(),order.getVersion());
         anModiInvoice=this.updateVersionByPrimaryKeySelective(anModiInvoice,invoice.getRefNo(),invoice.getVersion());
         BTAssert.notNull(anModiInvoice, "修改发票失败");
+      //保存发票明细项
+        if(anInvoiceItemList !=null && !anInvoiceItemList.isEmpty()){
+            invoiceItemService.saveAddInvoiceItem(anInvoiceItemList, anModiInvoice.getId()); 
+            anModiInvoice.setInvoiceItemList(anInvoiceItemList);
+        }else{
+            anModiInvoice.setInvoiceItemList(new ArrayList<ScfInvoiceDOItem>());
+        }
         logger.info("success to modify invoice"+UserUtils.getOperatorInfo().getName());
         return anModiInvoice;
     }
@@ -157,6 +188,7 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
         BTAssert.notNull(anVersion, "操作异常为空!操作失败");
         ScfInvoiceDO invoice = this.selectOneWithVersion(anRefNo, anVersion);
         BTAssert.notNull(invoice, "此订单异常!操作失败");
+        invoice.setInvoiceItemList(invoiceItemService.queryInvoiceItemsByInvoiceId(invoice.getId()));
         return invoice;
     }
     

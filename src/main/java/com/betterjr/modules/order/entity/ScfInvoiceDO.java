@@ -223,7 +223,7 @@ public class ScfInvoiceDO extends BaseVersionEntity {
     private String coreCustAccount;
 
     @Transient
-    private List<ScfInvoiceDODetail> InvoiceDetailList=new ArrayList<>();
+    private List<ScfInvoiceDOItem> invoiceItemList=new ArrayList<>();
     
     public String getInvoiceCode() {
         return this.invoiceCode;
@@ -433,12 +433,12 @@ public class ScfInvoiceDO extends BaseVersionEntity {
         this.coreCustAccount = anCoreCustAccount;
     }
 
-    public List<ScfInvoiceDODetail> getInvoiceDetailList() {
-        return this.InvoiceDetailList;
+    public List<ScfInvoiceDOItem> getInvoiceItemList() {
+        return this.invoiceItemList;
     }
 
-    public void setInvoiceDetailList(List<ScfInvoiceDODetail> anInvoiceDetailList) {
-        this.InvoiceDetailList = anInvoiceDetailList;
+    public void setInvoiceItemList(List<ScfInvoiceDOItem> anInvoiceItemList) {
+        this.invoiceItemList = anInvoiceItemList;
     }
 
     public ScfInvoiceDO() {

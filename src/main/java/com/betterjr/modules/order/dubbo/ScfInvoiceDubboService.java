@@ -1,5 +1,6 @@
 package com.betterjr.modules.order.dubbo;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import com.betterjr.common.web.AjaxObject;
 import com.betterjr.modules.order.IScfInvoiceService;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfInvoiceDO;
+import com.betterjr.modules.order.entity.ScfInvoiceDOItem;
 import com.betterjr.modules.order.entity.ScfInvoiceItem;
 import com.betterjr.modules.order.service.ScfInvoiceDOService;
 import com.betterjr.modules.order.service.ScfInvoiceItemService;
@@ -63,18 +65,18 @@ public class ScfInvoiceDubboService implements IScfInvoiceService {
     }
 
     @Override
-    public String webAddInvoiceDO(Map<String, Object> anAnMap, String anFileList, boolean anConfirmFlag) {
+    public String webAddInvoiceDO(Map<String, Object> anAnMap, String anFileList, boolean anConfirmFlag,List<ScfInvoiceDOItem> anInvoiceItemList) {
         
         ScfInvoiceDO invoice = RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk("发票信息添加成功", invoiceService.addInvoice(invoice,anFileList, anConfirmFlag)).toJson();
+        return AjaxObject.newOk("发票信息添加成功", invoiceService.addInvoice(invoice,anFileList, anConfirmFlag,anInvoiceItemList)).toJson();
         
     }
 
     @Override
-    public String webSaveModifyInvoiceDO(Map<String, Object> anAnMap, String anFileList, boolean anConfirmFlag) {
+    public String webSaveModifyInvoiceDO(Map<String, Object> anAnMap, String anFileList, boolean anConfirmFlag,List<ScfInvoiceDOItem> anInvoiceItemList) {
         
         ScfInvoiceDO invoice = RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk("发票信息编辑成功", invoiceService.saveModifyInvoice(invoice,anFileList, anConfirmFlag)).toJson();
+        return AjaxObject.newOk("发票信息编辑成功", invoiceService.saveModifyInvoice(invoice,anFileList, anConfirmFlag,anInvoiceItemList)).toJson();
     
     }
 

@@ -44,6 +44,7 @@
         com.betterjr.modules.agreement.service;
         com.betterjr.modules.ledger;
         com.betterjr.modules.version;
+        com.betterjr.modules.generator;
         com.betterjr.modules.asset;
 		com.betterjr.common" />
 	<!-- <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" 
@@ -68,6 +69,8 @@
         <property name="properties" value="scf-service-config.properties" />
     </bean>
 
+    <bean id="sequenceFactory" class="com.betterjr.modules.generator.SequenceFactory"
+            init-method="init" scope="singleton" lazy-init="false"></bean>
 	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
 		init-method="init" destroy-method="close">
 		<property name="driverClassName" value="${jdbc.driverClass}" />
