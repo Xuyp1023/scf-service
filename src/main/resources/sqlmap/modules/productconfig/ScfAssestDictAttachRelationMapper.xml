@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.productconfig.dao.ScfAssetDictAttachRelationMapper" >
+  <resultMap id="BaseResultMap" type="com.betterjr.modules.productconfig.entity.ScfAssetDictAttachRelation" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="L_ASSEST_ID" property="assestId" jdbcType="BIGINT" />
+    <result column="C_ATTCH_NAME" property="attchName" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>

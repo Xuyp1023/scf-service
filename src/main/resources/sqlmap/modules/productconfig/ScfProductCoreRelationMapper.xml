@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.productconfig.dao.ScfProductCoreRelationMapper" >
+  <resultMap id="BaseResultMap" type="com.betterjr.modules.productconfig.entity.ScfProductCoreRelation" >
+    <id column="ID" property="d" jdbcType="BIGINT" />
+    <result column="C_PRODUCT_CODE" property="productCode" jdbcType="VARCHAR" />
+    <result column="L_CORE_CUSTNO" property="coreCustNo" jdbcType="BIGINT" />
+    <result column="C_CORE_CUSTNAME" property="coreCustName" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>

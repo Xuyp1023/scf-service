@@ -17,6 +17,7 @@
 	<!-- 扫描spring注解 -->
 	<context:component-scan
 		base-package="com.betterjr.modules.test;
+		com.betterjr.modules.productconfig;
 		com.betterjr.modules.agreement;
 		com.betterjr.modules.product;
 		com.betterjr.modules.credit;
