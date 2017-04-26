@@ -239,5 +239,11 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
         
         return receivableList;
     }
+
+
+    public List<ScfReceivableDO> saveResolveFile(List<Map<String,Object>> listMap) {
+        
+        return null;
+    }
     
 }

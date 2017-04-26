@@ -1,22 +1,29 @@
 package com.betterjr.modules.order.service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.account.service.CustAccountService;
+import com.betterjr.modules.asset.data.AssetConstantCollentions;
 import com.betterjr.modules.customer.ICustMechBaseService;
 import com.betterjr.modules.document.ICustFileService;
+import com.betterjr.modules.flie.data.FileResolveConstants;
+import com.betterjr.modules.flie.entity.CustFileCloumn;
+import com.betterjr.modules.flie.service.CustFileCloumnService;
 import com.betterjr.modules.order.dao.ScfOrderDOMapper;
 import com.betterjr.modules.order.entity.ScfOrderDO;
 import com.betterjr.modules.version.constant.VersionConstantCollentions;
@@ -38,6 +45,9 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
 
     @Reference(interfaceClass = ICustMechBaseService.class)
     private ICustMechBaseService custMechBaseService;
+    
+    @Autowired
+    private CustFileCloumnService fileCloumnService;
     
     /**
      * 
@@ -193,7 +203,7 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
          }
          anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
          
-         Page<ScfOrderDO> anOrderList = this.selectPropertyByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo");
+         Page<ScfOrderDO> anOrderList = this.selectPropertyByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo desc");
 
          return anOrderList;
      }
@@ -233,7 +243,7 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
              anMap.put("modiOperId", UserUtils.getOperatorInfo().getId());
          }
          
-         Page<ScfOrderDO> orderList = this.selectPropertyIneffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo");
+         Page<ScfOrderDO> orderList = this.selectPropertyIneffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo desc");
          
          return orderList;
      }
@@ -278,7 +288,7 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
              //anMap.put("coreCustNo", getCustNoList(custInfos));
          }
          
-         Page<ScfOrderDO> orderList = this.selectPropertyEffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo");
+         Page<ScfOrderDO> orderList = this.selectPropertyEffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo desc");
          
          return orderList;
      }
@@ -323,9 +333,61 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
             anMap.put("coreCustNo", getCustNoList(custInfos));
         }
         
-        Page<ScfOrderDO> orderList = this.selectPropertyCanAunulByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo");
+        Page<ScfOrderDO> orderList = this.selectPropertyCanAunulByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo desc");
         
         return orderList;
+    }
+
+    /**
+     * 解析文件插入订单数据  
+     * regDate","regTime","modiOperId","modiOperName","operOrg"
+                                                ,"custNo","coreCustNo","batchNo" +模版中的属性
+     * @return
+     */
+    public List<ScfOrderDO> saveResolveFile(List<Map<String,Object>> listMap) {
+        List<ScfOrderDO> list=new ArrayList<>();
+        List<CustFileCloumn> fileCloumnList=fileCloumnService.queryFileCloumnByInfoTypeIsMust(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_ORDER,"1");
+        int i=FileResolveConstants.BEGIN_ROW_ORDER;
+        for (Map<String, Object> map : listMap) {
+            i++;
+            BTAssert.notNull(map.get("custNo"), "第选择供应商!再上传");
+            BTAssert.notNull(map.get("coreCustNo"), "第选择核心企业!再上传");
+            for(CustFileCloumn fileCloumn:fileCloumnList){
+                BTAssert.notNull(map.get(fileCloumn.getCloumnProperties()), "第"+i+"行的"+fileCloumn.getCloumnName()+"值为空,请重新上传"); 
+            }
+            map=initAddOrderWithMap(map);
+            ScfOrderDO order=new ScfOrderDO();
+            try {
+                BeanUtils.populate(order, map);
+                order=this.insertVersion(order);
+                BTAssert.notNull(order,"第"+i+"行的数据有问题,请重新上传"); 
+                list.add(order);
+            }
+            catch (IllegalAccessException | InvocationTargetException e) {
+                logger.info("文件上次map转对象订单失败"+map+" "+e.getMessage());
+            }
+            catch (Exception e) {
+                logger.info("第"+i+"行的数据有问题,请重新上传"+" "+e.getMessage());
+                BTAssert.notNull(null,"第"+i+"行的数据有问题,请重新上传"); 
+            }
+        }
+        
+        return list;
+    }
+
+    private Map<String, Object> initAddOrderWithMap(Map<String, Object> anMap) {
+        
+        Long custNo=Long.parseLong(anMap.get("custNo").toString());
+        anMap.put("custName",custAccountService.queryCustName(custNo));
+        Long coreCustNo=Long.parseLong(anMap.get("coreCustNo").toString());
+        anMap.put("coreCustName", custAccountService.queryCustName(coreCustNo));
+        anMap.put("dataSource", 2);
+        anMap.put("description","excel 导入");
+        anMap.put("id", SerialGenerator.getLongValue("ScfOrderDO.id"));
+        anMap.put("businStatus",VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE);
+        anMap.put("lockedStatus",VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
+        anMap.put("docStatus",VersionConstantCollentions.DOC_STATUS_DRAFT);
+        return anMap;
     }
 
 }

@@ -139,7 +139,7 @@ public class ScfAcceptBillDubboService implements IScfAcceptBillService {
     @Override
     public String webQueryIneffectiveAcceptBill(Map<String, Object> anAnMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize,
             boolean anIsAudit) {
-        final Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
         return AjaxObject
                 .newOkWithPage("汇票信息查询成功", acceptBillService.queryIneffectiveBill(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize,anIsAudit))
                 .toJson();

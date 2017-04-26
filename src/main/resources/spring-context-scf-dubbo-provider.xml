@@ -44,6 +44,7 @@
         com.betterjr.modules.agreement.service;
         com.betterjr.modules.ledger;
         com.betterjr.modules.version;
+        com.betterjr.modules.file;
         com.betterjr.modules.generator;
         com.betterjr.modules.asset;
 		com.betterjr.common" />

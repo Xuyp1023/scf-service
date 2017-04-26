@@ -337,4 +337,9 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
         logger.info("success to saveCustAnnulInvoice invoice"+UserUtils.getOperatorInfo().getName());
         return invoice;
     }
+
+    public List<ScfInvoiceDO> saveResolveFile(List<Map<String,Object>> listMap) {
+        
+        return null;
+    }
 }

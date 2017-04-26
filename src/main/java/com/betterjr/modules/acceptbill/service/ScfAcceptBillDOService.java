@@ -50,6 +50,7 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
         BTAssert.notNull(anAcceptBill.getSupplierNo(),"票据登记失败，原因：请选择收款人");
         logger.info("Begin to add addAcceptBill"+UserUtils.getOperatorInfo().getName());
         anAcceptBill.setCoreCustName(custAccountService.queryCustName(anAcceptBill.getCoreCustNo()));
+        anAcceptBill.setSupplierName(custAccountService.queryCustName(anAcceptBill.getSupplierNo()));
         anAcceptBill.setInvoiceCorp(anAcceptBill.getCoreCustName());
         anAcceptBill.initAddValue(UserUtils.getOperatorInfo(),confirmFlag);
         //操作机构设置为供应商
@@ -230,7 +231,7 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
             anMap.put("operId", UserUtils.getOperatorInfo().getId());
         }
         
-        Page<ScfAcceptBillDO> billList = this.selectPropertyIneffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo");
+        Page<ScfAcceptBillDO> billList = this.selectPropertyIneffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo desc");
         
         return billList;
     }
@@ -290,7 +291,7 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
             
         }
         
-        Page<ScfAcceptBillDO> billList = this.selectPropertyEffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo");
+        Page<ScfAcceptBillDO> billList = this.selectPropertyEffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo desc");
         
         return billList;
     }
@@ -323,9 +324,14 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
             anMap.put("coreCustNo", getCustNoList(custInfos));
         }
         
-        Page<ScfAcceptBillDO> billList = this.selectPropertyCanAunulByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo");
+        Page<ScfAcceptBillDO> billList = this.selectPropertyCanAunulByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo desc");
         
         return billList;
+    }
+
+    public List<ScfAcceptBillDO> saveResolveFile(List<Map<String,Object>> listMap) {
+        
+        return null;
     }
 
     

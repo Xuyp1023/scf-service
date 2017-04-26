@@ -82,6 +82,13 @@ public class ScfOrderDO extends BaseVersionEntity{
     @MetaData( value="创建日期", comments = "创建日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
+    
+    /**
+     * 创建时间
+     */
+    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
+    @MetaData( value="创建时间", comments = "创建时间")
+    private String regTime;
 
     /**
      * 商品名称
@@ -196,7 +203,7 @@ public class ScfOrderDO extends BaseVersionEntity{
     private Long batchNo;
 
     /**
-     * 数据来源, 0:关联单据默认生成, 1:用户录入
+     * 数据来源, 0:关联单据默认生成, 1:用户录入 2:excel 导入
      */
     @Column(name = "C_DATASOURCE",  columnDefinition="VARCHAR" )
     @MetaData( value="数据来源, 0:关联单据默认生成, 1:用户录入", comments = "数据来源, 0:关联单据默认生成, 1:用户录入")
@@ -400,6 +407,14 @@ public class ScfOrderDO extends BaseVersionEntity{
     public void setDescription(String anDescription) {
         this.description = anDescription;
     }
+    
+    public String getRegTime() {
+        return this.regTime;
+    }
+
+    public void setRegTime(String anRegTime) {
+        this.regTime = anRegTime;
+    }
 
     public ScfOrderDO() {
         super();
@@ -573,6 +588,7 @@ public class ScfOrderDO extends BaseVersionEntity{
             this.operOrg = anOperatorInfo.getOperOrg();
         }
         this.regDate = BetterDateUtils.getNumDate();
+        this.regTime=BetterDateUtils.getNumTime();
     }
     
     /**
