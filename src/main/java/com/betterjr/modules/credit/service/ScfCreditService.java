@@ -347,6 +347,18 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         String[] anSumFields = new String[] { "creditLimit", "creditUsed", "creditBalance", };
         return findCreditSum(anMap, anSumFields);
     }
+    
+    public Map<String, Object> findCreditSumByCustNo(Long anCustNo, Long factorNo) {
+    	BTAssert.notNull(anCustNo, "客户编号不能为空");
+        BTAssert.notNull(factorNo, "保理公司编号不能为空");
+        Map<String, Object> anMap = new HashMap<String, Object>();
+        anMap.put("custNo", anCustNo);
+        anMap.put("factorNo", factorNo);
+        anMap.put("businStatus", CreditConstants.CREDIT_STATUS_EFFECTIVE);// 授信状态:0-未生效;1-已生效;2-已失效;
+        // 授信额度总和 + 累计已使用额度 + 授信余额总和
+        String[] anSumFields = new String[] { "creditLimit", "creditUsed", "creditBalance", };
+        return findCreditSum(anMap, anSumFields);
+    }
 
     private Map<String, Object> findCreditSum(Map<String, Object> anConditionMap, String[] anSumFields) {
         Map<String, Object> anMap = new HashMap<String, Object>();
