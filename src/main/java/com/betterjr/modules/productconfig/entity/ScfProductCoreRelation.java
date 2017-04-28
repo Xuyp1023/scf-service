@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
@@ -32,6 +33,9 @@ public class ScfProductCoreRelation implements BetterjrEntity {
 	@Column(name = "C_CORE_CUSTNAME", columnDefinition = "VARCHAR")
 	@MetaData(value = "核心企业", comments = "核心企业")
 	private String coreCustName;
+	
+	@Transient
+	private String credict = "未授信";//未授信，已授信
 
 	public Long getCoreCustNo() {
 		return coreCustNo;
@@ -65,6 +69,14 @@ public class ScfProductCoreRelation implements BetterjrEntity {
 		this.coreCustName = coreCustName;
 	}
 	
+	public String getCredict() {
+		return credict;
+	}
+
+	public void setCredict(String credict) {
+		this.credict = credict;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -110,8 +122,8 @@ public class ScfProductCoreRelation implements BetterjrEntity {
 
 	@Override
 	public String toString() {
-		return "ScfProductCoreRelation [id=" + id + ", productCode=" + productCode + ", coreCustno=" + coreCustNo
-				+ ", coreCustName=" + coreCustName + "]";
+		return "ScfProductCoreRelation [id=" + id + ", productCode=" + productCode + ", coreCustNo=" + coreCustNo
+				+ ", coreCustName=" + coreCustName + ", credict=" + credict + "]";
 	}
 
 	public void init() {

@@ -14,7 +14,6 @@ import com.betterjr.common.utils.Collections3;
 import com.betterjr.modules.productconfig.dao.ScfProductAssetDictRelationMapper;
 import com.betterjr.modules.productconfig.entity.ScfAssetDict;
 import com.betterjr.modules.productconfig.entity.ScfProductAssetDictRelation;
-import com.betterjr.modules.productconfig.entity.ScfProductCoreRelation;
 
 @Service
 public class ScfProductAssetDictRelationService extends BaseService<ScfProductAssetDictRelationMapper, ScfProductAssetDictRelation> {
@@ -29,26 +28,24 @@ public class ScfProductAssetDictRelationService extends BaseService<ScfProductAs
         return this.selectByPrimaryKey(anRelation.getId());
     }
 	
-	public String batchSaveRelation(String anProductCode, String assets) {
+	public String batchSaveRelation(String anProductCode, String listIdType) {
 		BTAssert.notNull(anProductCode, "资产清单保存失败");
-		BTAssert.notNull(assets, "资产清单保存失败");
+		BTAssert.notNull(listIdType, "资产清单保存失败");
 		
 		//删除前面已保存的关系
-		String[] arrNo = assets.split(",");
-		for (int i = 0; i < arrNo.length; i++) {
-			this.deleteByProperty("productCode", anProductCode);
-		}
-		
+		String[] arrNo = listIdType.split(",");
+		this.deleteByProperty("productCode", anProductCode);
+
 		for (int i = 0; i < arrNo.length; i++) {
 			ScfProductAssetDictRelation relation = new ScfProductAssetDictRelation();
 			String[] assArr = arrNo[i].split("-");
-			relation.setAssestId(Long.parseLong(assArr[0]));
-			relation.setAssestType(assArr[1]);
+			relation.setAssestType(assArr[0]);
+			relation.setAssestId(Long.parseLong(assArr[1]));
 			relation.setProductCode(anProductCode);
 			relation.init();
 			this.insert(relation);
 		}
-		return assets;
+		return listIdType;
 	}
 	
 	public ScfProductAssetDictRelation findRelation(String anProductCode, Long assestId){
@@ -69,11 +66,12 @@ public class ScfProductAssetDictRelationService extends BaseService<ScfProductAs
 	    
 		//根据产品与资产关系表 循环出 关联的资产类型
 	    List<ScfProductAssetDictRelation> relations = this.selectByClassProperty(ScfProductAssetDictRelation.class, anMap);
-	    List assetDictIds = new ArrayList();
+	    List<ScfAssetDict> list = new ArrayList<ScfAssetDict>();
 	    for (ScfProductAssetDictRelation relation : relations) {
-	    	assetDictIds.add(relation.getAssestId());
+	    	ScfAssetDict dict = assetDictService.selectByPrimaryKey(relation.getAssestId());
+	    	dict.setAssetType(relation.getAssestType());
+			list.add(dict);
 		}
-	    
-        return assetDictService.selectByListProperty("id", assetDictIds);
+        return list;
    }
 }

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.betterjr.common.web.AjaxObject;
+import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.productconfig.IScfProductConfigService;
 import com.betterjr.modules.productconfig.entity.ScfAssetDict;
 import com.betterjr.modules.productconfig.entity.ScfAssetDictAttachRelation;
@@ -67,10 +68,10 @@ public class ProductConfigDubboService implements IScfProductConfigService {
 	}
 
 	@Override
-	public String webAddProductAssetDictRelation(String anProductCode, String anAssets) {
+	public String webAddProductAssetDictRelation(String anProductCode, String listIdType) {
 		logger.debug("保存产品与资产类型关系：" + anProductCode);
 		//ScfProductAssetDictRelation anRelation = (ScfProductAssetDictRelation) RuleServiceDubboFilterInvoker.getInputObj();
-		return AjaxObject.newOk("操作成功", productAssetDictRelationService.batchSaveRelation(anProductCode, anAssets)).toJson();
+		return AjaxObject.newOk("操作成功", productAssetDictRelationService.batchSaveRelation(anProductCode, listIdType)).toJson();
 	}
 
 	@Override
@@ -116,7 +117,22 @@ public class ProductConfigDubboService implements IScfProductConfigService {
 	
 	@Override
 	public String webQueryCoreByProduct(String anProductCode, int anFlag, int anPageNum, int anPageSize) {
-		return AjaxObject.newOkWithPage("操作成功", productConfigService.webFindCoreByProduct(anProductCode, anFlag, anPageNum, anPageSize)).toJson();
+		return AjaxObject.newOkWithPage("操作成功", productConfigService.queryCoreByProduct(anProductCode, anFlag, anPageNum, anPageSize)).toJson();
+	}
+	
+	@Override
+	public String webFindCoreByProductList(String anProductCode) {
+		return AjaxObject.newOk("操作成功", productConfigService.findCoreByProductList(anProductCode)).toJson();
+	}
+	
+	@Override
+	public String webDelProductConfig(Long anId) {
+		return AjaxObject.newOk("操作成功", productConfigService.delProductConfig(anId)).toJson();
+	}
+	
+	@Override
+	public String webQueryProductKeyAndValue(Long coreCustNo, Long anFactorNo) {
+		return AjaxObject.newOk("操作成功", productConfigService.queryProductKeyAndValue(coreCustNo, anFactorNo)).toJson();
 	}
 
 }

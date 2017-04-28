@@ -8,15 +8,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.betterjr.common.data.SimpleDataEntity;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
+import com.betterjr.common.utils.QueryTermBuilder;
+import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustInfo;
-import com.betterjr.modules.account.service.CustAccountService;
-import com.betterjr.modules.customer.ICustMechBankAccountService;
+import com.betterjr.modules.credit.service.ScfCreditService;
 import com.betterjr.modules.customer.ICustRelationService;
 import com.betterjr.modules.customer.entity.CustRelation;
+import com.betterjr.modules.product.constant.ProductConstants;
 import com.betterjr.modules.productconfig.dao.ScfProductConfigMapper;
 import com.betterjr.modules.productconfig.entity.ScfAssetDict;
 import com.betterjr.modules.productconfig.entity.ScfProductConfig;
@@ -30,17 +34,10 @@ public class ScfProductConfigService extends BaseService<ScfProductConfigMapper,
 	private ScfProductCoreRelationService productCoreRelationService;
 	
 	@Autowired
-	private ScfAssetDictAttachRelationService assetDictAttachRelationService;
-	
-	@Autowired
 	private ScfProductAssetDictRelationService productAssetDictRelationService ;
 	
-	@Autowired
-	private CustAccountService custAccountService;
-	
-	 @Reference(interfaceClass = ICustMechBankAccountService.class)
+	@Reference(interfaceClass = ICustRelationService.class)
     private ICustRelationService custRelationService;
-
 	
 	public ScfProductConfig addConfig(ScfProductConfig anConfig) {
         BTAssert.notNull(anConfig, "产品配置失败");
@@ -70,54 +67,130 @@ public class ScfProductConfigService extends BaseService<ScfProductConfigMapper,
 																	
 	public Page<ScfProductConfig> queryProduct(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
 		anMap = Collections3.filterMap(anMap, new String[]{"custNo", "coreCustNo", "factorNo", "productCode", "businStatus", "GTEregDate", "LTEregDate"});
+		
+		//保理公司查询
+		if(UserUtils.factorUser()){
+			return this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1==anFlag);
+		}
+		
+		//其它公司查询
+		List<String> productCodeList = getProductCode(anMap);
+		if(productCodeList.size() == 0){
+			return new Page<>(anPageNum, anPageSize);
+		}
+		
+		//输入条件有指定productCode时
+		Object productCode = anMap.get("productCode");
+		if(productCode != null){
+			if(productCodeList.contains(productCode.toString())){
+				anMap.put("productCode", productCode.toString());
+			}else{
+				return new Page<>(anPageNum, anPageSize);
+			}
+		}else{
+			anMap.put("productCode", productCodeList.toArray());
+		}
+		
+		
+		anMap.remove("coreCustNo");
+		anMap.remove("custNo");
+		return this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1==anFlag);
+    }
+
+	private List<String> getProductCode(Map<String, Object> anMap) {
 		Object custNo = anMap.get("custNo");
-		Object coreCustNo = anMap.get("coreCustNo");
+		String coreCustNo = anMap.get("coreCustNo") == null ? "":anMap.get("coreCustNo").toString();
+		List<String> productCodeList =  new ArrayList<String>();
 		
 		//供应商企业查询
-		if(custNo != null){
-			List<Long> idList =  new ArrayList<Long>();
-			//查出该供应商关联的所有核心企业
-			List<CustRelation> coreList = custRelationService.queryCoreList(Long.parseLong(custNo.toString()));
-			for (CustRelation cust : coreList) {
-				idList.add(cust.getCustNo());
+		if(UserUtils.supplierUser() || UserUtils.sellerUser()){
+			List<Long> noList =  new ArrayList<Long>();
+			if(!BetterStringUtils.isEmpty(coreCustNo)){
+				noList.add(Long.parseLong(coreCustNo));
+			}else{
+				//查出该供应商关联的所有核心企业
+				List<CustRelation> coreList = custRelationService.queryCoreList(Long.parseLong(custNo.toString()));
+				for (CustRelation cust : coreList) {
+					noList.add(cust.getRelateCustno());
+				}
 			}
 			
 			//查询产品关联的核心企业
-			anMap.put("coreCustNo", idList.toArray());
-			List<ScfProductCoreRelation> relationList = productCoreRelationService.selectByListProperty("coreCustNo", idList);
-			idList =  new ArrayList<Long>();
-			for (ScfProductCoreRelation rel : relationList) {
-				idList.add(rel.getId());
+			List<ScfProductCoreRelation> relationList = productCoreRelationService.selectByListProperty("coreCustNo", noList);
+			if(Collections3.isEmpty(relationList)){
+				return productCodeList;
 			}
 			
-			//查询产品
-			anMap.remove("custNo");
-			anMap.put("id", idList.toArray());
+			for (ScfProductCoreRelation rel : relationList) {
+			    productCodeList.add(rel.getProductCode());
+			}
 		}
 		
 		//核心企业查询
-		else if(coreCustNo != null){
-			List<Long> idList =  new ArrayList<Long>();
-			List<ScfProductCoreRelation> relationList = productCoreRelationService.selectByProperty("coreCustNo", coreCustNo.toString());
-			idList =  new ArrayList<Long>();
-			for (ScfProductCoreRelation rel : relationList) {
-				idList.add(rel.getId());
+		else if(UserUtils.coreUser()){
+			List<ScfProductCoreRelation> relationList = productCoreRelationService.selectByProperty("coreCustNo", coreCustNo);
+			if(Collections3.isEmpty(relationList)){
+				return productCodeList;
 			}
 			
-			//查询产品
-			anMap.remove("coreCustNo");
-			anMap.put("id", idList.toArray());
+			for (ScfProductCoreRelation rel : relationList) {
+				productCodeList.add(rel.getProductCode());
+			}
 		}
 		
-		return this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1==anFlag);
-    }
+		return productCodeList;
+	}
 
 	public List<ScfAssetDict> findAssetDictByProduct(String anProductCode) {
 		return productAssetDictRelationService.queryProductAssetDict(anProductCode);
 	}
 
-	public Page<CustInfo> webFindCoreByProduct(String anProductCode, int anFlag, int anPageNum, int anPageSize) {
+	public Page<ScfProductCoreRelation> queryCoreByProduct(String anProductCode, int anFlag, int anPageNum, int anPageSize) {
 		return productCoreRelationService.queryProductCoreUser(anProductCode, anPageNum, anPageSize, anFlag);
 	}
 	
+	public List<ScfProductCoreRelation> findCoreByProductList(String anProductCode) {
+		return productCoreRelationService.findCoreByProductList(anProductCode);
+	}
+	
+	public int delProductConfig(Long anId){
+		BTAssert.notNull(anId, "产品删除失败");
+		ScfProductConfig product = this.selectByPrimaryKey(anId);
+		Map<String, Object> anMap = QueryTermBuilder.newInstance().put("productCode", product.getProductCode()).build();
+		productCoreRelationService.deleteByExample(anMap);
+		productAssetDictRelationService.deleteByExample(anMap);
+		return this.delete(product);
+	}
+	
+	/**
+     * 融资产品下拉列表查询
+     * 
+     * @param coreCustNo
+     * @param anFactorNo
+     * @return
+     */
+    public List<SimpleDataEntity> queryProductKeyAndValue(Long coreCustNo, Long anFactorNo) {
+        List<SimpleDataEntity> result = new ArrayList<SimpleDataEntity>();
+        if (null == coreCustNo || null == anFactorNo) {
+            return result;
+        }
+        
+        //查询核心企业关联的产品
+        List<ScfProductCoreRelation> relationList = productCoreRelationService.findRelationByCore(coreCustNo);
+        ArrayList<String> codeList = new ArrayList<String>();
+        for (ScfProductCoreRelation relation : relationList) {
+        	codeList.add(relation.getProductCode());
+		}
+        
+        //查询保指定理公司的产品
+        Map<String, Object> anMap = QueryTermBuilder.newInstance()
+        		.put("productCode", codeList.toArray())
+        		.put("factorNo", anFactorNo)
+        		.put("businStatus", ProductConstants.PRO_STATUS_SHELVES).build();
+
+        for (ScfProductConfig product : this.selectByProperty(anMap)) {
+            result.add(new SimpleDataEntity(product.getProductName(), String.valueOf(product.getId())));
+        }
+        return result;
+    }
 }

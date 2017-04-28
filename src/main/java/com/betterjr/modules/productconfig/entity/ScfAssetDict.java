@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
@@ -47,6 +48,16 @@ public class ScfAssetDict implements BetterjrEntity{
     @MetaData( value="备注", comments = "备注")
     private String description;
     
+    @Transient
+    private String assetType;
+	public String getAssetType() {
+		return assetType;
+	}
+
+	public void setAssetType(String assetType) {
+		this.assetType = assetType;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -172,7 +183,7 @@ public class ScfAssetDict implements BetterjrEntity{
 	public String toString() {
 		return "ScfAssetDict [id=" + id + ", dictType=" + dictType + ", dataSource=" + dataSource + ", formData="
 				+ formData + ", attach=" + attach + ", businStatus=" + businStatus + ", description=" + description
-				+"]";
+				+ ", assetType=" + assetType + "]";
 	}
 
 	public void init() {
