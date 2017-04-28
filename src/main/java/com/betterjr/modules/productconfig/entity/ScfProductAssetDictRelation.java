@@ -16,6 +16,11 @@ import com.betterjr.common.selectkey.SerialGenerator;
 @Entity
 @Table(name = "T_SCF_PRODUCT_ASSET_DICT_RELATION")
 public class ScfProductAssetDictRelation implements BetterjrEntity {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7414534785625558438L;
+
 	@Id
 	@Column(name = "ID", columnDefinition = "BIGINT")
 	@OrderBy("desc")

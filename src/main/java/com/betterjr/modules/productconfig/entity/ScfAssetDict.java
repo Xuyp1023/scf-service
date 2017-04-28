@@ -18,6 +18,11 @@ import com.betterjr.common.selectkey.SerialGenerator;
 @Table(name = "T_SCF_ASSET_DICT")
 public class ScfAssetDict implements BetterjrEntity{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3278192321769790383L;
+
 	@Id
     @Column(name = "ID", columnDefinition = "BIGINT")
     @MetaData(value = "", comments = "")

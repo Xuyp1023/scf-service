@@ -16,8 +16,6 @@ import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
-import com.betterjr.modules.account.entity.CustInfo;
-import com.betterjr.modules.credit.service.ScfCreditService;
 import com.betterjr.modules.customer.ICustRelationService;
 import com.betterjr.modules.customer.entity.CustRelation;
 import com.betterjr.modules.product.constant.ProductConstants;
@@ -64,7 +62,15 @@ public class ScfProductConfigService extends BaseService<ScfProductConfigMapper,
 		}
         return Collections3.getFirst(list);
     }
-																	
+	
+	/**
+	 * 分页查询产品
+	 * @param anMap
+	 * @param anFlag
+	 * @param anPageNum
+	 * @param anPageSize
+	 * @return
+	 */
 	public Page<ScfProductConfig> queryProduct(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
 		anMap = Collections3.filterMap(anMap, new String[]{"custNo", "coreCustNo", "factorNo", "productCode", "businStatus", "GTEregDate", "LTEregDate"});
 		
@@ -90,7 +96,6 @@ public class ScfProductConfigService extends BaseService<ScfProductConfigMapper,
 		}else{
 			anMap.put("productCode", productCodeList.toArray());
 		}
-		
 		
 		anMap.remove("coreCustNo");
 		anMap.remove("custNo");
@@ -150,9 +155,14 @@ public class ScfProductConfigService extends BaseService<ScfProductConfigMapper,
 	}
 	
 	public List<ScfProductCoreRelation> findCoreByProductList(String anProductCode) {
-		return productCoreRelationService.findCoreByProductList(anProductCode);
+		return productCoreRelationService.findCoreListByProduct(anProductCode);
 	}
 	
+	/**
+	 * 删除产品
+	 * @param anId
+	 * @return
+	 */
 	public int delProductConfig(Long anId){
 		BTAssert.notNull(anId, "产品删除失败");
 		ScfProductConfig product = this.selectByPrimaryKey(anId);

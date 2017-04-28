@@ -26,6 +26,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 public class ScfProductConfig implements BetterjrEntity {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6875911693357156893L;
+
+	/**
 	 * 产品流水号
 	 */
 	@Id
