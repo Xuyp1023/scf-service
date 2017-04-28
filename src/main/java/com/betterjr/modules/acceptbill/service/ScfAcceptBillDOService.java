@@ -82,6 +82,7 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
         // 应收账款信息变更迁移初始化
         //order.setCustName(custAccountService.queryCustName(anModiBill.getCustNo()));
         anModiBill.setCoreCustName(custAccountService.queryCustName(anModiBill.getCoreCustNo()));
+        anModiBill.setSupplierName(custAccountService.queryCustName(anModiBill.getSupplierNo()));
         anModiBill.setInvoiceCorp(anModiBill.getCoreCustName());
         anModiBill.initModifyValue(bill,anConfirmFlag);
         //操作机构设置为供应商
@@ -213,6 +214,8 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
         if("1".equals(anIsOnlyNormal)){
             anMap.put("dataSource", "1");
         }
+        //去除空白字符串的查询条件
+        anMap = Collections3.filterMapEmptyObject(anMap);
         // 模糊查询
         anMap = Collections3.fuzzyMap(anMap, new String[] { "billNo"});
         
@@ -271,6 +274,9 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
         if("1".equals(anIsOnlyNormal)){
             anMap.put("dataSource", "1");
         }
+        
+        //去除空白字符串的查询条件
+        anMap = Collections3.filterMapEmptyObject(anMap);
         // 模糊查询
         anMap = Collections3.fuzzyMap(anMap, new String[] { "billNo"});
         
@@ -315,6 +321,8 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
         if("1".equals(anIsOnlyNormal)){
             anMap.put("dataSource", "1");
         }
+      //去除空白字符串的查询条件
+        anMap = Collections3.filterMapEmptyObject(anMap);
         // 模糊查询
         anMap = Collections3.fuzzyMap(anMap, new String[] { "billNo"});
         

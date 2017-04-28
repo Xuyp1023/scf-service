@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustInfo;
@@ -230,6 +231,9 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
              anMap.put("dataSource", "1");
          }
          
+         //去除空白字符串的查询条件
+         anMap = Collections3.filterMapEmptyObject(anMap);
+         
          if(anIsAudit){
              
              if (! anMap.containsKey("coreCustNo") ||  anMap.get("coreCustNo") ==null || StringUtils.isBlank(anMap.get("coreCustNo").toString())) {
@@ -269,6 +273,9 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
          if("1".equals(anIsOnlyNormal)){
              anMap.put("dataSource", "1");
          }
+         
+         //去除空白字符串的查询条件
+         anMap = Collections3.filterMapEmptyObject(anMap);
          
          Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
          
@@ -326,6 +333,9 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
         if("1".equals(anIsOnlyNormal)){
             anMap.put("dataSource", "1");
         }
+        
+        //去除空白字符串的查询条件
+        anMap = Collections3.filterMapEmptyObject(anMap);
         
         if (! anMap.containsKey("coreCustNo") ||  anMap.get("coreCustNo") ==null || StringUtils.isBlank(anMap.get("coreCustNo").toString())) {
             

@@ -418,7 +418,6 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
      private void checkEffectiveStatus(T anArg0) {
          
          checkStatus(anArg0.getIsLatest(), VersionConstantCollentions.IS_NOT_LATEST, true, "当前单据已不是最新版本,不允许被废止");
-         checkStatus(anArg0.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE, true, "当前单据未生效,只能由创建者废止");
          checkStatus(anArg0.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true, "当前单据已经转让,不允许被废止");
          checkStatus(anArg0.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_ANNUL, true, "当前单据已经废止,不允许被废止");
          checkStatus(anArg0.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EXPIRE, true, "当前单据已经过期,不允许被废止");

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustInfo;
@@ -196,6 +197,8 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
         
         BTAssert.notNull(anMap, "查询条件为空!操作失败");
         // 操作员只能查询本机构数据
+        //去除空白字符串的查询条件
+        anMap = Collections3.filterMapEmptyObject(anMap);
         
         if(anIsAudit){
             if (! anMap.containsKey("coreCustNo") ||  anMap.get("coreCustNo") ==null || StringUtils.isBlank(anMap.get("coreCustNo").toString())) {
@@ -217,6 +220,9 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
     public Page<ScfReceivableDO> queryEffectiveReceivable(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize,boolean anIsCust) {
         
         BTAssert.notNull(anMap, "查询条件为空!操作失败");
+        
+        //去除空白字符串的查询条件
+        anMap = Collections3.filterMapEmptyObject(anMap);
         //查询当前登录的用户下所有企业信息
         Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
         

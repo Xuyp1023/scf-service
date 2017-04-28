@@ -243,6 +243,9 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
         BTAssert.notNull(anMap, "查询条件为空!操作失败");
         // 操作员只能查询本机构数据
         
+        //去除空白字符串的查询条件
+        anMap = Collections3.filterMapEmptyObject(anMap);
+        
         if(anIsAudit){
             
             if (! anMap.containsKey("custNo") ||  anMap.get("custNo") ==null || StringUtils.isBlank(anMap.get("custNo").toString())) {
@@ -277,6 +280,9 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
         // 操作员只能查询本机构数据
         Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
         
+        //去除空白字符串的查询条件
+        anMap = Collections3.filterMapEmptyObject(anMap);
+        
         if(anIsCust){
             
             if (! anMap.containsKey("custNo") ||  anMap.get("custNo") ==null || StringUtils.isBlank(anMap.get("custNo").toString())) {
@@ -300,6 +306,9 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
     public Object queryRecycleInvoice(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
         
         BTAssert.notNull(anMap, "查询条件为空!操作失败");
+        
+        //去除空白字符串的查询条件
+        anMap = Collections3.filterMapEmptyObject(anMap);
         // 操作员只能查询本机构数据
         Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
 

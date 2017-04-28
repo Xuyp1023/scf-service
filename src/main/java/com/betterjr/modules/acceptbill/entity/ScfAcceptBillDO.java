@@ -1044,7 +1044,6 @@ public class ScfAcceptBillDO extends BaseVersionEntity {
         this.billFrom = "0";
         
         this.holderNo=this.supplierNo;//supplierNo 存放收款人
-        this.supplierName=this.supplier;
         this.holderBankAccount=this.suppBankAccount;
         this.holder=this.supplier;
         
