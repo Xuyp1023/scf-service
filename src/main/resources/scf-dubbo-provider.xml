@@ -12,6 +12,7 @@
 	<dubbo:annotation
 		package="com.betterjr.modules.test,
 		com.betterjr.modules.remote,
+		com.betterjr.modules.productconfig,
 		com.betterjr.modules.agreement,
 	    com.betterjr.modules.supplychain.service,
 	    com.betterjr.modules.supplychain.dubbo,
