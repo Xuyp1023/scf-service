@@ -74,6 +74,10 @@ public class ScfProductConfigService extends BaseService<ScfProductConfigMapper,
 	public Page<ScfProductConfig> queryProduct(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
 		anMap = Collections3.filterMap(anMap, new String[]{"custNo", "coreCustNo", "factorNo", "productCode", "businStatus", "GTEregDate", "LTEregDate"});
 		
+		if(null != anMap.get("businStatus")){
+    		anMap.put("businStatus", anMap.get("businStatus").toString().split(","));
+    	}
+		
 		//保理公司查询
 		if(UserUtils.factorUser()){
 			return this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1==anFlag);

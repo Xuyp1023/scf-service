@@ -15,6 +15,7 @@ import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.generator.SequenceFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -832,7 +833,7 @@ public class ScfProductConfig implements BetterjrEntity {
 
 	public void initModify() {
 		//上架
-		if(this.businStatus == "1"){
+		if(BetterStringUtils.equals(this.businStatus, "1")){
 			this.shelvesOperId = UserUtils.getOperatorInfo().getId();
 			this.shelvesOperName = UserUtils.getUserName();
 			this.shelvesDate = BetterDateUtils.getNumDate();
@@ -840,7 +841,7 @@ public class ScfProductConfig implements BetterjrEntity {
 		}
 		
 		//下架
-		else if(this.businStatus == "2"){
+		else if(BetterStringUtils.equals(this.businStatus, "2")){
 			this.offLineOperId = UserUtils.getOperatorInfo().getId();
 			this.offLineOperName = UserUtils.getUserName();
 			this.offLineDate = BetterDateUtils.getNumDate();
