@@ -39,6 +39,13 @@ public class CustFileCloumn implements BetterjrEntity {
     private String infoType;
     
     /**
+     * 当前列的类型0 字符串   1 数字
+     */
+    @Column(name = "C_CLOUMN_TYPE",  columnDefinition="VARCHAR" )
+    @MetaData( value="当前列的类型0 字符串   1 数字", comments = "当前列的类型0 字符串   1 数字")
+    private String cloumn_type;
+    
+    /**
      * 标记上传下载   上传1  下载2
      */
     @Column(name = "C_UP_FLAG",  columnDefinition="VARCHAR" )
@@ -102,6 +109,14 @@ public class CustFileCloumn implements BetterjrEntity {
 
     public void setId(Long anId) {
         this.id = anId;
+    }
+
+    public String getCloumn_type() {
+        return this.cloumn_type;
+    }
+
+    public void setCloumn_type(String anCloumn_type) {
+        this.cloumn_type = anCloumn_type;
     }
 
     public String getInfoType() {
