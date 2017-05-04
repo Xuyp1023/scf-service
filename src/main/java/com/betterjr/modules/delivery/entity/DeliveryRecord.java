@@ -1,0 +1,392 @@
+package com.betterjr.modules.delivery.entity;
+
+import com.betterjr.common.entity.BetterjrEntity;
+import javax.persistence.*;
+
+@Access(AccessType.FIELD)
+@Entity
+@Table(name = "t_cps_delivery")
+public class DeliveryRecord implements BetterjrEntity {
+    @Id
+    @Column(name = "ID",  columnDefinition="INTEGER" )
+    private Long id;
+
+    @Column(name = "C_REFNO",  columnDefinition="VARCHAR" )
+    private String refNo;
+
+    @Column(name = "F_TOTAL_BLANCE",  columnDefinition="DECIMAL" )
+    private Double totalBlance;
+
+    @Column(name = "N_TOTAL_AMOUNT",  columnDefinition="DECIMAL" )
+    private Double totalAmount;
+
+    @Column(name = "D_POST_DATE",  columnDefinition="VARCHAR" )
+    private String postDate;
+
+    @Column(name = "T_POST_TIME",  columnDefinition="VARCHAR" )
+    private String postTime;
+
+    @Column(name = "L_POST_CUSTNO",  columnDefinition="INTEGER" )
+    private Long postCustNo;
+
+    @Column(name = "C_POST_CUSTNAME",  columnDefinition="VARCHAR" )
+    private String postCustName;
+
+    @Column(name = "C_POST_OPERORG",  columnDefinition="VARCHAR" )
+    private String postOperOrg;
+
+    @Column(name = "L_CUSTNO",  columnDefinition="INTEGER" )
+    private Long custNo;
+
+    @Column(name = "C_CUSTNAME",  columnDefinition="VARCHAR" )
+    private String custName;
+
+    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
+    private String operOrg;
+
+    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
+    private String businStatus;
+
+    @Column(name = "D_CONFIRM_DATE",  columnDefinition="VARCHAR" )
+    private String confirmDate;
+
+    @Column(name = "T_CONFIRM_TIME",  columnDefinition="VARCHAR" )
+    private String confirmTime;
+    
+    
+    @Column(name = "L_CONFIRM_OPERID",  columnDefinition="INTEGER" )
+    private Long confirmOperId;
+
+    @Column(name = "L_CONFIRM_OPERNAME",  columnDefinition="VARCHAR" )
+    private String confirmOperName;
+    
+    @Column(name = "L_REG_OPERID",  columnDefinition="INTEGER" )
+    private Long regOperId;
+    
+    @Column(name = "C_REG_OPERNAME",  columnDefinition="VARCHAR" )
+    private String regOperName;
+
+    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
+    private String regDate;
+    
+    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
+    private String regTime;
+    
+    @Column(name = "N_VERSION",  columnDefinition="VARCHAR" )
+    private String version;
+
+    private static final long serialVersionUID = -189024275871128671L;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getRefNo() {
+        return refNo;
+    }
+
+    public void setRefNo(String refNo) {
+        this.refNo = refNo == null ? null : refNo.trim();
+    }
+
+    public Double getTotalBlance() {
+        return totalBlance;
+    }
+
+    public void setTotalBlance(Double totalBlance) {
+        this.totalBlance = totalBlance;
+    }
+
+    public String getPostDate() {
+        return postDate;
+    }
+
+    public void setPostDate(String postDate) {
+        this.postDate = postDate == null ? null : postDate.trim();
+    }
+
+    public String getPostTime() {
+        return postTime;
+    }
+
+    public void setPostTime(String postTime) {
+        this.postTime = postTime == null ? null : postTime.trim();
+    }
+
+    public Long getPostCustNo() {
+        return postCustNo;
+    }
+
+    public void setPostCustNo(Long postCustNo) {
+        this.postCustNo = postCustNo;
+    }
+
+    public String getPostCustName() {
+        return postCustName;
+    }
+
+    public void setPostCustName(String postCustName) {
+        this.postCustName = postCustName == null ? null : postCustName.trim();
+    }
+
+    public String getPostOperOrg() {
+        return postOperOrg;
+    }
+
+    public void setPostOperOrg(String postOperOrg) {
+        this.postOperOrg = postOperOrg == null ? null : postOperOrg.trim();
+    }
+
+    public Long getCustNo() {
+        return custNo;
+    }
+
+    public void setCustNo(Long custNo) {
+        this.custNo = custNo;
+    }
+
+    public String getCustName() {
+        return custName;
+    }
+
+    public void setCustName(String custName) {
+        this.custName = custName == null ? null : custName.trim();
+    }
+
+    public String getOperOrg() {
+        return operOrg;
+    }
+
+    public void setOperOrg(String operOrg) {
+        this.operOrg = operOrg == null ? null : operOrg.trim();
+    }
+
+    public String getBusinStatus() {
+        return businStatus;
+    }
+
+    public void setBusinStatus(String businStatus) {
+        this.businStatus = businStatus == null ? null : businStatus.trim();
+    }
+
+    public String getConfirmDate() {
+        return confirmDate;
+    }
+
+    public void setConfirmDate(String confirmDate) {
+        this.confirmDate = confirmDate == null ? null : confirmDate.trim();
+    }
+
+    public String getConfirmTime() {
+        return confirmTime;
+    }
+
+    public void setConfirmTime(String confirmTime) {
+        this.confirmTime = confirmTime == null ? null : confirmTime.trim();
+    }
+
+    public Double getTotalAmount() {
+        return this.totalAmount;
+    }
+
+    public void setTotalAmount(Double anTotalAmount) {
+        this.totalAmount = anTotalAmount;
+    }
+
+    public Long getConfirmOperId() {
+        return this.confirmOperId;
+    }
+
+    public void setConfirmOperId(Long anConfirmOperId) {
+        this.confirmOperId = anConfirmOperId;
+    }
+
+    public String getConfirmOperName() {
+        return this.confirmOperName;
+    }
+
+    public void setConfirmOperName(String anConfirmOperName) {
+        this.confirmOperName = anConfirmOperName;
+    }
+
+    public Long getRegOperId() {
+        return this.regOperId;
+    }
+
+    public void setRegOperId(Long anRegOperId) {
+        this.regOperId = anRegOperId;
+    }
+
+    public String getRegOperName() {
+        return this.regOperName;
+    }
+
+    public void setRegOperName(String anRegOperName) {
+        this.regOperName = anRegOperName;
+    }
+
+    public String getRegDate() {
+        return this.regDate;
+    }
+
+    public void setRegDate(String anRegDate) {
+        this.regDate = anRegDate;
+    }
+
+    public String getRegTime() {
+        return this.regTime;
+    }
+
+    public void setRegTime(String anRegTime) {
+        this.regTime = anRegTime;
+    }
+
+    public String getVersion() {
+        return this.version;
+    }
+
+    public void setVersion(String anVersion) {
+        this.version = anVersion;
+    }
+
+    @Override
+    public String toString() {
+        return "DeliveryRecord [id=" + this.id + ", refNo=" + this.refNo + ", totalBlance=" + this.totalBlance + ", totalAmount=" + this.totalAmount
+                + ", postDate=" + this.postDate + ", postTime=" + this.postTime + ", postCustNo=" + this.postCustNo + ", postCustName="
+                + this.postCustName + ", postOperOrg=" + this.postOperOrg + ", custNo=" + this.custNo + ", custName=" + this.custName + ", operOrg="
+                + this.operOrg + ", businStatus=" + this.businStatus + ", confirmDate=" + this.confirmDate + ", confirmTime=" + this.confirmTime
+                + ", confirmOperId=" + this.confirmOperId + ", confirmOperName=" + this.confirmOperName + ", regOperId=" + this.regOperId
+                + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", version=" + this.version + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.businStatus == null) ? 0 : this.businStatus.hashCode());
+        result = prime * result + ((this.confirmDate == null) ? 0 : this.confirmDate.hashCode());
+        result = prime * result + ((this.confirmOperId == null) ? 0 : this.confirmOperId.hashCode());
+        result = prime * result + ((this.confirmOperName == null) ? 0 : this.confirmOperName.hashCode());
+        result = prime * result + ((this.confirmTime == null) ? 0 : this.confirmTime.hashCode());
+        result = prime * result + ((this.custName == null) ? 0 : this.custName.hashCode());
+        result = prime * result + ((this.custNo == null) ? 0 : this.custNo.hashCode());
+        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+        result = prime * result + ((this.operOrg == null) ? 0 : this.operOrg.hashCode());
+        result = prime * result + ((this.postCustName == null) ? 0 : this.postCustName.hashCode());
+        result = prime * result + ((this.postCustNo == null) ? 0 : this.postCustNo.hashCode());
+        result = prime * result + ((this.postDate == null) ? 0 : this.postDate.hashCode());
+        result = prime * result + ((this.postOperOrg == null) ? 0 : this.postOperOrg.hashCode());
+        result = prime * result + ((this.postTime == null) ? 0 : this.postTime.hashCode());
+        result = prime * result + ((this.refNo == null) ? 0 : this.refNo.hashCode());
+        result = prime * result + ((this.regDate == null) ? 0 : this.regDate.hashCode());
+        result = prime * result + ((this.regOperId == null) ? 0 : this.regOperId.hashCode());
+        result = prime * result + ((this.regOperName == null) ? 0 : this.regOperName.hashCode());
+        result = prime * result + ((this.regTime == null) ? 0 : this.regTime.hashCode());
+        result = prime * result + ((this.totalAmount == null) ? 0 : this.totalAmount.hashCode());
+        result = prime * result + ((this.totalBlance == null) ? 0 : this.totalBlance.hashCode());
+        result = prime * result + ((this.version == null) ? 0 : this.version.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        DeliveryRecord other = (DeliveryRecord) obj;
+        if (this.businStatus == null) {
+            if (other.businStatus != null) return false;
+        }
+        else if (!this.businStatus.equals(other.businStatus)) return false;
+        if (this.confirmDate == null) {
+            if (other.confirmDate != null) return false;
+        }
+        else if (!this.confirmDate.equals(other.confirmDate)) return false;
+        if (this.confirmOperId == null) {
+            if (other.confirmOperId != null) return false;
+        }
+        else if (!this.confirmOperId.equals(other.confirmOperId)) return false;
+        if (this.confirmOperName == null) {
+            if (other.confirmOperName != null) return false;
+        }
+        else if (!this.confirmOperName.equals(other.confirmOperName)) return false;
+        if (this.confirmTime == null) {
+            if (other.confirmTime != null) return false;
+        }
+        else if (!this.confirmTime.equals(other.confirmTime)) return false;
+        if (this.custName == null) {
+            if (other.custName != null) return false;
+        }
+        else if (!this.custName.equals(other.custName)) return false;
+        if (this.custNo == null) {
+            if (other.custNo != null) return false;
+        }
+        else if (!this.custNo.equals(other.custNo)) return false;
+        if (this.id == null) {
+            if (other.id != null) return false;
+        }
+        else if (!this.id.equals(other.id)) return false;
+        if (this.operOrg == null) {
+            if (other.operOrg != null) return false;
+        }
+        else if (!this.operOrg.equals(other.operOrg)) return false;
+        if (this.postCustName == null) {
+            if (other.postCustName != null) return false;
+        }
+        else if (!this.postCustName.equals(other.postCustName)) return false;
+        if (this.postCustNo == null) {
+            if (other.postCustNo != null) return false;
+        }
+        else if (!this.postCustNo.equals(other.postCustNo)) return false;
+        if (this.postDate == null) {
+            if (other.postDate != null) return false;
+        }
+        else if (!this.postDate.equals(other.postDate)) return false;
+        if (this.postOperOrg == null) {
+            if (other.postOperOrg != null) return false;
+        }
+        else if (!this.postOperOrg.equals(other.postOperOrg)) return false;
+        if (this.postTime == null) {
+            if (other.postTime != null) return false;
+        }
+        else if (!this.postTime.equals(other.postTime)) return false;
+        if (this.refNo == null) {
+            if (other.refNo != null) return false;
+        }
+        else if (!this.refNo.equals(other.refNo)) return false;
+        if (this.regDate == null) {
+            if (other.regDate != null) return false;
+        }
+        else if (!this.regDate.equals(other.regDate)) return false;
+        if (this.regOperId == null) {
+            if (other.regOperId != null) return false;
+        }
+        else if (!this.regOperId.equals(other.regOperId)) return false;
+        if (this.regOperName == null) {
+            if (other.regOperName != null) return false;
+        }
+        else if (!this.regOperName.equals(other.regOperName)) return false;
+        if (this.regTime == null) {
+            if (other.regTime != null) return false;
+        }
+        else if (!this.regTime.equals(other.regTime)) return false;
+        if (this.totalAmount == null) {
+            if (other.totalAmount != null) return false;
+        }
+        else if (!this.totalAmount.equals(other.totalAmount)) return false;
+        if (this.totalBlance == null) {
+            if (other.totalBlance != null) return false;
+        }
+        else if (!this.totalBlance.equals(other.totalBlance)) return false;
+        if (this.version == null) {
+            if (other.version != null) return false;
+        }
+        else if (!this.version.equals(other.version)) return false;
+        return true;
+    }
+
+}

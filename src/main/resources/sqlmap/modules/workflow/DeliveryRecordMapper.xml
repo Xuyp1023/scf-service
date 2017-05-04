@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.delivery.dao.DeliveryRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.betterjr.modules.delivery.entity.DeliveryRecord" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="C_REFNO" property="refNo" jdbcType="VARCHAR" />
+    <result column="F_TOTAL_BLANCE" property="totalBlance" jdbcType="DECIMAL" />
+    <result column="N_TOTAL_ITEMS" property="totalItems" jdbcType="DECIMAL" />
+    <result column="D_POST_DATE" property="postDate" jdbcType="VARCHAR" />
+    <result column="T_POST_TIME" property="postTime" jdbcType="VARCHAR" />
+    <result column="L_POST_CUSTNO" property="postCustNo" jdbcType="INTEGER" />
+    <result column="C_POST_CUSTNAME" property="postCustName" jdbcType="VARCHAR" />
+    <result column="C_POST_OPERORG" property="postOperOrg" jdbcType="VARCHAR" />
+    <result column="L_CUSTNO" property="custNo" jdbcType="INTEGER" />
+    <result column="C_CUSTNAME" property="custName" jdbcType="VARCHAR" />
+    <result column="C_OPERORG" property="operOrg" jdbcType="VARCHAR" />
+    <result column="C_BUSIN_STATUS" property="businStatus" jdbcType="VARCHAR" />
+    <result column="D_CONFIRM_DATE" property="confirmDate" jdbcType="VARCHAR" />
+    <result column="T_CONFIRM_TIME" property="confirmTime" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>

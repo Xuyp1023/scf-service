@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.delivery.dao.DeliveryRecordStatementMapper" >
+  <resultMap id="BaseResultMap" type="com.betterjr.modules.delivery.entity.DeliveryRecordStatement" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="L_DELIVERRECORD_ID" property="deliverRecordId" jdbcType="INTEGER" />
+    <result column="C_DELIVERRECORD_REFNO" property="deliverRecodeRefNo" jdbcType="VARCHAR" />
+    <result column="L_MONTHLYSTATEMENT_ID" property="monthlyStatementId" jdbcType="INTEGER" />
+    <result column="C_MONTHLYSTATEMENT_REFNO" property="monthlyStatementRefNo" jdbcType="VARCHAR" />
+    <result column="D_PAY_BEGINDATE" property="payBeginDate" jdbcType="VARCHAR" />
+    <result column="D_PAY_ENDDATE" property="payEndDate" jdbcType="VARCHAR" />
+    <result column="F_TOTAL_BLANCE" property="totalBlance" jdbcType="DECIMAL" />
+    <result column="N_TOTAL_ITEMS" property="totalItems" jdbcType="INTEGER" />
+    <result column="F_PAY_TOTAL_SUCCESSBLANCE" property="payTotalSuccessBlance" jdbcType="DECIMAL" />
+    <result column="N_PAY_TOTAL_SUCCESSITEMS" property="payTotalSuccessitems" jdbcType="INTEGER" />
+    <result column="F_PAY_TOTAL_FAILUREBLANCE" property="payTotalFailureBlance" jdbcType="DECIMAL" />
+    <result column="N_PAY_TOTAL_FAILUREITEMS" property="payTotalFailureitems" jdbcType="INTEGER" />
+    <result column="L_OWN_CUSTNO" property="ownCustNo" jdbcType="INTEGER" />
+    <result column="C_OWN_CUSTNAME" property="ownCustName" jdbcType="VARCHAR" />
+    <result column="C_OWN_OPERORG" property="ownOperOrg" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>
