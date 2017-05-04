@@ -218,6 +218,19 @@ public class CommissionDailyStatement implements BetterjrEntity {
     @Column(name = "N_VERSION",  columnDefinition="INTEGER" )
     @MetaData( value="", comments = "")
     private Long version;
+    
+
+    @Column(name = "D_END_INTEREST_DATE",  columnDefinition="VARCHAR" )
+    @MetaData( value="结息日期", comments = "结息日期")
+    private String endInterestDate;
+    
+    @Column(name = "F_INTEREST",  columnDefinition="DECIMAL" )
+    @MetaData( value="利息", comments = "利息")
+    private BigDecimal interest;
+    
+    @Column(name = "F_INTEREST_RATE",  columnDefinition="DECIMAL" )
+    @MetaData( value="利率", comments = "利率")
+    private BigDecimal interestRate;
 
     private static final long serialVersionUID = 3778161046419627677L;
 
@@ -493,6 +506,30 @@ public class CommissionDailyStatement implements BetterjrEntity {
         this.version = version;
     }
 
+    public String getEndInterestDate() {
+        return this.endInterestDate;
+    }
+
+    public void setEndInterestDate(String anEndInterestDate) {
+        this.endInterestDate = anEndInterestDate;
+    }
+
+    public BigDecimal getInterest() {
+        return this.interest;
+    }
+
+    public void setInterest(BigDecimal anInterest) {
+        this.interest = anInterest;
+    }
+
+    public BigDecimal getInterestRate() {
+        return this.interestRate;
+    }
+
+    public void setInterestRate(BigDecimal anInterestRate) {
+        this.interestRate = anInterestRate;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -533,6 +570,9 @@ public class CommissionDailyStatement implements BetterjrEntity {
         sb.append(", modiDate=").append(modiDate);
         sb.append(", modiTime=").append(modiTime);
         sb.append(", version=").append(version);
+        sb.append(", endInterestDate=").append(endInterestDate);
+        sb.append(", interest=").append(interest);
+        sb.append(", interestRate=").append(interestRate);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
