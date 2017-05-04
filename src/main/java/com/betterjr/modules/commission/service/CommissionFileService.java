@@ -161,8 +161,8 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         logger.info("Begin to resolve 佣金文件 saveResolveFile"+UserUtils.getOperatorInfo().getName()+"  refNo="+anRefNo);
         //Map<String,Object> queryMap = QueryTermBuilder.newInstance().put("refNo", anRefNo).build();
         CommissionFile file = this.selectOne(new CommissionFile(anRefNo));
+        checkResolveFileStatus(file,UserUtils.getOperatorInfo());
         try {
-            checkResolveFileStatus(file,UserUtils.getOperatorInfo());
             //解析文件
             file=resolveCommissionFile(file);
         }
@@ -336,7 +336,7 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         checkStatus(anFile.getPayStatus(), CommissionConstantCollentions.COMMISSION_PAY_STATUS_SUCCESS, true, "当前文件记录已经开始付款，不能解析");
         checkStatus(anFile.getBusinStatus(), CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_AUDIT, true, "当前文件记录已经审核完成中，不能重复解析");
         checkStatus(anFile.getBusinStatus(), CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_IS_HANDLE, true, "当前文件记录已经解析完成中，不能重复解析");
-        checkStatus(anFile.getPayStatus(), CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_DELETE, true, "当前文件记录已经删除，不能重复解析");
+        checkStatus(anFile.getBusinStatus(), CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_DELETE, true, "当前文件记录已经删除，不能重复解析");
         checkStatus(anFile.getOperOrg(), anOperatorInfo.getOperOrg(), false, "你没有当前文件的删除权限");
    
         
