@@ -5,6 +5,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.ResultType;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -24,19 +25,19 @@ public interface CommissionPayResultRecordMapper extends Mapper<CommissionPayRes
     public int createPayResultRecord(Map<String, Object> param);
 
     @Select("SELECT COUNT(ID) FROM t_cps_pay_result_record WHERE L_PAY_RESULT_ID = #{payResultId} AND C_BUSIN_STATUS = '0'")
-    @Result(javaType=Long.class)
+    @ResultType(Long.class)
     public Long countUnconfirmPayResultRecord(@Param("payResultId") Long anPayResultId);
 
     @Select("SELECT COUNT(ID) FROM t_cps_pay_result_record WHERE L_PAY_RESULT_ID = #{payResultId} AND C_BUSIN_STATUS = '1' AND C_PAY_RESULT = '1'")
-    @Result(javaType=Long.class)
+    @ResultType(Long.class)
     public Long countSuccessPayResultRecord(@Param("payResultId") Long anPayResultId);
 
     @Select("SELECT COUNT(ID) FROM t_cps_pay_result_record WHERE L_PAY_RESULT_ID = #{payResultId} AND C_BUSIN_STATUS = '1' AND C_PAY_RESULT = '2'")
-    @Result(javaType=Long.class)
+    @ResultType(Long.class)
     public Long countFailurePayResultRecord(@Param("payResultId") Long anPayResultId);
 
     @Select("SELECT COUNT(ID) FROM t_cps_pay_result_record WHERE L_PAY_RESULT_ID = #{payResultId}")
-    @Result(javaType=Long.class)
+    @ResultType(Long.class)
     public Long countAllPayResultRecord(@Param("payResultId") Long anPayResultId);
 
     @Select("SELECT t1.balance AS totalBalance, t1.amount AS totalAmount, t2.balance AS paySuccessBalance, t2.amount AS paySuccessAmount, "
@@ -50,6 +51,7 @@ public interface CommissionPayResultRecordMapper extends Mapper<CommissionPayRes
     @Update("UPDATE t_cps_record cr INNER JOIN t_cps_pay_result_record cprr ON cr.ID = cprr.L_RECORD_ID "
             + "SET cr.C_PAY_STATUS = cprr.C_PAY_RESULT, cr.C_BUSIN_STATUS = '2' "
             + "WHERE cr.ID = cprr.L_RECORD_ID AND cprr.L_PAY_RESULT_ID = #{payResultId}")
-    public int writebackRecordStatus(@Param("payResultId") Long anPayResultId);
+    @ResultType(Long.class)
+    public Long writebackRecordStatus(@Param("payResultId") Long anPayResultId);
 
 }
