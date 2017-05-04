@@ -3,10 +3,11 @@
 // CURRENT VERSION
 // ============================================================================
 // CHANGE LOG
-// V2.0 : 2017年5月3日, liuwl, creation
+// V2.3 : 2017年5月3日, liuwl, creation
 // ============================================================================
 package com.betterjr.modules.commission.service;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,6 +65,8 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
         payResult = new CommissionPayResult();
 
         payResult.setRefNo("");
+        payResult.setImportDate(anImportDate);
+        payResult.setPayDate(anPayDate);
 
         payResult.init(operator);
 
@@ -225,6 +228,58 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
         findByIdAndCheckStatus(anPayResultId, CommissionPayResultStatus.NORMAL);
 
         payResultRecordService.saveFailureToSuccessPayResultRecord(anPayResultId, anPayResultRecordId);
+
+        return Boolean.TRUE;
+    }
+
+    // 确认日对账单
+    public Boolean saveConfirmPayResult(final Long anPayResultId) {
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
+
+        final CommissionPayResult payResult = findByIdAndCheckStatus(anPayResultId, CommissionPayResultStatus.NORMAL);
+
+        payResultRecordService.checkConfirmStatus(anPayResultId);
+
+        payResult.setBusinStatus(CommissionPayResultStatus.CONFIRM);
+
+        final Map<String, Object> calcResult = payResultRecordService.calcPayResultRecord(anPayResultId);
+        final Long totalAmount = (Long) calcResult.get("totalAmount");
+        final BigDecimal totalBalance = (BigDecimal) calcResult.get("totalBalance");
+        final Long paySuccessAmount = (Long) calcResult.get("paySuccessAmount");
+        final BigDecimal paySuccessBalance = (BigDecimal) calcResult.get("paySuccessBalance");
+        final Long payFailureAmount = (Long) calcResult.get("payFailureAmount");
+        final BigDecimal payFailureBalance = (BigDecimal) calcResult.get("payFailureBalance");
+
+        payResult.setTotalAmount(totalAmount);
+        payResult.setTotalBalance(totalBalance);
+        payResult.setPayTotalAmount(totalAmount);
+        payResult.setPayTotalBalance(totalBalance);
+        payResult.setPaySuccessAmount(paySuccessAmount);
+        payResult.setPaySuccessBalance(paySuccessBalance);
+        payResult.setPayFailureAmount(payFailureAmount);
+        payResult.setPayFailureBalance(payFailureBalance);
+
+        final int result = this.updateByPrimaryKeySelective(payResult);
+
+        BTAssert.isTrue(result == 1, "确认日对账单失败，公司[" + payResult.getCustName() + "] 导入日期[" + payResult.getImportDate() + "]");
+
+        return Boolean.TRUE;
+    }
+
+    // 审核日对账单
+    public Boolean saveAuditPayResult(final Long anPayResultId) {
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
+
+        final CommissionPayResult payResult = findByIdAndCheckStatus(anPayResultId, CommissionPayResultStatus.CONFIRM);
+
+        payResult.setBusinStatus(CommissionPayResultStatus.AUDIT);
+
+        final int result = this.updateByPrimaryKeySelective(payResult);
+
+        BTAssert.isTrue(result == 1, "确认日对账单失败，公司[" + payResult.getCustName() + "] 导入日期[" + payResult.getImportDate() + "]");
+
+        // TODO 回写导入记录
+        payResultRecordService.saveWritebackRecordStatus(anPayResultId);
 
         return Boolean.TRUE;
     }
