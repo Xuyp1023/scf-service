@@ -167,12 +167,11 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
             file=resolveCommissionFile(file);
         }
         catch (Exception e) {
-            BTAssert.notNull(null,"解析的佣金文件失败"+file.getShowMessage());
+            //BTAssert.notNull(null,"解析的佣金文件失败"+file.getShowMessage());
+            setResolveFailure(e.getMessage(), file);
         }
-        if(CommissionConstantCollentions.COMMISSION_RESOLVE_STATUS_FAILURE.equals(file.getResolveStatus())){
-            BTAssert.notNull(null,"解析的佣金文件失败"+file.getShowMessage());
-        }
-        logger.info("success to resolve 佣金文件 saveResolveFile"+UserUtils.getOperatorInfo().getName()+"  refNo="+anRefNo);
+        this.updateByPrimaryKeySelective(file);
+        logger.info("finsh to resolve 佣金文件 saveResolveFile"+UserUtils.getOperatorInfo().getName()+"  refNo="+anRefNo);
         return file;
     }
 
@@ -183,11 +182,11 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
      */
     private CommissionFile resolveCommissionFile(CommissionFile anFile) {
         
-        BTAssert.notNull(anFile,"解析的佣金文件不存在");
-        BTAssert.notNull(anFile.getFileId(),"解析的佣金文件不存在");
-        BTAssert.isNotShorString(anFile.getFileName(),"解析的文件名为空,请重新上传");
         try{
             
+            BTAssert.notNull(anFile,"解析的佣金文件不存在");
+            BTAssert.notNull(anFile.getFileId(),"解析的佣金文件不存在");
+            BTAssert.isNotShorString(anFile.getFileName(),"解析的文件名为空,请重新上传");
             String fileName = anFile.getFileName();
             if( ! (fileName.endsWith("xls") || fileName.endsWith("xlsx")) ){
                 BTAssert.notNull(null,"文件读取格式失败,请上传解析文件为excel");
@@ -228,9 +227,6 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
             logger.debug("文件解析失败 ,解析日志记录id 为："+anFile.getId()+"   "+e.getMessage()); 
             setResolveFailure(e.getMessage(), anFile);
         }
-        
-        this.updateByPrimaryKeySelective(anFile);
-        
         return anFile;
     }
 
