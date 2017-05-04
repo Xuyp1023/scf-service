@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.commission.dao.CommissionDailyStatementRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.betterjr.modules.commission.entity.CommissionDailyStatementRecord" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="L_DAILY_STATEMENT_ID" property="dailyStatementId" jdbcType="INTEGER" />
+    <result column="C_DAILY_STATEMENT_REFNO" property="dailyStatementRefNo" jdbcType="VARCHAR" />
+    <result column="L_PAY_RECORD_ID" property="payRecordId" jdbcType="INTEGER" />
+    <result column="C_PAY_RECORD_REFNO" property="payRecordRefNo" jdbcType="VARCHAR" />
+    <result column="L_RECORD_ID" property="recordId" jdbcType="INTEGER" />
+    <result column="C_RECORD_REFNO" property="recordRefNo" jdbcType="VARCHAR" />
+    <result column="D_IMPORT_DATE" property="importDate" jdbcType="VARCHAR" />
+    <result column="T_IMPORT_TIME" property="importTime" jdbcType="VARCHAR" />
+    <result column="C_PAYNO" property="payNo" jdbcType="VARCHAR" />
+    <result column="D_PAY_DATE" property="payDate" jdbcType="VARCHAR" />
+    <result column="T_PAY_TIME" property="payTime" jdbcType="VARCHAR" />
+    <result column="F_PAY_BALANCE" property="payBalance" jdbcType="DECIMAL" />
+    <result column="C_PAY_TARGET_BANK" property="payTargetBank" jdbcType="VARCHAR" />
+    <result column="C_PAY_TARGET_BANKNAME" property="payTargetBankName" jdbcType="VARCHAR" />
+    <result column="C_PAY_TARGET_BANK_FULLNAME" property="payTargetBankFullName" jdbcType="VARCHAR" />
+    <result column="C_PAY_TARGET_BANK_ACCO" property="payTargetBankAccount" jdbcType="VARCHAR" />
+    <result column="C_PAY_TARGET_BANK_ACCO_NAME" property="payTargetBankAccountName" jdbcType="VARCHAR" />
+    <result column="C_PAY_BANK" property="payBank" jdbcType="VARCHAR" />
+    <result column="C_PAY_BANKNAME" property="payBankName" jdbcType="VARCHAR" />
+    <result column="C_PAY_BANK_FULLNAME" property="payBankFullName" jdbcType="VARCHAR" />
+    <result column="C_PAY_BANK_ACCO" property="payBankAcco" jdbcType="VARCHAR" />
+    <result column="C_PAY_BANK_ACCO_NAME" property="payBankAccoName" jdbcType="VARCHAR" />
+    <result column="C_PAY_RESULT" property="payResult" jdbcType="VARCHAR" />
+    <result column="C_PAY_COMMENT" property="payComment" jdbcType="VARCHAR" />
+    <result column="C_BUSIN_STATUS" property="businStatus" jdbcType="VARCHAR" />
+    <result column="C_LAST_STATUS" property="lastStatus" jdbcType="VARCHAR" />
+    <result column="L_CUSTNO" property="custNo" jdbcType="INTEGER" />
+    <result column="C_CUSTNAME" property="custName" jdbcType="VARCHAR" />
+    <result column="C_OPERORG" property="operOrg" jdbcType="VARCHAR" />
+    <result column="L_REG_OPERID" property="regOperId" jdbcType="VARCHAR" />
+    <result column="C_REG_OPERNAME" property="regOperName" jdbcType="VARCHAR" />
+    <result column="D_REG_DATE" property="regDate" jdbcType="VARCHAR" />
+    <result column="T_REG_TIME" property="regTime" jdbcType="VARCHAR" />
+    <result column="N_VERSION" property="version" jdbcType="INTEGER" />
+  </resultMap>
+</mapper>
