@@ -8,13 +8,19 @@
 package com.betterjr.modules.commission.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.springframework.stereotype.Service;
+
 import com.betterjr.common.service.BaseService;
+import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
+import com.betterjr.modules.commission.constant.CommissionPayResultRecordStatus;
 import com.betterjr.modules.commission.dao.CommissionPayResultRecordMapper;
 import com.betterjr.modules.commission.entity.CommissionPayResultRecord;
 
@@ -22,8 +28,18 @@ import com.betterjr.modules.commission.entity.CommissionPayResultRecord;
  * @author liuwl
  *
  */
+@Service
 public class CommissionPayResultRecordService extends BaseService<CommissionPayResultRecordMapper, CommissionPayResultRecord> {
 
+    /**
+     *
+     * @param anCustNo
+     * @param anCustName
+     * @param anOperOrg
+     * @param anPayResultId
+     * @param anImportDate
+     * @return
+     */
     protected int saveCreatePayResultRecord(final Long anCustNo, final String anCustName, final String anOperOrg, final Long anPayResultId, final String anImportDate) {
         final Map<String, Object> param = new HashMap<>();
 
@@ -46,35 +62,84 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
      * @param anPayResultId
      * @param anPayResultRecords
      */
-    public void saveConfirmSuccessPayResultRecords(final Long anPayResultId, final Long[] anPayResultRecords) {
-        // TODO Auto-generated method stub
+    protected void saveConfirmSuccessPayResultRecords(final Long anPayResultId, final Long[] anPayResultRecords) {
+        final Map<String, Object> conditionMap = new HashMap<>();
+        conditionMap.put("payResultId", anPayResultId);
+        conditionMap.put("id", anPayResultRecords);
+
+        final List<CommissionPayResultRecord> payResultRecords = this.selectByProperty(conditionMap);
+
+        BTAssert.isTrue(anPayResultRecords.length == payResultRecords.size(), "数据不匹配！");
+
+        for (final CommissionPayResultRecord payResultRecord: payResultRecords) {
+            BTAssert.isTrue(BetterStringUtils.equals(CommissionPayResultRecordStatus.NORMAL, payResultRecord.getBusinStatus()), "数据状态不正确:[" + payResultRecord.getRecordRefNo() + "]");
+
+            payResultRecord.setBusinStatus(CommissionPayResultRecordStatus.CONFIRM);
+            payResultRecord.setPayResult(CommissionPayResultRecordStatus.PAY_SUCCESS);
+
+            final int result = this.updateByPrimaryKeySelective(payResultRecord);
+
+            BTAssert.isTrue(result == 1, "数据确认失败！:[" + payResultRecord.getRecordRefNo() + "]");
+        }
     }
 
     /**
      * @param anPayResultId
      * @param anPayResultRecords
      */
-    public void saveConfirmFailurePayResultRecords(final Long anPayResultId, final Long[] anPayResultRecords) {
-        // TODO Auto-generated method stub
+    protected void saveConfirmFailurePayResultRecords(final Long anPayResultId, final Long[] anPayResultRecords) {
+        final Map<String, Object> conditionMap = new HashMap<>();
+        conditionMap.put("payResultId", anPayResultId);
+        conditionMap.put("id", anPayResultRecords);
 
+        final List<CommissionPayResultRecord> payResultRecords = this.selectByProperty(conditionMap);
+
+        BTAssert.isTrue(anPayResultRecords.length == payResultRecords.size(), "数据不匹配！");
+
+        for (final CommissionPayResultRecord payResultRecord: payResultRecords) {
+            BTAssert.isTrue(BetterStringUtils.equals(CommissionPayResultRecordStatus.NORMAL, payResultRecord.getBusinStatus()), "数据状态不正确:[" + payResultRecord.getRecordRefNo() + "]");
+
+            payResultRecord.setBusinStatus(CommissionPayResultRecordStatus.CONFIRM);
+            payResultRecord.setPayResult(CommissionPayResultRecordStatus.PAY_FAILURE);
+
+            final int result = this.updateByPrimaryKeySelective(payResultRecord);
+
+            BTAssert.isTrue(result == 1, "数据确认失败！:[" + payResultRecord.getRecordRefNo() + "]");
+        }
     }
 
     /**
      * @param anPayResultId
      * @param anPayResultRecordId
      */
-    public void saveSuccessToFailurePayResultRecord(final Long anPayResultId, final Long anPayResultRecordId) {
-        // TODO Auto-generated method stub
+    protected void saveSuccessToFailurePayResultRecord(final Long anPayResultId, final Long anPayResultRecordId) {
+        final CommissionPayResultRecord payResultRecord = this.selectByPrimaryKey(anPayResultRecordId);
+        BTAssert.notNull(payResultRecord, "数据未找到！");
 
+        BTAssert.isTrue(BetterStringUtils.equals(CommissionPayResultRecordStatus.CONFIRM, payResultRecord.getBusinStatus()), "数据状态不正确:[" + payResultRecord.getRecordRefNo() + "]");
+        BTAssert.isTrue(BetterStringUtils.equals(CommissionPayResultRecordStatus.PAY_SUCCESS, payResultRecord.getPayResult()), "数据支付状态不正确:[" + payResultRecord.getRecordRefNo() + "]");
+
+        payResultRecord.setPayResult(CommissionPayResultRecordStatus.PAY_FAILURE);
+
+        final int result = this.updateByPrimaryKeySelective(payResultRecord);
+        BTAssert.isTrue(result == 1, "数据确认失败！:[" + payResultRecord.getRecordRefNo() + "]");
     }
 
     /**
      * @param anPayResultId
      * @param anPayResultRecordId
      */
-    public void saveFailureToSuccessPayResultRecord(final Long anPayResultId, final Long anPayResultRecordId) {
-        // TODO Auto-generated method stub
+    protected void saveFailureToSuccessPayResultRecord(final Long anPayResultId, final Long anPayResultRecordId) {
+        final CommissionPayResultRecord payResultRecord = this.selectByPrimaryKey(anPayResultRecordId);
+        BTAssert.notNull(payResultRecord, "数据未找到！");
 
+        BTAssert.isTrue(BetterStringUtils.equals(CommissionPayResultRecordStatus.CONFIRM, payResultRecord.getBusinStatus()), "数据状态不正确:[" + payResultRecord.getRecordRefNo() + "]");
+        BTAssert.isTrue(BetterStringUtils.equals(CommissionPayResultRecordStatus.PAY_FAILURE, payResultRecord.getPayResult()), "数据支付状态不正确:[" + payResultRecord.getRecordRefNo() + "]");
+
+        payResultRecord.setPayResult(CommissionPayResultRecordStatus.PAY_SUCCESS);
+
+        final int result = this.updateByPrimaryKeySelective(payResultRecord);
+        BTAssert.isTrue(result == 1, "数据确认失败！:[" + payResultRecord.getRecordRefNo() + "]");
     }
 
     /**
@@ -84,9 +149,13 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
      * @param anPageSize
      * @return
      */
-    public Page<CommissionPayResultRecord> queryUncheckPayResultRecords(final Long anPayResultId, final int anFlag, final int anPageNum, final int anPageSize) {
-        // TODO Auto-generated method stub
-        return null;
+    protected Page<CommissionPayResultRecord> queryUncheckPayResultRecords(final Long anPayResultId, final int anFlag, final int anPageNum, final int anPageSize) {
+
+        final Map<String, Object> conditionMap = new HashMap<>();
+        conditionMap.put("payResultId", anPayResultId);
+        conditionMap.put("businStatus", CommissionPayResultRecordStatus.NORMAL);
+
+        return this.selectPropertyByPage(conditionMap, anPageNum, anPageSize, anFlag == 1);
     }
 
     /**
@@ -96,9 +165,13 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
      * @param anPageSize
      * @return
      */
-    public Page<CommissionPayResultRecord> querySuccessPayResultRecords(final Long anPayResultId, final int anFlag, final int anPageNum, final int anPageSize) {
-        // TODO Auto-generated method stub
-        return null;
+    protected Page<CommissionPayResultRecord> querySuccessPayResultRecords(final Long anPayResultId, final int anFlag, final int anPageNum, final int anPageSize) {
+        final Map<String, Object> conditionMap = new HashMap<>();
+        conditionMap.put("payResultId", anPayResultId);
+        conditionMap.put("businStatus", CommissionPayResultRecordStatus.CONFIRM);
+        conditionMap.put("payResult", CommissionPayResultRecordStatus.PAY_SUCCESS);
+
+        return this.selectPropertyByPage(conditionMap, anPageNum, anPageSize, anFlag == 1);
     }
 
     /**
@@ -108,8 +181,36 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
      * @param anPageSize
      * @return
      */
-    public Page<CommissionPayResultRecord> queryFailurePayResultRecords(final Long anPayResultId, final int anFlag, final int anPageNum, final int anPageSize) {
-        // TODO Auto-generated method stub
-        return null;
+    protected Page<CommissionPayResultRecord> queryFailurePayResultRecords(final Long anPayResultId, final int anFlag, final int anPageNum, final int anPageSize) {
+        final Map<String, Object> conditionMap = new HashMap<>();
+        conditionMap.put("payResultId", anPayResultId);
+        conditionMap.put("businStatus", CommissionPayResultRecordStatus.CONFIRM);
+        conditionMap.put("payResult", CommissionPayResultRecordStatus.PAY_FAILURE);
+
+        return this.selectPropertyByPage(conditionMap, anPageNum, anPageSize, anFlag == 1);
+    }
+
+    /**
+     * @param anPayResultId
+     */
+    public void checkConfirmStatus(final Long anPayResultId) {
+        final Long unconfirmCount = this.mapper.countUnconfirmPayResultRecord(anPayResultId);
+
+        BTAssert.isTrue(unconfirmCount != null && unconfirmCount <= 0L, "还有未确认交易数据！");
+    }
+
+    /**
+     * @param anPayResultId
+     * @return
+     */
+    public Map<String, Object> calcPayResultRecord(final Long anPayResultId) {
+        return this.mapper.calcPayResultRecord(anPayResultId);
+    }
+
+    /**
+     * @param anPayResultId
+     */
+    public void saveWritebackRecordStatus(final Long anPayResultId) {
+        this.mapper.writebackRecordStatus(anPayResultId);
     }
 }
