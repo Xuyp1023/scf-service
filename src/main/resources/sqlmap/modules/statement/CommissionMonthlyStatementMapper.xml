@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.commission.dao.CommissionMonthlyStatementMapper" >
+  <resultMap id="BaseResultMap" type="com.betterjr.modules.commission.entity.CommissionMonthlyStatement" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="C_REFNO" property="refNo" jdbcType="VARCHAR" />
+    <result column="C_UNIT" property="unit" jdbcType="VARCHAR" />
+    <result column="C_CURRENY" property="curreny" jdbcType="VARCHAR" />
+    <result column="D_PAY_BEGIN_DATE" property="payBeginDate" jdbcType="VARCHAR" />
+    <result column="D_PAY_END_DATE" property="payEndDate" jdbcType="VARCHAR" />
+    <result column="F_TOTAL_BALANCE" property="totalBalance" jdbcType="DECIMAL" />
+    <result column="N_TOTAL_AMOUNT" property="totalAmount" jdbcType="DECIMAL" />
+    <result column="F_PAY_TOTAL_BALANCE" property="payTotalBalance" jdbcType="DECIMAL" />
+    <result column="N_PAY_TOTAL_AMOUNT" property="payTotalAmount" jdbcType="DECIMAL" />
+    <result column="F_PAY_SUCCESS_BALANCE" property="paySuccessBalance" jdbcType="DECIMAL" />
+    <result column="N_PAY_SUCCESS_AMOUNT" property="paySuccessAmount" jdbcType="DECIMAL" />
+    <result column="F_PAY_FAILURE_BALANCE" property="payFailureBalance" jdbcType="DECIMAL" />
+    <result column="N_PAY_FAILURE_AMOUNT" property="payFailureAmount" jdbcType="DECIMAL" />
+    <result column="L_OWN_CUSTNO" property="ownCustNo" jdbcType="INTEGER" />
+    <result column="C_OWN_CUSTNAME" property="ownCustName" jdbcType="VARCHAR" />
+    <result column="C_OWN_OPERORG" property="ownOperOrg" jdbcType="VARCHAR" />
+    <result column="C_MAKE_CUSTNAME" property="makeCustName" jdbcType="VARCHAR" />
+    <result column="C_MAKE_OPERNAME" property="makeOperName" jdbcType="VARCHAR" />
+    <result column="D_MAKE_DATE" property="makeDate" jdbcType="VARCHAR" />
+    <result column="T_MAKE_TIME" property="makeTime" jdbcType="VARCHAR" />
+    <result column="C_BUSIN_STATUS" property="businStatus" jdbcType="VARCHAR" />
+    <result column="C_LAST_STATUS" property="lastStatus" jdbcType="VARCHAR" />
+    <result column="F_INTEREST" property="interest" jdbcType="VARCHAR" />
+    <result column="F_INTEREST_RATE" property="interestRate" jdbcType="VARCHAR" />
+    <result column="F_TAX_BALANCE" property="taxBalance" jdbcType="VARCHAR" />
+    <result column="F_TAX_RATE" property="taxRate" jdbcType="VARCHAR" />
+    <result column="N_BATCHNO" property="batchNo" jdbcType="VARCHAR" />
+    <result column="C_OPERORG" property="operOrg" jdbcType="VARCHAR" />
+    <result column="L_REG_OPERID" property="regOperId" jdbcType="INTEGER" />
+    <result column="C_REG_OPERNAME" property="regOperName" jdbcType="VARCHAR" />
+    <result column="D_REG_DATE" property="regDate" jdbcType="VARCHAR" />
+    <result column="T_REG_TIME" property="regTime" jdbcType="VARCHAR" />
+    <result column="L_MODI_OPERID" property="modiOperId" jdbcType="INTEGER" />
+    <result column="C_MODI_OPERNAME" property="modiOperName" jdbcType="VARCHAR" />
+    <result column="D_MODI_DATE" property="modiDate" jdbcType="VARCHAR" />
+    <result column="T_MODI_TIME" property="modiTime" jdbcType="VARCHAR" />
+    <result column="N_VERSION" property="version" jdbcType="INTEGER" />
+  </resultMap>
+</mapper>
