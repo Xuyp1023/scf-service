@@ -250,6 +250,10 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     @MetaData( value="", comments = "")
     private Long version;
 
+    @Column(name = "D_END_INTEREST_DATE",  columnDefinition="VARCHAR" )
+    @MetaData( value="结息日期", comments = "结息日期")
+    private Long endInterestDate;
+    
     private static final long serialVersionUID = 1493796206916L;
 
     public Long getId() {
@@ -556,6 +560,14 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
         this.version = version;
     }
 
+    public Long getEndInterestDate() {
+        return this.endInterestDate;
+    }
+
+    public void setEndInterestDate(Long anEndInterestDate) {
+        this.endInterestDate = anEndInterestDate;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -600,6 +612,7 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
         sb.append(", modiDate=").append(modiDate);
         sb.append(", modiTime=").append(modiTime);
         sb.append(", version=").append(version);
+        sb.append(", endInterestDate=").append(endInterestDate);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
