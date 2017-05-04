@@ -219,7 +219,6 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
             anFile.setTotalAmount(recordAmount);
             anFile.setTotalBlance(blance);
             setResolveSuccess("文件解析成功", anFile);
-            this.updateByPrimaryKeySelective(anFile);
         }
         catch(IOException e){
             logger.debug("文件解析失败 ,解析日志记录id 为："+anFile.getId()+"   "+e.getMessage()); 
@@ -230,6 +229,7 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
             setResolveFailure(e.getMessage(), anFile);
         }
         
+        this.updateByPrimaryKeySelective(anFile);
         
         return anFile;
     }
