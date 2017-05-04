@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.betterjr.modules.commission.dao.CommissionFileMapper">
+  <resultMap id="BaseResultMap" type="com.betterjr.modules.commission.entity.CommissionFile">
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="C_REFNO" jdbcType="VARCHAR" property="refNo" />
+    <result column="N_BATCHNO" jdbcType="DECIMAL" property="batchNo" />
+    <result column="C_DIGEST" jdbcType="VARCHAR" property="digest" />
+    <result column="C_SIGNATURE" jdbcType="VARCHAR" property="signature" />
+    <result column="L_FILE_ID" jdbcType="INTEGER" property="fileId" />
+    <result column="C_FILE_NAME" jdbcType="VARCHAR" property="fileName" />
+    <result column="D_IMPORT_DATE" jdbcType="VARCHAR" property="importDate" />
+    <result column="T_IMPORT_TIME" jdbcType="VARCHAR" property="importTime" />
+    <result column="L_CUSTNO" jdbcType="INTEGER" property="custNo" />
+    <result column="C_CUSTNAME" jdbcType="VARCHAR" property="custName" />
+    <result column="C_OPERORG" jdbcType="VARCHAR" property="operOrg" />
+    <result column="C_PAY_STATUS" jdbcType="VARCHAR" property="payStatus" />
+    <result column="C_BUSIN_STATUS" jdbcType="VARCHAR" property="businStatus" />
+    <result column="C_RESOLVE_STATUS" jdbcType="VARCHAR" property="resolveStatus" />
+    <result column="C_SHOW_MESSAGE" jdbcType="VARCHAR" property="showMessage" />
+    <result column="F_BLANCE" jdbcType="DECIMAL" property="blance" />
+    <result column="L_COMMISSION_COUNT" jdbcType="INTEGER" property="commissionCount" />
+    <result column="C_INFO_TYPE" jdbcType="VARCHAR" property="infoType" />
+  </resultMap>
+</mapper>

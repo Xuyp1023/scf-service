@@ -36,6 +36,8 @@
         com.betterjr.modules.wechat.dubboclient,
         com.betterjr.modules.supplychain.handler,        
         com.betterjr.modules.customer,
+        com.betterjr.modules.commission,
+        com.betterjr.modules.delivery,
         com.betterjr.modules.ledger,
         com.betterjr.modules.config.dubboclient;
 		com.betterjr.dubbo.extend.filter" />
