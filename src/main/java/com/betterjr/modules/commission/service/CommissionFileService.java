@@ -1,5 +1,8 @@
 package com.betterjr.modules.commission.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -8,9 +11,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.jeecgframework.poi.excel.ExcelExportUtil;
+import org.jeecgframework.poi.excel.entity.TemplateExportParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -341,5 +349,112 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
    
         
     }
+
+    /**
+     * 文件审核 并生成下载文件路径
+     * @param anFileId
+     * @return
+     */
+    public CommissionFile saveAuditFile(Long anFileId) {
+
+        logger.info("佣金记录批量审核 ：  saveAuditRecordList  审核佣金记录文件  saveAuditFile 开始  审核人："+UserUtils.getOperatorInfo().getName()+"   文件id="+anFileId);
+        CommissionFile file = this.selectOne(new CommissionFile(anFileId));
+        checkAuditFileStatus(file, UserUtils.getOperatorInfo());
+        file.saveAuditInit(UserUtils.getOperatorInfo());
+        List<CommissionRecord> recordList=recordService.queryRecordListByFileId(anFileId);
+        CustFileItem fileItem=uploadCommissionRecordFile(recordList);
+        file.setDownFileId(fileItem.getId());
+        this.updateByPrimaryKey(file);
+        
+        logger.info("佣金记录批量审核 ：  saveAuditRecordList  审核佣金记录文件  saveAuditFile  成功 审核人："+UserUtils.getOperatorInfo().getName());
+        return file;
+        
+    }
+    
+    
+    /**
+     * 根据佣金记录生成佣金记录文件
+     * @param anRecordList
+     * @return
+     */
+    private CustFileItem uploadCommissionRecordFile(List<CommissionRecord> anRecordList) {
+        
+        logger.info("佣金记录批量审核 ：  saveAuditRecordList  生成佣金记录下载文件   审核人："+UserUtils.getOperatorInfo().getName());
+        BTAssert.notNull(anRecordList,"审核的数据文件为空");
+        //获取佣金记录导出模版文件
+        CustFileItem fileItem = custFileService.findOne(CommissionConstantCollentions.COMMISSION_FILE_DOWN_FILEITEM_FILEID);//文件上次详情
+        BTAssert.notNull(fileItem,"佣金记录导出模版为空");
+        InputStream is = dataStoreService.loadFromStore(fileItem);//得到文件输入流
+        TemplateExportParams params=new TemplateExportParams(is);
+        Map<String,Object> data=new HashMap<>();
+        data.put("recordList", anRecordList);
+        Workbook book=ExcelExportUtil.exportExcel(params, data);
+        BTAssert.notNull(book,"封装模版产生异常,请稍后重试");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        try {
+            book.write(os);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        byte[] b = os.toByteArray();
+        ByteArrayInputStream in = new ByteArrayInputStream(b);
+        String fileName=anRecordList.get(0).getCustName()+anRecordList.get(0).getFileId()+"佣金数据导出."+fileItem.getFileType();
+        CustFileItem item = dataStoreService.saveStreamToStore(in, fileItem.getFileType(),fileName );
+        logger.info("佣金记录批量审核 ：  saveAuditRecordList  生成佣金记录下载文件 已经成功上传到服务器   审核人："+UserUtils.getOperatorInfo().getName());
+        return item;
+    }
+
+    private void checkAuditFileStatus(CommissionFile anFile, CustOperatorInfo anOperatorInfo) {
+        
+        checkStatus(anFile.getPayStatus(), CommissionConstantCollentions.COMMISSION_PAY_STATUS_FAILURE, true, "当前文件记录已经付款，不能重新审核");
+        checkStatus(anFile.getPayStatus(), CommissionConstantCollentions.COMMISSION_PAY_STATUS_SUCCESS, true, "当前文件记录已经付款，不能重新审核");
+        checkStatus(anFile.getBusinStatus(), CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_DELETE, true, "当前文件记录已经删除，不能重新审核");
+        checkStatus(anFile.getOperOrg(), anOperatorInfo.getOperOrg(), false, "你没有当前文件的删除权限");
+   
+        
+    }
+
+    /**
+     * 查询未解析的文件  (未解析文件 和解析失败未删除文件)
+     * @param anMap
+     * @return
+     */
+    public List<CommissionFile> queryFileNoResolve(Map<String, Object> anMap) {
+        
+        BTAssert.notNull(anMap,"查询未解析的文件条件为空");
+        BTAssert.notNull(anMap.get("importDate"),"查询未解析的文件条件为空");
+        BTAssert.notNull(anMap.get("custNo"),"查询未解析的文件为空");
+        anMap.put("businStatus", CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_NO_HANDLE);
+        List<CommissionFile> noResolvelist = this.selectByProperty(anMap);
+        if(Collections3.isEmpty(noResolvelist)){
+            noResolvelist=new ArrayList<CommissionFile>();
+        }
+        anMap.put("businStatus", CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_IS_HANDLE);
+        anMap.put("resolveStatus", CommissionConstantCollentions.COMMISSION_RESOLVE_STATUS_FAILURE);
+        List<CommissionFile> falilureResolveList = this.selectByClassProperty(CommissionFile.class, anMap);
+        noResolvelist.addAll(falilureResolveList);
+        anMap.remove("resolveStatus");
+        anMap.remove("businStatus");
+        return noResolvelist;
+    }
+
+    /**
+     * 审核多个文件
+     * @param anFileSet
+     * @return
+     */
+    public List<CommissionFile> saveAuditFile(Set<Long> anFileSet) {
+        
+        List<CommissionFile> fileList=new ArrayList<CommissionFile>();
+        for (Long fileId : anFileSet) {
+            CommissionFile file = saveAuditFile(fileId);
+            fileList.add(file);
+        }
+        
+        return fileList;
+        
+    }
+
 
 }

@@ -46,6 +46,10 @@ public class CommissionFile implements BetterjrEntity {
     //文件上传id
     @Column(name = "L_FILE_ID",  columnDefinition="INTEGER" )
     private Long fileId;
+    
+    //文件下载id
+    @Column(name = "L_DOWNFILE_ID",  columnDefinition="INTEGER" )
+    private Long downFileId;
 
     //文件上传名称
     @Column(name = "C_FILE_NAME",  columnDefinition="VARCHAR" )
@@ -352,6 +356,14 @@ public class CommissionFile implements BetterjrEntity {
         this.infoType = infoType == null ? null : infoType.trim();
     }
 
+    public Long getDownFileId() {
+        return this.downFileId;
+    }
+
+    public void setDownFileId(Long anDownFileId) {
+        this.downFileId = anDownFileId;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -511,13 +523,13 @@ public class CommissionFile implements BetterjrEntity {
     @Override
     public String toString() {
         return "CommissionFile [id=" + this.id + ", refNo=" + this.refNo + ", batchNo=" + this.batchNo + ", digest=" + this.digest + ", signature="
-                + this.signature + ", fileId=" + this.fileId + ", fileName=" + this.fileName + ", importDate=" + this.importDate + ", importTime="
-                + this.importTime + ", custNo=" + this.custNo + ", custName=" + this.custName + ", operOrg=" + this.operOrg + ", payStatus="
-                + this.payStatus + ", businStatus=" + this.businStatus + ", resolveStatus=" + this.resolveStatus + ", showMessage=" + this.showMessage
-                + ", totalBlance=" + this.totalBlance + ", totalAmount=" + this.totalAmount + ", infoType=" + this.infoType + ", regOperId="
-                + this.regOperId + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", modiOperId="
-                + this.modiOperId + ", modiOperName=" + this.modiOperName + ", modiDate=" + this.modiDate + ", modiTime=" + this.modiTime
-                + ", version=" + this.version + "]";
+                + this.signature + ", fileId=" + this.fileId + ", downFileId=" + this.downFileId + ", fileName=" + this.fileName + ", importDate="
+                + this.importDate + ", importTime=" + this.importTime + ", custNo=" + this.custNo + ", custName=" + this.custName + ", operOrg="
+                + this.operOrg + ", payStatus=" + this.payStatus + ", businStatus=" + this.businStatus + ", resolveStatus=" + this.resolveStatus
+                + ", showMessage=" + this.showMessage + ", totalBlance=" + this.totalBlance + ", totalAmount=" + this.totalAmount + ", infoType="
+                + this.infoType + ", regOperId=" + this.regOperId + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate + ", regTime="
+                + this.regTime + ", modiOperId=" + this.modiOperId + ", modiOperName=" + this.modiOperName + ", modiDate=" + this.modiDate
+                + ", modiTime=" + this.modiTime + ", version=" + this.version + "]";
     }
 
     public CommissionFile saveAddinit(CustOperatorInfo anOperatorInfo, CustFileItem anFileItem) {
@@ -550,6 +562,11 @@ public class CommissionFile implements BetterjrEntity {
     public CommissionFile() {
         super();
     }
+    
+    public CommissionFile(Long anId) {
+        super();
+        this.id = anId;
+    }
 
     public Map<String, Object> resolveToRecordMap(CommissionFile anFile) {
         
@@ -562,6 +579,17 @@ public class CommissionFile implements BetterjrEntity {
                 .put("fileId", anFile.getId())
                 .build();
         return appendMap;
+    }
+
+    public CommissionFile saveAuditInit(CustOperatorInfo anOperatorInfo) {
+
+        this.setBusinStatus(CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_AUDIT);
+        this.setModiDate(BetterDateUtils.getNumDate());
+        this.setModiTime(BetterDateUtils.getNumTime());
+        this.setModiOperId(anOperatorInfo.getId());
+        this.setModiTime(anOperatorInfo.getName());
+        return this;
+        
     }
     
     
