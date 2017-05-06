@@ -26,6 +26,7 @@ import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.commission.constant.CommissionPayResultStatus;
 import com.betterjr.modules.commission.dao.CommissionPayResultMapper;
+import com.betterjr.modules.commission.data.CalcPayResult;
 import com.betterjr.modules.commission.entity.CommissionPayResult;
 import com.betterjr.modules.commission.entity.CommissionPayResultRecord;
 import com.betterjr.modules.commission.entity.CommissionRecord;
@@ -251,13 +252,13 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
 
         payResult.setBusinStatus(CommissionPayResultStatus.CONFIRM);
 
-        final Map<String, Object> calcResult = commissionPayResultRecordService.calcPayResultRecord(anPayResultId);
-        final Long totalAmount = (Long) calcResult.get("totalAmount");
-        final BigDecimal totalBalance = (BigDecimal) calcResult.get("totalBalance");
-        final Long paySuccessAmount = (Long) calcResult.get("paySuccessAmount");
-        final BigDecimal paySuccessBalance = (BigDecimal) calcResult.get("paySuccessBalance");
-        final Long payFailureAmount = (Long) calcResult.get("payFailureAmount");
-        final BigDecimal payFailureBalance = (BigDecimal) calcResult.get("payFailureBalance");
+        final CalcPayResult calcResult = commissionPayResultRecordService.calcPayResultRecord(anPayResultId);
+        final Long totalAmount = calcResult.getTotalAmount();
+        final BigDecimal totalBalance = calcResult.getTotalBalance();
+        final Long paySuccessAmount = calcResult.getPaySuccessAmount();
+        final BigDecimal paySuccessBalance = calcResult.getPaySuccessBalance();
+        final Long payFailureAmount = calcResult.getPayFailureAmount();
+        final BigDecimal payFailureBalance = calcResult.getPayFailureBalance();
 
         payResult.setTotalAmount(totalAmount);
         payResult.setTotalBalance(totalBalance);

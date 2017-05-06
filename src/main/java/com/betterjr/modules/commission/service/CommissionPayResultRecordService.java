@@ -22,6 +22,7 @@ import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.commission.constant.CommissionPayResultRecordStatus;
 import com.betterjr.modules.commission.dao.CommissionPayResultRecordMapper;
+import com.betterjr.modules.commission.data.CalcPayResult;
 import com.betterjr.modules.commission.entity.CommissionPayResultRecord;
 
 /**
@@ -207,7 +208,7 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
 
         return this.selectPropertyByPage(conditionMap, anPageNum, anPageSize, anFlag == 1);
     }
-    
+
     /**
      * @param anPayDate
      * @param anFlag
@@ -272,7 +273,7 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
      * @param anPayResultId
      * @return
      */
-    public Map<String, Object> calcPayResultRecord(final Long anPayResultId) {
+    public CalcPayResult calcPayResultRecord(final Long anPayResultId) {
         return this.mapper.calcPayResultRecord(anPayResultId);
     }
 

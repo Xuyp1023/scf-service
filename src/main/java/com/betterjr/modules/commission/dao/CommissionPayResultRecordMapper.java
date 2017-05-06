@@ -11,6 +11,7 @@ import org.apache.ibatis.annotations.Update;
 
 import com.betterjr.common.annotation.BetterjrMapper;
 import com.betterjr.mapper.common.Mapper;
+import com.betterjr.modules.commission.data.CalcPayResult;
 import com.betterjr.modules.commission.entity.CommissionPayResultRecord;
 
 @BetterjrMapper
@@ -45,8 +46,8 @@ public interface CommissionPayResultRecordMapper extends Mapper<CommissionPayRes
             + "(SELECT SUM(F_PAY_BALANCE) AS balance, COUNT(ID) AS amount FROM t_cps_pay_result_record WHERE L_PAY_RESULT_ID=#{payResultId}) AS t1, "
             + "(SELECT SUM(F_PAY_BALANCE) AS balance, COUNT(ID) AS amount FROM t_cps_pay_result_record WHERE L_PAY_RESULT_ID=#{payResultId} AND C_PAY_RESULT='1') AS t2, "
             + "(SELECT SUM(F_PAY_BALANCE) AS balance, COUNT(ID) AS amount FROM t_cps_pay_result_record WHERE L_PAY_RESULT_ID=#{payResultId} AND C_PAY_RESULT='2') AS t3")
-    @Result(javaType=Map.class)
-    public Map<String, Object> calcPayResultRecord(@Param("payResultId") Long anPayResultId);
+    @Result(javaType=CalcPayResult.class)
+    public CalcPayResult calcPayResultRecord(@Param("payResultId") Long anPayResultId);
 
     @Select("SELECT t1.balance AS totalBalance, t1.amount AS totalAmount, t2.balance AS paySuccessBalance, t2.amount AS paySuccessAmount, "
             + "t3.balance AS payFailureBalance, t3.amount AS payFailureAmount FROM "

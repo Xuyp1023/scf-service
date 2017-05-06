@@ -108,7 +108,7 @@ public class CommissionPayResultDubboService implements ICommissionPayResultServ
     @Override
     public String webConfirmFailurePayResultRecords(final Long anPayResultId, final String anPayResultRecords) {
         final List<Long> payResultRecords = COMMA_PATTERN.splitAsStream(anPayResultRecords).map(Long::valueOf).collect(Collectors.toList());
-        return AjaxObject.newOk("设置账单支付失败成功！", commissionPayResultService.saveConfirmSuccessPayResultRecords(anPayResultId, payResultRecords)).toJson();
+        return AjaxObject.newOk("设置账单支付失败成功！", commissionPayResultService.saveConfirmFailurePayResultRecords(anPayResultId, payResultRecords)).toJson();
     }
 
     /* (non-Javadoc)
