@@ -283,5 +283,18 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
         return this.selectPropertyByPage(map, anPageNum, anPageSize, anFlag == 1);
     }
 
+    /**
+     * @param anCustNo
+     * @param anImportDate
+     * @return
+     */
+    public Page<CommissionRecord> queryRecordListByImportDate(final Long anCustNo, final String anImportDate, final int anFlag, final int anPageNum, final int anPageSize) {
+        final Map<String,Object> map = QueryTermBuilder.newInstance()
+                .put("custNo",anCustNo)
+                .put("importDate", anImportDate)
+                .build();
+        return this.selectPropertyByPage(map, anPageNum, anPageSize, anFlag == 1);
+    }
+
 
 }
