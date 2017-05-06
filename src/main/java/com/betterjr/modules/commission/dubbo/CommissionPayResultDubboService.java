@@ -140,7 +140,7 @@ public class CommissionPayResultDubboService implements ICommissionPayResultServ
      */
     @Override
     public String webAuditPayResult(final Long anPayResultId) {
-        return AjaxObject.newOk("审核日对账单成功！", commissionPayResultService.saveConfirmPayResult(anPayResultId)).toJson();
+        return AjaxObject.newOk("审核日对账单成功！", commissionPayResultService.saveAuditPayResult(anPayResultId)).toJson();
     }
 
 }

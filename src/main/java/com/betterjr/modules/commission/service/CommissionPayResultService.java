@@ -117,7 +117,7 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
         BTAssert.notNull(commissionPayResult, "没有找到账单确认记录！");
 
         if (BetterStringUtils.isNotBlank(anStatus)) {
-            BTAssert.isTrue(BetterStringUtils.equals("0", commissionPayResult.getBusinStatus()), "账单状态不正确！");
+            BTAssert.isTrue(BetterStringUtils.equals(anStatus, commissionPayResult.getBusinStatus()), "账单状态不正确！");
         }
         return commissionPayResult;
     }
