@@ -1,6 +1,13 @@
 package com.betterjr.modules.delivery.entity;
 
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.selectkey.SerialGenerator;
+import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.modules.account.entity.CustInfo;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
+import com.betterjr.modules.commission.entity.CommissionMonthlyStatement;
+import com.betterjr.modules.delivery.data.DeliveryConstantCollentions;
+import com.betterjr.modules.generator.SequenceFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,15 +44,15 @@ public class DeliveryRecord implements BetterjrEntity {
     @Column(name = "T_POST_TIME",  columnDefinition="VARCHAR" )
     private String postTime;
 
-    //接收公司
+    //接收公司(青海移动)
     @Column(name = "L_POST_CUSTNO",  columnDefinition="INTEGER" )
     private Long postCustNo;
 
-    //接收公司名称
+    //接收公司名称(青海移动)
     @Column(name = "C_POST_CUSTNAME",  columnDefinition="VARCHAR" )
     private String postCustName;
 
-    //接收公司机构
+    //接收公司机构(青海移动)
     @Column(name = "C_POST_OPERORG",  columnDefinition="VARCHAR" )
     private String postOperOrg;
 
@@ -290,6 +297,11 @@ public class DeliveryRecord implements BetterjrEntity {
         super();
         this.refNo = anRefNo;
     }
+    
+    public DeliveryRecord(Long anId) {
+        super();
+        this.id = anId;
+    }
 
     public DeliveryRecord() {
         super();
@@ -430,6 +442,43 @@ public class DeliveryRecord implements BetterjrEntity {
         }
         else if (!this.version.equals(other.version)) return false;
         return true;
+    }
+
+    public void saveAddInit(CustOperatorInfo anOperatorInfo, CustInfo anDefCustInfo, CommissionMonthlyStatement anStatement) {
+        
+        this.setBusinStatus(DeliveryConstantCollentions.DELIVERY_RECORD_BUSIN_STATUS_NO_HANDEL);
+        this.setCustName(anDefCustInfo.getCustName());
+        this.setCustNo(anDefCustInfo.getCustNo());
+        this.setOperOrg(anOperatorInfo.getOperOrg());
+        this.setRefNo(SequenceFactory.generate("PLAT_COMMON", "#{Date:yyyyMMdd}#{Seq:12}","D"));
+        this.setRegDate(BetterDateUtils.getNumDate());
+        this.setRegTime(BetterDateUtils.getNumTime());
+        this.setRegOperId(anOperatorInfo.getId());
+        this.setRegOperName(anOperatorInfo.getName());
+        this.setVersion("1");
+        this.setPostCustName(anStatement.getOwnCustName());
+        this.setPostCustNo(anStatement.getOwnCustNo());
+        this.setPostOperOrg(anStatement.getOwnOperOrg());
+        this.setId(SerialGenerator.getLongValue("DeliveryRecord.id"));
+    }
+
+    public void saveExpressInit(CustOperatorInfo anOperatorInfo) {
+
+
+        this.setBusinStatus(DeliveryConstantCollentions.DELIVERY_RECORD_BUSIN_STATUS_EXPRESS);
+        this.setPostDate(BetterDateUtils.getNumDate());
+        this.setPostTime(BetterDateUtils.getNumTime());
+        
+    }
+
+    public void saveConfirmInit(CustOperatorInfo anOperatorInfo) {
+        
+        this.setBusinStatus(DeliveryConstantCollentions.DELIVERY_RECORD_BUSIN_STATUS_CONFIRM);
+        this.confirmDate=BetterDateUtils.getNumDate();
+        this.confirmTime=BetterDateUtils.getNumTime();
+        this.confirmOperId=anOperatorInfo.getId();
+        this.confirmOperName=anOperatorInfo.getName();
+        
     }
 
 }

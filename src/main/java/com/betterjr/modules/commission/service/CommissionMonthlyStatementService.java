@@ -104,6 +104,21 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
         return monthlyStatement;
     }
     
+    /**
+     * 查询需要添加到快递中的月账单，并且修改月账单状态
+     * @param anParam
+     * @return
+     */
+    public List<CommissionMonthlyStatement> saveQueryMonthlyStatement(Map<String, Object> anParam){
+        
+        List<CommissionMonthlyStatement> monthlyStatement=this.selectByProperty(anParam);
+        for (CommissionMonthlyStatement statement : monthlyStatement) {
+            statement.setBusinStatus("3");
+            this.updateByPrimaryKeySelective(statement);
+        }
+        return monthlyStatement;
+    }
+    
     /***
      * 根据id查询月报表信息
      * @param anMonthlyId

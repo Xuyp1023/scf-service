@@ -1,6 +1,7 @@
 package com.betterjr.modules.commission.entity;
 
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
@@ -19,121 +20,121 @@ import org.apache.commons.beanutils.BeanUtils;
 @Entity
 @Table(name = "t_cps_record")
 public class CommissionRecord implements BetterjrEntity {
-    
-    //编号
+
+    // 编号
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
+    @Column(name = "ID", columnDefinition = "INTEGER")
     private Long id;
 
-    //佣金文件id
-    @Column(name = "L_CPS_FILE_ID",  columnDefinition="INTEGER" )
+    // 佣金文件id
+    @Column(name = "L_CPS_FILE_ID", columnDefinition = "INTEGER")
     private Long fileId;
 
-    //凭证编号
-    @Column(name = "C_REFNO",  columnDefinition="VARCHAR" )
+    // 凭证编号
+    @Column(name = "C_REFNO", columnDefinition = "VARCHAR")
     private String refNo;
 
-    //导入日期
-    @Column(name = "D_IMPORT_DATE",  columnDefinition="VARCHAR" )
+    // 导入日期
+    @Column(name = "D_IMPORT_DATE", columnDefinition = "VARCHAR")
     private String importDate;
 
-    //导入时间
-    @Column(name = "T_IMPORT_TIME",  columnDefinition="VARCHAR" )
+    // 导入时间
+    @Column(name = "T_IMPORT_TIME", columnDefinition = "VARCHAR")
     private String importTime;
 
-    //片区
-    @Column(name = "C_AREA",  columnDefinition="VARCHAR" )
+    // 片区
+    @Column(name = "C_AREA", columnDefinition = "VARCHAR")
     private String area;
 
-    //客户名称
-    @Column(name = "C_CUSTOMER_NAME",  columnDefinition="VARCHAR" )
+    // 客户名称
+    @Column(name = "C_CUSTOMER_NAME", columnDefinition = "VARCHAR")
     private String customerName;
 
-    //数量
-    @Column(name = "N_AMOUNT",  columnDefinition="INTEGER" )
+    // 数量
+    @Column(name = "N_AMOUNT", columnDefinition = "INTEGER")
     private Long amount;
 
-    //单价
-    @Column(name = "F_UNIT",  columnDefinition="DECIMAL" )
+    // 单价
+    @Column(name = "F_UNIT", columnDefinition = "DECIMAL")
     private BigDecimal unit;
 
-    //金额
-    @Column(name = "F_BALANCE",  columnDefinition="DECIMAL" )
+    // 金额
+    @Column(name = "F_BALANCE", columnDefinition = "DECIMAL")
     private BigDecimal balance;
 
-    //银行账户
-    @Column(name = "C_BANK_ACCOUNT",  columnDefinition="VARCHAR" )
+    // 银行账户
+    @Column(name = "C_BANK_ACCOUNT", columnDefinition = "VARCHAR")
     private String bankAccount;
 
-    //银行账户名
-    @Column(name = "C_BANK_ACCOUNT_NAME",  columnDefinition="VARCHAR" )
+    // 银行账户名
+    @Column(name = "C_BANK_ACCOUNT_NAME", columnDefinition = "VARCHAR")
     private String bankAccountName;
 
-    //银行
-    @Column(name = "C_BANK",  columnDefinition="VARCHAR" )
+    // 银行
+    @Column(name = "C_BANK", columnDefinition = "VARCHAR")
     private String bank;
 
-    //银行全称
-    @Column(name = "C_BANK_NAME",  columnDefinition="VARCHAR" )
+    // 银行全称
+    @Column(name = "C_BANK_NAME", columnDefinition = "VARCHAR")
     private String bankName;
 
-    //银行地址
-    @Column(name = "C_BANK_ADDRESS",  columnDefinition="VARCHAR" )
+    // 银行地址
+    @Column(name = "C_BANK_ADDRESS", columnDefinition = "VARCHAR")
     private String bankAddress;
 
-    //联系人
-    @Column(name = "C_CONTACTS",  columnDefinition="VARCHAR" )
+    // 联系人
+    @Column(name = "C_CONTACTS", columnDefinition = "VARCHAR")
     private String contacts;
 
-    //联系人手机号码
-    @Column(name = "C_CONTACTS_MOBILENO",  columnDefinition="VARCHAR" )
+    // 联系人手机号码
+    @Column(name = "C_CONTACTS_MOBILENO", columnDefinition = "VARCHAR")
     private String contactsMobileNo;
 
-    //客户ID
-    @Column(name = "L_CUSTNO",  columnDefinition="INTEGER" )
+    // 客户ID
+    @Column(name = "L_CUSTNO", columnDefinition = "INTEGER")
     private Long custNo;
 
-    //客户名称
-    @Column(name = "C_CUSTNAME",  columnDefinition="VARCHAR" )
+    // 客户名称
+    @Column(name = "C_CUSTNAME", columnDefinition = "VARCHAR")
     private String custName;
 
-    //操作机构
-    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
+    // 操作机构
+    @Column(name = "C_OPERORG", columnDefinition = "VARCHAR")
     private String operOrg;
 
-    //支付状态  0 未处理  2 支付成功  1 支付失败
-    @Column(name = "C_PAY_STATUS",  columnDefinition="VARCHAR" )
+    // 支付状态 0 未处理 2 支付成功 1 支付失败
+    @Column(name = "C_PAY_STATUS", columnDefinition = "VARCHAR")
     private String payStatus;
 
-    //业务状态 0 未处理 1 已审核(最终可供 拜特支付状态)  2已支付 3删除
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
+    // 业务状态 0 未处理 1 已审核(最终可供 拜特支付状态) 2已支付 3删除
+    @Column(name = "C_BUSIN_STATUS", columnDefinition = "VARCHAR")
     private String businStatus;
-    
-    @Column(name = "L_REG_OPERID",  columnDefinition="INTEGER" )
+
+    @Column(name = "L_REG_OPERID", columnDefinition = "INTEGER")
     private Long regOperId;
-    
-    @Column(name = "C_REG_OPERNAME",  columnDefinition="VARCHAR" )
+
+    @Column(name = "C_REG_OPERNAME", columnDefinition = "VARCHAR")
     private String regOperName;
-    
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
+
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
     private String regDate;
-    
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
+
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
     private String regTime;
-    
-    @Column(name = "L_MODI_OPERID",  columnDefinition="INTEGER" )
+
+    @Column(name = "L_MODI_OPERID", columnDefinition = "INTEGER")
     private Long modiOperId;
-    
-    @Column(name = "C_MODI_OPERNAME",  columnDefinition="VARCHAR" )
+
+    @Column(name = "C_MODI_OPERNAME", columnDefinition = "VARCHAR")
     private String modiOperName;
-    
-    @Column(name = "D_MODI_DATE",  columnDefinition="VARCHAR" )
+
+    @Column(name = "D_MODI_DATE", columnDefinition = "VARCHAR")
     private String modiDate;
-    
-    @Column(name = "T_MODI_TIME",  columnDefinition="VARCHAR" )
+
+    @Column(name = "T_MODI_TIME", columnDefinition = "VARCHAR")
     private String modiTime;
-    
-    @Column(name = "N_VERSION",  columnDefinition="VARCHAR" )
+
+    @Column(name = "N_VERSION", columnDefinition = "VARCHAR")
     private String version;
 
     private static final long serialVersionUID = 1493715864481L;
@@ -146,7 +147,6 @@ public class CommissionRecord implements BetterjrEntity {
         this.id = id;
     }
 
-  
     public String getRefNo() {
         return refNo;
     }
@@ -203,7 +203,6 @@ public class CommissionRecord implements BetterjrEntity {
         this.unit = unit;
     }
 
-    
     public BigDecimal getBalance() {
         return this.balance;
     }
@@ -572,13 +571,9 @@ public class CommissionRecord implements BetterjrEntity {
                 + ", version=" + this.version + "]";
     }
 
-    
-    
     public CommissionRecord() {
         super();
     }
-    
-    
 
     public CommissionRecord(String anRefNo) {
         super();
@@ -586,7 +581,7 @@ public class CommissionRecord implements BetterjrEntity {
     }
 
     public void initResolveValue(Map<String, Object> anDataMap, int anI, CustOperatorInfo anOperatorInfo) {
-        
+
         try {
             BeanUtils.populate(this, anDataMap);
             this.setPayStatus(CommissionConstantCollentions.COMMISSION_PAY_STATUS_NO_HANDLE);
@@ -596,25 +591,25 @@ public class CommissionRecord implements BetterjrEntity {
             this.setRegOperId(anOperatorInfo.getId());
             this.setRegOperName(anOperatorInfo.getName());
             this.setVersion("1");
-            this.refNo=SequenceFactory.generate("PLAT_COMMISSION_RECORD",this.getOperOrg(),"RP#{Date:yyMMdd}#{Seq:8}","D");
+            this.refNo = SequenceFactory.generate("PLAT_COMMISSION_RECORD", this.getOperOrg(), "RP#{Date:yyMMdd}#{Seq:8}", "D");
+            this.id=SerialGenerator.getLongValue("CommissionRecord.id");
         }
         catch (Exception e) {
-            
-            BTAssert.notNull(null,"第"+anI+"行记录解析失败"+e.getMessage());
+
+            BTAssert.notNull(null, "第" + anI + "行记录解析失败" + e.getMessage());
         }
-        
+
     }
 
     public CommissionRecord saveAuditInit(CustOperatorInfo anOperatorInfo) {
-        
-        
+
         this.setBusinStatus(CommissionConstantCollentions.COMMISSION_RECORD_BUSIN_STATUS_AUDIT);
         this.setModiDate(BetterDateUtils.getNumDate());
         this.setModiTime(BetterDateUtils.getNumTime());
         this.setModiOperId(anOperatorInfo.getId());
         this.setModiOperName(anOperatorInfo.getName());
         return this;
-        
+
     }
-   
+
 }
