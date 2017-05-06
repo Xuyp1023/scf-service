@@ -11,6 +11,10 @@ import javax.persistence.Table;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.selectkey.SerialGenerator;
+import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.UserUtils;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -41,16 +45,16 @@ public class CommissionMonthlyStatementRecord implements BetterjrEntity {
     /**
      * 日报表ID
      */
-    @Column(name = "L_DAILY_STATEMENT_ID",  columnDefinition="VARCHAR" )
+    @Column(name = "L_DAILY_STATEMENT_ID",  columnDefinition="INTEGER" )
     @MetaData( value="日报表ID", comments = "日报表ID")
-    private String dailyStatementId;
+    private Long dailyStatementId;
 
     /**
      * 日报表凭证编号
      */
-    @Column(name = "C_DAILY_STATEMENT_REFNO",  columnDefinition="INTEGER" )
+    @Column(name = "C_DAILY_STATEMENT_REFNO",  columnDefinition="VARCHAR" )
     @MetaData( value="日报表凭证编号", comments = "日报表凭证编号")
-    private Long dailyStatementRefNo;
+    private String dailyStatementRefNo;
 
     /**
      * 支付日期
@@ -133,9 +137,9 @@ public class CommissionMonthlyStatementRecord implements BetterjrEntity {
     @MetaData( value="", comments = "")
     private String operOrg;
 
-    @Column(name = "L_REG_OPERID",  columnDefinition="VARCHAR" )
+    @Column(name = "L_REG_OPERID",  columnDefinition="Long" )
     @MetaData( value="", comments = "")
-    private String regOperId;
+    private Long regOperId;
 
     @Column(name = "C_REG_OPERNAME",  columnDefinition="VARCHAR" )
     @MetaData( value="", comments = "")
@@ -179,19 +183,19 @@ public class CommissionMonthlyStatementRecord implements BetterjrEntity {
         this.monthlyStatementRefNo = monthlyStatementRefNo;
     }
 
-    public String getDailyStatementId() {
+    public Long getDailyStatementId() {
         return dailyStatementId;
     }
 
-    public void setDailyStatementId(String dailyStatementId) {
+    public void setDailyStatementId(Long dailyStatementId) {
         this.dailyStatementId = dailyStatementId;
     }
 
-    public Long getDailyStatementRefNo() {
+    public String getDailyStatementRefNo() {
         return dailyStatementRefNo;
     }
 
-    public void setDailyStatementRefNo(Long dailyStatementRefNo) {
+    public void setDailyStatementRefNo(String dailyStatementRefNo) {
         this.dailyStatementRefNo = dailyStatementRefNo;
     }
 
@@ -291,11 +295,11 @@ public class CommissionMonthlyStatementRecord implements BetterjrEntity {
         this.operOrg = operOrg;
     }
 
-    public String getRegOperId() {
+    public Long getRegOperId() {
         return regOperId;
     }
 
-    public void setRegOperId(String regOperId) {
+    public void setRegOperId(Long regOperId) {
         this.regOperId = regOperId;
     }
 
@@ -427,5 +431,32 @@ public class CommissionMonthlyStatementRecord implements BetterjrEntity {
         result = prime * result + ((getRegTime() == null) ? 0 : getRegTime().hashCode());
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
         return result;
+    }
+    
+    public void initValue(CommissionDailyStatement anDailyStatement){
+        this.id = SerialGenerator.getLongValue("CommissionMonthlyStatementRecord.id");
+        if(anDailyStatement!=null){
+            this.dailyStatementId=anDailyStatement.getId();
+            this.dailyStatementRefNo=anDailyStatement.getRefNo();
+            this.payDate=anDailyStatement.getPayDate();
+            this.payTotalAmount=anDailyStatement.getPayTotalAmount();
+            this.payTotalBalance=anDailyStatement.getPayTotalBalance();
+            this.paySuccessAmount=anDailyStatement.getPaySuccessAmount();
+            this.paySuccessBalance=anDailyStatement.getPaySuccessBalance();
+            this.payFailureAmount=anDailyStatement.getPayFailureAmount();
+            this.payFailureBalance=anDailyStatement.getPayFailureBalance();
+            this.interest=anDailyStatement.getInterest();
+            this.interestRate=anDailyStatement.getInterestRate();
+            this.custName=anDailyStatement.getOwnCustName();
+            this.custNo=anDailyStatement.getOwnCustNo();
+        }
+        this.regDate=BetterDateUtils.getNumDate();
+        this.regTime=BetterDateUtils.getNumTime();
+        final CustOperatorInfo custOperator = (CustOperatorInfo) UserUtils.getPrincipal().getUser();
+        if(custOperator!=null){
+            this.operOrg=custOperator.getOperOrg();
+            this.regOperId=custOperator.getId();
+            this.regOperName=custOperator.getName();
+        }
     }
 }

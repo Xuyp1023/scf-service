@@ -1,6 +1,7 @@
 package com.betterjr.modules.commission.entity;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -11,6 +12,10 @@ import javax.persistence.Table;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.selectkey.SerialGenerator;
+import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.UserUtils;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -178,37 +183,37 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     /**
      * 利息
      */
-    @Column(name = "F_INTEREST",  columnDefinition="VARCHAR" )
+    @Column(name = "F_INTEREST",  columnDefinition="DECIMAL" )
     @MetaData( value="利息", comments = "利息")
-    private String interest;
+    private BigDecimal interest;
 
     /**
      * 利率
      */
-    @Column(name = "F_INTEREST_RATE",  columnDefinition="VARCHAR" )
+    @Column(name = "F_INTEREST_RATE",  columnDefinition="DECIMAL" )
     @MetaData( value="利率", comments = "利率")
-    private String interestRate;
+    private BigDecimal interestRate;
 
     /**
      * 税额
      */
-    @Column(name = "F_TAX_BALANCE",  columnDefinition="VARCHAR" )
+    @Column(name = "F_TAX_BALANCE",  columnDefinition="DECIMAL" )
     @MetaData( value="税额", comments = "税额")
-    private String taxBalance;
+    private BigDecimal taxBalance;
 
     /**
      * 税利率
      */
-    @Column(name = "F_TAX_RATE",  columnDefinition="VARCHAR" )
+    @Column(name = "F_TAX_RATE",  columnDefinition="DECIMAL" )
     @MetaData( value="税利率", comments = "税利率")
-    private String taxRate;
+    private BigDecimal taxRate;
 
     /**
      * 月报表文件
      */
-    @Column(name = "N_BATCHNO",  columnDefinition="VARCHAR" )
+    @Column(name = "N_BATCHNO",  columnDefinition="Long" )
     @MetaData( value="月报表文件", comments = "月报表文件")
-    private String batchNo;
+    private Long batchNo;
 
     @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
     @MetaData( value="", comments = "")
@@ -252,7 +257,7 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
 
     @Column(name = "D_END_INTEREST_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="结息日期", comments = "结息日期")
-    private Long endInterestDate;
+    private String endInterestDate;
     
     private static final long serialVersionUID = 1493796206916L;
 
@@ -440,46 +445,6 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
         this.lastStatus = lastStatus;
     }
 
-    public String getInterest() {
-        return interest;
-    }
-
-    public void setInterest(String interest) {
-        this.interest = interest;
-    }
-
-    public String getInterestRate() {
-        return interestRate;
-    }
-
-    public void setInterestRate(String interestRate) {
-        this.interestRate = interestRate;
-    }
-
-    public String getTaxBalance() {
-        return taxBalance;
-    }
-
-    public void setTaxBalance(String taxBalance) {
-        this.taxBalance = taxBalance;
-    }
-
-    public String getTaxRate() {
-        return taxRate;
-    }
-
-    public void setTaxRate(String taxRate) {
-        this.taxRate = taxRate;
-    }
-
-    public String getBatchNo() {
-        return batchNo;
-    }
-
-    public void setBatchNo(String batchNo) {
-        this.batchNo = batchNo;
-    }
-
     public String getOperOrg() {
         return operOrg;
     }
@@ -560,12 +525,52 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
         this.version = version;
     }
 
-    public Long getEndInterestDate() {
+    public String getEndInterestDate() {
         return this.endInterestDate;
     }
 
-    public void setEndInterestDate(Long anEndInterestDate) {
+    public void setEndInterestDate(String anEndInterestDate) {
         this.endInterestDate = anEndInterestDate;
+    }
+
+    public BigDecimal getInterest() {
+        return this.interest;
+    }
+
+    public void setInterest(BigDecimal anInterest) {
+        this.interest = anInterest;
+    }
+
+    public BigDecimal getInterestRate() {
+        return this.interestRate;
+    }
+
+    public void setInterestRate(BigDecimal anInterestRate) {
+        this.interestRate = anInterestRate;
+    }
+
+    public BigDecimal getTaxBalance() {
+        return this.taxBalance;
+    }
+
+    public void setTaxBalance(BigDecimal anTaxBalance) {
+        this.taxBalance = anTaxBalance;
+    }
+
+    public BigDecimal getTaxRate() {
+        return this.taxRate;
+    }
+
+    public void setTaxRate(BigDecimal anTaxRate) {
+        this.taxRate = anTaxRate;
+    }
+
+    public Long getBatchNo() {
+        return this.batchNo;
+    }
+
+    public void setBatchNo(Long anBatchNo) {
+        this.batchNo = anBatchNo;
     }
 
     @Override
@@ -618,100 +623,32 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
         return sb.toString();
     }
 
-    @Override
-    public boolean equals(Object that) {
-        if (this == that) {
-            return true;
+    public void initMonthlyStatement(Map<String,Object> anMap) {
+        this.id = SerialGenerator.getLongValue("CommissionDailyStatement.id");         
+        this.refNo = (String)anMap.get("monthlyRefNo");
+        this.ownCustName= (String)anMap.get("monthlyRefNo");
+        this.totalBalance=new BigDecimal((String)anMap.get("totalBalance"));
+        this.payTotalBalance = new BigDecimal((String)anMap.get("payTotalBalance"));
+        this.ownCustNo=Long.parseLong((String)anMap.get("monthlyRefNo"));
+        this.endInterestDate=(String)anMap.get("endInterestDate");
+        this.interest=new BigDecimal((String)anMap.get("interest"));
+        this.taxBalance=new BigDecimal((String)anMap.get("totalTaxBalance"));
+        this.payBeginDate=(String)anMap.get("startDate");
+        this.payEndDate=(String)anMap.get("endDate");
+        this.makeDate=BetterDateUtils.getNumDate();
+        this.makeTime= BetterDateUtils.getNumTime();
+        this.regDate = BetterDateUtils.getNumDate();
+        this.regTime = BetterDateUtils.getNumTime();
+        this.modiDate = BetterDateUtils.getNumDate();
+        this.modiTime = BetterDateUtils.getNumTime();
+        this.businStatus="0";
+        final CustOperatorInfo custOperator = (CustOperatorInfo) UserUtils.getPrincipal().getUser();
+        if(custOperator!=null){
+            this.operOrg=custOperator.getOperOrg();
+            this.regOperId=custOperator.getId();
+            this.regOperName=custOperator.getName();
+            this.modiOperId=custOperator.getId();
+            this.modiOperName=custOperator.getName();
         }
-        if (that == null) {
-            return false;
-        }
-        if (getClass() != that.getClass()) {
-            return false;
-        }
-        CommissionMonthlyStatement other = (CommissionMonthlyStatement) that;
-        return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getRefNo() == null ? other.getRefNo() == null : this.getRefNo().equals(other.getRefNo()))
-            && (this.getUnit() == null ? other.getUnit() == null : this.getUnit().equals(other.getUnit()))
-            && (this.getCurreny() == null ? other.getCurreny() == null : this.getCurreny().equals(other.getCurreny()))
-            && (this.getPayBeginDate() == null ? other.getPayBeginDate() == null : this.getPayBeginDate().equals(other.getPayBeginDate()))
-            && (this.getPayEndDate() == null ? other.getPayEndDate() == null : this.getPayEndDate().equals(other.getPayEndDate()))
-            && (this.getTotalBalance() == null ? other.getTotalBalance() == null : this.getTotalBalance().equals(other.getTotalBalance()))
-            && (this.getTotalAmount() == null ? other.getTotalAmount() == null : this.getTotalAmount().equals(other.getTotalAmount()))
-            && (this.getPayTotalBalance() == null ? other.getPayTotalBalance() == null : this.getPayTotalBalance().equals(other.getPayTotalBalance()))
-            && (this.getPayTotalAmount() == null ? other.getPayTotalAmount() == null : this.getPayTotalAmount().equals(other.getPayTotalAmount()))
-            && (this.getPaySuccessBalance() == null ? other.getPaySuccessBalance() == null : this.getPaySuccessBalance().equals(other.getPaySuccessBalance()))
-            && (this.getPaySuccessAmount() == null ? other.getPaySuccessAmount() == null : this.getPaySuccessAmount().equals(other.getPaySuccessAmount()))
-            && (this.getPayFailureBalance() == null ? other.getPayFailureBalance() == null : this.getPayFailureBalance().equals(other.getPayFailureBalance()))
-            && (this.getPayFailureAmount() == null ? other.getPayFailureAmount() == null : this.getPayFailureAmount().equals(other.getPayFailureAmount()))
-            && (this.getOwnCustNo() == null ? other.getOwnCustNo() == null : this.getOwnCustNo().equals(other.getOwnCustNo()))
-            && (this.getOwnCustName() == null ? other.getOwnCustName() == null : this.getOwnCustName().equals(other.getOwnCustName()))
-            && (this.getOwnOperOrg() == null ? other.getOwnOperOrg() == null : this.getOwnOperOrg().equals(other.getOwnOperOrg()))
-            && (this.getMakeCustName() == null ? other.getMakeCustName() == null : this.getMakeCustName().equals(other.getMakeCustName()))
-            && (this.getMakeOperName() == null ? other.getMakeOperName() == null : this.getMakeOperName().equals(other.getMakeOperName()))
-            && (this.getMakeDate() == null ? other.getMakeDate() == null : this.getMakeDate().equals(other.getMakeDate()))
-            && (this.getMakeTime() == null ? other.getMakeTime() == null : this.getMakeTime().equals(other.getMakeTime()))
-            && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
-            && (this.getLastStatus() == null ? other.getLastStatus() == null : this.getLastStatus().equals(other.getLastStatus()))
-            && (this.getInterest() == null ? other.getInterest() == null : this.getInterest().equals(other.getInterest()))
-            && (this.getInterestRate() == null ? other.getInterestRate() == null : this.getInterestRate().equals(other.getInterestRate()))
-            && (this.getTaxBalance() == null ? other.getTaxBalance() == null : this.getTaxBalance().equals(other.getTaxBalance()))
-            && (this.getTaxRate() == null ? other.getTaxRate() == null : this.getTaxRate().equals(other.getTaxRate()))
-            && (this.getBatchNo() == null ? other.getBatchNo() == null : this.getBatchNo().equals(other.getBatchNo()))
-            && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
-            && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
-            && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-            && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
-            && (this.getModiOperId() == null ? other.getModiOperId() == null : this.getModiOperId().equals(other.getModiOperId()))
-            && (this.getModiOperName() == null ? other.getModiOperName() == null : this.getModiOperName().equals(other.getModiOperName()))
-            && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-            && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()))
-            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        result = prime * result + ((getRefNo() == null) ? 0 : getRefNo().hashCode());
-        result = prime * result + ((getUnit() == null) ? 0 : getUnit().hashCode());
-        result = prime * result + ((getCurreny() == null) ? 0 : getCurreny().hashCode());
-        result = prime * result + ((getPayBeginDate() == null) ? 0 : getPayBeginDate().hashCode());
-        result = prime * result + ((getPayEndDate() == null) ? 0 : getPayEndDate().hashCode());
-        result = prime * result + ((getTotalBalance() == null) ? 0 : getTotalBalance().hashCode());
-        result = prime * result + ((getTotalAmount() == null) ? 0 : getTotalAmount().hashCode());
-        result = prime * result + ((getPayTotalBalance() == null) ? 0 : getPayTotalBalance().hashCode());
-        result = prime * result + ((getPayTotalAmount() == null) ? 0 : getPayTotalAmount().hashCode());
-        result = prime * result + ((getPaySuccessBalance() == null) ? 0 : getPaySuccessBalance().hashCode());
-        result = prime * result + ((getPaySuccessAmount() == null) ? 0 : getPaySuccessAmount().hashCode());
-        result = prime * result + ((getPayFailureBalance() == null) ? 0 : getPayFailureBalance().hashCode());
-        result = prime * result + ((getPayFailureAmount() == null) ? 0 : getPayFailureAmount().hashCode());
-        result = prime * result + ((getOwnCustNo() == null) ? 0 : getOwnCustNo().hashCode());
-        result = prime * result + ((getOwnCustName() == null) ? 0 : getOwnCustName().hashCode());
-        result = prime * result + ((getOwnOperOrg() == null) ? 0 : getOwnOperOrg().hashCode());
-        result = prime * result + ((getMakeCustName() == null) ? 0 : getMakeCustName().hashCode());
-        result = prime * result + ((getMakeOperName() == null) ? 0 : getMakeOperName().hashCode());
-        result = prime * result + ((getMakeDate() == null) ? 0 : getMakeDate().hashCode());
-        result = prime * result + ((getMakeTime() == null) ? 0 : getMakeTime().hashCode());
-        result = prime * result + ((getBusinStatus() == null) ? 0 : getBusinStatus().hashCode());
-        result = prime * result + ((getLastStatus() == null) ? 0 : getLastStatus().hashCode());
-        result = prime * result + ((getInterest() == null) ? 0 : getInterest().hashCode());
-        result = prime * result + ((getInterestRate() == null) ? 0 : getInterestRate().hashCode());
-        result = prime * result + ((getTaxBalance() == null) ? 0 : getTaxBalance().hashCode());
-        result = prime * result + ((getTaxRate() == null) ? 0 : getTaxRate().hashCode());
-        result = prime * result + ((getBatchNo() == null) ? 0 : getBatchNo().hashCode());
-        result = prime * result + ((getOperOrg() == null) ? 0 : getOperOrg().hashCode());
-        result = prime * result + ((getRegOperId() == null) ? 0 : getRegOperId().hashCode());
-        result = prime * result + ((getRegOperName() == null) ? 0 : getRegOperName().hashCode());
-        result = prime * result + ((getRegDate() == null) ? 0 : getRegDate().hashCode());
-        result = prime * result + ((getRegTime() == null) ? 0 : getRegTime().hashCode());
-        result = prime * result + ((getModiOperId() == null) ? 0 : getModiOperId().hashCode());
-        result = prime * result + ((getModiOperName() == null) ? 0 : getModiOperName().hashCode());
-        result = prime * result + ((getModiDate() == null) ? 0 : getModiDate().hashCode());
-        result = prime * result + ((getModiTime() == null) ? 0 : getModiTime().hashCode());
-        result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
-        return result;
     }
 }
