@@ -2,6 +2,7 @@ package com.betterjr.modules.commission.service;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -12,10 +13,13 @@ import org.springframework.stereotype.Service;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.MathExtend;
+import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.commission.dao.CommissionDailyStatementMapper;
 import com.betterjr.modules.commission.entity.CommissionDailyStatement;
 import com.betterjr.modules.commission.util.CommissionDateUtils;
+import com.betterjr.modules.generator.SequenceFactory;
 /***
  * 日账单服务类
  * @author hubl
@@ -23,7 +27,24 @@ import com.betterjr.modules.commission.util.CommissionDateUtils;
  */
 @Service
 public class CommissionDailyStatementService  extends BaseService<CommissionDailyStatementMapper, CommissionDailyStatement>{
-
+    
+    public Page<CommissionDailyStatement> queryDailyStatement(Map<String, Object> anParam, int anPageNum, int anPageSize){
+        Map<String,Object> paramMap=new HashMap<String, Object>();
+        
+        if(BetterStringUtils.isNotBlank((String)paramMap.get("beginDate"))){
+            paramMap.put("GTEpayDate", paramMap.get("beginDate"));
+            paramMap.put("LTEpayDate", paramMap.get("endDate"));
+        }
+        if(BetterStringUtils.isNotBlank((String)anParam.get("ownCustNo"))){
+            paramMap.put("ownCustNo", anParam.get("ownCustNo"));
+        }
+        if(BetterStringUtils.isNotBlank((String)anParam.get("businStatus"))){
+            paramMap.put("businStatus", anParam.get("businStatus"));
+        }
+        Page<CommissionDailyStatement> monthlyStatement=this.selectPropertyByPage(paramMap, anPageNum, anPageSize, "1".equals(anParam.get("flag")),"id desc");
+        return monthlyStatement;
+    }
+    
     /***
      * 根据先择的对账月份查询
      * @param anMonth
@@ -71,7 +92,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
     }
     
     /***
-     * 点击下一步时查询显示日账单的基础信息
+     * 新增月账单时点击下一步时查询显示日账单的基础信息调用
      * @param anParam
      * @return
      * @throws ParseException 
@@ -103,6 +124,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         BigDecimal totalPayBalance=new BigDecimal(0.00);// 总发生金额
         BigDecimal totalInterset=new BigDecimal(0.00);// 总利息
         BigDecimal totalTaxBalance=new BigDecimal(0.00);// 总税额
+        List<CommissionDailyStatement> resultDailyStatementList=new ArrayList<CommissionDailyStatement>();
         
         BigDecimal rate=new BigDecimal(0.10); // 利率，从参数表中获得
         BigDecimal taxAmount=new BigDecimal(200); // 税额，从参数表中获得
@@ -126,10 +148,50 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
             dailyStatement.setInterest(interset);
             dailyStatement.setInterestRate(rate);
             dailyStatement.setEndInterestDate(anEndInterestDate);
+            this.updateByPrimaryKey(dailyStatement);
+            resultDailyStatementList.add(dailyStatement);
         }
         
-        return null;
+        monthMap.put("ownCustName", anParam.get("ownCustName"));
+        monthMap.put("monthlyRefNo", SequenceFactory.generate("CommissionDailyStatement.refNo", "#{Date:yyyyMMdd}#{Seq:12}", "MB"));
+        monthMap.put("totalBalance", totalBalance);
+        monthMap.put("payTotalBalance", totalPayBalance);
+        monthMap.put("totalInterset", totalInterset);
+        monthMap.put("totalTaxBalance", totalTaxBalance);
+        monthMap.put("dailyList", resultDailyStatementList);
+        monthMap.put("makeCustName", "深圳市拜特科技股份有限公司");// 参数表中获得
+        monthMap.put("makeDateTime", BetterDateUtils.getDateTime());
+        monthMap.put("endInterestDate", anEndInterestDate);       
+        
+        return monthMap;
     }
     
+    /***
+     * 查询日账单统计的数据
+     * @param anMap
+     * @return
+     */
+    public Map<String,Object> findDailyStatementCount(Map<String,Object> anMap){
+        Map resultMap=this.mapper.selectDailyStatementCount(anMap);
+        logger.info("findDailyStatementCount,resultMap:"+resultMap);
+        return resultMap;
+    }
+    
+    /***
+     * 审核/作废
+     * @param andailyStatementId
+     * @param anBusinStatus
+     * @return
+     */
+    public boolean updateDailyStatement(Long anDailyStatementId,String anBusinStatus){
+        CommissionDailyStatement dailyStatement=this.selectByPrimaryKey(anDailyStatementId);
+        dailyStatement.setLastStatus(dailyStatement.getBusinStatus());
+        dailyStatement.setBusinStatus(anBusinStatus);
+        return this.updateByPrimaryKey(dailyStatement)>0;
+    }
+    
+    public boolean delDailyStatement(Long anDailyStatementId){
+        return this.deleteByPrimaryKey(anDailyStatementId)>0;
+    }
 
 }

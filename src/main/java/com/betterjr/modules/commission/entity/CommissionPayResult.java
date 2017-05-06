@@ -6,6 +6,7 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.betterjr.common.annotation.MetaData;
@@ -21,6 +22,7 @@ public class CommissionPayResult implements BetterjrEntity {
     /**
      * 编号
      */
+    @Id
     @Column(name = "ID",  columnDefinition="INTEGER" )
     @MetaData( value="编号", comments = "编号")
     private Long id;
@@ -599,6 +601,18 @@ public class CommissionPayResult implements BetterjrEntity {
             this.setRegOperId(anOperator.getId());
             this.setRegOperName(anOperator.getName());
 
+            this.setModiOperId(anOperator.getId());
+            this.setModiOperName(anOperator.getName());
+        }
+    }
+
+    /**
+     * @param anOperator
+     */
+    public void modify(final CustOperatorInfo anOperator) {
+        this.setModiDate(BetterDateUtils.getNumDate());
+        this.setModiTime(BetterDateUtils.getNumTime());
+        if (anOperator != null) {
             this.setModiOperId(anOperator.getId());
             this.setModiOperName(anOperator.getName());
         }
