@@ -603,4 +603,16 @@ public class CommissionPayResult implements BetterjrEntity {
             this.setModiOperName(anOperator.getName());
         }
     }
+
+    /**
+     * @param anOperator
+     */
+    public void modify(final CustOperatorInfo anOperator) {
+        this.setModiDate(BetterDateUtils.getNumDate());
+        this.setModiTime(BetterDateUtils.getNumTime());
+        if (anOperator != null) {
+            this.setModiOperId(anOperator.getId());
+            this.setModiOperName(anOperator.getName());
+        }
+    }
 }

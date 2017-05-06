@@ -101,7 +101,7 @@ public class CommissionRecord implements BetterjrEntity {
     @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
     private String operOrg;
 
-    //支付状态  0 未处理  1 支付成功  2 支付失败
+    //支付状态  0 未处理  2 支付成功  1 支付失败
     @Column(name = "C_PAY_STATUS",  columnDefinition="VARCHAR" )
     private String payStatus;
 
@@ -122,7 +122,7 @@ public class CommissionRecord implements BetterjrEntity {
     private String regTime;
     
     @Column(name = "L_MODI_OPERID",  columnDefinition="INTEGER" )
-    private String modiOperId;
+    private Long modiOperId;
     
     @Column(name = "C_MODI_OPERNAME",  columnDefinition="VARCHAR" )
     private String modiOperName;
@@ -348,11 +348,11 @@ public class CommissionRecord implements BetterjrEntity {
         this.regTime = anRegTime;
     }
 
-    public String getModiOperId() {
+    public Long getModiOperId() {
         return this.modiOperId;
     }
 
-    public void setModiOperId(String anModiOperId) {
+    public void setModiOperId(Long anModiOperId) {
         this.modiOperId = anModiOperId;
     }
 
@@ -577,6 +577,13 @@ public class CommissionRecord implements BetterjrEntity {
     public CommissionRecord() {
         super();
     }
+    
+    
+
+    public CommissionRecord(String anRefNo) {
+        super();
+        this.refNo = anRefNo;
+    }
 
     public void initResolveValue(Map<String, Object> anDataMap, int anI, CustOperatorInfo anOperatorInfo) {
         
@@ -595,6 +602,18 @@ public class CommissionRecord implements BetterjrEntity {
             
             BTAssert.notNull(null,"第"+anI+"行记录解析失败"+e.getMessage());
         }
+        
+    }
+
+    public CommissionRecord saveAuditInit(CustOperatorInfo anOperatorInfo) {
+        
+        
+        this.setBusinStatus(CommissionConstantCollentions.COMMISSION_RECORD_BUSIN_STATUS_AUDIT);
+        this.setModiDate(BetterDateUtils.getNumDate());
+        this.setModiTime(BetterDateUtils.getNumTime());
+        this.setModiOperId(anOperatorInfo.getId());
+        this.setModiOperName(anOperatorInfo.getName());
+        return this;
         
     }
    
