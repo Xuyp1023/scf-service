@@ -1,62 +1,83 @@
 package com.betterjr.modules.delivery.entity;
 
 import com.betterjr.common.entity.BetterjrEntity;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.*;
 
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "t_cps_delivery")
 public class DeliveryRecord implements BetterjrEntity {
+    
+    //编号
     @Id
     @Column(name = "ID",  columnDefinition="INTEGER" )
     private Long id;
 
+    //凭证编号
     @Column(name = "C_REFNO",  columnDefinition="VARCHAR" )
     private String refNo;
 
+    //总金额
     @Column(name = "F_TOTAL_BLANCE",  columnDefinition="DECIMAL" )
     private Double totalBlance;
 
+    //总笔数
     @Column(name = "N_TOTAL_AMOUNT",  columnDefinition="DECIMAL" )
     private Double totalAmount;
 
+    //投递日期
     @Column(name = "D_POST_DATE",  columnDefinition="VARCHAR" )
     private String postDate;
 
+    //投递时间
     @Column(name = "T_POST_TIME",  columnDefinition="VARCHAR" )
     private String postTime;
 
+    //接收公司
     @Column(name = "L_POST_CUSTNO",  columnDefinition="INTEGER" )
     private Long postCustNo;
 
+    //接收公司名称
     @Column(name = "C_POST_CUSTNAME",  columnDefinition="VARCHAR" )
     private String postCustName;
 
+    //接收公司机构
     @Column(name = "C_POST_OPERORG",  columnDefinition="VARCHAR" )
     private String postOperOrg;
 
+    //操作公司
     @Column(name = "L_CUSTNO",  columnDefinition="INTEGER" )
     private Long custNo;
 
+    //操作公司名称
     @Column(name = "C_CUSTNAME",  columnDefinition="VARCHAR" )
     private String custName;
 
+    //操作公司机构
     @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
     private String operOrg;
 
+    //业务状态  0未处理  1已投递 2确认
     @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
     private String businStatus;
 
+    //确认日期
     @Column(name = "D_CONFIRM_DATE",  columnDefinition="VARCHAR" )
     private String confirmDate;
 
+    //确认时间
     @Column(name = "T_CONFIRM_TIME",  columnDefinition="VARCHAR" )
     private String confirmTime;
     
-    
+    //确认操作员
     @Column(name = "L_CONFIRM_OPERID",  columnDefinition="INTEGER" )
     private Long confirmOperId;
 
+    //确认操作员名称
     @Column(name = "L_CONFIRM_OPERNAME",  columnDefinition="VARCHAR" )
     private String confirmOperName;
     
@@ -74,6 +95,9 @@ public class DeliveryRecord implements BetterjrEntity {
     
     @Column(name = "N_VERSION",  columnDefinition="VARCHAR" )
     private String version;
+    
+    @Transient
+    private List<DeliveryRecordStatement> recordStatementList=new ArrayList<>();
 
     private static final long serialVersionUID = -189024275871128671L;
 
@@ -252,6 +276,24 @@ public class DeliveryRecord implements BetterjrEntity {
     public void setVersion(String anVersion) {
         this.version = anVersion;
     }
+    
+    public List<DeliveryRecordStatement> getRecordStatementList() {
+        return this.recordStatementList;
+    }
+
+    public void setRecordStatementList(List<DeliveryRecordStatement> anRecordStatementList) {
+        this.recordStatementList = anRecordStatementList;
+    }
+
+    
+    public DeliveryRecord(String anRefNo) {
+        super();
+        this.refNo = anRefNo;
+    }
+
+    public DeliveryRecord() {
+        super();
+    }
 
     @Override
     public String toString() {
@@ -260,7 +302,8 @@ public class DeliveryRecord implements BetterjrEntity {
                 + this.postCustName + ", postOperOrg=" + this.postOperOrg + ", custNo=" + this.custNo + ", custName=" + this.custName + ", operOrg="
                 + this.operOrg + ", businStatus=" + this.businStatus + ", confirmDate=" + this.confirmDate + ", confirmTime=" + this.confirmTime
                 + ", confirmOperId=" + this.confirmOperId + ", confirmOperName=" + this.confirmOperName + ", regOperId=" + this.regOperId
-                + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", version=" + this.version + "]";
+                + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", version=" + this.version
+                + ", recordStatementList=" + this.recordStatementList + "]";
     }
 
     @Override

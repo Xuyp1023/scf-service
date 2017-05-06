@@ -3,6 +3,7 @@ package com.betterjr.modules.commission.service;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -371,13 +372,36 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         
     }
     
+    private CustFileItem uploadCommissionRecordFile(List<CommissionRecord> anRecordList) {
+        
+        logger.info("佣金记录批量审核 ：  saveAuditRecordList  生成佣金记录下载文件   审核人："+UserUtils.getOperatorInfo().getName());
+        BTAssert.notNull(anRecordList,"审核的数据文件为空");
+        //获取佣金记录导出模版文件
+        TemplateExportParams params=new TemplateExportParams("C:\\Users\\xuyp\\Desktop\\佣金数据导出模板.xlsx");
+        Map<String,Object> data=new HashMap<>();
+        data.put("recordList", anRecordList);
+        Workbook book=ExcelExportUtil.exportExcel(params, data);
+        BTAssert.notNull(book,"封装模版产生异常,请稍后重试");
+        FileOutputStream fos;
+        try {
+            fos=new FileOutputStream(new File("d:\\789.xlsx"));
+             book.write(fos);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        CustFileItem fileItem = custFileService.findOne(CommissionConstantCollentions.COMMISSION_FILE_DOWN_FILEITEM_FILEID);//文件上次详情
+        logger.info("佣金记录批量审核 ：  saveAuditRecordList  生成佣金记录下载文件 已经成功上传到服务器   审核人："+UserUtils.getOperatorInfo().getName());
+        return fileItem;
+    }
+
     
     /**
      * 根据佣金记录生成佣金记录文件
      * @param anRecordList
      * @return
      */
-    private CustFileItem uploadCommissionRecordFile(List<CommissionRecord> anRecordList) {
+    private CustFileItem uploadCommissionRecordFileis(List<CommissionRecord> anRecordList) {
         
         logger.info("佣金记录批量审核 ：  saveAuditRecordList  生成佣金记录下载文件   审核人："+UserUtils.getOperatorInfo().getName());
         BTAssert.notNull(anRecordList,"审核的数据文件为空");
@@ -385,13 +409,16 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         CustFileItem fileItem = custFileService.findOne(CommissionConstantCollentions.COMMISSION_FILE_DOWN_FILEITEM_FILEID);//文件上次详情
         BTAssert.notNull(fileItem,"佣金记录导出模版为空");
         InputStream is = dataStoreService.loadFromStore(fileItem);//得到文件输入流
-        TemplateExportParams params=new TemplateExportParams(is);
+        TemplateExportParams params=new TemplateExportParams("12321213",is);
+        //TemplateExportParams params=new TemplateExportParams("C:\\Users\\xuyp\\Desktop\\佣金数据导出模板.xlsx");
         Map<String,Object> data=new HashMap<>();
         data.put("recordList", anRecordList);
         Workbook book=ExcelExportUtil.exportExcel(params, data);
         BTAssert.notNull(book,"封装模版产生异常,请稍后重试");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
+           // FileOutputStream fos=new FileOutputStream(new File("d:\\789.xlsx"));
+           // book.write(fos);
             book.write(os);
         }
         catch (IOException e) {

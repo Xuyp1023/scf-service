@@ -45,7 +45,6 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
      */
     public List<CommissionRecord> saveDeleteStatusByRefNo(Long anFileId) {
         
-        
         BTAssert.notNull(anFileId,"删除佣金文件条件不符,");
         Map<String,Object> queryMap = QueryTermBuilder.newInstance()
                 .put("fileId", anFileId).build();
@@ -175,6 +174,9 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
         anMap.put("payStatus", CommissionConstantCollentions.COMMISSION_PAY_STATUS_NO_HANDLE);
         anMap.put("businStatus",CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_NO_HANDLE);
         List<CommissionRecord> recordList = this.selectByClassProperty(CommissionRecord.class, anMap);
+        if(Collections3.isEmpty(recordList)){
+            return CommissionRecordAuditResult.fail("当前没有记录可供审核，当前记录已经审核完毕");
+        }
         int recordAmount=0;
         BigDecimal blance=new BigDecimal(0);
         Set<Long> fileSet=new HashSet<>();

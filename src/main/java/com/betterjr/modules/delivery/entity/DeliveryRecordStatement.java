@@ -7,52 +7,69 @@ import javax.persistence.*;
 @Entity
 @Table(name = "t_cps_delivery_record")
 public class DeliveryRecordStatement implements BetterjrEntity {
+    
+    //编号
     @Id
     @Column(name = "ID",  columnDefinition="INTEGER" )
     private Long id;
 
+    //投递记录主表编号
     @Column(name = "L_DELIVERY_ID",  columnDefinition="INTEGER" )
     private Long deliverId;
 
+    //投递记录主表凭证号
     @Column(name = "C_DELIVERY_REFNO",  columnDefinition="VARCHAR" )
     private String deliverRefNo;
 
+    //月账单编号
     @Column(name = "L_MONTHLY_STATEMENT_ID",  columnDefinition="INTEGER" )
     private Long monthlyStatementId;
 
+    //月账单凭证号
     @Column(name = "C_MONTHLY_STATEMENT_REFNO",  columnDefinition="VARCHAR" )
     private String monthlyStatementRefNo;
 
+    //开始时间
     @Column(name = "D_PAY_BEGIN_DATE",  columnDefinition="VARCHAR" )
     private String payBeginDate;
 
+    //结束时间
     @Column(name = "D_PAY_END_DATE",  columnDefinition="VARCHAR" )
     private String payEndDate;
 
+    //总金额
     @Column(name = "F_TOTAL_BLANCE",  columnDefinition="DECIMAL" )
     private Double totalBlance;
 
+    //总的佣金笔数
     @Column(name = "N_TOTAL_AMOUNT",  columnDefinition="INTEGER" )
     private Long totalAmount;
 
+    //总的付成功的金额
     @Column(name = "F_PAY_TOTAL_SUCCESS_BALANCE",  columnDefinition="DECIMAL" )
     private Double payTotalSuccessBlance;
 
+    //总的付成功的项
     @Column(name = "N_PAY_TOTAL_SUCCESS_AMOUNT",  columnDefinition="INTEGER" )
     private Long payTotalSuccessitems;
 
+    //总的付失败的金额
     @Column(name = "F_PAY_TOTAL_FAILURE_BALANCE",  columnDefinition="DECIMAL" )
     private Double payTotalFailureBlance;
 
+    //总的付失败的项数
     @Column(name = "N_PAY_TOTAL_FAILURE_AMOUNT",  columnDefinition="INTEGER" )
     private Long payTotalFailureitems;
 
+    //拥有公司ID
     @Column(name = "L_OWN_CUSTNO",  columnDefinition="INTEGER" )
     private Long ownCustNo;
 
+    //拥有公司名称
     @Column(name = "C_OWN_CUSTNAME",  columnDefinition="VARCHAR" )
     private String ownCustName;
 
+    //拥有公司操作结构
     @Column(name = "C_OWN_OPERORG",  columnDefinition="VARCHAR" )
     private String ownOperOrg;
     

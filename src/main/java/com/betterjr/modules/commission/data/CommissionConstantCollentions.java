@@ -31,6 +31,6 @@ public class CommissionConstantCollentions {
     
     public static final Integer COMMISSION_FILE_BEGIN_ROW=1; //佣金文件解析的开始行
     
-    public static final Long COMMISSION_FILE_DOWN_FILEITEM_FILEID=1005028l;//文件下载模版
+    public static final Long COMMISSION_FILE_DOWN_FILEITEM_FILEID=1005033l;//文件下载模版
 
 }
