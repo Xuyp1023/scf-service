@@ -102,6 +102,8 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
      */
     public List<CommissionRecord> saveRecordListWithMap(List<Map<String, Object>> anListData) {
         
+        
+        BTAssert.notNull(anListData,"当前解析文件没有数据");
         List<CommissionRecord> records=new ArrayList<>();
         int i=CommissionConstantCollentions.COMMISSION_FILE_BEGIN_ROW;
         try{

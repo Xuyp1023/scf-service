@@ -97,7 +97,7 @@ public class DeliveryRecordService extends BaseService<DeliveryRecordMapper, Del
         BTAssert.notNull(anMap.get("ownCustNo"),"请选择传递的企业");
         List<Long> monthlyStatementIdList = getMonthlyStatementRefNoList(anMap.get("monthList").toString());
         //查询当前公司的佣金文件
-        Map<String,Object> queryMap = QueryTermBuilder.newInstance().put("operOrg", UserUtils.getOperatorInfo().getOperOrg())
+        Map<String,Object> queryMap = QueryTermBuilder.newInstance().put("ownOperOrg", UserUtils.getOperatorInfo().getOperOrg())
         .put("id", monthlyStatementIdList)
         .put("businStatus", "2")
         .put("ownCustNo", anMap.get("ownCustNo"))
@@ -133,7 +133,9 @@ public class DeliveryRecordService extends BaseService<DeliveryRecordMapper, Del
         
         //2更新返回前端数据快递主表信息
         DeliveryRecord record = findDeliveryRecord(refNo);
-        BTAssert.notNull(record.getRecordStatementList(),"投递的账单只剩下最后一张月账单，不允许删除");
+        if(Collections3.isEmpty(record.getRecordStatementList())){
+            BTAssert.notNull(null,"投递的账单只剩下最后一张月账单，不允许删除");
+        }
         //如果快递已经投递 或者已经确认，不允许移除
         checkStatus(record.getBusinStatus(), DeliveryConstantCollentions.DELIVERY_RECORD_BUSIN_STATUS_EXPRESS, true, "当前账单已经投递，不允许移除");
         checkStatus(record.getBusinStatus(), DeliveryConstantCollentions.DELIVERY_RECORD_BUSIN_STATUS_CONFIRM, true, "当前账单已经投递并确认，不允许移除");

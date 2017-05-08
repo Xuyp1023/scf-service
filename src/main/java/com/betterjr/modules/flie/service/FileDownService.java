@@ -2,6 +2,8 @@ package com.betterjr.modules.flie.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -54,13 +56,15 @@ public class FileDownService {
         //TemplateExportParams params=new TemplateExportParams("C:\\Users\\xuyp\\Desktop\\佣金数据导出模板.xlsx");
         Map<String,Object> data=new HashMap<>();
         data.put("recordList", anRecordList);
+        data.put("companyName", "   ");
         Workbook book=ExcelExportUtil.exportExcel(params, data);
         BTAssert.notNull(book,"封装模版产生异常,请稍后重试");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
-           // FileOutputStream fos=new FileOutputStream(new File("d:\\789.xlsx"));
-           // book.write(fos);
+           FileOutputStream fos=new FileOutputStream(new File("d:\\789.xlsx"));
+            book.write(fos);
             book.write(os);
+            fos.close();
         }
         catch (IOException e) {
             e.printStackTrace();

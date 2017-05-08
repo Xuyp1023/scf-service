@@ -591,7 +591,7 @@ public class CommissionRecord implements BetterjrEntity {
             this.setRegOperId(anOperatorInfo.getId());
             this.setRegOperName(anOperatorInfo.getName());
             this.setVersion("1");
-            this.refNo = SequenceFactory.generate("PLAT_COMMISSION_RECORD", this.getOperOrg(), "RP#{Date:yyMMdd}#{Seq:8}", "D");
+            this.refNo = SequenceFactory.generate("PLAT_COMMISSION_RECORD", this.getOperOrg(), "CP#{Date:yyMMdd}#{Seq:8}", "D");
             this.id=SerialGenerator.getLongValue("CommissionRecord.id");
         }
         catch (Exception e) {
