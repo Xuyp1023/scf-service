@@ -152,11 +152,37 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
      * @param anPageSize
      * @return
      */
-    protected Page<CommissionPayResultRecord> queryUncheckPayResultRecords(final Long anPayResultId, final int anFlag, final int anPageNum, final int anPageSize) {
+    protected Page<CommissionPayResultRecord> queryAllPayResultRecords(final Long anPayResultId, final int anFlag, final int anPageNum, final int anPageSize) {
+
+        final Map<String, Object> conditionMap = new HashMap<>();
+        conditionMap.put("payResultId", anPayResultId);
+
+        return this.selectPropertyByPage(conditionMap, anPageNum, anPageSize, anFlag == 1);
+    }
+
+    /**
+     * @param anPayResultId
+     * @param anFlag
+     * @param anPageNum
+     * @param anPageSize
+     * @return
+     */
+    protected Page<CommissionPayResultRecord> queryUncheckPayResultRecords(final Map<String, Object> anParam, final Long anPayResultId, final int anFlag, final int anPageNum, final int anPageSize) {
 
         final Map<String, Object> conditionMap = new HashMap<>();
         conditionMap.put("payResultId", anPayResultId);
         conditionMap.put("businStatus", CommissionPayResultRecordStatus.NORMAL);
+
+        final String payTargetBankAccountName = (String) anParam.get("payTargetBankAccountName");
+        final String payTargetBankAccount = (String) anParam.get("payTargetBankAccount");
+
+        if (BetterStringUtils.isNotBlank(payTargetBankAccountName)) {
+            conditionMap.put("LIKEpayTargetBankAccountName", "%" + payTargetBankAccountName + "%");
+        }
+
+        if (BetterStringUtils.isNotBlank(payTargetBankAccount)) {
+            conditionMap.put("LIKEpayTargetBankAccount", "%" + payTargetBankAccount + "%");
+        }
 
         return this.selectPropertyByPage(conditionMap, anPageNum, anPageSize, anFlag == 1);
     }
@@ -281,7 +307,7 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
      * @param anPayDate
      * @return
      */
-    public Map<String, Object> calcPayResultRecord(final Long anCustNo, final String anPayDate) {
+    public CalcPayResult calcPayResultRecord(final Long anCustNo, final String anPayDate) {
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
         return this.mapper.calcPayResultRecordByPayDate(anCustNo, anPayDate);
     }

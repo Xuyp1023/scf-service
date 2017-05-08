@@ -277,9 +277,12 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
         final Map<String,Object> map = QueryTermBuilder.newInstance()
                 .put("custNo",anCustNo)
                 .put("importDate", anImportDate)
+                .put("businStatus", "1")
                 .build();
         return this.selectPropertyByPage(map, anPageNum, anPageSize, anFlag == 1);
     }
 
-
+    public Map<String, Object> findRecordListCount(final Long anCustNo, final String anImportDate) {
+        return this.mapper.countRecordList(anCustNo, anImportDate);
+    }
 }

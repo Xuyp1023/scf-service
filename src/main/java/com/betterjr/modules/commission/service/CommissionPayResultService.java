@@ -126,7 +126,17 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
     public Page<CommissionRecord> queryUncheckCommissionRecord(final Long anCustNo, final String anImportDate, final int anFlag, final int anPageNum, final int anPageSize) {
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
 
+        BTAssert.notNull(anCustNo, "公司编号不允许为空！");
+        BTAssert.isTrue(BetterStringUtils.isNotBlank(anImportDate), "导入日期不允许为空");
         return commissionRecordService.queryRecordListByImportDate(anCustNo, anImportDate, anFlag, anPageNum, anPageSize);
+    }
+
+    public Map<String, Object> findCountCommissionRecord(final Long anCustNo, final String anImportDate) {
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
+
+        BTAssert.notNull(anCustNo, "公司编号不允许为空！");
+        BTAssert.isTrue(BetterStringUtils.isNotBlank(anImportDate), "导入日期不允许为空");
+        return commissionRecordService.findRecordListCount(anCustNo, anImportDate);
     }
 
     // 查询日对账记录 未确认待确认
@@ -134,7 +144,9 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
 
         final Map<String, Object> conditionMap = new HashMap<>();
-        conditionMap.put("ownCustNo", anCustNo);
+        if (anCustNo != null) {
+            conditionMap.put("ownCustNo", anCustNo);
+        }
         if (BetterStringUtils.isNotBlank(anPayDate)) {
             conditionMap.put("payDate", anPayDate);
         }
@@ -148,7 +160,9 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
 
         final Map<String, Object> conditionMap = new HashMap<>();
-        conditionMap.put("ownCustNo", anCustNo);
+        if (anCustNo != null) {
+            conditionMap.put("ownCustNo", anCustNo);
+        }
         if (BetterStringUtils.isNotBlank(anPayDate)) {
             conditionMap.put("payDate", anPayDate);
         }
@@ -162,7 +176,9 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
 
         final Map<String, Object> conditionMap = new HashMap<>();
-        conditionMap.put("ownCustNo", anCustNo);
+        if (anCustNo != null) {
+            conditionMap.put("ownCustNo", anCustNo);
+        }
         if (BetterStringUtils.isNotBlank(anPayDate)) {
             conditionMap.put("payDate", anPayDate);
         }
@@ -172,12 +188,21 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
     }
 
     // 未对账记录列表
-    public Page<CommissionPayResultRecord> queryUncheckPayResultRecords(final Long anPayResultId, final int anFlag, final int anPageNum, final int anPageSize) {
+    public Page<CommissionPayResultRecord> queryAllPayResultRecords(final Long anPayResultId, final int anFlag, final int anPageNum, final int anPageSize) {
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
 
         findByIdAndCheckStatus(anPayResultId, null);
 
-        return commissionPayResultRecordService.queryUncheckPayResultRecords(anPayResultId, anFlag, anPageNum, anPageSize);
+        return commissionPayResultRecordService.queryAllPayResultRecords(anPayResultId, anFlag, anPageNum, anPageSize);
+    }
+
+    // 未对账记录列表
+    public Page<CommissionPayResultRecord> queryUncheckPayResultRecords(final Map<String, Object> anParam, final Long anPayResultId, final int anFlag, final int anPageNum, final int anPageSize) {
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
+
+        findByIdAndCheckStatus(anPayResultId, null);
+
+        return commissionPayResultRecordService.queryUncheckPayResultRecords(anParam, anPayResultId, anFlag, anPageNum, anPageSize);
     }
 
     // 成功列表
@@ -296,5 +321,21 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
         commissionPayResultRecordService.saveWritebackRecordStatus(anPayResultId);
 
         return Boolean.TRUE;
+    }
+
+    /**
+     * @param anPayResultId
+     * @return
+     */
+    public Map<String, Object> findCountPayResultRecord(final Long anPayResultId) {
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
+        final CommissionPayResult payResult = findByIdAndCheckStatus(anPayResultId, CommissionPayResultStatus.NORMAL);
+
+        final Map<String, Object> result = new HashMap<>();
+        final CalcPayResult calcPayResult = commissionPayResultRecordService.calcPayResultRecord(anPayResultId);
+        result.put("payResult", payResult);
+        result.put("calcPayResult", calcPayResult);
+
+        return result;
     }
 }
