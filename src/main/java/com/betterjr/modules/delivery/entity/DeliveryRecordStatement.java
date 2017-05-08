@@ -89,6 +89,14 @@ public class DeliveryRecordStatement implements BetterjrEntity {
     @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
     private String businStatus;
     
+    //传递状态  0 未投递  1 已投递   2已确认
+    @Column(name = "C_EXPRESS_STATUS",  columnDefinition="VARCHAR" )
+    private String expressStatus;
+    
+    //对账月份yyyyMM
+    @Column(name = "D_BILL_MONTH",  columnDefinition="VARCHAR" )
+    private String billMonth;
+    
 
     @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
     private String operOrg;
@@ -109,6 +117,23 @@ public class DeliveryRecordStatement implements BetterjrEntity {
     private String version;
 
     private static final long serialVersionUID = 1493717117087L;
+    
+    
+    public String getBillMonth() {
+        return this.billMonth;
+    }
+
+    public void setBillMonth(String anBillMonth) {
+        this.billMonth = anBillMonth;
+    }
+
+    public String getExpressStatus() {
+        return this.expressStatus;
+    }
+
+    public void setExpressStatus(String anExpressStatus) {
+        this.expressStatus = anExpressStatus;
+    }
 
     public String getBusinStatus() {
         return this.businStatus;
@@ -430,9 +455,10 @@ public class DeliveryRecordStatement implements BetterjrEntity {
                 + this.payBeginDate + ", payEndDate=" + this.payEndDate + ", totalBlance=" + this.totalBlance + ", totalAmount=" + this.totalAmount
                 + ", payTotalSuccessBlance=" + this.payTotalSuccessBlance + ", payTotalSuccessitems=" + this.payTotalSuccessitems
                 + ", payTotalFailureBlance=" + this.payTotalFailureBlance + ", payTotalFailureitems=" + this.payTotalFailureitems + ", ownCustNo="
-                + this.ownCustNo + ", ownCustName=" + this.ownCustName + ", ownOperOrg=" + this.ownOperOrg + ", operOrg=" + this.operOrg
-                + ", regOperId=" + this.regOperId + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate + ", regTime=" + this.regTime
-                + ", version=" + this.version + "]";
+                + this.ownCustNo + ", ownCustName=" + this.ownCustName + ", ownOperOrg=" + this.ownOperOrg + ", businStatus=" + this.businStatus
+                + ", expressStatus=" + this.expressStatus + ", billMonth=" + this.billMonth + ", operOrg=" + this.operOrg + ", regOperId="
+                + this.regOperId + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", version="
+                + this.version + "]";
     }
 
     public void saveAddInit() {
@@ -445,6 +471,7 @@ public class DeliveryRecordStatement implements BetterjrEntity {
         this.setRegTime(BetterDateUtils.getNumTime());
         this.setVersion("1");
         this.businStatus=DeliveryConstantCollentions.DELIVERY_STATEMENT_BUSIN_STATUS_CANUSERD;
+        this.expressStatus=DeliveryConstantCollentions.DELIVERY_STATEMENT_EXPRESS_STATUS_NOEXPRESS;
     }
 
     public DeliveryRecordStatement(Long anId) {

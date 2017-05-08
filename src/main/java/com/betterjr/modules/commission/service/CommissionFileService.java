@@ -1,7 +1,5 @@
 package com.betterjr.modules.commission.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,9 +25,11 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.MathExtend;
+import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
@@ -81,6 +81,9 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         BTAssert.notNull(anFile, "新增佣金文件为空");
         BTAssert.notNull(anFile.getFileId(), "新增佣金文件参数出错,文件id为空");
         BTAssert.notNull(anFile.getCustNo(), "新增佣金文件参数出错,供应商为空");
+        if(!checkFilePermitOperator(anFile.getCustNo(), BetterDateUtils.getNumDate())){
+            BTAssert.notNull(null, "今天已经审核了全部文件，请明天再上传解析");
+        }
         logger.info("Begin to add addCommissionFile"+UserUtils.getOperatorInfo().getName());
         CustFileItem fileItem = custFileDubboService.findOne(anFile.getFileId());
         anFile.saveAddinit(UserUtils.getOperatorInfo(),fileItem);
@@ -91,7 +94,7 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         logger.info("success to add addCommissionFile"+UserUtils.getOperatorInfo().getName());
         return anFile;
     }
-
+    
     /**
      * 佣金文件查询
      * @param anQueryMap 查询条件
@@ -362,9 +365,9 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         CommissionFile file = this.selectOne(new CommissionFile(anFileId));
         checkAuditFileStatus(file, UserUtils.getOperatorInfo());
         file.saveAuditInit(UserUtils.getOperatorInfo());
-        List<CommissionRecord> recordList=recordService.queryRecordListByFileId(anFileId);
-        CustFileItem fileItem=uploadCommissionRecordFile(recordList);
-        file.setDownFileId(fileItem.getId());
+        //List<CommissionRecord> recordList=recordService.queryRecordListByFileId(anFileId);
+        //CustFileItem fileItem=uploadCommissionRecordFile(recordList);
+        //file.setDownFileId(fileItem.getId());
         this.updateByPrimaryKey(file);
         
         logger.info("佣金记录批量审核 ：  saveAuditRecordList  审核佣金记录文件  saveAuditFile  成功 审核人："+UserUtils.getOperatorInfo().getName());
@@ -402,36 +405,7 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
      * @param anRecordList
      * @return
      */
-    private CustFileItem uploadCommissionRecordFileis(List<CommissionRecord> anRecordList) {
-        
-        logger.info("佣金记录批量审核 ：  saveAuditRecordList  生成佣金记录下载文件   审核人："+UserUtils.getOperatorInfo().getName());
-        BTAssert.notNull(anRecordList,"审核的数据文件为空");
-        //获取佣金记录导出模版文件
-        CustFileItem fileItem = custFileService.findOne(CommissionConstantCollentions.COMMISSION_FILE_DOWN_FILEITEM_FILEID);//文件上次详情
-        BTAssert.notNull(fileItem,"佣金记录导出模版为空");
-        InputStream is = dataStoreService.loadFromStore(fileItem);//得到文件输入流
-        TemplateExportParams params=new TemplateExportParams(is);
-        //TemplateExportParams params=new TemplateExportParams("C:\\Users\\xuyp\\Desktop\\佣金数据导出模板.xlsx");
-        Map<String,Object> data=new HashMap<>();
-        data.put("recordList", anRecordList);
-        Workbook book=ExcelExportUtil.exportExcel(params, data);
-        BTAssert.notNull(book,"封装模版产生异常,请稍后重试");
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        try {
-           // FileOutputStream fos=new FileOutputStream(new File("d:\\789.xlsx"));
-           // book.write(fos);
-            book.write(os);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        byte[] b = os.toByteArray();
-        ByteArrayInputStream in = new ByteArrayInputStream(b);
-        String fileName=anRecordList.get(0).getCustName()+anRecordList.get(0).getFileId()+"佣金数据导出."+fileItem.getFileType();
-        CustFileItem item = dataStoreService.saveStreamToStore(in, fileItem.getFileType(),fileName );
-        logger.info("佣金记录批量审核 ：  saveAuditRecordList  生成佣金记录下载文件 已经成功上传到服务器   审核人："+UserUtils.getOperatorInfo().getName());
-        return item;
-    }
+   
 
     private void checkAuditFileStatus(CommissionFile anFile, CustOperatorInfo anOperatorInfo) {
         
@@ -482,6 +456,62 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         
         return fileList;
         
+    }
+    
+    /**
+     * 检查当前企业的解析记录是否审核完全，如果已经审核完成，不允许再次上传文件解析
+     * true  表明今天还没有审核文件
+     * false  表明今天已经把文件审核完成，不需要再次上传文件解析
+     * @param anCustNo
+     * @param anImportDate
+     * @return
+     */
+    public boolean checkFilePermitOperator(Long anCustNo,String anImportDate){
+        
+        Map queryMap = QueryTermBuilder.newInstance()
+        .put("custNo", anCustNo)
+        .put("importDate", anImportDate)
+        .put("businStatus", CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_AUDIT)
+        .build();
+        List<CommissionFile> fileList = this.selectByProperty(queryMap);
+        if(Collections3.isEmpty(fileList)){
+            List<String> payList=new ArrayList<>();
+            payList.add(CommissionConstantCollentions.COMMISSION_PAY_STATUS_SUCCESS);
+            payList.add(CommissionConstantCollentions.COMMISSION_PAY_STATUS_FAILURE);
+            
+            Map queryMap2 = QueryTermBuilder.newInstance()
+            .put("custNo", anCustNo)
+            .put("importDate", anImportDate)
+            .put("payStatus", payList)
+            .build();
+            List<CommissionFile> fileList2 = this.selectByProperty(queryMap2);
+            
+            if(Collections3.isEmpty(fileList2)){
+                return true;
+            }
+            
+        }
+        return false;
+    }
+    
+    /**
+     * 如果企业的所有文件已经审核完成，返回true
+     * 
+     * @param anCustNo
+     * @param anImportDate
+     * @return
+     */
+    public boolean checkFileAuditFinish(Long anCustNo,String anImportDate){
+        
+        
+        Map queryMap = QueryTermBuilder.newInstance()
+                .put("custNo", anCustNo)
+                .put("importDate", anImportDate)
+                .put("businStatus", CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_AUDIT)
+                .build();
+        List<CommissionFile> fileList = this.selectByProperty(queryMap);
+        
+        return Collections3.isEmpty(fileList)?false:true;
     }
 
 

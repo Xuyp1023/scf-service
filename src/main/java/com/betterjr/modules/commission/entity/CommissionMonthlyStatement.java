@@ -259,6 +259,10 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     @MetaData( value="结息日期", comments = "结息日期")
     private String endInterestDate;
     
+    //对账月份yyyyMM
+    @Column(name = "D_BILL_MONTH",  columnDefinition="VARCHAR" )
+    private String billMonth;
+    
     private static final long serialVersionUID = 1493796206916L;
 
     public Long getId() {
@@ -571,6 +575,14 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
 
     public void setBatchNo(Long anBatchNo) {
         this.batchNo = anBatchNo;
+    }
+
+    public String getBillMonth() {
+        return this.billMonth;
+    }
+
+    public void setBillMonth(String anBillMonth) {
+        this.billMonth = anBillMonth;
     }
 
     @Override

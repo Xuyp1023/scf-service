@@ -456,6 +456,8 @@ public class DeliveryRecord implements BetterjrEntity {
         this.setRegOperId(anOperatorInfo.getId());
         this.setRegOperName(anOperatorInfo.getName());
         this.setVersion("1");
+        this.setPostDate(BetterDateUtils.getNumDate());
+        this.setPostTime(BetterDateUtils.getNumTime());
         this.setPostCustName(anStatement.getOwnCustName());
         this.setPostCustNo(anStatement.getOwnCustNo());
         this.setPostOperOrg(anStatement.getOwnOperOrg());

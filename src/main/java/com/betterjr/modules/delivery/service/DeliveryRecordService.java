@@ -123,6 +123,7 @@ public class DeliveryRecordService extends BaseService<DeliveryRecordMapper, Del
         BTAssert.notNull(anStatementId,"修改的条件不正确");
         DeliveryRecordStatement statement = recordStatementService.selectOne(new DeliveryRecordStatement(anStatementId));
         BTAssert.notNull(statement,"修改的条件不正确");
+        checkStatus(statement.getOperOrg(),UserUtils.getOperOrg() , false, "你没有当前记录的操作权限");
         String refNo = statement.getDeliverRefNo();//快递主表id
         Long monthlyId = statement.getMonthlyStatementId();//月账单id
         
@@ -145,6 +146,7 @@ public class DeliveryRecordService extends BaseService<DeliveryRecordMapper, Del
         
         //3 更新月账单状态信息
         montylyService.saveMonthlyStatement(monthlyId, "2");
+        
         
         return record;
         
@@ -169,7 +171,14 @@ public class DeliveryRecordService extends BaseService<DeliveryRecordMapper, Del
             montylyService.saveMonthlyStatement(monthlyId, "4");
         }
         record.saveExpressInit(UserUtils.getOperatorInfo());
-        //更新自己的快递信息
+        //2保存月账单明细状态
+        for(DeliveryRecordStatement statement:record.getRecordStatementList()){
+            
+            recordStatementService.saveUpdateStatementExpressStatus(statement.getId(), DeliveryConstantCollentions.DELIVERY_STATEMENT_EXPRESS_STATUS_EXPRESS); 
+            
+        }
+        
+        //3 更新自己的快递信息
         this.updateByPrimaryKeySelective(record);
         
         return record;
@@ -185,10 +194,17 @@ public class DeliveryRecordService extends BaseService<DeliveryRecordMapper, Del
     public DeliveryRecord saveConfirmRecordByRefNo(String anRefNo){
         
         BTAssert.notNull(anRefNo,"确认的账单不正确");
-        DeliveryRecord record = this.selectOne(new DeliveryRecord(anRefNo));
+        DeliveryRecord record =findDeliveryRecord(anRefNo);
         checkStatus(record.getBusinStatus(), DeliveryConstantCollentions.DELIVERY_RECORD_BUSIN_STATUS_CONFIRM, true, "当前账单已经投递并确认，请不要重复确认");
         checkStatus(record.getPostOperOrg(), UserUtils.getOperatorInfo().getOperOrg(), false, "你没有确认当前账单的权限");
         record.saveConfirmInit(UserUtils.getOperatorInfo());
+      //1保存月账单明细状态
+        for(DeliveryRecordStatement statement:record.getRecordStatementList()){
+            
+            recordStatementService.saveUpdateStatementExpressStatus(statement.getId(), DeliveryConstantCollentions.DELIVERY_STATEMENT_EXPRESS_STATUS_CONFIREM); 
+            
+        }
+        //2 更新投递详情信息
         this.updateByPrimaryKeySelective(record);
         return record;
         
@@ -243,6 +259,7 @@ public class DeliveryRecordService extends BaseService<DeliveryRecordMapper, Del
             statement.setPayTotalSuccessitems(monthly.getPayTotalAmount());
             statement.setTotalAmount(monthly.getTotalAmount());
             statement.setTotalBlance(monthly.getTotalBalance());
+            statement.setBillMonth(monthly.getBillMonth());
             statementList.add(statement);
         }
         record.setRecordStatementList(statementList);
