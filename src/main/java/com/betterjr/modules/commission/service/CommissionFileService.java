@@ -8,13 +8,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -377,9 +377,10 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         logger.info("佣金记录批量审核 ：  saveAuditRecordList  生成佣金记录下载文件   审核人："+UserUtils.getOperatorInfo().getName());
         BTAssert.notNull(anRecordList,"审核的数据文件为空");
         //获取佣金记录导出模版文件
-        TemplateExportParams params=new TemplateExportParams("C:\\Users\\xuyp\\Desktop\\佣金数据导出模板.xlsx");
+        TemplateExportParams params=new TemplateExportParams("C:\\Users\\xuyp\\Desktop\\数据导出模版.xlsx");
         Map<String,Object> data=new HashMap<>();
         data.put("recordList", anRecordList);
+        data.put("editDate", new Date());
         Workbook book=ExcelExportUtil.exportExcel(params, data);
         BTAssert.notNull(book,"封装模版产生异常,请稍后重试");
         FileOutputStream fos;
@@ -409,7 +410,7 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         CustFileItem fileItem = custFileService.findOne(CommissionConstantCollentions.COMMISSION_FILE_DOWN_FILEITEM_FILEID);//文件上次详情
         BTAssert.notNull(fileItem,"佣金记录导出模版为空");
         InputStream is = dataStoreService.loadFromStore(fileItem);//得到文件输入流
-        TemplateExportParams params=new TemplateExportParams("12321213",is);
+        TemplateExportParams params=new TemplateExportParams(is);
         //TemplateExportParams params=new TemplateExportParams("C:\\Users\\xuyp\\Desktop\\佣金数据导出模板.xlsx");
         Map<String,Object> data=new HashMap<>();
         data.put("recordList", anRecordList);
