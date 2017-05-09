@@ -11,6 +11,10 @@ import javax.persistence.Table;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.selectkey.SerialGenerator;
+import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.UserUtils;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -665,5 +669,23 @@ public class CommissionDailyStatement implements BetterjrEntity {
         result = prime * result + ((getModiTime() == null) ? 0 : getModiTime().hashCode());
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
         return result;
+    }
+    
+    public void initValue(){
+        this.id = SerialGenerator.getLongValue("CommissionDailyStatement.id");   
+        this.makeTime= BetterDateUtils.getNumTime();
+        this.regDate = BetterDateUtils.getNumDate();
+        this.regTime = BetterDateUtils.getNumTime();
+        this.modiDate = BetterDateUtils.getNumDate();
+        this.modiTime = BetterDateUtils.getNumTime();
+        this.businStatus="1";
+        final CustOperatorInfo custOperator = (CustOperatorInfo) UserUtils.getPrincipal().getUser();
+        if(custOperator!=null){
+            this.operOrg=custOperator.getOperOrg();
+            this.regOperId=custOperator.getId();
+            this.regOperName=custOperator.getName();
+            this.modiOperId=custOperator.getId();
+            this.modiOperName=custOperator.getName();
+        }
     }
 }

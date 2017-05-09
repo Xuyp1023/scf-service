@@ -61,5 +61,9 @@ public interface CommissionPayResultRecordMapper extends Mapper<CommissionPayRes
             + "WHERE cr.ID = cprr.L_RECORD_ID AND cprr.L_PAY_RESULT_ID = #{payResultId}")
     @ResultType(Long.class)
     public Long writebackRecordStatus(@Param("payResultId") Long anPayResultId);
+    
+    @Update("update t_cps_pay_result_record set C_BUSIN_STATUS=#{businStatus} where d_pay_date=#{payDate} and l_custno=#{ownCustNo}")
+    @ResultType(Long.class)
+    public Long saveRecordStatus(Map<String, Object> param);
 
 }
