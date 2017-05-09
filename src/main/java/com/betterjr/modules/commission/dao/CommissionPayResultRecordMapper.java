@@ -19,8 +19,8 @@ public interface CommissionPayResultRecordMapper extends Mapper<CommissionPayRes
 
     @Insert("INSERT INTO t_cps_pay_result_record(ID, C_REFNO, L_PAY_RESULT_ID, L_RECORD_ID, C_RECORD_REFNO, "
             + "D_IMPORT_DATE, T_IMPORT_TIME, D_PAY_DATE, F_PAY_BALANCE, C_PAY_TARGET_BANK, C_PAY_TARGET_BANK_NAME, C_PAY_TARGET_BANK_ACCO, "
-            + "C_PAY_TARGET_BANK_ACCO_NAME, L_CUSTNO, C_CUSTNAME, C_OPERORG, L_REG_OPERID, C_REG_OPERNAME, D_REG_DATE, T_REG_TIME, C_PAY_RESULT, C_BUSIN_STATUS)  "
-            + "SELECT ID,C_REFNO,#{payResultId}, ID,C_REFNO, D_IMPORT_DATE, T_IMPORT_TIME, #{payDate}, F_BALANCE, C_BANK, C_BANK_NAME, C_BANK_ACCOUNT, C_BANK_ACCOUNT_NAME, "
+            + "C_PAY_TARGET_BANK_ACCO_NAME, C_PAY_TARGET_MOBILENO, L_CUSTNO, C_CUSTNAME, C_OPERORG, L_REG_OPERID, C_REG_OPERNAME, D_REG_DATE, T_REG_TIME, C_PAY_RESULT, C_BUSIN_STATUS)  "
+            + "SELECT ID,C_REFNO,#{payResultId}, ID,C_REFNO, D_IMPORT_DATE, T_IMPORT_TIME, #{payDate}, F_BALANCE, C_BANK, C_BANK_NAME, C_BANK_ACCOUNT, C_BANK_ACCOUNT_NAME, C_CONTACTS_MOBILENO, "
             + "#{custNo}, #{custName}, #{operOrg}, #{regOperId}, #{regOperName}, #{regDate}, #{regTime}, '0', '0' FROM t_cps_record tcr "
             + "WHERE tcr.L_CUSTNO = #{custNo} AND tcr.C_OPERORG = #{operOrg} AND tcr.D_IMPORT_DATE = #{importDate}")
     public int createPayResultRecord(Map<String, Object> param);
@@ -64,7 +64,7 @@ public interface CommissionPayResultRecordMapper extends Mapper<CommissionPayRes
             + "WHERE cr.ID = cprr.L_RECORD_ID AND cprr.L_PAY_RESULT_ID = #{payResultId}")
     @ResultType(Long.class)
     public Long writebackRecordStatus(@Param("payResultId") Long anPayResultId);
-    
+
     @Update("update t_cps_pay_result_record set C_BUSIN_STATUS=#{businStatus} where d_pay_date=#{payDate} and l_custno=#{ownCustNo}")
     @ResultType(Long.class)
     public Long saveRecordStatus(Map<String, Object> param);

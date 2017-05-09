@@ -147,6 +147,12 @@ public class CommissionPayResultRecord implements BetterjrEntity {
     private String payTargetBankAccountName;
 
     /**
+     * 联系人手机号码
+     */
+    @Column(name = "C_PAY_TARGET_MOBILENO",  columnDefinition="VARCHAR" )
+    private String payTargetMobileNo;
+
+    /**
      * 支付银行
      */
     @Column(name = "C_PAY_BANK",  columnDefinition="VARCHAR" )
@@ -393,6 +399,14 @@ public class CommissionPayResultRecord implements BetterjrEntity {
         this.payTargetBankAccountName = payTargetBankAccountName;
     }
 
+    public String getPayTargetMobileNo() {
+        return payTargetMobileNo;
+    }
+
+    public void setPayTargetMobileNo(final String anPayTargetMobileNo) {
+        payTargetMobileNo = anPayTargetMobileNo;
+    }
+
     public String getPayBank() {
         return payBank;
     }
@@ -553,6 +567,7 @@ public class CommissionPayResultRecord implements BetterjrEntity {
         sb.append(", payTargetBankFullName=").append(payTargetBankFullName);
         sb.append(", payTargetBankAccount=").append(payTargetBankAccount);
         sb.append(", payTargetBankAccountName=").append(payTargetBankAccountName);
+        sb.append(", payTargetMobileNo=").append(payTargetMobileNo);
         sb.append(", payBank=").append(payBank);
         sb.append(", payBankName=").append(payBankName);
         sb.append(", payBankFullName=").append(payBankFullName);
@@ -605,6 +620,7 @@ public class CommissionPayResultRecord implements BetterjrEntity {
                 && (this.getPayTargetBankFullName() == null ? other.getPayTargetBankFullName() == null : this.getPayTargetBankFullName().equals(other.getPayTargetBankFullName()))
                 && (this.getPayTargetBankAccount() == null ? other.getPayTargetBankAccount() == null : this.getPayTargetBankAccount().equals(other.getPayTargetBankAccount()))
                 && (this.getPayTargetBankAccountName() == null ? other.getPayTargetBankAccountName() == null : this.getPayTargetBankAccountName().equals(other.getPayTargetBankAccountName()))
+                && (this.getPayTargetMobileNo() == null ? other.getPayTargetMobileNo() == null : this.getPayTargetMobileNo().equals(other.getPayTargetMobileNo()))
                 && (this.getPayBank() == null ? other.getPayBank() == null : this.getPayBank().equals(other.getPayBank()))
                 && (this.getPayBankName() == null ? other.getPayBankName() == null : this.getPayBankName().equals(other.getPayBankName()))
                 && (this.getPayBankFullName() == null ? other.getPayBankFullName() == null : this.getPayBankFullName().equals(other.getPayBankFullName()))
@@ -646,6 +662,7 @@ public class CommissionPayResultRecord implements BetterjrEntity {
         result = prime * result + ((getPayTargetBankFullName() == null) ? 0 : getPayTargetBankFullName().hashCode());
         result = prime * result + ((getPayTargetBankAccount() == null) ? 0 : getPayTargetBankAccount().hashCode());
         result = prime * result + ((getPayTargetBankAccountName() == null) ? 0 : getPayTargetBankAccountName().hashCode());
+        result = prime * result + ((getPayTargetMobileNo() == null) ? 0 : getPayTargetMobileNo().hashCode());
         result = prime * result + ((getPayBank() == null) ? 0 : getPayBank().hashCode());
         result = prime * result + ((getPayBankName() == null) ? 0 : getPayBankName().hashCode());
         result = prime * result + ((getPayBankFullName() == null) ? 0 : getPayBankFullName().hashCode());

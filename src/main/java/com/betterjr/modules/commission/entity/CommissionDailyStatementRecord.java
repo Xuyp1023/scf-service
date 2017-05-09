@@ -2,10 +2,15 @@ package com.betterjr.modules.commission.entity;
 
 import java.math.BigDecimal;
 
-import com.betterjr.common.annotation.*;
-import com.betterjr.common.entity.BetterjrEntity;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-import javax.persistence.*;
+import com.betterjr.common.annotation.MetaData;
+import com.betterjr.common.entity.BetterjrEntity;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -139,6 +144,12 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
     private String payTargetBankAccountName;
 
     /**
+     * 联系人手机号码
+     */
+    @Column(name = "C_PAY_TARGET_MOBILENO",  columnDefinition="VARCHAR" )
+    private String payTargetMobileNo;
+
+    /**
      * 支付银行
      */
     @Column(name = "C_PAY_BANK",  columnDefinition="VARCHAR" )
@@ -242,7 +253,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -250,7 +261,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return dailyStatementId;
     }
 
-    public void setDailyStatementId(Long dailyStatementId) {
+    public void setDailyStatementId(final Long dailyStatementId) {
         this.dailyStatementId = dailyStatementId;
     }
 
@@ -258,7 +269,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return dailyStatementRefNo;
     }
 
-    public void setDailyStatementRefNo(String dailyStatementRefNo) {
+    public void setDailyStatementRefNo(final String dailyStatementRefNo) {
         this.dailyStatementRefNo = dailyStatementRefNo;
     }
 
@@ -266,7 +277,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return payRecordId;
     }
 
-    public void setPayRecordId(Long payRecordId) {
+    public void setPayRecordId(final Long payRecordId) {
         this.payRecordId = payRecordId;
     }
 
@@ -274,7 +285,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return payRecordRefNo;
     }
 
-    public void setPayRecordRefNo(String payRecordRefNo) {
+    public void setPayRecordRefNo(final String payRecordRefNo) {
         this.payRecordRefNo = payRecordRefNo;
     }
 
@@ -282,7 +293,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return recordId;
     }
 
-    public void setRecordId(Long recordId) {
+    public void setRecordId(final Long recordId) {
         this.recordId = recordId;
     }
 
@@ -290,7 +301,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return recordRefNo;
     }
 
-    public void setRecordRefNo(String recordRefNo) {
+    public void setRecordRefNo(final String recordRefNo) {
         this.recordRefNo = recordRefNo;
     }
 
@@ -298,7 +309,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return importDate;
     }
 
-    public void setImportDate(String importDate) {
+    public void setImportDate(final String importDate) {
         this.importDate = importDate;
     }
 
@@ -306,7 +317,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return importTime;
     }
 
-    public void setImportTime(String importTime) {
+    public void setImportTime(final String importTime) {
         this.importTime = importTime;
     }
 
@@ -314,7 +325,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return payNo;
     }
 
-    public void setPayNo(String payNo) {
+    public void setPayNo(final String payNo) {
         this.payNo = payNo;
     }
 
@@ -322,7 +333,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return payDate;
     }
 
-    public void setPayDate(String payDate) {
+    public void setPayDate(final String payDate) {
         this.payDate = payDate;
     }
 
@@ -330,7 +341,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return payTime;
     }
 
-    public void setPayTime(String payTime) {
+    public void setPayTime(final String payTime) {
         this.payTime = payTime;
     }
 
@@ -338,7 +349,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return payBalance;
     }
 
-    public void setPayBalance(BigDecimal payBalance) {
+    public void setPayBalance(final BigDecimal payBalance) {
         this.payBalance = payBalance;
     }
 
@@ -346,7 +357,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return payTargetBank;
     }
 
-    public void setPayTargetBank(String payTargetBank) {
+    public void setPayTargetBank(final String payTargetBank) {
         this.payTargetBank = payTargetBank;
     }
 
@@ -354,7 +365,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return payTargetBankName;
     }
 
-    public void setPayTargetBankName(String payTargetBankName) {
+    public void setPayTargetBankName(final String payTargetBankName) {
         this.payTargetBankName = payTargetBankName;
     }
 
@@ -362,7 +373,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return payTargetBankFullName;
     }
 
-    public void setPayTargetBankFullName(String payTargetBankFullName) {
+    public void setPayTargetBankFullName(final String payTargetBankFullName) {
         this.payTargetBankFullName = payTargetBankFullName;
     }
 
@@ -370,7 +381,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return payTargetBankAccount;
     }
 
-    public void setPayTargetBankAccount(String payTargetBankAccount) {
+    public void setPayTargetBankAccount(final String payTargetBankAccount) {
         this.payTargetBankAccount = payTargetBankAccount;
     }
 
@@ -378,15 +389,23 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return payTargetBankAccountName;
     }
 
-    public void setPayTargetBankAccountName(String payTargetBankAccountName) {
+    public void setPayTargetBankAccountName(final String payTargetBankAccountName) {
         this.payTargetBankAccountName = payTargetBankAccountName;
+    }
+
+    public String getPayTargetMobileNo() {
+        return payTargetMobileNo;
+    }
+
+    public void setPayTargetMobileNo(final String anPayTargetMobileNo) {
+        payTargetMobileNo = anPayTargetMobileNo;
     }
 
     public String getPayBank() {
         return payBank;
     }
 
-    public void setPayBank(String payBank) {
+    public void setPayBank(final String payBank) {
         this.payBank = payBank;
     }
 
@@ -394,7 +413,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return payBankName;
     }
 
-    public void setPayBankName(String payBankName) {
+    public void setPayBankName(final String payBankName) {
         this.payBankName = payBankName;
     }
 
@@ -402,7 +421,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return payBankFullName;
     }
 
-    public void setPayBankFullName(String payBankFullName) {
+    public void setPayBankFullName(final String payBankFullName) {
         this.payBankFullName = payBankFullName;
     }
 
@@ -410,7 +429,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return payBankAccount;
     }
 
-    public void setPayBankAccount(String payBankAccount) {
+    public void setPayBankAccount(final String payBankAccount) {
         this.payBankAccount = payBankAccount;
     }
 
@@ -418,7 +437,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return payBankAccountName;
     }
 
-    public void setPayBankAccountName(String payBankAccountName) {
+    public void setPayBankAccountName(final String payBankAccountName) {
         this.payBankAccountName = payBankAccountName;
     }
 
@@ -426,7 +445,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return payResult;
     }
 
-    public void setPayResult(String payResult) {
+    public void setPayResult(final String payResult) {
         this.payResult = payResult;
     }
 
@@ -434,7 +453,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return payComment;
     }
 
-    public void setPayComment(String payComment) {
+    public void setPayComment(final String payComment) {
         this.payComment = payComment;
     }
 
@@ -442,7 +461,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return businStatus;
     }
 
-    public void setBusinStatus(String businStatus) {
+    public void setBusinStatus(final String businStatus) {
         this.businStatus = businStatus;
     }
 
@@ -450,7 +469,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return lastStatus;
     }
 
-    public void setLastStatus(String lastStatus) {
+    public void setLastStatus(final String lastStatus) {
         this.lastStatus = lastStatus;
     }
 
@@ -458,7 +477,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return custNo;
     }
 
-    public void setCustNo(Long custNo) {
+    public void setCustNo(final Long custNo) {
         this.custNo = custNo;
     }
 
@@ -466,7 +485,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return custName;
     }
 
-    public void setCustName(String custName) {
+    public void setCustName(final String custName) {
         this.custName = custName;
     }
 
@@ -474,7 +493,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return operOrg;
     }
 
-    public void setOperOrg(String operOrg) {
+    public void setOperOrg(final String operOrg) {
         this.operOrg = operOrg;
     }
 
@@ -482,7 +501,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return regOperId;
     }
 
-    public void setRegOperId(String regOperId) {
+    public void setRegOperId(final String regOperId) {
         this.regOperId = regOperId;
     }
 
@@ -490,7 +509,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return regOperName;
     }
 
-    public void setRegOperName(String regOperName) {
+    public void setRegOperName(final String regOperName) {
         this.regOperName = regOperName;
     }
 
@@ -498,7 +517,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return regDate;
     }
 
-    public void setRegDate(String regDate) {
+    public void setRegDate(final String regDate) {
         this.regDate = regDate;
     }
 
@@ -506,7 +525,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return regTime;
     }
 
-    public void setRegTime(String regTime) {
+    public void setRegTime(final String regTime) {
         this.regTime = regTime;
     }
 
@@ -514,13 +533,13 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         return version;
     }
 
-    public void setVersion(Long version) {
+    public void setVersion(final Long version) {
         this.version = version;
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
@@ -542,6 +561,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         sb.append(", payTargetBankFullName=").append(payTargetBankFullName);
         sb.append(", payTargetBankAccount=").append(payTargetBankAccount);
         sb.append(", payTargetBankAccountName=").append(payTargetBankAccountName);
+        sb.append(", payTargetMobileNo=").append(payTargetMobileNo);
         sb.append(", payBank=").append(payBank);
         sb.append(", payBankName=").append(payBankName);
         sb.append(", payBankFullName=").append(payBankFullName);
@@ -565,7 +585,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
     }
 
     @Override
-    public boolean equals(Object that) {
+    public boolean equals(final Object that) {
         if (this == that) {
             return true;
         }
@@ -575,42 +595,43 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         if (getClass() != that.getClass()) {
             return false;
         }
-        CommissionDailyStatementRecord other = (CommissionDailyStatementRecord) that;
+        final CommissionDailyStatementRecord other = (CommissionDailyStatementRecord) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getDailyStatementId() == null ? other.getDailyStatementId() == null : this.getDailyStatementId().equals(other.getDailyStatementId()))
-            && (this.getDailyStatementRefNo() == null ? other.getDailyStatementRefNo() == null : this.getDailyStatementRefNo().equals(other.getDailyStatementRefNo()))
-            && (this.getPayRecordId() == null ? other.getPayRecordId() == null : this.getPayRecordId().equals(other.getPayRecordId()))
-            && (this.getPayRecordRefNo() == null ? other.getPayRecordRefNo() == null : this.getPayRecordRefNo().equals(other.getPayRecordRefNo()))
-            && (this.getRecordId() == null ? other.getRecordId() == null : this.getRecordId().equals(other.getRecordId()))
-            && (this.getRecordRefNo() == null ? other.getRecordRefNo() == null : this.getRecordRefNo().equals(other.getRecordRefNo()))
-            && (this.getImportDate() == null ? other.getImportDate() == null : this.getImportDate().equals(other.getImportDate()))
-            && (this.getImportTime() == null ? other.getImportTime() == null : this.getImportTime().equals(other.getImportTime()))
-            && (this.getPayNo() == null ? other.getPayNo() == null : this.getPayNo().equals(other.getPayNo()))
-            && (this.getPayDate() == null ? other.getPayDate() == null : this.getPayDate().equals(other.getPayDate()))
-            && (this.getPayTime() == null ? other.getPayTime() == null : this.getPayTime().equals(other.getPayTime()))
-            && (this.getPayBalance() == null ? other.getPayBalance() == null : this.getPayBalance().equals(other.getPayBalance()))
-            && (this.getPayTargetBank() == null ? other.getPayTargetBank() == null : this.getPayTargetBank().equals(other.getPayTargetBank()))
-            && (this.getPayTargetBankName() == null ? other.getPayTargetBankName() == null : this.getPayTargetBankName().equals(other.getPayTargetBankName()))
-            && (this.getPayTargetBankFullName() == null ? other.getPayTargetBankFullName() == null : this.getPayTargetBankFullName().equals(other.getPayTargetBankFullName()))
-            && (this.getPayTargetBankAccount() == null ? other.getPayTargetBankAccount() == null : this.getPayTargetBankAccount().equals(other.getPayTargetBankAccount()))
-            && (this.getPayTargetBankAccountName() == null ? other.getPayTargetBankAccountName() == null : this.getPayTargetBankAccountName().equals(other.getPayTargetBankAccountName()))
-            && (this.getPayBank() == null ? other.getPayBank() == null : this.getPayBank().equals(other.getPayBank()))
-            && (this.getPayBankName() == null ? other.getPayBankName() == null : this.getPayBankName().equals(other.getPayBankName()))
-            && (this.getPayBankFullName() == null ? other.getPayBankFullName() == null : this.getPayBankFullName().equals(other.getPayBankFullName()))
-            && (this.getPayBankAccount() == null ? other.getPayBankAccount() == null : this.getPayBankAccount().equals(other.getPayBankAccount()))
-            && (this.getPayBankAccountName() == null ? other.getPayBankAccountName() == null : this.getPayBankAccountName().equals(other.getPayBankAccountName()))
-            && (this.getPayResult() == null ? other.getPayResult() == null : this.getPayResult().equals(other.getPayResult()))
-            && (this.getPayComment() == null ? other.getPayComment() == null : this.getPayComment().equals(other.getPayComment()))
-            && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
-            && (this.getLastStatus() == null ? other.getLastStatus() == null : this.getLastStatus().equals(other.getLastStatus()))
-            && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-            && (this.getCustName() == null ? other.getCustName() == null : this.getCustName().equals(other.getCustName()))
-            && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
-            && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
-            && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-            && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
-            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
+                && (this.getDailyStatementId() == null ? other.getDailyStatementId() == null : this.getDailyStatementId().equals(other.getDailyStatementId()))
+                && (this.getDailyStatementRefNo() == null ? other.getDailyStatementRefNo() == null : this.getDailyStatementRefNo().equals(other.getDailyStatementRefNo()))
+                && (this.getPayRecordId() == null ? other.getPayRecordId() == null : this.getPayRecordId().equals(other.getPayRecordId()))
+                && (this.getPayRecordRefNo() == null ? other.getPayRecordRefNo() == null : this.getPayRecordRefNo().equals(other.getPayRecordRefNo()))
+                && (this.getRecordId() == null ? other.getRecordId() == null : this.getRecordId().equals(other.getRecordId()))
+                && (this.getRecordRefNo() == null ? other.getRecordRefNo() == null : this.getRecordRefNo().equals(other.getRecordRefNo()))
+                && (this.getImportDate() == null ? other.getImportDate() == null : this.getImportDate().equals(other.getImportDate()))
+                && (this.getImportTime() == null ? other.getImportTime() == null : this.getImportTime().equals(other.getImportTime()))
+                && (this.getPayNo() == null ? other.getPayNo() == null : this.getPayNo().equals(other.getPayNo()))
+                && (this.getPayDate() == null ? other.getPayDate() == null : this.getPayDate().equals(other.getPayDate()))
+                && (this.getPayTime() == null ? other.getPayTime() == null : this.getPayTime().equals(other.getPayTime()))
+                && (this.getPayBalance() == null ? other.getPayBalance() == null : this.getPayBalance().equals(other.getPayBalance()))
+                && (this.getPayTargetBank() == null ? other.getPayTargetBank() == null : this.getPayTargetBank().equals(other.getPayTargetBank()))
+                && (this.getPayTargetBankName() == null ? other.getPayTargetBankName() == null : this.getPayTargetBankName().equals(other.getPayTargetBankName()))
+                && (this.getPayTargetBankFullName() == null ? other.getPayTargetBankFullName() == null : this.getPayTargetBankFullName().equals(other.getPayTargetBankFullName()))
+                && (this.getPayTargetBankAccount() == null ? other.getPayTargetBankAccount() == null : this.getPayTargetBankAccount().equals(other.getPayTargetBankAccount()))
+                && (this.getPayTargetBankAccountName() == null ? other.getPayTargetBankAccountName() == null : this.getPayTargetBankAccountName().equals(other.getPayTargetBankAccountName()))
+                && (this.getPayTargetMobileNo() == null ? other.getPayTargetMobileNo() == null : this.getPayTargetMobileNo().equals(other.getPayTargetMobileNo()))
+                && (this.getPayBank() == null ? other.getPayBank() == null : this.getPayBank().equals(other.getPayBank()))
+                && (this.getPayBankName() == null ? other.getPayBankName() == null : this.getPayBankName().equals(other.getPayBankName()))
+                && (this.getPayBankFullName() == null ? other.getPayBankFullName() == null : this.getPayBankFullName().equals(other.getPayBankFullName()))
+                && (this.getPayBankAccount() == null ? other.getPayBankAccount() == null : this.getPayBankAccount().equals(other.getPayBankAccount()))
+                && (this.getPayBankAccountName() == null ? other.getPayBankAccountName() == null : this.getPayBankAccountName().equals(other.getPayBankAccountName()))
+                && (this.getPayResult() == null ? other.getPayResult() == null : this.getPayResult().equals(other.getPayResult()))
+                && (this.getPayComment() == null ? other.getPayComment() == null : this.getPayComment().equals(other.getPayComment()))
+                && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
+                && (this.getLastStatus() == null ? other.getLastStatus() == null : this.getLastStatus().equals(other.getLastStatus()))
+                && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
+                && (this.getCustName() == null ? other.getCustName() == null : this.getCustName().equals(other.getCustName()))
+                && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
+                && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
+                && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
+                && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
+                && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
+                && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
     }
 
     @Override
@@ -635,6 +656,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
         result = prime * result + ((getPayTargetBankFullName() == null) ? 0 : getPayTargetBankFullName().hashCode());
         result = prime * result + ((getPayTargetBankAccount() == null) ? 0 : getPayTargetBankAccount().hashCode());
         result = prime * result + ((getPayTargetBankAccountName() == null) ? 0 : getPayTargetBankAccountName().hashCode());
+        result = prime * result + ((getPayTargetMobileNo() == null) ? 0 : getPayTargetMobileNo().hashCode());
         result = prime * result + ((getPayBank() == null) ? 0 : getPayBank().hashCode());
         result = prime * result + ((getPayBankName() == null) ? 0 : getPayBankName().hashCode());
         result = prime * result + ((getPayBankFullName() == null) ? 0 : getPayBankFullName().hashCode());
