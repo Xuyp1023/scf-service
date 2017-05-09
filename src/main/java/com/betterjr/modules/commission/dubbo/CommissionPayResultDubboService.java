@@ -215,4 +215,12 @@ public class CommissionPayResultDubboService implements ICommissionPayResultServ
         return AjaxObject.newOk("统计成功！", commissionPayResultService.findCountPayResultRecord(anPayResultId)).toJson();
     }
 
+    /* (non-Javadoc)
+     * @see com.betterjr.modules.commission.ICommissionPayResultService#webFindCommissionRecord(java.lang.String)
+     */
+    @Override
+    public String webFindCommissionRecord(final String anRefNo) {
+        return AjaxObject.newOk("查询成功！", commissionPayResultService.findCommissionRecord(anRefNo)).toJson();
+    }
+
 }

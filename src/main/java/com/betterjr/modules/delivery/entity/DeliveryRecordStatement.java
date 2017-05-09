@@ -1,67 +1,108 @@
 package com.betterjr.modules.delivery.entity;
 
+import java.math.BigDecimal;
+
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import com.betterjr.common.entity.BetterjrEntity;
-import javax.persistence.*;
+import com.betterjr.common.selectkey.SerialGenerator;
+import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.UserUtils;
+import com.betterjr.modules.delivery.data.DeliveryConstantCollentions;
 
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "t_cps_delivery_record")
 public class DeliveryRecordStatement implements BetterjrEntity {
+    
+    //编号
     @Id
     @Column(name = "ID",  columnDefinition="INTEGER" )
     private Long id;
 
+    //投递记录主表编号
     @Column(name = "L_DELIVERY_ID",  columnDefinition="INTEGER" )
     private Long deliverId;
 
+    //投递记录主表凭证号
     @Column(name = "C_DELIVERY_REFNO",  columnDefinition="VARCHAR" )
     private String deliverRefNo;
 
+    //月账单编号
     @Column(name = "L_MONTHLY_STATEMENT_ID",  columnDefinition="INTEGER" )
     private Long monthlyStatementId;
 
+    //月账单凭证号
     @Column(name = "C_MONTHLY_STATEMENT_REFNO",  columnDefinition="VARCHAR" )
     private String monthlyStatementRefNo;
 
+    //开始时间
     @Column(name = "D_PAY_BEGIN_DATE",  columnDefinition="VARCHAR" )
     private String payBeginDate;
 
+    //结束时间
     @Column(name = "D_PAY_END_DATE",  columnDefinition="VARCHAR" )
     private String payEndDate;
 
+    //总金额
     @Column(name = "F_TOTAL_BLANCE",  columnDefinition="DECIMAL" )
-    private Double totalBlance;
+    private BigDecimal totalBlance;
 
+    //总的佣金笔数
     @Column(name = "N_TOTAL_AMOUNT",  columnDefinition="INTEGER" )
-    private Long totalAmount;
+    private BigDecimal totalAmount;
 
+    //总的付成功的金额
     @Column(name = "F_PAY_TOTAL_SUCCESS_BALANCE",  columnDefinition="DECIMAL" )
-    private Double payTotalSuccessBlance;
+    private BigDecimal payTotalSuccessBlance;
 
+    //总的付成功的项
     @Column(name = "N_PAY_TOTAL_SUCCESS_AMOUNT",  columnDefinition="INTEGER" )
-    private Long payTotalSuccessitems;
+    private BigDecimal payTotalSuccessitems;
 
+    //总的付失败的金额
     @Column(name = "F_PAY_TOTAL_FAILURE_BALANCE",  columnDefinition="DECIMAL" )
-    private Double payTotalFailureBlance;
+    private BigDecimal payTotalFailureBlance;
 
+    //总的付失败的项数
     @Column(name = "N_PAY_TOTAL_FAILURE_AMOUNT",  columnDefinition="INTEGER" )
-    private Long payTotalFailureitems;
+    private BigDecimal payTotalFailureitems;
 
+    //拥有公司ID
     @Column(name = "L_OWN_CUSTNO",  columnDefinition="INTEGER" )
     private Long ownCustNo;
 
+    //拥有公司名称
     @Column(name = "C_OWN_CUSTNAME",  columnDefinition="VARCHAR" )
     private String ownCustName;
 
+    //拥有公司操作结构
     @Column(name = "C_OWN_OPERORG",  columnDefinition="VARCHAR" )
     private String ownOperOrg;
+    
+    //0 可用   1 不可用，已删除状态
+    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
+    private String businStatus;
+    
+    //传递状态  0 未投递  1 已投递   2已确认
+    @Column(name = "C_EXPRESS_STATUS",  columnDefinition="VARCHAR" )
+    private String expressStatus;
+    
+    //对账月份yyyyMM
+    @Column(name = "D_BILL_MONTH",  columnDefinition="VARCHAR" )
+    private String billMonth;
     
 
     @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
     private String operOrg;
     
     @Column(name = "L_REG_OPERID",  columnDefinition="INTEGER" )
-    private String regOperId;
+    private Long regOperId;
     
     @Column(name = "C_REG_OPERNAME",  columnDefinition="VARCHAR" )
     private String regOperName;
@@ -76,6 +117,31 @@ public class DeliveryRecordStatement implements BetterjrEntity {
     private String version;
 
     private static final long serialVersionUID = 1493717117087L;
+    
+    
+    public String getBillMonth() {
+        return this.billMonth;
+    }
+
+    public void setBillMonth(String anBillMonth) {
+        this.billMonth = anBillMonth;
+    }
+
+    public String getExpressStatus() {
+        return this.expressStatus;
+    }
+
+    public void setExpressStatus(String anExpressStatus) {
+        this.expressStatus = anExpressStatus;
+    }
+
+    public String getBusinStatus() {
+        return this.businStatus;
+    }
+
+    public void setBusinStatus(String anBusinStatus) {
+        this.businStatus = anBusinStatus;
+    }
 
     public Long getId() {
         return id;
@@ -118,45 +184,45 @@ public class DeliveryRecordStatement implements BetterjrEntity {
         this.payEndDate = payEndDate == null ? null : payEndDate.trim();
     }
 
-    public Double getTotalBlance() {
+    public BigDecimal getTotalBlance() {
         return totalBlance;
     }
 
-    public void setTotalBlance(Double totalBlance) {
+    public void setTotalBlance(BigDecimal totalBlance) {
         this.totalBlance = totalBlance;
     }
 
     
 
-    public Double getPayTotalSuccessBlance() {
+    public BigDecimal getPayTotalSuccessBlance() {
         return payTotalSuccessBlance;
     }
 
-    public void setPayTotalSuccessBlance(Double payTotalSuccessBlance) {
+    public void setPayTotalSuccessBlance(BigDecimal payTotalSuccessBlance) {
         this.payTotalSuccessBlance = payTotalSuccessBlance;
     }
 
-    public Long getPayTotalSuccessitems() {
+    public BigDecimal getPayTotalSuccessitems() {
         return payTotalSuccessitems;
     }
 
-    public void setPayTotalSuccessitems(Long payTotalSuccessitems) {
+    public void setPayTotalSuccessitems(BigDecimal payTotalSuccessitems) {
         this.payTotalSuccessitems = payTotalSuccessitems;
     }
 
-    public Double getPayTotalFailureBlance() {
+    public BigDecimal getPayTotalFailureBlance() {
         return payTotalFailureBlance;
     }
 
-    public void setPayTotalFailureBlance(Double payTotalFailureBlance) {
+    public void setPayTotalFailureBlance(BigDecimal payTotalFailureBlance) {
         this.payTotalFailureBlance = payTotalFailureBlance;
     }
 
-    public Long getPayTotalFailureitems() {
+    public BigDecimal getPayTotalFailureitems() {
         return payTotalFailureitems;
     }
 
-    public void setPayTotalFailureitems(Long payTotalFailureitems) {
+    public void setPayTotalFailureitems(BigDecimal payTotalFailureitems) {
         this.payTotalFailureitems = payTotalFailureitems;
     }
 
@@ -200,11 +266,11 @@ public class DeliveryRecordStatement implements BetterjrEntity {
         this.deliverRefNo = anDeliverRefNo;
     }
 
-    public Long getTotalAmount() {
+    public BigDecimal getTotalAmount() {
         return this.totalAmount;
     }
 
-    public void setTotalAmount(Long anTotalAmount) {
+    public void setTotalAmount(BigDecimal anTotalAmount) {
         this.totalAmount = anTotalAmount;
     }
 
@@ -216,11 +282,11 @@ public class DeliveryRecordStatement implements BetterjrEntity {
         this.operOrg = anOperOrg;
     }
 
-    public String getRegOperId() {
+    public Long getRegOperId() {
         return this.regOperId;
     }
 
-    public void setRegOperId(String anRegOperId) {
+    public void setRegOperId(Long anRegOperId) {
         this.regOperId = anRegOperId;
     }
 
@@ -389,9 +455,34 @@ public class DeliveryRecordStatement implements BetterjrEntity {
                 + this.payBeginDate + ", payEndDate=" + this.payEndDate + ", totalBlance=" + this.totalBlance + ", totalAmount=" + this.totalAmount
                 + ", payTotalSuccessBlance=" + this.payTotalSuccessBlance + ", payTotalSuccessitems=" + this.payTotalSuccessitems
                 + ", payTotalFailureBlance=" + this.payTotalFailureBlance + ", payTotalFailureitems=" + this.payTotalFailureitems + ", ownCustNo="
-                + this.ownCustNo + ", ownCustName=" + this.ownCustName + ", ownOperOrg=" + this.ownOperOrg + ", operOrg=" + this.operOrg
-                + ", regOperId=" + this.regOperId + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate + ", regTime=" + this.regTime
-                + ", version=" + this.version + "]";
+                + this.ownCustNo + ", ownCustName=" + this.ownCustName + ", ownOperOrg=" + this.ownOperOrg + ", businStatus=" + this.businStatus
+                + ", expressStatus=" + this.expressStatus + ", billMonth=" + this.billMonth + ", operOrg=" + this.operOrg + ", regOperId="
+                + this.regOperId + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", version="
+                + this.version + "]";
     }
+
+    public void saveAddInit() {
+       
+        this.setId(SerialGenerator.getLongValue("CommissionMonthlyStatement.id"));
+        this.setRegDate(BetterDateUtils.getNumDate());
+        this.setRegOperId(UserUtils.getOperatorInfo().getId());
+        this.setRegOperName(UserUtils.getOperatorInfo().getName());
+        this.setOperOrg(UserUtils.getOperatorInfo().getOperOrg());
+        this.setRegTime(BetterDateUtils.getNumTime());
+        this.setVersion("1");
+        this.businStatus=DeliveryConstantCollentions.DELIVERY_STATEMENT_BUSIN_STATUS_CANUSERD;
+        this.expressStatus=DeliveryConstantCollentions.DELIVERY_STATEMENT_EXPRESS_STATUS_NOEXPRESS;
+    }
+
+    public DeliveryRecordStatement(Long anId) {
+        super();
+        this.id = anId;
+    }
+
+    public DeliveryRecordStatement() {
+        super();
+    }
+    
+    
 
 }

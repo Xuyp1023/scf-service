@@ -43,6 +43,14 @@ public class CommissionRecordAuditResult implements Serializable{
         result.noAuditFile=noAuditFile;
         return result;
     }
+    public static CommissionRecordAuditResult fail (String message){
+        
+        CommissionRecordAuditResult result=new CommissionRecordAuditResult();
+        result.code=300;
+        result.auditMessage=message;
+        result.noAuditFile=0;
+        return result;
+    }
     
     public Integer getCode() {
         return this.code;

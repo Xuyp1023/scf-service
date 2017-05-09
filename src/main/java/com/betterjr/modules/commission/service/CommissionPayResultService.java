@@ -338,4 +338,16 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
 
         return result;
     }
+
+    /**
+     * @param anRefNo
+     * @return
+     */
+    public String findCommissionRecord(final String anRefNo) {
+        final CommissionRecord record = null;
+        final CommissionPayResultRecord payResultRecord = null;
+
+
+        return null;
+    }
 }

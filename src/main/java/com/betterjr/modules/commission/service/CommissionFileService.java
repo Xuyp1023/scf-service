@@ -1,11 +1,12 @@
 package com.betterjr.modules.commission.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -24,9 +25,11 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.MathExtend;
+import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
@@ -47,39 +50,42 @@ import com.betterjr.modules.flie.service.CustFileCloumnService;
 @Service
 public class CommissionFileService extends BaseService<CommissionFileMapper, CommissionFile> {
 
-
+    
     @Autowired
     private CustAccountService custAccountService;
-
+    
     @Reference(interfaceClass = ICustFileService.class)
     private ICustFileService custFileDubboService;
-
+    
     @Reference(interfaceClass = ICustMechBaseService.class)
     private ICustMechBaseService baseService;
-
+    
     @Autowired
     private CommissionRecordService recordService;
-
+    
     @Reference(interfaceClass = ICustFileService.class)
     private ICustFileService custFileService;   //查询文件详情
     @Autowired
     private DataStoreService dataStoreService; //将文件转成输入流
-
+    
     @Autowired
     private CustFileCloumnService fileCloumnService; //查询解析文件列对应关系
-
+    
     /**
      * 新增佣金文件
      * @param anFile
      * @return
      */
-    public CommissionFile saveAddCommissionFile(final CommissionFile anFile) {
-
+    public CommissionFile saveAddCommissionFile(CommissionFile anFile) {
+        
         BTAssert.notNull(anFile, "新增佣金文件为空");
         BTAssert.notNull(anFile.getFileId(), "新增佣金文件参数出错,文件id为空");
         BTAssert.notNull(anFile.getCustNo(), "新增佣金文件参数出错,供应商为空");
+        if(!checkFilePermitOperator(anFile.getCustNo(), BetterDateUtils.getNumDate())){
+            BTAssert.notNull(null, "今天已经审核了全部文件，请明天再上传解析");
+        }
         logger.info("Begin to add addCommissionFile"+UserUtils.getOperatorInfo().getName());
-        final CustFileItem fileItem = custFileDubboService.findOne(anFile.getFileId());
+        CustFileItem fileItem = custFileDubboService.findOne(anFile.getFileId());
         anFile.saveAddinit(UserUtils.getOperatorInfo(),fileItem);
         anFile.setCustName(custAccountService.queryCustName(anFile.getCustNo()));
         //操作机构设置为供应商
@@ -88,7 +94,7 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         logger.info("success to add addCommissionFile"+UserUtils.getOperatorInfo().getName());
         return anFile;
     }
-
+    
     /**
      * 佣金文件查询
      * @param anQueryMap 查询条件
@@ -97,16 +103,16 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
      * @param anPageSize 每页显示总的记录数
      * @return
      */
-    public Page queryFileList(final Map<String, Object> anMap, final String anFlag, final int anPageNum, final int anPageSize) {
-
+    public Page queryFileList(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+        
         BTAssert.notNull(anMap,"查询佣金文件条件为空");
         //去除空白字符串的查询条件
-        //anMap = Collections3.filterMapEmptyObject(anMap);
+        anMap = Collections3.filterMapEmptyObject(anMap);
         //查询当前公司的佣金文件
         anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
-
-        final Page<CommissionFile> fileList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
-
+        
+        Page<CommissionFile> fileList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
+       
         return fileList;
     }
 
@@ -115,12 +121,12 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
      * @param anRefNo
      * @return
      */
-    public synchronized CommissionFile saveDeleteFile(final String anRefNo) {
-
+    public synchronized CommissionFile saveDeleteFile(String anRefNo) {
+        
         BTAssert.notNull(anRefNo,"删除佣金文件条件不符,");
         logger.info("Begin to delete 佣金文件 saveDeleteFile"+UserUtils.getOperatorInfo().getName()+"  refNo="+anRefNo);
         //Map<String,Object> queryMap = QueryTermBuilder.newInstance().put("refNo", anRefNo).build();
-        final CommissionFile file = this.selectOne(new CommissionFile(anRefNo));
+        CommissionFile file = this.selectOne(new CommissionFile(anRefNo));
         //校验文件状态
         checkDeleteFileStatus(file,UserUtils.getOperatorInfo());
         //设置文件删除状态和佣金记录的删除状态
@@ -136,20 +142,20 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
      * @param anFile
      * @param anOperatorInfo
      */
-    private void checkDeleteFileStatus(final CommissionFile anFile, final CustOperatorInfo anOperatorInfo) {
-
+    private void checkDeleteFileStatus(CommissionFile anFile, CustOperatorInfo anOperatorInfo) {
+        
         checkStatus(anFile.getPayStatus(), CommissionConstantCollentions.COMMISSION_PAY_STATUS_FAILURE, true, "当前文件记录已经开始付款，不能删除");
         checkStatus(anFile.getPayStatus(), CommissionConstantCollentions.COMMISSION_PAY_STATUS_SUCCESS, true, "当前文件记录已经开始付款，不能删除");
         checkStatus(anFile.getBusinStatus(), CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_AUDIT, true, "当前文件记录进入付款流程中，不能删除");
         checkStatus(anFile.getPayStatus(), CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_DELETE, true, "当前文件记录已经删除，不能重复删除");
         checkStatus(anFile.getOperOrg(), anOperatorInfo.getOperOrg(), false, "你没有当前文件的删除权限");
-
+        
     }
-
+    
     /**
      * 检查状态信息
      */
-    public void checkStatus(final String anBusinStatus, final String anTargetStatus, final boolean anFlag, final String anMessage) {
+    public void checkStatus(String anBusinStatus, String anTargetStatus, boolean anFlag, String anMessage) {
         if (BetterStringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
             logger.warn(anMessage);
             throw new BytterTradeException(40001, anMessage);
@@ -161,8 +167,8 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
      * @param anRefNo
      * @return
      */
-    public CommissionFile saveResolveFile(final String anRefNo) {
-
+    public CommissionFile saveResolveFile(String anRefNo) {
+        
         BTAssert.notNull(anRefNo,"删除佣金文件条件不符,");
         logger.info("Begin to resolve 佣金文件 saveResolveFile"+UserUtils.getOperatorInfo().getName()+"  refNo="+anRefNo);
         //Map<String,Object> queryMap = QueryTermBuilder.newInstance().put("refNo", anRefNo).build();
@@ -172,7 +178,7 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
             //解析文件
             file=resolveCommissionFile(file);
         }
-        catch (final Exception e) {
+        catch (Exception e) {
             //BTAssert.notNull(null,"解析的佣金文件失败"+file.getShowMessage());
             setResolveFailure(e.getMessage(), file);
         }
@@ -186,22 +192,22 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
      * @param anFile
      * @return
      */
-    private CommissionFile resolveCommissionFile(final CommissionFile anFile) {
-
+    private CommissionFile resolveCommissionFile(CommissionFile anFile) {
+        
         try{
-
+            
             BTAssert.notNull(anFile,"解析的佣金文件不存在");
             BTAssert.notNull(anFile.getFileId(),"解析的佣金文件不存在");
             BTAssert.isNotShorString(anFile.getFileName(),"解析的文件名为空,请重新上传");
-            final String fileName = anFile.getFileName();
+            String fileName = anFile.getFileName();
             if( ! (fileName.endsWith("xls") || fileName.endsWith("xlsx")) ){
                 BTAssert.notNull(null,"文件读取格式失败,请上传解析文件为excel");
             }
-
+            
             //根据类型查找对应的列
-            final List<CustFileCloumn> fileCloumnList=fileCloumnService.queryFileCloumnByInfoType(anFile.getInfoType(),"1");
-            final CustFileItem fileItem = custFileService.findOne(anFile.getFileId());//文件上次详情
-            final InputStream is = dataStoreService.loadFromStore(fileItem);//得到文件输入流
+            List<CustFileCloumn> fileCloumnList=fileCloumnService.queryFileCloumnByInfoType(anFile.getInfoType(),"1");
+            CustFileItem fileItem = custFileService.findOne(anFile.getFileId());//文件上次详情
+            InputStream is = dataStoreService.loadFromStore(fileItem);//得到文件输入流
             if(is==null){
                 setResolveFailure("文件解析失败：文件读取失败!", anFile);
                 BTAssert.notNull(null,"文件解析失败：文件读取失败!");
@@ -211,12 +217,12 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
                 BTAssert.notNull(null,"文件解析失败：请预先配置模版参数");
             }
             //得到佣金记录的数据集合
-            final List<Map<String,Object>> listData=resolveFileToListMap(is,fileCloumnList,anFile);
+            List<Map<String,Object>> listData=resolveFileToListMap(is,fileCloumnList,anFile);
             //插入佣金记录信息
-            final List<CommissionRecord> recordList = recordService.saveRecordListWithMap(listData);
+            List<CommissionRecord> recordList = recordService.saveRecordListWithMap(listData);
             int recordAmount=0;
             BigDecimal blance=new BigDecimal(0);
-            for (final CommissionRecord commissionRecord : recordList) {
+            for (CommissionRecord commissionRecord : recordList) {
                 recordAmount++;
                 blance= MathExtend.add(blance, commissionRecord.getBalance());
                 //blance=MathExtend  //blance+commissionRecord.getBalance();
@@ -225,12 +231,12 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
             anFile.setTotalBlance(blance);
             setResolveSuccess("文件解析成功", anFile);
         }
-        catch(final IOException e){
-            logger.debug("文件解析失败 ,解析日志记录id 为："+anFile.getId()+"   "+e.getMessage());
+        catch(IOException e){
+            logger.debug("文件解析失败 ,解析日志记录id 为："+anFile.getId()+"   "+e.getMessage()); 
             setResolveFailure(e.getMessage(), anFile);
         }
-        catch(final Exception e){
-            logger.debug("文件解析失败 ,解析日志记录id 为："+anFile.getId()+"   "+e.getMessage());
+        catch(Exception e){
+            logger.debug("文件解析失败 ,解析日志记录id 为："+anFile.getId()+"   "+e.getMessage()); 
             setResolveFailure(e.getMessage(), anFile);
         }
         return anFile;
@@ -242,93 +248,93 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
      * @param anFileCloumnList
      * @param anFile
      * @return
-     * @throws IOException
+     * @throws IOException 
      */
-    private List<Map<String, Object>> resolveFileToListMap(final InputStream anIs, final List<CustFileCloumn> anFileCloumnList, final CommissionFile anFile) throws IOException {
-
-
+    private List<Map<String, Object>> resolveFileToListMap(InputStream anIs, List<CustFileCloumn> anFileCloumnList, CommissionFile anFile) throws IOException {
+        
+       
         //将佣金文件中需要存储到拥挤记录的信息存储到map中
-        final Map<String,Object> appendMap=anFile.resolveToRecordMap(anFile);
+        Map<String,Object> appendMap=anFile.resolveToRecordMap(anFile);
         //文件后缀
         //FileUtils.copyInputStreamToFile(anIs, new File("d:\\123.xlsx"));
-        final String fileType=anFile.getFileName().substring(anFile.getFileName().indexOf(".")+1);
-        final Iterator<Row> rows = ExcelUtils.parseFile(anIs, fileType);
+        String fileType=anFile.getFileName().substring(anFile.getFileName().indexOf(".")+1);
+        Iterator<Row> rows = ExcelUtils.parseFile(anIs, fileType);
         //File file = ExcelUtils.createFile(anIs, fileType);
         //Iterator<Row> rows = ExcelUtils.parseFile(file, fileType);
-        BTAssert.notNull(rows,"文件读取失败");
-        final List<Map<String, Object>> listMap=new ArrayList<>();
-        while (rows.hasNext()) {
-            final Map<String, Object> map=new HashMap<>();
-            final Row currentRow = rows.next();
-            // 模板里的表头，该行跳过
-            if (currentRow.getRowNum() < CommissionConstantCollentions.COMMISSION_FILE_BEGIN_ROW) {
-                continue;
-            }
-            /*if(currentRow.getRowNum() > CommissionConstantCollentions.COMMISSION_FILE_BEGIN_ROW ){
-
-                    if(StringUtils.isBlank(ExcelUtils.getStringCellValue(currentRow.getCell(0)))
+             BTAssert.notNull(rows,"文件读取失败");
+            List<Map<String, Object>> listMap=new ArrayList<>();
+            while (rows.hasNext()) {
+                Map<String, Object> map=new HashMap<>();
+                Row currentRow = rows.next();
+                // 模板里的表头，该行跳过
+                if (currentRow.getRowNum() < CommissionConstantCollentions.COMMISSION_FILE_BEGIN_ROW) {
+                    continue;
+                }
+                /*if(currentRow.getRowNum() > CommissionConstantCollentions.COMMISSION_FILE_BEGIN_ROW ){
+                    
+                    if(StringUtils.isBlank(ExcelUtils.getStringCellValue(currentRow.getCell(0))) 
                             || StringUtils.isBlank(ExcelUtils.getStringCellValue(currentRow.getCell(1)))
                             || StringUtils.isBlank(ExcelUtils.getStringCellValue(currentRow.getCell(2)))){
                         break;
                     }
-
+                    
                 }*/
-            final int rowNum = currentRow.getRowNum() + 1;
-
-            for (final CustFileCloumn  fileColumn : anFileCloumnList) {
-
-                final String fileColumnProperties=fileColumn.getCloumnProperties();
-                final String fileColumnName=fileColumn.getCloumnName();
-                final int fileColumnOrder=fileColumn.getCloumnOrder();
-                final int isMust=fileColumn.getIsMust();
-                final String cloumnType = fileColumn.getCloumnType();
-                final String stringCellValue = ExcelUtils.getStringCellValue(currentRow.getCell(fileColumnOrder));
-                if(StringUtils.isBlank(stringCellValue) && isMust==FileResolveConstants.RESOLVE_FILE_IS_MUST){
-                    setResolveFailure("第"+rowNum+"行的"+fileColumnName+"不能为空", anFile);
-                    BTAssert.notNull(null,"第"+rowNum+"行的"+fileColumnName+"不能为空");
-                }
-                if(StringUtils.isNotBlank(stringCellValue) && "n".equals(cloumnType) ){
-                    if(! isNumber(stringCellValue)){
-                        setResolveFailure("第"+rowNum+"行的"+fileColumnName+"必须为数字类型", anFile);
-                        BTAssert.notNull(null,"第"+rowNum+"行的"+fileColumnName+"必须为数字类型");
+                int rowNum = currentRow.getRowNum() + 1;
+                
+                for (CustFileCloumn  fileColumn : anFileCloumnList) {
+                   
+                    String fileColumnProperties=fileColumn.getCloumnProperties();
+                    String fileColumnName=fileColumn.getCloumnName();
+                    int fileColumnOrder=fileColumn.getCloumnOrder();
+                    int isMust=fileColumn.getIsMust();
+                    String cloumnType = fileColumn.getCloumnType();
+                    String stringCellValue = ExcelUtils.getStringCellValue(currentRow.getCell(fileColumnOrder));
+                    if(StringUtils.isBlank(stringCellValue) && isMust==FileResolveConstants.RESOLVE_FILE_IS_MUST){
+                        setResolveFailure("第"+rowNum+"行的"+fileColumnName+"不能为空", anFile);
+                        BTAssert.notNull(null,"第"+rowNum+"行的"+fileColumnName+"不能为空"); 
                     }
-                }
-                map.put(fileColumnProperties, stringCellValue);
+                    if(StringUtils.isNotBlank(stringCellValue) && "n".equals(cloumnType) ){
+                        if(! isNumber(stringCellValue)){
+                            setResolveFailure("第"+rowNum+"行的"+fileColumnName+"必须为数字类型", anFile);
+                            BTAssert.notNull(null,"第"+rowNum+"行的"+fileColumnName+"必须为数字类型"); 
+                        }
+                    }
+                    map.put(fileColumnProperties, stringCellValue);
+               }
+                map.putAll(appendMap);
+                listMap.add(map); 
             }
-            map.putAll(appendMap);
-            listMap.add(map);
-        }
-
-        return listMap;
+        
+            return listMap;
     }
-
-
-    private boolean isNumber(final String anValue){
+    
+    
+    private boolean isNumber(String anValue){
         if (!anValue.matches("\\d+(.\\d+)?[fF]?")) {
             return false;
         }
-
+        
         return true;
     }
-
-    public CommissionFile setResolveFailure(final String anShowMessage,final CommissionFile anFile){
-
+    
+    public CommissionFile setResolveFailure(String anShowMessage,CommissionFile anFile){
+        
         anFile.setShowMessage(anShowMessage);
         anFile.setBusinStatus(CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_IS_HANDLE);
         anFile.setResolveStatus(CommissionConstantCollentions.COMMISSION_RESOLVE_STATUS_FAILURE);
-
+        
         return anFile;
-
+   
     }
-
-    public CommissionFile setResolveSuccess(final String anShowMessage,final CommissionFile anFile){
-
+    
+    public CommissionFile setResolveSuccess(String anShowMessage,CommissionFile anFile){
+        
         anFile.setShowMessage(anShowMessage);
         anFile.setBusinStatus(CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_IS_HANDLE);
         anFile.setResolveStatus(CommissionConstantCollentions.COMMISSION_RESOLVE_STATUS_SUCCESS);
-
+        
         return anFile;
-
+        
     }
 
     /**
@@ -336,16 +342,16 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
      * @param anFile
      * @param anOperatorInfo
      */
-    private void checkResolveFileStatus(final CommissionFile anFile, final CustOperatorInfo anOperatorInfo) {
-
+    private void checkResolveFileStatus(CommissionFile anFile, CustOperatorInfo anOperatorInfo) {
+        
         checkStatus(anFile.getPayStatus(), CommissionConstantCollentions.COMMISSION_PAY_STATUS_FAILURE, true, "当前文件记录已经开始付款，不能解析");
         checkStatus(anFile.getPayStatus(), CommissionConstantCollentions.COMMISSION_PAY_STATUS_SUCCESS, true, "当前文件记录已经开始付款，不能解析");
         checkStatus(anFile.getBusinStatus(), CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_AUDIT, true, "当前文件记录已经审核完成中，不能重复解析");
         checkStatus(anFile.getBusinStatus(), CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_IS_HANDLE, true, "当前文件记录已经解析完成中，不能重复解析");
         checkStatus(anFile.getBusinStatus(), CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_DELETE, true, "当前文件记录已经删除，不能重复解析");
         checkStatus(anFile.getOperOrg(), anOperatorInfo.getOperOrg(), false, "你没有当前文件的删除权限");
-
-
+   
+        
     }
 
     /**
@@ -353,64 +359,62 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
      * @param anFileId
      * @return
      */
-    public CommissionFile saveAuditFile(final Long anFileId) {
+    public CommissionFile saveAuditFile(Long anFileId) {
 
         logger.info("佣金记录批量审核 ：  saveAuditRecordList  审核佣金记录文件  saveAuditFile 开始  审核人："+UserUtils.getOperatorInfo().getName()+"   文件id="+anFileId);
-        final CommissionFile file = this.selectOne(new CommissionFile(anFileId));
+        CommissionFile file = this.selectOne(new CommissionFile(anFileId));
         checkAuditFileStatus(file, UserUtils.getOperatorInfo());
         file.saveAuditInit(UserUtils.getOperatorInfo());
-        final List<CommissionRecord> recordList=recordService.queryRecordListByFileId(anFileId);
-        final CustFileItem fileItem=uploadCommissionRecordFile(recordList);
-        file.setDownFileId(fileItem.getId());
+        //List<CommissionRecord> recordList=recordService.queryRecordListByFileId(anFileId);
+        //CustFileItem fileItem=uploadCommissionRecordFile(recordList);
+        //file.setDownFileId(fileItem.getId());
         this.updateByPrimaryKey(file);
-
+        
         logger.info("佣金记录批量审核 ：  saveAuditRecordList  审核佣金记录文件  saveAuditFile  成功 审核人："+UserUtils.getOperatorInfo().getName());
         return file;
-
+        
+    }
+    
+    private CustFileItem uploadCommissionRecordFile(List<CommissionRecord> anRecordList) {
+        
+        logger.info("佣金记录批量审核 ：  saveAuditRecordList  生成佣金记录下载文件   审核人："+UserUtils.getOperatorInfo().getName());
+        BTAssert.notNull(anRecordList,"审核的数据文件为空");
+        //获取佣金记录导出模版文件
+        TemplateExportParams params=new TemplateExportParams("C:\\Users\\xuyp\\Desktop\\数据导出模版.xlsx");
+        Map<String,Object> data=new HashMap<>();
+        data.put("recordList", anRecordList);
+        data.put("editDate", new Date());
+        Workbook book=ExcelExportUtil.exportExcel(params, data);
+        BTAssert.notNull(book,"封装模版产生异常,请稍后重试");
+        FileOutputStream fos;
+        try {
+            fos=new FileOutputStream(new File("d:\\789.xlsx"));
+             book.write(fos);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        CustFileItem fileItem = custFileService.findOne(CommissionConstantCollentions.COMMISSION_FILE_DOWN_FILEITEM_FILEID);//文件上次详情
+        logger.info("佣金记录批量审核 ：  saveAuditRecordList  生成佣金记录下载文件 已经成功上传到服务器   审核人："+UserUtils.getOperatorInfo().getName());
+        return fileItem;
     }
 
-
+    
     /**
      * 根据佣金记录生成佣金记录文件
      * @param anRecordList
      * @return
      */
-    private CustFileItem uploadCommissionRecordFile(final List<CommissionRecord> anRecordList) {
+   
 
-        logger.info("佣金记录批量审核 ：  saveAuditRecordList  生成佣金记录下载文件   审核人："+UserUtils.getOperatorInfo().getName());
-        BTAssert.notNull(anRecordList,"审核的数据文件为空");
-        //获取佣金记录导出模版文件
-        final CustFileItem fileItem = custFileService.findOne(CommissionConstantCollentions.COMMISSION_FILE_DOWN_FILEITEM_FILEID);//文件上次详情
-        BTAssert.notNull(fileItem,"佣金记录导出模版为空");
-        final InputStream is = dataStoreService.loadFromStore(fileItem);//得到文件输入流
-        final TemplateExportParams params=null;//new TemplateExportParams(is);
-        final Map<String,Object> data=new HashMap<>();
-        data.put("recordList", anRecordList);
-        final Workbook book=ExcelExportUtil.exportExcel(params, data);
-        BTAssert.notNull(book,"封装模版产生异常,请稍后重试");
-        final ByteArrayOutputStream os = new ByteArrayOutputStream();
-        try {
-            book.write(os);
-        }
-        catch (final IOException e) {
-            e.printStackTrace();
-        }
-        final byte[] b = os.toByteArray();
-        final ByteArrayInputStream in = new ByteArrayInputStream(b);
-        final String fileName=anRecordList.get(0).getCustName()+anRecordList.get(0).getFileId()+"佣金数据导出."+fileItem.getFileType();
-        final CustFileItem item = dataStoreService.saveStreamToStore(in, fileItem.getFileType(),fileName );
-        logger.info("佣金记录批量审核 ：  saveAuditRecordList  生成佣金记录下载文件 已经成功上传到服务器   审核人："+UserUtils.getOperatorInfo().getName());
-        return item;
-    }
-
-    private void checkAuditFileStatus(final CommissionFile anFile, final CustOperatorInfo anOperatorInfo) {
-
+    private void checkAuditFileStatus(CommissionFile anFile, CustOperatorInfo anOperatorInfo) {
+        
         checkStatus(anFile.getPayStatus(), CommissionConstantCollentions.COMMISSION_PAY_STATUS_FAILURE, true, "当前文件记录已经付款，不能重新审核");
         checkStatus(anFile.getPayStatus(), CommissionConstantCollentions.COMMISSION_PAY_STATUS_SUCCESS, true, "当前文件记录已经付款，不能重新审核");
         checkStatus(anFile.getBusinStatus(), CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_DELETE, true, "当前文件记录已经删除，不能重新审核");
         checkStatus(anFile.getOperOrg(), anOperatorInfo.getOperOrg(), false, "你没有当前文件的删除权限");
-
-
+   
+        
     }
 
     /**
@@ -418,8 +422,8 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
      * @param anMap
      * @return
      */
-    public List<CommissionFile> queryFileNoResolve(final Map<String, Object> anMap) {
-
+    public List<CommissionFile> queryFileNoResolve(Map<String, Object> anMap) {
+        
         BTAssert.notNull(anMap,"查询未解析的文件条件为空");
         BTAssert.notNull(anMap.get("importDate"),"查询未解析的文件条件为空");
         BTAssert.notNull(anMap.get("custNo"),"查询未解析的文件为空");
@@ -430,7 +434,7 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         }
         anMap.put("businStatus", CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_IS_HANDLE);
         anMap.put("resolveStatus", CommissionConstantCollentions.COMMISSION_RESOLVE_STATUS_FAILURE);
-        final List<CommissionFile> falilureResolveList = this.selectByClassProperty(CommissionFile.class, anMap);
+        List<CommissionFile> falilureResolveList = this.selectByClassProperty(CommissionFile.class, anMap);
         noResolvelist.addAll(falilureResolveList);
         anMap.remove("resolveStatus");
         anMap.remove("businStatus");
@@ -442,16 +446,72 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
      * @param anFileSet
      * @return
      */
-    public List<CommissionFile> saveAuditFile(final Set<Long> anFileSet) {
-
-        final List<CommissionFile> fileList=new ArrayList<CommissionFile>();
-        for (final Long fileId : anFileSet) {
-            final CommissionFile file = saveAuditFile(fileId);
+    public List<CommissionFile> saveAuditFile(Set<Long> anFileSet) {
+        
+        List<CommissionFile> fileList=new ArrayList<CommissionFile>();
+        for (Long fileId : anFileSet) {
+            CommissionFile file = saveAuditFile(fileId);
             fileList.add(file);
         }
-
+        
         return fileList;
-
+        
+    }
+    
+    /**
+     * 检查当前企业的解析记录是否审核完全，如果已经审核完成，不允许再次上传文件解析
+     * true  表明今天还没有审核文件
+     * false  表明今天已经把文件审核完成，不需要再次上传文件解析
+     * @param anCustNo
+     * @param anImportDate
+     * @return
+     */
+    public boolean checkFilePermitOperator(Long anCustNo,String anImportDate){
+        
+        Map queryMap = QueryTermBuilder.newInstance()
+        .put("custNo", anCustNo)
+        .put("importDate", anImportDate)
+        .put("businStatus", CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_AUDIT)
+        .build();
+        List<CommissionFile> fileList = this.selectByProperty(queryMap);
+        if(Collections3.isEmpty(fileList)){
+            List<String> payList=new ArrayList<>();
+            payList.add(CommissionConstantCollentions.COMMISSION_PAY_STATUS_SUCCESS);
+            payList.add(CommissionConstantCollentions.COMMISSION_PAY_STATUS_FAILURE);
+            
+            Map queryMap2 = QueryTermBuilder.newInstance()
+            .put("custNo", anCustNo)
+            .put("importDate", anImportDate)
+            .put("payStatus", payList)
+            .build();
+            List<CommissionFile> fileList2 = this.selectByProperty(queryMap2);
+            
+            if(Collections3.isEmpty(fileList2)){
+                return true;
+            }
+            
+        }
+        return false;
+    }
+    
+    /**
+     * 如果企业的所有文件已经审核完成，返回true
+     * 
+     * @param anCustNo
+     * @param anImportDate
+     * @return
+     */
+    public boolean checkFileAuditFinish(Long anCustNo,String anImportDate){
+        
+        
+        Map queryMap = QueryTermBuilder.newInstance()
+                .put("custNo", anCustNo)
+                .put("importDate", anImportDate)
+                .put("businStatus", CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_AUDIT)
+                .build();
+        List<CommissionFile> fileList = this.selectByProperty(queryMap);
+        
+        return Collections3.isEmpty(fileList)?false:true;
     }
 
 

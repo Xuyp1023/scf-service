@@ -35,7 +35,7 @@ public class CommissionRecordDubboService implements ICommissionRecordService{
                 .put("importDate", anImportDate)
                 .build();
         return AjaxObject
-                .newOk("佣金记录查询成功", recordService.saveAuditRecordList(queryMap))
+                .newOk("佣金记录审核成功", recordService.saveAuditRecordList(queryMap))
                 .toJson();
     }
 

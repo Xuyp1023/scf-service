@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.QueryTermBuilder;
@@ -550,6 +551,7 @@ public class CommissionFile implements BetterjrEntity {
         this.setBatchNo(anFileItem.getBatchNo());
         this.setFileName(anFileItem.getFileName());
         this.refNo= SequenceFactory.generate("PLAT_COMMON", "#{Date:yyyyMMdd}#{Seq:12}","D");
+        this.id=SerialGenerator.getLongValue("CommissionFile.id");
         return this;
         
     }

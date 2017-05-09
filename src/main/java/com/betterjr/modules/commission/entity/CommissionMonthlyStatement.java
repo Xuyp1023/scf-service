@@ -259,9 +259,8 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     @MetaData( value="结息日期", comments = "结息日期")
     private String endInterestDate;
     
-
+    //对账月份yyyyMM
     @Column(name = "D_BILL_MONTH",  columnDefinition="VARCHAR" )
-    @MetaData( value="对账月份", comments = "对账月份")
     private String billMonth;
     
     private static final long serialVersionUID = 1493796206916L;
