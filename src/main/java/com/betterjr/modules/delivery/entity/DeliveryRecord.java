@@ -1,5 +1,17 @@
 package com.betterjr.modules.delivery.entity;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
@@ -8,11 +20,6 @@ import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.commission.entity.CommissionMonthlyStatement;
 import com.betterjr.modules.delivery.data.DeliveryConstantCollentions;
 import com.betterjr.modules.generator.SequenceFactory;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.*;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -30,11 +37,11 @@ public class DeliveryRecord implements BetterjrEntity {
 
     //总金额
     @Column(name = "F_TOTAL_BLANCE",  columnDefinition="DECIMAL" )
-    private Double totalBlance;
+    private BigDecimal totalBlance;
 
     //总笔数
     @Column(name = "N_TOTAL_AMOUNT",  columnDefinition="DECIMAL" )
-    private Double totalAmount;
+    private BigDecimal totalAmount;
 
     //投递日期
     @Column(name = "D_POST_DATE",  columnDefinition="VARCHAR" )
@@ -103,10 +110,21 @@ public class DeliveryRecord implements BetterjrEntity {
     @Column(name = "N_VERSION",  columnDefinition="VARCHAR" )
     private String version;
     
+    @Column(name = "C_DESCRIPTION",  columnDefinition="VARCHAR" )
+    private String description;
+    
     @Transient
     private List<DeliveryRecordStatement> recordStatementList=new ArrayList<>();
 
     private static final long serialVersionUID = -189024275871128671L;
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setDescription(String anDescription) {
+        this.description = anDescription;
+    }
 
     public Long getId() {
         return id;
@@ -124,11 +142,11 @@ public class DeliveryRecord implements BetterjrEntity {
         this.refNo = refNo == null ? null : refNo.trim();
     }
 
-    public Double getTotalBlance() {
+    public BigDecimal getTotalBlance() {
         return totalBlance;
     }
 
-    public void setTotalBlance(Double totalBlance) {
+    public void setTotalBlance(BigDecimal totalBlance) {
         this.totalBlance = totalBlance;
     }
 
@@ -220,11 +238,11 @@ public class DeliveryRecord implements BetterjrEntity {
         this.confirmTime = confirmTime == null ? null : confirmTime.trim();
     }
 
-    public Double getTotalAmount() {
+    public BigDecimal getTotalAmount() {
         return this.totalAmount;
     }
 
-    public void setTotalAmount(Double anTotalAmount) {
+    public void setTotalAmount(BigDecimal anTotalAmount) {
         this.totalAmount = anTotalAmount;
     }
 
@@ -315,7 +333,7 @@ public class DeliveryRecord implements BetterjrEntity {
                 + this.operOrg + ", businStatus=" + this.businStatus + ", confirmDate=" + this.confirmDate + ", confirmTime=" + this.confirmTime
                 + ", confirmOperId=" + this.confirmOperId + ", confirmOperName=" + this.confirmOperName + ", regOperId=" + this.regOperId
                 + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", version=" + this.version
-                + ", recordStatementList=" + this.recordStatementList + "]";
+                + ", description=" + this.description + ", recordStatementList=" + this.recordStatementList + "]";
     }
 
     @Override
