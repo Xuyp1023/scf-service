@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.commission.dao.CommissionDailyStatementMapper;
+import com.betterjr.modules.commission.data.CalcPayResult;
 import com.betterjr.modules.commission.entity.CommissionDailyStatement;
 import com.betterjr.modules.commission.entity.CommissionDailyStatementRecord;
 import com.betterjr.modules.commission.entity.CommissionPayResultRecord;
@@ -101,16 +103,16 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
      * @return 统计结果
      * @throws ParseException 
      */
-    public Map<String,Object> findDailyStatementCount(String anMonth,Long anCustNo) throws ParseException{
+    public CalcPayResult findDailyStatementCount(String anMonth,Long anCustNo) throws ParseException{
         anMonth=anMonth.replaceAll("-", "")+"01";
         // 不管是几月在将月份改为1-31 号，作为条件查询
         Map<String,Object> monthMap=new HashMap<String, Object>();
         monthMap.put("startDate", CommissionDateUtils.getMinMonthDate(anMonth));
         monthMap.put("endDate", CommissionDateUtils.getMaxMonthDate(anMonth));
         monthMap.put("ownCustNo", anCustNo);
-        Map resultMap=this.mapper.selectDailyStatementCount(monthMap); // 查询所有记录数
-        logger.info("resultMap:"+resultMap);
-        return resultMap;
+        CalcPayResult payResult=this.mapper.selectDailyStatementCount(monthMap); // 查询所有记录数
+        logger.info("payResult:"+payResult);
+        return payResult;
     }
     
     /***
@@ -120,8 +122,8 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
      * @throws ParseException 
      */
     public Map<String,Object> findDailyStatementBasicsInfo(Map<String,Object> anParam) throws ParseException{
-        String anMonth=anParam.get("month").toString();
-        Long anOwnCustNo=Long.parseLong(anParam.get("ownCustNo").toString());
+        String anMonth=anParam.get("billMonth").toString();
+        Long anOwnCustNo=Long.parseLong(anParam.get("custNo").toString());
         String anEndInterestDate=(String)anParam.get("endInterestDate"); // 结息日期
         String month=anMonth.replaceAll("-", "")+"01";
         
@@ -137,9 +139,9 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
          */
         long time = new Date().getTime()-BetterDateUtils.parseDate(CommissionDateUtils.getMaxMonthDate(month)).getTime();
         BTAssert.isTrue(time>0, "当前日期要大于对账月份的月末日期");
-        Map resultMap=this.mapper.selectDailyStatementCount(monthMap);
+        CalcPayResult payResult=this.mapper.selectDailyStatementCount(monthMap);
         
-        Long failureTotalCount=Long.parseLong((String)resultMap.get("failureTotalCount"));
+        Long failureTotalCount=payResult.getPayFailureAmount();
         BTAssert.isTrue(failureTotalCount<0, "日账单存在未生效数据，不能生成月账单");
         
         BigDecimal totalBalance=new BigDecimal(0.00);// 总金额
@@ -176,7 +178,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
             resultDailyStatementList.add(dailyStatement);
         }
         
-        monthMap.put("ownCustName", anParam.get("ownCustName"));
+        monthMap.put("ownCustName", custAccountService.queryCustName(anOwnCustNo));
         monthMap.put("monthlyRefNo", SequenceFactory.generate("CommissionMonthlyStatement.refNo", "#{Date:yyyyMMdd}#{Seq:12}", "MB"));
         monthMap.put("totalBalance", totalBalance);
         monthMap.put("payTotalBalance", totalPayBalance);
@@ -194,10 +196,8 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
      * @param anMap
      * @return
      */
-    public Map<String,Object> findDailyStatementCount(Map<String,Object> anMap){
-        Map resultMap=this.mapper.selectDailyStatementCount(anMap);
-        logger.info("findDailyStatementCount,resultMap:"+resultMap);
-        return resultMap;
+    public CalcPayResult findDailyStatementCount(Map<String,Object> anMap){
+        return this.mapper.selectDailyStatementCount(anMap);
     }
     
     /***
@@ -223,7 +223,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
      * @param anOwnCustNo
      * @return
      */
-    public Map<String,Object> findPayResultCount(String anPayDate,Long anOwnCustNo){
+    public CalcPayResult findPayResultCount(String anPayDate,Long anOwnCustNo){
         return payResultRecordService.calcPayResultRecord(anOwnCustNo, anPayDate);
     }
     
@@ -248,17 +248,17 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
      * @return
      */
     public Map<String, Object> findPayResultInfo(String anPayDate,Long anOwnCustNo){
-         Map<String,Object> countMap= payResultRecordService.calcPayResultRecord(anOwnCustNo, anPayDate);
-         Long payFailureAmount=Long.parseLong((String)countMap.get("payFailureAmount"));
+         CalcPayResult payResult = payResultRecordService.calcPayResultRecord(anOwnCustNo, anPayDate);
+         Long payFailureAmount=payResult.getPayFailureAmount();
          BTAssert.isTrue(payFailureAmount<0, "佣金支付结果存在未生效数据，不能生成日账单");
          
          Map<String, Object> resultMp=new HashMap<String, Object>();
          resultMp.put("dailyRefNo",SequenceFactory.generate("CommissionDailyStatement.refNo", "#{Date:yyyyMMdd}#{Seq:12}", "DB"));
-         resultMp.put("totalBalance", countMap.get("totalBalance"));
+         resultMp.put("totalBalance", payResult.getTotalBalance());
          resultMp.put("payDate", anPayDate);
          resultMp.put("ownCustNo", anOwnCustNo);
          resultMp.put("ownCustName", custAccountService.queryCustName(anOwnCustNo));
-         resultMp.put("totalAmount", countMap.get("totalAmount"));
+         resultMp.put("totalAmount", payResult.getTotalAmount());
          resultMp=getConfigData();
          resultMp.put("makeDateTime", BetterDateUtils.getDateTime());
          return resultMp;
@@ -294,15 +294,16 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         dailyStatement.setMakeCustName((String)configMap.get("makeCustName"));
         dailyStatement.setOperName((String)configMap.get("makeOperName"));
         
-        Map<String,Object> countMap= payResultRecordService.calcPayResultRecord(anOwnCustNo, anPayDate);
-        dailyStatement.setTotalBalance(new BigDecimal((String)countMap.get("totalBalance")));
-        dailyStatement.setTotalAmount(new BigDecimal((String)countMap.get("totalAmount")));
-        dailyStatement.setPayTotalBalance(new BigDecimal((String)countMap.get("totalBalance")));
-        dailyStatement.setPayTotalAmount(new BigDecimal((String)countMap.get("totalAmount")));
-        dailyStatement.setPaySuccessAmount(new BigDecimal((String)countMap.get("paySuccessAmount")));
-        dailyStatement.setPaySuccessBalance(new BigDecimal((String)countMap.get("paySuccessBalance")));
-        dailyStatement.setPayFailureBalance(new BigDecimal((String)countMap.get("payFailureBalance")));
-        dailyStatement.setPayFailureAmount(new BigDecimal((String)countMap.get("payFailureAmount")));
+        CalcPayResult payResult= payResultRecordService.calcPayResultRecord(anOwnCustNo, anPayDate);
+        
+        dailyStatement.setTotalBalance(payResult.getTotalBalance());
+        dailyStatement.setTotalAmount(new BigDecimal(payResult.getTotalAmount()));
+        dailyStatement.setPayTotalBalance(payResult.getTotalBalance());
+        dailyStatement.setPayTotalAmount(new BigDecimal(payResult.getTotalAmount()));
+        dailyStatement.setPaySuccessAmount(new BigDecimal(payResult.getPaySuccessAmount()));
+        dailyStatement.setPaySuccessBalance(payResult.getPaySuccessBalance());
+        dailyStatement.setPayFailureBalance(payResult.getPayFailureBalance());
+        dailyStatement.setPayFailureAmount(new BigDecimal(payResult.getPayFailureAmount()));
         dailyStatement.initValue();
         
         this.insert(dailyStatement);

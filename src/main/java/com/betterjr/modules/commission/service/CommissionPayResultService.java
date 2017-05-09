@@ -329,7 +329,7 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
      */
     public Map<String, Object> findCountPayResultRecord(final Long anPayResultId) {
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
-        final CommissionPayResult payResult = findByIdAndCheckStatus(anPayResultId, CommissionPayResultStatus.NORMAL);
+        final CommissionPayResult payResult = findByIdAndCheckStatus(anPayResultId, null);
 
         final Map<String, Object> result = new HashMap<>();
         final CalcPayResult calcPayResult = commissionPayResultRecordService.calcPayResultRecord(anPayResultId);

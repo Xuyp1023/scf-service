@@ -31,6 +31,19 @@ public class CommissionDailyStatementDubboService implements ICommissionDailySta
         }
         return null;
     }
+    
+    @Override
+    public String webFindDailyStatementInfoByMonth(String anMonth, Long anCustNo) {
+        try {
+            return AjaxObject.newOk("根据对账月份查询日账单列表",dailyStatementService.findCpsDailyStatementByMonth(anMonth, anCustNo)).toJson();   
+        }
+        catch (Exception e) {
+            BTAssert.notNull(null, "根据对账月份查询日账单列表异常："+e);
+        }
+        return null;
+    }
+    
+    
 
     @Override
     public String webFindDailyStatementBasicsInfo(Map<String, Object> anParam) {
