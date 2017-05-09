@@ -319,4 +319,8 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
         this.mapper.writebackPayResultRecordStatus(anPayResultId);
         this.mapper.writebackRecordStatus(anPayResultId);
     }
+    
+    public Long saveRecordStatus(final Map<String,Object> anParam){
+        return this.mapper.saveRecordStatus(anParam);
+    }
 }

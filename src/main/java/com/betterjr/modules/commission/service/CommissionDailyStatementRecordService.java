@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.commission.dao.CommissionDailyStatementRecordMapper;
+import com.betterjr.modules.commission.entity.CommissionDailyStatement;
 import com.betterjr.modules.commission.entity.CommissionDailyStatementRecord;
 
 /***
@@ -28,18 +29,26 @@ public class CommissionDailyStatementRecordService extends BaseService<Commissio
     }
     
     /***
-     * 根据日账单的凭证编号查询
+     * 根据日账单编号查询
      * @param anDailyStatementRefNo
      * @param anPageNum
      * @param anPageSize
      * @return
      */
-    public Page<CommissionDailyStatementRecord> queryCommissionDailyStatementRecordByRefNo(String anDailyStatementRefNo, int anPageNum, int anPageSize){
+    public Page<CommissionDailyStatementRecord> queryCommissionDailyStatementRecordByRefNo(Long anDailyStatementId, int anPageNum, int anPageSize,String anFlag){
         Map<String,Object> map=new HashMap<String, Object>();
-        map.put("dailyStatementRefNo", anDailyStatementRefNo);
-        map.put("businStatus", "2");
-        map.put("flag", "1");
+        map.put("dailyStatementId", anDailyStatementId);
+        map.put("flag", anFlag);
         return queryCommissionDailyStatementRecord(map,anPageNum,anPageSize);
+    }
+    
+    /***
+     * 保存日记录
+     * @return
+     */
+    public boolean addDailyStatementRecord(CommissionDailyStatement anDailyStatement){
+        anDailyStatement.setBusinStatus("0");
+        return this.mapper.addDailyStatementRecord(anDailyStatement)>0;
     }
     
 }

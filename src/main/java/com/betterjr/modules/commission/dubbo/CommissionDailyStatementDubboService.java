@@ -45,7 +45,7 @@ public class CommissionDailyStatementDubboService implements ICommissionDailySta
 
     @Override
     public String webUpdateDailyStatement(Long anDailyStatementId, String anBusinStatus) {
-        if(dailyStatementService.updateDailyStatement(anDailyStatementId, anBusinStatus)){
+        if(dailyStatementService.saveDailyStatementById(anDailyStatementId, anBusinStatus)){
             return AjaxObject.newOk("更新成功").toJson();
         }else{
             return AjaxObject.newError("更新失败").toJson();
@@ -59,5 +59,35 @@ public class CommissionDailyStatementDubboService implements ICommissionDailySta
         }else{
             return AjaxObject.newError("删除失败").toJson();
         }
+    }
+
+    @Override
+    public String webFindPayResultCount(String anPayDate, Long anOwnCustNo) {
+        return AjaxObject.newOk("支付记录总数",dailyStatementService.findPayResultCount(anPayDate, anOwnCustNo)).toJson();
+    }
+
+    @Override
+    public String webQueryPayResultRecord(Long anOwnCustNo, String anPayDate, int anFlag, int anPageNum, int anPageSize) {
+        return AjaxObject.newOkWithPage("分页查询支付记录", dailyStatementService.queryPayResultRecord(anOwnCustNo, anPayDate, anFlag, anPageNum, anPageSize)).toJson();
+    }
+    
+    @Override
+    public String webFindPayResultInfo(String anPayDate,Long anOwnCustNo){
+        return AjaxObject.newOk("查询支付信息",dailyStatementService.findPayResultInfo(anPayDate, anOwnCustNo)).toJson();
+    }
+    
+    @Override
+    public String webSaveDailyStatement(String anDailyRefNo,String anPayDate,Long anOwnCustNo){
+        return AjaxObject.newOk("添加记录",dailyStatementService.saveDailyStatement(anDailyRefNo, anPayDate, anOwnCustNo)).toJson();
+    }
+    
+    @Override
+    public String webFindDailyStatementById(Long anDailyStatementId){
+        return AjaxObject.newOk("查询日账单详情", dailyStatementService.findDailyStatementById(anDailyStatementId)).toJson();
+    }
+    
+    @Override
+    public String webQueryDailyStatementRecordById(Long anDailyStatementId,int anPageNum,int anPageSize,String anFlag){
+        return AjaxObject.newOk("查询日账单详情", dailyStatementService.queryDailyStatementRecordByDailyId(anDailyStatementId, anPageNum, anPageSize, anFlag)).toJson();
     }
 }

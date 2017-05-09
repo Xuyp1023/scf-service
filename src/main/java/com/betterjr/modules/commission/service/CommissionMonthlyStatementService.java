@@ -9,18 +9,19 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.betterjr.common.exception.BytterException;
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
+import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.commission.dao.CommissionMonthlyStatementMapper;
 import com.betterjr.modules.commission.entity.CommissionDailyStatement;
 import com.betterjr.modules.commission.entity.CommissionMonthlyStatement;
 import com.betterjr.modules.commission.entity.CommissionMonthlyStatementRecord;
-import com.betterjr.modules.commission.util.CommissionDateUtils;
-import com.betterjr.modules.generator.SequenceFactory;
+import com.betterjr.modules.config.dubbo.interfaces.IDomainAttributeService;
 
 /***
  * 月报表服务类型
@@ -34,6 +35,10 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
     private CommissionDailyStatementService dailyStatementService;
     @Autowired
     private CommissionMonthlyStatementRecordService monthlyRecordService;
+//    @Resource
+//    private DomainAttributeDubboClientService domainAttributeDubboClientService;
+    @Reference(interfaceClass=IDomainAttributeService.class)
+    private IDomainAttributeService domainAttributeDubboClientService;
     
     /***
      * 保存月报表记录
@@ -57,10 +62,13 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
         monthlyStatement.setPaySuccessBalance(new BigDecimal((String)countMap.get("successTotalBalance")));
         monthlyStatement.setPayFailureAmount(new BigDecimal((String)countMap.get("failureTotalCount")));
         monthlyStatement.setPayFailureBalance(new BigDecimal((String)countMap.get("failureTotalBalance")));
-        monthlyStatement.setMakeCustName("");// 参数表中获取
-        monthlyStatement.setMakeOperName("");// 参数表中获取
-        monthlyStatement.setInterestRate(new BigDecimal("0.00"));// 参数表中获取
-        monthlyStatement.setTaxRate(new BigDecimal("0.00"));// 参数表中获取
+        monthlyStatement.setBillMonth((String)anParam.get("billMonth"));
+        
+        monthMap=getConfigData();
+        monthlyStatement.setMakeCustName(monthMap.get("makeCustName").toString());
+        monthlyStatement.setMakeOperName(monthMap.get("makeOperName").toString());
+        monthlyStatement.setInterestRate(new BigDecimal(monthMap.get("interestRate").toString()));
+        monthlyStatement.setTaxRate(new BigDecimal(monthMap.get("taxRate").toString()));
         
         this.insert(monthlyStatement);
         
@@ -87,17 +95,22 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
      */
     public Page<CommissionMonthlyStatement> queryMonthlyStatement(Map<String, Object> anParam, int anPageNum, int anPageSize) throws ParseException{
         Map<String,Object> paramMap=new HashMap<String, Object>();
-        String anMonth=(String)anParam.get("month");
-        if(BetterStringUtils.isNotBlank(anMonth)){
-            anMonth=anMonth.replaceAll("-", "")+"01";
-            paramMap.put("payBeginDate", CommissionDateUtils.getMinMonthDate(anMonth));
-            paramMap.put("payEndDate", CommissionDateUtils.getMaxMonthDate(anMonth));
+//        String anMonth=(String)anParam.get("billMonth");
+//        if(BetterStringUtils.isNotBlank(anMonth)){
+//            anMonth=anMonth.replaceAll("-", "")+"01";
+//            paramMap.put("payBeginDate", CommissionDateUtils.getMinMonthDate(anMonth));
+//            paramMap.put("payEndDate", CommissionDateUtils.getMaxMonthDate(anMonth));
+//        }
+        if(BetterStringUtils.isNotBlank((String)anParam.get("billMonth"))){
+            paramMap.put("billMonth", anParam.get("billMonth"));
         }
         if(BetterStringUtils.isNotBlank((String)anParam.get("ownCustNo"))){
             paramMap.put("ownCustNo", anParam.get("ownCustNo"));
         }
         if(BetterStringUtils.isNotBlank((String)anParam.get("businStatus"))){
             paramMap.put("businStatus", anParam.get("businStatus"));
+        }else{
+            paramMap.put("businStatus", new String[]{"0","1","2","9"});
         }
         Page<CommissionMonthlyStatement> monthlyStatement=this.selectPropertyByPage(paramMap, anPageNum, anPageSize, "1".equals(anParam.get("flag")),"id desc");
 
@@ -122,7 +135,7 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
         monthMap.put("totalInterset", monthlyStatement.getInterest());
         monthMap.put("totalTaxBalance", monthlyStatement.getTaxBalance());
         monthMap.put("dailyList", monthlyRecordList);
-        monthMap.put("makeCustName", monthlyStatement.getMakeCustName());// 参数表中获得
+        monthMap.put("makeCustName", monthlyStatement.getMakeCustName());
         monthMap.put("makeDateTime", BetterDateUtils.formatDispDate(monthlyStatement.getMakeDate())+BetterDateUtils.formatDispTime(monthlyStatement.getMakeTime()));
         monthMap.put("endInterestDate", monthlyStatement.getEndInterestDate());  
         return monthMap;
@@ -144,5 +157,25 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
     public boolean delMonthlyStatement(Long anMonthlyId){
         return this.deleteByPrimaryKey(anMonthlyId)>0;
     }
+    
+    /***
+    * 获取参数表里面的信息
+    * @return
+    */
+   public Map<String,Object> getConfigData(){
+       Map<String, Object> map=new HashMap<String, Object>();
+       final CustOperatorInfo custOperator = (CustOperatorInfo) UserUtils.getPrincipal().getUser();
+       final String cusrName = domainAttributeDubboClientService.findString(custOperator.getOperOrg(), "PLAT_COMMISSION_MAKE_CUSTNAME");
+       final String operator = domainAttributeDubboClientService.findString(custOperator.getOperOrg(), "PLAT_COMMISSION_MAKE_OPERATOR");
+       final BigDecimal interestRate = domainAttributeDubboClientService.findMoney(custOperator.getOperOrg(), "PLAT_COMMISSION_INTEREST_RATE");
+       final BigDecimal taxRate = domainAttributeDubboClientService.findMoney(custOperator.getOperOrg(), "PLAT_COMMISSION_TAX_RATE");
+
+       map.put("makeCustName", cusrName);
+       map.put("makeOperName", operator);
+       map.put("interestRate", interestRate);
+       map.put("taxRate", taxRate);
+       
+       return map;
+   }
     
 }

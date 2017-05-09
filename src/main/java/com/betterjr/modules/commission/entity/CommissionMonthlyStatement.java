@@ -259,6 +259,11 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     @MetaData( value="结息日期", comments = "结息日期")
     private String endInterestDate;
     
+
+    @Column(name = "D_BILL_MONTH",  columnDefinition="VARCHAR" )
+    @MetaData( value="对账月份", comments = "对账月份")
+    private String billMonth;
+    
     private static final long serialVersionUID = 1493796206916L;
 
     public Long getId() {
@@ -573,6 +578,14 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
         this.batchNo = anBatchNo;
     }
 
+    public String getBillMonth() {
+        return this.billMonth;
+    }
+
+    public void setBillMonth(String anBillMonth) {
+        this.billMonth = anBillMonth;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -624,7 +637,7 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     }
 
     public void initMonthlyStatement(Map<String,Object> anMap) {
-        this.id = SerialGenerator.getLongValue("CommissionDailyStatement.id");         
+        this.id = SerialGenerator.getLongValue("CommissionMonthlyStatement.id");         
         this.refNo = (String)anMap.get("monthlyRefNo");
         this.ownCustName= (String)anMap.get("monthlyRefNo");
         this.totalBalance=new BigDecimal((String)anMap.get("totalBalance"));
@@ -641,7 +654,7 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
         this.regTime = BetterDateUtils.getNumTime();
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
-        this.businStatus="0";
+        this.businStatus="1";
         final CustOperatorInfo custOperator = (CustOperatorInfo) UserUtils.getPrincipal().getUser();
         if(custOperator!=null){
             this.operOrg=custOperator.getOperOrg();
