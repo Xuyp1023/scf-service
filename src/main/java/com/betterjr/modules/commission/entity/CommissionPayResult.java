@@ -11,9 +11,12 @@ import javax.persistence.Table;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
+import com.betterjr.common.mapper.CustTimeJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -37,6 +40,7 @@ public class CommissionPayResult implements BetterjrEntity {
     /**
      * 支付日期
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_PAY_DATE",  columnDefinition="CHAR" )
     @MetaData( value="支付日期", comments = "支付日期")
     private String payDate;
@@ -44,6 +48,7 @@ public class CommissionPayResult implements BetterjrEntity {
     /**
      * 支付时间
      */
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     @Column(name = "T_PAY_TIME",  columnDefinition="CHAR" )
     @MetaData( value="支付时间", comments = "支付时间")
     private String payTime;
@@ -51,6 +56,7 @@ public class CommissionPayResult implements BetterjrEntity {
     /**
      * 导入日期
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_IMPORT_DATE",  columnDefinition="CHAR" )
     @MetaData( value="导入日期", comments = "导入日期")
     private String importDate;
@@ -58,6 +64,7 @@ public class CommissionPayResult implements BetterjrEntity {
     /**
      * 导入时间
      */
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     @Column(name = "T_IMPORT_TIME",  columnDefinition="CHAR" )
     @MetaData( value="导入时间", comments = "导入时间")
     private String importTime;
