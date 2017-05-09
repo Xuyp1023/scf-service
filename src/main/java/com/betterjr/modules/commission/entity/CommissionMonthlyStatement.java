@@ -639,7 +639,7 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     public void initMonthlyStatement(Map<String,Object> anMap) {
         this.id = SerialGenerator.getLongValue("CommissionMonthlyStatement.id");         
         this.refNo = (String)anMap.get("monthlyRefNo");
-        this.ownCustName= (String)anMap.get("monthlyRefNo");
+        this.ownCustName= (String)anMap.get("ownCustName");
         this.totalBalance=new BigDecimal((String)anMap.get("totalBalance"));
         this.payTotalBalance = new BigDecimal((String)anMap.get("payTotalBalance"));
         this.ownCustNo=Long.parseLong((String)anMap.get("monthlyRefNo"));

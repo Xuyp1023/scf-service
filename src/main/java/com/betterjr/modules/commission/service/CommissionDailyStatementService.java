@@ -126,11 +126,12 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         Long anOwnCustNo=Long.parseLong(anParam.get("custNo").toString());
         String anEndInterestDate=(String)anParam.get("endInterestDate"); // 结息日期
         String month=anMonth.replaceAll("-", "")+"01";
-        
+        String startDate=CommissionDateUtils.getMinMonthDate(month);
+        String endDate=CommissionDateUtils.getMaxMonthDate(month);
         // 根据对账月份查询
         Map<String,Object> monthMap=new HashMap<String, Object>();
-        monthMap.put("startDate", CommissionDateUtils.getMinMonthDate(month));
-        monthMap.put("endDate", CommissionDateUtils.getMaxMonthDate(month));
+        monthMap.put("startDate", startDate);
+        monthMap.put("endDate", endDate);
         monthMap.put("ownCustNo", anOwnCustNo);
         /**
          *  检查条件
@@ -178,6 +179,9 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
             resultDailyStatementList.add(dailyStatement);
         }
         
+        monthMap.put("payBeginDate", startDate);
+        monthMap.put("payEndDate", endDate);
+        monthMap.put("ownCustNo", anOwnCustNo);
         monthMap.put("ownCustName", custAccountService.queryCustName(anOwnCustNo));
         monthMap.put("monthlyRefNo", SequenceFactory.generate("CommissionMonthlyStatement.refNo", "#{Date:yyyyMMdd}#{Seq:12}", "MB"));
         monthMap.put("totalBalance", totalBalance);

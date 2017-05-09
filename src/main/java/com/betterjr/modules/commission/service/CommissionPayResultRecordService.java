@@ -308,7 +308,6 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
      * @return
      */
     public CalcPayResult calcPayResultRecord(final Long anCustNo, final String anPayDate) {
-        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
         return this.mapper.calcPayResultRecordByPayDate(anCustNo, anPayDate);
     }
 

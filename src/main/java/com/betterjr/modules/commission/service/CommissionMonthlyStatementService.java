@@ -50,8 +50,8 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
     public CommissionMonthlyStatement saveComissionMonthlyStatement(Map<String,Object> anParam) throws ParseException{
         // 添加月账单主表信息
         Map<String,Object> monthMap=new HashMap<String, Object>();
-        monthMap.put("GTEpayDate", anParam.get("startDate"));
-        monthMap.put("LTEpayDate", anParam.get("endDate"));
+        monthMap.put("GTEpayDate", anParam.get("payBeginDate"));
+        monthMap.put("LTEpayDate", anParam.get("payEndDate"));
         monthMap.put("businStatus", "2");
         monthMap.put("ownCustNo", anParam.get("ownCustNo"));
         CommissionMonthlyStatement monthlyStatement=new CommissionMonthlyStatement();
@@ -65,11 +65,11 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
         monthlyStatement.setPayFailureBalance(payResult.getPayFailureBalance());
         monthlyStatement.setBillMonth((String)anParam.get("billMonth"));
         
-        monthMap=getConfigData();
-        monthlyStatement.setMakeCustName(monthMap.get("makeCustName").toString());
-        monthlyStatement.setMakeOperName(monthMap.get("makeOperName").toString());
-        monthlyStatement.setInterestRate(new BigDecimal(monthMap.get("interestRate").toString()));
-        monthlyStatement.setTaxRate(new BigDecimal(monthMap.get("taxRate").toString()));
+        Map<String,Object> configMap=getConfigData();
+        monthlyStatement.setMakeCustName(configMap.get("makeCustName").toString());
+        monthlyStatement.setMakeOperName(configMap.get("makeOperName").toString());
+        monthlyStatement.setInterestRate(new BigDecimal(configMap.get("interestRate").toString()));
+        monthlyStatement.setTaxRate(new BigDecimal(configMap.get("taxRate").toString()));
         
         this.insert(monthlyStatement);
         
