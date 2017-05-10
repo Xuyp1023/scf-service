@@ -1,5 +1,6 @@
 package com.betterjr.modules.delivery.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -10,10 +11,13 @@ import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
+import com.betterjr.common.utils.MathExtend;
 import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.commission.entity.CommissionMonthlyStatement;
+import com.betterjr.modules.commission.entity.CommissionRecord;
 import com.betterjr.modules.commission.service.CommissionMonthlyStatementService;
 import com.betterjr.modules.delivery.dao.DeliveryRecordMapper;
 import com.betterjr.modules.delivery.data.DeliveryConstantCollentions;
@@ -155,11 +159,39 @@ public class DeliveryRecordService extends BaseService<DeliveryRecordMapper, Del
     }
     
     /**
-     * 投递月账单信息
-     * @param anRefNo
+     * 删除未提交的对账单记录
+     * @param anRecordId
      * @return
      */
-    public DeliveryRecord saveExpressRecordById(String anRefNo){
+    public boolean saveDeleteRecordById(Long anRecordId){
+        
+        BTAssert.notNull(anRecordId,"请选择要删除的对账单");
+        DeliveryRecord record = this.selectByPrimaryKey(anRecordId);
+        checkDeleteRecord(record,UserUtils.getOperatorInfo());
+        //删除对账单明细和重置月账单为审核状态
+        recordStatementService.saveDeleteRecordStatementByRecordId(anRecordId);
+        //删除对账单信息
+        this.delete(record);
+        
+        return true;
+    }
+    
+    ////业务状态  0未处理  1已投递 2确认
+    private void checkDeleteRecord(DeliveryRecord anRecord, CustOperatorInfo anOperatorInfo) {
+        
+        checkStatus(anRecord.getBusinStatus(), DeliveryConstantCollentions.DELIVERY_RECORD_BUSIN_STATUS_EXPRESS, true, "当前对账单已经投递，不允许删除");
+        checkStatus(anRecord.getBusinStatus(), DeliveryConstantCollentions.DELIVERY_RECORD_BUSIN_STATUS_CONFIRM, true, "当前对账单已经确认，不允许删除");
+        checkStatus(anRecord.getOperOrg(), anOperatorInfo.getOperOrg(), false, "你没有当前对账单的操作权限");
+        
+    }
+
+    /**
+     * 投递月账单信息
+     * @param anRefNo
+     * @param anDescription  提交描述
+     * @return
+     */
+    public DeliveryRecord saveExpressRecordById(String anRefNo, String anDescription){
         
         BTAssert.notNull(anRefNo,"投递的账单不正确");
         
@@ -181,6 +213,7 @@ public class DeliveryRecordService extends BaseService<DeliveryRecordMapper, Del
         }
         
         //3 更新自己的快递信息
+        record.setDescription(anDescription);
         this.updateByPrimaryKeySelective(record);
         
         return record;
@@ -238,12 +271,21 @@ public class DeliveryRecordService extends BaseService<DeliveryRecordMapper, Del
      * 将月账单转换成快递账单pojo
      * @param anMonthlyStatementList
      * @return
+     *  int recordAmount=0;
+            BigDecimal blance=new BigDecimal(0);
+            for (CommissionRecord commissionRecord : recordList) {
+                recordAmount++;
+                blance= MathExtend.add(blance, commissionRecord.getBalance());
+                //blance=MathExtend  //blance+commissionRecord.getBalance();
+            }
      */
     private DeliveryRecord convertToDeliveryRecord(List<CommissionMonthlyStatement> anMonthlyStatementList) {
         
         DeliveryRecord record=new DeliveryRecord();
         record.saveAddInit(UserUtils.getOperatorInfo(),UserUtils.getDefCustInfo(),anMonthlyStatementList.get(0));
         List<DeliveryRecordStatement> statementList=new ArrayList<>();
+        BigDecimal recordAmount=new BigDecimal(0);
+        BigDecimal blance=new BigDecimal(0);
         for (CommissionMonthlyStatement monthly : anMonthlyStatementList) {
             DeliveryRecordStatement statement=new DeliveryRecordStatement();
             statement.setDeliverId(record.getId());
@@ -258,12 +300,17 @@ public class DeliveryRecordService extends BaseService<DeliveryRecordMapper, Del
             statement.setPayTotalFailureBlance(monthly.getPayFailureBalance());
             statement.setPayTotalFailureitems(monthly.getPayFailureAmount());
             statement.setPayTotalSuccessBlance(monthly.getPayTotalBalance());
+            blance= MathExtend.add(blance, monthly.getPayTotalBalance());
+            recordAmount= MathExtend.add(recordAmount, monthly.getPayTotalAmount());
             statement.setPayTotalSuccessitems(monthly.getPayTotalAmount());
+            statement.setFileId(monthly.getFileId());
             statement.setTotalAmount(monthly.getTotalAmount());
             statement.setTotalBlance(monthly.getTotalBalance());
             statement.setBillMonth(monthly.getBillMonth());
             statementList.add(statement);
         }
+        record.setTotalAmount(recordAmount);
+        record.setTotalBlance(blance);
         record.setRecordStatementList(statementList);
         return record;
     }

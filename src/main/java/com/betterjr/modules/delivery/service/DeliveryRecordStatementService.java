@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.service.BaseService;
@@ -12,6 +13,7 @@ import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.commission.service.CommissionMonthlyStatementService;
 import com.betterjr.modules.delivery.dao.DeliveryRecordStatementMapper;
 import com.betterjr.modules.delivery.data.DeliveryConstantCollentions;
 import com.betterjr.modules.delivery.entity.DeliveryRecordStatement;
@@ -19,7 +21,8 @@ import com.betterjr.modules.delivery.entity.DeliveryRecordStatement;
 @Service
 public class DeliveryRecordStatementService extends BaseService<DeliveryRecordStatementMapper, DeliveryRecordStatement> {
 
-    
+    @Autowired
+    private CommissionMonthlyStatementService montylyService;
     /**
      * 根据快递账单的凭证编号查询当前下面的月账单
      * @param anDeliverRefNo
@@ -91,6 +94,24 @@ public class DeliveryRecordStatementService extends BaseService<DeliveryRecordSt
         anMap.put("businStatus", DeliveryConstantCollentions.DELIVERY_STATEMENT_BUSIN_STATUS_CANUSERD);
         
         return this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
+    }
+
+  //删除对账单明细和重置月账单为审核状态
+    public void saveDeleteRecordStatementByRecordId(Long anRecordId) {
+        
+        ////0 可用   1 不可用，已删除状态
+        Map<String,Object> queryMap = QueryTermBuilder.newInstance()
+                .put("deliverId", anRecordId)
+                .put("businStatus", DeliveryConstantCollentions.DELIVERY_STATEMENT_BUSIN_STATUS_CANUSERD)
+                .build();
+        
+        List<DeliveryRecordStatement> recordStatementList = this.selectByProperty(queryMap);
+        for (DeliveryRecordStatement statement : recordStatementList) {
+            Long monthlyId=statement.getMonthlyStatementId();
+            montylyService.saveMonthlyStatement(monthlyId, "2");
+            this.delete(statement);
+        }
+        
     }
     
 }

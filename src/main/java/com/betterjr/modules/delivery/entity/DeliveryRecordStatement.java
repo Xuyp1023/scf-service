@@ -9,11 +9,15 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
+import com.betterjr.common.mapper.CustTimeJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.delivery.data.DeliveryConstantCollentions;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -43,10 +47,12 @@ public class DeliveryRecordStatement implements BetterjrEntity {
 
     //开始时间
     @Column(name = "D_PAY_BEGIN_DATE",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String payBeginDate;
 
     //结束时间
     @Column(name = "D_PAY_END_DATE",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String payEndDate;
 
     //总金额
@@ -108,13 +114,22 @@ public class DeliveryRecordStatement implements BetterjrEntity {
     private String regOperName;
     
     @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
     
     @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String regTime;
     
     @Column(name = "N_VERSION",  columnDefinition="VARCHAR" )
     private String version;
+
+    /**
+     * 月报表文件id
+     */
+    @Column(name = "L_FILE_ID",  columnDefinition="Long" )
+    @MetaData( value="月报表文件", comments = "月报表文件")
+    private Long fileId;
 
     private static final long serialVersionUID = 1493717117087L;
     
@@ -150,8 +165,15 @@ public class DeliveryRecordStatement implements BetterjrEntity {
     public void setId(Long id) {
         this.id = id;
     }
-
    
+    public Long getFileId() {
+        return this.fileId;
+    }
+
+    public void setFileId(Long anFileId) {
+        this.fileId = anFileId;
+    }
+
     public Long getMonthlyStatementId() {
         return monthlyStatementId;
     }
@@ -448,6 +470,7 @@ public class DeliveryRecordStatement implements BetterjrEntity {
         return true;
     }
 
+
     @Override
     public String toString() {
         return "DeliveryRecordStatement [id=" + this.id + ", deliverId=" + this.deliverId + ", deliverRefNo=" + this.deliverRefNo
@@ -458,7 +481,7 @@ public class DeliveryRecordStatement implements BetterjrEntity {
                 + this.ownCustNo + ", ownCustName=" + this.ownCustName + ", ownOperOrg=" + this.ownOperOrg + ", businStatus=" + this.businStatus
                 + ", expressStatus=" + this.expressStatus + ", billMonth=" + this.billMonth + ", operOrg=" + this.operOrg + ", regOperId="
                 + this.regOperId + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", version="
-                + this.version + "]";
+                + this.version + ", fileId=" + this.fileId + "]";
     }
 
     public void saveAddInit() {

@@ -1,20 +1,27 @@
 package com.betterjr.modules.commission.entity;
 
+import java.math.BigDecimal;
+import java.util.Map;
+
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.apache.commons.beanutils.BeanUtils;
+
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
+import com.betterjr.common.mapper.CustTimeJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.commission.data.CommissionConstantCollentions;
 import com.betterjr.modules.generator.SequenceFactory;
-
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.util.Map;
-
-import javax.persistence.*;
-
-import org.apache.commons.beanutils.BeanUtils;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -36,10 +43,12 @@ public class CommissionRecord implements BetterjrEntity {
 
     // 导入日期
     @Column(name = "D_IMPORT_DATE", columnDefinition = "VARCHAR")
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String importDate;
 
     // 导入时间
     @Column(name = "T_IMPORT_TIME", columnDefinition = "VARCHAR")
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String importTime;
 
     // 片区
@@ -117,9 +126,11 @@ public class CommissionRecord implements BetterjrEntity {
     private String regOperName;
 
     @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
 
     @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String regTime;
 
     @Column(name = "L_MODI_OPERID", columnDefinition = "INTEGER")
@@ -129,9 +140,11 @@ public class CommissionRecord implements BetterjrEntity {
     private String modiOperName;
 
     @Column(name = "D_MODI_DATE", columnDefinition = "VARCHAR")
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String modiDate;
 
     @Column(name = "T_MODI_TIME", columnDefinition = "VARCHAR")
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String modiTime;
 
     @Column(name = "N_VERSION", columnDefinition = "VARCHAR")

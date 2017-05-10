@@ -214,6 +214,13 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     @Column(name = "N_BATCHNO",  columnDefinition="Long" )
     @MetaData( value="月报表文件", comments = "月报表文件")
     private Long batchNo;
+    
+    /**
+     * 月报表文件id
+     */
+    @Column(name = "L_FILE_ID",  columnDefinition="Long" )
+    @MetaData( value="月报表文件", comments = "月报表文件")
+    private Long fileId;
 
     @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
     @MetaData( value="", comments = "")
@@ -268,6 +275,19 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     public Long getId() {
         return id;
     }
+
+    
+    public Long getFileId() {
+        return this.fileId;
+    }
+
+
+
+    public void setFileId(Long anFileId) {
+        this.fileId = anFileId;
+    }
+
+
 
     public void setId(Long id) {
         this.id = id;
