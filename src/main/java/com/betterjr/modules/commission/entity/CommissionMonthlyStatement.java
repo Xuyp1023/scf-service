@@ -639,14 +639,17 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
         this.id = SerialGenerator.getLongValue("CommissionMonthlyStatement.id");         
         this.refNo = (String)anMap.get("monthlyRefNo");
         this.ownCustName= (String)anMap.get("ownCustName");
+        this.billMonth= (String)anMap.get("billMonth");
         this.totalBalance=new BigDecimal((String)anMap.get("totalBalance"));
         this.payTotalBalance = new BigDecimal((String)anMap.get("payTotalBalance"));
-        this.ownCustNo=Long.parseLong((String)anMap.get("monthlyRefNo"));
+        this.ownCustNo=Long.parseLong((String)anMap.get("ownCustNo"));
         this.endInterestDate=(String)anMap.get("endInterestDate");
-        this.interest=new BigDecimal((String)anMap.get("interest"));
-        this.taxBalance=new BigDecimal((String)anMap.get("totalTaxBalance"));
-        this.payBeginDate=(String)anMap.get("startDate");
-        this.payEndDate=(String)anMap.get("endDate");
+        String totalInterset= (String)anMap.get("totalInterset")==""?"0":(String)anMap.get("totalInterset");
+        this.interest=new BigDecimal(totalInterset);
+        String tax= (String)anMap.get("totalTaxBalance")==""?"0":(String)anMap.get("totalTaxBalance");
+        this.taxBalance=new BigDecimal(tax);
+        this.payBeginDate=(String)anMap.get("payBeginDate");
+        this.payEndDate=(String)anMap.get("payEndDate");
         this.makeDate=BetterDateUtils.getNumDate();
         this.makeTime= BetterDateUtils.getNumTime();
         this.regDate = BetterDateUtils.getNumDate();
@@ -654,6 +657,8 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
         this.businStatus="1";
+        this.unit="元";
+        this.curreny="RMB";
         final CustOperatorInfo custOperator = (CustOperatorInfo) UserUtils.getPrincipal().getUser();
         if(custOperator!=null){
             this.operOrg=custOperator.getOperOrg();

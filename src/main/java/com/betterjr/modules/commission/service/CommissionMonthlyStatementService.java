@@ -60,10 +60,9 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
         monthlyStatement.setTotalAmount(new BigDecimal(payResult.getTotalAmount()));
         monthlyStatement.setPayTotalAmount(new BigDecimal(payResult.getTotalAmount()));
         monthlyStatement.setPaySuccessAmount(new BigDecimal(payResult.getPaySuccessAmount()));
-        monthlyStatement.setPaySuccessBalance(payResult.getPaySuccessBalance());
+        monthlyStatement.setPaySuccessBalance(payResult.getPaySuccessBalance()==null?new BigDecimal(0):payResult.getPaySuccessBalance());
         monthlyStatement.setPayFailureAmount(new BigDecimal(payResult.getPayFailureAmount()));
-        monthlyStatement.setPayFailureBalance(payResult.getPayFailureBalance());
-        monthlyStatement.setBillMonth((String)anParam.get("billMonth"));
+        monthlyStatement.setPayFailureBalance(payResult.getPayFailureBalance()==null?new BigDecimal(0):payResult.getPayFailureBalance());
         
         Map<String,Object> configMap=getConfigData();
         monthlyStatement.setMakeCustName(configMap.get("makeCustName").toString());
@@ -96,17 +95,12 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
      */
     public Page<CommissionMonthlyStatement> queryMonthlyStatement(Map<String, Object> anParam, int anPageNum, int anPageSize) throws ParseException{
         Map<String,Object> paramMap=new HashMap<String, Object>();
-//        String anMonth=(String)anParam.get("billMonth");
-//        if(BetterStringUtils.isNotBlank(anMonth)){
-//            anMonth=anMonth.replaceAll("-", "")+"01";
-//            paramMap.put("payBeginDate", CommissionDateUtils.getMinMonthDate(anMonth));
-//            paramMap.put("payEndDate", CommissionDateUtils.getMaxMonthDate(anMonth));
-//        }
+
         if(BetterStringUtils.isNotBlank((String)anParam.get("billMonth"))){
             paramMap.put("billMonth", anParam.get("billMonth"));
         }
-        if(BetterStringUtils.isNotBlank((String)anParam.get("ownCustNo"))){
-            paramMap.put("ownCustNo", anParam.get("ownCustNo"));
+        if(BetterStringUtils.isNotBlank((String)anParam.get("custNo"))){
+            paramMap.put("ownCustNo", anParam.get("custNo"));
         }
         if(BetterStringUtils.isNotBlank((String)anParam.get("businStatus"))){
             paramMap.put("businStatus", anParam.get("businStatus"));
@@ -175,6 +169,19 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
     
     public boolean delMonthlyStatement(Long anMonthlyId){
         return this.deleteByPrimaryKey(anMonthlyId)>0;
+    }
+    
+    /***
+     * 根据对账月份查询
+     * @param anBillMonth
+     * @param ownCustNo
+     * @return
+     */
+    public List<CommissionMonthlyStatement> findMonthlyStatementByMonth(String anBillMonth,Long ownCustNo){
+        Map<String,Object> anMap=new HashMap<String, Object>();
+        anMap.put("billMonth", anBillMonth);
+        anMap.put("ownCustNo", ownCustNo);
+        return this.selectByProperty(anMap);
     }
     
     /***

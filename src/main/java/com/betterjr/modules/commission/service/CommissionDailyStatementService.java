@@ -3,13 +3,9 @@ package com.betterjr.modules.commission.service;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +25,7 @@ import com.betterjr.modules.commission.dao.CommissionDailyStatementMapper;
 import com.betterjr.modules.commission.data.CalcPayResult;
 import com.betterjr.modules.commission.entity.CommissionDailyStatement;
 import com.betterjr.modules.commission.entity.CommissionDailyStatementRecord;
+import com.betterjr.modules.commission.entity.CommissionMonthlyStatement;
 import com.betterjr.modules.commission.entity.CommissionPayResultRecord;
 import com.betterjr.modules.commission.util.CommissionDateUtils;
 import com.betterjr.modules.config.dubbo.interfaces.IDomainAttributeService;
@@ -51,6 +48,8 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
     private CustAccountService custAccountService; 
     @Autowired
     private CommissionDailyStatementRecordService dailyStatementRecordService;
+    @Autowired
+    private CommissionMonthlyStatementService monthlyStatementService;
     
     public Page<CommissionDailyStatement> queryDailyStatement(Map<String, Object> anParam, int anPageNum, int anPageSize){
         Map<String,Object> paramMap=new HashMap<String, Object>();
@@ -124,10 +123,10 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
      * @throws ParseException 
      */
     public Map<String,Object> findDailyStatementBasicsInfo(Map<String,Object> anParam) throws ParseException{
-        String anMonth=anParam.get("billMonth").toString();
+        String billMonth=anParam.get("billMonth").toString();
         Long anOwnCustNo=Long.parseLong(anParam.get("custNo").toString());
         String anEndInterestDate=(String)anParam.get("endInterestDate"); // 结息日期
-        String month=anMonth.replaceAll("-", "")+"01";
+        String month=billMonth.replaceAll("-", "")+"01";
         String startDate=CommissionDateUtils.getMinMonthDate(month);
         String endDate=CommissionDateUtils.getMaxMonthDate(month);
         // 根据对账月份查询
@@ -135,22 +134,22 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         monthMap.put("startDate", startDate);
         monthMap.put("endDate", endDate);
         monthMap.put("ownCustNo", anOwnCustNo);
-        /**
-         *  检查条件
-         *  1、判断当前时间要大于朋末时间
-         *  2、未生效账单必须为0
-         */
-//        long time = new Date().getTime()-BetterDateUtils.parseDate(CommissionDateUtils.getMaxMonthDate(month)).getTime();
-        
-        long time = BetterDateUtils.parseDate(BetterDateUtils.getNumMonth()).getTime()-BetterDateUtils.parseDate(anMonth).getTime();
+
+        long time = BetterDateUtils.parseDate(BetterDateUtils.getNumMonth()).getTime()-BetterDateUtils.parseDate(billMonth).getTime();
         if(time<=0){
-            throw new BytterTradeException("对账月份要不于当前月");
+            throw new BytterTradeException("对账月份大于当前月");
         }
-        BTAssert.isTrue(time<0, "当前日期要大于对账月份的月末日期");
         CalcPayResult payResult=this.mapper.selectDailyStatementCount(monthMap);
         
         Long failureTotalCount=payResult.getPayFailureAmount();
-        BTAssert.isTrue(failureTotalCount<0, "日账单存在未生效数据，不能生成月账单");
+        if(failureTotalCount>0){
+            throw new BytterTradeException("日账单存在未生效数据，不能生成月账单");
+        }
+        
+        List<CommissionMonthlyStatement> monthlyList=monthlyStatementService.findMonthlyStatementByMonth(billMonth,anOwnCustNo);
+        if(monthlyList!=null && monthlyList.size()>0){
+            throw new BytterTradeException("该月对账单已经生成");
+        }
         
         BigDecimal totalBalance=new BigDecimal(0.00);// 总金额
         BigDecimal totalPayBalance=new BigDecimal(0.00);// 总发生金额
@@ -160,21 +159,23 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         
         monthMap=getConfigData();
         
-        BigDecimal rate=new BigDecimal((String)monthMap.get("interestRate")); 
-        BigDecimal taxAmount=new BigDecimal((String)monthMap.get("taxRate"));
+        BigDecimal rate=new BigDecimal(monthMap.get("interestRate").toString()); 
+        BigDecimal taxRate=new BigDecimal(monthMap.get("taxRate").toString());
         
         // 获取日账单的列表，并计算好利息
-        List<CommissionDailyStatement> dailyStatementList=findCpsDailyStatementByMonth(anMonth,anOwnCustNo);
+        List<CommissionDailyStatement> dailyStatementList=findCpsDailyStatementByMonth(billMonth,anOwnCustNo);
         for(CommissionDailyStatement dailyStatement:dailyStatementList){
             BigDecimal payTotalBalance= dailyStatement.getPayTotalBalance();
             String payDate=dailyStatement.getPayDate();
             long lTerm = BetterDateUtils.parseDate(anEndInterestDate).getTime()-BetterDateUtils.parseDate(payDate).getTime();
+            lTerm=lTerm/(24*60*60*1000);
             BigDecimal term=new BigDecimal(lTerm);
-            BigDecimal d=term.divide(new BigDecimal(100)).divide(new BigDecimal(360));
-            BigDecimal interset=MathExtend.multiply(MathExtend.multiply(payTotalBalance,rate), d) ;
-            BigDecimal taxBalance=MathExtend.add(payTotalBalance, interset).multiply(taxAmount.divide(new BigDecimal(100)));
+            
+            BigDecimal interset=getInterset(payTotalBalance,rate,term);
+            BigDecimal taxBalance = getTaxBalance(payTotalBalance,interset,taxRate);
+            
             logger.info("每日利息：dailyStatement refNo:"+dailyStatement.getRefNo()+"，interset:"+interset+"，每日税额："+taxBalance);
-            totalBalance=MathExtend.add(totalBalance, payTotalBalance).add(interset).add(taxBalance);
+            totalBalance=MathExtend.add(MathExtend.add(MathExtend.add(totalBalance, payTotalBalance), interset),taxBalance);
             totalPayBalance=MathExtend.add(totalPayBalance, payTotalBalance);
             totalInterset=MathExtend.add(totalInterset, interset);
             totalTaxBalance=MathExtend.add(totalTaxBalance, taxBalance);
@@ -186,12 +187,13 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
             resultDailyStatementList.add(dailyStatement);
         }
         
+        monthMap.put("billMonth",billMonth);
         monthMap.put("payBeginDate", startDate);
         monthMap.put("payEndDate", endDate);
         monthMap.put("ownCustNo", anOwnCustNo);
         monthMap.put("ownCustName", custAccountService.queryCustName(anOwnCustNo));
         final CustOperatorInfo custOperator = (CustOperatorInfo) UserUtils.getPrincipal().getUser();
-        monthMap.put("monthlyRefNo", SequenceFactory.generate("PLAT_COMMISSION_MONTHLY_REFNO",custOperator.getOperOrg(), "DB#{Date:yyyyMMdd}#{Seq:8}", "D"));
+        monthMap.put("monthlyRefNo", SequenceFactory.generate("PLAT_COMMISSION_MONTHLY_REFNO",custOperator.getOperOrg(), "MB#{Date:yyyyMM}#{Seq:10}", "M"));
         monthMap.put("totalBalance", totalBalance);
         monthMap.put("payTotalBalance", totalPayBalance);
         monthMap.put("totalInterset", totalInterset);
@@ -382,5 +384,30 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         }
         return false;
     }
+    
+    /***
+     * 计算利息
+     * @param payTotalBalance 金额
+     * @param rate 利率
+     * @param term 期限
+     * @return
+     */
+    public BigDecimal getInterset(BigDecimal payTotalBalance,BigDecimal rate,BigDecimal term){
+        BigDecimal interset=MathExtend.divide(MathExtend.divide(MathExtend.multiply(MathExtend.multiply(payTotalBalance,rate), term), new BigDecimal(100)),new BigDecimal(360));
+        return interset;
+    }
+    
+    /***
+     * 计算税额
+     * @param payTotalBalance
+     * @param interset
+     * @param taxAmount
+     * @return
+     */
+    public BigDecimal getTaxBalance(BigDecimal payTotalBalance,BigDecimal interset,BigDecimal taxRate){
+        return MathExtend.divide(MathExtend.multiply(MathExtend.add(payTotalBalance, interset), taxRate), new BigDecimal(100));
+        
+    }
+    
     
 }
