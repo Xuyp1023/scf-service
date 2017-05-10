@@ -81,6 +81,9 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         if(!checkFilePermitOperator(anFile.getCustNo(), BetterDateUtils.getNumDate())){
             BTAssert.notNull(null, "今天已经审核了全部文件，请明天再上传解析");
         }
+        if(!checkFilePermitOperator(anFile.getFileId())){
+            BTAssert.notNull(null, "当前文件已经上传成功!请不要重复提交");
+        }
         logger.info("Begin to add addCommissionFile"+UserUtils.getOperatorInfo().getName());
         //数字签名
         verifyCommissionFile(anFile.getCustNo(), anFile.getFileId(), anFile.getSignature());
@@ -93,7 +96,7 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         logger.info("success to add addCommissionFile"+UserUtils.getOperatorInfo().getName());
         return anFile;
     }
-    
+
     private void verifyCommissionFile(Long anCustNo,Long anFileId,String ansignatue){
         
         try{
@@ -477,6 +480,25 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
             
         }
         return false;
+    }
+    
+    private boolean checkFilePermitOperator(Long anFileId) {
+        
+        Map queryMap = QueryTermBuilder.newInstance()
+                .put("fileId", anFileId)
+                .build();
+                List<CommissionFile> fileList = this.selectByProperty(queryMap);
+                if(Collections3.isEmpty(fileList)){
+                    return true;
+                }
+                for (CommissionFile commissionFile : fileList) {
+                    if(! commissionFile.getBusinStatus().equals(CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_DELETE)){
+                        
+                        return false;
+                        
+                    }
+                }
+                return true;
     }
     
     /**
