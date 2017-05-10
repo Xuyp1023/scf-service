@@ -1,6 +1,7 @@
 package com.betterjr.modules.commission.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -48,6 +49,10 @@ public class CommissionDailyStatementRecordService extends BaseService<Commissio
     public boolean addDailyStatementRecord(CommissionDailyStatement anDailyStatement){
         anDailyStatement.setBusinStatus("0");
         return this.mapper.addDailyStatementRecord(anDailyStatement)>0;
+    }
+    
+    public List<CommissionDailyStatementRecord> findDailyStatementRecord(Long anDailyStatementId){
+        return this.selectByProperty("dailyStatementId", anDailyStatementId);
     }
     
 }

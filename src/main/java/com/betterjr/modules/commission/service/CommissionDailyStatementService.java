@@ -29,6 +29,8 @@ import com.betterjr.modules.commission.entity.CommissionMonthlyStatement;
 import com.betterjr.modules.commission.entity.CommissionPayResultRecord;
 import com.betterjr.modules.commission.util.CommissionDateUtils;
 import com.betterjr.modules.config.dubbo.interfaces.IDomainAttributeService;
+import com.betterjr.modules.document.entity.CustFileItem;
+import com.betterjr.modules.flie.service.FileDownService;
 import com.betterjr.modules.generator.SequenceFactory;
 /***
  * 日账单服务类
@@ -50,6 +52,8 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
     private CommissionDailyStatementRecordService dailyStatementRecordService;
     @Autowired
     private CommissionMonthlyStatementService monthlyStatementService;
+    @Autowired
+    private FileDownService fileDownService;
     
     public Page<CommissionDailyStatement> queryDailyStatement(Map<String, Object> anParam, int anPageNum, int anPageSize){
         Map<String,Object> paramMap=new HashMap<String, Object>();
@@ -274,7 +278,6 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
          BTAssert.isTrue(totalAmount!=0, "没有查到佣金支付数据");
 
          long time = BetterDateUtils.parseDate(BetterDateUtils.getNumDate()).getTime()-BetterDateUtils.parseDate(anPayDate).getTime();
-//         long time = new Date().getTime()-BetterDateUtils.parseDate(anPayDate).getTime();
          BTAssert.isTrue(time>0, "当前时间要小于对账月份时间");
          
          Map<String, Object> resultMp=new HashMap<String, Object>();
@@ -337,6 +340,15 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         // 添加日报表记录
         dailyStatementRecordService.addDailyStatementRecord(dailyStatement);
         
+        
+        Map<String, Object> fileMap=new HashMap<String, Object>();
+        fileMap.put("daily", dailyStatement);
+        fileMap.put("recordList", dailyStatementRecordService.findDailyStatementRecord(dailyStatement.getId()));
+        CustFileItem custFile = fileDownService.uploadCommissionRecordFileis(fileMap, 1l, dailyStatement.getPayDate()+"-日账单");
+        dailyStatement.setFileId(custFile.getId());
+        dailyStatement.setBatchNo(custFile.getBatchNo());
+        this.updateByPrimaryKey(dailyStatement);
+        
         // 回写生成日报表的记录状态        
         Map<String,Object> anMap=new HashMap<String, Object>();
         anMap.put("businStatus", "3");
@@ -349,6 +361,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
     
     public Map<String,Object> findDailyStatementById(Long anDailyStatementId){
         CommissionDailyStatement dailyStatement=this.selectByPrimaryKey(anDailyStatementId);
+        
         Map<String,Object> infoMp=new HashMap<String, Object>();
         infoMp.put("ownCustNo", dailyStatement.getOwnCustNo());
         infoMp.put("ownCustName", dailyStatement.getOwnCustName());

@@ -11,6 +11,8 @@ import javax.persistence.Table;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -90,6 +92,7 @@ public class CommissionDailyStatementRecord implements BetterjrEntity {
     /**
      * 支付日期
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_PAY_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="支付日期", comments = "支付日期")
     private String payDate;

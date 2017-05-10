@@ -23,6 +23,8 @@ import com.betterjr.modules.commission.entity.CommissionDailyStatement;
 import com.betterjr.modules.commission.entity.CommissionMonthlyStatement;
 import com.betterjr.modules.commission.entity.CommissionMonthlyStatementRecord;
 import com.betterjr.modules.config.dubbo.interfaces.IDomainAttributeService;
+import com.betterjr.modules.document.entity.CustFileItem;
+import com.betterjr.modules.flie.service.FileDownService;
 
 /***
  * 月报表服务类型
@@ -36,10 +38,10 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
     private CommissionDailyStatementService dailyStatementService;
     @Autowired
     private CommissionMonthlyStatementRecordService monthlyRecordService;
-//    @Resource
-//    private DomainAttributeDubboClientService domainAttributeDubboClientService;
     @Reference(interfaceClass=IDomainAttributeService.class)
     private IDomainAttributeService domainAttributeDubboClientService;
+    @Autowired
+    private FileDownService fileDownService;
     
     /***
      * 保存月报表记录
@@ -82,6 +84,16 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
             dailyStatement.setBusinStatus("3");
             dailyStatementService.updateByPrimaryKey(dailyStatement);
         }
+        
+        // 生成文件
+        Map<String, Object> fileMap=new HashMap<String, Object>();
+        fileMap.put("monthly", monthlyStatement);
+        fileMap.put("recordList",monthlyRecordService.findMonthlyStatementRecord(monthlyStatement.getId(), monthlyStatement.getRefNo()));
+        CustFileItem custFile = fileDownService.uploadCommissionRecordFileis(fileMap, 2l, monthlyStatement.getBillMonth()+"-月账单");
+        monthlyStatement.setFileId(custFile.getId());
+        monthlyStatement.setBatchNo(custFile.getBatchNo());
+        this.updateByPrimaryKey(monthlyStatement);
+        
         return monthlyStatement;
     }
 

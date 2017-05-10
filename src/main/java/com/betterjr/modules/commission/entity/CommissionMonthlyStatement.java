@@ -12,10 +12,13 @@ import javax.persistence.Table;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
+import com.betterjr.common.mapper.CustTimeJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -53,6 +56,7 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     /**
      * 开始时间
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_PAY_BEGIN_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="开始时间", comments = "开始时间")
     private String payBeginDate;
@@ -60,6 +64,7 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     /**
      * 结束时间
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_PAY_END_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="结束时间", comments = "结束时间")
     private String payEndDate;
@@ -158,6 +163,7 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     /**
      * 制表日期
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_MAKE_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="制表日期", comments = "制表日期")
     private String makeDate;
@@ -165,6 +171,7 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     /**
      * 制表时间
      */
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     @Column(name = "T_MAKE_TIME",  columnDefinition="VARCHAR" )
     @MetaData( value="制表时间", comments = "制表时间")
     private String makeTime;
@@ -262,6 +269,7 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     @MetaData( value="", comments = "")
     private Long version;
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_END_INTEREST_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="结息日期", comments = "结息日期")
     private String endInterestDate;
