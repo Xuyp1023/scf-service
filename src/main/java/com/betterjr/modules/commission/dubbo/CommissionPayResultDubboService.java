@@ -45,6 +45,7 @@ public class CommissionPayResultDubboService implements ICommissionPayResultServ
         }
         final String importDate = (String) param.get("importDate");
         final String payDate = (String) param.get("payDate");
+
         return AjaxObject.newOk("日对账单创建成功！", commissionPayResultService.saveCreatePayResult(importDate, payDate, custNo)).toJson();
     }
 
