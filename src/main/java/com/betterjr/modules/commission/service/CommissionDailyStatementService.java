@@ -141,8 +141,12 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
          *  2、未生效账单必须为0
          */
 //        long time = new Date().getTime()-BetterDateUtils.parseDate(CommissionDateUtils.getMaxMonthDate(month)).getTime();
-        long time = BetterDateUtils.parseDate(BetterDateUtils.getNumDate()).getTime()-BetterDateUtils.parseDate(CommissionDateUtils.getMaxMonthDate(month)).getTime();
-        BTAssert.isTrue(time>0, "当前日期要大于对账月份的月末日期");
+        
+        long time = BetterDateUtils.parseDate(BetterDateUtils.getNumMonth()).getTime()-BetterDateUtils.parseDate(anMonth).getTime();
+        if(time<=0){
+            throw new BytterTradeException("对账月份要不于当前月");
+        }
+        BTAssert.isTrue(time<0, "当前日期要大于对账月份的月末日期");
         CalcPayResult payResult=this.mapper.selectDailyStatementCount(monthMap);
         
         Long failureTotalCount=payResult.getPayFailureAmount();

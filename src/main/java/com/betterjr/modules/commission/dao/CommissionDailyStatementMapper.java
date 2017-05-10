@@ -21,16 +21,16 @@ public interface CommissionDailyStatementMapper extends Mapper<CommissionDailySt
      */    
     @Select("select t1.totalCount as totalAmount,t1.totalBalance as totalBalance,t2.totalCount as paySuccessAmount,t2.totalBalance as paySuccessBalance,t3.totalCount as payFailureAmount,t3.totalBalance as payFailureBalance from "
             + "("
-            + "(select count(ID) as totalCount,sum(F_TOTAL_BALANCE) as totalBalance from t_cps_daily_statement"
-            + "where D_PAY_DATE>=#{startDate} and D_PAY_DATE<=#{endDate} and L_OWN_CUSTNO=#{ownCustNo} and C_BUSIN_STATUS in ('0','1','2')"
+            + "(select count(ID) as totalCount,sum(F_TOTAL_BALANCE) as totalBalance from t_cps_daily_statement "
+            + " where D_PAY_DATE>=#{startDate} and D_PAY_DATE<=#{endDate} and L_OWN_CUSTNO=#{ownCustNo} and C_BUSIN_STATUS in ('0','1','2')"
             + ") as t1,"
             + "("
-            + "select count(ID) as totalCount,sum(F_TOTAL_BALANCE) as totalBalance from t_cps_daily_statement"
-            + "where D_PAY_DATE>=#{startDate} and D_PAY_DATE<=#{endDate} and L_OWN_CUSTNO=#{ownCustNo} and C_BUSIN_STATUS in ('2')"
+            + "select count(ID) as totalCount,sum(F_TOTAL_BALANCE) as totalBalance from t_cps_daily_statement "
+            + " where D_PAY_DATE>=#{startDate} and D_PAY_DATE<=#{endDate} and L_OWN_CUSTNO=#{ownCustNo} and C_BUSIN_STATUS in ('2')"
             + ") as t2,"
             + "("
-            + "select count(ID) as totalCount,sum(F_TOTAL_BALANCE) as totalBalance from t_cps_daily_statement"
-            + "where D_PAY_DATE>=#{startDate} and D_PAY_DATE<=#{endDate} and L_OWN_CUSTNO=#{ownCustNo} and C_BUSIN_STATUS in ('0','1')"
+            + "select count(ID) as totalCount,sum(F_TOTAL_BALANCE) as totalBalance from t_cps_daily_statement "
+            + " where D_PAY_DATE>=#{startDate} and D_PAY_DATE<=#{endDate} and L_OWN_CUSTNO=#{ownCustNo} and C_BUSIN_STATUS in ('0','1')"
             + ") as t3"
             + ")")
     @ResultType(CalcPayResult.class)
