@@ -23,9 +23,9 @@ public class CommissionDailyStatementRecordService extends BaseService<Commissio
      * 条件分页查询
      * @return
      */
-    public Page<CommissionDailyStatementRecord> queryCommissionDailyStatementRecord(Map<String,Object> anMap,int anPageNum, int anPageSize){
+    public Page<CommissionDailyStatementRecord> queryCommissionDailyStatementRecord(Map<String,Object> anMap,int anPageNum, int anPageSize,String anFlag){
         
-        return this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anMap.get("flag")));
+        return this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
     }
     
     /***
@@ -38,8 +38,7 @@ public class CommissionDailyStatementRecordService extends BaseService<Commissio
     public Page<CommissionDailyStatementRecord> queryCommissionDailyStatementRecordByRefNo(Long anDailyStatementId, int anPageNum, int anPageSize,String anFlag){
         Map<String,Object> map=new HashMap<String, Object>();
         map.put("dailyStatementId", anDailyStatementId);
-        map.put("flag", anFlag);
-        return queryCommissionDailyStatementRecord(map,anPageNum,anPageSize);
+        return queryCommissionDailyStatementRecord(map,anPageNum,anPageSize,anFlag);
     }
     
     /***

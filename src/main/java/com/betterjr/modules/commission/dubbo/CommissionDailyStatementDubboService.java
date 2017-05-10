@@ -18,7 +18,7 @@ public class CommissionDailyStatementDubboService implements ICommissionDailySta
 
     @Override
     public String webQueryDailyStatement(Map<String, Object> anParam, int anPageNum, int anPageSize) {
-        return AjaxObject.newOk("分页查询日报表", dailyStatementService.queryDailyStatement(anParam, anPageNum, anPageSize)).toJson();
+        return AjaxObject.newOkWithPage("分页查询日报表", dailyStatementService.queryDailyStatement(anParam, anPageNum, anPageSize)).toJson();
     }
     
     @Override
@@ -101,6 +101,6 @@ public class CommissionDailyStatementDubboService implements ICommissionDailySta
     
     @Override
     public String webQueryDailyStatementRecordById(Long anDailyStatementId,int anPageNum,int anPageSize,String anFlag){
-        return AjaxObject.newOk("查询日账单详情", dailyStatementService.queryDailyStatementRecordByDailyId(anDailyStatementId, anPageNum, anPageSize, anFlag)).toJson();
+        return AjaxObject.newOkWithPage("查询日账单详情", dailyStatementService.queryDailyStatementRecordByDailyId(anDailyStatementId, anPageNum, anPageSize, anFlag)).toJson();
     }
 }

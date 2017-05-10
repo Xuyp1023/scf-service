@@ -55,7 +55,7 @@ public interface CommissionPayResultRecordMapper extends Mapper<CommissionPayRes
             + "(SELECT SUM(F_PAY_BALANCE) AS balance, COUNT(ID) AS amount FROM t_cps_pay_result_record WHERE D_PAY_DATE=#{payDate} AND L_CUSTNO=#{custNo}) AS t1, "
             + "(SELECT SUM(F_PAY_BALANCE) AS balance, COUNT(ID) AS amount FROM t_cps_pay_result_record WHERE D_PAY_DATE=#{payDate} AND C_PAY_RESULT='1' AND L_CUSTNO=#{custNo}) AS t2, "
             + "(SELECT SUM(F_PAY_BALANCE) AS balance, COUNT(ID) AS amount FROM t_cps_pay_result_record WHERE D_PAY_DATE=#{payDate} AND C_PAY_RESULT='2' AND L_CUSTNO=#{custNo}) AS t3, "
-            + "(SELECT SUM(F_PAY_BALANCE) AS balance, COUNT(ID) AS amount FROM t_cps_pay_result_record WHERE L_PAY_RESULT_ID=#{payResultId} AND C_PAY_RESULT='0' AND C_BUSIN_STATUS='0') AS t4 ")
+            + "(SELECT SUM(F_PAY_BALANCE) AS balance, COUNT(ID) AS amount FROM t_cps_pay_result_record WHERE D_PAY_DATE=#{payDate} AND C_PAY_RESULT='0' AND C_BUSIN_STATUS='0') AS t4 ")
     @Result(javaType=CalcPayResult.class)
     public CalcPayResult calcPayResultRecordByPayDate(@Param("custNo") Long anCustNo, @Param("payDate") String anPayDate);
 

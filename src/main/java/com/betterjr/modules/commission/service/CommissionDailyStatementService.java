@@ -53,11 +53,11 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
     public Page<CommissionDailyStatement> queryDailyStatement(Map<String, Object> anParam, int anPageNum, int anPageSize){
         Map<String,Object> paramMap=new HashMap<String, Object>();
         
-        if(BetterStringUtils.isNotBlank((String)paramMap.get("GTEpayDate"))){
-            paramMap.put("GTEpayDate", paramMap.get("GTEpayDate"));
-            paramMap.put("LTEpayDate", paramMap.get("LTEpayDate"));
+        if(BetterStringUtils.isNotBlank((String)anParam.get("GTEregDate"))){
+            paramMap.put("GTEpayDate", anParam.get("GTEregDate"));
+            paramMap.put("LTEpayDate", anParam.get("LTEregDate"));
         }
-        if(BetterStringUtils.isNotBlank((String)anParam.get("ownCustNo"))){
+        if(BetterStringUtils.isNotBlank((String)anParam.get("custNo"))){
             paramMap.put("ownCustNo", anParam.get("custNo"));
         }
         if(BetterStringUtils.isNotBlank((String)anParam.get("businStatus"))){
@@ -254,16 +254,17 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
     public Map<String, Object> findPayResultInfo(String anPayDate,Long anOwnCustNo){
          CalcPayResult payResult = payResultRecordService.calcPayResultRecord(anOwnCustNo, anPayDate);
          Long payFailureAmount=payResult.getPayFailureAmount();
-         BTAssert.isTrue(payFailureAmount<0, "佣金支付结果存在未生效数据，不能生成日账单");
+         BTAssert.isTrue(payFailureAmount<=0, "佣金支付结果存在未生效数据，不能生成日账单");
          
          Map<String, Object> resultMp=new HashMap<String, Object>();
-         resultMp.put("dailyRefNo",SequenceFactory.generate("CommissionDailyStatement.refNo", "#{Date:yyyyMMdd}#{Seq:12}", "DB"));
+         resultMp=getConfigData();
+         final CustOperatorInfo custOperator = (CustOperatorInfo) UserUtils.getPrincipal().getUser();
+         resultMp.put("dailyRefNo",SequenceFactory.generate("PLAT_COMMISSION_DAILY_REFNO",custOperator.getOperOrg(), "DB#{Date:yyyyMMdd}#{Seq:8}", "D"));
          resultMp.put("totalBalance", payResult.getTotalBalance());
          resultMp.put("payDate", anPayDate);
          resultMp.put("ownCustNo", anOwnCustNo);
          resultMp.put("ownCustName", custAccountService.queryCustName(anOwnCustNo));
          resultMp.put("totalAmount", payResult.getTotalAmount());
-         resultMp=getConfigData();
          resultMp.put("makeDateTime", BetterDateUtils.getDateTime());
          return resultMp;
     }
@@ -300,13 +301,13 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         
         CalcPayResult payResult= payResultRecordService.calcPayResultRecord(anOwnCustNo, anPayDate);
         
-        dailyStatement.setTotalBalance(payResult.getTotalBalance());
+        dailyStatement.setTotalBalance(payResult.getTotalBalance()==null?new BigDecimal(0):payResult.getTotalBalance());
         dailyStatement.setTotalAmount(new BigDecimal(payResult.getTotalAmount()));
-        dailyStatement.setPayTotalBalance(payResult.getTotalBalance());
+        dailyStatement.setPayTotalBalance(payResult.getTotalBalance()==null?new BigDecimal(0):payResult.getTotalBalance());
         dailyStatement.setPayTotalAmount(new BigDecimal(payResult.getTotalAmount()));
         dailyStatement.setPaySuccessAmount(new BigDecimal(payResult.getPaySuccessAmount()));
-        dailyStatement.setPaySuccessBalance(payResult.getPaySuccessBalance());
-        dailyStatement.setPayFailureBalance(payResult.getPayFailureBalance());
+        dailyStatement.setPaySuccessBalance(payResult.getPaySuccessBalance()==null?new BigDecimal(0):payResult.getPaySuccessBalance());
+        dailyStatement.setPayFailureBalance(payResult.getPayFailureBalance()==null?new BigDecimal(0):payResult.getPayFailureBalance());
         dailyStatement.setPayFailureAmount(new BigDecimal(payResult.getPayFailureAmount()));
         dailyStatement.initValue();
         
@@ -337,7 +338,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         infoMp.put("id", anDailyStatementId);
         infoMp.put("makeCustName", dailyStatement.getMakeCustName());
         infoMp.put("operName", dailyStatement.getOperName());
-        infoMp.put("makeDateTime", BetterDateUtils.formatDispDate(dailyStatement.getMakeDate())+BetterDateUtils.formatDispTime(dailyStatement.getMakeTime()));
+        infoMp.put("makeDateTime", BetterDateUtils.formatDispDate(dailyStatement.getMakeDate())+" "+BetterDateUtils.formatDispTime(dailyStatement.getMakeTime()));
         return infoMp;
     }
     

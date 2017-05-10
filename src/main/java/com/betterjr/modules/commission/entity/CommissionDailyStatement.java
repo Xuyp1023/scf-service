@@ -672,7 +672,8 @@ public class CommissionDailyStatement implements BetterjrEntity {
     }
     
     public void initValue(){
-        this.id = SerialGenerator.getLongValue("CommissionDailyStatement.id");   
+        this.id = SerialGenerator.getLongValue("CommissionDailyStatement.id"); 
+        this.makeDate = BetterDateUtils.getNumDate();
         this.makeTime= BetterDateUtils.getNumTime();
         this.regDate = BetterDateUtils.getNumDate();
         this.regTime = BetterDateUtils.getNumTime();
