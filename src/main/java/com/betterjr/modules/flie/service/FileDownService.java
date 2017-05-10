@@ -6,8 +6,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Workbook;
@@ -58,7 +56,11 @@ public class FileDownService {
         BTAssert.notNull(book,"封装模版产生异常,请稍后重试");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
+            FileOutputStream fos=new FileOutputStream(new File("d:\\789.xlsx"));
+            book.write(fos);
             book.write(os);
+            fos.close();
+//            book.write(os);
         }
         catch (IOException e) {
             logger.info("封装模版产生异常,请稍后重试!"+e.getMessage());
