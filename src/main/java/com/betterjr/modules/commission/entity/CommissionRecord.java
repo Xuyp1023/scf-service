@@ -130,6 +130,7 @@ public class CommissionRecord implements BetterjrEntity {
     private String regDate;
 
     @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String regTime;
 
     @Column(name = "L_MODI_OPERID", columnDefinition = "INTEGER")
@@ -143,6 +144,7 @@ public class CommissionRecord implements BetterjrEntity {
     private String modiDate;
 
     @Column(name = "T_MODI_TIME", columnDefinition = "VARCHAR")
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String modiTime;
 
     @Column(name = "N_VERSION", columnDefinition = "VARCHAR")

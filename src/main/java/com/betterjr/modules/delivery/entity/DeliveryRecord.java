@@ -14,6 +14,7 @@ import javax.persistence.Transient;
 
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
+import com.betterjr.common.mapper.CustTimeJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.modules.account.entity.CustInfo;
@@ -52,7 +53,7 @@ public class DeliveryRecord implements BetterjrEntity {
 
     //投递时间
     @Column(name = "T_POST_TIME",  columnDefinition="VARCHAR" )
-    @JsonSerialize(using = CustDateJsonSerializer.class)
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String postTime;
 
     //接收公司(青海移动)
@@ -90,7 +91,7 @@ public class DeliveryRecord implements BetterjrEntity {
 
     //确认时间
     @Column(name = "T_CONFIRM_TIME",  columnDefinition="VARCHAR" )
-    @JsonSerialize(using = CustDateJsonSerializer.class)
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String confirmTime;
     
     //确认操作员
@@ -112,7 +113,7 @@ public class DeliveryRecord implements BetterjrEntity {
     private String regDate;
     
     @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
-    @JsonSerialize(using = CustDateJsonSerializer.class)
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String regTime;
     
     @Column(name = "N_VERSION",  columnDefinition="VARCHAR" )

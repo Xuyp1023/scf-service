@@ -11,10 +11,13 @@ import javax.persistence.Table;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
+import com.betterjr.common.mapper.CustTimeJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.delivery.data.DeliveryConstantCollentions;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -44,10 +47,12 @@ public class DeliveryRecordStatement implements BetterjrEntity {
 
     //开始时间
     @Column(name = "D_PAY_BEGIN_DATE",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String payBeginDate;
 
     //结束时间
     @Column(name = "D_PAY_END_DATE",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String payEndDate;
 
     //总金额
@@ -109,9 +114,11 @@ public class DeliveryRecordStatement implements BetterjrEntity {
     private String regOperName;
     
     @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
     
     @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String regTime;
     
     @Column(name = "N_VERSION",  columnDefinition="VARCHAR" )
