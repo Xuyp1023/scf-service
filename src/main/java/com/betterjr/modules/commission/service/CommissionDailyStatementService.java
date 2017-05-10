@@ -10,10 +10,12 @@ import java.util.Map;
 
 
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
@@ -138,7 +140,8 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
          *  1、判断当前时间要大于朋末时间
          *  2、未生效账单必须为0
          */
-        long time = new Date().getTime()-BetterDateUtils.parseDate(CommissionDateUtils.getMaxMonthDate(month)).getTime();
+//        long time = new Date().getTime()-BetterDateUtils.parseDate(CommissionDateUtils.getMaxMonthDate(month)).getTime();
+        long time = BetterDateUtils.parseDate(BetterDateUtils.getNumDate()).getTime()-BetterDateUtils.parseDate(CommissionDateUtils.getMaxMonthDate(month)).getTime();
         BTAssert.isTrue(time>0, "当前日期要大于对账月份的月末日期");
         CalcPayResult payResult=this.mapper.selectDailyStatementCount(monthMap);
         
@@ -183,7 +186,8 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         monthMap.put("payEndDate", endDate);
         monthMap.put("ownCustNo", anOwnCustNo);
         monthMap.put("ownCustName", custAccountService.queryCustName(anOwnCustNo));
-        monthMap.put("monthlyRefNo", SequenceFactory.generate("CommissionMonthlyStatement.refNo", "#{Date:yyyyMMdd}#{Seq:12}", "MB"));
+        final CustOperatorInfo custOperator = (CustOperatorInfo) UserUtils.getPrincipal().getUser();
+        monthMap.put("monthlyRefNo", SequenceFactory.generate("PLAT_COMMISSION_MONTHLY_REFNO",custOperator.getOperOrg(), "DB#{Date:yyyyMMdd}#{Seq:8}", "D"));
         monthMap.put("totalBalance", totalBalance);
         monthMap.put("payTotalBalance", totalPayBalance);
         monthMap.put("totalInterset", totalInterset);
@@ -252,9 +256,20 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
      * @return
      */
     public Map<String, Object> findPayResultInfo(String anPayDate,Long anOwnCustNo){
+         
+         if(findDailyStatementByPayDate(anPayDate, anOwnCustNo)){
+             throw new BytterTradeException("当前日期已经生成日对账单");
+         }
+         
          CalcPayResult payResult = payResultRecordService.calcPayResultRecord(anOwnCustNo, anPayDate);
          Long payFailureAmount=payResult.getPayFailureAmount();
          BTAssert.isTrue(payFailureAmount<=0, "佣金支付结果存在未生效数据，不能生成日账单");
+         Long totalAmount=payResult.getTotalAmount();
+         BTAssert.isTrue(totalAmount!=0, "没有查到佣金支付数据");
+
+         long time = BetterDateUtils.parseDate(BetterDateUtils.getNumDate()).getTime()-BetterDateUtils.parseDate(anPayDate).getTime();
+//         long time = new Date().getTime()-BetterDateUtils.parseDate(anPayDate).getTime();
+         BTAssert.isTrue(time>0, "当前时间要小于对账月份时间");
          
          Map<String, Object> resultMp=new HashMap<String, Object>();
          resultMp=getConfigData();
@@ -344,6 +359,24 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
     
     public Page<CommissionDailyStatementRecord> queryDailyStatementRecordByDailyId(Long anDailyStatementId, int anPageNum, int anPageSize,String anFlag){
         return dailyStatementRecordService.queryCommissionDailyStatementRecordByRefNo(anDailyStatementId, anPageNum, anPageSize, anFlag);
+    }
+    
+    /***
+     * 根据对账日期和对账企业查询日账单
+     * @param anPayDate 对账日期
+     * @param anOwnCustNo 对账企业客户号
+     * @return 是否存在
+     */
+    public boolean findDailyStatementByPayDate(String anPayDate,Long anOwnCustNo){
+        Map<String,Object> anMap=new HashMap<String, Object>();
+        anMap.put("payDate", anPayDate);
+        anMap.put("ownCustNo", anOwnCustNo);
+        
+        List<CommissionDailyStatement> dailyList=this.selectByProperty(anMap);
+        if(dailyList!=null && dailyList.size()>0){
+           return true;
+        }
+        return false;
     }
     
 }
