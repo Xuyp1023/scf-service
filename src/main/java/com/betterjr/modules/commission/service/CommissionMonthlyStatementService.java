@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterTradeException;
+import com.betterjr.common.mapper.JsonMapper;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
@@ -59,6 +60,7 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
         CommissionMonthlyStatement monthlyStatement=new CommissionMonthlyStatement();
         monthlyStatement.initMonthlyStatement(anParam);
         CalcPayResult payResult=dailyStatementService.findDailyStatementCount(anParam);
+        logger.info("saveComissionMonthlyStatement payResult:"+payResult);
         monthlyStatement.setTotalAmount(new BigDecimal(payResult.getTotalAmount()));
         monthlyStatement.setPayTotalAmount(new BigDecimal(payResult.getTotalAmount()));
         monthlyStatement.setPaySuccessAmount(new BigDecimal(payResult.getPaySuccessAmount()));
@@ -85,11 +87,22 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
             dailyStatementService.updateByPrimaryKey(dailyStatement);
         }
         
+        String monthlyTemplate=(String)configMap.get("monthlyTemplate");
+        logger.info("dailyTemplate:"+monthlyTemplate);
+        Long fileId=0l;
+        String fileType="";
+        if(monthlyTemplate!=null){
+            Map<String, Object> templateMp = JsonMapper.parserJson(monthlyTemplate);
+            fileId=Long.parseLong(templateMp.get("id").toString());
+            fileType=(String)templateMp.get("fileType");
+        }
+        
         // 生成文件
         Map<String, Object> fileMap=new HashMap<String, Object>();
         fileMap.put("monthly", monthlyStatement);
         fileMap.put("recordList",monthlyRecordService.findMonthlyStatementRecord(monthlyStatement.getId(), monthlyStatement.getRefNo()));
-        CustFileItem custFile = fileDownService.uploadCommissionRecordFileis(fileMap, 2l, monthlyStatement.getBillMonth()+"-月账单");
+        CustFileItem custFile = fileDownService.uploadCommissionRecordFileis(fileMap, fileId, monthlyStatement.getBillMonth()+"-月账单"+fileType);
+        logger.info("saveComissionMonthlyStatement,custFile:"+custFile);
         monthlyStatement.setFileId(custFile.getId());
         monthlyStatement.setBatchNo(custFile.getBatchNo());
         this.updateByPrimaryKey(monthlyStatement);
@@ -117,7 +130,7 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
         if(BetterStringUtils.isNotBlank((String)anParam.get("businStatus"))){
             paramMap.put("businStatus", anParam.get("businStatus"));
         }else{
-            paramMap.put("businStatus", new String[]{"0","1","2","9"});
+            paramMap.put("businStatus", new String[]{"0","1","2","3","9"});
         }
         Page<CommissionMonthlyStatement> monthlyStatement=this.selectPropertyByPage(paramMap, anPageNum, anPageSize, "1".equals(anParam.get("flag")),"id desc");
 
@@ -144,26 +157,13 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
      * @param anMonthlyId
      * @return
      */
-    public Map<String,Object> findMonthlyStatementById(Long anMonthlyId){
-        Map<String,Object> monthMap=new HashMap<String, Object>();
+    public CommissionMonthlyStatement findMonthlyStatementById(Long anMonthlyId){
         CommissionMonthlyStatement monthlyStatement=this.selectByPrimaryKey(anMonthlyId);
-        
         // 查询日记录列表
         List<CommissionMonthlyStatementRecord> monthlyRecordList=monthlyRecordService.findMonthlyStatementRecord(monthlyStatement.getId(), monthlyStatement.getRefNo());
-        monthMap.put("ownCustName", monthlyStatement.getOwnCustName());
-        monthMap.put("monthlyRefNo", monthlyStatement.getRefNo());
-        monthMap.put("payBeginDate", monthlyStatement.getPayBeginDate());
-        monthMap.put("payEndDate", monthlyStatement.getPayEndDate());
-        monthMap.put("totalBalance", monthlyStatement.getTotalBalance());
-        monthMap.put("payTotalBalance", monthlyStatement.getPayTotalBalance());
-        monthMap.put("totalInterset", monthlyStatement.getInterest());
-        monthMap.put("totalTaxBalance", monthlyStatement.getTaxBalance());
-        monthMap.put("dailyList", monthlyRecordList);
-        monthMap.put("makeCustName", monthlyStatement.getMakeCustName());
-        monthMap.put("operName", monthlyStatement.getMakeOperName());
-        monthMap.put("makeDateTime", BetterDateUtils.formatDispDate(monthlyStatement.getMakeDate())+BetterDateUtils.formatDispTime(monthlyStatement.getMakeTime()));
-        monthMap.put("endInterestDate", monthlyStatement.getEndInterestDate());  
-        return monthMap;
+        monthlyStatement.setDailyList(monthlyRecordList);
+        monthlyStatement.setMakeDateTime(BetterDateUtils.formatDispDate(monthlyStatement.getMakeDate()) +" "+BetterDateUtils.formatDispTime(monthlyStatement.getMakeTime()));
+        return monthlyStatement;
     }
     
     /***
@@ -207,11 +207,13 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
        final String operator = domainAttributeDubboClientService.findString(custOperator.getOperOrg(), "PLAT_COMMISSION_MAKE_OPERATOR");
        final BigDecimal interestRate = domainAttributeDubboClientService.findMoney(custOperator.getOperOrg(), "PLAT_COMMISSION_INTEREST_RATE");
        final BigDecimal taxRate = domainAttributeDubboClientService.findMoney(custOperator.getOperOrg(), "PLAT_COMMISSION_TAX_RATE");
+       final String monthlyTemplate = domainAttributeDubboClientService.findString("GLOBAL_COMMISSION_MONTHLY_TEMPLATE");
 
        map.put("makeCustName", cusrName);
        map.put("makeOperName", operator);
        map.put("interestRate", interestRate);
        map.put("taxRate", taxRate);
+       map.put("monthlyTemplate", monthlyTemplate);
        
        return map;
    }

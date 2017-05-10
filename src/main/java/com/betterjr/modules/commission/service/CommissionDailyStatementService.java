@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterTradeException;
+import com.betterjr.common.mapper.JsonMapper;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
@@ -32,6 +33,7 @@ import com.betterjr.modules.config.dubbo.interfaces.IDomainAttributeService;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.flie.service.FileDownService;
 import com.betterjr.modules.generator.SequenceFactory;
+import com.betterjr.modules.sys.security.BetterUserFilter;
 /***
  * 日账单服务类
  * @author hubl
@@ -68,7 +70,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         if(BetterStringUtils.isNotBlank((String)anParam.get("businStatus"))){
             paramMap.put("businStatus", anParam.get("businStatus"));
         }else{
-            paramMap.put("businStatus", new String[]{"0","1","2","9"});
+            paramMap.put("businStatus", new String[]{"0","1","2","3","9"});
         }
         Page<CommissionDailyStatement> monthlyStatement=this.selectPropertyByPage(paramMap, anPageNum, anPageSize, "1".equals(anParam.get("flag")),"id desc");
         return monthlyStatement;
@@ -141,7 +143,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
 
         long time = BetterDateUtils.parseDate(BetterDateUtils.getNumMonth()).getTime()-BetterDateUtils.parseDate(billMonth).getTime();
         if(time<=0){
-            throw new BytterTradeException("对账月份大于当前月");
+            throw new BytterTradeException("对账月份必须小于当前月");
         }
         CalcPayResult payResult=this.mapper.selectDailyStatementCount(monthMap);
         
@@ -200,8 +202,8 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         monthMap.put("monthlyRefNo", SequenceFactory.generate("PLAT_COMMISSION_MONTHLY_REFNO",custOperator.getOperOrg(), "MB#{Date:yyyyMM}#{Seq:10}", "M"));
         monthMap.put("totalBalance", totalBalance);
         monthMap.put("payTotalBalance", totalPayBalance);
-        monthMap.put("totalInterset", totalInterset);
-        monthMap.put("totalTaxBalance", totalTaxBalance);
+        monthMap.put("interest", totalInterset);
+        monthMap.put("taxBalance", totalTaxBalance);
         monthMap.put("dailyList", resultDailyStatementList);
         monthMap.put("makeDateTime", BetterDateUtils.getDateTime());
         monthMap.put("endInterestDate", anEndInterestDate);       
@@ -272,8 +274,8 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
          }
          
          CalcPayResult payResult = payResultRecordService.calcPayResultRecord(anOwnCustNo, anPayDate);
-         Long payFailureAmount=payResult.getPayFailureAmount();
-         BTAssert.isTrue(payFailureAmount<=0, "佣金支付结果存在未生效数据，不能生成日账单");
+         Long unconfirmAmount=payResult.getUnconfirmAmount();
+         BTAssert.isTrue(unconfirmAmount<=0, "佣金支付结果存在未确认数据，不能生成日账单");
          Long totalAmount=payResult.getTotalAmount();
          BTAssert.isTrue(totalAmount!=0, "没有查到佣金支付数据");
 
@@ -304,11 +306,13 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         final String operator = domainAttributeDubboClientService.findString(custOperator.getOperOrg(), "PLAT_COMMISSION_MAKE_OPERATOR");
         final BigDecimal interestRate = domainAttributeDubboClientService.findMoney(custOperator.getOperOrg(), "PLAT_COMMISSION_INTEREST_RATE");
         final BigDecimal taxRate = domainAttributeDubboClientService.findMoney(custOperator.getOperOrg(), "PLAT_COMMISSION_TAX_RATE");
+        final String dailyTemplate = domainAttributeDubboClientService.findString("GLOBAL_COMMISSION_DAILY_TEMPLATE");
 
         map.put("makeCustName", cusrName);
         map.put("makeOperName", operator);
         map.put("interestRate", interestRate);
         map.put("taxRate", taxRate);
+        map.put("dailyTemplate", dailyTemplate);
         
         return map;
     }
@@ -324,6 +328,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         dailyStatement.setOperName((String)configMap.get("makeOperName"));
         
         CalcPayResult payResult= payResultRecordService.calcPayResultRecord(anOwnCustNo, anPayDate);
+        logger.info("payResult:"+payResult);
         
         dailyStatement.setTotalBalance(payResult.getTotalBalance()==null?new BigDecimal(0):payResult.getTotalBalance());
         dailyStatement.setTotalAmount(new BigDecimal(payResult.getTotalAmount()));
@@ -340,11 +345,21 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         // 添加日报表记录
         dailyStatementRecordService.addDailyStatementRecord(dailyStatement);
         
+        String dailyTemplate=(String)configMap.get("dailyTemplate");
+        logger.info("dailyTemplate:"+dailyTemplate);
+        Long fileId=0l;
+        String fileType="";
+        if(dailyTemplate!=null){
+            Map<String, Object> templateMp = JsonMapper.parserJson(dailyTemplate);
+            fileId=Long.parseLong(templateMp.get("id").toString());
+            fileType=(String)templateMp.get("fileType");
+        }
         
         Map<String, Object> fileMap=new HashMap<String, Object>();
         fileMap.put("daily", dailyStatement);
         fileMap.put("recordList", dailyStatementRecordService.findDailyStatementRecord(dailyStatement.getId()));
-        CustFileItem custFile = fileDownService.uploadCommissionRecordFileis(fileMap, 1l, dailyStatement.getPayDate()+"-日账单");
+        CustFileItem custFile = fileDownService.uploadCommissionRecordFileis(fileMap, fileId, BetterDateUtils.formatDispay(dailyStatement.getPayDate())+"-日账单"+fileType);
+        logger.info("生成后的文件，custFile:"+custFile);
         dailyStatement.setFileId(custFile.getId());
         dailyStatement.setBatchNo(custFile.getBatchNo());
         this.updateByPrimaryKey(dailyStatement);
@@ -359,21 +374,10 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         return dailyStatement;
     }
     
-    public Map<String,Object> findDailyStatementById(Long anDailyStatementId){
+    public CommissionDailyStatement findDailyStatementById(Long anDailyStatementId){
         CommissionDailyStatement dailyStatement=this.selectByPrimaryKey(anDailyStatementId);
-        
-        Map<String,Object> infoMp=new HashMap<String, Object>();
-        infoMp.put("ownCustNo", dailyStatement.getOwnCustNo());
-        infoMp.put("ownCustName", dailyStatement.getOwnCustName());
-        infoMp.put("dailyRefNo", dailyStatement.getRefNo());
-        infoMp.put("totalBalance", dailyStatement.getTotalBalance());
-        infoMp.put("totalAmount", dailyStatement.getTotalAmount());
-        infoMp.put("payDate", dailyStatement.getPayDate());
-        infoMp.put("id", anDailyStatementId);
-        infoMp.put("makeCustName", dailyStatement.getMakeCustName());
-        infoMp.put("operName", dailyStatement.getOperName());
-        infoMp.put("makeDateTime", BetterDateUtils.formatDispDate(dailyStatement.getMakeDate())+" "+BetterDateUtils.formatDispTime(dailyStatement.getMakeTime()));
-        return infoMp;
+        dailyStatement.setMakeDateTime(BetterDateUtils.formatDispDate(dailyStatement.getMakeDate()) +" "+BetterDateUtils.formatDispTime(dailyStatement.getMakeTime()));
+        return dailyStatement;
     }
     
     public Page<CommissionDailyStatementRecord> queryDailyStatementRecordByDailyId(Long anDailyStatementId, int anPageNum, int anPageSize,String anFlag){
