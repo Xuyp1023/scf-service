@@ -103,4 +103,9 @@ public class CommissionDailyStatementDubboService implements ICommissionDailySta
     public String webQueryDailyStatementRecordById(Long anDailyStatementId,int anPageNum,int anPageSize,String anFlag){
         return AjaxObject.newOkWithPage("查询日账单详情", dailyStatementService.queryDailyStatementRecordByDailyId(anDailyStatementId, anPageNum, anPageSize, anFlag)).toJson();
     }
+    
+    @Override
+    public String webFindDailyStatementByPayDate(String anPayDate,Long anOwnCustNo){
+        return AjaxObject.newOk("根据对账日期和对账企业查询日账单",dailyStatementService.findDailyStatementByPayDate(anPayDate, anOwnCustNo)).toJson();
+    }
 }
