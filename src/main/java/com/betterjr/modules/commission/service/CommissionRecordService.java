@@ -2,6 +2,7 @@ package com.betterjr.modules.commission.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -209,8 +210,11 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
         //  2审核文件列表
       fileService.saveAuditFile(fileSet);
       //3 生成佣金记录文件
+      Map<String,Object> data=new HashMap<>();
+      data.put("recordList", recordList);
+      data.put("companyName", "   ");
       String fileName=BetterDateUtils.getNumDate()+recordList.get(0).getCustName()+"打款明细表.xlsx";
-      CustFileItem fileItem = fileDownService.uploadCommissionRecordFileis(recordList, CommissionConstantCollentions.COMMISSION_FILE_DOWN_FILEITEM_FILEID, fileName);
+      CustFileItem fileItem = fileDownService.uploadCommissionRecordFileis(data, CommissionConstantCollentions.COMMISSION_FILE_DOWN_FILEITEM_FILEID, fileName);
       CommissionFileDown fileDown=new CommissionFileDown();
       fileDown.saveAddInit(recordAmount,blance,recordList.get(0));
       fileDown.setBatchNo(fileItem.getBatchNo());

@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.modules.account.entity.CustInfo;
@@ -20,6 +21,7 @@ import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.commission.entity.CommissionMonthlyStatement;
 import com.betterjr.modules.delivery.data.DeliveryConstantCollentions;
 import com.betterjr.modules.generator.SequenceFactory;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -45,10 +47,12 @@ public class DeliveryRecord implements BetterjrEntity {
 
     //投递日期
     @Column(name = "D_POST_DATE",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String postDate;
 
     //投递时间
     @Column(name = "T_POST_TIME",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String postTime;
 
     //接收公司(青海移动)
@@ -81,10 +85,12 @@ public class DeliveryRecord implements BetterjrEntity {
 
     //确认日期
     @Column(name = "D_CONFIRM_DATE",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String confirmDate;
 
     //确认时间
     @Column(name = "T_CONFIRM_TIME",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String confirmTime;
     
     //确认操作员
@@ -102,9 +108,11 @@ public class DeliveryRecord implements BetterjrEntity {
     private String regOperName;
 
     @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
     
     @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regTime;
     
     @Column(name = "N_VERSION",  columnDefinition="VARCHAR" )
