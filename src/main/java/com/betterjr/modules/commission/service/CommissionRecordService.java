@@ -2,6 +2,7 @@ package com.betterjr.modules.commission.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.MathExtend;
@@ -24,9 +26,12 @@ import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.commission.dao.CommissionRecordMapper;
 import com.betterjr.modules.commission.data.CommissionConstantCollentions;
 import com.betterjr.modules.commission.entity.CommissionFile;
+import com.betterjr.modules.commission.entity.CommissionFileDown;
 import com.betterjr.modules.commission.entity.CommissionRecord;
 import com.betterjr.modules.commission.entity.CommissionRecordAuditResult;
 import com.betterjr.modules.customer.ICustMechBaseService;
+import com.betterjr.modules.document.entity.CustFileItem;
+import com.betterjr.modules.flie.service.FileDownService;
 
 @Service
 public class CommissionRecordService extends BaseService<CommissionRecordMapper, CommissionRecord> {
@@ -37,6 +42,12 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
     
     @Reference(interfaceClass = ICustMechBaseService.class)
     private ICustMechBaseService baseService;
+    
+    @Autowired
+    private CommissionFileDownService CommissionfileDownService;
+    
+    @Autowired
+    private FileDownService fileDownService;
     
     /**
      * 通过佣金文件的fileId对佣金记录进行删除操作
@@ -92,6 +103,8 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
      */
     public List<CommissionRecord> saveRecordListWithMap(List<Map<String, Object>> anListData) {
         
+        
+        BTAssert.notNull(anListData,"当前解析文件没有数据");
         List<CommissionRecord> records=new ArrayList<>();
         int i=CommissionConstantCollentions.COMMISSION_FILE_BEGIN_ROW;
         try{
@@ -152,6 +165,11 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
         
     }
     
+    /**
+     * 审核佣金记录全部
+     * @param anMap
+     * @return
+     */
     public CommissionRecordAuditResult saveAuditRecordList(Map<String, Object> anMap){
         
         BTAssert.notNull(anMap,"审核佣金记录条件为空");
@@ -180,6 +198,7 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
         int recordAmount=0;
         BigDecimal blance=new BigDecimal(0);
         Set<Long> fileSet=new HashSet<>();
+        //1 修改每条佣金记录的状态
         for (CommissionRecord commissionRecord : recordList) {
             recordAmount++;
             blance= MathExtend.add(blance, commissionRecord.getBalance());
@@ -188,8 +207,19 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
             this.updateByPrimaryKeySelective(commissionRecord);
         }
         logger.info("佣金记录批量审核 ：  saveAuditRecordList  查询到未审核的记录 个数为："+recordAmount+"  :总的金额为："+blance+"   审核的文件数量为="+fileSet.size()); 
-        //审核文件列表
+        //  2审核文件列表
       fileService.saveAuditFile(fileSet);
+      //3 生成佣金记录文件
+      Map<String,Object> data=new HashMap<>();
+      data.put("recordList", recordList);
+      data.put("companyName", "   ");
+      String fileName=BetterDateUtils.getNumDate()+recordList.get(0).getCustName()+"打款明细表.xlsx";
+      CustFileItem fileItem = fileDownService.uploadCommissionRecordFileis(data, CommissionConstantCollentions.COMMISSION_FILE_DOWN_FILEITEM_FILEID, fileName);
+      CommissionFileDown fileDown=new CommissionFileDown();
+      fileDown.saveAddInit(recordAmount,blance,recordList.get(0));
+      fileDown.setBatchNo(fileItem.getBatchNo());
+      fileDown.setFileId(fileItem.getId());
+      CommissionfileDownService.insert(fileDown);
       
       return   CommissionRecordAuditResult.ok(fileSet.size(), recordAmount, blance);
         
@@ -270,7 +300,6 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
     }
     
 
-
     /**
      * @param anCustNo
      * @param anImportDate
@@ -280,7 +309,6 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
         final Map<String,Object> map = QueryTermBuilder.newInstance()
                 .put("custNo",anCustNo)
                 .put("importDate", anImportDate)
-                .put("businStatus", "1")
                 .build();
         return this.selectPropertyByPage(map, anPageNum, anPageSize, anFlag == 1);
     }
@@ -288,4 +316,6 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
     public Map<String, Object> findRecordListCount(final Long anCustNo, final String anImportDate) {
         return this.mapper.countRecordList(anCustNo, anImportDate);
     }
+
+
 }

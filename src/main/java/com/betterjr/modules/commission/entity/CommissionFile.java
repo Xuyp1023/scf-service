@@ -614,7 +614,7 @@ public class CommissionFile implements BetterjrEntity {
         this.setModiDate(BetterDateUtils.getNumDate());
         this.setModiTime(BetterDateUtils.getNumTime());
         this.setModiOperId(anOperatorInfo.getId());
-        this.setModiTime(anOperatorInfo.getName());
+        this.setModiOperName(anOperatorInfo.getName());
         return this;
         
     }
