@@ -2,12 +2,9 @@ package com.betterjr.modules.flie.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
-
 import org.apache.poi.ss.usermodel.Workbook;
 import org.jeecgframework.poi.excel.ExcelExportUtil;
 import org.jeecgframework.poi.excel.entity.TemplateExportParams;
@@ -15,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.UserUtils;
@@ -56,11 +52,7 @@ public class FileDownService {
         BTAssert.notNull(book,"封装模版产生异常,请稍后重试");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
-            FileOutputStream fos=new FileOutputStream(new File("d:\\789.xlsx"));
-            book.write(fos);
             book.write(os);
-            fos.close();
-//            book.write(os);
         }
         catch (IOException e) {
             logger.info("封装模版产生异常,请稍后重试!"+e.getMessage());

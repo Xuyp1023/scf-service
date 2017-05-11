@@ -1,23 +1,19 @@
 package com.betterjr.modules.commission.service;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.transaction.Synchronization;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.jeecgframework.poi.excel.ExcelExportUtil;
-import org.jeecgframework.poi.excel.entity.TemplateExportParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +30,7 @@ import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.account.service.CustAccountService;
+import com.betterjr.modules.cert.dubbo.interfaces.IVerifySignCertService;
 import com.betterjr.modules.commission.dao.CommissionFileMapper;
 import com.betterjr.modules.commission.data.CommissionConstantCollentions;
 import com.betterjr.modules.commission.entity.CommissionFile;
@@ -71,12 +68,15 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
     @Autowired
     private CustFileCloumnService fileCloumnService; //查询解析文件列对应关系
     
+    @Reference(interfaceClass =IVerifySignCertService.class)
+    private IVerifySignCertService verifySignCertService;
+    
     /**
      * 新增佣金文件
      * @param anFile
      * @return
      */
-    public CommissionFile saveAddCommissionFile(CommissionFile anFile) {
+    public synchronized CommissionFile saveAddCommissionFile(CommissionFile anFile) {
         
         BTAssert.notNull(anFile, "新增佣金文件为空");
         BTAssert.notNull(anFile.getFileId(), "新增佣金文件参数出错,文件id为空");
@@ -84,7 +84,12 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         if(!checkFilePermitOperator(anFile.getCustNo(), BetterDateUtils.getNumDate())){
             BTAssert.notNull(null, "今天已经审核了全部文件，请明天再上传解析");
         }
+        if(!checkFilePermitOperator(anFile.getFileId())){
+            BTAssert.notNull(null, "当前文件已经上传成功!请不要重复提交");
+        }
         logger.info("Begin to add addCommissionFile"+UserUtils.getOperatorInfo().getName());
+        //数字签名
+        verifyCommissionFile(anFile.getCustNo(), anFile.getFileId(), anFile.getSignature());
         CustFileItem fileItem = custFileDubboService.findOne(anFile.getFileId());
         anFile.saveAddinit(UserUtils.getOperatorInfo(),fileItem);
         anFile.setCustName(custAccountService.queryCustName(anFile.getCustNo()));
@@ -93,6 +98,20 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         this.insert(anFile);
         logger.info("success to add addCommissionFile"+UserUtils.getOperatorInfo().getName());
         return anFile;
+    }
+
+    private void verifyCommissionFile(Long anCustNo,Long anFileId,String ansignatue){
+        
+        try{
+            if(!verifySignCertService.verifyFile(anCustNo, anFileId, ansignatue)){
+                logger.info("failer to 数字签名 verifyCommissionFile"+UserUtils.getOperatorInfo().getName()+"  文件id"+anFileId );
+                BTAssert.notNull(null, "数字签名失败!"); 
+            }
+            
+        }catch(Exception e){
+            logger.info("failer to 数字签名 verifyCommissionFile"+UserUtils.getOperatorInfo().getName()+"  文件id"+anFileId +" 异常为："+e.getMessage());
+            BTAssert.notNull(null, "数字签名失败!");  
+        }
     }
     
     /**
@@ -365,40 +384,12 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         CommissionFile file = this.selectOne(new CommissionFile(anFileId));
         checkAuditFileStatus(file, UserUtils.getOperatorInfo());
         file.saveAuditInit(UserUtils.getOperatorInfo());
-        //List<CommissionRecord> recordList=recordService.queryRecordListByFileId(anFileId);
-        //CustFileItem fileItem=uploadCommissionRecordFile(recordList);
-        //file.setDownFileId(fileItem.getId());
         this.updateByPrimaryKey(file);
         
         logger.info("佣金记录批量审核 ：  saveAuditRecordList  审核佣金记录文件  saveAuditFile  成功 审核人："+UserUtils.getOperatorInfo().getName());
         return file;
         
     }
-    
-    private CustFileItem uploadCommissionRecordFile(List<CommissionRecord> anRecordList) {
-        
-        logger.info("佣金记录批量审核 ：  saveAuditRecordList  生成佣金记录下载文件   审核人："+UserUtils.getOperatorInfo().getName());
-        BTAssert.notNull(anRecordList,"审核的数据文件为空");
-        //获取佣金记录导出模版文件
-        TemplateExportParams params=new TemplateExportParams("C:\\Users\\xuyp\\Desktop\\数据导出模版.xlsx");
-        Map<String,Object> data=new HashMap<>();
-        data.put("recordList", anRecordList);
-        data.put("editDate", new Date());
-        Workbook book=ExcelExportUtil.exportExcel(params, data);
-        BTAssert.notNull(book,"封装模版产生异常,请稍后重试");
-        FileOutputStream fos;
-        try {
-            fos=new FileOutputStream(new File("d:\\789.xlsx"));
-             book.write(fos);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        CustFileItem fileItem = custFileService.findOne(CommissionConstantCollentions.COMMISSION_FILE_DOWN_FILEITEM_FILEID);//文件上次详情
-        logger.info("佣金记录批量审核 ：  saveAuditRecordList  生成佣金记录下载文件 已经成功上传到服务器   审核人："+UserUtils.getOperatorInfo().getName());
-        return fileItem;
-    }
-
     
     /**
      * 根据佣金记录生成佣金记录文件
@@ -492,6 +483,25 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
             
         }
         return false;
+    }
+    
+    private boolean checkFilePermitOperator(Long anFileId) {
+        
+        Map queryMap = QueryTermBuilder.newInstance()
+                .put("fileId", anFileId)
+                .build();
+                List<CommissionFile> fileList = this.selectByProperty(queryMap);
+                if(Collections3.isEmpty(fileList)){
+                    return true;
+                }
+                for (CommissionFile commissionFile : fileList) {
+                    if(! commissionFile.getBusinStatus().equals(CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_DELETE)){
+                        
+                        return false;
+                        
+                    }
+                }
+                return true;
     }
     
     /**
