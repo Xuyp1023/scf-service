@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.commission.dao.CommissionMonthlyStatementRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.betterjr.modules.commission.entity.CommissionMonthlyStatementRecord" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="L_MONTHLY_STATEMENT_ID" property="monthlyStatementId" jdbcType="INTEGER" />
+    <result column="C_MONTHLY_STATEMENT_REFNO" property="monthlyStatementRefNo" jdbcType="VARCHAR" />
+    <result column="L_DAILY_STATEMENT_ID" property="dailyStatementId" jdbcType="VARCHAR" />
+    <result column="C_DAILY_STATEMENT_REFNO" property="dailyStatementRefNo" jdbcType="INTEGER" />
+    <result column="D_PAY_DATE" property="payDate" jdbcType="VARCHAR" />
+    <result column="F_PAY_TOTAL_BALANCE" property="payTotalBalance" jdbcType="DECIMAL" />
+    <result column="N_PAY_TOTAL_AMOUNT" property="payTotalAmount" jdbcType="DECIMAL" />
+    <result column="F_PAY_SUCCESS_BALANCE" property="paySuccessBalance" jdbcType="DECIMAL" />
+    <result column="N_PAY_SUCCESS_AMOUNT" property="paySuccessAmount" jdbcType="DECIMAL" />
+    <result column="F_PAY_FAILURE_BALANCE" property="payFailureBalance" jdbcType="DECIMAL" />
+    <result column="N_PAY_FAILURE_AMOUNT" property="payFailureAmount" jdbcType="DECIMAL" />
+    <result column="F_INTEREST" property="interest" jdbcType="DECIMAL" />
+    <result column="F_INTEREST_RATE" property="interestRate" jdbcType="DECIMAL" />
+    <result column="L_CUSTNO" property="custNo" jdbcType="INTEGER" />
+    <result column="C_CUSTNAME" property="custName" jdbcType="VARCHAR" />
+    <result column="C_OPERORG" property="operOrg" jdbcType="VARCHAR" />
+    <result column="L_REG_OPERID" property="regOperId" jdbcType="VARCHAR" />
+    <result column="C_REG_OPERNAME" property="regOperName" jdbcType="VARCHAR" />
+    <result column="D_REG_DATE" property="regDate" jdbcType="VARCHAR" />
+    <result column="T_REG_TIME" property="regTime" jdbcType="VARCHAR" />
+    <result column="N_VERSION" property="version" jdbcType="INTEGER" />
+  </resultMap>
+</mapper>

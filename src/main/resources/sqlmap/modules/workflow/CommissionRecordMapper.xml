@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.betterjr.modules.commission.dao.CommissionRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.betterjr.modules.commission.entity.CommissionRecord" >
+    <!--
+      WARNING - @mbggenerated
+    -->
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="L_COMMISSIONFILE_ID" property="commissionFileId" jdbcType="INTEGER" />
+    <result column="C_REFNO" property="refNo" jdbcType="VARCHAR" />
+    <result column="D_IMPORT_DATE" property="importDate" jdbcType="VARCHAR" />
+    <result column="T_IMPORT_TIME" property="importTime" jdbcType="VARCHAR" />
+    <result column="C_AREA" property="area" jdbcType="VARCHAR" />
+    <result column="C_CUSTOMER_NAME" property="customerName" jdbcType="VARCHAR" />
+    <result column="N_AMOUNT" property="amount" jdbcType="INTEGER" />
+    <result column="F_UNIT" property="unit" jdbcType="DECIMAL" />
+    <result column="F_BALANCE" property="fBalance" jdbcType="DECIMAL" />
+    <result column="C_BANK_ACCOUNT" property="bankAccount" jdbcType="VARCHAR" />
+    <result column="C_BANK_ACCOUNT_NAME" property="bankAccountName" jdbcType="VARCHAR" />
+    <result column="C_BANK" property="bank" jdbcType="VARCHAR" />
+    <result column="C_BANK_NAME" property="bankName" jdbcType="VARCHAR" />
+    <result column="C_BANK_ADDRESS" property="bankAddress" jdbcType="VARCHAR" />
+    <result column="C_CONTACTS" property="contacts" jdbcType="VARCHAR" />
+    <result column="C_CONTACTS_MOBILENO" property="contactsMobileNo" jdbcType="VARCHAR" />
+    <result column="L_CUSTNO" property="custNo" jdbcType="INTEGER" />
+    <result column="C_CUSTNAME" property="custName" jdbcType="VARCHAR" />
+    <result column="C_OPERORG" property="operOrg" jdbcType="VARCHAR" />
+    <result column="C_PAY_STATUS" property="payStatus" jdbcType="VARCHAR" />
+    <result column="C_BUSIN_STATUS" property="businStatus" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>

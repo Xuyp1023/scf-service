@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.config.ParamNames;
+import com.betterjr.common.config.SpringPropertyResourceReader;
 import com.betterjr.common.data.SimpleDataEntity;
 import com.betterjr.common.data.WebServiceErrorCode;
 import com.betterjr.common.exception.BytterTradeException;
@@ -220,13 +221,17 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
             logger.error("saveAndSendValidSMS not find signed parnter use with anAppNo " + anAppNo);
             return false;
         }
-        boolean result = this.remoteHelper.sendValidSMS(anAppNo, custNo, anVcode);
-        this.scfElecAgreeStubService.saveElecAgreeStubStatus(custNo, anAppNo, result ? "1" : "2");
-        if  (result){
-            saveSignFileInfo(anElecAgree, fileItem, false);
+        String mode= SpringPropertyResourceReader.getProperty("sys.mode", "prod");
+        if(BetterStringUtils.equalsIgnoreCase(mode, "dev")){
+            return true;
+        }else{
+            boolean result = this.remoteHelper.sendValidSMS(anAppNo, custNo, anVcode);
+            this.scfElecAgreeStubService.saveElecAgreeStubStatus(custNo, anAppNo, result ? "1" : "2");
+            if  (result){
+                saveSignFileInfo(anElecAgree, fileItem, false);
+            }
+            return result;
         }
-
-        return result;
     }
     
     /**
@@ -243,18 +248,22 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
 
             return false;
         }
-        ScfElecAgreement electAgreement = this.selectByPrimaryKey(anAppNo);
-        if (electAgreement.hasSendSignOrder()) {
-            if (this.saveAndSignElecAgreement(electAgreement) == false) {
-                logger.error("SendSignOrder find Error ");
-                return false;
+        String mode= SpringPropertyResourceReader.getProperty("sys.mode", "prod");
+        if(BetterStringUtils.equalsIgnoreCase(mode, "dev")){
+            return true;
+        }else{
+            ScfElecAgreement electAgreement = this.selectByPrimaryKey(anAppNo);
+            if (electAgreement.hasSendSignOrder()) {
+                if (this.saveAndSignElecAgreement(electAgreement) == false) {
+                    logger.error("SendSignOrder find Error ");
+                    return false;
+                }
             }
+            else {
+                logger.info("this electAgreement appNo" + anAppNo + ", has sended!");
+            }
+            return this.remoteHelper.sendSMS(anAppNo, custNo);
         }
-        else {
-            logger.info("this electAgreement appNo" + anAppNo + ", has sended!");
-        }
-
-        return this.remoteHelper.sendSMS(anAppNo, custNo);
     }
     
     /**
@@ -266,13 +275,19 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
      */
     protected boolean saveAndSignElecAgreement(ScfElecAgreement anElectAgreement) {
         logger.info("create saveAndSignElecAgreement " + anElectAgreement);
-        boolean result = this.remoteHelper.signElecAgreement(anElectAgreement);
-        if (result) {
 
-            this.updateByPrimaryKey(anElectAgreement);
+        String mode= SpringPropertyResourceReader.getProperty("sys.mode", "prod");
+        if(BetterStringUtils.equalsIgnoreCase(mode, "dev")){
+            return true;
+        }else{
+            boolean result = this.remoteHelper.signElecAgreement(anElectAgreement);
+            if (result) {
+
+                this.updateByPrimaryKey(anElectAgreement);
+            }
+
+            return result;
         }
-
-        return result;
     }
     
     /**
