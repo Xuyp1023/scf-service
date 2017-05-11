@@ -9,6 +9,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.transaction.Synchronization;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +76,7 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
      * @param anFile
      * @return
      */
-    public CommissionFile saveAddCommissionFile(CommissionFile anFile) {
+    public synchronized CommissionFile saveAddCommissionFile(CommissionFile anFile) {
         
         BTAssert.notNull(anFile, "新增佣金文件为空");
         BTAssert.notNull(anFile.getFileId(), "新增佣金文件参数出错,文件id为空");

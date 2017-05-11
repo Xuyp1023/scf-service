@@ -85,6 +85,7 @@ public class DeliveryDubboService  implements IDeliveryService{
         try {
             Map<String, Object> queryMap = RuleServiceDubboFilterInvoker.getInputObj();
             queryMap.put("businStatus", "2");
+            queryMap.put("custNo", queryMap.get("ownCustNo"));
             return AjaxObject.newOkWithPage("查询月账单列表", monthlyStatementService.queryMonthlyStatement(queryMap, anPageNum, anPageSize)).toJson();
         }
         catch (ParseException e) {
