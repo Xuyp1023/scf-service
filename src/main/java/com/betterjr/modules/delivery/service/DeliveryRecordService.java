@@ -152,8 +152,10 @@ public class DeliveryRecordService extends BaseService<DeliveryRecordMapper, Del
         
         //3 更新月账单状态信息
         montylyService.saveMonthlyStatement(monthlyId, "2");
-        
-        
+        //更新投递账单主表信息
+        record.setTotalBlance(record.getTotalBlance().subtract(statement.getPayTotalSuccessBlance()));
+        record.setTotalAmount(record.getTotalAmount().subtract(statement.getPayTotalSuccessitems()));
+        this.updateByPrimaryKeySelective(record);
         return record;
         
     }
