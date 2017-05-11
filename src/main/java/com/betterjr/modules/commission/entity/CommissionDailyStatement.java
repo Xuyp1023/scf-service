@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
@@ -248,6 +249,9 @@ public class CommissionDailyStatement implements BetterjrEntity {
     @Column(name = "L_FILE_ID",  columnDefinition="INTEGER" )
     @MetaData( value="文件ID", comments = "文件ID")
     private Long fileId;
+    
+    @Transient
+    private String makeDateTime;
 
     private static final long serialVersionUID = 3778161046419627677L;
 
@@ -553,6 +557,14 @@ public class CommissionDailyStatement implements BetterjrEntity {
 
     public void setFileId(Long anFileId) {
         this.fileId = anFileId;
+    }
+
+    public String getMakeDateTime() {
+        return this.makeDateTime;
+    }
+
+    public void setMakeDateTime(String anMakeDateTime) {
+        this.makeDateTime = anMakeDateTime;
     }
 
     @Override

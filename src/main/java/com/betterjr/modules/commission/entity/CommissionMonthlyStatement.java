@@ -1,6 +1,8 @@
 package com.betterjr.modules.commission.entity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Access;
@@ -9,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
@@ -278,7 +281,22 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     @Column(name = "D_BILL_MONTH",  columnDefinition="VARCHAR" )
     private String billMonth;
     
+    @Transient
+    private String makeDateTime;
+    
+    private List<CommissionMonthlyStatementRecord> dailyList=new ArrayList<CommissionMonthlyStatementRecord>();
+    
     private static final long serialVersionUID = 1493796206916L;
+
+    public List<CommissionMonthlyStatementRecord> getDailyList() {
+        return this.dailyList;
+    }
+
+
+    public void setDailyList(List<CommissionMonthlyStatementRecord> anDailyList) {
+        this.dailyList = anDailyList;
+    }
+
 
     public Long getId() {
         return id;
@@ -613,6 +631,16 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
         this.billMonth = anBillMonth;
     }
 
+    public String getMakeDateTime() {
+        return this.makeDateTime;
+    }
+
+
+    public void setMakeDateTime(String anMakeDateTime) {
+        this.makeDateTime = anMakeDateTime;
+    }
+
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -672,9 +700,9 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
         this.payTotalBalance = new BigDecimal((String)anMap.get("payTotalBalance"));
         this.ownCustNo=Long.parseLong((String)anMap.get("ownCustNo"));
         this.endInterestDate=(String)anMap.get("endInterestDate");
-        String totalInterset= (String)anMap.get("totalInterset")==""?"0":(String)anMap.get("totalInterset");
+        String totalInterset= (String)anMap.get("interest")==""?"0":(String)anMap.get("interest");
         this.interest=new BigDecimal(totalInterset);
-        String tax= (String)anMap.get("totalTaxBalance")==""?"0":(String)anMap.get("totalTaxBalance");
+        String tax= (String)anMap.get("taxBalance")==""?"0":(String)anMap.get("taxBalance");
         this.taxBalance=new BigDecimal(tax);
         this.payBeginDate=(String)anMap.get("payBeginDate");
         this.payEndDate=(String)anMap.get("payEndDate");
