@@ -95,13 +95,16 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
             Map<String, Object> templateMp = JsonMapper.parserJson(monthlyTemplate);
             fileId=Long.parseLong(templateMp.get("id").toString());
             fileType=(String)templateMp.get("fileType");
+            if(BetterStringUtils.isBlank(fileType)){
+                fileType=".xlsx";
+            }
         }
         
         // 生成文件
         Map<String, Object> fileMap=new HashMap<String, Object>();
         fileMap.put("monthly", monthlyStatement);
         fileMap.put("recordList",monthlyRecordService.findMonthlyStatementRecord(monthlyStatement.getId(), monthlyStatement.getRefNo()));
-        CustFileItem custFile = fileDownService.uploadCommissionRecordFileis(fileMap, fileId, monthlyStatement.getBillMonth()+"-月账单"+fileType);
+        CustFileItem custFile = fileDownService.uploadCommissionRecordFileis(fileMap, fileId, BetterDateUtils.formatMonthDispay(monthlyStatement.getBillMonth())+"-对账单"+fileType);
         logger.info("saveComissionMonthlyStatement,custFile:"+custFile);
         monthlyStatement.setFileId(custFile.getId());
         monthlyStatement.setBatchNo(custFile.getBatchNo());

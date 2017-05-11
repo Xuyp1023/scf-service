@@ -33,7 +33,6 @@ import com.betterjr.modules.config.dubbo.interfaces.IDomainAttributeService;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.flie.service.FileDownService;
 import com.betterjr.modules.generator.SequenceFactory;
-import com.betterjr.modules.sys.security.BetterUserFilter;
 /***
  * 日账单服务类
  * @author hubl
@@ -199,7 +198,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         monthMap.put("ownCustNo", anOwnCustNo);
         monthMap.put("ownCustName", custAccountService.queryCustName(anOwnCustNo));
         final CustOperatorInfo custOperator = (CustOperatorInfo) UserUtils.getPrincipal().getUser();
-        monthMap.put("monthlyRefNo", SequenceFactory.generate("PLAT_COMMISSION_MONTHLY_REFNO",custOperator.getOperOrg(), "MB#{Date:yyyyMM}#{Seq:10}", "M"));
+        monthMap.put("refNo", SequenceFactory.generate("PLAT_COMMISSION_MONTHLY_REFNO",custOperator.getOperOrg(), "MB#{Date:yyyyMM}#{Seq:10}", "M"));
         monthMap.put("totalBalance", totalBalance);
         monthMap.put("payTotalBalance", totalPayBalance);
         monthMap.put("interest", totalInterset);
@@ -353,12 +352,15 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
             Map<String, Object> templateMp = JsonMapper.parserJson(dailyTemplate);
             fileId=Long.parseLong(templateMp.get("id").toString());
             fileType=(String)templateMp.get("fileType");
+            if(BetterStringUtils.isBlank(fileType)){
+                fileType=".xlsx";
+            }
         }
         
         Map<String, Object> fileMap=new HashMap<String, Object>();
         fileMap.put("daily", dailyStatement);
         fileMap.put("recordList", dailyStatementRecordService.findDailyStatementRecord(dailyStatement.getId()));
-        CustFileItem custFile = fileDownService.uploadCommissionRecordFileis(fileMap, fileId, BetterDateUtils.formatDispay(dailyStatement.getPayDate())+"-日账单"+fileType);
+        CustFileItem custFile = fileDownService.uploadCommissionRecordFileis(fileMap, fileId, BetterDateUtils.formatDispay(dailyStatement.getPayDate())+"-对账单"+fileType);
         logger.info("生成后的文件，custFile:"+custFile);
         dailyStatement.setFileId(custFile.getId());
         dailyStatement.setBatchNo(custFile.getBatchNo());
