@@ -11,6 +11,13 @@ import javax.persistence.Table;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
+import com.betterjr.common.mapper.CustTimeJsonSerializer;
+import com.betterjr.common.selectkey.SerialGenerator;
+import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.UserUtils;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -48,6 +55,7 @@ public class CommissionDailyStatement implements BetterjrEntity {
     /**
      * 支付日期
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_PAY_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="支付日期", comments = "支付日期")
     private String payDate;
@@ -55,6 +63,7 @@ public class CommissionDailyStatement implements BetterjrEntity {
     /**
      * 支付时间
      */
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     @Column(name = "T_PAY_TIME",  columnDefinition="VARCHAR" )
     @MetaData( value="支付时间", comments = "支付时间")
     private String payTime;
@@ -153,6 +162,7 @@ public class CommissionDailyStatement implements BetterjrEntity {
     /**
      * 制表日期
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_MAKE_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="制表日期", comments = "制表日期")
     private String makeDate;
@@ -160,6 +170,7 @@ public class CommissionDailyStatement implements BetterjrEntity {
     /**
      * 制表时间
      */
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     @Column(name = "T_MAKE_TIME",  columnDefinition="VARCHAR" )
     @MetaData( value="制表时间", comments = "制表时间")
     private String makeTime;
@@ -220,6 +231,7 @@ public class CommissionDailyStatement implements BetterjrEntity {
     private Long version;
     
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_END_INTEREST_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="结息日期", comments = "结息日期")
     private String endInterestDate;
@@ -231,6 +243,11 @@ public class CommissionDailyStatement implements BetterjrEntity {
     @Column(name = "F_INTEREST_RATE",  columnDefinition="DECIMAL" )
     @MetaData( value="利率", comments = "利率")
     private BigDecimal interestRate;
+    
+
+    @Column(name = "L_FILE_ID",  columnDefinition="INTEGER" )
+    @MetaData( value="文件ID", comments = "文件ID")
+    private Long fileId;
 
     private static final long serialVersionUID = 3778161046419627677L;
 
@@ -530,6 +547,14 @@ public class CommissionDailyStatement implements BetterjrEntity {
         this.interestRate = anInterestRate;
     }
 
+    public Long getFileId() {
+        return this.fileId;
+    }
+
+    public void setFileId(Long anFileId) {
+        this.fileId = anFileId;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -665,5 +690,24 @@ public class CommissionDailyStatement implements BetterjrEntity {
         result = prime * result + ((getModiTime() == null) ? 0 : getModiTime().hashCode());
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
         return result;
+    }
+    
+    public void initValue(){
+        this.id = SerialGenerator.getLongValue("CommissionDailyStatement.id"); 
+        this.makeDate = BetterDateUtils.getNumDate();
+        this.makeTime= BetterDateUtils.getNumTime();
+        this.regDate = BetterDateUtils.getNumDate();
+        this.regTime = BetterDateUtils.getNumTime();
+        this.modiDate = BetterDateUtils.getNumDate();
+        this.modiTime = BetterDateUtils.getNumTime();
+        this.businStatus="1";
+        final CustOperatorInfo custOperator = (CustOperatorInfo) UserUtils.getPrincipal().getUser();
+        if(custOperator!=null){
+            this.operOrg=custOperator.getOperOrg();
+            this.regOperId=custOperator.getId();
+            this.regOperName=custOperator.getName();
+            this.modiOperId=custOperator.getId();
+            this.modiOperName=custOperator.getName();
+        }
     }
 }

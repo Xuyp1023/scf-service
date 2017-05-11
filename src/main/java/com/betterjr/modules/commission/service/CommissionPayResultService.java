@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
@@ -26,6 +27,7 @@ import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.commission.constant.CommissionPayResultStatus;
 import com.betterjr.modules.commission.dao.CommissionPayResultMapper;
+import com.betterjr.modules.commission.data.CalcPayResult;
 import com.betterjr.modules.commission.entity.CommissionPayResult;
 import com.betterjr.modules.commission.entity.CommissionPayResultRecord;
 import com.betterjr.modules.commission.entity.CommissionRecord;
@@ -43,7 +45,13 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
     private ICustMechBaseService custMechBaseService;
 
     @Resource
+    private CommissionFileService commissionFileService;
+
+    @Resource
     private CommissionRecordService commissionRecordService;
+
+    @Resource
+    private CommissionDailyStatementService commissionDailyStatementService;
 
     @Resource
     private CommissionPayResultRecordService commissionPayResultRecordService;
@@ -55,6 +63,12 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
         BTAssert.isTrue(BetterStringUtils.isNotBlank(anImportDate), "导入日期不允许为空！");
         BTAssert.isTrue(BetterStringUtils.isNotBlank(anPayDate), "支付日期不允许为空！");
 
+        final long importTime =  BetterDateUtils.parseDate(BetterDateUtils.getNumDate()).getTime()-BetterDateUtils.parseDate(anImportDate).getTime();
+        final long payTime = BetterDateUtils.parseDate(BetterDateUtils.getNumDate()).getTime()-BetterDateUtils.parseDate(anPayDate).getTime();
+
+        BTAssert.isTrue(importTime >= 0, "导入日期必须小于等于当前日期");
+        BTAssert.isTrue(payTime >= 0, "支付日期必须小于等于当前日期");
+
         BTAssert.notNull(anCustNo, "公司编号不允许为空！");
 
         final CustMechBase custMechBase = custMechBaseService.findBaseInfo(anCustNo);
@@ -63,8 +77,13 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
         CommissionPayResult payResult = findByImportDateAndCustNo(anImportDate, anCustNo);
         BTAssert.isNull(payResult, "该企业当日记录已经创建对账记录：企业[" + custMechBase.getCustName() + "] 导入日期[" + anImportDate + "]");
 
-        // TODO 检查是否有未审核数据
-        //commissionRecordService.checkStatus(anBusinStatus, anTargetStatus, anFlag, anMessage);
+        final boolean auditStatus = commissionFileService.checkFileAuditFinish(anCustNo, anImportDate);
+
+        BTAssert.isTrue(auditStatus, "佣金记录还未审核完毕，请联系企业[" + custMechBase.getCustName() +"]");
+
+        final boolean createDailyResult = commissionDailyStatementService.findDailyStatementByPayDate(anPayDate, anCustNo);
+
+        BTAssert.isTrue(!createDailyResult, "该企业当日");
 
         final CustOperatorInfo operator = UserUtils.getOperatorInfo();
 
@@ -85,6 +104,10 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
 
         final int resultCount = commissionPayResultRecordService.saveCreatePayResultRecord(anCustNo, custMechBase.getCustName(), custMechBase.getOperOrg(), payResult.getId(),
                 anImportDate, anPayDate);
+
+        calcPayResultRecord(payResult, payResult.getId());
+
+        final int updateResult = this.updateByPrimaryKeySelective(payResult);
 
         return payResult;
     }
@@ -116,7 +139,7 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
         BTAssert.notNull(commissionPayResult, "没有找到账单确认记录！");
 
         if (BetterStringUtils.isNotBlank(anStatus)) {
-            BTAssert.isTrue(BetterStringUtils.equals("0", commissionPayResult.getBusinStatus()), "账单状态不正确！");
+            BTAssert.isTrue(BetterStringUtils.equals(anStatus, commissionPayResult.getBusinStatus()), "账单状态不正确！");
         }
         return commissionPayResult;
     }
@@ -125,7 +148,17 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
     public Page<CommissionRecord> queryUncheckCommissionRecord(final Long anCustNo, final String anImportDate, final int anFlag, final int anPageNum, final int anPageSize) {
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
 
+        BTAssert.notNull(anCustNo, "公司编号不允许为空！");
+        BTAssert.isTrue(BetterStringUtils.isNotBlank(anImportDate), "导入日期不允许为空");
         return commissionRecordService.queryRecordListByImportDate(anCustNo, anImportDate, anFlag, anPageNum, anPageSize);
+    }
+
+    public Map<String, Object> findCountCommissionRecord(final Long anCustNo, final String anImportDate) {
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
+
+        BTAssert.notNull(anCustNo, "公司编号不允许为空！");
+        BTAssert.isTrue(BetterStringUtils.isNotBlank(anImportDate), "导入日期不允许为空");
+        return commissionRecordService.findRecordListCount(anCustNo, anImportDate);
     }
 
     // 查询日对账记录 未确认待确认
@@ -133,7 +166,9 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
 
         final Map<String, Object> conditionMap = new HashMap<>();
-        conditionMap.put("ownCustNo", anCustNo);
+        if (anCustNo != null) {
+            conditionMap.put("ownCustNo", anCustNo);
+        }
         if (BetterStringUtils.isNotBlank(anPayDate)) {
             conditionMap.put("payDate", anPayDate);
         }
@@ -147,7 +182,9 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
 
         final Map<String, Object> conditionMap = new HashMap<>();
-        conditionMap.put("ownCustNo", anCustNo);
+        if (anCustNo != null) {
+            conditionMap.put("ownCustNo", anCustNo);
+        }
         if (BetterStringUtils.isNotBlank(anPayDate)) {
             conditionMap.put("payDate", anPayDate);
         }
@@ -161,7 +198,9 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
 
         final Map<String, Object> conditionMap = new HashMap<>();
-        conditionMap.put("ownCustNo", anCustNo);
+        if (anCustNo != null) {
+            conditionMap.put("ownCustNo", anCustNo);
+        }
         if (BetterStringUtils.isNotBlank(anPayDate)) {
             conditionMap.put("payDate", anPayDate);
         }
@@ -171,12 +210,21 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
     }
 
     // 未对账记录列表
-    public Page<CommissionPayResultRecord> queryUncheckPayResultRecords(final Long anPayResultId, final int anFlag, final int anPageNum, final int anPageSize) {
+    public Page<CommissionPayResultRecord> queryAllPayResultRecords(final Long anPayResultId, final int anFlag, final int anPageNum, final int anPageSize) {
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
 
         findByIdAndCheckStatus(anPayResultId, null);
 
-        return commissionPayResultRecordService.queryUncheckPayResultRecords(anPayResultId, anFlag, anPageNum, anPageSize);
+        return commissionPayResultRecordService.queryAllPayResultRecords(anPayResultId, anFlag, anPageNum, anPageSize);
+    }
+
+    // 未对账记录列表
+    public Page<CommissionPayResultRecord> queryUncheckPayResultRecords(final Map<String, Object> anParam, final Long anPayResultId, final int anFlag, final int anPageNum, final int anPageSize) {
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
+
+        findByIdAndCheckStatus(anPayResultId, null);
+
+        return commissionPayResultRecordService.queryUncheckPayResultRecords(anParam, anPayResultId, anFlag, anPageNum, anPageSize);
     }
 
     // 成功列表
@@ -198,51 +246,67 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
     }
 
     // 批量确认成功
-    public Boolean saveConfirmSuccessPayResultRecords(final Long anPayResultId, final List<Long> anPayResultRecords) {
+    public Map<String, Object> saveConfirmSuccessPayResultRecords(final Long anPayResultId, final List<Long> anPayResultRecords) {
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
 
-        findByIdAndCheckStatus(anPayResultId, CommissionPayResultStatus.NORMAL);
+        final CommissionPayResult payResult = findByIdAndCheckStatus(anPayResultId, CommissionPayResultStatus.NORMAL);
 
-        commissionPayResultRecordService.saveConfirmSuccessPayResultRecords(anPayResultId, anPayResultRecords);
+        final Map<String, Object> resultMap = commissionPayResultRecordService.saveConfirmSuccessPayResultRecords(anPayResultId, anPayResultRecords);
 
-        return Boolean.TRUE;
+        calcPayResultRecord(payResult, payResult.getId());
+
+        final int result = this.updateByPrimaryKeySelective(payResult);
+
+        return resultMap;
     }
 
     // 批量确认失败
-    public Boolean saveConfirmFailurePayResultRecords(final Long anPayResultId, final List<Long> anPayResultRecords) {
+    public Map<String, Object> saveConfirmFailurePayResultRecords(final Long anPayResultId, final List<Long> anPayResultRecords) {
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
 
-        findByIdAndCheckStatus(anPayResultId, CommissionPayResultStatus.NORMAL);
+        final CommissionPayResult payResult = findByIdAndCheckStatus(anPayResultId, CommissionPayResultStatus.NORMAL);
 
-        commissionPayResultRecordService.saveConfirmFailurePayResultRecords(anPayResultId, anPayResultRecords);
+        final Map<String, Object> resultMap = commissionPayResultRecordService.saveConfirmFailurePayResultRecords(anPayResultId, anPayResultRecords);
 
-        return Boolean.TRUE;
+        calcPayResultRecord(payResult, payResult.getId());
+
+        final int result = this.updateByPrimaryKeySelective(payResult);
+
+        return resultMap;
     }
 
     // 成功变失败
-    public Boolean saveSuccessToFailurePayResultRecord(final Long anPayResultId, final Long anPayResultRecordId) {
+    public CommissionPayResultRecord saveSuccessToFailurePayResultRecord(final Long anPayResultId, final Long anPayResultRecordId) {
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
 
-        findByIdAndCheckStatus(anPayResultId, CommissionPayResultStatus.NORMAL);
+        final CommissionPayResult payResult = findByIdAndCheckStatus(anPayResultId, CommissionPayResultStatus.NORMAL);
 
-        commissionPayResultRecordService.saveSuccessToFailurePayResultRecord(anPayResultId, anPayResultRecordId);
+        final CommissionPayResultRecord payResultRecord = commissionPayResultRecordService.saveSuccessToFailurePayResultRecord(anPayResultId, anPayResultRecordId);
 
-        return Boolean.TRUE;
+        calcPayResultRecord(payResult, payResult.getId());
+
+        final int result = this.updateByPrimaryKeySelective(payResult);
+
+        return payResultRecord;
     }
 
     // 失败变成功
-    public Boolean saveFailureToSuccessPayResultRecord(final Long anPayResultId, final Long anPayResultRecordId) {
+    public CommissionPayResultRecord saveFailureToSuccessPayResultRecord(final Long anPayResultId, final Long anPayResultRecordId) {
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
 
-        findByIdAndCheckStatus(anPayResultId, CommissionPayResultStatus.NORMAL);
+        final CommissionPayResult payResult = findByIdAndCheckStatus(anPayResultId, CommissionPayResultStatus.NORMAL);
 
-        commissionPayResultRecordService.saveFailureToSuccessPayResultRecord(anPayResultId, anPayResultRecordId);
+        final CommissionPayResultRecord payResultRecord = commissionPayResultRecordService.saveFailureToSuccessPayResultRecord(anPayResultId, anPayResultRecordId);
 
-        return Boolean.TRUE;
+        calcPayResultRecord(payResult, payResult.getId());
+
+        final int result = this.updateByPrimaryKeySelective(payResult);
+
+        return payResultRecord;
     }
 
     // 确认日对账单
-    public Boolean saveConfirmPayResult(final Long anPayResultId) {
+    public CalcPayResult saveConfirmPayResult(final Long anPayResultId) {
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
 
         final CommissionPayResult payResult = findByIdAndCheckStatus(anPayResultId, CommissionPayResultStatus.NORMAL);
@@ -251,13 +315,23 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
 
         payResult.setBusinStatus(CommissionPayResultStatus.CONFIRM);
 
-        final Map<String, Object> calcResult = commissionPayResultRecordService.calcPayResultRecord(anPayResultId);
-        final Long totalAmount = (Long) calcResult.get("totalAmount");
-        final BigDecimal totalBalance = (BigDecimal) calcResult.get("totalBalance");
-        final Long paySuccessAmount = (Long) calcResult.get("paySuccessAmount");
-        final BigDecimal paySuccessBalance = (BigDecimal) calcResult.get("paySuccessBalance");
-        final Long payFailureAmount = (Long) calcResult.get("payFailureAmount");
-        final BigDecimal payFailureBalance = (BigDecimal) calcResult.get("payFailureBalance");
+        calcPayResultRecord(payResult, anPayResultId);
+
+        final int result = this.updateByPrimaryKeySelective(payResult);
+
+        BTAssert.isTrue(result == 1, "确认日对账单失败，公司[" + payResult.getCustName() + "] 导入日期[" + payResult.getImportDate() + "]");
+
+        return commissionPayResultRecordService.calcPayResultRecord(anPayResultId);
+    }
+
+    private void calcPayResultRecord(final CommissionPayResult payResult, final Long anPayResultId) {
+        final CalcPayResult calcResult = commissionPayResultRecordService.calcPayResultRecord(anPayResultId);
+        final Long totalAmount = calcResult.getTotalAmount();
+        final BigDecimal totalBalance = calcResult.getTotalBalance();
+        final Long paySuccessAmount = calcResult.getPaySuccessAmount();
+        final BigDecimal paySuccessBalance = calcResult.getPaySuccessBalance();
+        final Long payFailureAmount = calcResult.getPayFailureAmount();
+        final BigDecimal payFailureBalance = calcResult.getPayFailureBalance();
 
         payResult.setTotalAmount(totalAmount);
         payResult.setTotalBalance(totalBalance);
@@ -267,16 +341,10 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
         payResult.setPaySuccessBalance(paySuccessBalance);
         payResult.setPayFailureAmount(payFailureAmount);
         payResult.setPayFailureBalance(payFailureBalance);
-
-        final int result = this.updateByPrimaryKeySelective(payResult);
-
-        BTAssert.isTrue(result == 1, "确认日对账单失败，公司[" + payResult.getCustName() + "] 导入日期[" + payResult.getImportDate() + "]");
-
-        return Boolean.TRUE;
     }
 
     // 审核日对账单
-    public Boolean saveAuditPayResult(final Long anPayResultId) {
+    public CalcPayResult saveAuditPayResult(final Long anPayResultId) {
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
 
         final CommissionPayResult payResult = findByIdAndCheckStatus(anPayResultId, CommissionPayResultStatus.CONFIRM);
@@ -294,6 +362,37 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
         // TODO 回写导入记录
         commissionPayResultRecordService.saveWritebackRecordStatus(anPayResultId);
 
-        return Boolean.TRUE;
+        return commissionPayResultRecordService.calcPayResultRecord(anPayResultId);
+    }
+
+    /**
+     * @param anPayResultId
+     * @return
+     */
+    public Map<String, Object> findCountPayResultRecord(final Long anPayResultId) {
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
+        final CommissionPayResult payResult = findByIdAndCheckStatus(anPayResultId, null);
+
+        final Map<String, Object> result = new HashMap<>();
+        final CalcPayResult calcPayResult = commissionPayResultRecordService.calcPayResultRecord(anPayResultId);
+        result.put("payResult", payResult);
+        result.put("calcPayResult", calcPayResult);
+
+        return result;
+    }
+
+    /**
+     * @param anRefNo
+     * @return
+     */
+    public Map<String, Object> findCommissionRecord(final String anRefNo) {
+        final CommissionRecord record = commissionRecordService.findRecord(anRefNo);
+        final CommissionPayResultRecord payResultRecord = commissionPayResultRecordService.findPayResultRecord(anRefNo);
+
+        final Map<String, Object> commissionRecord = new HashMap<>();
+        commissionRecord.put("record", record);
+        commissionRecord.put("payResultRecord", payResultRecord);
+
+        return commissionRecord;
     }
 }
