@@ -8,13 +8,17 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
+import com.betterjr.common.mapper.CustTimeJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -52,6 +56,7 @@ public class CommissionDailyStatement implements BetterjrEntity {
     /**
      * 支付日期
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_PAY_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="支付日期", comments = "支付日期")
     private String payDate;
@@ -59,6 +64,7 @@ public class CommissionDailyStatement implements BetterjrEntity {
     /**
      * 支付时间
      */
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     @Column(name = "T_PAY_TIME",  columnDefinition="VARCHAR" )
     @MetaData( value="支付时间", comments = "支付时间")
     private String payTime;
@@ -157,6 +163,7 @@ public class CommissionDailyStatement implements BetterjrEntity {
     /**
      * 制表日期
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_MAKE_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="制表日期", comments = "制表日期")
     private String makeDate;
@@ -164,6 +171,7 @@ public class CommissionDailyStatement implements BetterjrEntity {
     /**
      * 制表时间
      */
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     @Column(name = "T_MAKE_TIME",  columnDefinition="VARCHAR" )
     @MetaData( value="制表时间", comments = "制表时间")
     private String makeTime;
@@ -224,6 +232,7 @@ public class CommissionDailyStatement implements BetterjrEntity {
     private Long version;
     
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_END_INTEREST_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="结息日期", comments = "结息日期")
     private String endInterestDate;
@@ -235,6 +244,14 @@ public class CommissionDailyStatement implements BetterjrEntity {
     @Column(name = "F_INTEREST_RATE",  columnDefinition="DECIMAL" )
     @MetaData( value="利率", comments = "利率")
     private BigDecimal interestRate;
+    
+
+    @Column(name = "L_FILE_ID",  columnDefinition="INTEGER" )
+    @MetaData( value="文件ID", comments = "文件ID")
+    private Long fileId;
+    
+    @Transient
+    private String makeDateTime;
 
     private static final long serialVersionUID = 3778161046419627677L;
 
@@ -532,6 +549,22 @@ public class CommissionDailyStatement implements BetterjrEntity {
 
     public void setInterestRate(BigDecimal anInterestRate) {
         this.interestRate = anInterestRate;
+    }
+
+    public Long getFileId() {
+        return this.fileId;
+    }
+
+    public void setFileId(Long anFileId) {
+        this.fileId = anFileId;
+    }
+
+    public String getMakeDateTime() {
+        return this.makeDateTime;
+    }
+
+    public void setMakeDateTime(String anMakeDateTime) {
+        this.makeDateTime = anMakeDateTime;
     }
 
     @Override

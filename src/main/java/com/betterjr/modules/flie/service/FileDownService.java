@@ -2,14 +2,9 @@ package com.betterjr.modules.flie.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
 import org.apache.poi.ss.usermodel.Workbook;
 import org.jeecgframework.poi.excel.ExcelExportUtil;
 import org.jeecgframework.poi.excel.entity.TemplateExportParams;
@@ -17,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.UserUtils;
@@ -43,10 +37,10 @@ public class FileDownService {
      * fileName 导出的文件名
      * @return
      */
-    public CustFileItem uploadCommissionRecordFileis(List anRecordList,Long tempFileId,String fileName) {
+    public CustFileItem uploadCommissionRecordFileis(Map<String,Object> data,Long tempFileId,String fileName) {
         
         logger.info("文件导出服务： 操作人："+UserUtils.getOperatorInfo().getName());
-        BTAssert.notNull(anRecordList,"导出的数据文件为空");
+        BTAssert.notNull(data,"导出的数据文件为空");
         //获取佣金记录导出模版文件
         //CustFileItem fileItem = custFileService.findOne(CommissionConstantCollentions.COMMISSION_FILE_DOWN_FILEITEM_FILEID);//文件上次详情
         CustFileItem fileItem = custFileService.findOne(tempFileId);//文件上次详情
@@ -54,20 +48,15 @@ public class FileDownService {
         InputStream is = dataStoreService.loadFromStore(fileItem);//得到文件输入流
         TemplateExportParams params=new TemplateExportParams(is);
         //TemplateExportParams params=new TemplateExportParams("C:\\Users\\xuyp\\Desktop\\佣金数据导出模板.xlsx");
-        Map<String,Object> data=new HashMap<>();
-        data.put("recordList", anRecordList);
-        data.put("companyName", "   ");
         Workbook book=ExcelExportUtil.exportExcel(params, data);
         BTAssert.notNull(book,"封装模版产生异常,请稍后重试");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
-           FileOutputStream fos=new FileOutputStream(new File("d:\\789.xlsx"));
-            book.write(fos);
             book.write(os);
-            fos.close();
         }
         catch (IOException e) {
-            e.printStackTrace();
+            logger.info("封装模版产生异常,请稍后重试!"+e.getMessage());
+            BTAssert.notNull(book,"封装模版产生异常,请稍后重试!");
         }
         byte[] b = os.toByteArray();
         ByteArrayInputStream in = new ByteArrayInputStream(b);

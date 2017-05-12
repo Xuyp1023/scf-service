@@ -1,6 +1,20 @@
 package com.betterjr.modules.delivery.entity;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
+import com.betterjr.common.mapper.CustTimeJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.modules.account.entity.CustInfo;
@@ -8,11 +22,7 @@ import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.commission.entity.CommissionMonthlyStatement;
 import com.betterjr.modules.delivery.data.DeliveryConstantCollentions;
 import com.betterjr.modules.generator.SequenceFactory;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -30,18 +40,20 @@ public class DeliveryRecord implements BetterjrEntity {
 
     //总金额
     @Column(name = "F_TOTAL_BLANCE",  columnDefinition="DECIMAL" )
-    private Double totalBlance;
+    private BigDecimal totalBlance;
 
     //总笔数
     @Column(name = "N_TOTAL_AMOUNT",  columnDefinition="DECIMAL" )
-    private Double totalAmount;
+    private BigDecimal totalAmount;
 
     //投递日期
     @Column(name = "D_POST_DATE",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String postDate;
 
     //投递时间
     @Column(name = "T_POST_TIME",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String postTime;
 
     //接收公司(青海移动)
@@ -74,10 +86,12 @@ public class DeliveryRecord implements BetterjrEntity {
 
     //确认日期
     @Column(name = "D_CONFIRM_DATE",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String confirmDate;
 
     //确认时间
     @Column(name = "T_CONFIRM_TIME",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String confirmTime;
     
     //确认操作员
@@ -95,18 +109,31 @@ public class DeliveryRecord implements BetterjrEntity {
     private String regOperName;
 
     @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
     
     @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String regTime;
     
     @Column(name = "N_VERSION",  columnDefinition="VARCHAR" )
     private String version;
     
+    @Column(name = "C_DESCRIPTION",  columnDefinition="VARCHAR" )
+    private String description;
+    
     @Transient
     private List<DeliveryRecordStatement> recordStatementList=new ArrayList<>();
 
     private static final long serialVersionUID = -189024275871128671L;
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setDescription(String anDescription) {
+        this.description = anDescription;
+    }
 
     public Long getId() {
         return id;
@@ -124,11 +151,11 @@ public class DeliveryRecord implements BetterjrEntity {
         this.refNo = refNo == null ? null : refNo.trim();
     }
 
-    public Double getTotalBlance() {
+    public BigDecimal getTotalBlance() {
         return totalBlance;
     }
 
-    public void setTotalBlance(Double totalBlance) {
+    public void setTotalBlance(BigDecimal totalBlance) {
         this.totalBlance = totalBlance;
     }
 
@@ -220,11 +247,11 @@ public class DeliveryRecord implements BetterjrEntity {
         this.confirmTime = confirmTime == null ? null : confirmTime.trim();
     }
 
-    public Double getTotalAmount() {
+    public BigDecimal getTotalAmount() {
         return this.totalAmount;
     }
 
-    public void setTotalAmount(Double anTotalAmount) {
+    public void setTotalAmount(BigDecimal anTotalAmount) {
         this.totalAmount = anTotalAmount;
     }
 
@@ -315,7 +342,7 @@ public class DeliveryRecord implements BetterjrEntity {
                 + this.operOrg + ", businStatus=" + this.businStatus + ", confirmDate=" + this.confirmDate + ", confirmTime=" + this.confirmTime
                 + ", confirmOperId=" + this.confirmOperId + ", confirmOperName=" + this.confirmOperName + ", regOperId=" + this.regOperId
                 + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", version=" + this.version
-                + ", recordStatementList=" + this.recordStatementList + "]";
+                + ", description=" + this.description + ", recordStatementList=" + this.recordStatementList + "]";
     }
 
     @Override

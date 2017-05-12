@@ -10,7 +10,11 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
+import com.betterjr.common.mapper.CustTimeJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
@@ -19,6 +23,7 @@ import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.commission.data.CommissionConstantCollentions;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.generator.SequenceFactory;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -58,10 +63,12 @@ public class CommissionFile implements BetterjrEntity {
 
     //文件导入日期
     @Column(name = "D_IMPORT_DATE",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String importDate;
 
     //文件导入时间
     @Column(name = "T_IMPORT_TIME",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String importTime;
 
     //企业id
@@ -111,9 +118,11 @@ public class CommissionFile implements BetterjrEntity {
     private String regOperName;
     
     @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
     
     @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String regTime;
     
     @Column(name = "L_MODI_OPERID",  columnDefinition="INTEGER" )
@@ -123,9 +132,11 @@ public class CommissionFile implements BetterjrEntity {
     private String modiOperName;
     
     @Column(name = "D_MODI_DATE",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String modiDate;
     
     @Column(name = "T_MODI_TIME",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String modiTime;
     
     @Column(name = "N_VERSION",  columnDefinition="VARCHAR" )
@@ -549,10 +560,24 @@ public class CommissionFile implements BetterjrEntity {
         this.setRegOperName(anOperatorInfo.getName());
         this.setVersion("1");
         this.setBatchNo(anFileItem.getBatchNo());
+        checkFileName(anFileItem.getFileName());
         this.setFileName(anFileItem.getFileName());
         this.refNo= SequenceFactory.generate("PLAT_COMMON", "#{Date:yyyyMMdd}#{Seq:12}","D");
         this.id=SerialGenerator.getLongValue("CommissionFile.id");
         return this;
+        
+    }
+    
+    private void checkFileName(String anFileName){
+        
+        if(StringUtils.isBlank(anFileName)){
+            BTAssert.notNull(null, "上传的文件应该是excel文件");
+        }
+        
+        if(!( anFileName.endsWith("xls") || anFileName.endsWith("xlsx"))){
+            BTAssert.notNull(null, "上传的文件应该是excel文件");
+        }
+        
         
     }
 
@@ -589,7 +614,7 @@ public class CommissionFile implements BetterjrEntity {
         this.setModiDate(BetterDateUtils.getNumDate());
         this.setModiTime(BetterDateUtils.getNumTime());
         this.setModiOperId(anOperatorInfo.getId());
-        this.setModiTime(anOperatorInfo.getName());
+        this.setModiOperName(anOperatorInfo.getName());
         return this;
         
     }

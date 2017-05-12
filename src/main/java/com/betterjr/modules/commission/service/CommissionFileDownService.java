@@ -23,7 +23,7 @@ public Page queryFileDownList(Map<String, Object> anMap, String anFlag, int anPa
         //去除空白字符串的查询条件
         anMap = Collections3.filterMapEmptyObject(anMap);
         //查询当前公司的佣金文件
-        anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+        //anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
         
         Page<CommissionFileDown> fileList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
        

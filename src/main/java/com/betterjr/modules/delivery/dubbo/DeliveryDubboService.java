@@ -57,10 +57,17 @@ public class DeliveryDubboService  implements IDeliveryService{
     }
 
     @Override
-    public String webSaveExpressDelivery(String anRefNo) {
+    public String webSaveDeleteRecord(Long anRecordId) {
         
         return AjaxObject
-                .newOk("投递账单投递成功", recordService.saveExpressRecordById(anRefNo))
+                .newOk("投递账单修改成功", recordService.saveDeleteRecordById(anRecordId))
+                .toJson();
+    }
+    @Override
+    public String webSaveExpressDelivery(String anRefNo,String anDescription) {
+        
+        return AjaxObject
+                .newOk("投递账单投递成功", recordService.saveExpressRecordById(anRefNo,anDescription))
                 .toJson();
     }
 
@@ -78,6 +85,7 @@ public class DeliveryDubboService  implements IDeliveryService{
         try {
             Map<String, Object> queryMap = RuleServiceDubboFilterInvoker.getInputObj();
             queryMap.put("businStatus", "2");
+            queryMap.put("custNo", queryMap.get("ownCustNo"));
             return AjaxObject.newOkWithPage("查询月账单列表", monthlyStatementService.queryMonthlyStatement(queryMap, anPageNum, anPageSize)).toJson();
         }
         catch (ParseException e) {
@@ -85,6 +93,6 @@ public class DeliveryDubboService  implements IDeliveryService{
         }
         return null;
     }
-    
+
 
 }

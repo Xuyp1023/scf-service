@@ -1,6 +1,8 @@
 package com.betterjr.modules.commission.entity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Access;
@@ -9,13 +11,17 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
+import com.betterjr.common.mapper.CustTimeJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -53,6 +59,7 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     /**
      * 开始时间
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_PAY_BEGIN_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="开始时间", comments = "开始时间")
     private String payBeginDate;
@@ -60,6 +67,7 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     /**
      * 结束时间
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_PAY_END_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="结束时间", comments = "结束时间")
     private String payEndDate;
@@ -158,6 +166,7 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     /**
      * 制表日期
      */
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_MAKE_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="制表日期", comments = "制表日期")
     private String makeDate;
@@ -165,6 +174,7 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     /**
      * 制表时间
      */
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     @Column(name = "T_MAKE_TIME",  columnDefinition="VARCHAR" )
     @MetaData( value="制表时间", comments = "制表时间")
     private String makeTime;
@@ -214,6 +224,13 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     @Column(name = "N_BATCHNO",  columnDefinition="Long" )
     @MetaData( value="月报表文件", comments = "月报表文件")
     private Long batchNo;
+    
+    /**
+     * 月报表文件id
+     */
+    @Column(name = "L_FILE_ID",  columnDefinition="Long" )
+    @MetaData( value="月报表文件", comments = "月报表文件")
+    private Long fileId;
 
     @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
     @MetaData( value="", comments = "")
@@ -255,6 +272,7 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     @MetaData( value="", comments = "")
     private Long version;
 
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     @Column(name = "D_END_INTEREST_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="结息日期", comments = "结息日期")
     private String endInterestDate;
@@ -263,11 +281,39 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     @Column(name = "D_BILL_MONTH",  columnDefinition="VARCHAR" )
     private String billMonth;
     
+    @Transient
+    private String makeDateTime;
+    
+    private List<CommissionMonthlyStatementRecord> dailyList=new ArrayList<CommissionMonthlyStatementRecord>();
+    
     private static final long serialVersionUID = 1493796206916L;
+
+    public List<CommissionMonthlyStatementRecord> getDailyList() {
+        return this.dailyList;
+    }
+
+
+    public void setDailyList(List<CommissionMonthlyStatementRecord> anDailyList) {
+        this.dailyList = anDailyList;
+    }
+
 
     public Long getId() {
         return id;
     }
+
+    
+    public Long getFileId() {
+        return this.fileId;
+    }
+
+
+
+    public void setFileId(Long anFileId) {
+        this.fileId = anFileId;
+    }
+
+
 
     public void setId(Long id) {
         this.id = id;
@@ -585,6 +631,16 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
         this.billMonth = anBillMonth;
     }
 
+    public String getMakeDateTime() {
+        return this.makeDateTime;
+    }
+
+
+    public void setMakeDateTime(String anMakeDateTime) {
+        this.makeDateTime = anMakeDateTime;
+    }
+
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -637,16 +693,19 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
 
     public void initMonthlyStatement(Map<String,Object> anMap) {
         this.id = SerialGenerator.getLongValue("CommissionMonthlyStatement.id");         
-        this.refNo = (String)anMap.get("monthlyRefNo");
+        this.refNo = (String)anMap.get("refNo");
         this.ownCustName= (String)anMap.get("ownCustName");
+        this.billMonth= (String)anMap.get("billMonth");
         this.totalBalance=new BigDecimal((String)anMap.get("totalBalance"));
         this.payTotalBalance = new BigDecimal((String)anMap.get("payTotalBalance"));
-        this.ownCustNo=Long.parseLong((String)anMap.get("monthlyRefNo"));
+        this.ownCustNo=Long.parseLong((String)anMap.get("ownCustNo"));
         this.endInterestDate=(String)anMap.get("endInterestDate");
-        this.interest=new BigDecimal((String)anMap.get("interest"));
-        this.taxBalance=new BigDecimal((String)anMap.get("totalTaxBalance"));
-        this.payBeginDate=(String)anMap.get("startDate");
-        this.payEndDate=(String)anMap.get("endDate");
+        String totalInterset= (String)anMap.get("interest")==""?"0":(String)anMap.get("interest");
+        this.interest=new BigDecimal(totalInterset);
+        String tax= (String)anMap.get("taxBalance")==""?"0":(String)anMap.get("taxBalance");
+        this.taxBalance=new BigDecimal(tax);
+        this.payBeginDate=(String)anMap.get("payBeginDate");
+        this.payEndDate=(String)anMap.get("payEndDate");
         this.makeDate=BetterDateUtils.getNumDate();
         this.makeTime= BetterDateUtils.getNumTime();
         this.regDate = BetterDateUtils.getNumDate();
@@ -654,6 +713,8 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
         this.businStatus="1";
+        this.unit="元";
+        this.curreny="RMB";
         final CustOperatorInfo custOperator = (CustOperatorInfo) UserUtils.getPrincipal().getUser();
         if(custOperator!=null){
             this.operOrg=custOperator.getOperOrg();

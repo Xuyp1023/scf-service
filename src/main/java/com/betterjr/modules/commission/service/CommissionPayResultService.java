@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
@@ -50,6 +51,9 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
     private CommissionRecordService commissionRecordService;
 
     @Resource
+    private CommissionDailyStatementService commissionDailyStatementService;
+
+    @Resource
     private CommissionPayResultRecordService commissionPayResultRecordService;
 
     // 创建 日对账记录 所有日对账记录
@@ -58,6 +62,14 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
 
         BTAssert.isTrue(BetterStringUtils.isNotBlank(anImportDate), "导入日期不允许为空！");
         BTAssert.isTrue(BetterStringUtils.isNotBlank(anPayDate), "支付日期不允许为空！");
+
+        final long importTime =  BetterDateUtils.parseDate(BetterDateUtils.getNumDate()).getTime()-BetterDateUtils.parseDate(anImportDate).getTime();
+        final long payTime = BetterDateUtils.parseDate(BetterDateUtils.getNumDate()).getTime()-BetterDateUtils.parseDate(anPayDate).getTime();
+
+        BTAssert.isTrue(importTime >= 0, "导入日期必须小于等于当前日期");
+        BTAssert.isTrue(payTime >= 0, "支付日期必须小于等于当前日期");
+        BTAssert.isTrue(payTime<=importTime, "支付日期不能小于导入日期");
+        
 
         BTAssert.notNull(anCustNo, "公司编号不允许为空！");
 
@@ -70,6 +82,10 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
         final boolean auditStatus = commissionFileService.checkFileAuditFinish(anCustNo, anImportDate);
 
         BTAssert.isTrue(auditStatus, "佣金记录还未审核完毕，请联系企业[" + custMechBase.getCustName() +"]");
+
+        final boolean createDailyResult = commissionDailyStatementService.findDailyStatementByPayDate(anPayDate, anCustNo);
+
+        BTAssert.isTrue(!createDailyResult, "该企业当日");
 
         final CustOperatorInfo operator = UserUtils.getOperatorInfo();
 
