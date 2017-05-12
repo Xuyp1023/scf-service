@@ -95,6 +95,9 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
             Map<String, Object> templateMp = JsonMapper.parserJson(monthlyTemplate);
             fileId=Long.parseLong(templateMp.get("id").toString());
             fileType=(String)templateMp.get("fileType");
+            if(BetterStringUtils.isBlank(fileType)){
+                fileType=".xlsx";
+            }
         }
         
         // 生成文件

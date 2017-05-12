@@ -352,6 +352,9 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
             Map<String, Object> templateMp = JsonMapper.parserJson(dailyTemplate);
             fileId=Long.parseLong(templateMp.get("id").toString());
             fileType=(String)templateMp.get("fileType");
+            if(BetterStringUtils.isBlank(fileType)){
+                fileType=".xlsx";
+            }
         }
         
         Map<String, Object> fileMap=new HashMap<String, Object>();

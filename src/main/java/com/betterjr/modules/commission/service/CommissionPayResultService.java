@@ -68,6 +68,8 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
 
         BTAssert.isTrue(importTime >= 0, "导入日期必须小于等于当前日期");
         BTAssert.isTrue(payTime >= 0, "支付日期必须小于等于当前日期");
+        BTAssert.isTrue(payTime<=importTime, "支付日期不能小于导入日期");
+        
 
         BTAssert.notNull(anCustNo, "公司编号不允许为空！");
 
