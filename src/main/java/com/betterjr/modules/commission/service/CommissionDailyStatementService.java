@@ -57,8 +57,8 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
     private FileDownService fileDownService;
     
     public Page<CommissionDailyStatement> queryDailyStatement(Map<String, Object> anParam, int anPageNum, int anPageSize){
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
         Map<String,Object> paramMap=new HashMap<String, Object>();
-        
         if(BetterStringUtils.isNotBlank((String)anParam.get("GTEregDate"))){
             paramMap.put("GTEpayDate", anParam.get("GTEregDate"));
             paramMap.put("LTEpayDate", anParam.get("LTEregDate"));
@@ -82,6 +82,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
      * @throws ParseException 
      */
     public List<CommissionDailyStatement> findCpsDailyStatementByMonth(String anMonth,Long anCustNo) throws ParseException{
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
         anMonth=anMonth.replaceAll("-", "")+"01";
         // 不管是几月在将月份改为1-31 号，作为条件查询
         Map<String,Object> monthMap=new HashMap<String, Object>();
@@ -110,6 +111,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
      * @throws ParseException 
      */
     public CalcPayResult findDailyStatementCount(String anMonth,Long anCustNo) throws ParseException{
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
         anMonth=anMonth.replaceAll("-", "")+"01";
         // 不管是几月在将月份改为1-31 号，作为条件查询
         Map<String,Object> monthMap=new HashMap<String, Object>();
@@ -128,6 +130,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
      * @throws ParseException 
      */
     public Map<String,Object> findDailyStatementBasicsInfo(Map<String,Object> anParam) throws ParseException{
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
         String billMonth=anParam.get("billMonth").toString();
         Long anOwnCustNo=Long.parseLong(anParam.get("custNo").toString());
         String anEndInterestDate=(String)anParam.get("endInterestDate"); // 结息日期
@@ -226,6 +229,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
      * @return
      */
     public boolean saveDailyStatementById(Long anDailyStatementId,String anBusinStatus){
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
         CommissionDailyStatement dailyStatement=this.selectByPrimaryKey(anDailyStatementId);
         dailyStatement.setLastStatus(dailyStatement.getBusinStatus());
         dailyStatement.setBusinStatus(anBusinStatus);
@@ -233,6 +237,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
     }
     
     public boolean delDailyStatement(Long anDailyStatementId){
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
         return this.deleteByPrimaryKey(anDailyStatementId)>0;
     }
 
@@ -243,6 +248,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
      * @return
      */
     public CalcPayResult findPayResultCount(String anPayDate,Long anOwnCustNo){
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
         return payResultRecordService.calcPayResultRecord(anOwnCustNo, anPayDate);
     }
     
@@ -256,7 +262,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
      * @return
      */
     public Page<CommissionPayResultRecord> queryPayResultRecord(Long anOwnCustNo,String anPayDate,int anFlag, int anPageNum, int anPageSize){
-        
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
         return payResultRecordService.queryAllPayResultRecords(anOwnCustNo, anPayDate, anFlag, anPageNum, anPageSize);
     }
     
@@ -267,7 +273,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
      * @return
      */
     public Map<String, Object> findPayResultInfo(String anPayDate,Long anOwnCustNo){
-         
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
          if(findDailyStatementByPayDate(anPayDate, anOwnCustNo)){
              throw new BytterTradeException("当前日期已经生成日对账单");
          }
@@ -317,6 +323,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
     }
 
     public CommissionDailyStatement saveDailyStatement(String anDailyRefNo,String anPayDate,Long anOwnCustNo){
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
         CommissionDailyStatement dailyStatement=new CommissionDailyStatement();
         dailyStatement.setRefNo(anDailyRefNo);
         dailyStatement.setPayDate(anPayDate);
@@ -377,12 +384,14 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
     }
     
     public CommissionDailyStatement findDailyStatementById(Long anDailyStatementId){
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
         CommissionDailyStatement dailyStatement=this.selectByPrimaryKey(anDailyStatementId);
         dailyStatement.setMakeDateTime(BetterDateUtils.formatDispDate(dailyStatement.getMakeDate()) +" "+BetterDateUtils.formatDispTime(dailyStatement.getMakeTime()));
         return dailyStatement;
     }
     
     public Page<CommissionDailyStatementRecord> queryDailyStatementRecordByDailyId(Long anDailyStatementId, int anPageNum, int anPageSize,String anFlag){
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
         return dailyStatementRecordService.queryCommissionDailyStatementRecordByRefNo(anDailyStatementId, anPageNum, anPageSize, anFlag);
     }
     
@@ -393,6 +402,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
      * @return 是否存在
      */
     public boolean findDailyStatementByPayDate(String anPayDate,Long anOwnCustNo){
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
         Map<String,Object> anMap=new HashMap<String, Object>();
         anMap.put("payDate", anPayDate);
         anMap.put("ownCustNo", anOwnCustNo);

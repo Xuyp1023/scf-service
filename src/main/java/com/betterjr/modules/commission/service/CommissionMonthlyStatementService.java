@@ -13,11 +13,14 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.mapper.JsonMapper;
 import com.betterjr.common.service.BaseService;
+import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
+import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.commission.dao.CommissionMonthlyStatementMapper;
 import com.betterjr.modules.commission.data.CalcPayResult;
 import com.betterjr.modules.commission.entity.CommissionDailyStatement;
@@ -43,6 +46,8 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
     private IDomainAttributeService domainAttributeDubboClientService;
     @Autowired
     private FileDownService fileDownService;
+    @Autowired
+    private CustAccountService custAccountService; 
     
     /***
      * 保存月报表记录
@@ -51,6 +56,7 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
      * @throws ParseException 
      */
     public CommissionMonthlyStatement saveComissionMonthlyStatement(Map<String,Object> anParam) throws ParseException{
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
         // 添加月账单主表信息
         Map<String,Object> monthMap=new HashMap<String, Object>();
         monthMap.put("GTEpayDate", anParam.get("payBeginDate"));
@@ -59,6 +65,10 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
         monthMap.put("ownCustNo", anParam.get("ownCustNo"));
         CommissionMonthlyStatement monthlyStatement=new CommissionMonthlyStatement();
         monthlyStatement.initMonthlyStatement(anParam);
+        CustInfo custInfo=custAccountService.findCustInfo(monthlyStatement.getOwnCustNo());// 查询企业基本信息
+        if(custInfo!=null){
+            monthlyStatement.setOwnOperOrg(custInfo.getOperOrg());
+        }
         CalcPayResult payResult=dailyStatementService.findDailyStatementCount(anParam);
         logger.info("saveComissionMonthlyStatement payResult:"+payResult);
         monthlyStatement.setTotalAmount(new BigDecimal(payResult.getTotalAmount()));
@@ -122,6 +132,7 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
      * @throws ParseException
      */
     public Page<CommissionMonthlyStatement> queryMonthlyStatement(Map<String, Object> anParam, int anPageNum, int anPageSize) throws ParseException{
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
         Map<String,Object> paramMap=new HashMap<String, Object>();
 
         if(BetterStringUtils.isNotBlank((String)anParam.get("billMonth"))){
@@ -146,7 +157,7 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
      * @return
      */
     public List<CommissionMonthlyStatement> saveQueryMonthlyStatement(Map<String, Object> anParam){
-        
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
         List<CommissionMonthlyStatement> monthlyStatement=this.selectByProperty(anParam);
         for (CommissionMonthlyStatement statement : monthlyStatement) {
             statement.setBusinStatus("3");
@@ -161,6 +172,7 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
      * @return
      */
     public CommissionMonthlyStatement findMonthlyStatementById(Long anMonthlyId){
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
         CommissionMonthlyStatement monthlyStatement=this.selectByPrimaryKey(anMonthlyId);
         // 查询日记录列表
         List<CommissionMonthlyStatementRecord> monthlyRecordList=monthlyRecordService.findMonthlyStatementRecord(monthlyStatement.getId(), monthlyStatement.getRefNo());
@@ -176,6 +188,7 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
      * @return
      */
     public boolean saveMonthlyStatement(Long anMonthlyId,String anBusinStatus){
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
         CommissionMonthlyStatement monthlyStatement=this.selectByPrimaryKey(anMonthlyId);
         monthlyStatement.setLastStatus(monthlyStatement.getBusinStatus());
         monthlyStatement.setBusinStatus(anBusinStatus);
@@ -183,6 +196,7 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
     }
     
     public boolean delMonthlyStatement(Long anMonthlyId){
+        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
         return this.deleteByPrimaryKey(anMonthlyId)>0;
     }
     
