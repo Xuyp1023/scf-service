@@ -27,7 +27,6 @@ import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.commission.constant.CommissionPayResultStatus;
 import com.betterjr.modules.commission.dao.CommissionPayResultMapper;
-import com.betterjr.modules.commission.data.CalcPayResult;
 import com.betterjr.modules.commission.entity.CommissionPayResult;
 import com.betterjr.modules.commission.entity.CommissionPayResultRecord;
 import com.betterjr.modules.commission.entity.CommissionRecord;
@@ -69,7 +68,7 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
         BTAssert.isTrue(importTime >= 0, "导入日期必须小于等于当前日期");
         BTAssert.isTrue(payTime >= 0, "支付日期必须小于等于当前日期");
         BTAssert.isTrue(payTime<=importTime, "支付日期不能小于导入日期");
-        
+
 
         BTAssert.notNull(anCustNo, "公司编号不允许为空！");
 
@@ -190,7 +189,7 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
         if (BetterStringUtils.isNotBlank(anPayDate)) {
             conditionMap.put("payDate", anPayDate);
         }
-        conditionMap.put("businStatus", CommissionPayResultStatus.CONFIRM);
+        conditionMap.put("businStatus", new String[] {CommissionPayResultStatus.CONFIRM, CommissionPayResultStatus.AUDIT});
 
         return this.selectPropertyByPage(conditionMap, anPageNum, anPageSize, anFlag == 1);
     }
