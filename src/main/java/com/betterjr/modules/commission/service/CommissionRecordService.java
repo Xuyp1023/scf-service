@@ -8,11 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterTradeException;
+import com.betterjr.common.mapper.JsonMapper;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
@@ -29,6 +31,7 @@ import com.betterjr.modules.commission.entity.CommissionFile;
 import com.betterjr.modules.commission.entity.CommissionFileDown;
 import com.betterjr.modules.commission.entity.CommissionRecord;
 import com.betterjr.modules.commission.entity.CommissionRecordAuditResult;
+import com.betterjr.modules.config.dubbo.interfaces.IDomainAttributeService;
 import com.betterjr.modules.customer.ICustMechBaseService;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.flie.service.FileDownService;
@@ -48,6 +51,9 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
     
     @Autowired
     private FileDownService fileDownService;
+    
+    @Reference(interfaceClass=IDomainAttributeService.class)
+    private IDomainAttributeService domainAttributeDubboClientService;
     
     /**
      * 通过佣金文件的fileId对佣金记录进行删除操作
@@ -210,18 +216,58 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
         //  2审核文件列表
       fileService.saveAuditFile(fileSet);
       //3 生成佣金记录文件
-      Map<String,Object> data=new HashMap<>();
-      data.put("recordList", recordList);
-      data.put("companyName", "   ");
-      String fileName=BetterDateUtils.getNumDate()+recordList.get(0).getCustName()+"打款明细表.xlsx";
-      CustFileItem fileItem = fileDownService.uploadCommissionRecordFileis(data, CommissionConstantCollentions.COMMISSION_FILE_DOWN_FILEITEM_FILEID, fileName);
-      CommissionFileDown fileDown=new CommissionFileDown();
-      fileDown.saveAddInit(recordAmount,blance,recordList.get(0));
-      fileDown.setBatchNo(fileItem.getBatchNo());
-      fileDown.setFileId(fileItem.getId());
-      CommissionfileDownService.insert(fileDown);
+      saveAddFileDownRecord(recordList, recordAmount, blance);
       
       return   CommissionRecordAuditResult.ok(fileSet.size(), recordAmount, blance);
+        
+    }
+
+
+    /**
+     * 生成佣金记录下载文件
+     * @param recordList
+     * @param recordAmount
+     * @param blance
+     */
+    private void saveAddFileDownRecord(List<CommissionRecord> recordList, int recordAmount, BigDecimal blance) {
+        
+        Map<String,Object> data=new HashMap<>();
+          data.put("recordList", recordList);
+          data.put("companyName", "   ");
+          String fileName=BetterDateUtils.getNumDate()+recordList.get(0).getCustName()+"打款明细表.xlsx";
+          Long fileId=getExportFileId();
+          
+          if(fileId==null){
+              BTAssert.notNull(null,"请先联系平台上传佣金导出模版");   
+          }
+          CustFileItem fileItem = fileDownService.uploadCommissionRecordFileis(data,fileId, fileName);
+          CommissionFileDown fileDown=new CommissionFileDown();
+          fileDown.saveAddInit(recordAmount,blance,recordList.get(0));
+          fileDown.setBatchNo(fileItem.getBatchNo());
+          fileDown.setFileId(fileItem.getId());
+          CommissionfileDownService.insert(fileDown);
+    }
+    
+    
+    private Long getExportFileId(){
+        
+        String exportCommissionTemplate =domainAttributeDubboClientService.findString("GLOBAL_COMMISSION_EXPORT_TEMPLATE");
+        
+        if(StringUtils.isNoneBlank(exportCommissionTemplate)){
+            
+          Map<String, Object> templateMp = JsonMapper.parserJson(exportCommissionTemplate);
+          Long fileId=Long.parseLong(templateMp.get("id").toString());
+          
+          return fileId;
+          
+        }else{
+            
+            BTAssert.notNull(null,"请先联系平台上传佣金导出模版");  
+            
+        }
+        
+        return null;
+        
         
     }
     
