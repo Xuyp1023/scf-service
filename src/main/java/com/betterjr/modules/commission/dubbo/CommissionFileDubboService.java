@@ -69,4 +69,12 @@ public class CommissionFileDubboService implements ICommissionFileService {
         
     }
 
+    @Override
+    public String webFindTemplateFile() {
+        
+        return AjaxObject
+                .newOk("佣金文件解析成功", commissionFileService.findCommissionFileExportTemplate())
+                .toJson();
+    }
+
 }

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterTradeException;
+import com.betterjr.common.mapper.JsonMapper;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
@@ -31,6 +32,7 @@ import com.betterjr.modules.commission.dao.CommissionFileMapper;
 import com.betterjr.modules.commission.data.CommissionConstantCollentions;
 import com.betterjr.modules.commission.entity.CommissionFile;
 import com.betterjr.modules.commission.entity.CommissionRecord;
+import com.betterjr.modules.config.dubbo.interfaces.IDomainAttributeService;
 import com.betterjr.modules.customer.ICustMechBaseService;
 import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.document.entity.CustFileItem;
@@ -66,6 +68,9 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
     
     @Reference(interfaceClass =IVerifySignCertService.class)
     private IVerifySignCertService verifySignCertService;
+    
+    @Reference(interfaceClass=IDomainAttributeService.class)
+    private IDomainAttributeService domainAttributeDubboClientService;
     
     /**
      * 新增佣金文件
@@ -150,6 +155,21 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         this.updateByPrimaryKeySelective(file);
         logger.info("success to delete 佣金文件 saveDeleteFile"+UserUtils.getOperatorInfo().getName()+"  refNo="+anRefNo);
         return file;
+    }
+    
+    /**
+     * 查找佣金文件导出模版
+     * @return
+     */
+    public Map<String,Object> findCommissionFileExportTemplate(){
+        
+        String value = domainAttributeDubboClientService.findString("GLOBAL_COMMISSION_IMPORT_TEMPLATE");
+        if(StringUtils.isBlank(value)){
+            BTAssert.notNull(null,"删除佣金文件条件不符,");
+        }
+        Map<String, Object> templateMp = JsonMapper.parserJson(value);
+        
+        return  templateMp;
     }
 
     /**
