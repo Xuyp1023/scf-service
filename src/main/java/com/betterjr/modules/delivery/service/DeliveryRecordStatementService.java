@@ -32,7 +32,7 @@ public class DeliveryRecordStatementService extends BaseService<DeliveryRecordSt
         
         BTAssert.notNull(anDeliverRefNo,"查询佣金文件条件为空");
         //查询当前公司的佣金文件
-        Map<String,Object> queryMap = QueryTermBuilder.newInstance().put("operOrg", UserUtils.getOperatorInfo().getOperOrg())
+        Map<String,Object> queryMap = QueryTermBuilder.newInstance()
         .put("deliverRefNo", anDeliverRefNo)
         .put("businStatus", DeliveryConstantCollentions.DELIVERY_STATEMENT_BUSIN_STATUS_CANUSERD)
         .build();

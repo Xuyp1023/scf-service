@@ -59,7 +59,7 @@ public class DeliveryRecordService extends BaseService<DeliveryRecordMapper, Del
                 businStatusList.add(DeliveryConstantCollentions.DELIVERY_RECORD_BUSIN_STATUS_CONFIRM);
                 anMap.put("businStatus", businStatusList);
             }
-            anMap.put("postOperOrg", UserUtils.getOperatorInfo().getOperOrg());
+           // anMap.put("postOperOrg", UserUtils.getOperatorInfo().getOperOrg());
         }else{
             //是平台查询操作记录
             anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
@@ -101,7 +101,7 @@ public class DeliveryRecordService extends BaseService<DeliveryRecordMapper, Del
         BTAssert.notNull(anMap.get("ownCustNo"),"请选择传递的企业");
         List<Long> monthlyStatementIdList = getMonthlyStatementRefNoList(anMap.get("monthList").toString());
         //查询当前公司的佣金文件
-        Map<String,Object> queryMap = QueryTermBuilder.newInstance().put("ownOperOrg", UserUtils.getOperatorInfo().getOperOrg())
+        Map<String,Object> queryMap = QueryTermBuilder.newInstance()
         .put("id", monthlyStatementIdList)
         .put("businStatus", "2")
         .put("ownCustNo", anMap.get("ownCustNo"))
