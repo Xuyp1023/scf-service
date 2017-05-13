@@ -48,7 +48,7 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
     private FileDownService fileDownService;
     @Autowired
     private CustAccountService custAccountService; 
-    
+     
     /***
      * 保存月报表记录
      * @param anParam
@@ -110,10 +110,14 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
             }
         }
         
+        List<CommissionMonthlyStatementRecord> monthlyRecordList=monthlyRecordService.findMonthlyStatementRecord(monthlyStatement.getId(), monthlyStatement.getRefNo());
+        CommissionMonthlyStatementRecord monthlyRecord=new CommissionMonthlyStatementRecord();
+        monthlyRecordList.add(monthlyRecord);
+        
         // 生成文件
         Map<String, Object> fileMap=new HashMap<String, Object>();
         fileMap.put("monthly", monthlyStatement);
-        fileMap.put("recordList",monthlyRecordService.findMonthlyStatementRecord(monthlyStatement.getId(), monthlyStatement.getRefNo()));
+        fileMap.put("recordList",monthlyRecordList);
         CustFileItem custFile = fileDownService.uploadCommissionRecordFileis(fileMap, fileId, BetterDateUtils.formatMonthDispay(monthlyStatement.getBillMonth())+"-对账单"+fileType);
         logger.info("saveComissionMonthlyStatement,custFile:"+custFile);
         monthlyStatement.setFileId(custFile.getId());
@@ -144,7 +148,7 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
         if(BetterStringUtils.isNotBlank((String)anParam.get("businStatus"))){
             paramMap.put("businStatus", anParam.get("businStatus"));
         }else{
-            paramMap.put("businStatus", new String[]{"0","1","2","3","9"});
+            paramMap.put("businStatus", new String[]{"0","1","2","3","4","9"});
         }
         Page<CommissionMonthlyStatement> monthlyStatement=this.selectPropertyByPage(paramMap, anPageNum, anPageSize, "1".equals(anParam.get("flag")),"id desc");
 
@@ -172,7 +176,6 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
      * @return
      */
     public CommissionMonthlyStatement findMonthlyStatementById(Long anMonthlyId){
-        BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
         CommissionMonthlyStatement monthlyStatement=this.selectByPrimaryKey(anMonthlyId);
         // 查询日记录列表
         List<CommissionMonthlyStatementRecord> monthlyRecordList=monthlyRecordService.findMonthlyStatementRecord(monthlyStatement.getId(), monthlyStatement.getRefNo());

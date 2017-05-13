@@ -364,9 +364,13 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
             }
         }
         
+        List<CommissionDailyStatementRecord> recordList=dailyStatementRecordService.findDailyStatementRecord(dailyStatement.getId());
+        CommissionDailyStatementRecord record=new CommissionDailyStatementRecord();
+        recordList.add(record);
+        
         Map<String, Object> fileMap=new HashMap<String, Object>();
         fileMap.put("daily", dailyStatement);
-        fileMap.put("recordList", dailyStatementRecordService.findDailyStatementRecord(dailyStatement.getId()));
+        fileMap.put("recordList", recordList);
         CustFileItem custFile = fileDownService.uploadCommissionRecordFileis(fileMap, fileId, BetterDateUtils.formatDispay(dailyStatement.getPayDate())+"-对账单"+fileType);
         logger.info("生成后的文件，custFile:"+custFile);
         dailyStatement.setFileId(custFile.getId());
