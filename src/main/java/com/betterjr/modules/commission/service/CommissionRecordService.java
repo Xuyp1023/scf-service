@@ -356,6 +356,7 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
         final Map<String,Object> map = QueryTermBuilder.newInstance()
                 .put("custNo",anCustNo)
                 .put("importDate", anImportDate)
+				.put("businStatus", "1")
                 .build();
         return this.selectPropertyByPage(map, anPageNum, anPageSize, anFlag == 1);
     }

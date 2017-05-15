@@ -85,7 +85,7 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
 
         final boolean createDailyResult = commissionDailyStatementService.findDailyStatementByPayDate(anPayDate, anCustNo);
 
-        BTAssert.isTrue(!createDailyResult, "该企业当日");
+        BTAssert.isTrue(!createDailyResult, "该企业当日对账记录已经创建");
 
         final CustOperatorInfo operator = UserUtils.getOperatorInfo();
 
