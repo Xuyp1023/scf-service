@@ -74,4 +74,10 @@ public interface CommissionPayResultRecordMapper extends Mapper<CommissionPayRes
             + "WHERE cprr.L_PAY_RESULT_ID = #{payResultId}")
     @ResultType(Long.class)
     public void writebackPayResultRecordStatus(Long anPayResultId);
+    
+    @Select("SELECT IF(t.total = t1.total,'true','false') as result FROM "
+            + "(SELECT count(id) as total FROM t_cps_pay_result_record WHERE c_busin_status='2' and L_CUSTNO =#{custNo} and D_PAY_DATE=#{payDate}) as t,"
+            +" (SELECT count(id) as total FROM t_cps_pay_result_record WHERE L_CUSTNO = #{custNo} and D_PAY_DATE = #{payDate} ) as t1")
+    @ResultType(String.class)
+    public String findAllAuditResult(@Param("custNo") Long anCustNo, @Param("payDate") String anPayDate);
 }
