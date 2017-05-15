@@ -84,6 +84,7 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
 
             payResultRecord.setBusinStatus(CommissionPayResultRecordStatus.CONFIRM);
             payResultRecord.setPayResult(CommissionPayResultRecordStatus.PAY_SUCCESS);
+            payResultRecord.setPayTime(BetterDateUtils.getNumTime());
 
             final int result = this.updateByPrimaryKeySelective(payResultRecord);
 
@@ -121,6 +122,7 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
 
             payResultRecord.setBusinStatus(CommissionPayResultRecordStatus.CONFIRM);
             payResultRecord.setPayResult(CommissionPayResultRecordStatus.PAY_FAILURE);
+            payResultRecord.setPayTime(BetterDateUtils.getNumTime());
 
             final int result = this.updateByPrimaryKeySelective(payResultRecord);
 
@@ -149,6 +151,7 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
         BTAssert.isTrue(BetterStringUtils.equals(CommissionPayResultRecordStatus.PAY_SUCCESS, payResultRecord.getPayResult()), "数据支付状态不正确:[" + payResultRecord.getRecordRefNo() + "]");
 
         payResultRecord.setPayResult(CommissionPayResultRecordStatus.PAY_FAILURE);
+        payResultRecord.setPayTime(BetterDateUtils.getNumTime());
 
         final int result = this.updateByPrimaryKeySelective(payResultRecord);
         BTAssert.isTrue(result == 1, "数据确认失败！:[" + payResultRecord.getRecordRefNo() + "]");
@@ -168,6 +171,7 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
         BTAssert.isTrue(BetterStringUtils.equals(CommissionPayResultRecordStatus.PAY_FAILURE, payResultRecord.getPayResult()), "数据支付状态不正确:[" + payResultRecord.getRecordRefNo() + "]");
 
         payResultRecord.setPayResult(CommissionPayResultRecordStatus.PAY_SUCCESS);
+        payResultRecord.setPayTime(BetterDateUtils.getNumTime());
 
         final int result = this.updateByPrimaryKeySelective(payResultRecord);
         BTAssert.isTrue(result == 1, "数据确认失败！:[" + payResultRecord.getRecordRefNo() + "]");
