@@ -130,6 +130,7 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         anMap = Collections3.filterMapEmptyObject(anMap);
         //查询当前公司的佣金文件
         anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+        anMap.put("NEbusinStatus", CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_DELETE);
         
         Page<CommissionFile> fileList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
        
