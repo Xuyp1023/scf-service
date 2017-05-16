@@ -32,5 +32,7 @@ public class CommissionConstantCollentions {
     public static final Integer COMMISSION_FILE_BEGIN_ROW=1; //佣金文件解析的开始行
     
     public static final Long COMMISSION_FILE_DOWN_FILEITEM_FILEID=1005043l;//文件下载模版
+    
+    public static final Integer COMMISSION_FILE_RESOLVE_SLEEP_TIME=3;//文件解析睡眠时间
 
 }
