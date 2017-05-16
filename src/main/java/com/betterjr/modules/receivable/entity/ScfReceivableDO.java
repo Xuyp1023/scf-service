@@ -143,6 +143,13 @@ public class ScfReceivableDO extends BaseVersionEntity{
     @MetaData( value="数据创建日期", comments = "数据创建日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
+    
+    /**
+     * 数据创建时间
+     */
+    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
+    @MetaData( value="数据创建时间", comments = "数据创建时间")
+    private String regTime;
 
     /**
      * 编辑操作员编码
@@ -326,6 +333,14 @@ public class ScfReceivableDO extends BaseVersionEntity{
         this.regDate = anRegDate;
     }
 
+    public String getRegTime() {
+        return this.regTime;
+    }
+
+    public void setRegTime(String anRegTime) {
+        this.regTime = anRegTime;
+    }
+
     public Long getModiOperId() {
         return this.modiOperId;
     }
@@ -382,19 +397,16 @@ public class ScfReceivableDO extends BaseVersionEntity{
         this.description = anDescription;
     }
 
+
     @Override
     public String toString() {
         return "ScfReceivableDO [receivableNo=" + this.receivableNo + ", btNo=" + this.btNo + ", coreCustNo=" + this.coreCustNo + ", coreCustName="
                 + this.coreCustName + ", custNo=" + this.custNo + ", custName=" + this.custName + ", creditor=" + this.creditor + ", debtor="
                 + this.debtor + ", balance=" + this.balance + ", surplusBalance=" + this.surplusBalance + ", deductionBalance="
                 + this.deductionBalance + ", statementBalance=" + this.statementBalance + ", agreeNo=" + this.agreeNo + ", invoiceNo="
-                + this.invoiceNo + ", endDate=" + this.endDate + ", regDate=" + this.regDate + ", modiOperId=" + this.modiOperId + ", modiOperName="
-                + this.modiOperName + ", operOrg=" + this.operOrg + ", modiDate=" + this.modiDate + ", modiTime=" + this.modiTime + ", batchNo="
-                + this.batchNo + ", description=" + this.description + ", getRefNo()=" + this.getRefNo() + ", getVersion()=" + this.getVersion()
-                + ", getIsLatest()=" + this.getIsLatest() + ", getBusinStatus()=" + this.getBusinStatus() + ", getLockedStatus()="
-                + this.getLockedStatus() + ", getDocStatus()=" + this.getDocStatus() + ", getAuditOperId()=" + this.getAuditOperId()
-                + ", getAuditOperName()=" + this.getAuditOperName() + ", getAuditData()=" + this.getAuditData() + ", getAuditTime()="
-                + this.getAuditTime() + ", getId()=" + this.getId() + ", hashCode()=" + this.hashCode() + "]";
+                + this.invoiceNo + ", endDate=" + this.endDate + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", modiOperId="
+                + this.modiOperId + ", modiOperName=" + this.modiOperName + ", operOrg=" + this.operOrg + ", modiDate=" + this.modiDate
+                + ", modiTime=" + this.modiTime + ", batchNo=" + this.batchNo + ", description=" + this.description + "]";
     }
 
     @Override
@@ -549,6 +561,7 @@ public class ScfReceivableDO extends BaseVersionEntity{
         this.creditor=this.custNo+"";
         this.debtor=this.coreCustNo+"";
         this.regDate = BetterDateUtils.getNumDate();
+        this.regTime = BetterDateUtils.getNumTime();
         if (null != anOperatorInfo) {
             this.setModiOperId(anOperatorInfo.getId());
             this.modiOperName = anOperatorInfo.getName();
@@ -575,6 +588,7 @@ public class ScfReceivableDO extends BaseVersionEntity{
         this.modiTime=BetterDateUtils.getNumTime();
         this.setId(anReceivable.getId());
         this.regDate=anReceivable.getRegDate();
+        this.regTime=anReceivable.getRegTime();
         return this;
     }
     
