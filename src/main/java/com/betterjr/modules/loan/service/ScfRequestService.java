@@ -932,4 +932,6 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
         }
         return contractTemplateService.findTemplateByType(request.getFactorNo(), tempType, "1");
 	}
+	
+	
 }

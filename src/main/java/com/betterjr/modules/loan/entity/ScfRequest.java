@@ -404,7 +404,15 @@ public class ScfRequest implements BetterjrEntity {
     @Column(name = "N_BATCHNO",  columnDefinition="INT" )
     @MetaData( value="上传的批次号", comments = "上传的批次号，对应fileinfo中的ID")
     private Integer batchNo;
-
+    
+    @Column(name = "C_LOANNO",  columnDefinition="VARCHAR" )
+    @MetaData( value="融资编号", comments = "融资编号")
+    private String loanNo;
+    
+    @Column(name = "C_SUPP_BANK_ACCOUNT",  columnDefinition="VARCHAR" )
+    @MetaData( value="收款方银行账户", comments = "收款方银行账户")
+    private String suppBankAccount;
+    
     private static final long serialVersionUID = 1474419650663L;
 
     public String getRequestNo() {
@@ -918,228 +926,504 @@ public class ScfRequest implements BetterjrEntity {
         this.batchNo = batchNo;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", requestNo=").append(requestNo);
-        sb.append(", productCode=").append(productCode);
-        sb.append(", buyerNo=").append(buyerNo);
-        sb.append(", supplierNo=").append(supplierNo);
-        sb.append(", billNo=").append(billNo);
-        sb.append(", balance=").append(balance);
-        sb.append(", approvedBalance=").append(approvedBalance);
-        sb.append(", confirmBalance=").append(confirmBalance);
-        sb.append(", requestDate=").append(requestDate);
-        sb.append(", requestTime=").append(requestTime);
-        sb.append(", factorRequestNo=").append(factorRequestNo);
-        sb.append(", operDate=").append(operDate);
-        sb.append(", operTime=").append(operTime);
-        sb.append(", checker=").append(checker);
-        sb.append(", operCode=").append(operCode);
-        sb.append(", checkerNo=").append(checkerNo);
-        sb.append(", contactName=").append(contactName);
-        sb.append(", aduit=").append(aduit);
-        sb.append(", tradeStatus=").append(tradeStatus);
-        sb.append(", lastStatus=").append(lastStatus);
-        sb.append(", operOrg=").append(operOrg);
-        sb.append(", loanBalance=").append(loanBalance);
-        sb.append(", actualDate=").append(actualDate);
-        sb.append(", endDate=").append(endDate);
-        sb.append(", cleanDate=").append(cleanDate);
-        sb.append(", ratio=").append(ratio);
-        sb.append(", approvedRatio=").append(approvedRatio);
-        sb.append(", cashRequestNo=").append(cashRequestNo);
-        sb.append(", creditMoney=").append(creditMoney);
-        sb.append(", remainMoney=").append(remainMoney);
-        sb.append(", description=").append(description);
-        sb.append(", factorNo=").append(factorNo);
-        sb.append(", billId=").append(billId);
-        sb.append(", confirmCause=").append(confirmCause);
-        sb.append(", custName=").append(custName);
-        sb.append(", invoiceBalance=").append(invoiceBalance);
-        sb.append(", productId=").append(productId);
-        sb.append(", period=").append(period);
-        sb.append(", periodUnit=").append(periodUnit);
-        sb.append(", approvedPeriod=").append(approvedPeriod);
-        sb.append(", approvedPeriodUnit=").append(approvedPeriodUnit);
-        sb.append(", custNo=").append(custNo);
-        sb.append(", coreCustNo=").append(coreCustNo);
-        sb.append(", custType=").append(custType);
-        sb.append(", managementRatio=").append(managementRatio);
-        sb.append(", servicefeeRatio=").append(servicefeeRatio);
-        sb.append(", requestType=").append(requestType);
-        sb.append(", bondBalance=").append(bondBalance);
-        sb.append(", creditMode=").append(creditMode);
-        sb.append(", flowStatus=").append(flowStatus);
-        sb.append(", regOperId=").append(regOperId);
-        sb.append(", modiOperId=").append(modiOperId);
-        sb.append(", modiOperName=").append(modiOperName);
-        sb.append(", modiDate=").append(modiDate);
-        sb.append(", modiTime=").append(modiTime);
-        sb.append(", version=").append(version);
-        sb.append(", regOperName=").append(regOperName);
-        sb.append(", regDate=").append(regDate);
-        sb.append(", regTime=").append(regTime);
-        sb.append(", orders=").append(orders);
-        sb.append(", requestFrom=").append(requestFrom);
-        sb.append(", offerId=").append(offerId);
-        sb.append(", batchNo=").append(batchNo);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
-    }
+    public String getLoanNo() {
+		return loanNo;
+	}
+
+	public void setLoanNo(String loanNo) {
+		this.loanNo = loanNo;
+	}
+
+	public String getSuppBankAccount() {
+		return suppBankAccount;
+	}
+
+	public void setSuppBankAccount(String suppBankAccount) {
+		this.suppBankAccount = suppBankAccount;
+	}
 
     @Override
-    public boolean equals(Object that) {
-        if (this == that) {
-            return true;
-        }
-        if (that == null) {
-            return false;
-        }
-        if (getClass() != that.getClass()) {
-            return false;
-        }
-        ScfRequest other = (ScfRequest) that;
-        return (this.getRequestNo() == null ? other.getRequestNo() == null : this.getRequestNo().equals(other.getRequestNo()))
-            && (this.getProductCode() == null ? other.getProductCode() == null : this.getProductCode().equals(other.getProductCode()))
-            && (this.getBuyerNo() == null ? other.getBuyerNo() == null : this.getBuyerNo().equals(other.getBuyerNo()))
-            && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
-            && (this.getBillNo() == null ? other.getBillNo() == null : this.getBillNo().equals(other.getBillNo()))
-            && (this.getBalance() == null ? other.getBalance() == null : this.getBalance().equals(other.getBalance()))
-            && (this.getApprovedBalance() == null ? other.getApprovedBalance() == null : this.getApprovedBalance().equals(other.getApprovedBalance()))
-            && (this.getConfirmBalance() == null ? other.getConfirmBalance() == null : this.getConfirmBalance().equals(other.getConfirmBalance()))
-            && (this.getRequestDate() == null ? other.getRequestDate() == null : this.getRequestDate().equals(other.getRequestDate()))
-            && (this.getRequestTime() == null ? other.getRequestTime() == null : this.getRequestTime().equals(other.getRequestTime()))
-            && (this.getFactorRequestNo() == null ? other.getFactorRequestNo() == null : this.getFactorRequestNo().equals(other.getFactorRequestNo()))
-            && (this.getOperDate() == null ? other.getOperDate() == null : this.getOperDate().equals(other.getOperDate()))
-            && (this.getOperTime() == null ? other.getOperTime() == null : this.getOperTime().equals(other.getOperTime()))
-            && (this.getChecker() == null ? other.getChecker() == null : this.getChecker().equals(other.getChecker()))
-            && (this.getOperCode() == null ? other.getOperCode() == null : this.getOperCode().equals(other.getOperCode()))
-            && (this.getCheckerNo() == null ? other.getCheckerNo() == null : this.getCheckerNo().equals(other.getCheckerNo()))
-            && (this.getContactName() == null ? other.getContactName() == null : this.getContactName().equals(other.getContactName()))
-            && (this.getAduit() == null ? other.getAduit() == null : this.getAduit().equals(other.getAduit()))
-            && (this.getTradeStatus() == null ? other.getTradeStatus() == null : this.getTradeStatus().equals(other.getTradeStatus()))
-            && (this.getLastStatus() == null ? other.getLastStatus() == null : this.getLastStatus().equals(other.getLastStatus()))
-            && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
-            && (this.getLoanBalance() == null ? other.getLoanBalance() == null : this.getLoanBalance().equals(other.getLoanBalance()))
-            && (this.getActualDate() == null ? other.getActualDate() == null : this.getActualDate().equals(other.getActualDate()))
-            && (this.getEndDate() == null ? other.getEndDate() == null : this.getEndDate().equals(other.getEndDate()))
-            && (this.getCleanDate() == null ? other.getCleanDate() == null : this.getCleanDate().equals(other.getCleanDate()))
-            && (this.getRatio() == null ? other.getRatio() == null : this.getRatio().equals(other.getRatio()))
-            && (this.getApprovedRatio() == null ? other.getApprovedRatio() == null : this.getApprovedRatio().equals(other.getApprovedRatio()))
-            && (this.getCashRequestNo() == null ? other.getCashRequestNo() == null : this.getCashRequestNo().equals(other.getCashRequestNo()))
-            && (this.getCreditMoney() == null ? other.getCreditMoney() == null : this.getCreditMoney().equals(other.getCreditMoney()))
-            && (this.getRemainMoney() == null ? other.getRemainMoney() == null : this.getRemainMoney().equals(other.getRemainMoney()))
-            && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()))
-            && (this.getFactorNo() == null ? other.getFactorNo() == null : this.getFactorNo().equals(other.getFactorNo()))
-            && (this.getBillId() == null ? other.getBillId() == null : this.getBillId().equals(other.getBillId()))
-            && (this.getConfirmCause() == null ? other.getConfirmCause() == null : this.getConfirmCause().equals(other.getConfirmCause()))
-            && (this.getCustName() == null ? other.getCustName() == null : this.getCustName().equals(other.getCustName()))
-            && (this.getInvoiceBalance() == null ? other.getInvoiceBalance() == null : this.getInvoiceBalance().equals(other.getInvoiceBalance()))
-            && (this.getProductId() == null ? other.getProductId() == null : this.getProductId().equals(other.getProductId()))
-            && (this.getPeriod() == null ? other.getPeriod() == null : this.getPeriod().equals(other.getPeriod()))
-            && (this.getPeriodUnit() == null ? other.getPeriodUnit() == null : this.getPeriodUnit().equals(other.getPeriodUnit()))
-            && (this.getApprovedPeriod() == null ? other.getApprovedPeriod() == null : this.getApprovedPeriod().equals(other.getApprovedPeriod()))
-            && (this.getApprovedPeriodUnit() == null ? other.getApprovedPeriodUnit() == null : this.getApprovedPeriodUnit().equals(other.getApprovedPeriodUnit()))
-            && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-            && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
-            && (this.getCustType() == null ? other.getCustType() == null : this.getCustType().equals(other.getCustType()))
-            && (this.getManagementRatio() == null ? other.getManagementRatio() == null : this.getManagementRatio().equals(other.getManagementRatio()))
-            && (this.getServicefeeRatio() == null ? other.getServicefeeRatio() == null : this.getServicefeeRatio().equals(other.getServicefeeRatio()))
-            && (this.getRequestType() == null ? other.getRequestType() == null : this.getRequestType().equals(other.getRequestType()))
-            && (this.getBondBalance() == null ? other.getBondBalance() == null : this.getBondBalance().equals(other.getBondBalance()))
-            && (this.getCreditMode() == null ? other.getCreditMode() == null : this.getCreditMode().equals(other.getCreditMode()))
-            && (this.getFlowStatus() == null ? other.getFlowStatus() == null : this.getFlowStatus().equals(other.getFlowStatus()))
-            && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
-            && (this.getModiOperId() == null ? other.getModiOperId() == null : this.getModiOperId().equals(other.getModiOperId()))
-            && (this.getModiOperName() == null ? other.getModiOperName() == null : this.getModiOperName().equals(other.getModiOperName()))
-            && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-            && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()))
-            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()))
-            && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-            && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
-            && (this.getOrders() == null ? other.getOrders() == null : this.getOrders().equals(other.getOrders()))
-            && (this.getRequestFrom() == null ? other.getRequestFrom() == null : this.getRequestFrom().equals(other.getRequestFrom()))
-            && (this.getOfferId() == null ? other.getOfferId() == null : this.getOfferId().equals(other.getOfferId()))
-            && (this.getBatchNo() == null ? other.getBatchNo() == null : this.getBatchNo().equals(other.getBatchNo()));
-    }
+	public String toString() {
+		return "ScfRequest [requestNo=" + requestNo + ", productCode=" + productCode + ", buyerNo=" + buyerNo
+				+ ", supplierNo=" + supplierNo + ", billNo=" + billNo + ", balance=" + balance + ", approvedBalance="
+				+ approvedBalance + ", confirmBalance=" + confirmBalance + ", requestDate=" + requestDate
+				+ ", requestTime=" + requestTime + ", factorRequestNo=" + factorRequestNo + ", operDate=" + operDate
+				+ ", operTime=" + operTime + ", checker=" + checker + ", operCode=" + operCode + ", checkerNo="
+				+ checkerNo + ", contactName=" + contactName + ", aduit=" + aduit + ", tradeStatus=" + tradeStatus
+				+ ", lastStatus=" + lastStatus + ", operOrg=" + operOrg + ", loanBalance=" + loanBalance
+				+ ", actualDate=" + actualDate + ", endDate=" + endDate + ", cleanDate=" + cleanDate + ", ratio="
+				+ ratio + ", approvedRatio=" + approvedRatio + ", cashRequestNo=" + cashRequestNo + ", creditMoney="
+				+ creditMoney + ", remainMoney=" + remainMoney + ", description=" + description + ", factorNo="
+				+ factorNo + ", billId=" + billId + ", confirmCause=" + confirmCause + ", custName=" + custName
+				+ ", invoiceBalance=" + invoiceBalance + ", productId=" + productId + ", period=" + period
+				+ ", periodUnit=" + periodUnit + ", approvedPeriod=" + approvedPeriod + ", approvedPeriodUnit="
+				+ approvedPeriodUnit + ", custNo=" + custNo + ", coreCustNo=" + coreCustNo + ", custType=" + custType
+				+ ", managementRatio=" + managementRatio + ", servicefeeRatio=" + servicefeeRatio + ", requestType="
+				+ requestType + ", bondBalance=" + bondBalance + ", creditMode=" + creditMode + ", flowStatus="
+				+ flowStatus + ", regOperId=" + regOperId + ", modiOperId=" + modiOperId + ", modiOperName="
+				+ modiOperName + ", modiDate=" + modiDate + ", modiTime=" + modiTime + ", version=" + version
+				+ ", regOperName=" + regOperName + ", regDate=" + regDate + ", regTime=" + regTime + ", orders="
+				+ orders + ", outStatus=" + outStatus + ", requestFrom=" + requestFrom + ", offerId=" + offerId
+				+ ", batchNo=" + batchNo + ", loanNo=" + loanNo + ", suppBankAccount=" + suppBankAccount
+				+ ", coreCustName=" + coreCustName + ", factorName=" + factorName + ", payPlan=" + payPlan
+				+ ", orderBalance=" + orderBalance + ", productName=" + productName + ", servicefeeBalance="
+				+ servicefeeBalance + "]";
+	}
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getRequestNo() == null) ? 0 : getRequestNo().hashCode());
-        result = prime * result + ((getProductCode() == null) ? 0 : getProductCode().hashCode());
-        result = prime * result + ((getBuyerNo() == null) ? 0 : getBuyerNo().hashCode());
-        result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
-        result = prime * result + ((getBillNo() == null) ? 0 : getBillNo().hashCode());
-        result = prime * result + ((getBalance() == null) ? 0 : getBalance().hashCode());
-        result = prime * result + ((getApprovedBalance() == null) ? 0 : getApprovedBalance().hashCode());
-        result = prime * result + ((getConfirmBalance() == null) ? 0 : getConfirmBalance().hashCode());
-        result = prime * result + ((getRequestDate() == null) ? 0 : getRequestDate().hashCode());
-        result = prime * result + ((getRequestTime() == null) ? 0 : getRequestTime().hashCode());
-        result = prime * result + ((getFactorRequestNo() == null) ? 0 : getFactorRequestNo().hashCode());
-        result = prime * result + ((getOperDate() == null) ? 0 : getOperDate().hashCode());
-        result = prime * result + ((getOperTime() == null) ? 0 : getOperTime().hashCode());
-        result = prime * result + ((getChecker() == null) ? 0 : getChecker().hashCode());
-        result = prime * result + ((getOperCode() == null) ? 0 : getOperCode().hashCode());
-        result = prime * result + ((getCheckerNo() == null) ? 0 : getCheckerNo().hashCode());
-        result = prime * result + ((getContactName() == null) ? 0 : getContactName().hashCode());
-        result = prime * result + ((getAduit() == null) ? 0 : getAduit().hashCode());
-        result = prime * result + ((getTradeStatus() == null) ? 0 : getTradeStatus().hashCode());
-        result = prime * result + ((getLastStatus() == null) ? 0 : getLastStatus().hashCode());
-        result = prime * result + ((getOperOrg() == null) ? 0 : getOperOrg().hashCode());
-        result = prime * result + ((getLoanBalance() == null) ? 0 : getLoanBalance().hashCode());
-        result = prime * result + ((getActualDate() == null) ? 0 : getActualDate().hashCode());
-        result = prime * result + ((getEndDate() == null) ? 0 : getEndDate().hashCode());
-        result = prime * result + ((getCleanDate() == null) ? 0 : getCleanDate().hashCode());
-        result = prime * result + ((getRatio() == null) ? 0 : getRatio().hashCode());
-        result = prime * result + ((getApprovedRatio() == null) ? 0 : getApprovedRatio().hashCode());
-        result = prime * result + ((getCashRequestNo() == null) ? 0 : getCashRequestNo().hashCode());
-        result = prime * result + ((getCreditMoney() == null) ? 0 : getCreditMoney().hashCode());
-        result = prime * result + ((getRemainMoney() == null) ? 0 : getRemainMoney().hashCode());
-        result = prime * result + ((getDescription() == null) ? 0 : getDescription().hashCode());
-        result = prime * result + ((getFactorNo() == null) ? 0 : getFactorNo().hashCode());
-        result = prime * result + ((getBillId() == null) ? 0 : getBillId().hashCode());
-        result = prime * result + ((getConfirmCause() == null) ? 0 : getConfirmCause().hashCode());
-        result = prime * result + ((getCustName() == null) ? 0 : getCustName().hashCode());
-        result = prime * result + ((getInvoiceBalance() == null) ? 0 : getInvoiceBalance().hashCode());
-        result = prime * result + ((getProductId() == null) ? 0 : getProductId().hashCode());
-        result = prime * result + ((getPeriod() == null) ? 0 : getPeriod().hashCode());
-        result = prime * result + ((getPeriodUnit() == null) ? 0 : getPeriodUnit().hashCode());
-        result = prime * result + ((getApprovedPeriod() == null) ? 0 : getApprovedPeriod().hashCode());
-        result = prime * result + ((getApprovedPeriodUnit() == null) ? 0 : getApprovedPeriodUnit().hashCode());
-        result = prime * result + ((getCustNo() == null) ? 0 : getCustNo().hashCode());
-        result = prime * result + ((getCoreCustNo() == null) ? 0 : getCoreCustNo().hashCode());
-        result = prime * result + ((getCustType() == null) ? 0 : getCustType().hashCode());
-        result = prime * result + ((getManagementRatio() == null) ? 0 : getManagementRatio().hashCode());
-        result = prime * result + ((getServicefeeRatio() == null) ? 0 : getServicefeeRatio().hashCode());
-        result = prime * result + ((getRequestType() == null) ? 0 : getRequestType().hashCode());
-        result = prime * result + ((getBondBalance() == null) ? 0 : getBondBalance().hashCode());
-        result = prime * result + ((getCreditMode() == null) ? 0 : getCreditMode().hashCode());
-        result = prime * result + ((getFlowStatus() == null) ? 0 : getFlowStatus().hashCode());
-        result = prime * result + ((getRegOperId() == null) ? 0 : getRegOperId().hashCode());
-        result = prime * result + ((getModiOperId() == null) ? 0 : getModiOperId().hashCode());
-        result = prime * result + ((getModiOperName() == null) ? 0 : getModiOperName().hashCode());
-        result = prime * result + ((getModiDate() == null) ? 0 : getModiDate().hashCode());
-        result = prime * result + ((getModiTime() == null) ? 0 : getModiTime().hashCode());
-        result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
-        result = prime * result + ((getRegOperName() == null) ? 0 : getRegOperName().hashCode());
-        result = prime * result + ((getRegDate() == null) ? 0 : getRegDate().hashCode());
-        result = prime * result + ((getRegTime() == null) ? 0 : getRegTime().hashCode());
-        result = prime * result + ((getOrders() == null) ? 0 : getOrders().hashCode());
-        result = prime * result + ((getRequestFrom() == null) ? 0 : getRequestFrom().hashCode());
-        result = prime * result + ((getOfferId() == null) ? 0 : getOfferId().hashCode());
-        result = prime * result + ((getBatchNo() == null) ? 0 : getBatchNo().hashCode());
-        return result;
-    }
-    
-    @Transient
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((actualDate == null) ? 0 : actualDate.hashCode());
+		result = prime * result + ((aduit == null) ? 0 : aduit.hashCode());
+		result = prime * result + ((approvedBalance == null) ? 0 : approvedBalance.hashCode());
+		result = prime * result + ((approvedPeriod == null) ? 0 : approvedPeriod.hashCode());
+		result = prime * result + ((approvedPeriodUnit == null) ? 0 : approvedPeriodUnit.hashCode());
+		result = prime * result + ((approvedRatio == null) ? 0 : approvedRatio.hashCode());
+		result = prime * result + ((balance == null) ? 0 : balance.hashCode());
+		result = prime * result + ((batchNo == null) ? 0 : batchNo.hashCode());
+		result = prime * result + ((billId == null) ? 0 : billId.hashCode());
+		result = prime * result + ((billNo == null) ? 0 : billNo.hashCode());
+		result = prime * result + ((bondBalance == null) ? 0 : bondBalance.hashCode());
+		result = prime * result + ((buyerNo == null) ? 0 : buyerNo.hashCode());
+		result = prime * result + ((cashRequestNo == null) ? 0 : cashRequestNo.hashCode());
+		result = prime * result + ((checker == null) ? 0 : checker.hashCode());
+		result = prime * result + ((checkerNo == null) ? 0 : checkerNo.hashCode());
+		result = prime * result + ((cleanDate == null) ? 0 : cleanDate.hashCode());
+		result = prime * result + ((confirmBalance == null) ? 0 : confirmBalance.hashCode());
+		result = prime * result + ((confirmCause == null) ? 0 : confirmCause.hashCode());
+		result = prime * result + ((contactName == null) ? 0 : contactName.hashCode());
+		result = prime * result + ((coreCustName == null) ? 0 : coreCustName.hashCode());
+		result = prime * result + ((coreCustNo == null) ? 0 : coreCustNo.hashCode());
+		result = prime * result + ((creditMode == null) ? 0 : creditMode.hashCode());
+		result = prime * result + ((creditMoney == null) ? 0 : creditMoney.hashCode());
+		result = prime * result + ((custName == null) ? 0 : custName.hashCode());
+		result = prime * result + ((custNo == null) ? 0 : custNo.hashCode());
+		result = prime * result + ((custType == null) ? 0 : custType.hashCode());
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
+		result = prime * result + ((factorName == null) ? 0 : factorName.hashCode());
+		result = prime * result + ((factorNo == null) ? 0 : factorNo.hashCode());
+		result = prime * result + ((factorRequestNo == null) ? 0 : factorRequestNo.hashCode());
+		result = prime * result + ((flowStatus == null) ? 0 : flowStatus.hashCode());
+		result = prime * result + ((invoiceBalance == null) ? 0 : invoiceBalance.hashCode());
+		result = prime * result + ((lastStatus == null) ? 0 : lastStatus.hashCode());
+		result = prime * result + ((loanBalance == null) ? 0 : loanBalance.hashCode());
+		result = prime * result + ((loanNo == null) ? 0 : loanNo.hashCode());
+		result = prime * result + ((managementRatio == null) ? 0 : managementRatio.hashCode());
+		result = prime * result + ((modiDate == null) ? 0 : modiDate.hashCode());
+		result = prime * result + ((modiOperId == null) ? 0 : modiOperId.hashCode());
+		result = prime * result + ((modiOperName == null) ? 0 : modiOperName.hashCode());
+		result = prime * result + ((modiTime == null) ? 0 : modiTime.hashCode());
+		result = prime * result + ((offerId == null) ? 0 : offerId.hashCode());
+		result = prime * result + ((operCode == null) ? 0 : operCode.hashCode());
+		result = prime * result + ((operDate == null) ? 0 : operDate.hashCode());
+		result = prime * result + ((operOrg == null) ? 0 : operOrg.hashCode());
+		result = prime * result + ((operTime == null) ? 0 : operTime.hashCode());
+		result = prime * result + ((orderBalance == null) ? 0 : orderBalance.hashCode());
+		result = prime * result + ((orders == null) ? 0 : orders.hashCode());
+		result = prime * result + ((outStatus == null) ? 0 : outStatus.hashCode());
+		result = prime * result + ((payPlan == null) ? 0 : payPlan.hashCode());
+		result = prime * result + ((period == null) ? 0 : period.hashCode());
+		result = prime * result + ((periodUnit == null) ? 0 : periodUnit.hashCode());
+		result = prime * result + ((productCode == null) ? 0 : productCode.hashCode());
+		result = prime * result + ((productId == null) ? 0 : productId.hashCode());
+		result = prime * result + ((productName == null) ? 0 : productName.hashCode());
+		result = prime * result + ((ratio == null) ? 0 : ratio.hashCode());
+		result = prime * result + ((regDate == null) ? 0 : regDate.hashCode());
+		result = prime * result + ((regOperId == null) ? 0 : regOperId.hashCode());
+		result = prime * result + ((regOperName == null) ? 0 : regOperName.hashCode());
+		result = prime * result + ((regTime == null) ? 0 : regTime.hashCode());
+		result = prime * result + ((remainMoney == null) ? 0 : remainMoney.hashCode());
+		result = prime * result + ((requestDate == null) ? 0 : requestDate.hashCode());
+		result = prime * result + ((requestFrom == null) ? 0 : requestFrom.hashCode());
+		result = prime * result + ((requestNo == null) ? 0 : requestNo.hashCode());
+		result = prime * result + ((requestTime == null) ? 0 : requestTime.hashCode());
+		result = prime * result + ((requestType == null) ? 0 : requestType.hashCode());
+		result = prime * result + ((servicefeeBalance == null) ? 0 : servicefeeBalance.hashCode());
+		result = prime * result + ((servicefeeRatio == null) ? 0 : servicefeeRatio.hashCode());
+		result = prime * result + ((suppBankAccount == null) ? 0 : suppBankAccount.hashCode());
+		result = prime * result + ((supplierNo == null) ? 0 : supplierNo.hashCode());
+		result = prime * result + ((tradeStatus == null) ? 0 : tradeStatus.hashCode());
+		result = prime * result + ((version == null) ? 0 : version.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ScfRequest other = (ScfRequest) obj;
+		if (actualDate == null) {
+			if (other.actualDate != null)
+				return false;
+		} else if (!actualDate.equals(other.actualDate))
+			return false;
+		if (aduit == null) {
+			if (other.aduit != null)
+				return false;
+		} else if (!aduit.equals(other.aduit))
+			return false;
+		if (approvedBalance == null) {
+			if (other.approvedBalance != null)
+				return false;
+		} else if (!approvedBalance.equals(other.approvedBalance))
+			return false;
+		if (approvedPeriod == null) {
+			if (other.approvedPeriod != null)
+				return false;
+		} else if (!approvedPeriod.equals(other.approvedPeriod))
+			return false;
+		if (approvedPeriodUnit == null) {
+			if (other.approvedPeriodUnit != null)
+				return false;
+		} else if (!approvedPeriodUnit.equals(other.approvedPeriodUnit))
+			return false;
+		if (approvedRatio == null) {
+			if (other.approvedRatio != null)
+				return false;
+		} else if (!approvedRatio.equals(other.approvedRatio))
+			return false;
+		if (balance == null) {
+			if (other.balance != null)
+				return false;
+		} else if (!balance.equals(other.balance))
+			return false;
+		if (batchNo == null) {
+			if (other.batchNo != null)
+				return false;
+		} else if (!batchNo.equals(other.batchNo))
+			return false;
+		if (billId == null) {
+			if (other.billId != null)
+				return false;
+		} else if (!billId.equals(other.billId))
+			return false;
+		if (billNo == null) {
+			if (other.billNo != null)
+				return false;
+		} else if (!billNo.equals(other.billNo))
+			return false;
+		if (bondBalance == null) {
+			if (other.bondBalance != null)
+				return false;
+		} else if (!bondBalance.equals(other.bondBalance))
+			return false;
+		if (buyerNo == null) {
+			if (other.buyerNo != null)
+				return false;
+		} else if (!buyerNo.equals(other.buyerNo))
+			return false;
+		if (cashRequestNo == null) {
+			if (other.cashRequestNo != null)
+				return false;
+		} else if (!cashRequestNo.equals(other.cashRequestNo))
+			return false;
+		if (checker == null) {
+			if (other.checker != null)
+				return false;
+		} else if (!checker.equals(other.checker))
+			return false;
+		if (checkerNo == null) {
+			if (other.checkerNo != null)
+				return false;
+		} else if (!checkerNo.equals(other.checkerNo))
+			return false;
+		if (cleanDate == null) {
+			if (other.cleanDate != null)
+				return false;
+		} else if (!cleanDate.equals(other.cleanDate))
+			return false;
+		if (confirmBalance == null) {
+			if (other.confirmBalance != null)
+				return false;
+		} else if (!confirmBalance.equals(other.confirmBalance))
+			return false;
+		if (confirmCause == null) {
+			if (other.confirmCause != null)
+				return false;
+		} else if (!confirmCause.equals(other.confirmCause))
+			return false;
+		if (contactName == null) {
+			if (other.contactName != null)
+				return false;
+		} else if (!contactName.equals(other.contactName))
+			return false;
+		if (coreCustName == null) {
+			if (other.coreCustName != null)
+				return false;
+		} else if (!coreCustName.equals(other.coreCustName))
+			return false;
+		if (coreCustNo == null) {
+			if (other.coreCustNo != null)
+				return false;
+		} else if (!coreCustNo.equals(other.coreCustNo))
+			return false;
+		if (creditMode == null) {
+			if (other.creditMode != null)
+				return false;
+		} else if (!creditMode.equals(other.creditMode))
+			return false;
+		if (creditMoney == null) {
+			if (other.creditMoney != null)
+				return false;
+		} else if (!creditMoney.equals(other.creditMoney))
+			return false;
+		if (custName == null) {
+			if (other.custName != null)
+				return false;
+		} else if (!custName.equals(other.custName))
+			return false;
+		if (custNo == null) {
+			if (other.custNo != null)
+				return false;
+		} else if (!custNo.equals(other.custNo))
+			return false;
+		if (custType == null) {
+			if (other.custType != null)
+				return false;
+		} else if (!custType.equals(other.custType))
+			return false;
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
+		if (endDate == null) {
+			if (other.endDate != null)
+				return false;
+		} else if (!endDate.equals(other.endDate))
+			return false;
+		if (factorName == null) {
+			if (other.factorName != null)
+				return false;
+		} else if (!factorName.equals(other.factorName))
+			return false;
+		if (factorNo == null) {
+			if (other.factorNo != null)
+				return false;
+		} else if (!factorNo.equals(other.factorNo))
+			return false;
+		if (factorRequestNo == null) {
+			if (other.factorRequestNo != null)
+				return false;
+		} else if (!factorRequestNo.equals(other.factorRequestNo))
+			return false;
+		if (flowStatus == null) {
+			if (other.flowStatus != null)
+				return false;
+		} else if (!flowStatus.equals(other.flowStatus))
+			return false;
+		if (invoiceBalance == null) {
+			if (other.invoiceBalance != null)
+				return false;
+		} else if (!invoiceBalance.equals(other.invoiceBalance))
+			return false;
+		if (lastStatus == null) {
+			if (other.lastStatus != null)
+				return false;
+		} else if (!lastStatus.equals(other.lastStatus))
+			return false;
+		if (loanBalance == null) {
+			if (other.loanBalance != null)
+				return false;
+		} else if (!loanBalance.equals(other.loanBalance))
+			return false;
+		if (loanNo == null) {
+			if (other.loanNo != null)
+				return false;
+		} else if (!loanNo.equals(other.loanNo))
+			return false;
+		if (managementRatio == null) {
+			if (other.managementRatio != null)
+				return false;
+		} else if (!managementRatio.equals(other.managementRatio))
+			return false;
+		if (modiDate == null) {
+			if (other.modiDate != null)
+				return false;
+		} else if (!modiDate.equals(other.modiDate))
+			return false;
+		if (modiOperId == null) {
+			if (other.modiOperId != null)
+				return false;
+		} else if (!modiOperId.equals(other.modiOperId))
+			return false;
+		if (modiOperName == null) {
+			if (other.modiOperName != null)
+				return false;
+		} else if (!modiOperName.equals(other.modiOperName))
+			return false;
+		if (modiTime == null) {
+			if (other.modiTime != null)
+				return false;
+		} else if (!modiTime.equals(other.modiTime))
+			return false;
+		if (offerId == null) {
+			if (other.offerId != null)
+				return false;
+		} else if (!offerId.equals(other.offerId))
+			return false;
+		if (operCode == null) {
+			if (other.operCode != null)
+				return false;
+		} else if (!operCode.equals(other.operCode))
+			return false;
+		if (operDate == null) {
+			if (other.operDate != null)
+				return false;
+		} else if (!operDate.equals(other.operDate))
+			return false;
+		if (operOrg == null) {
+			if (other.operOrg != null)
+				return false;
+		} else if (!operOrg.equals(other.operOrg))
+			return false;
+		if (operTime == null) {
+			if (other.operTime != null)
+				return false;
+		} else if (!operTime.equals(other.operTime))
+			return false;
+		if (orderBalance == null) {
+			if (other.orderBalance != null)
+				return false;
+		} else if (!orderBalance.equals(other.orderBalance))
+			return false;
+		if (orders == null) {
+			if (other.orders != null)
+				return false;
+		} else if (!orders.equals(other.orders))
+			return false;
+		if (outStatus == null) {
+			if (other.outStatus != null)
+				return false;
+		} else if (!outStatus.equals(other.outStatus))
+			return false;
+		if (payPlan == null) {
+			if (other.payPlan != null)
+				return false;
+		} else if (!payPlan.equals(other.payPlan))
+			return false;
+		if (period == null) {
+			if (other.period != null)
+				return false;
+		} else if (!period.equals(other.period))
+			return false;
+		if (periodUnit == null) {
+			if (other.periodUnit != null)
+				return false;
+		} else if (!periodUnit.equals(other.periodUnit))
+			return false;
+		if (productCode == null) {
+			if (other.productCode != null)
+				return false;
+		} else if (!productCode.equals(other.productCode))
+			return false;
+		if (productId == null) {
+			if (other.productId != null)
+				return false;
+		} else if (!productId.equals(other.productId))
+			return false;
+		if (productName == null) {
+			if (other.productName != null)
+				return false;
+		} else if (!productName.equals(other.productName))
+			return false;
+		if (ratio == null) {
+			if (other.ratio != null)
+				return false;
+		} else if (!ratio.equals(other.ratio))
+			return false;
+		if (regDate == null) {
+			if (other.regDate != null)
+				return false;
+		} else if (!regDate.equals(other.regDate))
+			return false;
+		if (regOperId == null) {
+			if (other.regOperId != null)
+				return false;
+		} else if (!regOperId.equals(other.regOperId))
+			return false;
+		if (regOperName == null) {
+			if (other.regOperName != null)
+				return false;
+		} else if (!regOperName.equals(other.regOperName))
+			return false;
+		if (regTime == null) {
+			if (other.regTime != null)
+				return false;
+		} else if (!regTime.equals(other.regTime))
+			return false;
+		if (remainMoney == null) {
+			if (other.remainMoney != null)
+				return false;
+		} else if (!remainMoney.equals(other.remainMoney))
+			return false;
+		if (requestDate == null) {
+			if (other.requestDate != null)
+				return false;
+		} else if (!requestDate.equals(other.requestDate))
+			return false;
+		if (requestFrom == null) {
+			if (other.requestFrom != null)
+				return false;
+		} else if (!requestFrom.equals(other.requestFrom))
+			return false;
+		if (requestNo == null) {
+			if (other.requestNo != null)
+				return false;
+		} else if (!requestNo.equals(other.requestNo))
+			return false;
+		if (requestTime == null) {
+			if (other.requestTime != null)
+				return false;
+		} else if (!requestTime.equals(other.requestTime))
+			return false;
+		if (requestType == null) {
+			if (other.requestType != null)
+				return false;
+		} else if (!requestType.equals(other.requestType))
+			return false;
+		if (servicefeeBalance == null) {
+			if (other.servicefeeBalance != null)
+				return false;
+		} else if (!servicefeeBalance.equals(other.servicefeeBalance))
+			return false;
+		if (servicefeeRatio == null) {
+			if (other.servicefeeRatio != null)
+				return false;
+		} else if (!servicefeeRatio.equals(other.servicefeeRatio))
+			return false;
+		if (suppBankAccount == null) {
+			if (other.suppBankAccount != null)
+				return false;
+		} else if (!suppBankAccount.equals(other.suppBankAccount))
+			return false;
+		if (supplierNo == null) {
+			if (other.supplierNo != null)
+				return false;
+		} else if (!supplierNo.equals(other.supplierNo))
+			return false;
+		if (tradeStatus == null) {
+			if (other.tradeStatus != null)
+				return false;
+		} else if (!tradeStatus.equals(other.tradeStatus))
+			return false;
+		if (version == null) {
+			if (other.version != null)
+				return false;
+		} else if (!version.equals(other.version))
+			return false;
+		return true;
+	}
+
+
+
+	@Transient
     private String coreCustName;
     @Transient
     private String factorName;
