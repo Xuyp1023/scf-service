@@ -41,6 +41,7 @@
 		com.betterjr.modules.rule.service;
 		com.betterjr.modules.rule.validator;
 		com.betterjr.modules.sys.service;
+        com.betterjr.modules.loan.job;
         com.betterjr.modules.customer;
         com.betterjr.modules.agreement.service;
         com.betterjr.modules.ledger;
