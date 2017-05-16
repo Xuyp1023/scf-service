@@ -245,14 +245,24 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         CommissionDailyStatement dailyStatement=this.selectByPrimaryKey(anDailyStatementId);
         dailyStatement.setLastStatus(dailyStatement.getBusinStatus());
         dailyStatement.setBusinStatus(anBusinStatus);
+        
+        if(BetterStringUtils.equalsIgnoreCase("9", anBusinStatus)){
+            saveRecordStatus(dailyStatement.getPayDate(),dailyStatement.getOwnCustNo(),"2");
+        }
         return this.updateByPrimaryKey(dailyStatement)>0;
     }
     
     public boolean delDailyStatement(Long anDailyStatementId){
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
+        CommissionDailyStatement dailyStatement=this.selectByPrimaryKey(anDailyStatementId);
+        // 删除之前先回写佣金数据状态
+        saveRecordStatus(dailyStatement.getPayDate(),dailyStatement.getOwnCustNo(),"2");
+        // 删除记录表数据
+        dailyStatementRecordService.delDailyStatementRecord(anDailyStatementId, dailyStatement.getRefNo());
+        
         return this.deleteByPrimaryKey(anDailyStatementId)>0;
     }
-
+    
     /***
      * 查询佣金记录数
      * @param anPayDate
@@ -286,7 +296,8 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
      */
     public Map<String, Object> findPayResultInfo(String anPayDate,Long anOwnCustNo){
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
-         if(findDailyStatementByPayDate(anPayDate, anOwnCustNo)){
+        String[] businStatusArr=new String[]{"0","1","2","3"};
+         if(findDailyStatementByPayDate(anPayDate, anOwnCustNo,businStatusArr)){
              throw new BytterTradeException("当前日期已经生成日对账单");
          }
          
@@ -397,14 +408,19 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         dailyStatement.setBatchNo(custFile.getBatchNo());
         this.updateByPrimaryKey(dailyStatement);
         
+        // 回写生成日报表的记录状态      
+        saveRecordStatus(anPayDate,anOwnCustNo,"3");
+        
+        return dailyStatement;
+    }
+    
+    public void saveRecordStatus(String anPayDate,Long anOwnCustNo,String anBusinStatus){
         // 回写生成日报表的记录状态        
         Map<String,Object> anMap=new HashMap<String, Object>();
-        anMap.put("businStatus", "3");
+        anMap.put("businStatus", anBusinStatus);
         anMap.put("payDate", anPayDate);
         anMap.put("ownCustNo", anOwnCustNo);
         BTAssert.isTrue(payResultRecordService.saveRecordStatus(anMap)>0, "回写佣金状态记录异常");
-        
-        return dailyStatement;
     }
     
     public CommissionDailyStatement findDailyStatementById(Long anDailyStatementId){
@@ -425,11 +441,14 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
      * @param anOwnCustNo 对账企业客户号
      * @return 是否存在
      */
-    public boolean findDailyStatementByPayDate(String anPayDate,Long anOwnCustNo){
+    public boolean findDailyStatementByPayDate(String anPayDate,Long anOwnCustNo,String[] anBusinStatus){
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
         Map<String,Object> anMap=new HashMap<String, Object>();
         anMap.put("payDate", anPayDate);
         anMap.put("ownCustNo", anOwnCustNo);
+        if(anBusinStatus!=null && anBusinStatus.length>0){
+            anMap.put("businStatus", anBusinStatus);
+        }
         
         List<CommissionDailyStatement> dailyList=this.selectByProperty(anMap);
         if(dailyList!=null && dailyList.size()>0){

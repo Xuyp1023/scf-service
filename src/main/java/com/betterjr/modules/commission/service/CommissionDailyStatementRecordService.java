@@ -55,4 +55,11 @@ public class CommissionDailyStatementRecordService extends BaseService<Commissio
         return this.selectByProperty("dailyStatementId", anDailyStatementId);
     }
     
+    public boolean delDailyStatementRecord(Long anDailyStatementId,String anDailyStatementRefNo){
+        Map<String, Object> map=new HashMap<String, Object>();
+        map.put("dailyStatementId", anDailyStatementId);
+        map.put("dailyStatementRefNo", anDailyStatementRefNo);
+        return this.deleteByExample(map)>0;
+    }
+    
 }

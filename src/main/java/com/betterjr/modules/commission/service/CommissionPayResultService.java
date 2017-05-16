@@ -82,8 +82,8 @@ public class CommissionPayResultService extends BaseService<CommissionPayResultM
         final boolean auditStatus = commissionFileService.checkFileAuditFinish(anCustNo, anImportDate);
 
         BTAssert.isTrue(auditStatus, "佣金记录还未审核完毕，请联系企业[" + custMechBase.getCustName() +"]");
-
-        final boolean createDailyResult = commissionDailyStatementService.findDailyStatementByPayDate(anPayDate, anCustNo);
+        String[] businStatusArr=new String[]{"0","1","2","3"};
+        final boolean createDailyResult = commissionDailyStatementService.findDailyStatementByPayDate(anPayDate, anCustNo,businStatusArr);
 
         BTAssert.isTrue(!createDailyResult, "该企业当日对账记录已经创建");
 
