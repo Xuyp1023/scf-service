@@ -209,7 +209,7 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         BTAssert.notNull(anRefNo,"删除佣金文件条件不符,");
         logger.info("Begin to resolve 佣金文件 saveResolveFile"+UserUtils.getOperatorInfo().getName()+"  refNo="+anRefNo);
         //Map<String,Object> queryMap = QueryTermBuilder.newInstance().put("refNo", anRefNo).build();
-        JedisUtils.acquireLock(anRefNo, CommissionConstantCollentions.COMMISSION_FILE_RESOLVE_SLEEP_TIME);
+        JedisUtils.acquireLock(CommissionConstantCollentions.COMMISSION_FILE_RESOLVE_SUFFIX_KEY+anRefNo, CommissionConstantCollentions.COMMISSION_FILE_RESOLVE_SLEEP_TIME);
         CommissionFile file = this.selectOne(new CommissionFile(anRefNo));
         checkResolveFileStatus(file,UserUtils.getOperatorInfo());
         try {
@@ -222,7 +222,7 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         }
         this.updateByPrimaryKeySelective(file);
         logger.info("finsh to resolve 佣金文件 saveResolveFile"+UserUtils.getOperatorInfo().getName()+"  refNo="+anRefNo);
-        JedisUtils.releaseLock(anRefNo);
+        JedisUtils.releaseLock(CommissionConstantCollentions.COMMISSION_FILE_RESOLVE_SUFFIX_KEY+anRefNo);
         return file;
     }
 
