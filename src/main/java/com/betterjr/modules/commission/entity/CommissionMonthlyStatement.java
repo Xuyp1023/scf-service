@@ -281,6 +281,13 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     @Column(name = "D_BILL_MONTH",  columnDefinition="VARCHAR" )
     private String billMonth;
     
+    /**
+     * 结算金额
+     */
+    @Column(name = "F_INTEREST_BALANCE",  columnDefinition="DECIMAL" )
+    @MetaData( value="结算金额", comments = "结算金额")
+    private BigDecimal interestBalance;
+    
     @Transient
     private String makeDateTime;
     
@@ -641,6 +648,16 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     }
 
 
+    public BigDecimal getInterestBalance() {
+        return this.interestBalance;
+    }
+
+
+    public void setInterestBalance(BigDecimal anInterestBalance) {
+        this.interestBalance = anInterestBalance;
+    }
+
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -706,6 +723,8 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
         this.taxBalance=new BigDecimal(tax);
         this.payBeginDate=(String)anMap.get("payBeginDate");
         this.payEndDate=(String)anMap.get("payEndDate");
+        String interestBalance= (String)anMap.get("interestBalance")==""?"0":(String)anMap.get("interestBalance");
+        this.interestBalance=new BigDecimal(interestBalance);
         this.makeDate=BetterDateUtils.getNumDate();
         this.makeTime= BetterDateUtils.getNumTime();
         this.regDate = BetterDateUtils.getNumDate();

@@ -47,7 +47,7 @@ public class CommissionDailyStatementRecordService extends BaseService<Commissio
      * @return
      */
     public boolean addDailyStatementRecord(CommissionDailyStatement anDailyStatement){
-        anDailyStatement.setBusinStatus("0");
+        anDailyStatement.setBusinStatus("1");
         return this.mapper.addDailyStatementRecord(anDailyStatement)>0;
     }
     

@@ -69,7 +69,9 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
         if(custInfo!=null){
             monthlyStatement.setOwnOperOrg(custInfo.getOperOrg());
         }
+        
         CalcPayResult payResult=dailyStatementService.findDailyStatementCount(anParam);
+        
         logger.info("saveComissionMonthlyStatement payResult:"+payResult);
         monthlyStatement.setTotalAmount(new BigDecimal(payResult.getTotalAmount()));
         monthlyStatement.setPayTotalAmount(new BigDecimal(payResult.getTotalAmount()));

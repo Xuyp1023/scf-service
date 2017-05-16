@@ -19,6 +19,6 @@ public interface CommissionDailyStatementRecordMapper extends Mapper<CommissionD
             + "C_PAY_BANK_NAME,C_PAY_BANK_FULLNAME,C_PAY_BANK_ACCO,C_PAY_BANK_ACCO_NAME,C_PAY_RESULT,C_PAY_COMMENT,#{businStatus},"
             + "#{businStatus},#{ownCustNo},#{ownCustName},#{operOrg},#{regOperId},"
             + "#{regOperName},#{regDate},#{regTime} FROM t_cps_pay_result_record"
-            + " WHERE d_pay_date=#{payDate} and l_custno=#{ownCustNo}")
+            + " WHERE d_pay_date=#{payDate} and l_custno=#{ownCustNo} and C_PAY_RESULT=#{businStatus}")
     public int addDailyStatementRecord(CommissionDailyStatement dailyStatement);
 }

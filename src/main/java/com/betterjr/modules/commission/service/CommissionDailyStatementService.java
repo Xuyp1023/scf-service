@@ -119,8 +119,8 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         anMonth=anMonth.replaceAll("-", "")+"01";
         // 不管是几月在将月份改为1-31 号，作为条件查询
         Map<String,Object> monthMap=new HashMap<String, Object>();
-        monthMap.put("startDate", CommissionDateUtils.getMinMonthDate(anMonth));
-        monthMap.put("endDate", CommissionDateUtils.getMaxMonthDate(anMonth));
+        monthMap.put("payBeginDate", CommissionDateUtils.getMinMonthDate(anMonth));
+        monthMap.put("payEndDate", CommissionDateUtils.getMaxMonthDate(anMonth));
         monthMap.put("ownCustNo", anCustNo);
         CalcPayResult payResult=this.mapper.selectDailyStatementCount(monthMap); // 查询所有记录数
         logger.info("payResult:"+payResult);
@@ -143,8 +143,8 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         String endDate=CommissionDateUtils.getMaxMonthDate(month);
         // 根据对账月份查询
         Map<String,Object> monthMap=new HashMap<String, Object>();
-        monthMap.put("startDate", startDate);
-        monthMap.put("endDate", endDate);
+        monthMap.put("payBeginDate", startDate);
+        monthMap.put("payEndDate", endDate);
         monthMap.put("ownCustNo", anOwnCustNo);
 
         long time = BetterDateUtils.parseDate(BetterDateUtils.getNumMonth()).getTime()-BetterDateUtils.parseDate(billMonth).getTime();
@@ -167,12 +167,17 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         BigDecimal totalPayBalance=new BigDecimal(0.00);// 总发生金额
         BigDecimal totalInterset=new BigDecimal(0.00);// 总利息
         BigDecimal totalTaxBalance=new BigDecimal(0.00);// 总税额
+        BigDecimal interestBalance=new BigDecimal(0.00);// 结算金额
+        BigDecimal paySuccessBalance=new BigDecimal(0.00);// 成功金额
+        
         List<CommissionDailyStatement> resultDailyStatementList=new ArrayList<CommissionDailyStatement>();
         
         monthMap=getConfigData();
         
         BigDecimal rate=new BigDecimal(monthMap.get("interestRate").toString()); 
         BigDecimal taxRate=new BigDecimal(monthMap.get("taxRate").toString());
+        
+        
         
         // 获取日账单的列表，并计算好利息
         List<CommissionDailyStatement> dailyStatementList=findCpsDailyStatementByMonth(billMonth,anOwnCustNo,"2");
@@ -187,10 +192,12 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
             BigDecimal taxBalance = getTaxBalance(payTotalBalance,interset,taxRate);
             
             logger.info("每日利息：dailyStatement refNo:"+dailyStatement.getRefNo()+"，interset:"+interset+"，每日税额："+taxBalance);
-            totalBalance=MathExtend.add(MathExtend.add(MathExtend.add(totalBalance, payTotalBalance), interset),taxBalance);
+            totalBalance=MathExtend.add(totalBalance, dailyStatement.getTotalBalance());
+            interestBalance=MathExtend.add(MathExtend.add(MathExtend.add(interestBalance, payTotalBalance), interset),taxBalance);
             totalPayBalance=MathExtend.add(totalPayBalance, payTotalBalance);
             totalInterset=MathExtend.add(totalInterset, interset);
             totalTaxBalance=MathExtend.add(totalTaxBalance, taxBalance);
+            paySuccessBalance=MathExtend.add(dailyStatement.getPaySuccessBalance(), paySuccessBalance);
             // 更新日报表利息
             dailyStatement.setInterest(interset);
             dailyStatement.setInterestRate(rate);
@@ -212,8 +219,9 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         monthMap.put("taxBalance", totalTaxBalance);
         monthMap.put("dailyList", resultDailyStatementList);
         monthMap.put("makeDateTime", BetterDateUtils.getDateTime());
-        monthMap.put("endInterestDate", anEndInterestDate);       
-        
+        monthMap.put("endInterestDate", anEndInterestDate);
+        monthMap.put("interestBalance", interestBalance);
+        monthMap.put("paySuccessBalance", paySuccessBalance);
         return monthMap;
     }
     
@@ -306,6 +314,9 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
          resultMp.put("ownCustName", custAccountService.queryCustName(anOwnCustNo));
          resultMp.put("totalAmount", payResult.getTotalAmount());
          resultMp.put("makeDateTime", BetterDateUtils.getDateTime());
+         resultMp.put("paySuccessBalance", payResult.getPaySuccessBalance());
+         resultMp.put("paySuccessAmount", payResult.getPaySuccessAmount());
+         
          return resultMp;
     }
     
