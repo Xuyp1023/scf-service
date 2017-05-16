@@ -41,6 +41,7 @@
 		com.betterjr.modules.rule.service;
 		com.betterjr.modules.rule.validator;
 		com.betterjr.modules.sys.service;
+        com.betterjr.modules.loan.job;
         com.betterjr.modules.customer;
         com.betterjr.modules.agreement.service;
         com.betterjr.modules.ledger;
@@ -153,6 +154,10 @@
 		<property name="testOnBorrow" value="true" />
 	</bean>
 	
+    <bean id="jedisUtils" class="com.betterjr.modules.jedis.JedisUtils">
+        <property name="defaultJedisPool" ref="defaultJedisPool"></property>
+    </bean>
+    
 	<bean id="defaultJedisPool" class="redis.clients.jedis.JedisPool">
 		<constructor-arg index="0" ref="jedisPoolConfig" />
 		<constructor-arg index="1" value="${redis.address}" type="String" />
