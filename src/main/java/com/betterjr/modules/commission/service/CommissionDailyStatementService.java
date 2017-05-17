@@ -149,6 +149,11 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         if(time<=0){
             throw new BytterTradeException("对账月份必须小于当前月");
         }
+        
+        long interestTime = BetterDateUtils.parseDate(anEndInterestDate).getTime()-BetterDateUtils.parseDate(BetterDateUtils.getNumDate()).getTime();
+        if(interestTime<0){
+            throw new BytterTradeException("结息日期不能小于当前日期");
+        }
         CalcPayResult payResult=this.mapper.selectDailyStatementCount(monthMap);
         
         Long failureTotalCount=payResult.getPayFailureAmount();
@@ -184,6 +189,9 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
             String payDate=dailyStatement.getPayDate();
             long lTerm = BetterDateUtils.parseDate(anEndInterestDate).getTime()-BetterDateUtils.parseDate(payDate).getTime();
             lTerm=lTerm/(24*60*60*1000);
+            if(lTerm<0){
+                throw new BytterTradeException("日付款日期不能小于结息日期");
+            }
             BigDecimal term=new BigDecimal(lTerm);
             
             BigDecimal interset=getInterset(payTotalBalance,rate,term);
