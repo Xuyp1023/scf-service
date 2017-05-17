@@ -58,6 +58,10 @@ public class DeliveryRecordStatement implements BetterjrEntity {
     //总金额
     @Column(name = "F_TOTAL_BLANCE",  columnDefinition="DECIMAL" )
     private BigDecimal totalBlance;
+    
+    //付款成功+税额+佣金
+    @Column(name = "F_INTEREST_BALANCE",  columnDefinition="DECIMAL" )
+    private BigDecimal interestBalance;
 
     //总的佣金笔数
     @Column(name = "N_TOTAL_AMOUNT",  columnDefinition="INTEGER" )
@@ -140,6 +144,14 @@ public class DeliveryRecordStatement implements BetterjrEntity {
 
     public void setBillMonth(String anBillMonth) {
         this.billMonth = anBillMonth;
+    }
+
+    public BigDecimal getInterestBalance() {
+        return this.interestBalance;
+    }
+
+    public void setInterestBalance(BigDecimal anInterestBalance) {
+        this.interestBalance = anInterestBalance;
     }
 
     public String getExpressStatus() {
