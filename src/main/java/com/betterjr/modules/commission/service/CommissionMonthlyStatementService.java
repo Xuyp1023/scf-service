@@ -28,7 +28,7 @@ import com.betterjr.modules.commission.entity.CommissionMonthlyStatement;
 import com.betterjr.modules.commission.entity.CommissionMonthlyStatementRecord;
 import com.betterjr.modules.config.dubbo.interfaces.IDomainAttributeService;
 import com.betterjr.modules.document.entity.CustFileItem;
-import com.betterjr.modules.flie.service.FileDownService;
+import com.betterjr.modules.flie.service.JxlsFileService;
 
 /***
  * 月报表服务类型
@@ -45,9 +45,9 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
     @Reference(interfaceClass=IDomainAttributeService.class)
     private IDomainAttributeService domainAttributeDubboClientService;
     @Autowired
-    private FileDownService fileDownService;
-    @Autowired
     private CustAccountService custAccountService; 
+    @Autowired
+    private JxlsFileService jxlsFileService;
      
     /***
      * 保存月报表记录
@@ -74,7 +74,7 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
         
         logger.info("saveComissionMonthlyStatement payResult:"+payResult);
         monthlyStatement.setTotalAmount(new BigDecimal(payResult.getTotalAmount()));
-        monthlyStatement.setPayTotalAmount(new BigDecimal(payResult.getTotalAmount()));
+        monthlyStatement.setPayTotalAmount(new BigDecimal(payResult.getPaySuccessAmount()));
         monthlyStatement.setPaySuccessAmount(new BigDecimal(payResult.getPaySuccessAmount()));
         monthlyStatement.setPaySuccessBalance(payResult.getPaySuccessBalance()==null?new BigDecimal(0):payResult.getPaySuccessBalance());
         monthlyStatement.setPayFailureAmount(new BigDecimal(payResult.getPayFailureAmount()));
@@ -119,13 +119,16 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
         // 生成文件
         Map<String, Object> fileMap=new HashMap<String, Object>();
         fileMap.put("monthly", monthlyStatement);
-        fileMap.put("recordList",monthlyRecordList);
-        CustFileItem custFile = fileDownService.uploadCommissionRecordFileis(fileMap, fileId, BetterDateUtils.formatMonthDispay(monthlyStatement.getBillMonth())+"-对账单"+fileType);
-        logger.info("saveComissionMonthlyStatement,custFile:"+custFile);
-        monthlyStatement.setFileId(custFile.getId());
-        monthlyStatement.setBatchNo(custFile.getBatchNo());
-        this.updateByPrimaryKey(monthlyStatement);
-        
+        try {
+            CustFileItem custFile =jxlsFileService.transformXLSFile(monthlyRecordList, fileMap, fileId, 22, 24, BetterDateUtils.formatMonthDispay(monthlyStatement.getBillMonth())+"-对账单"+fileType);
+            logger.info("生成后的文件，custFile:"+custFile);
+            monthlyStatement.setFileId(custFile.getId());
+            monthlyStatement.setBatchNo(custFile.getBatchNo());
+            this.updateByPrimaryKey(monthlyStatement);
+        }
+        catch (Exception e) {
+            logger.error("异常："+e);
+        }
         return monthlyStatement;
     }
 

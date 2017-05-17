@@ -69,6 +69,24 @@
 			<artifactId>jsoup</artifactId>
 			<version>1.8.3</version>
 		</dependency>
+  
+         <!-- https://mvnrepository.com/artifact/net.sf.jxls/jxls-core -->
+         <dependency>
+             <groupId>net.sf.jxls</groupId>
+             <artifactId>jxls-core</artifactId>
+             <version>1.0.6</version>
+         </dependency>
+         
+         <!-- https://mvnrepository.com/artifact/net.sf.jxls/jxls-reader -->
+         <dependency>
+             <groupId>net.sf.jxls</groupId>
+             <artifactId>jxls-reader</artifactId>
+             <version>1.0.6</version>
+         </dependency>
+         
+
+
+           
 	</dependencies>
 
 	<packaging>war</packaging>
