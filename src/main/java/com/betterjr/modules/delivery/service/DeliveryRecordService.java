@@ -304,6 +304,7 @@ public class DeliveryRecordService extends BaseService<DeliveryRecordMapper, Del
             statement.setPayTotalSuccessBlance(monthly.getPayTotalBalance());
             blance= MathExtend.add(blance, monthly.getInterestBalance());
             recordAmount= MathExtend.add(recordAmount, monthly.getPayTotalAmount());
+            statement.setInterestBalance(monthly.getInterestBalance());
             statement.setPayTotalSuccessitems(monthly.getPayTotalAmount());
             statement.setFileId(monthly.getFileId());
             statement.setTotalAmount(monthly.getTotalAmount());

@@ -58,6 +58,10 @@ public class DeliveryRecordStatement implements BetterjrEntity {
     //总金额
     @Column(name = "F_TOTAL_BLANCE",  columnDefinition="DECIMAL" )
     private BigDecimal totalBlance;
+    
+    //付款成功+税额+佣金
+    @Column(name = "F_INTEREST_BALANCE",  columnDefinition="DECIMAL" )
+    private BigDecimal interestBalance;
 
     //总的佣金笔数
     @Column(name = "N_TOTAL_AMOUNT",  columnDefinition="INTEGER" )
@@ -140,6 +144,14 @@ public class DeliveryRecordStatement implements BetterjrEntity {
 
     public void setBillMonth(String anBillMonth) {
         this.billMonth = anBillMonth;
+    }
+
+    public BigDecimal getInterestBalance() {
+        return this.interestBalance;
+    }
+
+    public void setInterestBalance(BigDecimal anInterestBalance) {
+        this.interestBalance = anInterestBalance;
     }
 
     public String getExpressStatus() {
@@ -475,13 +487,13 @@ public class DeliveryRecordStatement implements BetterjrEntity {
     public String toString() {
         return "DeliveryRecordStatement [id=" + this.id + ", deliverId=" + this.deliverId + ", deliverRefNo=" + this.deliverRefNo
                 + ", monthlyStatementId=" + this.monthlyStatementId + ", monthlyStatementRefNo=" + this.monthlyStatementRefNo + ", payBeginDate="
-                + this.payBeginDate + ", payEndDate=" + this.payEndDate + ", totalBlance=" + this.totalBlance + ", totalAmount=" + this.totalAmount
-                + ", payTotalSuccessBlance=" + this.payTotalSuccessBlance + ", payTotalSuccessitems=" + this.payTotalSuccessitems
-                + ", payTotalFailureBlance=" + this.payTotalFailureBlance + ", payTotalFailureitems=" + this.payTotalFailureitems + ", ownCustNo="
-                + this.ownCustNo + ", ownCustName=" + this.ownCustName + ", ownOperOrg=" + this.ownOperOrg + ", businStatus=" + this.businStatus
-                + ", expressStatus=" + this.expressStatus + ", billMonth=" + this.billMonth + ", operOrg=" + this.operOrg + ", regOperId="
-                + this.regOperId + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", version="
-                + this.version + ", fileId=" + this.fileId + "]";
+                + this.payBeginDate + ", payEndDate=" + this.payEndDate + ", totalBlance=" + this.totalBlance + ", interestBalance="
+                + this.interestBalance + ", totalAmount=" + this.totalAmount + ", payTotalSuccessBlance=" + this.payTotalSuccessBlance
+                + ", payTotalSuccessitems=" + this.payTotalSuccessitems + ", payTotalFailureBlance=" + this.payTotalFailureBlance
+                + ", payTotalFailureitems=" + this.payTotalFailureitems + ", ownCustNo=" + this.ownCustNo + ", ownCustName=" + this.ownCustName
+                + ", ownOperOrg=" + this.ownOperOrg + ", businStatus=" + this.businStatus + ", expressStatus=" + this.expressStatus + ", billMonth="
+                + this.billMonth + ", operOrg=" + this.operOrg + ", regOperId=" + this.regOperId + ", regOperName=" + this.regOperName + ", regDate="
+                + this.regDate + ", regTime=" + this.regTime + ", version=" + this.version + ", fileId=" + this.fileId + "]";
     }
 
     public void saveAddInit() {
