@@ -100,6 +100,7 @@ protected final Logger logger = LoggerFactory.getLogger(this.getClass().getName(
                 totalPage = 1;
             }
         }
+        int diff = pageSize - fristPageSize;
         List<Page> objects = new ArrayList<Page>();
         for (int pageIndex = 0; pageIndex < totalPage; pageIndex++) {
             Page page = new Page();
@@ -121,16 +122,16 @@ protected final Logger logger = LoggerFactory.getLogger(this.getClass().getName(
                 }
             }  else if (pageIndex == totalPage - 1) {
                 List list = new ArrayList();
-                List subList=resultList.subList(pageIndex * pageSize, total);
+                List subList=resultList.subList(pageIndex * pageSize - diff, total);
                 list.addAll(subList);
                 for(int m=0;m<pageSize-subList.size();m++){
                     list.add(new HashMap());
                 }
-                page.setPageSize(pageSize);
+                page.setPageSize(subList.size());
                 page.setList(list);
             } else {
-                page.setPageSize(pageIndex * pageSize + pageSize - pageIndex * pageSize);
-                page.setList(resultList.subList(pageIndex * pageSize, pageIndex * pageSize + pageSize));
+                page.setPageSize(pageSize);
+                page.setList(resultList.subList(pageIndex * pageSize - diff, pageIndex * pageSize + pageSize - diff));
             }
             objects.add(page);
         }
