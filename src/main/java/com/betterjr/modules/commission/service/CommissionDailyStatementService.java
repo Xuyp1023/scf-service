@@ -119,8 +119,8 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         anMonth=anMonth.replaceAll("-", "")+"01";
         // 不管是几月在将月份改为1-31 号，作为条件查询
         Map<String,Object> monthMap=new HashMap<String, Object>();
-        monthMap.put("startDate", CommissionDateUtils.getMinMonthDate(anMonth));
-        monthMap.put("endDate", CommissionDateUtils.getMaxMonthDate(anMonth));
+        monthMap.put("payBeginDate", CommissionDateUtils.getMinMonthDate(anMonth));
+        monthMap.put("payEndDate", CommissionDateUtils.getMaxMonthDate(anMonth));
         monthMap.put("ownCustNo", anCustNo);
         CalcPayResult payResult=this.mapper.selectDailyStatementCount(monthMap); // 查询所有记录数
         logger.info("payResult:"+payResult);
@@ -143,8 +143,8 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         String endDate=CommissionDateUtils.getMaxMonthDate(month);
         // 根据对账月份查询
         Map<String,Object> monthMap=new HashMap<String, Object>();
-        monthMap.put("startDate", startDate);
-        monthMap.put("endDate", endDate);
+        monthMap.put("payBeginDate", startDate);
+        monthMap.put("payEndDate", endDate);
         monthMap.put("ownCustNo", anOwnCustNo);
 
         long time = BetterDateUtils.parseDate(BetterDateUtils.getNumMonth()).getTime()-BetterDateUtils.parseDate(billMonth).getTime();
@@ -167,12 +167,17 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         BigDecimal totalPayBalance=new BigDecimal(0.00);// 总发生金额
         BigDecimal totalInterset=new BigDecimal(0.00);// 总利息
         BigDecimal totalTaxBalance=new BigDecimal(0.00);// 总税额
+        BigDecimal interestBalance=new BigDecimal(0.00);// 结算金额
+        BigDecimal paySuccessBalance=new BigDecimal(0.00);// 成功金额
+        
         List<CommissionDailyStatement> resultDailyStatementList=new ArrayList<CommissionDailyStatement>();
         
         monthMap=getConfigData();
         
         BigDecimal rate=new BigDecimal(monthMap.get("interestRate").toString()); 
         BigDecimal taxRate=new BigDecimal(monthMap.get("taxRate").toString());
+        
+        
         
         // 获取日账单的列表，并计算好利息
         List<CommissionDailyStatement> dailyStatementList=findCpsDailyStatementByMonth(billMonth,anOwnCustNo,"2");
@@ -187,10 +192,12 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
             BigDecimal taxBalance = getTaxBalance(payTotalBalance,interset,taxRate);
             
             logger.info("每日利息：dailyStatement refNo:"+dailyStatement.getRefNo()+"，interset:"+interset+"，每日税额："+taxBalance);
-            totalBalance=MathExtend.add(MathExtend.add(MathExtend.add(totalBalance, payTotalBalance), interset),taxBalance);
+            totalBalance=MathExtend.add(totalBalance, dailyStatement.getTotalBalance());
+            interestBalance=MathExtend.add(MathExtend.add(MathExtend.add(interestBalance, payTotalBalance), interset),taxBalance);
             totalPayBalance=MathExtend.add(totalPayBalance, payTotalBalance);
             totalInterset=MathExtend.add(totalInterset, interset);
             totalTaxBalance=MathExtend.add(totalTaxBalance, taxBalance);
+            paySuccessBalance=MathExtend.add(dailyStatement.getPaySuccessBalance(), paySuccessBalance);
             // 更新日报表利息
             dailyStatement.setInterest(interset);
             dailyStatement.setInterestRate(rate);
@@ -212,8 +219,9 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         monthMap.put("taxBalance", totalTaxBalance);
         monthMap.put("dailyList", resultDailyStatementList);
         monthMap.put("makeDateTime", BetterDateUtils.getDateTime());
-        monthMap.put("endInterestDate", anEndInterestDate);       
-        
+        monthMap.put("endInterestDate", anEndInterestDate);
+        monthMap.put("interestBalance", interestBalance);
+        monthMap.put("paySuccessBalance", paySuccessBalance);
         return monthMap;
     }
     
@@ -237,14 +245,24 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         CommissionDailyStatement dailyStatement=this.selectByPrimaryKey(anDailyStatementId);
         dailyStatement.setLastStatus(dailyStatement.getBusinStatus());
         dailyStatement.setBusinStatus(anBusinStatus);
+        
+        if(BetterStringUtils.equalsIgnoreCase("9", anBusinStatus)){
+            saveRecordStatus(dailyStatement.getPayDate(),dailyStatement.getOwnCustNo(),"2");
+        }
         return this.updateByPrimaryKey(dailyStatement)>0;
     }
     
     public boolean delDailyStatement(Long anDailyStatementId){
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
+        CommissionDailyStatement dailyStatement=this.selectByPrimaryKey(anDailyStatementId);
+        // 删除之前先回写佣金数据状态
+        saveRecordStatus(dailyStatement.getPayDate(),dailyStatement.getOwnCustNo(),"2");
+        // 删除记录表数据
+        dailyStatementRecordService.delDailyStatementRecord(anDailyStatementId, dailyStatement.getRefNo());
+        
         return this.deleteByPrimaryKey(anDailyStatementId)>0;
     }
-
+    
     /***
      * 查询佣金记录数
      * @param anPayDate
@@ -278,7 +296,8 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
      */
     public Map<String, Object> findPayResultInfo(String anPayDate,Long anOwnCustNo){
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
-         if(findDailyStatementByPayDate(anPayDate, anOwnCustNo)){
+        String[] businStatusArr=new String[]{"0","1","2","3"};
+         if(findDailyStatementByPayDate(anPayDate, anOwnCustNo,businStatusArr)){
              throw new BytterTradeException("当前日期已经生成日对账单");
          }
          
@@ -306,6 +325,9 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
          resultMp.put("ownCustName", custAccountService.queryCustName(anOwnCustNo));
          resultMp.put("totalAmount", payResult.getTotalAmount());
          resultMp.put("makeDateTime", BetterDateUtils.getDateTime());
+         resultMp.put("paySuccessBalance", payResult.getPaySuccessBalance());
+         resultMp.put("paySuccessAmount", payResult.getPaySuccessAmount());
+         
          return resultMp;
     }
     
@@ -386,14 +408,19 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         dailyStatement.setBatchNo(custFile.getBatchNo());
         this.updateByPrimaryKey(dailyStatement);
         
+        // 回写生成日报表的记录状态      
+        saveRecordStatus(anPayDate,anOwnCustNo,"3");
+        
+        return dailyStatement;
+    }
+    
+    public void saveRecordStatus(String anPayDate,Long anOwnCustNo,String anBusinStatus){
         // 回写生成日报表的记录状态        
         Map<String,Object> anMap=new HashMap<String, Object>();
-        anMap.put("businStatus", "3");
+        anMap.put("businStatus", anBusinStatus);
         anMap.put("payDate", anPayDate);
         anMap.put("ownCustNo", anOwnCustNo);
         BTAssert.isTrue(payResultRecordService.saveRecordStatus(anMap)>0, "回写佣金状态记录异常");
-        
-        return dailyStatement;
     }
     
     public CommissionDailyStatement findDailyStatementById(Long anDailyStatementId){
@@ -414,11 +441,14 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
      * @param anOwnCustNo 对账企业客户号
      * @return 是否存在
      */
-    public boolean findDailyStatementByPayDate(String anPayDate,Long anOwnCustNo){
+    public boolean findDailyStatementByPayDate(String anPayDate,Long anOwnCustNo,String[] anBusinStatus){
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
         Map<String,Object> anMap=new HashMap<String, Object>();
         anMap.put("payDate", anPayDate);
         anMap.put("ownCustNo", anOwnCustNo);
+        if(anBusinStatus!=null && anBusinStatus.length>0){
+            anMap.put("businStatus", anBusinStatus);
+        }
         
         List<CommissionDailyStatement> dailyList=this.selectByProperty(anMap);
         if(dailyList!=null && dailyList.size()>0){

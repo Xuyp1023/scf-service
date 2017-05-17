@@ -69,7 +69,9 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
         if(custInfo!=null){
             monthlyStatement.setOwnOperOrg(custInfo.getOperOrg());
         }
+        
         CalcPayResult payResult=dailyStatementService.findDailyStatementCount(anParam);
+        
         logger.info("saveComissionMonthlyStatement payResult:"+payResult);
         monthlyStatement.setTotalAmount(new BigDecimal(payResult.getTotalAmount()));
         monthlyStatement.setPayTotalAmount(new BigDecimal(payResult.getTotalAmount()));
@@ -195,11 +197,26 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
         CommissionMonthlyStatement monthlyStatement=this.selectByPrimaryKey(anMonthlyId);
         monthlyStatement.setLastStatus(monthlyStatement.getBusinStatus());
         monthlyStatement.setBusinStatus(anBusinStatus);
+        
+        if(BetterStringUtils.equalsIgnoreCase("9", anBusinStatus)){
+            List<CommissionMonthlyStatementRecord> recordList=monthlyRecordService.findMonthlyStatementRecord(monthlyStatement.getId(), monthlyStatement.getRefNo());
+            for(CommissionMonthlyStatementRecord record:recordList){
+                dailyStatementService.saveDailyStatementById(record.getDailyStatementId(), "2");
+            }
+        }
+        
         return this.updateByPrimaryKey(monthlyStatement)>0;
     }
     
     public boolean delMonthlyStatement(Long anMonthlyId){
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
+        CommissionMonthlyStatement monthlyStatement=this.selectByPrimaryKey(anMonthlyId);
+        List<CommissionMonthlyStatementRecord> recordList=monthlyRecordService.findMonthlyStatementRecord(monthlyStatement.getId(), monthlyStatement.getRefNo());
+        for(CommissionMonthlyStatementRecord record:recordList){
+            // 删除之前先回写日账单状态
+            dailyStatementService.saveDailyStatementById(record.getDailyStatementId(), "2");
+            monthlyRecordService.delete(record);
+        }
         return this.deleteByPrimaryKey(anMonthlyId)>0;
     }
     
@@ -213,6 +230,7 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
         Map<String,Object> anMap=new HashMap<String, Object>();
         anMap.put("billMonth", anBillMonth);
         anMap.put("ownCustNo", ownCustNo);
+        anMap.put("businStatus", new String[]{"0","1","2","3","4"});
         return this.selectByProperty(anMap);
     }
     
