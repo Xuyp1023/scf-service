@@ -33,7 +33,7 @@ public class CommissionConstantCollentions {
     
     public static final Long COMMISSION_FILE_DOWN_FILEITEM_FILEID=1005043l;//文件下载模版
     
-    public static final Integer COMMISSION_FILE_RESOLVE_SLEEP_TIME=10;//文件解析睡眠时间
+    public static final Integer COMMISSION_FILE_RESOLVE_SLEEP_TIME=60;//文件解析睡眠时间
     
     public static final String COMMISSION_FILE_RESOLVE_SUFFIX_KEY="COMMISSIONFILERESOLVE";//佣金文件解析前缀
 
