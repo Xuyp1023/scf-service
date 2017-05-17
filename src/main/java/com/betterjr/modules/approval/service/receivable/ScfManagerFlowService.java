@@ -20,7 +20,7 @@ public class ScfManagerFlowService extends ScfBaseApprovalService{
 	public void processCancel(Map<String, Object> anContext) {
 		String requestNo  = anContext.get("requestNo").toString();
 		BTAssert.notNull(requestNo);
-		ScfRequest request = requestService.findRequestByRequestNo(requestNo);
+		ScfRequest request = this.getReqtuest(requestNo);
 		this.releaseSource(request);
 		this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.CLOSED.getCode(), RequestLastStatus.CLOSED.getCode());
 		this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
@@ -34,6 +34,6 @@ public class ScfManagerFlowService extends ScfBaseApprovalService{
 		String requestNo  = anContext.get("requestNo").toString();
 		BTAssert.notNull(requestNo);
 		this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.FINISH_LOAN.getCode(), RequestLastStatus.LOAN.getCode());
-		//this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
+		//this.pushOrderInfo(request);
 	}
 }

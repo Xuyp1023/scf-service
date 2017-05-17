@@ -68,13 +68,13 @@ public class ScfReceApprovalDubboService implements IScfReceApprovalFlowDubboSer
 	
 	@Override
 	public Map<String, Object> application(Map<String, Object> anContext){
-		//applicationService.savApplication(anRequest)
+		applicationService.savApplication(anContext);
 		return anContext;
 	}
 	
 	@Override
-	public Map<String, Object> applicationReview(Map<String, Object> anContext, int resultType){
-		if (PROCESS_PASS == resultType) {
+	public Map<String, Object> applicationReview(Map<String, Object> anContext, int anResultType){
+		if (PROCESS_PASS == anResultType) {
 			applicationReviewService.processPass(anContext);
 		} else {
 			applicationReviewService.processReject(anContext);
@@ -89,8 +89,8 @@ public class ScfReceApprovalDubboService implements IScfReceApprovalFlowDubboSer
 	}
 	
 	@Override
-	public Map<String, Object> riskControl(Map<String, Object> anContext, int resultType){
-		if (PROCESS_PASS == resultType) {
+	public Map<String, Object> riskControl(Map<String, Object> anContext, int anResultType){
+		if (PROCESS_PASS == anResultType) {
 			riskControlService.processPass(anContext);
 		} else {
 			riskControlService.processReject(anContext);
@@ -105,8 +105,8 @@ public class ScfReceApprovalDubboService implements IScfReceApprovalFlowDubboSer
 	}
 	
 	@Override
-	public Map<String, Object> schemeReview(Map<String, Object> anContext, int resultType){
-		if (PROCESS_PASS == resultType) {
+	public Map<String, Object> schemeReview(Map<String, Object> anContext, int anResultType){
+		if (PROCESS_PASS == anResultType) {
 			schemeReviewService.processPass(anContext);
 		} else {
 			schemeReviewService.processReject(anContext);
@@ -115,8 +115,8 @@ public class ScfReceApprovalDubboService implements IScfReceApprovalFlowDubboSer
 	}
 	
 	@Override
-	public Map<String, Object> schemeConfirm(Map<String, Object> anContext, int resultType){
-		if (PROCESS_PASS == resultType) {
+	public Map<String, Object> schemeConfirm(Map<String, Object> anContext, int anResultType){
+		if (PROCESS_PASS == anResultType) {
 			schemeConfirmService.processPass(anContext);
 		} else {
 			schemeConfirmService.processReject(anContext);
@@ -125,8 +125,8 @@ public class ScfReceApprovalDubboService implements IScfReceApprovalFlowDubboSer
 	}
 	
 	@Override
-	public Map<String, Object> confirmTradingBackgrand(Map<String, Object> anContext, int resultType){
-		if (PROCESS_PASS == resultType) {
+	public Map<String, Object> confirmTradingBackgrand(Map<String, Object> anContext, int anResultType){
+		if (PROCESS_PASS == anResultType) {
 			confirmTradingBackgrandService.processPass(anContext);
 		} else {
 			confirmTradingBackgrandService.processReject(anContext);
@@ -141,8 +141,8 @@ public class ScfReceApprovalDubboService implements IScfReceApprovalFlowDubboSer
 	}
 	
 	@Override
-	public Map<String, Object> signReview(Map<String, Object> anContext, int resultType) {
-		if (PROCESS_PASS == resultType) {
+	public Map<String, Object> signReview(Map<String, Object> anContext, int anResultType) {
+		if (PROCESS_PASS == anResultType) {
 			signReviewService.processPass(anContext);
 		} else {
 			signReviewService.processReject(anContext);
@@ -163,8 +163,8 @@ public class ScfReceApprovalDubboService implements IScfReceApprovalFlowDubboSer
 	}
 	
 	@Override
-	public Map<String, Object> loanReview(Map<String, Object> anContext, int resultType) {
-		if (PROCESS_PASS == resultType) {
+	public Map<String, Object> loanReview(Map<String, Object> anContext, int anResultType) {
+		if (PROCESS_PASS == anResultType) {
 			loanReviewService.processPass(anContext);
 		} else {
 			loanReviewService.processReject(anContext);
