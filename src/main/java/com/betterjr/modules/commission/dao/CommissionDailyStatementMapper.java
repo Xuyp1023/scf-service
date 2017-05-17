@@ -25,11 +25,11 @@ public interface CommissionDailyStatementMapper extends Mapper<CommissionDailySt
             + " where D_PAY_DATE>=#{payBeginDate} and D_PAY_DATE<=#{payEndDate} and L_OWN_CUSTNO=#{ownCustNo} and C_BUSIN_STATUS in ('0','1','2')"
             + ") as t1,"
             + "("
-            + "select count(ID) as totalCount,sum(F_TOTAL_BALANCE) as totalBalance from t_cps_daily_statement "
+            + "select count(ID) as totalCount,sum(F_PAY_SUCCESS_BALANCE) as totalBalance from t_cps_daily_statement "
             + " where D_PAY_DATE>=#{payBeginDate} and D_PAY_DATE<=#{payEndDate} and L_OWN_CUSTNO=#{ownCustNo} and C_BUSIN_STATUS in ('2')"
             + ") as t2,"
             + "("
-            + "select count(ID) as totalCount,sum(F_TOTAL_BALANCE) as totalBalance from t_cps_daily_statement "
+            + "select count(ID) as totalCount,sum(F_PAY_FAILURE_BALANCE) as totalBalance from t_cps_daily_statement "
             + " where D_PAY_DATE>=#{payBeginDate} and D_PAY_DATE<=#{payEndDate} and L_OWN_CUSTNO=#{ownCustNo} and C_BUSIN_STATUS in ('0','1')"
             + ") as t3"
             + ")")

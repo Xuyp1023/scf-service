@@ -23,7 +23,7 @@ public class CommissionMonthlyStatementDubboservice implements ICommissionMonthl
             return AjaxObject.newOk("月报表添加成功",  monthlyStatementService.saveComissionMonthlyStatement(anParam)).toJson();
         } 
         catch (Exception e) {
-            BTAssert.notNull(null, "新增月报表出错:"+e.getMessage());
+            BTAssert.notNull(null, e.getMessage());
         }
         return null;
     }
@@ -34,7 +34,7 @@ public class CommissionMonthlyStatementDubboservice implements ICommissionMonthl
             return AjaxObject.newOkWithPage("查询月账单列表", monthlyStatementService.queryMonthlyStatement(anParam, anPageNum, anPageSize)).toJson();
         }
         catch (ParseException e) {
-            BTAssert.notNull(null, "查询月账单出错："+e.getMessage());
+            BTAssert.notNull(null, e.getMessage());
         }
         return null;
     }

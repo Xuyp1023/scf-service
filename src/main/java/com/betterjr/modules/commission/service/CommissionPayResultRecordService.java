@@ -260,7 +260,7 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
      * @param anPageSize
      * @return
      */
-    protected Page<CommissionPayResultRecord> queryAllPayResultRecords(final Long anCustNo, final String anPayDate,final String anPayStatus, final int anFlag, final int anPageNum, final int anPageSize) {
+    protected Page<CommissionPayResultRecord> queryAllPayResultRecords(final Long anCustNo, final String anPayDate,final String anPayStatus,final int anFlag, final int anPageNum, final int anPageSize) {
 
         final Map<String, Object> conditionMap = new HashMap<>();
         conditionMap.put("payDate", anPayDate);
@@ -268,6 +268,7 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
         if(BetterStringUtils.isNotBlank(anPayStatus)){
             conditionMap.put("payResult", anPayStatus);
         }
+        conditionMap.put("businStatus", new String[]{"0","1","2"});
 
         return this.selectPropertyByPage(conditionMap, anPageNum, anPageSize, anFlag == 1);
     }

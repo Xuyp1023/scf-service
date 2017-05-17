@@ -714,7 +714,7 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
         this.ownCustName= (String)anMap.get("ownCustName");
         this.billMonth= (String)anMap.get("billMonth");
         this.totalBalance=new BigDecimal((String)anMap.get("totalBalance"));
-        this.payTotalBalance = new BigDecimal((String)anMap.get("payTotalBalance"));
+        this.payTotalBalance = new BigDecimal((String)anMap.get("paySuccessBalance"));
         this.ownCustNo=Long.parseLong((String)anMap.get("ownCustNo"));
         this.endInterestDate=(String)anMap.get("endInterestDate");
         String totalInterset= (String)anMap.get("interest")==""?"0":(String)anMap.get("interest");

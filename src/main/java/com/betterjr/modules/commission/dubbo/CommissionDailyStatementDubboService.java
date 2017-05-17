@@ -27,7 +27,7 @@ public class CommissionDailyStatementDubboService implements ICommissionDailySta
             return AjaxObject.newOk("查询月账单统计数据",dailyStatementService.findDailyStatementCount(anMonth, anCustNo)).toJson();   
         }
         catch (Exception e) {
-            BTAssert.notNull(null, "查询月账单统计数据异常："+e);
+            BTAssert.notNull(null, e.getMessage());
         }
         return null;
     }
@@ -38,7 +38,7 @@ public class CommissionDailyStatementDubboService implements ICommissionDailySta
             return AjaxObject.newOk("根据对账月份查询日账单列表",dailyStatementService.findCpsDailyStatementByMonth(anMonth, anCustNo,anBusinStatus)).toJson();   
         }
         catch (Exception e) {
-            BTAssert.notNull(null, "根据对账月份查询日账单列表异常："+e);
+            BTAssert.notNull(null, e.getMessage());
         }
         return null;
     }
@@ -51,7 +51,7 @@ public class CommissionDailyStatementDubboService implements ICommissionDailySta
             return AjaxObject.newOk("查询当月日账单基础信息",dailyStatementService.findDailyStatementBasicsInfo(anParam)).toJson();
         }
         catch (Exception e) {
-            BTAssert.notNull(null, "查询当月日账单基础信息异常："+e);
+            BTAssert.notNull(null, e.getMessage());
         }
         return null;
     }

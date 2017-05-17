@@ -32,6 +32,7 @@ import com.betterjr.modules.commission.util.CommissionDateUtils;
 import com.betterjr.modules.config.dubbo.interfaces.IDomainAttributeService;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.flie.service.FileDownService;
+import com.betterjr.modules.flie.service.JxlsFileService;
 import com.betterjr.modules.generator.SequenceFactory;
 /***
  * 日账单服务类
@@ -182,7 +183,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         // 获取日账单的列表，并计算好利息
         List<CommissionDailyStatement> dailyStatementList=findCpsDailyStatementByMonth(billMonth,anOwnCustNo,"2");
         for(CommissionDailyStatement dailyStatement:dailyStatementList){
-            BigDecimal payTotalBalance= dailyStatement.getPayTotalBalance();
+            BigDecimal payTotalBalance= dailyStatement.getPaySuccessBalance();
             String payDate=dailyStatement.getPayDate();
             long lTerm = BetterDateUtils.parseDate(anEndInterestDate).getTime()-BetterDateUtils.parseDate(payDate).getTime();
             lTerm=lTerm/(24*60*60*1000);
@@ -369,8 +370,8 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         
         dailyStatement.setTotalBalance(payResult.getTotalBalance()==null?new BigDecimal(0):payResult.getTotalBalance());
         dailyStatement.setTotalAmount(new BigDecimal(payResult.getTotalAmount()));
-        dailyStatement.setPayTotalBalance(payResult.getTotalBalance()==null?new BigDecimal(0):payResult.getTotalBalance());
-        dailyStatement.setPayTotalAmount(new BigDecimal(payResult.getTotalAmount()));
+        dailyStatement.setPayTotalBalance(payResult.getPaySuccessBalance()==null?new BigDecimal(0):payResult.getPaySuccessBalance());
+        dailyStatement.setPayTotalAmount(new BigDecimal(payResult.getPaySuccessAmount()));
         dailyStatement.setPaySuccessAmount(new BigDecimal(payResult.getPaySuccessAmount()));
         dailyStatement.setPaySuccessBalance(payResult.getPaySuccessBalance()==null?new BigDecimal(0):payResult.getPaySuccessBalance());
         dailyStatement.setPayFailureBalance(payResult.getPayFailureBalance()==null?new BigDecimal(0):payResult.getPayFailureBalance());
