@@ -154,7 +154,6 @@ public class ScfOrderDO extends BaseVersionEntity{
      */
     @Column(name = "L_MODI_OPERID",  columnDefinition="INTEGER" )
     @MetaData( value="编辑操作员编码", comments = "编辑操作员编码")
-    @JsonIgnore
     private Long modiOperId ;
 
     /**
@@ -162,7 +161,6 @@ public class ScfOrderDO extends BaseVersionEntity{
      */
     @Column(name = "C_MODI_OPERNAME",  columnDefinition="VARCHAR" )
     @MetaData( value="编辑操作员名字", comments = "编辑操作员名字")
-    @JsonIgnore
     private String modiOperName;
 
     /**

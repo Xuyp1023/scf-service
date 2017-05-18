@@ -151,14 +151,14 @@ public class ScfOrderDubboService implements IScfOrderService{
     public String webQueryIneffectiveOrder(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize,
             boolean anIsAudit) {
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk("订单查询成功", orderService.queryIneffectiveOrder(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize, anIsAudit)).toJson();
+        return AjaxObject.newOkWithPage("订单查询成功", orderService.queryIneffectiveOrder(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize, anIsAudit)).toJson();
     }
 
     @Override
     public String webQueryEffectiveOrder(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize,
             boolean anIsCust) {
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk("订单查询成功", orderService.queryEffectiveOrder(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize, anIsCust)).toJson();
+        return AjaxObject.newOkWithPage("订单查询成功", orderService.queryEffectiveOrder(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize, anIsCust)).toJson();
     }
 
     @Override
