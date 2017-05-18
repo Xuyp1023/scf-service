@@ -199,6 +199,13 @@ public class ScfOrderDO extends BaseVersionEntity{
     @Column(name = "N_BATCHNO",  columnDefinition="INTEGER" )
     @MetaData( value="订单附件", comments = "订单附件，对应fileinfo中的ID")
     private Long batchNo;
+    
+    /**
+     * 解析记录文件id
+     */
+    @Column(name = "N_RESOLVEFILE_ID",  columnDefinition="INTEGER" )
+    @MetaData( value=" 解析记录文件id", comments = " 解析记录文件id")
+    private Long resolveFileId;
 
     /**
      * 数据来源, 0:关联单据默认生成, 1:用户录入 2:excel 导入
@@ -414,6 +421,14 @@ public class ScfOrderDO extends BaseVersionEntity{
         this.regTime = anRegTime;
     }
 
+    public Long getResolveFileId() {
+        return this.resolveFileId;
+    }
+
+    public void setResolveFileId(Long anResolveFileId) {
+        this.resolveFileId = anResolveFileId;
+    }
+
     public ScfOrderDO() {
         super();
     }
@@ -421,16 +436,12 @@ public class ScfOrderDO extends BaseVersionEntity{
     @Override
     public String toString() {
         return "ScfOrderDO [orderNo=" + this.orderNo + ", btOrderNo=" + this.btOrderNo + ", btNo=" + this.btNo + ", custNo=" + this.custNo
-                + ", custName=" + this.custName + ", orderType=" + this.orderType + ", regDate=" + this.regDate + ", goodsName=" + this.goodsName
-                + ", orderDate=" + this.orderDate + ", endDate=" + this.endDate + ", unit=" + this.unit + ", amount=" + this.amount + ", balance="
-                + this.balance + ", coreCustNo=" + this.coreCustNo + ", coreCustName=" + this.coreCustName + ", modiOperId=" + this.modiOperId
-                + ", modiOperName=" + this.modiOperName + ", operOrg=" + this.operOrg + ", modiDate=" + this.modiDate + ", modiTime=" + this.modiTime
-                + ", settlement=" + this.settlement + ", batchNo=" + this.batchNo + ", dataSource=" + this.dataSource + ", description="
-                + this.description + ", getRefNo()=" + this.getRefNo() + ", getVersion()=" + this.getVersion() + ", getIsLatest()="
-                + this.getIsLatest() + ", getBusinStatus()=" + this.getBusinStatus() + ", getLockedStatus()=" + this.getLockedStatus()
-                + ", getDocStatus()=" + this.getDocStatus() + ", getAuditOperId()=" + this.getAuditOperId() + ", getAuditOperName()="
-                + this.getAuditOperName() + ", getAuditData()=" + this.getAuditData() + ", getAuditTime()=" + this.getAuditTime() + ", getId()="
-                + this.getId() + "]";
+                + ", custName=" + this.custName + ", orderType=" + this.orderType + ", regDate=" + this.regDate + ", regTime=" + this.regTime
+                + ", goodsName=" + this.goodsName + ", orderDate=" + this.orderDate + ", endDate=" + this.endDate + ", unit=" + this.unit
+                + ", amount=" + this.amount + ", balance=" + this.balance + ", coreCustNo=" + this.coreCustNo + ", coreCustName=" + this.coreCustName
+                + ", modiOperId=" + this.modiOperId + ", modiOperName=" + this.modiOperName + ", operOrg=" + this.operOrg + ", modiDate="
+                + this.modiDate + ", modiTime=" + this.modiTime + ", settlement=" + this.settlement + ", batchNo=" + this.batchNo + ", resolveFileId="
+                + this.resolveFileId + ", dataSource=" + this.dataSource + ", description=" + this.description + "]";
     }
 
     @Override

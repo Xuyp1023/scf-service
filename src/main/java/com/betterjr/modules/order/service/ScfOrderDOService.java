@@ -378,7 +378,7 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
             }
             catch (Exception e) {
                 logger.info("第"+i+"行的数据有问题,请重新上传"+" "+e.getMessage());
-                BTAssert.notNull(null,"第"+i+"行的数据有问题,请重新上传"); 
+                BTAssert.notNull(null,"第"+i+"行的数据有问题,请重新上传"+e.getMessage()); 
             }
         }
         

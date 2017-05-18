@@ -3,6 +3,7 @@ package com.betterjr.modules.flie.service;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -22,6 +23,7 @@ import com.betterjr.common.mq.annotation.RocketMQListener;
 import com.betterjr.common.mq.message.MQMessage;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.Collections3;
+import com.betterjr.common.utils.FileUtils;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillDOService;
 import com.betterjr.modules.asset.data.AssetConstantCollentions;
 import com.betterjr.modules.document.ICustFileService;
@@ -65,17 +67,19 @@ public class CustomerResolveService {
         String[] filterProperties=new String[]{"regDate","regTime","modiOperId","modiOperName","operOrg"
                                                 ,"custNo","coreCustNo","batchNo"};
         Map<String, Object> resolveFileMap = transBean2Map(resolveFile,filterProperties);
+        resolveFileMap.put("resolveFileId", resolveFile.getId());
         try{
             String fileType = resolveFile.getFileType();
             if( ! ("xls".equals(fileType) || "xlsx".equals(fileType)) ){
-                BTAssert.notNull(null,"文件读取格式失败");
+                BTAssert.notNull(null,"文件读取格式失败,请上传excel文件");
             }
             //得到文件类型 1订单 2票据  3应收账款 4发票 5 合同
             String infoType=(String) message.getHead("infoType");
             //根据类型查找对应的列
-            List<CustFileCloumn> fileCloumnList=fileCloumnService.queryFileCloumnByInfoType(infoType,"1");
+            List<CustFileCloumn> fileCloumnList=fileCloumnService.queryFileCloumnByInfoType(infoType,FileResolveConstants.FILE_USED_UOLOAD);
             CustFileItem fileItem = custFileService.findOne(resolveFile.getFileItemId());//文件上次详情
             InputStream is = dataStoreService.loadFromStore(fileItem);
+           //FileUtils.copyInputStreamToFile(is, new File("d:\\788945.xlsx"));
             if(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_ORDER.equals(infoType)){
                 //获取
                 List<Map<String,Object>> listMap=convertListMap(is,fileCloumnList,resolveFileMap,fileType,FileResolveConstants.BEGIN_ROW_ORDER);
@@ -149,9 +153,15 @@ public class CustomerResolveService {
                  String fileColumnName=fileColumn.getCloumnName();
                  int fileColumnOrder=fileColumn.getCloumnOrder();
                  int isMust=fileColumn.getIsMust();
+                 String cloumnType = fileColumn.getCloumnType();
                  String stringCellValue = ExcelUtils.getStringCellValue(currentRow.getCell(fileColumnOrder));
                  if(StringUtils.isBlank(stringCellValue) && isMust==FileResolveConstants.RESOLVE_FILE_IS_MUST){
                      BTAssert.notNull(null,"第"+rowNum+"行的"+fileColumnName+"不能为空，请修改重试"); 
+                 }
+                 if(StringUtils.isNotBlank(stringCellValue) && "n".equals(cloumnType) ){
+                     if(! isNumber(stringCellValue)){
+                         BTAssert.notNull(null,"第"+rowNum+"行的"+fileColumnName+"必须为数字类型"); 
+                     }
                  }
                  map.put(fileColumnProperties, stringCellValue);
             }
@@ -160,6 +170,14 @@ public class CustomerResolveService {
          }
      
          return listMap;
+    }
+    
+    private boolean isNumber(String anValue){
+        if (!anValue.matches("\\d+(.\\d+)?[fF]?")) {
+            return false;
+        }
+        
+        return true;
     }
 
 // Bean --> Map 1: 利用Introspector和PropertyDescriptor 将Bean --> Map  
