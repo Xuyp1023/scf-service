@@ -1,4 +1,4 @@
-package com.betterjr.modules.service;
+package com.betterjr.modules.flie.service;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -31,7 +31,6 @@ import com.betterjr.modules.document.service.DataStoreService;
 import com.betterjr.modules.flie.data.ExcelUtils;
 import com.betterjr.modules.flie.data.FileResolveConstants;
 import com.betterjr.modules.flie.entity.CustFileCloumn;
-import com.betterjr.modules.flie.service.CustFileCloumnService;
 import com.betterjr.modules.order.service.ScfInvoiceDOService;
 import com.betterjr.modules.order.service.ScfOrderDOService;
 import com.betterjr.modules.receivable.service.ScfReceivableDOService;

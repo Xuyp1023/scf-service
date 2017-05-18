@@ -247,7 +247,7 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
              anMap.put("modiOperId", UserUtils.getOperatorInfo().getId());
          }
          
-         Page<ScfOrderDO> orderList = this.selectPropertyIneffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo desc");
+         Page<ScfOrderDO> orderList = this.selectPropertyIneffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
          
          return orderList;
      }
@@ -295,7 +295,7 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
              //anMap.put("coreCustNo", getCustNoList(custInfos));
          }
          
-         Page<ScfOrderDO> orderList = this.selectPropertyEffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo desc");
+         Page<ScfOrderDO> orderList = this.selectPropertyEffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
          
          return orderList;
      }
