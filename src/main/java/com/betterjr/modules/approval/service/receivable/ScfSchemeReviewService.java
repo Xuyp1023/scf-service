@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service;
 
 import com.betterjr.modules.approval.service.ScfBaseApprovalService;
 import com.betterjr.modules.loan.entity.ScfRequest;
-import com.betterjr.modules.loan.helper.RequestLastStatus;
-import com.betterjr.modules.loan.helper.RequestTradeStatus;
 
 /**
  * 融资-审核融资方案
@@ -18,12 +16,15 @@ import com.betterjr.modules.loan.helper.RequestTradeStatus;
 @Service
 public class ScfSchemeReviewService extends ScfBaseApprovalService {
 	
-	public void processPass(Map<String, Object> context) {
-
+	public void processPass(Map<String, Object> anContext) {
+		ScfRequest request = this.getReqtuest(anContext.get("requestNo").toString());
+		this.updateRequestLastStatus(request, true);
+		this.pushOrderInfo(request);
 	}
 
-	public void processReject(Map<String, Object> context) {
-
+	public void processReject(Map<String, Object> anContext) {
+		ScfRequest request = this.getReqtuest(anContext.get("requestNo").toString());
+		this.updateRequestLastStatus(request, true);
 	}
 
 }

@@ -49,7 +49,7 @@ public class ScfRequestTempService extends BaseService<ScfRequestTempMapper, Scf
 	}
 	
 	public ScfRequestTemp findRequestTemp(String anRequestNo) {
-		BTAssert.notNull(anRequestNo, "查询失败anRequestNo不能为空");
+		BTAssert.notNull(anRequestNo, "查询失败,anRequestNo不能为空");
 		ScfRequestTemp temp = this.selectByPrimaryKey(anRequestNo);
 		setName(temp);
 		return temp;

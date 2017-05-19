@@ -65,7 +65,7 @@ public class ScfRequestTemp implements BetterjrEntity {
     private String suppBankAccount;
 	               
 	@Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="状态", comments = "1：草稿，2：作废")
+    @MetaData( value="状态", comments = "1：草稿，2.已确认,3：作废")
     private String businStatus;
 	
     @Column(name = "L_REG_OPERID",  columnDefinition="VARCHAR" )
@@ -463,6 +463,7 @@ public class ScfRequestTemp implements BetterjrEntity {
         this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
         this.regDate = BetterDateUtils.getNumDate();
         this.regTime = BetterDateUtils.getNumTime();
+        this.businStatus = "1";
     }
 
 	public void initModify() {
