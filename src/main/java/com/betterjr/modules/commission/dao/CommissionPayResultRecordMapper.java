@@ -22,7 +22,7 @@ public interface CommissionPayResultRecordMapper extends Mapper<CommissionPayRes
             + "C_PAY_TARGET_BANK_ACCO_NAME, C_PAY_TARGET_MOBILENO, L_CUSTNO, C_CUSTNAME, C_OPERORG, L_REG_OPERID, C_REG_OPERNAME, D_REG_DATE, T_REG_TIME, C_PAY_RESULT, C_BUSIN_STATUS)  "
             + "SELECT ID,C_REFNO,#{payResultId}, ID,C_REFNO, D_IMPORT_DATE, T_IMPORT_TIME, #{payDate}, F_BALANCE, C_BANK, C_BANK_NAME, C_BANK_ACCOUNT, C_BANK_ACCOUNT_NAME, C_CONTACTS_MOBILENO, "
             + "#{custNo}, #{custName}, #{operOrg}, #{regOperId}, #{regOperName}, #{regDate}, #{regTime}, '0', '0' FROM t_cps_record tcr "
-            + "WHERE tcr.L_CUSTNO = #{custNo} AND tcr.C_OPERORG = #{operOrg} AND tcr.D_IMPORT_DATE = #{importDate} tcr.C_BUSIN_STATUS='1' ")
+            + "WHERE tcr.L_CUSTNO = #{custNo} AND tcr.C_OPERORG = #{operOrg} AND tcr.D_IMPORT_DATE = #{importDate} AND tcr.C_BUSIN_STATUS='1' ")
     public int createPayResultRecord(Map<String, Object> param);
 
     @Select("SELECT COUNT(ID) FROM t_cps_pay_result_record WHERE L_PAY_RESULT_ID = #{payResultId} AND C_BUSIN_STATUS = '0'")
