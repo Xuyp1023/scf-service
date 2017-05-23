@@ -212,7 +212,7 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
             anMap.put("modiOperId", UserUtils.getOperatorInfo().getId());
         }
         
-        Page<ScfReceivableDO> receivableList = this.selectPropertyIneffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo");
+        Page<ScfReceivableDO> receivableList = this.selectPropertyIneffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
         
         return receivableList;
     }
@@ -241,7 +241,7 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
             }
         }
         
-        Page<ScfReceivableDO> receivableList = this.selectPropertyEffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo");
+        Page<ScfReceivableDO> receivableList = this.selectPropertyEffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
         
         return receivableList;
     }

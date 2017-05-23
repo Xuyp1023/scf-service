@@ -8,12 +8,15 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
+import com.betterjr.modules.flie.annotation.ExcelImportAnno;
+import com.betterjr.modules.flie.annotation.ExcelImportTypeAnno;
 import com.betterjr.modules.version.constant.VersionConstantCollentions;
 import com.betterjr.modules.version.entity.BaseVersionEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -23,6 +26,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "T_SCF_ORDER_V3")
+@ExcelImportTypeAnno(excelBeginRow=2)
 public class ScfOrderDO extends BaseVersionEntity{
 
     /**
@@ -36,6 +40,7 @@ public class ScfOrderDO extends BaseVersionEntity{
     @Column(name = "C_ORDERNO",  columnDefinition="VARCHAR" )
     @MetaData( value="订单编号", comments = "订单编号")
     @OrderBy("ASC")
+    @ExcelImportAnno(isMust="1",cloumnChineseName="订单编号",cloumnOrder=0,cloumnType="0",vailedRegular="")
     private String orderNo;
 
     /**
@@ -95,6 +100,7 @@ public class ScfOrderDO extends BaseVersionEntity{
      */
     @Column(name = "C_GOODSNAME",  columnDefinition="VARCHAR" )
     @MetaData( value="商品名称", comments = "商品名称")
+    @ExcelImportAnno(isMust="1",cloumnChineseName="商品名称",cloumnOrder=2,cloumnType="0",vailedRegular="")
     private String goodsName;
 
     /**
@@ -104,6 +110,7 @@ public class ScfOrderDO extends BaseVersionEntity{
     @MetaData( value="订单日期", comments = "订单日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     @OrderBy("ASC")
+    @ExcelImportAnno(isMust="1",cloumnChineseName="订单日期",cloumnOrder=1,cloumnType="1",vailedRegular="\\d{8}")
     private String orderDate;
 
     /**
@@ -119,6 +126,7 @@ public class ScfOrderDO extends BaseVersionEntity{
      */
     @Column(name = "F_UNIT",  columnDefinition="DOUBLE" )
     @MetaData( value="商品价格", comments = "商品价格")
+    @ExcelImportAnno(isMust="0",cloumnChineseName="单价",cloumnOrder=3,cloumnType="1",vailedRegular="")
     private BigDecimal unit;
 
     /**
@@ -126,6 +134,7 @@ public class ScfOrderDO extends BaseVersionEntity{
      */
     @Column(name = "N_AMOUNT",  columnDefinition="DOUBLE" )
     @MetaData( value="采购数量", comments = "采购数量")
+    @ExcelImportAnno(isMust="0",cloumnChineseName="数量",cloumnOrder=4,cloumnType="1",vailedRegular="")
     private Integer amount;
 
     /**
@@ -133,6 +142,7 @@ public class ScfOrderDO extends BaseVersionEntity{
      */
     @Column(name = "F_BALANCE",  columnDefinition="DOUBLE" )
     @MetaData( value="订单总额", comments = "订单总额")
+    @ExcelImportAnno(isMust="1",cloumnChineseName="金额",cloumnOrder=5,cloumnType="1",vailedRegular="")
     private BigDecimal balance;
 
     /**

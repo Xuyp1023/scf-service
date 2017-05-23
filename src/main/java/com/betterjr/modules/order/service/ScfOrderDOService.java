@@ -1,5 +1,6 @@
 package com.betterjr.modules.order.service;
 
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,6 +16,7 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.Collections3;
+import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustInfo;
@@ -22,6 +24,9 @@ import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.asset.data.AssetConstantCollentions;
 import com.betterjr.modules.customer.ICustMechBaseService;
 import com.betterjr.modules.document.ICustFileService;
+import com.betterjr.modules.document.entity.CustFileItem;
+import com.betterjr.modules.document.service.DataStoreService;
+import com.betterjr.modules.flie.data.ExcelImportUtils;
 import com.betterjr.modules.flie.data.FileResolveConstants;
 import com.betterjr.modules.flie.entity.CustFileCloumn;
 import com.betterjr.modules.flie.service.CustFileCloumnService;
@@ -50,6 +55,11 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
     @Autowired
     private CustFileCloumnService fileCloumnService;
     
+    @Reference(interfaceClass = ICustFileService.class)
+    private ICustFileService custFileService;
+    @Autowired
+    private DataStoreService dataStoreService;
+    
     /**
      * 
      * @param anOrder  订单保存对象
@@ -61,6 +71,8 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
      public ScfOrderDO addOrder(ScfOrderDO anOrder, String anFileList,boolean anConfirmFlag) {
          
          BTAssert.notNull(anOrder,"插入订单为空,操作失败");
+         BTAssert.notNull(anOrder.getCustNo(),"请选择供应商,操作失败");
+         BTAssert.notNull(anOrder.getCoreCustNo(),"请选择核心企业,操作失败");
          logger.info("Begin to add order"+UserUtils.getOperatorInfo().getName());
          anOrder.initAddValue(UserUtils.getOperatorInfo(),anConfirmFlag);
          // 操作机构设置为供应商
@@ -398,6 +410,44 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
         anMap.put("lockedStatus",VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
         anMap.put("docStatus",VersionConstantCollentions.DOC_STATUS_DRAFT);
         return anMap;
+    }
+
+    public List<ScfOrderDO> queryExportOrderRecordList(Long anResolveFileid) {
+        
+        BTAssert.notNull(anResolveFileid, "查询导入数据失败");
+        
+        Map<String,Object> paramMap= QueryTermBuilder.newInstance()
+                .put("resolveFileId", anResolveFileid)
+                .build();
+        
+        return this.selectByProperty(paramMap);
+    }
+
+    public List<ScfOrderDO> saveResolveOrderFile(Map<String, Object> anAnMap) {
+
+        BTAssert.notNull(anAnMap, "解析的文件为空");
+        BTAssert.notNull(anAnMap.get("custNo"), "请选择供应商!再上传");
+        BTAssert.notNull(anAnMap.get("coreCustNo"), "请选择核心企业!再上传");
+        BTAssert.notNull(anAnMap.get("id"), "请选择解析文件再上传");
+        
+        CustFileItem fileItem = custFileService.findOne(Long.parseLong(anAnMap.get("id").toString()));//文件上次详情
+        InputStream is = dataStoreService.loadFromStore(fileItem);
+        List<ScfOrderDO> orders=new ArrayList<>();
+        try {
+            orders = ExcelImportUtils.importObj(ScfOrderDO.class, is, fileItem.getFileType());
+            for (ScfOrderDO scfOrderDO : orders) {
+                scfOrderDO.setDescription("excel文件导入");
+                scfOrderDO.setCoreCustNo(Long.parseLong(anAnMap.get("coreCustNo").toString()));
+                scfOrderDO.setCustNo(Long.parseLong(anAnMap.get("custNo").toString()));
+                scfOrderDO.setResolveFileId(fileItem.getId());
+                addOrder(scfOrderDO, "", true);
+            }
+        }
+        catch (Exception e) {
+            logger.info(UserUtils.getOperatorInfo().getName()+"文件导入失败! 文件Id为："+fileItem.getId()+"  产生错误信息："+e.getMessage());
+            BTAssert.notNull(null, e.getMessage());
+        }
+        return orders;
     }
 
 }

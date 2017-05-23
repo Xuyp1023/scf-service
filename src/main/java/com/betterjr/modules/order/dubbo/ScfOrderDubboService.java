@@ -167,4 +167,17 @@ public class ScfOrderDubboService implements IScfOrderService{
         return AjaxObject.newOk("订单查询成功", orderService.findOrder(anRefNo, anVersion)).toJson();
     }
 
+    @Override
+    public String webQueryExportOrderRecordList(Long anResolveFileid) {
+        
+        return AjaxObject.newOk("订单信息查询成功", orderService.queryExportOrderRecordList(anResolveFileid)).toJson();
+   
+    }
+
+    @Override
+    public String webSaveResolveFile(Map<String, Object> anAnMap) {
+        
+        return AjaxObject.newOk("订单解析成功", orderService.saveResolveOrderFile(anAnMap)).toJson();
+    }
+
 }

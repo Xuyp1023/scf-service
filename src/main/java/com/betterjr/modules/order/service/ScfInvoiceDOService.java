@@ -58,7 +58,12 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
         
         BTAssert.notNull(anInvoice,"插入发票为空,操作失败");
         BTAssert.notNull(anInvoice.getInvoiceNo(),"插入发票号码为空,操作失败");
-        checkInvoiceNoIsExist(anInvoice.getInvoiceNo());
+        //通过发票号查找当前发票号是否已经被使用
+        List<ScfInvoiceDO> checkInvoiceLists = checkInvoiceNoIsExist(anInvoice.getInvoiceNo());
+        BTAssert.notNull(checkInvoiceLists,"当前发票已经登记,操作失败"); 
+        if(!Collections3.isEmpty(checkInvoiceLists)){
+            BTAssert.notNull(null,"当前发票已经登记,操作失败"); 
+        }
         logger.info("Begin to add order"+UserUtils.getOperatorInfo().getName());
         anInvoice.initAddValue(UserUtils.getOperatorInfo(),anConfirmFlag);
         // 操作机构设置为供应商
@@ -84,7 +89,7 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
      * 校验当前发票是否存在，如果已经存在不允许再次插入
      * @param anInvoiceNo
      */
-   private void checkInvoiceNoIsExist(String anInvoiceNo) {
+   private List<ScfInvoiceDO> checkInvoiceNoIsExist(String anInvoiceNo) {
         
        List<String> businStatusList=new ArrayList<>();
        businStatusList.add(VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE);
@@ -93,12 +98,15 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
        List<String> docStatusList=new ArrayList<>();
        docStatusList.add(VersionConstantCollentions.DOC_STATUS_DRAFT);
        docStatusList.add(VersionConstantCollentions.DOC_STATUS_CONFIRM);
-       Map<String,Object> map=QueryTermBuilder.newInstance().put("invoiceNo", anInvoiceNo).put("businStatus", businStatusList).put("docStatus", docStatusList).put("isLatest", VersionConstantCollentions.IS_LATEST).build();
+       Map<String,Object> map=QueryTermBuilder.newInstance()
+               .put("invoiceNo", anInvoiceNo)
+               .put("businStatus", businStatusList)
+               .put("docStatus", docStatusList)
+               .put("isLatest", VersionConstantCollentions.IS_LATEST)
+               .build();
        List<ScfInvoiceDO> invoiceList = this.selectByClassProperty(ScfInvoiceDO.class, map);
-       BTAssert.notNull(invoiceList,"当前发票已经登记,操作失败"); 
-       if(Collections3.isEmpty(invoiceList)){
-           BTAssert.notNull(null,"当前发票已经登记,操作失败"); 
-       }
+       
+       return invoiceList;
     }
 
 /**
@@ -119,6 +127,12 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
         BTAssert.notNull(invoice, "无法获取发票信息");
         //校验当前操作员是否是创建此订单的人 并且校验当前订单是否允许修改
         checkOperatorModifyStatus(UserUtils.getOperatorInfo(),invoice);
+        List<ScfInvoiceDO> checkInvoiceLists = checkInvoiceNoIsExist(invoice.getInvoiceNo());
+        BTAssert.notNull(checkInvoiceLists,"当前发票已经删除,操作失败"); 
+        checkInvoiceLists.remove(invoice);
+        if(!Collections3.isEmpty(checkInvoiceLists)){
+            BTAssert.notNull(null,"当前发票已经登记,操作失败"); 
+        }
         // 应收账款信息变更迁移初始化
         anModiInvoice.initModifyValue(invoice);
         if(! invoice.getCustNo().equals(anModiInvoice.getCustNo())){
@@ -256,10 +270,10 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
             anMap.put("docStatus", VersionConstantCollentions.DOC_STATUS_CONFIRM);
             
         }else{
-            anMap.put("modiOperId", UserUtils.getOperatorInfo().getId());
+            anMap.put("regOperId", UserUtils.getOperatorInfo().getId());
         }
         
-        Page<ScfInvoiceDO> invoiceList = this.selectPropertyIneffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo");
+        Page<ScfInvoiceDO> invoiceList = this.selectPropertyIneffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
         
         return invoiceList;
     }
@@ -298,12 +312,12 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
             //anMap.put("coreCustNo", getCustNoList(custInfos));
         }
         
-        Page<ScfInvoiceDO> invoiceList = this.selectPropertyEffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo");
+        Page<ScfInvoiceDO> invoiceList = this.selectPropertyEffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
         
         return invoiceList;
     }
 
-    public Object queryRecycleInvoice(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public Page queryRecycleInvoice(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
         
         BTAssert.notNull(anMap, "查询条件为空!操作失败");
         
@@ -316,9 +330,9 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
             anMap.put("custNo", getCustNoList(custInfos));
         }
         anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
-        Page<ScfInvoiceDO> invoiceList = this.selectPropertyByPageWithStatus(anMap, anPageNum, anPageSize,"1".equals(anFlag), "refNo", VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, VersionConstantCollentions.DOC_STATUS_CONFIRM, VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
+        Page<ScfInvoiceDO> invoiceList = this.selectPropertyByPageWithStatus(anMap, anPageNum, anPageSize,"1".equals(anFlag), "id desc", VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, VersionConstantCollentions.DOC_STATUS_CONFIRM, VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
         
-        Page<ScfInvoiceDO> invoiceList2 = this.selectPropertyByPageWithStatus(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo",VersionConstantCollentions.BUSIN_STATUS_USED,VersionConstantCollentions.DOC_STATUS_CONFIRM,VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
+        Page<ScfInvoiceDO> invoiceList2 = this.selectPropertyByPageWithStatus(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc",VersionConstantCollentions.BUSIN_STATUS_USED,VersionConstantCollentions.DOC_STATUS_CONFIRM,VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
         invoiceList.addAll(invoiceList2);
         return invoiceList;
     }

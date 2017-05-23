@@ -133,7 +133,6 @@ public class ScfReceivableDO extends BaseVersionEntity{
     @Column(name = "D_END_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="付款到期日期", comments = "付款到期日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
-    @OrderBy("DESC")
     private String endDate;
 
     /**
@@ -164,7 +163,6 @@ public class ScfReceivableDO extends BaseVersionEntity{
      */
     @Column(name = "C_MODI_OPERNAME",  columnDefinition="VARCHAR" )
     @MetaData( value="编辑操作员名字", comments = "编辑操作员名字")
-    @JsonIgnore
     private String modiOperName;
 
     /**

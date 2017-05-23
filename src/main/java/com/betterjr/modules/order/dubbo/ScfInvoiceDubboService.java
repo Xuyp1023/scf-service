@@ -96,7 +96,7 @@ public class ScfInvoiceDubboService implements IScfInvoiceService {
     public String webQueryIneffectiveInvoice(Map<String, Object> anAnMap, String anFlag, int anPageNum, int anPageSize, boolean anIsAudit) {
        
         Map<String, Object> conditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk("发票查询成功", invoiceService.queryIneffectiveInvoice(conditionMap, anFlag, anPageNum, anPageSize, anIsAudit)).toJson();
+        return AjaxObject.newOkWithPage("发票查询成功", invoiceService.queryIneffectiveInvoice(conditionMap, anFlag, anPageNum, anPageSize, anIsAudit)).toJson();
  
     }
 
@@ -104,7 +104,7 @@ public class ScfInvoiceDubboService implements IScfInvoiceService {
     public String webQueryEffectiveInvoice(Map<String, Object> anAnMap, String anFlag, int anPageNum, int anPageSize, boolean anIsCust) {
       
         Map<String, Object> conditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk("发票查询成功", invoiceService.queryEffectiveInvoice(conditionMap, anFlag, anPageNum, anPageSize, anIsCust)).toJson();
+        return AjaxObject.newOkWithPage("发票查询成功", invoiceService.queryEffectiveInvoice(conditionMap, anFlag, anPageNum, anPageSize, anIsCust)).toJson();
  
     }
 
@@ -118,7 +118,7 @@ public class ScfInvoiceDubboService implements IScfInvoiceService {
     public String webQueryRecycleInvoice(Map<String, Object> anAnMap, String anFlag, int anPageNum, int anPageSize) {
        
         Map<String, Object> conditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk("发票查询成功", invoiceService.queryRecycleInvoice(conditionMap, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject.newOkWithPage("发票查询成功", invoiceService.queryRecycleInvoice(conditionMap, anFlag, anPageNum, anPageSize)).toJson();
  
     }
 
