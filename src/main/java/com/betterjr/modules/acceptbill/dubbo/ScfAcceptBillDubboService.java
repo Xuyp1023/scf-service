@@ -161,6 +161,12 @@ public class ScfAcceptBillDubboService implements IScfAcceptBillService {
                 .newOkWithPage("汇票信息查询成功", acceptBillService.queryCanAnnulBill(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize))
                 .toJson();
     }
+
+    @Override
+    public String webSaveModifyAcceptBillFile(String anFileList, String anRefNo, String anVersion) {
+        
+        return  AjaxObject.newOk("汇票信息修改成功", acceptBillService.saveModifyAcceptBillDOFile(anFileList, anRefNo,anVersion )).toJson();
+    }
    
 
     

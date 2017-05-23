@@ -294,7 +294,7 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
     public Page<T> selectPropertyCanAunulByPageWithVersion (Map<String, Object> anParamMap, int arg1, int arg2, boolean arg3, String arg4) {
         
         anParamMap.put("isLatest", VersionConstantCollentions.IS_LATEST);
-        anParamMap.put("businStatus", VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE);
+        anParamMap.put("businStatus", VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE);
         anParamMap.put("docStatus", VersionConstantCollentions.DOC_STATUS_CONFIRM);
         anParamMap.put("lockedStatus", VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
         PageHelper.startPage(arg1, arg2, arg3);

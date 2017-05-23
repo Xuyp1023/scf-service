@@ -9,13 +9,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.acceptbill.dao.ScfAcceptBillDOMapper;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBillDO;
 import com.betterjr.modules.account.entity.CustInfo;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.customer.ICustMechBaseService;
 import com.betterjr.modules.document.ICustFileService;
@@ -87,12 +90,7 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
         anModiBill.initModifyValue(bill,anConfirmFlag);
         //操作机构设置为供应商
         anModiBill.setOperOrg(baseService.findBaseInfo(anModiBill.getSupplierNo()).getOperOrg());
-        // 保存附件信息
-        if(StringUtils.isNotBlank(anFileList)){
-            anModiBill.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anFileList, anModiBill.getBatchNo()));
-        }else{
-            anModiBill.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo("", anModiBill.getBatchNo())); 
-        }
+       
         // 初始版本更改 直接返回
         if(bill.getBusinStatus().equals(VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE)&&
                 bill.getDocStatus().equals(VersionConstantCollentions.DOC_STATUS_DRAFT)){
@@ -342,5 +340,49 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
         return null;
     }
 
+    /**
+     * 更新票据的附件信息
+     * @param anFileList
+     * @param anRefNo
+     * @param anVersion
+     * @return
+     */
+    public ScfAcceptBillDO saveModifyAcceptBillDOFile(String anFileList, String anRefNo, String anVersion) {
+       
+        BTAssert.notNull(anRefNo, "修改条件为空!操作失败");
+        BTAssert.notNull(anVersion, "修改条件为空!操作失败");
+        ScfAcceptBillDO acceptBillDO = this.selectOneWithVersion(anRefNo, anVersion);
+        BTAssert.notNull(acceptBillDO, "没有找到相应的票据信息!请刷新重试");
+        
+        checkBillDOUploadFileStatus(acceptBillDO,UserUtils.getOperatorInfo());
+        // 保存附件信息
+        if(StringUtils.isNotBlank(anFileList)){
+            acceptBillDO.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anFileList, acceptBillDO.getBatchNo()));
+        }else{
+            acceptBillDO.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo("", acceptBillDO.getBatchNo())); 
+        }
+        this.updateByPrimaryKeySelective(acceptBillDO);
+        return acceptBillDO;
+    }
+    
+    public void checkBillDOUploadFileStatus(ScfAcceptBillDO anBill, CustOperatorInfo anOperatorInfo){
+        
+        checkStatus(anBill.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_ANNUL, true, "当前单据已经废止，不能再次上传附件");
+        checkStatus(anBill.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EXPIRE, true, "当前单据已经过期，不能再次上传附件");
+        checkStatus(anBill.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true, "当前单据转让，不能再次上传附件");
+        checkStatus(anBill.getOperOrg(), anOperatorInfo.getOperOrg(), false, "你没有当前记录的操作权限");
+        checkStatus(anBill.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true, "当前票据已经使用，不能再次更改");
+    }
+
+    /**
+     * 检查状态信息
+     */
+    public void checkStatus(String anBusinStatus, String anTargetStatus, boolean anFlag, String anMessage) {
+        if (BetterStringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
+            logger.warn(anMessage);
+            throw new BytterTradeException(40001, anMessage);
+        }
+    }
+    
     
 }
