@@ -109,14 +109,14 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
        return invoiceList;
     }
 
-/**
-    * 发票信息编辑
-    * @param anModiInvoice
-    * @param anFileList  文件上传批次号
-    * @param anConfirmFlag  true: 确认并修改     false: 修改
- * @param anInvoiceItemList 
-    * @return
-    */
+    /**
+        * 发票信息编辑
+        * @param anModiInvoice
+        * @param anFileList  文件上传批次号
+        * @param anConfirmFlag  true: 确认并修改     false: 修改
+        * @param anInvoiceItemList 
+        * @return
+        */
     public ScfInvoiceDO saveModifyInvoice(ScfInvoiceDO anModiInvoice,String anFileList,boolean anConfirmFlag, List<ScfInvoiceDOItem> anInvoiceItemList) {
         
         BTAssert.notNull(anModiInvoice,"发票为空,操作失败");
@@ -127,11 +127,9 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
         BTAssert.notNull(invoice, "无法获取发票信息");
         //校验当前操作员是否是创建此订单的人 并且校验当前订单是否允许修改
         checkOperatorModifyStatus(UserUtils.getOperatorInfo(),invoice);
-        List<ScfInvoiceDO> checkInvoiceLists = checkInvoiceNoIsExist(invoice.getInvoiceNo());
-        BTAssert.notNull(checkInvoiceLists,"当前发票已经删除,操作失败"); 
-        checkInvoiceLists.remove(invoice);
+        List<ScfInvoiceDO> checkInvoiceLists = checkInvoiceNoIsExist(anModiInvoice.getInvoiceNo());
         if(!Collections3.isEmpty(checkInvoiceLists)){
-            BTAssert.notNull(null,"当前发票已经登记,操作失败"); 
+            BTAssert.notNull(null,"当前发票号已经登记,操作失败"); 
         }
         // 应收账款信息变更迁移初始化
         anModiInvoice.initModifyValue(invoice);

@@ -412,7 +412,7 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
         return anMap;
     }
 
-    public List<ScfOrderDO> queryExportOrderRecordList(Long anResolveFileid) {
+    public Page<ScfOrderDO> queryExportOrderRecordList(Long anResolveFileid, String anFlag, int anPageNum, int anPageSize) {
         
         BTAssert.notNull(anResolveFileid, "查询导入数据失败");
         
@@ -420,7 +420,9 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
                 .put("resolveFileId", anResolveFileid)
                 .build();
         
-        return this.selectByProperty(paramMap);
+        Page<ScfOrderDO> orderList = this.selectPropertyByPage(paramMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
+        
+        return orderList;
     }
 
     public List<ScfOrderDO> saveResolveOrderFile(Map<String, Object> anAnMap) {
