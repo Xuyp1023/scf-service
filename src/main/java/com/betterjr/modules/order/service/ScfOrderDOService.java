@@ -191,6 +191,54 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
          
      }
      
+     /**
+      * 批量审核订单文件
+      * @param ids
+      * @return
+      */
+     public List<ScfOrderDO> saveAuditOrders(String ids){
+         
+         BTAssert.notNull(ids, "审核文件对象查询失败!操作失败");
+         if(StringUtils.isBlank(ids)){
+             BTAssert.notNull(null, "审核文件对象查询失败!操作失败"); 
+         }
+         List<Long> idList=covernStringToLongList(ids,",");
+         List<ScfOrderDO> orders=new ArrayList<>(idList.size());
+         for (Long id : idList) {
+            ScfOrderDO order = this.selectByPrimaryKey(id);
+            BTAssert.notNull(order, "此订单异常!操作失败");
+            Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
+            BTAssert.notNull(custInfos, "获取当前企业失败!操作失败");
+            if(! getCustNoList(custInfos).contains(order.getCoreCustNo())){
+                BTAssert.notNull(order, "您没有审核权限!操作失败"); 
+            }
+            this.auditOperator(UserUtils.getOperatorInfo(), order);
+            orders.add(order);
+        }
+         
+         return orders;
+     }
+     
+    private List<Long> covernStringToLongList(String anIds, String anString) {
+        
+        List<Long> idList=new ArrayList<>();
+        if(StringUtils.isNoneBlank(anIds) && StringUtils.isNoneBlank(anString)){
+            if(anIds.contains(anString)){
+                
+                String[]  ids= anIds.split(anString);
+                for (String id : ids) {
+                    if(ExcelImportUtils.isDecimal(id)){
+                        idList.add(Long.parseLong(id));
+                    }
+                }
+            }else{
+                idList.add(Long.parseLong(anIds));
+            }
+        }
+        
+        return idList;
+    }
+
     /**
      * 订单信息分页查询
      * @param anMap 查询条件封装

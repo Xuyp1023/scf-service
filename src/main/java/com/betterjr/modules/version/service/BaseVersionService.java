@@ -466,7 +466,7 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
              int result = this.updateByPrimaryKey(arg0);
              return result == VersionConstantCollentions.MODIFY_SUCCESS ? arg0 : null;
          }
-         BTAssert.notNull(null,"单据不符合核准的条件");
+         BTAssert.notNull(null,"单据不符合核准的条件,请刷新后重试");
          return null;
      }
      

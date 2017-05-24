@@ -179,5 +179,12 @@ public class ScfOrderDubboService implements IScfOrderService{
         
         return AjaxObject.newOk("订单解析成功", orderService.saveResolveOrderFile(anAnMap)).toJson();
     }
+    
+    @Override
+    public String webSaveAuditOrderByOrderIds(String ids) {
+       
+        
+        return AjaxObject.newOk("订单审核成功", orderService.saveAuditOrders(ids).size()).toJson();
+    }
 
 }
