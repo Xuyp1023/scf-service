@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterTradeException;
-import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
@@ -50,10 +49,11 @@ import com.betterjr.modules.push.service.ScfSupplierPushService;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
 import com.betterjr.modules.supplychain.entity.CustCoreCorpInfo;
 import com.betterjr.modules.supplychain.service.CustCoreCorpService;
+import com.betterjr.modules.version.service.BaseVersionService;
 import com.betterjr.modules.wechat.ICustWeChatService;
 
 @Service
-public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAcceptBill> implements IScfOrderInfoCheckService {
+public class ScfAcceptBillService extends BaseVersionService<ScfAcceptBillMapper, ScfAcceptBill> implements IScfOrderInfoCheckService {
 
     private static final Logger logger = LoggerFactory.getLogger(ScfAcceptBillService.class);
 
@@ -478,15 +478,6 @@ public class ScfAcceptBillService extends BaseService<ScfAcceptBillMapper, ScfAc
         }
     }
 
-    /**
-     * 检查状态信息
-     */
-    private void checkStatus(final String anBusinStatus, final String anTargetStatus, final boolean anFlag, final String anMessage) {
-        if (BetterStringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
-            logger.warn(anMessage);
-            throw new BytterTradeException(40001, anMessage);
-        }
-    }
 
     /**
      * 变更融资标志

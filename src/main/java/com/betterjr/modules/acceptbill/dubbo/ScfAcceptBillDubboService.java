@@ -8,6 +8,8 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.betterjr.common.web.AjaxObject;
 import com.betterjr.modules.acceptbill.IScfAcceptBillService;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
+import com.betterjr.modules.acceptbill.entity.ScfAcceptBillDO;
+import com.betterjr.modules.acceptbill.service.ScfAcceptBillDOService;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 
@@ -17,6 +19,9 @@ public class ScfAcceptBillDubboService implements IScfAcceptBillService {
     @Autowired
     private ScfAcceptBillService scfAcceptBillService;
 
+    @Autowired
+    private ScfAcceptBillDOService acceptBillService;
+    
     @Override
     public String webQueryAcceptBill(final Map<String, Object> anMap, final String anIsOnlyNormal, final String anFlag, final int anPageNum,
             final int anPageSize) {
@@ -39,7 +44,7 @@ public class ScfAcceptBillDubboService implements IScfAcceptBillService {
         final ScfAcceptBill anAcceptBill = (ScfAcceptBill) RuleServiceDubboFilterInvoker.getInputObj();
         return AjaxObject.newOk("汇票信息修改成功", scfAcceptBillService.saveModifyAcceptBill(anAcceptBill, anId, anFileList, anOtherFileList)).toJson();
     }
-
+    
     @Override
     public String webAddAcceptBill(final Map<String, Object> anMap, final String anFileList, final String anOtherFileList) {
 
@@ -47,6 +52,14 @@ public class ScfAcceptBillDubboService implements IScfAcceptBillService {
         return AjaxObject.newOk("汇票信息登记成功", scfAcceptBillService.addAcceptBill(anAcceptBill, anFileList, anOtherFileList)).toJson();
     }
 
+    @Override
+    public String webAddAcceptBillDO(Map<String, Object> anMap, String anFileList, boolean anConfirmFlag) {
+        
+        ScfAcceptBillDO anAcceptBill = (ScfAcceptBillDO) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOk("票据登记成功", acceptBillService.addAcceptBill(anAcceptBill, anFileList,anConfirmFlag)).toJson();
+   
+    }
+    
     @Override
     public String webSaveAduitAcceptBill(final Long anId) {
 
@@ -91,4 +104,70 @@ public class ScfAcceptBillDubboService implements IScfAcceptBillService {
     public String webSaveBillFile(Long anBillId,String anFileTypeName,String anFileMediaId){
         return AjaxObject.newOk("保存票据附件",scfAcceptBillService.saveBillFile(anBillId,anFileTypeName,anFileMediaId)).toJson();
     }
+
+    @Override
+    public String webSaveAnnulAcceptBill(String anRefNo, String anVersion) {
+        
+        return AjaxObject.newOk("票据废止成功", acceptBillService.saveAnnulBill(anRefNo, anVersion)).toJson();
+    }
+    
+    @Override
+    public String webSaveCoreCustAnnulBill(String anRefNo, String anVersion) {
+        
+        return AjaxObject.newOk("票据废止成功", acceptBillService.saveCoreCustAnnulBill(anRefNo, anVersion)).toJson();
+    }
+
+    @Override
+    public String webFindAcceptBillDOByRefNoVersion(String anRefNo, String anVersion) {
+        
+        return AjaxObject.newOk("票据查询成功", acceptBillService.findBill(anRefNo, anVersion)).toJson();
+    }
+
+    @Override
+    public String webSaveAuditBillDOByRefNoVersion(String anRefNo, String anVersion) {
+        
+        return AjaxObject.newOk("票据审核成功", acceptBillService.saveAuditBill(anRefNo, anVersion)).toJson();
+    }
+
+    @Override
+    public String webSaveModifyAcceptBillDO(Map<String, Object> anMap, String anFileList, boolean anConfirmFlag) {
+      
+         ScfAcceptBillDO anAcceptBill = (ScfAcceptBillDO) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOk("汇票信息修改成功", acceptBillService.saveModifyAcceptBill(anAcceptBill, anFileList,anConfirmFlag )).toJson();
+    }
+
+    @Override
+    public String webQueryIneffectiveAcceptBill(Map<String, Object> anAnMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize,
+            boolean anIsAudit) {
+         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject
+                .newOkWithPage("汇票信息查询成功", acceptBillService.queryIneffectiveBill(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize,anIsAudit))
+                .toJson();
+    }
+
+    @Override
+    public String webQueryEffectiveAcceptBill(Map<String, Object> anAnMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize,
+            boolean anIsCust) {
+        final Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject
+                .newOkWithPage("汇票信息查询成功", acceptBillService.queryEffectiveBill(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize,anIsCust))
+                .toJson();
+    }
+
+    @Override
+    public String webQueryCanAnnulAcceptBill(Map<String, Object> anAnMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize) {
+        final Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject
+                .newOkWithPage("汇票信息查询成功", acceptBillService.queryCanAnnulBill(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize))
+                .toJson();
+    }
+
+    @Override
+    public String webSaveModifyAcceptBillFile(String anFileList, String anRefNo, String anVersion) {
+        
+        return  AjaxObject.newOk("汇票信息修改成功", acceptBillService.saveModifyAcceptBillDOFile(anFileList, anRefNo,anVersion )).toJson();
+    }
+   
+
+    
 }

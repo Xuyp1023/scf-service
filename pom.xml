@@ -49,8 +49,12 @@
 			<version>1.1.1</version>
 		</dependency>
 
+<<<<<<< HEAD
 		<!-- https://mvnrepository.com/artifact/org.jeecg/easypoi-base -->
 		<!-- easypoi 依赖 -->
+=======
+       <!-- easypoi 依赖 -->
+>>>>>>> refs/remotes/xuyp.scf-service/bug-185(2)
 		<dependency>
 			<groupId>org.jeecg</groupId>
 			<artifactId>easypoi-base</artifactId>
@@ -69,6 +73,7 @@
 			<artifactId>jsoup</artifactId>
 			<version>1.8.3</version>
 		</dependency>
+<<<<<<< HEAD
   
          <!-- https://mvnrepository.com/artifact/net.sf.jxls/jxls-core -->
          <dependency>
@@ -87,6 +92,8 @@
 
 
            
+=======
+>>>>>>> refs/remotes/xuyp.scf-service/bug-185(2)
 	</dependencies>
 
 	<packaging>war</packaging>

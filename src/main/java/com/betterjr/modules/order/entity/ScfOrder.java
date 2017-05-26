@@ -11,9 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
 import com.betterjr.common.annotation.MetaData;
-import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
@@ -22,13 +20,14 @@ import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
+import com.betterjr.modules.version.entity.BaseVersionEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "T_SCF_ORDER")
-public class ScfOrder implements BetterjrEntity {
+public class ScfOrder extends BaseVersionEntity {
     /**
      * 流水号
      */

@@ -24,13 +24,14 @@ import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.entity.ScfTransport;
+import com.betterjr.modules.version.entity.BaseVersionEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "T_SCF_RECEIVABLE")
-public class ScfReceivable implements BetterjrEntity {
+public class ScfReceivable extends BaseVersionEntity {
     /**
      * 流水号
      */
