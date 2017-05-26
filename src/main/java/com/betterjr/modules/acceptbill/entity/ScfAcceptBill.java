@@ -28,13 +28,14 @@ import com.betterjr.modules.order.entity.ScfInvoice;
 import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.entity.ScfTransport;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
+import com.betterjr.modules.version.entity.BaseVersionEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "T_SCF_ACCEPT_BILL")
-public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
+public class ScfAcceptBill extends BaseVersionEntity implements ScfClientDataParentFace {
 
     /**
      * 流水号
