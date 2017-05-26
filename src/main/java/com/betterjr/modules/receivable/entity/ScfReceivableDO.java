@@ -125,7 +125,7 @@ public class ScfReceivableDO extends BaseVersionEntity{
      */
     @Column(name = "C_INVOICENO",  columnDefinition="VARCHAR" )
     @MetaData( value="发票编号", comments = "发票编号")
-    private String invoiceNo;
+    private String invoiceNos;
     
     /**
      * 付款到期日期（应付账款结算日）
@@ -307,12 +307,12 @@ public class ScfReceivableDO extends BaseVersionEntity{
         this.agreeNo = anAgreeNo;
     }
 
-    public String getInvoiceNo() {
-        return this.invoiceNo;
+    public String getInvoiceNos() {
+        return this.invoiceNos;
     }
 
-    public void setInvoiceNo(String anInvoiceNo) {
-        this.invoiceNo = anInvoiceNo;
+    public void setInvoiceNos(String anInvoiceNos) {
+        this.invoiceNos = anInvoiceNos;
     }
 
     public String getEndDate() {
@@ -402,7 +402,7 @@ public class ScfReceivableDO extends BaseVersionEntity{
                 + this.coreCustName + ", custNo=" + this.custNo + ", custName=" + this.custName + ", creditor=" + this.creditor + ", debtor="
                 + this.debtor + ", balance=" + this.balance + ", surplusBalance=" + this.surplusBalance + ", deductionBalance="
                 + this.deductionBalance + ", statementBalance=" + this.statementBalance + ", agreeNo=" + this.agreeNo + ", invoiceNo="
-                + this.invoiceNo + ", endDate=" + this.endDate + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", modiOperId="
+                + this.invoiceNos + ", endDate=" + this.endDate + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", modiOperId="
                 + this.modiOperId + ", modiOperName=" + this.modiOperName + ", operOrg=" + this.operOrg + ", modiDate=" + this.modiDate
                 + ", modiTime=" + this.modiTime + ", batchNo=" + this.batchNo + ", description=" + this.description + "]";
     }
@@ -424,7 +424,7 @@ public class ScfReceivableDO extends BaseVersionEntity{
         result = prime * result + ((this.deductionBalance == null) ? 0 : this.deductionBalance.hashCode());
         result = prime * result + ((this.description == null) ? 0 : this.description.hashCode());
         result = prime * result + ((this.endDate == null) ? 0 : this.endDate.hashCode());
-        result = prime * result + ((this.invoiceNo == null) ? 0 : this.invoiceNo.hashCode());
+        result = prime * result + ((this.invoiceNos == null) ? 0 : this.invoiceNos.hashCode());
         result = prime * result + ((this.modiDate == null) ? 0 : this.modiDate.hashCode());
         result = prime * result + ((this.modiOperId == null) ? 0 : this.modiOperId.hashCode());
         result = prime * result + ((this.modiOperName == null) ? 0 : this.modiOperName.hashCode());
@@ -495,10 +495,10 @@ public class ScfReceivableDO extends BaseVersionEntity{
             if (other.endDate != null) return false;
         }
         else if (!this.endDate.equals(other.endDate)) return false;
-        if (this.invoiceNo == null) {
-            if (other.invoiceNo != null) return false;
+        if (this.invoiceNos == null) {
+            if (other.invoiceNos != null) return false;
         }
-        else if (!this.invoiceNo.equals(other.invoiceNo)) return false;
+        else if (!this.invoiceNos.equals(other.invoiceNos)) return false;
         if (this.modiDate == null) {
             if (other.modiDate != null) return false;
         }

@@ -129,7 +129,14 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
         checkOperatorModifyStatus(UserUtils.getOperatorInfo(),invoice);
         List<ScfInvoiceDO> checkInvoiceLists = checkInvoiceNoIsExist(anModiInvoice.getInvoiceNo());
         if(!Collections3.isEmpty(checkInvoiceLists)){
-            BTAssert.notNull(null,"当前发票号已经登记,操作失败"); 
+            if(checkInvoiceLists.size()>1){
+                BTAssert.notNull(null,"当前发票号已经登记,操作失败"); 
+            }
+            String refNo = checkInvoiceLists.get(0).getRefNo();
+            String version = checkInvoiceLists.get(0).getVersion();
+            if(! refNo.equals(invoice.getRefNo()) || !version.equals(invoice.getVersion())){
+                BTAssert.notNull(null,"当前发票号已经登记,操作失败"); 
+            }
         }
         // 应收账款信息变更迁移初始化
         anModiInvoice.initModifyValue(invoice);

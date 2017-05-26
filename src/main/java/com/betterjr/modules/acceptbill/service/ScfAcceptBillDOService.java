@@ -214,9 +214,14 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
         }
         //去除空白字符串的查询条件
         anMap = Collections3.filterMapEmptyObject(anMap);
+        //查询未生效的单据核心企业必须有对应的企业
+        BTAssert.notNull(anMap.get("coreCustNo"), "请选择你所在的企业再查询!");
         // 模糊查询
-        anMap = Collections3.fuzzyMap(anMap, new String[] { "billNo"});
-        
+        //anMap = Collections3.fuzzyMap(anMap, new String[] { "billNo"});
+        if(anMap.containsKey("LIKEbillNo") && null !=anMap.get("LIKEbillNo")){
+            Object object = anMap.get("LIKEbillNo");
+            anMap.put("LIKEbillNo", "%"+object+"%") ;
+        }
         anMap.put("coreOperOrg", UserUtils.getOperatorInfo().getOperOrg());
         
         if(anAuditFlag){
@@ -276,7 +281,10 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
         //去除空白字符串的查询条件
         anMap = Collections3.filterMapEmptyObject(anMap);
         // 模糊查询
-        anMap = Collections3.fuzzyMap(anMap, new String[] { "billNo"});
+        if(anMap.containsKey("LIKEbillNo") && null !=anMap.get("LIKEbillNo")){
+            Object object = anMap.get("LIKEbillNo");
+            anMap.put("LIKEbillNo", "%"+object+"%") ;
+        }
         
         Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
         if(anIsCust){
@@ -322,7 +330,11 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
       //去除空白字符串的查询条件
         anMap = Collections3.filterMapEmptyObject(anMap);
         // 模糊查询
-        anMap = Collections3.fuzzyMap(anMap, new String[] { "billNo"});
+        if(anMap.containsKey("LIKEbillNo") && null !=anMap.get("LIKEbillNo")){
+            Object object = anMap.get("LIKEbillNo");
+            anMap.put("LIKEbillNo", "%"+object+"%") ;
+        }
+        //anMap = Collections3.fuzzyMap(anMap, new String[] { "billNo"});
         
         if (! anMap.containsKey("coreCustNo") ||  anMap.get("coreCustNo") ==null || StringUtils.isBlank(anMap.get("coreCustNo").toString())) {
             
