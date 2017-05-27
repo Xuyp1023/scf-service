@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.exception.BytterTradeException;
+import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
@@ -15,10 +16,9 @@ import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.order.dao.ScfTransportMapper;
 import com.betterjr.modules.order.entity.ScfTransport;
 import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
-import com.betterjr.modules.version.service.BaseVersionService;
 
 @Service
-public class ScfTransportService extends BaseVersionService<ScfTransportMapper, ScfTransport> implements IScfOrderInfoCheckService {
+public class ScfTransportService extends BaseService<ScfTransportMapper, ScfTransport> implements IScfOrderInfoCheckService {
 
     /**
      * 订单运输单据录入

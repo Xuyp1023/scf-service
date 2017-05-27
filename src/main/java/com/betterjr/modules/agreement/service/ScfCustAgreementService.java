@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.data.SimpleDataEntity;
 import com.betterjr.common.exception.BytterTradeException;
+import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
@@ -25,7 +26,6 @@ import com.betterjr.modules.customer.entity.CustMechBankAccount;
 import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
-import com.betterjr.modules.version.service.BaseVersionService;
 
 /***
  * 
@@ -33,7 +33,7 @@ import com.betterjr.modules.version.service.BaseVersionService;
  *
  */
 @Service
-public class ScfCustAgreementService extends BaseVersionService<CustAgreementMapper, CustAgreement> implements IScfOrderInfoCheckService {
+public class ScfCustAgreementService extends BaseService<CustAgreementMapper, CustAgreement> implements IScfOrderInfoCheckService {
 
     @Autowired
     private CustAccountService custAccoService;

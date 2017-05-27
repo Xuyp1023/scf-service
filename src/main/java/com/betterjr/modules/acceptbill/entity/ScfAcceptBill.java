@@ -35,7 +35,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "T_SCF_ACCEPT_BILL")
-public class ScfAcceptBill extends BaseVersionEntity implements ScfClientDataParentFace {
+public class ScfAcceptBill implements BetterjrEntity,ScfClientDataParentFace {
 
     /**
      * 流水号

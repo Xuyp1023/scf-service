@@ -4,26 +4,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
-import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
-import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
+import com.betterjr.modules.acceptbill.entity.ScfAcceptBillDO;
+import com.betterjr.modules.acceptbill.service.ScfAcceptBillDOService;
 import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.agreement.service.ScfCustAgreementService;
 import com.betterjr.modules.asset.dao.ScfAssetBasedataMapper;
 import com.betterjr.modules.asset.data.AssetConstantCollentions;
 import com.betterjr.modules.asset.entity.ScfAsset;
 import com.betterjr.modules.asset.entity.ScfAssetBasedata;
-import com.betterjr.modules.order.entity.ScfInvoice;
-import com.betterjr.modules.order.entity.ScfOrder;
+import com.betterjr.modules.order.entity.ScfInvoiceDO;
+import com.betterjr.modules.order.entity.ScfOrderDO;
 import com.betterjr.modules.order.entity.ScfTransport;
-import com.betterjr.modules.order.service.ScfInvoiceService;
-import com.betterjr.modules.order.service.ScfOrderService;
+import com.betterjr.modules.order.service.ScfInvoiceDOService;
+import com.betterjr.modules.order.service.ScfOrderDOService;
 import com.betterjr.modules.order.service.ScfTransportService;
-import com.betterjr.modules.receivable.entity.ScfReceivable;
-import com.betterjr.modules.receivable.service.ScfReceivableService;
+import com.betterjr.modules.receivable.entity.ScfReceivableDO;
+import com.betterjr.modules.receivable.service.ScfReceivableDOService;
 
 @Service
 public class ScfAssetBasedataService extends BaseService<ScfAssetBasedataMapper, ScfAssetBasedata> {
@@ -31,15 +33,13 @@ public class ScfAssetBasedataService extends BaseService<ScfAssetBasedataMapper,
     @Autowired
     private ScfCustAgreementService custAgreementService;
     @Autowired
-    private ScfTransportService transportService;
+    private ScfInvoiceDOService invoiceService;
     @Autowired
-    private ScfInvoiceService invoiceService;
+    private ScfAcceptBillDOService acceptBillService;
     @Autowired
-    private ScfAcceptBillService acceptBillService;
+    private ScfReceivableDOService receivableService;
     @Autowired
-    private ScfReceivableService receivableService;
-    @Autowired
-    private ScfOrderService orderService;
+    private ScfOrderDOService orderService;
     /**
      * 插入资产记录的基础数据关系
      * @param anAssetBasedata
@@ -79,12 +79,12 @@ public class ScfAssetBasedataService extends BaseService<ScfAssetBasedataMapper,
 
     private void fillBasedata(ScfAsset anAsset, List<ScfAssetBasedata> assetBasedata) {
         BTAssert.notNull(assetBasedata, "查询资产基础数据 失败-assetBasedata is null");
-        List<ScfOrder> orderList=new ArrayList<ScfOrder>();
+        List<ScfOrderDO> orderList=new ArrayList<ScfOrderDO>();
         List<CustAgreement> agreementList=new ArrayList<CustAgreement>();
-        List<ScfAcceptBill> billList=new ArrayList<ScfAcceptBill>();
+        List<ScfAcceptBillDO> billList=new ArrayList<ScfAcceptBillDO>();
         List<ScfTransport> transportList=new ArrayList<ScfTransport>();
-        List<ScfInvoice> invoiceList=new ArrayList<ScfInvoice>();
-        List<ScfReceivable> receivableList=new ArrayList<ScfReceivable>();
+        List<ScfInvoiceDO> invoiceList=new ArrayList<ScfInvoiceDO>();
+        List<ScfReceivableDO> receivableList=new ArrayList<ScfReceivableDO>();
         for (ScfAssetBasedata scfAssetBasedata : assetBasedata) {
             String type=scfAssetBasedata.getInfoType();
             BTAssert.notNull(assetBasedata, "查询资产基础数据 失败-assetBasedata type is null");
@@ -94,32 +94,29 @@ public class ScfAssetBasedataService extends BaseService<ScfAssetBasedataMapper,
             BTAssert.notNull(assetBasedata, "查询资产基础数据 失败-assetBasedata version is null");
             if(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_ORDER.equals(type)){
                
-                ScfOrder order=orderService.selectOneWithVersion(refNo, version);
+                ScfOrderDO order=orderService.selectOneWithVersion(refNo, version);
                 orderList.add(order);
                 continue;
             }
             if(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT.equals(type)){
-                CustAgreement agreement=custAgreementService.selectOneWithVersion(refNo, version);
+                CustAgreement agreement=new CustAgreement();
+                //=custAgreementService.selectOneWithVersion(refNo, version);
                 agreementList.add(agreement);
                 continue;
             }
             if(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL.equals(type)){
-                ScfAcceptBill bill=acceptBillService.selectOneWithVersion(refNo, version);
+                ScfAcceptBillDO bill=acceptBillService.selectOneWithVersion(refNo, version);
                 billList.add(bill);
                 continue;
             }
-            if(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_TRANSPORT.equals(type)){
-                ScfTransport transport=transportService.selectOneWithVersion(refNo, version);
-                transportList.add(transport);
-                continue;
-            }
+            
             if(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE.equals(type)){
-                ScfReceivable receivable=receivableService.selectOneWithVersion(refNo, version);
+                ScfReceivableDO receivable=receivableService.selectOneWithVersion(refNo, version);
                 receivableList.add(receivable);
                 continue;
             }
             if(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE.equals(type)){
-                ScfInvoice invoice=invoiceService.selectOneWithVersion(refNo, version);
+                ScfInvoiceDO invoice=invoiceService.selectOneWithVersion(refNo, version);
                 invoiceList.add(invoice);
             }
         }

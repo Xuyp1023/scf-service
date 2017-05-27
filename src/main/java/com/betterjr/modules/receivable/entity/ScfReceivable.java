@@ -31,7 +31,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "T_SCF_RECEIVABLE")
-public class ScfReceivable extends BaseVersionEntity {
+public class ScfReceivable implements BetterjrEntity {
     /**
      * 流水号
      */
