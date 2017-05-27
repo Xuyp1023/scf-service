@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterTradeException;
+import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
@@ -33,10 +34,9 @@ import com.betterjr.modules.order.service.ScfOrderRelationService;
 import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.receivable.dao.ScfReceivableMapper;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
-import com.betterjr.modules.version.service.BaseVersionService;
 
 @Service
-public class ScfReceivableService extends BaseVersionService<ScfReceivableMapper, ScfReceivable> implements IScfOrderInfoCheckService  {
+public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfReceivable> implements IScfOrderInfoCheckService  {
    
     @Autowired
     private ScfOrderRelationService orderRelationService;
@@ -293,4 +293,15 @@ public class ScfReceivableService extends BaseVersionService<ScfReceivableMapper
         this.updateByPrimaryKey(anReceivable);
         return anReceivable;
     }
+    
+    /**
+     * 检查状态信息
+     */
+    public void checkStatus(String anBusinStatus, String anTargetStatus, boolean anFlag, String anMessage) {
+        if (BetterStringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
+            logger.warn(anMessage);
+            throw new BytterTradeException(40001, anMessage);
+        }
+    }
+    
 }

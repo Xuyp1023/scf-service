@@ -20,7 +20,7 @@ import javax.persistence.*;
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "T_CUST_AGREEMENT")
-public class CustAgreement extends BaseVersionEntity {
+public class CustAgreement implements BetterjrEntity {
     /**
      * 流水号
      */
