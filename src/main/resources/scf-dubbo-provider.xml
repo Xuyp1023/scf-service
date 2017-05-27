@@ -39,13 +39,9 @@
         com.betterjr.modules.customer,
         com.betterjr.modules.commission,
         com.betterjr.modules.delivery,
-        com.betterjr.modules.flie,
         com.betterjr.modules.ledger,
-<<<<<<< HEAD
         com.betterjr.modules.config.dubboclient;
-=======
         com.betterjr.modules.flie,
->>>>>>> refs/remotes/xuyp.scf-service/bug-185(2)
 		com.betterjr.dubbo.extend.filter" />
 	<!-- 提供方应用信息，用于计算依赖关系 -->
 	<dubbo:application name="${dubbo.application}" />
