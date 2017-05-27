@@ -115,13 +115,8 @@ public class CustFileCloumn implements BetterjrEntity {
         return this.cloumnType;
     }
 
-<<<<<<< HEAD
-    public void setCloumnType(String anCloumn_type) {
-        this.cloumnType = anCloumn_type;
-=======
     public void setCloumnType(String anCloumnType) {
         this.cloumnType = anCloumnType;
->>>>>>> refs/remotes/xuyp.scf-service/bug-185(2)
     }
 
     public String getInfoType() {
