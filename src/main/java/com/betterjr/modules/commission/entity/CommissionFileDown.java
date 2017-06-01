@@ -8,10 +8,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
+import com.betterjr.common.mapper.CustTimeJsonSerializer;
 import com.betterjr.common.utils.BetterDateUtils;
-import com.betterjr.modules.account.entity.CustOperatorInfo;
+import com.betterjr.modules.commission.data.CommissionConstantCollentions;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -70,10 +72,139 @@ public class CommissionFileDown implements BetterjrEntity {
     
     @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
     private String regTime;
+    
+    //拜特确认当前记录是否合规 0 未确认  1 不合规  2 合规
+    @Column(name = "C_CONFIRM_STATUS",  columnDefinition="VARCHAR" )
+    private String confirmStatus;
+    
+    //确认日期
+    @Column(name = "D_CONFIRM_DATE",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustDateJsonSerializer.class)
+    private String confirmDate;
+    
+    //确认时间
+    @Column(name = "T_CONFIRM_TIME",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
+    private String confirmTime;
+    
+    //确认信息
+    @Column(name = "C_CONFRIM_MESSAGE",  columnDefinition="VARCHAR" )
+    private String confirmMessage;
+    
+  //当前文件总金额
+    @Column(name = "F_BALANCE_CONFIRM_FAILURE",  columnDefinition="DECIMAL" )
+    private BigDecimal confirmFailureBalance;
+
+    //当前解析文件总的行数
+    @Column(name = "N_AMOUNT_CONFIRM_FAILURE",  columnDefinition="INTEGER" )
+    private Integer confirmFailureAmount;
+    
+  //当前文件总金额
+    @Column(name = "F_BALANCE_CONFIRM_SUCCESS",  columnDefinition="DECIMAL" )
+    private BigDecimal confirmSuccessBalance;
+
+    //当前解析文件总的行数
+    @Column(name = "N_AMOUNT_CONFIRM_SUCCESS",  columnDefinition="INTEGER" )
+    private Integer confirmSuccessAmount;
 
     public CommissionFileDown() {
         super();
     }
+
+    public String getConfirmStatus() {
+        return this.confirmStatus;
+    }
+
+
+
+    public void setConfirmStatus(String anConfirmStatus) {
+        this.confirmStatus = anConfirmStatus;
+    }
+
+
+
+    public String getConfirmDate() {
+        return this.confirmDate;
+    }
+
+
+
+    public void setConfirmDate(String anConfirmDate) {
+        this.confirmDate = anConfirmDate;
+    }
+
+
+
+    public String getConfirmTime() {
+        return this.confirmTime;
+    }
+
+
+
+    public void setConfirmTime(String anConfirmTime) {
+        this.confirmTime = anConfirmTime;
+    }
+
+
+
+    public String getConfirmMessage() {
+        return this.confirmMessage;
+    }
+
+
+
+    public void setConfirmMessage(String anConfirmMessage) {
+        this.confirmMessage = anConfirmMessage;
+    }
+
+
+
+    public BigDecimal getConfirmFailureBalance() {
+        return this.confirmFailureBalance;
+    }
+
+
+
+    public void setConfirmFailureBalance(BigDecimal anConfirmFailureBalance) {
+        this.confirmFailureBalance = anConfirmFailureBalance;
+    }
+
+
+
+    public Integer getConfirmFailureAmount() {
+        return this.confirmFailureAmount;
+    }
+
+
+
+    public void setConfirmFailureAmount(Integer anConfirmFailureAmount) {
+        this.confirmFailureAmount = anConfirmFailureAmount;
+    }
+
+
+
+    public BigDecimal getConfirmSuccessBalance() {
+        return this.confirmSuccessBalance;
+    }
+
+
+
+    public void setConfirmSuccessBalance(BigDecimal anConfirmSuccessBalance) {
+        this.confirmSuccessBalance = anConfirmSuccessBalance;
+    }
+
+
+
+    public Integer getConfirmSuccessAmount() {
+        return this.confirmSuccessAmount;
+    }
+
+
+
+    public void setConfirmSuccessAmount(Integer anConfirmSuccessAmount) {
+        this.confirmSuccessAmount = anConfirmSuccessAmount;
+    }
+
 
 
     public Long getId() {
@@ -173,19 +304,20 @@ public class CommissionFileDown implements BetterjrEntity {
     }
 
     @Override
-    public String toString() {
-        return "CommissionFileDown [id=" + this.id + ", fileId=" + this.fileId + ", batchNo=" + this.batchNo + ", importDate=" + this.importDate
-                + ", importTime=" + this.importTime + ", custNo=" + this.custNo + ", custName=" + this.custName + ", operOrg=" + this.operOrg
-                + ", blance=" + this.blance + ", amount=" + this.amount + ", regDate=" + this.regDate + ", regTime=" + this.regTime + "]";
-    }
-
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((this.amount == null) ? 0 : this.amount.hashCode());
         result = prime * result + ((this.batchNo == null) ? 0 : this.batchNo.hashCode());
         result = prime * result + ((this.blance == null) ? 0 : this.blance.hashCode());
+        result = prime * result + ((this.confirmDate == null) ? 0 : this.confirmDate.hashCode());
+        result = prime * result + ((this.confirmFailureAmount == null) ? 0 : this.confirmFailureAmount.hashCode());
+        result = prime * result + ((this.confirmFailureBalance == null) ? 0 : this.confirmFailureBalance.hashCode());
+        result = prime * result + ((this.confirmMessage == null) ? 0 : this.confirmMessage.hashCode());
+        result = prime * result + ((this.confirmStatus == null) ? 0 : this.confirmStatus.hashCode());
+        result = prime * result + ((this.confirmSuccessAmount == null) ? 0 : this.confirmSuccessAmount.hashCode());
+        result = prime * result + ((this.confirmSuccessBalance == null) ? 0 : this.confirmSuccessBalance.hashCode());
+        result = prime * result + ((this.confirmTime == null) ? 0 : this.confirmTime.hashCode());
         result = prime * result + ((this.custName == null) ? 0 : this.custName.hashCode());
         result = prime * result + ((this.custNo == null) ? 0 : this.custNo.hashCode());
         result = prime * result + ((this.fileId == null) ? 0 : this.fileId.hashCode());
@@ -216,6 +348,38 @@ public class CommissionFileDown implements BetterjrEntity {
             if (other.blance != null) return false;
         }
         else if (!this.blance.equals(other.blance)) return false;
+        if (this.confirmDate == null) {
+            if (other.confirmDate != null) return false;
+        }
+        else if (!this.confirmDate.equals(other.confirmDate)) return false;
+        if (this.confirmFailureAmount == null) {
+            if (other.confirmFailureAmount != null) return false;
+        }
+        else if (!this.confirmFailureAmount.equals(other.confirmFailureAmount)) return false;
+        if (this.confirmFailureBalance == null) {
+            if (other.confirmFailureBalance != null) return false;
+        }
+        else if (!this.confirmFailureBalance.equals(other.confirmFailureBalance)) return false;
+        if (this.confirmMessage == null) {
+            if (other.confirmMessage != null) return false;
+        }
+        else if (!this.confirmMessage.equals(other.confirmMessage)) return false;
+        if (this.confirmStatus == null) {
+            if (other.confirmStatus != null) return false;
+        }
+        else if (!this.confirmStatus.equals(other.confirmStatus)) return false;
+        if (this.confirmSuccessAmount == null) {
+            if (other.confirmSuccessAmount != null) return false;
+        }
+        else if (!this.confirmSuccessAmount.equals(other.confirmSuccessAmount)) return false;
+        if (this.confirmSuccessBalance == null) {
+            if (other.confirmSuccessBalance != null) return false;
+        }
+        else if (!this.confirmSuccessBalance.equals(other.confirmSuccessBalance)) return false;
+        if (this.confirmTime == null) {
+            if (other.confirmTime != null) return false;
+        }
+        else if (!this.confirmTime.equals(other.confirmTime)) return false;
         if (this.custName == null) {
             if (other.custName != null) return false;
         }
@@ -255,6 +419,16 @@ public class CommissionFileDown implements BetterjrEntity {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "CommissionFileDown [id=" + this.id + ", fileId=" + this.fileId + ", batchNo=" + this.batchNo + ", importDate=" + this.importDate
+                + ", importTime=" + this.importTime + ", custNo=" + this.custNo + ", custName=" + this.custName + ", operOrg=" + this.operOrg
+                + ", blance=" + this.blance + ", amount=" + this.amount + ", regDate=" + this.regDate + ", regTime=" + this.regTime
+                + ", confirmStatus=" + this.confirmStatus + ", confirmDate=" + this.confirmDate + ", confirmTime=" + this.confirmTime
+                + ", confirmMessage=" + this.confirmMessage + ", confirmFailureBalance=" + this.confirmFailureBalance + ", confirmFailureAmount="
+                + this.confirmFailureAmount + ", confirmSuccessBalance=" + this.confirmSuccessBalance + ", confirmSuccessAmount="
+                + this.confirmSuccessAmount + "]";
+    }
 
     public void saveAddInit(int anRecordAmount, BigDecimal anBlance, CommissionRecord anRecord) {
         
@@ -267,6 +441,7 @@ public class CommissionFileDown implements BetterjrEntity {
         this.setImportTime(anRecord.getImportTime());
         this.setRegDate(BetterDateUtils.getNumDate());
         this.setRegTime(BetterDateUtils.getNumTime());
+        this.confirmStatus=CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_UNCONFIRMED;
         
     }
     

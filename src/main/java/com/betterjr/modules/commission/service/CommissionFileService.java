@@ -83,7 +83,7 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         BTAssert.notNull(anFile, "新增佣金文件为空");
         BTAssert.notNull(anFile.getFileId(), "新增佣金文件参数出错,文件id为空");
         BTAssert.notNull(anFile.getCustNo(), "新增佣金文件参数出错,供应商为空");
-        if(!checkFilePermitOperator(anFile.getCustNo(), BetterDateUtils.getNumDate())){
+        if(!checkFilePermitOperatorSecond(anFile.getCustNo(), BetterDateUtils.getNumDate())){
             BTAssert.notNull(null, "今天已经审核了全部文件，请明天再上传解析");
         }
         if(!checkFilePermitOperator(anFile.getFileId())){
@@ -184,7 +184,7 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         checkStatus(anFile.getPayStatus(), CommissionConstantCollentions.COMMISSION_PAY_STATUS_FAILURE, true, "当前文件记录已经开始付款，不能删除");
         checkStatus(anFile.getPayStatus(), CommissionConstantCollentions.COMMISSION_PAY_STATUS_SUCCESS, true, "当前文件记录已经开始付款，不能删除");
         checkStatus(anFile.getBusinStatus(), CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_AUDIT, true, "当前文件记录进入付款流程中，不能删除");
-        checkStatus(anFile.getPayStatus(), CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_DELETE, true, "当前文件记录已经删除，不能重复删除");
+        checkStatus(anFile.getBusinStatus(), CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_DELETE, true, "当前文件记录已经删除，不能重复删除");
         checkStatus(anFile.getOperOrg(), anOperatorInfo.getOperOrg(), false, "你没有当前文件的删除权限");
         
     }
@@ -356,6 +356,46 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         return true;
     }
     
+    /**
+     * 佣金文件作废
+     * @param anFileId
+     * @return
+     */
+    public CommissionFile saveCannulFile(Long anFileId){
+        
+        BTAssert.notNull(anFileId,"作废佣金文件失败!条件不正确");
+        CustOperatorInfo operatorInfo = UserUtils.getOperatorInfo();
+        BTAssert.notNull(operatorInfo,"作废佣金文件失败!请先登录");
+        CommissionFile file = this.selectByPrimaryKey(anFileId);
+        BTAssert.notNull(file,"作废佣金文件失败!条件不正确");
+        checkCannulFileStatus(file,operatorInfo);
+        //设置文件删除状态和佣金记录的删除状态
+        recordService.saveCannulStatusByFileId(file.getId());
+        file.setBusinStatus(CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_CANNUL);
+        this.updateByPrimaryKeySelective(file);
+        logger.info("success to cannul 佣金文件 saveCannulCommissionFile"+UserUtils.getOperatorInfo().getName()+"  anFileId="+anFileId);
+        
+        return file;
+        
+    }
+    
+    /**
+     * 校验当前文件是否符合作废的条件
+     * @param anFile
+     * @param anOperatorInfo
+     */
+    private void checkCannulFileStatus(CommissionFile anFile, CustOperatorInfo anOperatorInfo) {
+        
+        checkStatus(anFile.getPayStatus(), CommissionConstantCollentions.COMMISSION_PAY_STATUS_FAILURE, true, "当前文件记录已经付款，不能作废");
+        checkStatus(anFile.getPayStatus(), CommissionConstantCollentions.COMMISSION_PAY_STATUS_SUCCESS, true, "当前文件记录已经付款，不能作废");
+        checkStatus(anFile.getBusinStatus(), CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_DELETE, true, "当前文件记录已经删除，不能作废");
+        checkStatus(anFile.getBusinStatus(), CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_CANNUL, true, "当前文件记录已经作废，不能重复作废");
+        checkStatus(anFile.getConfirmStatus(), CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_EFFECTIVE, true, "当前文件记录已经确认通过，不能作废");
+        checkStatus(anFile.getOperOrg(), anOperatorInfo.getOperOrg(), false, "你没有当前文件的作废权限");
+   
+        
+    }
+
     public CommissionFile setResolveFailure(String anShowMessage,CommissionFile anFile){
         
         anFile.setShowMessage(anShowMessage);
@@ -396,10 +436,25 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
     /**
      * 文件审核 并生成下载文件路径
      * @param anFileId
+     * @param anFileDownId 
      * @return
      */
-    public CommissionFile saveAuditFile(Long anFileId) {
+    public CommissionFile saveAuditFile(Long anFileId, Long anFileDownId) {
 
+        logger.info("佣金记录批量审核 ：  saveAuditRecordList  审核佣金记录文件  saveAuditFile 开始  审核人："+UserUtils.getOperatorInfo().getName()+"   文件id="+anFileId);
+        CommissionFile file = this.selectOne(new CommissionFile(anFileId));
+        checkAuditFileStatus(file, UserUtils.getOperatorInfo());
+        file.saveAuditInit(UserUtils.getOperatorInfo());
+        file.setFileDownId(anFileDownId);
+        this.updateByPrimaryKey(file);
+        
+        logger.info("佣金记录批量审核 ：  saveAuditRecordList  审核佣金记录文件  saveAuditFile  成功 审核人："+UserUtils.getOperatorInfo().getName());
+        return file;
+        
+    }
+    
+    public CommissionFile saveAuditFile(Long anFileId) {
+        
         logger.info("佣金记录批量审核 ：  saveAuditRecordList  审核佣金记录文件  saveAuditFile 开始  审核人："+UserUtils.getOperatorInfo().getName()+"   文件id="+anFileId);
         CommissionFile file = this.selectOne(new CommissionFile(anFileId));
         checkAuditFileStatus(file, UserUtils.getOperatorInfo());
@@ -429,7 +484,7 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
     }
 
     /**
-     * 查询未解析的文件  (未解析文件 和解析失败未删除文件)
+     * 查询未解析的文件  (未解析文件 和解析失败未删除文件和已经审核但是确认未通过的文件)
      * @param anMap
      * @return
      */
@@ -448,6 +503,11 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         List<CommissionFile> falilureResolveList = this.selectByClassProperty(CommissionFile.class, anMap);
         noResolvelist.addAll(falilureResolveList);
         anMap.remove("resolveStatus");
+        anMap.put("businStatus", CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_AUDIT);
+        anMap.put("confirmStatus", CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_INEFFECTIVE);
+        List<CommissionFile> inEffeciveResolveList = this.selectByClassProperty(CommissionFile.class, anMap);
+        noResolvelist.addAll(inEffeciveResolveList);
+        anMap.remove("confirmStatus");
         anMap.remove("businStatus");
         return noResolvelist;
     }
@@ -455,13 +515,14 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
     /**
      * 审核多个文件
      * @param anFileSet
+     * @param anFileDownId 
      * @return
      */
-    public List<CommissionFile> saveAuditFile(Set<Long> anFileSet) {
+    public List<CommissionFile> saveAuditFile(Set<Long> anFileSet, Long anFileDownId) {
         
         List<CommissionFile> fileList=new ArrayList<CommissionFile>();
         for (Long fileId : anFileSet) {
-            CommissionFile file = saveAuditFile(fileId);
+            CommissionFile file = saveAuditFile(fileId,anFileDownId);
             fileList.add(file);
         }
         
@@ -471,12 +532,46 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
     
     /**
      * 检查当前企业的解析记录是否审核完全，如果已经审核完成，不允许再次上传文件解析
-     * true  表明今天还没有审核文件
-     * false  表明今天已经把文件审核完成，不需要再次上传文件解析
+     * true  表明今天还可以上传文件
+     * false  表明今天已经不可以上传文件解析
      * @param anCustNo
      * @param anImportDate
      * @return
      */
+    public boolean checkFilePermitOperatorSecond(Long anCustNo,String anImportDate){
+        
+        Map queryMap = QueryTermBuilder.newInstance()
+        .put("custNo", anCustNo)
+        .put("importDate", anImportDate)
+        .build();
+        List<CommissionFile> fileList = this.selectByProperty(queryMap);
+        for (CommissionFile file : fileList) {
+            
+            //已经付款失败，不允许再次上传
+            if(CommissionConstantCollentions.COMMISSION_PAY_STATUS_FAILURE.equals(file.getPayStatus())){
+                return false;
+            }
+            
+            //已经付款成功，不允许再次上传
+            if(CommissionConstantCollentions.COMMISSION_PAY_STATUS_FAILURE.equals(file.getPayStatus())){
+                return false;
+            }
+            
+            //已经审核，但是确认状态是确认通过或者未确认状态不允许再次上传
+            if(CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_AUDIT.equals(file.getBusinStatus())){
+                
+                if(!CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_INEFFECTIVE.equals(file.getConfirmStatus())){
+                    return false;
+                    
+                }
+                
+            }
+            
+        }
+        return true;
+    }
+    
+    @Deprecated
     public boolean checkFilePermitOperator(Long anCustNo,String anImportDate){
         
         Map queryMap = QueryTermBuilder.newInstance()
