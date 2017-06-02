@@ -13,9 +13,11 @@ import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.generator.SequenceFactory;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -211,7 +213,8 @@ public class ScfRequestTemp implements BetterjrEntity {
 	public void setModiOperName(String modiOperName) {
 		this.modiOperName = modiOperName;
 	}
-
+	
+	@JsonSerialize(using = CustDateJsonSerializer.class)
 	public String getModiDate() {
 		return modiDate;
 	}
@@ -244,6 +247,7 @@ public class ScfRequestTemp implements BetterjrEntity {
 		this.regOperName = regOperName;
 	}
 
+	@JsonSerialize(using = CustDateJsonSerializer.class)
 	public String getRegDate() {
 		return regDate;
 	}
@@ -452,7 +456,7 @@ public class ScfRequestTemp implements BetterjrEntity {
 				+ ", modiDate=" + modiDate + ", modiTime=" + modiTime + ", version=" + version + ", regOperName="
 				+ regOperName + ", regDate=" + regDate + ", regTime=" + regTime + ", operOrg=" + operOrg + ", orders="
 				+ orders + ", description=" + description + ", factorName=" + factorName + ", productName="
-				+ productName + "]";
+				+ productName + ", custName=" + custName + ", coreCustName=" + coreCustName + "]";
 	}
 
 	public void init() {
@@ -478,6 +482,11 @@ public class ScfRequestTemp implements BetterjrEntity {
     private String factorName;
 	@Transient
     private String productName;
+	@Transient
+    private String custName;
+	@Transient
+    private String coreCustName;
+
 
 	public String getFactorName() {
 		return factorName;
@@ -493,6 +502,22 @@ public class ScfRequestTemp implements BetterjrEntity {
 
 	public void setProductName(String productName) {
 		this.productName = productName;
+	}
+
+	public String getCustName() {
+		return custName;
+	}
+
+	public void setCustName(String custName) {
+		this.custName = custName;
+	}
+
+	public String getCoreCustName() {
+		return coreCustName;
+	}
+
+	public void setCoreCustName(String coreCustName) {
+		this.coreCustName = coreCustName;
 	}
 	
 	 

@@ -214,8 +214,9 @@ public class ScfProductConfigService extends BaseService<ScfProductConfigMapper,
         		.put("factorNo", anFactorNo)
         		.put("businStatus", ProductConstants.PRO_STATUS_SHELVES).build();
 
-        for (ScfProductConfig product : this.selectByProperty(anMap)) {
-            result.add(new SimpleDataEntity(product.getProductName(), String.valueOf(product.getId())));
+        List<ScfProductConfig> list = this.selectByProperty(anMap);
+        for (ScfProductConfig product : list) {
+            result.add(new SimpleDataEntity(product.getProductName(), String.valueOf(product.getProductCode())));
         }
         return result;
     }

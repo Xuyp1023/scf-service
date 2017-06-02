@@ -41,6 +41,7 @@ public class ScfRequestTempService extends BaseService<ScfRequestTempMapper, Scf
 	}
 
 	public Page<ScfRequestTemp> queryTempList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
+		anMap.put("businStatus", new String[]{"1", "2"});
 		Page<ScfRequestTemp> list = this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
 		for (ScfRequestTemp temp : list) {
 			setName(temp);
@@ -56,6 +57,8 @@ public class ScfRequestTempService extends BaseService<ScfRequestTempMapper, Scf
 	}
 	
 	private void setName(ScfRequestTemp temp) {
+		temp.setCustName(custAccountService.findCustInfo(temp.getCustNo()).getCustName());
+		temp.setCoreCustName(custAccountService.findCustInfo(temp.getCoreCustNo()).getCustName());
 		temp.setFactorName(custAccountService.findCustInfo(temp.getFactorNo()).getCustName());
 		temp.setProductName(scfProductConfigService.findProductByCode(temp.getProductCode()).getProductName());
 	}
