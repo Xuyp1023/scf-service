@@ -639,5 +639,20 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         return Collections3.isEmpty(fileList)?false:true;
     }
 
+    /**
+     * 通过当天总文件id查询当天所有的文件信息
+     * @param anFileId
+     * @return
+     */
+    public List<CommissionFile> queryFileListByFileDownId(Long anFileId) {
+
+        Map queryMap = QueryTermBuilder.newInstance()
+                .put("fileDownId", anFileId)
+                .build();
+        List<CommissionFile> fileList = this.selectByProperty(queryMap);
+        
+        return fileList;
+    }
+
 
 }

@@ -104,14 +104,14 @@ public class ScfReceivableDO extends BaseVersionEntity{
      */
     @Column(name = "F_DEDUCTION_BALANCE",  columnDefinition="DOUBLE" )
     @MetaData( value="抵扣金额", comments = "抵扣金额")
-    private BigDecimal deductionBalance ;
+    private BigDecimal deductionBalance =new BigDecimal(0);
     
     /**
      * 结算金额(已结算金额)
      */
     @Column(name = "F_STATEMENT_BALANCE",  columnDefinition="DOUBLE" )
     @MetaData( value="结算金额", comments = "结算金额")
-    private BigDecimal statementBalance ;
+    private BigDecimal statementBalance =new BigDecimal(0);
 
     /**
      * 贸易合同号
@@ -545,7 +545,14 @@ public class ScfReceivableDO extends BaseVersionEntity{
     public void initAddValue(CustOperatorInfo anOperatorInfo, boolean anConfirmFlag) {
         
         BTAssert.notNull(anOperatorInfo,"无法获取登录信息,操作失败");
-        double operValue = this.surplusBalance.add(this.deductionBalance).add(this.statementBalance).doubleValue();
+        BigDecimal bd=this.surplusBalance;
+        if(this.deductionBalance!=null){
+            bd=bd.add(this.deductionBalance);
+        }
+        if(this.statementBalance !=null){
+            bd=bd.add(this.statementBalance);
+        }
+        double operValue = bd.doubleValue();
         if(this.balance.doubleValue()!=operValue){
             BTAssert.notNull(null,"应付账款金额 = 应付账款余额 + 抵扣金额 + 已结算金额!保存失败"); 
         }
@@ -570,7 +577,14 @@ public class ScfReceivableDO extends BaseVersionEntity{
 
     public ScfReceivableDO initModifyValue(ScfReceivableDO anReceivable) {
         
-        double operValue = this.surplusBalance.add(this.deductionBalance).add(this.statementBalance).doubleValue();
+        BigDecimal bd=this.surplusBalance;
+        if(this.deductionBalance!=null){
+            bd=bd.add(this.deductionBalance);
+        }
+        if(this.statementBalance !=null){
+            bd=bd.add(this.statementBalance);
+        }
+        double operValue = bd.doubleValue();
         if(this.balance.doubleValue()!=operValue){
             BTAssert.notNull(null,"应付账款金额 = 应付账款余额 + 抵扣金额 + 已结算金额!保存失败"); 
         }

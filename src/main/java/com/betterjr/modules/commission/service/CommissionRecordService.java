@@ -431,7 +431,21 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
         return this.mapper.countRecordList(anCustNo, anImportDate);
     }
 
-
     
+    /**
+     * 通过文件ids分页查询
+     * @param anIds
+     * @param anFlag
+     * @param anPageNum
+     * @param anPageSize
+     * @return
+     */
+    public Page<CommissionRecord> queryRecordPageByFileIds(List<Long> anIds, String anFlag, int anPageNum, int anPageSize) {
+        
+        Map<String,Object> map = QueryTermBuilder.newInstance()
+                .put("fileId",anIds)
+                .build();
+        return this.selectPropertyByPage(map, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
+    }
 
 }

@@ -26,4 +26,31 @@ public class CommissionFileDownDubboService implements ICommissionFileDownServic
                 .toJson();
     }
 
+    @Override
+    public String webQueryCanAuditFileList(Map<String, Object> anAnMap, String anFlag, int anPageNum, int anPageSize) {
+       
+        Map<String, Object> queryMap = RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject
+                .newOkWithPage("佣金下载文件查询成功", fileDownService.queryCanAuditFileList(queryMap,anFlag, anPageNum, anPageSize))
+                .toJson();
+    }
+
+    @Override
+    public String webQueryFileRecordByFileId(Long anFileId, String anFlag, int anPageNum, int anPageSize) {
+        
+        return AjaxObject
+                .newOkWithPage("佣金下载文件查询成功", fileDownService.queryFileRecordByFileId(anFileId,anFlag, anPageNum, anPageSize))
+                .toJson();
+    }
+
+    @Override
+    public String webSaveAuditFileDownById(Map<String, Object> anAnMap) {
+        
+        Map<String, Object> queryMap = RuleServiceDubboFilterInvoker.getInputObj();
+        
+        return AjaxObject
+                .newOk("佣金文件审核成功", fileDownService.saveAuditFileDown(queryMap))
+                .toJson();
+    }
+
 }
