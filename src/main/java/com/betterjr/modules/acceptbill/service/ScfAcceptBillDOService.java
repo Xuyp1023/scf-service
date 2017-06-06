@@ -292,7 +292,9 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
             if (! anMap.containsKey("supplierNo") ||  anMap.get("supplierNo") ==null || StringUtils.isBlank(anMap.get("supplierNo").toString())) {
                 anMap.put("supplierNo", getCustNoList(custInfos));
             }
-            //anMap.put("supplierNo", getCustNoList(custInfos));
+            
+            //供应商去除已经废止的票据信息
+            anMap.put("NEbusinStatus",VersionConstantCollentions.BUSIN_STATUS_ANNUL);
             
         }else{
             
