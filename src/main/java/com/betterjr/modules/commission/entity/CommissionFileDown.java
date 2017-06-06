@@ -11,7 +11,9 @@ import javax.persistence.Table;
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.mapper.CustTimeJsonSerializer;
+import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.commission.data.CommissionConstantCollentions;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -73,7 +75,7 @@ public class CommissionFileDown implements BetterjrEntity {
     @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
     private String regTime;
     
-    //拜特确认当前记录是否合规 0 未确认  1 不合规  2 合规
+    //拜特确认当前记录是否合规 未确认  1 确认未通过  2 确认通过
     @Column(name = "C_CONFIRM_STATUS",  columnDefinition="VARCHAR" )
     private String confirmStatus;
     
@@ -107,6 +109,12 @@ public class CommissionFileDown implements BetterjrEntity {
     @Column(name = "N_AMOUNT_CONFIRM_SUCCESS",  columnDefinition="INTEGER" )
     private Integer confirmSuccessAmount;
 
+    @Column(name = "L_AUDIT_OPERID",  columnDefinition="INTEGER" )
+    private Long auditOperId;
+    
+    @Column(name = "C_AUDIT_OPERNAME",  columnDefinition="VARCHAR" )
+    private String auditOperName;
+    
     public CommissionFileDown() {
         super();
     }
@@ -115,7 +123,21 @@ public class CommissionFileDown implements BetterjrEntity {
         return this.confirmStatus;
     }
 
+    public Long getAuditOperId() {
+        return this.auditOperId;
+    }
 
+    public void setAuditOperId(Long anAuditOperId) {
+        this.auditOperId = anAuditOperId;
+    }
+
+    public String getAuditOperName() {
+        return this.auditOperName;
+    }
+
+    public void setAuditOperName(String anAuditOperName) {
+        this.auditOperName = anAuditOperName;
+    }
 
     public void setConfirmStatus(String anConfirmStatus) {
         this.confirmStatus = anConfirmStatus;
@@ -419,6 +441,7 @@ public class CommissionFileDown implements BetterjrEntity {
         return true;
     }
 
+  
     @Override
     public String toString() {
         return "CommissionFileDown [id=" + this.id + ", fileId=" + this.fileId + ", batchNo=" + this.batchNo + ", importDate=" + this.importDate
@@ -427,7 +450,7 @@ public class CommissionFileDown implements BetterjrEntity {
                 + ", confirmStatus=" + this.confirmStatus + ", confirmDate=" + this.confirmDate + ", confirmTime=" + this.confirmTime
                 + ", confirmMessage=" + this.confirmMessage + ", confirmFailureBalance=" + this.confirmFailureBalance + ", confirmFailureAmount="
                 + this.confirmFailureAmount + ", confirmSuccessBalance=" + this.confirmSuccessBalance + ", confirmSuccessAmount="
-                + this.confirmSuccessAmount + "]";
+                + this.confirmSuccessAmount + ", auditOperId=" + this.auditOperId + ", auditOperName=" + this.auditOperName + "]";
     }
 
     public void saveAddInit(int anRecordAmount, BigDecimal anBlance, CommissionRecord anRecord) {
@@ -442,6 +465,19 @@ public class CommissionFileDown implements BetterjrEntity {
         this.setRegDate(BetterDateUtils.getNumDate());
         this.setRegTime(BetterDateUtils.getNumTime());
         this.confirmStatus=CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_UNCONFIRMED;
+        this.id=SerialGenerator.getLongValue("CommissionFileDown.id");
+        
+    }
+
+    public void saveAuditInit(String anConfirmStatus, String anConfirmMessage, CustOperatorInfo anOperatorInfo) {
+        
+        this.auditOperId=anOperatorInfo.getId();
+        this.auditOperName=anOperatorInfo.getName();
+        this.confirmDate=BetterDateUtils.getNumDate();
+        this.confirmMessage=anConfirmMessage;
+        this.confirmStatus=anConfirmStatus;
+        this.confirmTime=BetterDateUtils.getNumTime();
+                
         
     }
     

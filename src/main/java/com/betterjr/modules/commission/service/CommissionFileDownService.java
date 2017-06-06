@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
@@ -124,10 +125,11 @@ public class CommissionFileDownService extends BaseService<CommissionFileDownMap
             BTAssert.notNull(fileDown,"审核佣金文件不存在");
             checkFileDownStatus(fileDown);
             //设置下载文件的状态
-            
-            //设置佣金文件的状态
-            
-            //设置佣金记录的状态
+            fileDown.saveAuditInit(anMap.get("confirmStatus").toString(),anMap.get("confirmMessage").toString(),UserUtils.getOperatorInfo());
+            this.updateByPrimaryKeySelective(fileDown);
+            //设置佣金文件的状态和 设置佣金记录的状态
+            fileService.saveUpdateByFileDown(fileDown);
+          
             
             return fileDown;
         }

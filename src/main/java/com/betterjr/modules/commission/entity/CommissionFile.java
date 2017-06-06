@@ -164,6 +164,12 @@ public class CommissionFile implements BetterjrEntity {
     @Column(name = "L_FILEDOWN_ID",  columnDefinition="INTEGER" )
     private Long fileDownId;
     
+    @Column(name = "L_AUDIT_OPERID",  columnDefinition="INTEGER" )
+    private Long auditOperId;
+    
+    @Column(name = "C_AUDIT_OPERNAME",  columnDefinition="VARCHAR" )
+    private String auditOperName;
+    
     private static final long serialVersionUID = -7738651669430689381L;
     
     
@@ -213,6 +219,22 @@ public class CommissionFile implements BetterjrEntity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    public Long getAuditOperId() {
+        return this.auditOperId;
+    }
+
+    public void setAuditOperId(Long anAuditOperId) {
+        this.auditOperId = anAuditOperId;
+    }
+
+    public String getAuditOperName() {
+        return this.auditOperName;
+    }
+
+    public void setAuditOperName(String anAuditOperName) {
+        this.auditOperName = anAuditOperName;
     }
 
     public String getRefNo() {
@@ -439,7 +461,6 @@ public class CommissionFile implements BetterjrEntity {
         this.downFileId = anDownFileId;
     }
 
-
     @Override
     public String toString() {
         return "CommissionFile [id=" + this.id + ", refNo=" + this.refNo + ", batchNo=" + this.batchNo + ", digest=" + this.digest + ", signature="
@@ -451,7 +472,7 @@ public class CommissionFile implements BetterjrEntity {
                 + this.regTime + ", modiOperId=" + this.modiOperId + ", modiOperName=" + this.modiOperName + ", modiDate=" + this.modiDate
                 + ", modiTime=" + this.modiTime + ", version=" + this.version + ", confirmStatus=" + this.confirmStatus + ", confirmDate="
                 + this.confirmDate + ", confirmTime=" + this.confirmTime + ", confirmMessage=" + this.confirmMessage + ", fileDownId="
-                + this.fileDownId + "]";
+                + this.fileDownId + ", auditOperId=" + this.auditOperId + ", auditOperName=" + this.auditOperName + "]";
     }
 
     @Override

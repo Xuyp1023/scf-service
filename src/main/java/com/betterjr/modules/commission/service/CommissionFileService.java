@@ -31,6 +31,7 @@ import com.betterjr.modules.cert.dubbo.interfaces.IVerifySignCertService;
 import com.betterjr.modules.commission.dao.CommissionFileMapper;
 import com.betterjr.modules.commission.data.CommissionConstantCollentions;
 import com.betterjr.modules.commission.entity.CommissionFile;
+import com.betterjr.modules.commission.entity.CommissionFileDown;
 import com.betterjr.modules.commission.entity.CommissionRecord;
 import com.betterjr.modules.config.dubbo.interfaces.IDomainAttributeService;
 import com.betterjr.modules.customer.ICustMechBaseService;
@@ -649,9 +650,52 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         Map queryMap = QueryTermBuilder.newInstance()
                 .put("fileDownId", anFileId)
                 .build();
-        List<CommissionFile> fileList = this.selectByProperty(queryMap);
+        List<CommissionFile> fileList = this.selectByProperty(queryMap,"id desc");
         
         return fileList;
+    }
+
+    /**
+     * 通过导出文件更新佣金文件和佣金记录的状态
+     * @param anFileDown
+     */
+    public List<CommissionFile> saveUpdateByFileDown(CommissionFileDown anFileDown) {
+        
+        BTAssert.notNull(anFileDown,"审核导出文件不存在！");
+        BTAssert.notNull(anFileDown.getId(),"审核导出文件为空");
+        BTAssert.notNull(anFileDown.getConfirmStatus(),"审核导出文件条件为空");
+        BTAssert.notNull(anFileDown.getConfirmMessage(),"审核导出文件条件为空");
+        
+        List<CommissionFile> fileList = queryFileListByFileDownId(anFileDown.getId());
+        BTAssert.notNull(fileList,"审核导出文件不存在！");
+        for (CommissionFile file : fileList) {
+            checkOperatorAuditFileStatus(file);
+            file.setConfirmDate(anFileDown.getConfirmDate());
+            file.setConfirmMessage(anFileDown.getConfirmMessage());
+            file.setConfirmStatus(anFileDown.getConfirmStatus());
+            file.setConfirmTime(anFileDown.getConfirmTime());
+            file.setAuditOperId(anFileDown.getAuditOperId());
+            file.setAuditOperName(anFileDown.getAuditOperName());
+            this.updateByPrimaryKeySelective(file);
+            //更新明细记录信息
+            recordService.saveUpdateByCommissionFile(file);
+        }
+        
+        return  fileList;
+        
+    }
+
+    private void checkOperatorAuditFileStatus(CommissionFile anFile) {
+
+        checkStatus(anFile.getConfirmStatus(), CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_EFFECTIVE, true, "当前文件记录已经已经审核通过，不能重复审核");
+        checkStatus(anFile.getConfirmStatus(), CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_INEFFECTIVE, true, "当前文件记录已经审核未通过，不能重复审核");
+        checkStatus(anFile.getPayStatus(), CommissionConstantCollentions.COMMISSION_PAY_STATUS_FAILURE, true, "当前文件记录已经付款，不能审核");
+        checkStatus(anFile.getPayStatus(), CommissionConstantCollentions.COMMISSION_PAY_STATUS_SUCCESS, true, "当前文件记录已经付款，不能审核");
+        checkStatus(anFile.getBusinStatus(), CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_DELETE, true, "当前文件记录已经删除，不能审核");
+        checkStatus(anFile.getBusinStatus(), CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_CANNUL, true, "当前文件记录已经作废，不能审核");
+        checkStatus(anFile.getBusinStatus(), CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_NO_HANDLE, true, "当前文件记录还未达到审核条件，不能审核");
+        checkStatus(anFile.getBusinStatus(), CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_IS_HANDLE, true, "当前文件记录还未达到审核条件，不能审核");
+        
     }
 
 
