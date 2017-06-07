@@ -10,6 +10,8 @@ public class CommissionConstantCollentions {
     
     public static final String COMMISSION_BUSIN_STATUS_DELETE="3"; //佣金业务状态已删除
     
+    public static final String COMMISSION_BUSIN_STATUS_CANNUL="4"; //佣金业务状态已作废
+    
     public static final String COMMISSION_PAY_STATUS_NO_HANDLE="0"; //佣金付款状态未处理
     
     public static final String COMMISSION_PAY_STATUS_SUCCESS="2"; //佣金付款状态付款成功
@@ -36,5 +38,11 @@ public class CommissionConstantCollentions {
     public static final Integer COMMISSION_FILE_RESOLVE_SLEEP_TIME=60;//文件解析睡眠时间
     
     public static final String COMMISSION_FILE_RESOLVE_SUFFIX_KEY="COMMISSIONFILERESOLVE";//佣金文件解析前缀
+    
+    public static final String COMMISSION_FILE_CONFIRM_STATUS_EFFECTIVE="2"; //确认合规(确认通过)
+    
+    public static final String COMMISSION_FILE_CONFIRM_STATUS_INEFFECTIVE="1";//确认不合规(确认未通过)
+    
+    public static final String COMMISSION_FILE_CONFIRM_STATUS_UNCONFIRMED="0";//还没有确认
 
 }

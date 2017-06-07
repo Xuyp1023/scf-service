@@ -149,8 +149,20 @@ public class CommissionRecord implements BetterjrEntity {
 
     @Column(name = "N_VERSION", columnDefinition = "VARCHAR")
     private String version;
+    
+    //拜特确认当前记录是否合规 0 未确认  1 不合规  2 合规
+    @Column(name = "C_CONFIRM_STATUS",  columnDefinition="VARCHAR" )
+    private String confirmStatus;
 
     private static final long serialVersionUID = 1493715864481L;
+    
+    public String getConfirmStatus() {
+        return this.confirmStatus;
+    }
+
+    public void setConfirmStatus(String anConfirmStatus) {
+        this.confirmStatus = anConfirmStatus;
+    }
 
     public Long getId() {
         return id;
@@ -406,18 +418,19 @@ public class CommissionRecord implements BetterjrEntity {
         int result = 1;
         result = prime * result + ((this.amount == null) ? 0 : this.amount.hashCode());
         result = prime * result + ((this.area == null) ? 0 : this.area.hashCode());
+        result = prime * result + ((this.balance == null) ? 0 : this.balance.hashCode());
         result = prime * result + ((this.bank == null) ? 0 : this.bank.hashCode());
         result = prime * result + ((this.bankAccount == null) ? 0 : this.bankAccount.hashCode());
         result = prime * result + ((this.bankAccountName == null) ? 0 : this.bankAccountName.hashCode());
         result = prime * result + ((this.bankAddress == null) ? 0 : this.bankAddress.hashCode());
         result = prime * result + ((this.bankName == null) ? 0 : this.bankName.hashCode());
         result = prime * result + ((this.businStatus == null) ? 0 : this.businStatus.hashCode());
+        result = prime * result + ((this.confirmStatus == null) ? 0 : this.confirmStatus.hashCode());
         result = prime * result + ((this.contacts == null) ? 0 : this.contacts.hashCode());
         result = prime * result + ((this.contactsMobileNo == null) ? 0 : this.contactsMobileNo.hashCode());
         result = prime * result + ((this.custName == null) ? 0 : this.custName.hashCode());
         result = prime * result + ((this.custNo == null) ? 0 : this.custNo.hashCode());
         result = prime * result + ((this.customerName == null) ? 0 : this.customerName.hashCode());
-        result = prime * result + ((this.balance == null) ? 0 : this.balance.hashCode());
         result = prime * result + ((this.fileId == null) ? 0 : this.fileId.hashCode());
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
         result = prime * result + ((this.importDate == null) ? 0 : this.importDate.hashCode());
@@ -452,6 +465,10 @@ public class CommissionRecord implements BetterjrEntity {
             if (other.area != null) return false;
         }
         else if (!this.area.equals(other.area)) return false;
+        if (this.balance == null) {
+            if (other.balance != null) return false;
+        }
+        else if (!this.balance.equals(other.balance)) return false;
         if (this.bank == null) {
             if (other.bank != null) return false;
         }
@@ -476,6 +493,10 @@ public class CommissionRecord implements BetterjrEntity {
             if (other.businStatus != null) return false;
         }
         else if (!this.businStatus.equals(other.businStatus)) return false;
+        if (this.confirmStatus == null) {
+            if (other.confirmStatus != null) return false;
+        }
+        else if (!this.confirmStatus.equals(other.confirmStatus)) return false;
         if (this.contacts == null) {
             if (other.contacts != null) return false;
         }
@@ -496,10 +517,6 @@ public class CommissionRecord implements BetterjrEntity {
             if (other.customerName != null) return false;
         }
         else if (!this.customerName.equals(other.customerName)) return false;
-        if (this.balance == null) {
-            if (other.balance != null) return false;
-        }
-        else if (!this.balance.equals(other.balance)) return false;
         if (this.fileId == null) {
             if (other.fileId != null) return false;
         }
@@ -581,7 +598,7 @@ public class CommissionRecord implements BetterjrEntity {
                 + ", operOrg=" + this.operOrg + ", payStatus=" + this.payStatus + ", businStatus=" + this.businStatus + ", regOperId="
                 + this.regOperId + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", modiOperId="
                 + this.modiOperId + ", modiOperName=" + this.modiOperName + ", modiDate=" + this.modiDate + ", modiTime=" + this.modiTime
-                + ", version=" + this.version + "]";
+                + ", version=" + this.version + ", confirmStatus=" + this.confirmStatus + "]";
     }
 
     public CommissionRecord() {
@@ -604,6 +621,7 @@ public class CommissionRecord implements BetterjrEntity {
             this.setRegOperId(anOperatorInfo.getId());
             this.setRegOperName(anOperatorInfo.getName());
             this.setVersion("1");
+            this.confirmStatus=CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_UNCONFIRMED;
             this.refNo = SequenceFactory.generate("PLAT_COMMISSION_RECORD", this.getOperOrg(), "CP#{Date:yyMMdd}#{Seq:8}", "D");
             this.id=SerialGenerator.getLongValue("CommissionRecord.id");
         }

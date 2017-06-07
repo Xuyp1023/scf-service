@@ -346,6 +346,8 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
              }
              //anMap.put("custNo", getCustNoList(custInfos));
              anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+           //供应商去除已经废止的票据信息
+             anMap.put("NEbusinStatus",VersionConstantCollentions.BUSIN_STATUS_ANNUL);
              
          }else{
              

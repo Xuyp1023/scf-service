@@ -87,7 +87,7 @@ public class CommissionFile implements BetterjrEntity {
     @Column(name = "C_PAY_STATUS",  columnDefinition="VARCHAR" )
     private String payStatus;
 
-    //业务状态 0 未处理 1 已处理 2已审核 3删除
+    //业务状态 0 未处理 1 已处理 2已审核 3删除 4:作废状态
     @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
     private String businStatus;
 
@@ -142,7 +142,76 @@ public class CommissionFile implements BetterjrEntity {
     @Column(name = "N_VERSION",  columnDefinition="VARCHAR" )
     private String version;
     
+    //拜特确认当前记录是否合规 0 未确认  1 确认未通过 2 确认通过
+    @Column(name = "C_CONFIRM_STATUS",  columnDefinition="VARCHAR" )
+    private String confirmStatus;
+    
+    //确认日期
+    @Column(name = "D_CONFIRM_DATE",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustDateJsonSerializer.class)
+    private String confirmDate;
+    
+    //确认时间
+    @Column(name = "T_CONFIRM_TIME",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
+    private String confirmTime;
+    
+    //确认信息
+    @Column(name = "C_CONFRIM_MESSAGE",  columnDefinition="VARCHAR" )
+    private String confirmMessage;
+    
+    //当天审核全部文件的id
+    @Column(name = "L_FILEDOWN_ID",  columnDefinition="INTEGER" )
+    private Long fileDownId;
+    
+    @Column(name = "L_AUDIT_OPERID",  columnDefinition="INTEGER" )
+    private Long auditOperId;
+    
+    @Column(name = "C_AUDIT_OPERNAME",  columnDefinition="VARCHAR" )
+    private String auditOperName;
+    
     private static final long serialVersionUID = -7738651669430689381L;
+    
+    
+    public String getConfirmStatus() {
+        return this.confirmStatus;
+    }
+
+    public void setConfirmStatus(String anConfirmStatus) {
+        this.confirmStatus = anConfirmStatus;
+    }
+
+    public String getConfirmDate() {
+        return this.confirmDate;
+    }
+
+    public void setConfirmDate(String anConfirmDate) {
+        this.confirmDate = anConfirmDate;
+    }
+
+    public String getConfirmTime() {
+        return this.confirmTime;
+    }
+
+    public void setConfirmTime(String anConfirmTime) {
+        this.confirmTime = anConfirmTime;
+    }
+
+    public String getConfirmMessage() {
+        return this.confirmMessage;
+    }
+
+    public void setConfirmMessage(String anConfirmMessage) {
+        this.confirmMessage = anConfirmMessage;
+    }
+
+    public Long getFileDownId() {
+        return this.fileDownId;
+    }
+
+    public void setFileDownId(Long anFileDownId) {
+        this.fileDownId = anFileDownId;
+    }
 
     public Long getId() {
         return id;
@@ -150,6 +219,22 @@ public class CommissionFile implements BetterjrEntity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    public Long getAuditOperId() {
+        return this.auditOperId;
+    }
+
+    public void setAuditOperId(Long anAuditOperId) {
+        this.auditOperId = anAuditOperId;
+    }
+
+    public String getAuditOperName() {
+        return this.auditOperName;
+    }
+
+    public void setAuditOperName(String anAuditOperName) {
+        this.auditOperName = anAuditOperName;
     }
 
     public String getRefNo() {
@@ -377,14 +462,34 @@ public class CommissionFile implements BetterjrEntity {
     }
 
     @Override
+    public String toString() {
+        return "CommissionFile [id=" + this.id + ", refNo=" + this.refNo + ", batchNo=" + this.batchNo + ", digest=" + this.digest + ", signature="
+                + this.signature + ", fileId=" + this.fileId + ", downFileId=" + this.downFileId + ", fileName=" + this.fileName + ", importDate="
+                + this.importDate + ", importTime=" + this.importTime + ", custNo=" + this.custNo + ", custName=" + this.custName + ", operOrg="
+                + this.operOrg + ", payStatus=" + this.payStatus + ", businStatus=" + this.businStatus + ", resolveStatus=" + this.resolveStatus
+                + ", showMessage=" + this.showMessage + ", totalBlance=" + this.totalBlance + ", totalAmount=" + this.totalAmount + ", infoType="
+                + this.infoType + ", regOperId=" + this.regOperId + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate + ", regTime="
+                + this.regTime + ", modiOperId=" + this.modiOperId + ", modiOperName=" + this.modiOperName + ", modiDate=" + this.modiDate
+                + ", modiTime=" + this.modiTime + ", version=" + this.version + ", confirmStatus=" + this.confirmStatus + ", confirmDate="
+                + this.confirmDate + ", confirmTime=" + this.confirmTime + ", confirmMessage=" + this.confirmMessage + ", fileDownId="
+                + this.fileDownId + ", auditOperId=" + this.auditOperId + ", auditOperName=" + this.auditOperName + "]";
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((this.batchNo == null) ? 0 : this.batchNo.hashCode());
         result = prime * result + ((this.businStatus == null) ? 0 : this.businStatus.hashCode());
+        result = prime * result + ((this.confirmDate == null) ? 0 : this.confirmDate.hashCode());
+        result = prime * result + ((this.confirmMessage == null) ? 0 : this.confirmMessage.hashCode());
+        result = prime * result + ((this.confirmStatus == null) ? 0 : this.confirmStatus.hashCode());
+        result = prime * result + ((this.confirmTime == null) ? 0 : this.confirmTime.hashCode());
         result = prime * result + ((this.custName == null) ? 0 : this.custName.hashCode());
         result = prime * result + ((this.custNo == null) ? 0 : this.custNo.hashCode());
         result = prime * result + ((this.digest == null) ? 0 : this.digest.hashCode());
+        result = prime * result + ((this.downFileId == null) ? 0 : this.downFileId.hashCode());
+        result = prime * result + ((this.fileDownId == null) ? 0 : this.fileDownId.hashCode());
         result = prime * result + ((this.fileId == null) ? 0 : this.fileId.hashCode());
         result = prime * result + ((this.fileName == null) ? 0 : this.fileName.hashCode());
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
@@ -425,6 +530,22 @@ public class CommissionFile implements BetterjrEntity {
             if (other.businStatus != null) return false;
         }
         else if (!this.businStatus.equals(other.businStatus)) return false;
+        if (this.confirmDate == null) {
+            if (other.confirmDate != null) return false;
+        }
+        else if (!this.confirmDate.equals(other.confirmDate)) return false;
+        if (this.confirmMessage == null) {
+            if (other.confirmMessage != null) return false;
+        }
+        else if (!this.confirmMessage.equals(other.confirmMessage)) return false;
+        if (this.confirmStatus == null) {
+            if (other.confirmStatus != null) return false;
+        }
+        else if (!this.confirmStatus.equals(other.confirmStatus)) return false;
+        if (this.confirmTime == null) {
+            if (other.confirmTime != null) return false;
+        }
+        else if (!this.confirmTime.equals(other.confirmTime)) return false;
         if (this.custName == null) {
             if (other.custName != null) return false;
         }
@@ -437,6 +558,14 @@ public class CommissionFile implements BetterjrEntity {
             if (other.digest != null) return false;
         }
         else if (!this.digest.equals(other.digest)) return false;
+        if (this.downFileId == null) {
+            if (other.downFileId != null) return false;
+        }
+        else if (!this.downFileId.equals(other.downFileId)) return false;
+        if (this.fileDownId == null) {
+            if (other.fileDownId != null) return false;
+        }
+        else if (!this.fileDownId.equals(other.fileDownId)) return false;
         if (this.fileId == null) {
             if (other.fileId != null) return false;
         }
@@ -532,18 +661,6 @@ public class CommissionFile implements BetterjrEntity {
         return true;
     }
 
-    @Override
-    public String toString() {
-        return "CommissionFile [id=" + this.id + ", refNo=" + this.refNo + ", batchNo=" + this.batchNo + ", digest=" + this.digest + ", signature="
-                + this.signature + ", fileId=" + this.fileId + ", downFileId=" + this.downFileId + ", fileName=" + this.fileName + ", importDate="
-                + this.importDate + ", importTime=" + this.importTime + ", custNo=" + this.custNo + ", custName=" + this.custName + ", operOrg="
-                + this.operOrg + ", payStatus=" + this.payStatus + ", businStatus=" + this.businStatus + ", resolveStatus=" + this.resolveStatus
-                + ", showMessage=" + this.showMessage + ", totalBlance=" + this.totalBlance + ", totalAmount=" + this.totalAmount + ", infoType="
-                + this.infoType + ", regOperId=" + this.regOperId + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate + ", regTime="
-                + this.regTime + ", modiOperId=" + this.modiOperId + ", modiOperName=" + this.modiOperName + ", modiDate=" + this.modiDate
-                + ", modiTime=" + this.modiTime + ", version=" + this.version + "]";
-    }
-
     public CommissionFile saveAddinit(CustOperatorInfo anOperatorInfo, CustFileItem anFileItem) {
         
         BTAssert.notNull(anOperatorInfo, "新增佣金当前未登录");
@@ -564,6 +681,7 @@ public class CommissionFile implements BetterjrEntity {
         this.setFileName(anFileItem.getFileName());
         this.refNo= SequenceFactory.generate("PLAT_COMMON", "#{Date:yyyyMMdd}#{Seq:12}","D");
         this.id=SerialGenerator.getLongValue("CommissionFile.id");
+        this.confirmStatus=CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_UNCONFIRMED;
         return this;
         
     }

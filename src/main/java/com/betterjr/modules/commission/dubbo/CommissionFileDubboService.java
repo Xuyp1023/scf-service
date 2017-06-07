@@ -51,6 +51,15 @@ public class CommissionFileDubboService implements ICommissionFileService {
                 .newOk("佣金文件删除成功", commissionFileService.saveDeleteFile(anRefNo))
                 .toJson();
     }
+    
+    @Override
+    public String webSaveCannulFile(Long  anFileId) {
+        
+        return  AjaxObject
+                .newOk("佣金文件作废成功", commissionFileService.saveCannulFile(anFileId))
+                .toJson();
+    }
+
 
     @Override
     public String webSaveResolveFile(String anRefNo) {
@@ -77,4 +86,5 @@ public class CommissionFileDubboService implements ICommissionFileService {
                 .toJson();
     }
 
+   
 }

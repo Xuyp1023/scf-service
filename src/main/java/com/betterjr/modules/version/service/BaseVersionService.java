@@ -1,6 +1,7 @@
 package com.betterjr.modules.version.service;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -259,11 +260,21 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
     public Page<T> selectPropertyEffectiveByPageWithVersion (Map<String, Object> anParamMap, int arg1, int arg2, boolean arg3, String arg4) {
        
         anParamMap.put("isLatest", VersionConstantCollentions.IS_LATEST);
-        anParamMap.put("NEbusinStatus", VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE);
-        if(anParamMap.containsKey("businStatus") && anParamMap.get("businStatus")!=null &&VersionConstantCollentions.BUSIN_STATUS_USED.equals(anParamMap.get("businStatus").toString())){
-            
-            anParamMap.put("lockedStatus", VersionConstantCollentions.LOCKED_STATUS_LOCKED);
-            
+        if(!anParamMap.containsKey("NEbusinStatus") || anParamMap.get("NEbusinStatus")==null ){
+            anParamMap.remove("NEbusinStatus");
+            anParamMap.put("NEbusinStatus", VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE);
+        }else{
+            Object object = anParamMap.get("NEbusinStatus");
+            if(object instanceof List){
+                List paramObj=(List) object;
+                paramObj.add(VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE);
+                anParamMap.put("NEbusinStatus", paramObj);
+            }else{
+                List paramObj=new ArrayList<>();
+                paramObj.add(object.toString().trim());
+                paramObj.add(VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE);
+                anParamMap.put("NEbusinStatus", paramObj);
+            }
         }
         PageHelper.startPage(arg1, arg2, arg3);
         return (Page) this.selectByProperty(anParamMap, arg4);

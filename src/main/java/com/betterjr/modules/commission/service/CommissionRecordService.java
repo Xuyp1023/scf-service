@@ -74,6 +74,42 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
         return recordList;
     }
     
+    /**
+     * 通过佣金文件的id对佣金记录进行作废操作
+     * @param anId 佣金文件id
+     */
+    public List<CommissionRecord> saveCannulStatusByFileId(Long anFileId) {
+        
+        BTAssert.notNull(anFileId,"删除佣金文件条件不符,");
+        Map<String,Object> queryMap = QueryTermBuilder.newInstance()
+                .put("fileId", anFileId).build();
+        List<CommissionRecord> recordList = this.selectByProperty(queryMap);
+        for (CommissionRecord record : recordList) {
+            checkCannulFileStatus(record, UserUtils.getOperatorInfo());
+            record.setBusinStatus(CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_DELETE);
+            this.updateByPrimaryKeySelective(record);
+        }
+        return recordList;
+        
+    }
+
+    
+    
+    /**
+     * 检查是否符合作废的条件
+     * @param anFile
+     * @param anOperatorInfo
+     */
+    private void checkCannulFileStatus(CommissionRecord anRecord, CustOperatorInfo anOperatorInfo) {
+        
+        BTAssert.notNull(anOperatorInfo,"登录已过期，请重新登录");
+        checkStatus(anRecord.getPayStatus(), CommissionConstantCollentions.COMMISSION_PAY_STATUS_FAILURE, true, "当前文件记录已经开始付款，不能删除");
+        checkStatus(anRecord.getPayStatus(), CommissionConstantCollentions.COMMISSION_PAY_STATUS_SUCCESS, true, "当前文件记录已经开始付款，不能删除");
+        checkStatus(anRecord.getBusinStatus(), CommissionConstantCollentions.COMMISSION_RECORD_BUSIN_STATUS_PAY, true, "当前文件记录进入付款流程中，不能删除");
+        checkStatus(anRecord.getBusinStatus(), CommissionConstantCollentions.COMMISSION_RECORD_BUSIN_STATUS_DELETE, true, "当前记录已经作废，请不要重复作废");
+        checkStatus(anRecord.getOperOrg(), anOperatorInfo.getOperOrg(), false, "你没有当前文件的删除权限");
+        
+    }
     
     /**
      * 检查是否符合删除的条件
@@ -86,6 +122,8 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
         checkStatus(anRecord.getPayStatus(), CommissionConstantCollentions.COMMISSION_PAY_STATUS_FAILURE, true, "当前文件记录已经开始付款，不能删除");
         checkStatus(anRecord.getPayStatus(), CommissionConstantCollentions.COMMISSION_PAY_STATUS_SUCCESS, true, "当前文件记录已经开始付款，不能删除");
         checkStatus(anRecord.getBusinStatus(), CommissionConstantCollentions.COMMISSION_RECORD_BUSIN_STATUS_PAY, true, "当前文件记录进入付款流程中，不能删除");
+        checkStatus(anRecord.getConfirmStatus(), CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_EFFECTIVE, true, "当前文件记录已经确认通过，不能删除");
+        checkStatus(anRecord.getConfirmStatus(), CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_INEFFECTIVE, true, "当前文件记录已经确认，不能删除");
         checkStatus(anRecord.getOperOrg(), anOperatorInfo.getOperOrg(), false, "你没有当前文件的删除权限");
         
     }
@@ -157,6 +195,30 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
     }
     
     /**
+     * 查询佣金文件审核全部查询佣金记录所有信息
+     * @param anMap
+     * @param anFlag
+     * @param anPageNum
+     * @param anPageSize
+     * @return
+     */
+    public Page<CommissionRecord> queryCanAuditRecordList(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+        
+        BTAssert.notNull(anMap,"查询佣金记录条件为空");
+        //去除空白字符串的查询条件
+        anMap = Collections3.filterMapEmptyObject(anMap);
+        //查询当前公司的佣金文件
+        anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+        anMap.put("businStatus", CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_NO_HANDLE);
+        anMap.put("payStatus", CommissionConstantCollentions.COMMISSION_PAY_STATUS_NO_HANDLE);
+        anMap.put("confirmStatus", CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_UNCONFIRMED);
+        
+        Page<CommissionRecord> recordList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
+        
+        return recordList;
+    }
+    
+    /**
      * 查询佣金记录详情
      * @param anRefNo
      * @return
@@ -198,6 +260,7 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
         //查询到所有的到custNO  和导入日期并且是未审核的所有佣金记录
         anMap.put("payStatus", CommissionConstantCollentions.COMMISSION_PAY_STATUS_NO_HANDLE);
         anMap.put("businStatus",CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_NO_HANDLE);
+        anMap.put("confirmStatus",CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_UNCONFIRMED);
         List<CommissionRecord> recordList = this.selectByClassProperty(CommissionRecord.class, anMap);
         if(Collections3.isEmpty(recordList)){
             return CommissionRecordAuditResult.fail("当前没有记录可供审核，当前记录已经审核完毕");
@@ -214,10 +277,12 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
             this.updateByPrimaryKeySelective(commissionRecord);
         }
         logger.info("佣金记录批量审核 ：  saveAuditRecordList  查询到未审核的记录 个数为："+recordAmount+"  :总的金额为："+blance+"   审核的文件数量为="+fileSet.size()); 
+        
+        //3 生成佣金记录文件
+        CommissionFileDown fileDownRecord = saveAddFileDownRecord(recordList, recordAmount, blance);
+       
         //  2审核文件列表
-      fileService.saveAuditFile(fileSet);
-      //3 生成佣金记录文件
-      saveAddFileDownRecord(recordList, recordAmount, blance);
+        fileService.saveAuditFile(fileSet,fileDownRecord.getId());
       
       return   CommissionRecordAuditResult.ok(fileSet.size(), recordAmount, blance);
         
@@ -230,7 +295,7 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
      * @param recordAmount
      * @param blance
      */
-    private void saveAddFileDownRecord(List<CommissionRecord> recordList, int recordAmount, BigDecimal blance) {
+    private CommissionFileDown saveAddFileDownRecord(List<CommissionRecord> recordList, int recordAmount, BigDecimal blance) {
         
         Map<String,Object> data=new HashMap<>();
           data.put("recordList", recordList);
@@ -247,6 +312,7 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
           fileDown.setBatchNo(fileItem.getBatchNo());
           fileDown.setFileId(fileItem.getId());
           CommissionfileDownService.insert(fileDown);
+          return fileDown;
     }
     
     
@@ -365,5 +431,52 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
         return this.mapper.countRecordList(anCustNo, anImportDate);
     }
 
+    
+    /**
+     * 通过文件ids分页查询
+     * @param anIds
+     * @param anFlag
+     * @param anPageNum
+     * @param anPageSize
+     * @return
+     */
+    public Page<CommissionRecord> queryRecordPageByFileIds(List<Long> anIds, String anFlag, int anPageNum, int anPageSize) {
+        
+        Map<String,Object> map = QueryTermBuilder.newInstance()
+                .put("fileId",anIds)
+                .build();
+        return this.selectPropertyByPage(map, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
+    }
 
+    /**
+     * 平台审核导出文件记录信息
+     * @param anFile
+     */
+    public List<CommissionRecord> saveUpdateByCommissionFile(CommissionFile anFile) {
+        
+        BTAssert.notNull(anFile,"审核导出文件不存在！");
+        BTAssert.notNull(anFile.getId(),"审核导出文件为空");
+        List<CommissionRecord> recordList = queryRecordListByFileId(anFile.getId());
+        BTAssert.notNull(recordList,"审核导出文件为空");
+        for (CommissionRecord record : recordList) {
+            
+            checkOperatorAuditRecordStatus(record);
+            record.setConfirmStatus(anFile.getConfirmStatus());
+            this.updateByPrimaryKeySelective(record);
+        }
+        
+        return recordList;
+    }
+
+    private void checkOperatorAuditRecordStatus(CommissionRecord anRecord) {
+
+        checkStatus(anRecord.getConfirmStatus(), CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_EFFECTIVE, true, "当前文件记录已经已经审核通过，不能重复审核");
+        checkStatus(anRecord.getConfirmStatus(), CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_INEFFECTIVE, true, "当前文件记录已经审核未通过，不能重复审核");
+        checkStatus(anRecord.getPayStatus(), CommissionConstantCollentions.COMMISSION_PAY_STATUS_FAILURE, true, "当前文件记录已经付款，不能审核");
+        checkStatus(anRecord.getPayStatus(), CommissionConstantCollentions.COMMISSION_PAY_STATUS_SUCCESS, true, "当前文件记录已经付款，不能审核");
+        checkStatus(anRecord.getBusinStatus(), CommissionConstantCollentions.COMMISSION_RECORD_BUSIN_STATUS_DELETE, true, "当前文件记录已经删除，不能审核");
+        checkStatus(anRecord.getBusinStatus(), CommissionConstantCollentions.COMMISSION_RECORD_BUSIN_STATUS_PAY, true, "当前文件记录进入付款流程，不能审核");
+        checkStatus(anRecord.getBusinStatus(), CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_NO_HANDLE, true, "当前文件记录还未达到审核条件，不能审核");
+        
+    }
 }
