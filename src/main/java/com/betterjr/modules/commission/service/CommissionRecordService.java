@@ -423,6 +423,7 @@ public class CommissionRecordService extends BaseService<CommissionRecordMapper,
                 .put("custNo",anCustNo)
                 .put("importDate", anImportDate)
 				.put("businStatus", "1")
+				.put("confirmStatus", CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_EFFECTIVE)
                 .build();
         return this.selectPropertyByPage(map, anPageNum, anPageSize, anFlag == 1);
     }
