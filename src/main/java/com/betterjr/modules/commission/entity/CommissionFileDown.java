@@ -42,10 +42,12 @@ public class CommissionFileDown implements BetterjrEntity {
     
   //文件导入日期
     @Column(name = "D_IMPORT_DATE",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String importDate;
     
   //文件导入时间
     @Column(name = "T_IMPORT_TIME",  columnDefinition="VARCHAR" )
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String importTime;
 
     //企业id
