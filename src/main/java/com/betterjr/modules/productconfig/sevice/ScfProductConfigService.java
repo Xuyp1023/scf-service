@@ -1,6 +1,8 @@
 package com.betterjr.modules.productconfig.sevice;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +49,6 @@ public class ScfProductConfigService extends BaseService<ScfProductConfigMapper,
 	public ScfProductConfig saveModifyConfig(ScfProductConfig anConfig, Long anId) {
         BTAssert.notNull(anConfig, "产品修改失败");
         BTAssert.notNull(anId, "产品修改失败");
-        
         anConfig.setId(anId);
         anConfig.initModify();
         this.updateByPrimaryKeySelective(anConfig);
@@ -57,6 +58,17 @@ public class ScfProductConfigService extends BaseService<ScfProductConfigMapper,
 	public ScfProductConfig findProduct(Map<String, Object> anMap) {
 		anMap = Collections3.filterMap(anMap, new String[]{"factorNo", "productCode", "businStatus"});
 		List<ScfProductConfig> list = this.selectByClassProperty(ScfProductConfig.class, anMap);
+		if(Collections3.isEmpty(list)){
+			return null;
+		}
+        return Collections3.getFirst(list);
+    }
+	
+	public ScfProductConfig findProductByCode(String anProductCode) {
+		BTAssert.notNull(anProductCode, "查询失败anProductCode不能为空");
+		Map<String, Object> anMap = new HashMap<String, Object>();
+		anMap.put("productCode", anProductCode);
+		List<ScfProductConfig> list = this.selectByClassProperty(ScfProductConfig.class, anMap );
 		if(Collections3.isEmpty(list)){
 			return null;
 		}
@@ -202,8 +214,9 @@ public class ScfProductConfigService extends BaseService<ScfProductConfigMapper,
         		.put("factorNo", anFactorNo)
         		.put("businStatus", ProductConstants.PRO_STATUS_SHELVES).build();
 
-        for (ScfProductConfig product : this.selectByProperty(anMap)) {
-            result.add(new SimpleDataEntity(product.getProductName(), String.valueOf(product.getId())));
+        List<ScfProductConfig> list = this.selectByProperty(anMap);
+        for (ScfProductConfig product : list) {
+            result.add(new SimpleDataEntity(product.getProductName(), String.valueOf(product.getProductCode())));
         }
         return result;
     }

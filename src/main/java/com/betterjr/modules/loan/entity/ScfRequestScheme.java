@@ -144,7 +144,16 @@ public class ScfRequestScheme implements BetterjrEntity {
     @Column(name = "C_CREDIT_MODE",  columnDefinition="VARCHAR" )
     @MetaData( value="授信类型", comments = "授信类型")
     private String creditMode;
+    
+    @Column(name = "F_EXTENSION_RATIO",  columnDefinition="VARCHAR" )
+    @MetaData( value="展期利率", comments = "展期利率")
+    private BigDecimal extensionRatio;    
 
+    
+    @Column(name = "F_OVERDUE_RATIO",  columnDefinition="VARCHAR" )
+    @MetaData( value="逾期利率", comments = "逾期利率")
+    private BigDecimal overdueRatio;
+    
     /**
      * 操作机构
      */
@@ -407,121 +416,252 @@ public class ScfRequestScheme implements BetterjrEntity {
     public void setVersion(Long version) {
         this.version = version;
     }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", requestNo=").append(requestNo);
-        sb.append(", factorNo=").append(factorNo);
-        sb.append(", custNo=").append(custNo);
-        sb.append(", coreCustNo=").append(coreCustNo);
-        sb.append(", custAduit=").append(custAduit);
-        sb.append(", coreCustAduit=").append(coreCustAduit);
-        sb.append(", requestBalance=").append(requestBalance);
-        sb.append(", approvedBalance=").append(approvedBalance);
-        sb.append(", approvedRatio=").append(approvedRatio);
-        sb.append(", approvedManagementRatio=").append(approvedManagementRatio);
-        sb.append(", servicefeeRatio=").append(servicefeeRatio);
-        sb.append(", period=").append(period);
-        sb.append(", periodUnit=").append(periodUnit);
-        sb.append(", approvedPeriod=").append(approvedPeriod);
-        sb.append(", approvedPeriodUnit=").append(approvedPeriodUnit);
-        sb.append(", creditMode=").append(creditMode);
-        sb.append(", operOrg=").append(operOrg);
-        sb.append(", regOperId=").append(regOperId);
-        sb.append(", regOperName=").append(regOperName);
-        sb.append(", regDate=").append(regDate);
-        sb.append(", regTime=").append(regTime);
-        sb.append(", modiOperId=").append(modiOperId);
-        sb.append(", modiOperName=").append(modiOperName);
-        sb.append(", modiDate=").append(modiDate);
-        sb.append(", modiTime=").append(modiTime);
-        sb.append(", version=").append(version);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-        if (this == that) {
-            return true;
-        }
-        if (that == null) {
-            return false;
-        }
-        if (getClass() != that.getClass()) {
-            return false;
-        }
-        ScfRequestScheme other = (ScfRequestScheme) that;
-        return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getRequestNo() == null ? other.getRequestNo() == null : this.getRequestNo().equals(other.getRequestNo()))
-            && (this.getFactorNo() == null ? other.getFactorNo() == null : this.getFactorNo().equals(other.getFactorNo()))
-            && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-            && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
-            && (this.getCustAduit() == null ? other.getCustAduit() == null : this.getCustAduit().equals(other.getCustAduit()))
-            && (this.getCoreCustAduit() == null ? other.getCoreCustAduit() == null : this.getCoreCustAduit().equals(other.getCoreCustAduit()))
-            && (this.getRequestBalance() == null ? other.getRequestBalance() == null : this.getRequestBalance().equals(other.getRequestBalance()))
-            && (this.getApprovedBalance() == null ? other.getApprovedBalance() == null : this.getApprovedBalance().equals(other.getApprovedBalance()))
-            && (this.getApprovedRatio() == null ? other.getApprovedRatio() == null : this.getApprovedRatio().equals(other.getApprovedRatio()))
-            && (this.getApprovedManagementRatio() == null ? other.getApprovedManagementRatio() == null : this.getApprovedManagementRatio().equals(other.getApprovedManagementRatio()))
-            && (this.getServicefeeRatio() == null ? other.getServicefeeRatio() == null : this.getServicefeeRatio().equals(other.getServicefeeRatio()))
-            && (this.getPeriod() == null ? other.getPeriod() == null : this.getPeriod().equals(other.getPeriod()))
-            && (this.getPeriodUnit() == null ? other.getPeriodUnit() == null : this.getPeriodUnit().equals(other.getPeriodUnit()))
-            && (this.getApprovedPeriod() == null ? other.getApprovedPeriod() == null : this.getApprovedPeriod().equals(other.getApprovedPeriod()))
-            && (this.getApprovedPeriodUnit() == null ? other.getApprovedPeriodUnit() == null : this.getApprovedPeriodUnit().equals(other.getApprovedPeriodUnit()))
-            && (this.getCreditMode() == null ? other.getCreditMode() == null : this.getCreditMode().equals(other.getCreditMode()))
-            && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
-            && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
-            && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-            && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
-            && (this.getModiOperId() == null ? other.getModiOperId() == null : this.getModiOperId().equals(other.getModiOperId()))
-            && (this.getModiOperName() == null ? other.getModiOperName() == null : this.getModiOperName().equals(other.getModiOperName()))
-            && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-            && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()))
-            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        result = prime * result + ((getRequestNo() == null) ? 0 : getRequestNo().hashCode());
-        result = prime * result + ((getFactorNo() == null) ? 0 : getFactorNo().hashCode());
-        result = prime * result + ((getCustNo() == null) ? 0 : getCustNo().hashCode());
-        result = prime * result + ((getCoreCustNo() == null) ? 0 : getCoreCustNo().hashCode());
-        result = prime * result + ((getCustAduit() == null) ? 0 : getCustAduit().hashCode());
-        result = prime * result + ((getCoreCustAduit() == null) ? 0 : getCoreCustAduit().hashCode());
-        result = prime * result + ((getRequestBalance() == null) ? 0 : getRequestBalance().hashCode());
-        result = prime * result + ((getApprovedBalance() == null) ? 0 : getApprovedBalance().hashCode());
-        result = prime * result + ((getApprovedRatio() == null) ? 0 : getApprovedRatio().hashCode());
-        result = prime * result + ((getApprovedManagementRatio() == null) ? 0 : getApprovedManagementRatio().hashCode());
-        result = prime * result + ((getServicefeeRatio() == null) ? 0 : getServicefeeRatio().hashCode());
-        result = prime * result + ((getPeriod() == null) ? 0 : getPeriod().hashCode());
-        result = prime * result + ((getPeriodUnit() == null) ? 0 : getPeriodUnit().hashCode());
-        result = prime * result + ((getApprovedPeriod() == null) ? 0 : getApprovedPeriod().hashCode());
-        result = prime * result + ((getApprovedPeriodUnit() == null) ? 0 : getApprovedPeriodUnit().hashCode());
-        result = prime * result + ((getCreditMode() == null) ? 0 : getCreditMode().hashCode());
-        result = prime * result + ((getOperOrg() == null) ? 0 : getOperOrg().hashCode());
-        result = prime * result + ((getRegOperId() == null) ? 0 : getRegOperId().hashCode());
-        result = prime * result + ((getRegOperName() == null) ? 0 : getRegOperName().hashCode());
-        result = prime * result + ((getRegDate() == null) ? 0 : getRegDate().hashCode());
-        result = prime * result + ((getRegTime() == null) ? 0 : getRegTime().hashCode());
-        result = prime * result + ((getModiOperId() == null) ? 0 : getModiOperId().hashCode());
-        result = prime * result + ((getModiOperName() == null) ? 0 : getModiOperName().hashCode());
-        result = prime * result + ((getModiDate() == null) ? 0 : getModiDate().hashCode());
-        result = prime * result + ((getModiTime() == null) ? 0 : getModiTime().hashCode());
-        result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
-        return result;
-    }
     
-    @Transient
+    public BigDecimal getExtensionRatio() {
+		return extensionRatio;
+	}
+
+	public void setExtensionRatio(BigDecimal extensionRatio) {
+		this.extensionRatio = extensionRatio;
+	}
+
+	public BigDecimal getOverdueRatio() {
+		return overdueRatio;
+	}
+
+	public void setOverdueRatio(BigDecimal overdueRatio) {
+		this.overdueRatio = overdueRatio;
+	}
+    
+    @Override
+	public String toString() {
+		return "ScfRequestScheme [id=" + id + ", requestNo=" + requestNo + ", factorNo=" + factorNo + ", custNo="
+				+ custNo + ", coreCustNo=" + coreCustNo + ", custAduit=" + custAduit + ", coreCustAduit="
+				+ coreCustAduit + ", requestBalance=" + requestBalance + ", approvedBalance=" + approvedBalance
+				+ ", approvedRatio=" + approvedRatio + ", approvedManagementRatio=" + approvedManagementRatio
+				+ ", servicefeeRatio=" + servicefeeRatio + ", period=" + period + ", periodUnit=" + periodUnit
+				+ ", approvedPeriod=" + approvedPeriod + ", approvedPeriodUnit=" + approvedPeriodUnit + ", creditMode="
+				+ creditMode + ", extensionRatio=" + extensionRatio + ", overdueRatio=" + overdueRatio + ", operOrg="
+				+ operOrg + ", regOperId=" + regOperId + ", regOperName=" + regOperName + ", regDate=" + regDate
+				+ ", regTime=" + regTime + ", modiOperId=" + modiOperId + ", modiOperName=" + modiOperName
+				+ ", modiDate=" + modiDate + ", modiTime=" + modiTime + ", version=" + version + ", custName="
+				+ custName + ", coreCustName=" + coreCustName + ", factorName=" + factorName + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((approvedBalance == null) ? 0 : approvedBalance.hashCode());
+		result = prime * result + ((approvedManagementRatio == null) ? 0 : approvedManagementRatio.hashCode());
+		result = prime * result + ((approvedPeriod == null) ? 0 : approvedPeriod.hashCode());
+		result = prime * result + ((approvedPeriodUnit == null) ? 0 : approvedPeriodUnit.hashCode());
+		result = prime * result + ((approvedRatio == null) ? 0 : approvedRatio.hashCode());
+		result = prime * result + ((coreCustAduit == null) ? 0 : coreCustAduit.hashCode());
+		result = prime * result + ((coreCustName == null) ? 0 : coreCustName.hashCode());
+		result = prime * result + ((coreCustNo == null) ? 0 : coreCustNo.hashCode());
+		result = prime * result + ((creditMode == null) ? 0 : creditMode.hashCode());
+		result = prime * result + ((custAduit == null) ? 0 : custAduit.hashCode());
+		result = prime * result + ((custName == null) ? 0 : custName.hashCode());
+		result = prime * result + ((custNo == null) ? 0 : custNo.hashCode());
+		result = prime * result + ((extensionRatio == null) ? 0 : extensionRatio.hashCode());
+		result = prime * result + ((factorName == null) ? 0 : factorName.hashCode());
+		result = prime * result + ((factorNo == null) ? 0 : factorNo.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((modiDate == null) ? 0 : modiDate.hashCode());
+		result = prime * result + ((modiOperId == null) ? 0 : modiOperId.hashCode());
+		result = prime * result + ((modiOperName == null) ? 0 : modiOperName.hashCode());
+		result = prime * result + ((modiTime == null) ? 0 : modiTime.hashCode());
+		result = prime * result + ((operOrg == null) ? 0 : operOrg.hashCode());
+		result = prime * result + ((overdueRatio == null) ? 0 : overdueRatio.hashCode());
+		result = prime * result + ((period == null) ? 0 : period.hashCode());
+		result = prime * result + ((periodUnit == null) ? 0 : periodUnit.hashCode());
+		result = prime * result + ((regDate == null) ? 0 : regDate.hashCode());
+		result = prime * result + ((regOperId == null) ? 0 : regOperId.hashCode());
+		result = prime * result + ((regOperName == null) ? 0 : regOperName.hashCode());
+		result = prime * result + ((regTime == null) ? 0 : regTime.hashCode());
+		result = prime * result + ((requestBalance == null) ? 0 : requestBalance.hashCode());
+		result = prime * result + ((requestNo == null) ? 0 : requestNo.hashCode());
+		result = prime * result + ((servicefeeRatio == null) ? 0 : servicefeeRatio.hashCode());
+		result = prime * result + ((version == null) ? 0 : version.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ScfRequestScheme other = (ScfRequestScheme) obj;
+		if (approvedBalance == null) {
+			if (other.approvedBalance != null)
+				return false;
+		} else if (!approvedBalance.equals(other.approvedBalance))
+			return false;
+		if (approvedManagementRatio == null) {
+			if (other.approvedManagementRatio != null)
+				return false;
+		} else if (!approvedManagementRatio.equals(other.approvedManagementRatio))
+			return false;
+		if (approvedPeriod == null) {
+			if (other.approvedPeriod != null)
+				return false;
+		} else if (!approvedPeriod.equals(other.approvedPeriod))
+			return false;
+		if (approvedPeriodUnit == null) {
+			if (other.approvedPeriodUnit != null)
+				return false;
+		} else if (!approvedPeriodUnit.equals(other.approvedPeriodUnit))
+			return false;
+		if (approvedRatio == null) {
+			if (other.approvedRatio != null)
+				return false;
+		} else if (!approvedRatio.equals(other.approvedRatio))
+			return false;
+		if (coreCustAduit == null) {
+			if (other.coreCustAduit != null)
+				return false;
+		} else if (!coreCustAduit.equals(other.coreCustAduit))
+			return false;
+		if (coreCustName == null) {
+			if (other.coreCustName != null)
+				return false;
+		} else if (!coreCustName.equals(other.coreCustName))
+			return false;
+		if (coreCustNo == null) {
+			if (other.coreCustNo != null)
+				return false;
+		} else if (!coreCustNo.equals(other.coreCustNo))
+			return false;
+		if (creditMode == null) {
+			if (other.creditMode != null)
+				return false;
+		} else if (!creditMode.equals(other.creditMode))
+			return false;
+		if (custAduit == null) {
+			if (other.custAduit != null)
+				return false;
+		} else if (!custAduit.equals(other.custAduit))
+			return false;
+		if (custName == null) {
+			if (other.custName != null)
+				return false;
+		} else if (!custName.equals(other.custName))
+			return false;
+		if (custNo == null) {
+			if (other.custNo != null)
+				return false;
+		} else if (!custNo.equals(other.custNo))
+			return false;
+		if (extensionRatio == null) {
+			if (other.extensionRatio != null)
+				return false;
+		} else if (!extensionRatio.equals(other.extensionRatio))
+			return false;
+		if (factorName == null) {
+			if (other.factorName != null)
+				return false;
+		} else if (!factorName.equals(other.factorName))
+			return false;
+		if (factorNo == null) {
+			if (other.factorNo != null)
+				return false;
+		} else if (!factorNo.equals(other.factorNo))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (modiDate == null) {
+			if (other.modiDate != null)
+				return false;
+		} else if (!modiDate.equals(other.modiDate))
+			return false;
+		if (modiOperId == null) {
+			if (other.modiOperId != null)
+				return false;
+		} else if (!modiOperId.equals(other.modiOperId))
+			return false;
+		if (modiOperName == null) {
+			if (other.modiOperName != null)
+				return false;
+		} else if (!modiOperName.equals(other.modiOperName))
+			return false;
+		if (modiTime == null) {
+			if (other.modiTime != null)
+				return false;
+		} else if (!modiTime.equals(other.modiTime))
+			return false;
+		if (operOrg == null) {
+			if (other.operOrg != null)
+				return false;
+		} else if (!operOrg.equals(other.operOrg))
+			return false;
+		if (overdueRatio == null) {
+			if (other.overdueRatio != null)
+				return false;
+		} else if (!overdueRatio.equals(other.overdueRatio))
+			return false;
+		if (period == null) {
+			if (other.period != null)
+				return false;
+		} else if (!period.equals(other.period))
+			return false;
+		if (periodUnit == null) {
+			if (other.periodUnit != null)
+				return false;
+		} else if (!periodUnit.equals(other.periodUnit))
+			return false;
+		if (regDate == null) {
+			if (other.regDate != null)
+				return false;
+		} else if (!regDate.equals(other.regDate))
+			return false;
+		if (regOperId == null) {
+			if (other.regOperId != null)
+				return false;
+		} else if (!regOperId.equals(other.regOperId))
+			return false;
+		if (regOperName == null) {
+			if (other.regOperName != null)
+				return false;
+		} else if (!regOperName.equals(other.regOperName))
+			return false;
+		if (regTime == null) {
+			if (other.regTime != null)
+				return false;
+		} else if (!regTime.equals(other.regTime))
+			return false;
+		if (requestBalance == null) {
+			if (other.requestBalance != null)
+				return false;
+		} else if (!requestBalance.equals(other.requestBalance))
+			return false;
+		if (requestNo == null) {
+			if (other.requestNo != null)
+				return false;
+		} else if (!requestNo.equals(other.requestNo))
+			return false;
+		if (servicefeeRatio == null) {
+			if (other.servicefeeRatio != null)
+				return false;
+		} else if (!servicefeeRatio.equals(other.servicefeeRatio))
+			return false;
+		if (version == null) {
+			if (other.version != null)
+				return false;
+		} else if (!version.equals(other.version))
+			return false;
+		return true;
+	}
+
+
+
+	@Transient
     private String custName;
     @Transient
     private String coreCustName;

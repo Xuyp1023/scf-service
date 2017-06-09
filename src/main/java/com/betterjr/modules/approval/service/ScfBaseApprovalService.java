@@ -1,5 +1,8 @@
 package com.betterjr.modules.approval.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -134,5 +137,32 @@ public class ScfBaseApprovalService {
 			supplierPushService.pushOrderInfo(anRequest);
 		//}
 	}
+	
+	/**
+	 * 修改项目状态
+	 * 
+	 * @param anContext
+	 * @param isNext， ture前进，false后退
+	 * @return
+	 */
+	public void updateRequestLastStatus(ScfRequest anRequest, boolean isNext) {
+		List<String> statusList = new ArrayList<String>();
+		for (int i = 1000; i < 1010; i++) {
+			statusList.add(i+"");
+		}
+		
+		for (int i=0; i<statusList.size(); i++) {
+			String status = statusList.get(i);
+			if(anRequest.getLastStatus().equals(status)){
+				status = isNext? statusList.get(i+1) : statusList.get(i-1);
+				anRequest.setLastStatus(status);
+				break;
+			}
+		}
+        requestService.saveModifyRequest(anRequest, anRequest.getRequestNo());
+	}
 
+	public ScfRequest getReqtuest(String anRequestNo){
+		return requestService.findRequestByRequestNo(anRequestNo);
+	}
 }

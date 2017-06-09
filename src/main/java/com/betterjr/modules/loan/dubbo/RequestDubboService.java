@@ -531,5 +531,11 @@ public class RequestDubboService implements IScfRequestService {
     	requestService.saveModifyRequest(request,request.getRequestNo());
         return AjaxObject.newOk("操作成功", request).toJson();
     }
-
+    
+    @Override
+    public String webAddScheme(Map<String, Object> anMap){
+    	ScfRequestScheme scheme = (ScfRequestScheme) RuleServiceDubboFilterInvoker.getInputObj();
+    	scheme = requestService.saveScheme(scheme);
+    	return AjaxObject.newOk("操作成功", scheme).toJson();
+    }
 }

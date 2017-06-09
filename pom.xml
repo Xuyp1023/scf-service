@@ -26,23 +26,31 @@
 			<version>1.0.0</version>
 		</dependency>
 
-		<dependency>
-			<groupId>com.betterjr</groupId>
-			<artifactId>platform-interfaces</artifactId>
-			<version>1.0.0</version>
+        <dependency>
+         <groupId>com.betterjr</groupId>
+         <artifactId>platform-interfaces</artifactId>
+         <version>1.0.0</version>
+        </dependency>
+        
+        <dependency>
+         <groupId>com.betterjr</groupId>
+         <artifactId>workflow-interfaces</artifactId>
+         <version>1.0.0</version>
+        </dependency>
+        
+        <!-- 定时任务 -->
+        <dependency>
+		    <groupId>com.dangdang</groupId>
+		    <artifactId>elastic-job-core</artifactId>
+		    <version>1.1.1</version>
 		</dependency>
-
-		<!-- 定时任务 -->
-		<dependency>
-			<groupId>com.dangdang</groupId>
-			<artifactId>elastic-job-core</artifactId>
-			<version>1.1.1</version>
-		</dependency>
+		
 		<dependency>
 			<groupId>com.dangdang</groupId>
 			<artifactId>elastic-job-api-core</artifactId>
 			<version>1.1.1</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.dangdang</groupId>
 			<artifactId>elastic-job-spring</artifactId>
