@@ -20,9 +20,9 @@ public class ScfAcceptService extends ScfBaseApprovalService {
 	
 	public void processHandle(Map<String, Object> anContext) {
 		ScfRequest request = this.getReqtuest(anContext.get("requestNo").toString());
-		this.updateRequestLastStatus(request, true);
-		this.forzenSource(request);
-		this.pushOrderInfo(requestService.findRequestByRequestNo(request.getRequestNo()));
+		//this.updateRequestLastStatus(request, true);
+		//this.forzenSource(request);
+		//this.pushOrderInfo(requestService.findRequestByRequestNo(request.getRequestNo()));
 	}
 
 }

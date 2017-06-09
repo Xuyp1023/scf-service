@@ -29,8 +29,8 @@ public class ScfSchemeConfirmService extends ScfBaseApprovalService {
 		//}
 		
 		ScfRequest request = this.getReqtuest(anContext.get("requestNo").toString());
-		this.updateRequestLastStatus(request, true);
-		this.pushOrderInfo(request);
+		//this.updateRequestLastStatus(request, true);
+		//this.pushOrderInfo(request);
 	}
 
 	public void processReject(Map<String, Object> anContext) {

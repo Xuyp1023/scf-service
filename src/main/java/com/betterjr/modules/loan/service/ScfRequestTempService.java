@@ -41,7 +41,7 @@ public class ScfRequestTempService extends BaseService<ScfRequestTempMapper, Scf
 	}
 
 	public Page<ScfRequestTemp> queryTempList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
-		anMap.put("businStatus", new String[]{"1", "2"});
+		anMap.put("businStatus", new String[]{"1"});
 		Page<ScfRequestTemp> list = this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
 		for (ScfRequestTemp temp : list) {
 			setName(temp);

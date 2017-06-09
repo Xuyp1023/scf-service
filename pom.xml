@@ -32,6 +32,12 @@
          <version>1.0.0</version>
         </dependency>
         
+        <dependency>
+         <groupId>com.betterjr</groupId>
+         <artifactId>workflow-interfaces</artifactId>
+         <version>1.0.0</version>
+        </dependency>
+        
         <!-- 定时任务 -->
         <dependency>
 		    <groupId>com.dangdang</groupId>

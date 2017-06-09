@@ -29,16 +29,16 @@ public class ScfConfirmTradingBackgrandService extends ScfBaseApprovalService{
 		BTAssert.notNull(requestNo, "申请编号不能为空！");
 		//BTAssert.notNull(smsCode, "短信验证码不能为空！");
 
-		ScfRequestScheme scheme = schemeService.findSchemeDetail2(requestNo);
-		BTAssert.notNull(scheme);
+		//ScfRequestScheme scheme = schemeService.findSchemeDetail2(requestNo);
+		//BTAssert.notNull(scheme);
 
 		// 电子合同类型，0：签署应收账款转让确认书，1：买方确认意见，2三方协议书
 		//if (false == agreementService.sendValidCodeByRequestNo(requestNo, AGREEMENT_TYPE_CONFIRMATION, smsCode)) {
 			//throw new RuntimeException("操作失败：短信验证码错误");
 		//}
 
-		this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.CONFIRM_LOAN.getCode(), RequestLastStatus.APPROVE.getCode());
-		this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
+		//this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.CONFIRM_LOAN.getCode(), RequestLastStatus.APPROVE.getCode());
+		//this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
 	}
 
 	public void processReject(Map<String, Object> anContext) {

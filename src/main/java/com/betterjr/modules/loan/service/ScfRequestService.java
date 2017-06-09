@@ -57,6 +57,8 @@ import com.betterjr.modules.order.helper.ScfOrderRelationType;
 import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.product.entity.ScfProduct;
 import com.betterjr.modules.product.service.ScfProductService;
+import com.betterjr.modules.productconfig.entity.ScfProductConfig;
+import com.betterjr.modules.productconfig.sevice.ScfProductConfigService;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
 import com.betterjr.modules.template.entity.ScfContractTemplate;
 import com.betterjr.modules.template.service.ScfContractTemplateService;
@@ -83,6 +85,10 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
 
 	@Autowired
 	private ScfProductService productService;
+	
+	@Autowired
+	private ScfProductConfigService productConfigService;
+	
 	@Autowired
 	private ScfOfferService offerService;
 	@Autowired
@@ -265,13 +271,20 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
 		return request;
 	}
 
-	private void fillCustName(ScfRequest request) {
+	public void fillCustName(ScfRequest request) {
 		// 设置相关名称
 		request.setCoreCustName(custAccountService.queryCustName(request.getCoreCustNo()));
 		request.setFactorName(custAccountService.queryCustName(request.getFactorNo()));
 		ScfProduct product = productService.findProductById(request.getProductId());
 		if (null != product) {
 			request.setProductName(product.getProductName());
+		}
+		
+		if(BetterStringUtils.isBlank(request.getProductName())){
+			ScfProductConfig productConfig = productConfigService.selectByPrimaryKey(request.getProductId());
+			if (null != productConfig) {
+				request.setProductName(productConfig.getProductName());
+			}
 		}
 
 		ScfServiceFee serviceFee = feeService.findServiceFeeByType(request.getRequestNo(), "1");
@@ -938,6 +951,24 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
 			throw new BytterTradeException(40001, "无法获取融资信息");
 		}
 		return contractTemplateService.findTemplateByType(request.getFactorNo(), tempType, "1");
+	}
+	
+	/**
+	 * 2.3.1-资方-出具融资方案
+	 * 
+	 * @param anMap
+	 * @return
+	 */
+	public ScfRequestScheme saveScheme(ScfRequestScheme anScheme) {
+		// 将融资确认后的融资信息放入到申请表中（修改申请表中的信息）
+		ScfRequest request = this.selectByPrimaryKey(anScheme.getRequestNo());
+		request.setApprovedPeriod(anScheme.getApprovedPeriod());
+		request.setApprovedPeriodUnit(anScheme.getApprovedPeriodUnit());
+		request.setApprovedRatio(anScheme.getApprovedRatio());
+		request.setApprovedBalance(anScheme.getApprovedBalance());
+		request.setConfirmBalance(anScheme.getApprovedBalance());
+		this.saveModifyRequest(request, anScheme.getRequestNo());
+		return schemeService.addScheme(anScheme);
 	}
 
 }
