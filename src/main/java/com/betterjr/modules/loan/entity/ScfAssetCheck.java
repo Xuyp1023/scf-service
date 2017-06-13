@@ -11,7 +11,11 @@ import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
+import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.UserUtils;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -132,6 +136,7 @@ public class ScfAssetCheck implements BetterjrEntity {
 		this.checker = checker;
 	}
 
+	@JsonSerialize(using = CustDateJsonSerializer.class)
 	public String getCheckDate() {
 		return checkDate;
 	}
@@ -156,6 +161,7 @@ public class ScfAssetCheck implements BetterjrEntity {
 		this.zdwRegCode = zdwRegCode;
 	}
 
+	@JsonSerialize(using = CustDateJsonSerializer.class)
 	public String getZdwRegDate() {
 		return zdwRegDate;
 	}
@@ -402,6 +408,11 @@ public class ScfAssetCheck implements BetterjrEntity {
 	}
 
 	public void init() {
+		this.regOperName = UserUtils.getUserName();
+		this.regOperId = UserUtils.getOperatorInfo().getId();
+		this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
+		this.regDate = BetterDateUtils.getNumDate();
+		this.regTime = BetterDateUtils.getNumTime();
 		this.id = SerialGenerator.getLongValue("ScfAssetCheck.id");
 	}
 

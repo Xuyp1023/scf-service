@@ -57,10 +57,6 @@ public class ScfAssetRegister implements BetterjrEntity {
 	@MetaData(value = "中征登记日期", comments = "中征登记日期")
 	private String zdwRegDate;
 
-	@Column(name = "T_ZDW_REG_TIME", columnDefinition = "VARCHAR")
-	@MetaData(value = "中征登记时间", comments = "中征登记时间")
-	private String zdwRegTime;
-
 	@Column(name = "L_BATCHNO", columnDefinition = "VARCHAR")
 	@MetaData(value = "中征登记文件", comments = "中征登记文件")
 	private Long batchNo;
@@ -177,14 +173,6 @@ public class ScfAssetRegister implements BetterjrEntity {
 		this.zdwRegDate = zdwRegDate;
 	}
 
-	public String getZdwRegTime() {
-		return zdwRegTime;
-	}
-
-	public void setZdwRegTime(String zdwRegTime) {
-		this.zdwRegTime = zdwRegTime;
-	}
-
 	public Long getBatchNo() {
 		return batchNo;
 	}
@@ -288,7 +276,6 @@ public class ScfAssetRegister implements BetterjrEntity {
 		result = prime * result + ((version == null) ? 0 : version.hashCode());
 		result = prime * result + ((zdwRegCode == null) ? 0 : zdwRegCode.hashCode());
 		result = prime * result + ((zdwRegDate == null) ? 0 : zdwRegDate.hashCode());
-		result = prime * result + ((zdwRegTime == null) ? 0 : zdwRegTime.hashCode());
 		return result;
 	}
 
@@ -395,11 +382,6 @@ public class ScfAssetRegister implements BetterjrEntity {
 			if (other.zdwRegDate != null)
 				return false;
 		} else if (!zdwRegDate.equals(other.zdwRegDate))
-			return false;
-		if (zdwRegTime == null) {
-			if (other.zdwRegTime != null)
-				return false;
-		} else if (!zdwRegTime.equals(other.zdwRegTime))
 			return false;
 		return true;
 	}

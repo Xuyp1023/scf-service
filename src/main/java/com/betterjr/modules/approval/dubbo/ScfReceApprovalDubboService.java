@@ -176,7 +176,6 @@ public class ScfReceApprovalDubboService implements IScfReceApprovalFlowDubboSer
 
 	@Override
 	public void endFlow(Map<String, Object> anContext, int anResultType) {
-		anContext = RuleServiceDubboFilterInvoker.getInputObj();
 		if (PROCESS_PASS == anResultType) {
 			managerFlowService.processCancel(anContext);
 		} else {

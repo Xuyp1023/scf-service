@@ -967,6 +967,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
 		request.setApprovedRatio(anScheme.getApprovedRatio());
 		request.setApprovedBalance(anScheme.getApprovedBalance());
 		request.setConfirmBalance(anScheme.getApprovedBalance());
+		request.setOverdueRatio(anScheme.getOverdueRatio());
 		this.saveModifyRequest(request, anScheme.getRequestNo());
 		return schemeService.addScheme(anScheme);
 	}
