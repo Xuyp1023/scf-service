@@ -110,7 +110,7 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
         if(anConfirmFlag){
             anModiReceivable.setDocStatus(VersionConstantCollentions.DOC_STATUS_CONFIRM); 
         }
-        anModiReceivable=this.updateVersionByPrimaryKeySelective(anModiReceivable,receivable.getRefNo(),receivable.getVersion());
+        anModiReceivable=this.updateVersionByPrimaryKeySelective(anModiReceivable,receivable.getId());
         BTAssert.notNull(anModiReceivable, "修改订单失败");
         logger.info("success to modify saveModifyOrder"+UserUtils.getOperatorInfo().getName());
         return anModiReceivable;
@@ -241,6 +241,7 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
             if (! anMap.containsKey("coreCustNo") ||  anMap.get("coreCustNo") ==null || StringUtils.isBlank(anMap.get("coreCustNo").toString())) {
                 anMap.put("coreCustNo", getCustNoList(custInfos));
             }
+            return this.selectPropertyByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
         }
         
         Page<ScfReceivableDO> receivableList = this.selectPropertyEffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");

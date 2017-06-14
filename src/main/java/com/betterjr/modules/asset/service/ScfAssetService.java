@@ -1,18 +1,37 @@
 package com.betterjr.modules.asset.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.QueryTermBuilder;
+import com.betterjr.common.utils.UserUtils;
+import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.acceptbill.entity.ScfAcceptBillDO;
+import com.betterjr.modules.acceptbill.service.ScfAcceptBillDOService;
 import com.betterjr.modules.account.entity.CustInfo;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.asset.dao.ScfAssetMapper;
 import com.betterjr.modules.asset.data.AssetConstantCollentions;
 import com.betterjr.modules.asset.entity.ScfAsset;
 import com.betterjr.modules.asset.entity.ScfAssetBasedata;
 import com.betterjr.modules.asset.entity.ScfAssetCompany;
+import com.betterjr.modules.customer.ICustMechBaseService;
+import com.betterjr.modules.ledger.entity.ContractLedger;
+import com.betterjr.modules.ledger.service.ContractLedgerService;
+import com.betterjr.modules.order.entity.ScfInvoiceDO;
+import com.betterjr.modules.order.entity.ScfOrderDO;
+import com.betterjr.modules.order.service.ScfInvoiceDOService;
+import com.betterjr.modules.order.service.ScfOrderDOService;
+import com.betterjr.modules.receivable.entity.ScfReceivableDO;
+import com.betterjr.modules.receivable.service.ScfReceivableDOService;
 import com.betterjr.modules.version.entity.BaseVersionEntity;
 
 @Service
@@ -24,6 +43,23 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
     @Autowired
     private ScfAssetBasedataService assetBasedataService;
     
+    @Autowired
+    private ScfReceivableDOService receivableService;//引收账款
+    
+    @Autowired
+    private ScfInvoiceDOService invoiceService;//发票
+    
+    @Autowired
+    private ScfOrderDOService orderService;//订单
+    
+    @Autowired 
+    private ScfAcceptBillDOService billService;//票据
+    
+    @Autowired
+    private ContractLedgerService contractLedgerService;//合同
+    
+    @Reference(interfaceClass = ICustMechBaseService.class)
+    private ICustMechBaseService custMechBaseService;
     /**
      * 新增资产以及相关企业，基础数据信息
      * @param anAsset
@@ -214,5 +250,55 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         return list;
     }
     
+    /**
+     * 查找符合条件的资产基础数据
+     * @param anCustNo  供应商id
+     * @param anDataType  资产类型   关联的基础数据的类型1订单2票据3应收账款4发票5贸易合同6运输单单据类型
+     * @param anFlag
+     * @param anPageNum
+     * @param anPageSize
+     * @return
+     */
+    public Page queryFinanceBaseDataList(Long anCustNo,String anDataType,String anFlag, int anPageNum, int anPageSize){
+        
+        BTAssert.notNull(anCustNo, "查询可用资产失败!供应商id不存在");
+        BTAssert.notNull(anDataType, "查询可用资产失败!请选择要查询的数据");
+        if(!getCurrentUserCustNos().contains(anCustNo)){
+            BTAssert.notNull(null, "查询可用资产失败!你没有当前企业资产的操作权限");  
+        }
+        
+        Map<String,Object> paramMap = QueryTermBuilder.newInstance()
+                .put("custNo", anCustNo)
+                .build();
+        if(anDataType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_ORDER)){
+            Page<ScfOrderDO> orderPage = orderService.selectCanUsePageWithVersion(paramMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
+            return orderPage;
+        }else if(anDataType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL)){
+            Page<ScfAcceptBillDO> billPage = billService.selectCanUsePageWithVersion(paramMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
+            return billPage;
+        }else if(anDataType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE)){
+            Page<ScfInvoiceDO> invoicePage = invoiceService.selectCanUsePageWithVersion(paramMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
+            return invoicePage;
+        }else if(anDataType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE)){
+            Page<ScfReceivableDO> receivablePage = receivableService.selectCanUsePageWithVersion(paramMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
+            return receivablePage;
+        }else{
+            Page<ContractLedger> agreementPage = contractLedgerService.selectCanUsePageWithVersion(paramMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
+            return agreementPage;
+        }
+        
+    }
     
+    private Collection<Long> getCurrentUserCustNos(){
+        
+        CustOperatorInfo operInfo = UserUtils.getOperatorInfo();
+        BTAssert.notNull(operInfo, "查询可用资产失败!请先登录");
+        Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
+        BTAssert.notNull(custInfos, "查询可用资产失败!获取当前企业失败");
+        Collection<Long> custNos=new ArrayList<>();
+        for (CustInfo custInfo : custInfos) {
+            custNos.add(custInfo.getId());
+        }
+        return  custNos;
+    }
 }

@@ -128,6 +128,34 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
         
     }
     
+ public synchronized T updateVersionByPrimaryKeySelective(T anT, Long anId){
+        
+        if (anT != null) {
+            try {
+                
+                T arg2 = this.selectByPrimaryKey(anId);
+                checkStatus(arg2.getIsLatest(), VersionConstantCollentions.IS_NOT_LATEST, true, "当前订单已不是最新版本,不允许被编辑");
+                arg2.setIsLatest(VersionConstantCollentions.IS_NOT_LATEST);
+                this.updateByPrimaryKeySelective(arg2);
+            }
+            catch (Exception e1) {
+                e1.printStackTrace();
+            }
+            try {
+                long id = SerialGenerator.getLongValue(anT.getClass().getSimpleName()+".id");
+                anT.setId(id);
+            }catch (Exception e) {
+                logger.info("初始化插入对象Id出错！"+e.getMessage());
+                return null;
+            } 
+            
+            return this.insertVersionSelective(anT);
+        }
+        
+        return null;
+        
+    }
+    
     /**
      * 通过对象查询相似的对象 类似 select方法
      */
@@ -152,7 +180,7 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
     public T selectOneWithVersion(String refNo,String version) {
         
         Map<String,Object> paramMap= QueryTermBuilder.newInstance().put("refNo", refNo).put("version", version).build();
-        List<T> lists = selectByProperty(paramMap);
+        List<T> lists = selectByProperty(paramMap,"id desc");
         return Collections3.getFirst(lists);
     }
     
@@ -259,7 +287,7 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
      */
     public Page<T> selectPropertyEffectiveByPageWithVersion (Map<String, Object> anParamMap, int arg1, int arg2, boolean arg3, String arg4) {
        
-        anParamMap.put("isLatest", VersionConstantCollentions.IS_LATEST);
+        //anParamMap.put("isLatest", VersionConstantCollentions.IS_LATEST);
         if(!anParamMap.containsKey("NEbusinStatus") || anParamMap.get("NEbusinStatus")==null ){
             anParamMap.remove("NEbusinStatus");
             anParamMap.put("NEbusinStatus", VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE);
@@ -276,8 +304,9 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
                 anParamMap.put("NEbusinStatus", paramObj);
             }
         }
-        PageHelper.startPage(arg1, arg2, arg3);
-        return (Page) this.selectByProperty(anParamMap, arg4);
+        //PageHelper.startPage(arg1, arg2, arg3);
+        //return (Page) this.selectByProperty(anParamMap, arg4);
+        return selectPropertyByPageWithVersion(anParamMap, arg1, arg2, arg3, arg4);
     }
     
     /**
@@ -481,5 +510,49 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
          return null;
      }
      
+     
+     /**
+      * 根据分页查询带版本查询可以用来融资，询价的基础数据信息
+      * 查询已经生效并且没有使用的基础数据
+      * @param paramMap 查询条件
+      * @param arg1   当前页数
+      * @param arg2   每页的输了
+      * @param arg3   是否跳过查询总的条数
+      * @param arg4   排序字段
+      * @return
+      */
+     public Page<T> selectCanUsePageWithVersion (Map<String, Object> paramMap, int anPageNum, int anPageSize, boolean anFlag, String anOrderDesc) {
+         paramMap.put("isLatest", VersionConstantCollentions.IS_LATEST);
+         paramMap.put("businStatus",VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE);
+         paramMap.put("lockedStatus",VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
+         PageHelper.startPage(anPageNum, anPageSize, anFlag);
+         return (Page) this.selectByProperty(paramMap, anOrderDesc);
+     }
+     
+     /**
+      * 更新指定基础资料的状态
+      * @param anRefNo
+      * @param anVersion
+      * @param anBusinStatus
+      * @param anLockedStatus
+      * @param anDocStatus
+      * @return
+      */
+     public T updateBaseAssetStatus(String anRefNo,String anVersion,String anBusinStatus,String anLockedStatus,String anDocStatus){
+         
+         T base = this.selectOneWithVersion(anRefNo, anVersion);
+         
+         BTAssert.notNull(base,"对象为空，操作失败");
+         
+         if(base.getIsLatest().equals(VersionConstantCollentions.IS_NOT_LATEST)){
+            BTAssert.notNull(base,"当前资产已经修改，不允许再次修改");  
+         }
+         
+         base.setBusinStatus(anBusinStatus);
+         base.setLockedStatus(anLockedStatus);
+         base.setDocStatus(anDocStatus);
+         int result = this.updateByPrimaryKeySelective(base);
+         return result == VersionConstantCollentions.MODIFY_SUCCESS ? base : null;
+     }
     
 }

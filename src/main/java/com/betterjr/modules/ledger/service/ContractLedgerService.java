@@ -16,11 +16,13 @@ import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.mapper.pagehelper.PageHelper;
 import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.ledger.dao.ContractLedgerMapper;
 import com.betterjr.modules.ledger.entity.ContractLedger;
 import com.betterjr.modules.ledger.entity.CustContractLedger;
+import com.betterjr.modules.version.constant.VersionConstantCollentions;
 import com.betterjr.modules.wechat.ICustWeChatService;
 
 /***
@@ -67,7 +69,8 @@ public class ContractLedgerService  extends BaseService<ContractLedgerMapper, Co
         }
         logger.info("分页查询合同台账信息 queryContractLedgerByPage-anMap:"+map);
         String flag=(String)anMap.get("flag");
-        return this.selectPropertyByPage(map, anPageNum, anPageSize, "1".equals(flag),"regDate desc,regTime desc");
+        map.put("isLatest", VersionConstantCollentions.IS_LATEST);
+        return this.selectPropertyByPage(map, anPageNum, anPageSize, "1".equals(flag),"id desc");
     }
     
     /***
@@ -160,21 +163,26 @@ public class ContractLedgerService  extends BaseService<ContractLedgerMapper, Co
         if ("0".equals(contractLedger.getBusinStatus()) == false) {
             throw new BytterTradeException(40001, "已生效或废止的合同不能修改！");
         }
+        if (VersionConstantCollentions.IS_NOT_LATEST.equals(contractLedger.getIsLatest())) {
+            throw new BytterTradeException(40001, "当前合同已不是最新版本不能修改！");
+        }
         ContractLedger reqContractLedger=anContractLedger;
         reqContractLedger.modifyContractLedger(contractLedger);
         reqContractLedger.setBatchNo(custFileService.updateCustFileItemInfo(anFileList, reqContractLedger.getBatchNo()));
-        this.updateByPrimaryKey(reqContractLedger);
-        
+        //this.updateByPrimaryKey(reqContractLedger);
+        this.insertSelective(reqContractLedger);
+        contractLedger.setIsLatest(VersionConstantCollentions.IS_NOT_LATEST);
+        this.updateByPrimaryKey(contractLedger);
         // 修改买方，卖方的客户信息
-        anBuyerCustContractLedger.setContractId(anContractLedger.getId());
-        anSupplierCustContractLedger.setContractId(anContractLedger.getId());
+        anBuyerCustContractLedger.setContractId(reqContractLedger.getId());
+        anSupplierCustContractLedger.setContractId(reqContractLedger.getId());
         anBuyerCustContractLedger.initValue();
         anSupplierCustContractLedger.initValue();
         boolean buyerFlag=custContractLedgerService.svaeCustContractLedger(anBuyerCustContractLedger);
         boolean supplierFlag=custContractLedgerService.svaeCustContractLedger(anSupplierCustContractLedger);
         logger.info("buyerFlag："+buyerFlag+"，supplierFlag："+supplierFlag);
         // 添加台账记录
-        addContractLedgerRecode(anContractLedger.getId(),anContractLedger.getBusinStatus());
+        addContractLedgerRecode(reqContractLedger.getId(),anContractLedger.getBusinStatus());
         return reqContractLedger;
     }
     
@@ -191,6 +199,10 @@ public class ContractLedgerService  extends BaseService<ContractLedgerMapper, Co
         }
         contractLedger.initModiDateValue();
         contractLedger.setBusinStatus(anStatus);
+        if(VersionConstantCollentions.LOCKED_STATUS_LOCKED.equals(contractLedger.getLockedStatus())){
+            throw new BytterTradeException(40001, "当前单据已经用于融资，不能修改！");
+        }
+        contractLedger.setBusinVersionStatus(anStatus);
         bool=this.updateByPrimaryKey(contractLedger)>0;
         if(bool){
             // 添加修改状态的记录
@@ -309,4 +321,16 @@ public class ContractLedgerService  extends BaseService<ContractLedgerMapper, Co
         CustFileItem anFile = custFileService.findOne(anFileId);
         return custFileService.deleteFileItem(anFile.getId(),anFile.getBatchNo());
     }
+    
+    public Page<ContractLedger> selectCanUsePageWithVersion (Map<String, Object> paramMap, int anPageNum, int anPageSize, boolean anFlag, String anOrderDesc) {
+        paramMap.put("isLatest", VersionConstantCollentions.IS_LATEST);
+        paramMap.put("businStatus",VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE);
+        paramMap.put("lockedStatus",VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
+        PageHelper.startPage(anPageNum, anPageSize, anFlag);
+        return (Page) this.selectByProperty(paramMap, anOrderDesc);
+    }
+
+    
+    
+    
 }
