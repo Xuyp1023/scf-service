@@ -68,7 +68,14 @@ public class ScfAcceptBillDO extends BaseVersionEntity {
     @JsonSerialize(using = CustDateJsonSerializer.class)
     @OrderBy("DESC")
     private String invoiceDate;
-
+    
+    @Column(name = "L_CUSTNO", columnDefinition = "INTEGER")
+    @MetaData(value = "卖方客户号", comments = "卖方客户号")
+    private Long custNo;
+    
+    @Column(name = "C_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "卖方公司名称", comments = "修改操作员姓名")
+    private String custName;
 
     /**
      * 开票单位
@@ -710,26 +717,39 @@ public class ScfAcceptBillDO extends BaseVersionEntity {
     public void setInvoicer(String anInvoicer) {
         this.invoicer = anInvoicer;
     }
+    
+    public Long getCustNo() {
+        return this.custNo;
+    }
 
+    public void setCustNo(Long anCustNo) {
+        this.custNo = anCustNo;
+    }
+
+    public String getCustName() {
+        return this.custName;
+    }
+
+    public void setCustName(String anCustName) {
+        this.custName = anCustName;
+    }
+
+   
     @Override
     public String toString() {
         return "ScfAcceptBillDO [billNo=" + this.billNo + ", billType=" + this.billType + ", billMode=" + this.billMode + ", balance=" + this.balance
-                + ", invoiceDate=" + this.invoiceDate + ", invoiceCorp=" + this.invoiceCorp + ", drawerId=" + this.drawerId + ", endDate="
-                + this.endDate + ", cashDate=" + this.cashDate + ", holder=" + this.holder + ", holderNo=" + this.holderNo + ", holderBankAccount="
-                + this.holderBankAccount + ", acceptor=" + this.acceptor + ", acceptorBankAccount=" + this.acceptorBankAccount + ", supplierNo="
-                + this.supplierNo + ", supplierName=" + this.supplierName + ", supplier=" + this.supplier + ", suppBankAccount="
-                + this.suppBankAccount + ", suppBankName=" + this.suppBankName + ", buyerNo=" + this.buyerNo + ", buyerName=" + this.buyerName
-                + ", buyer=" + this.buyer + ", realBuyer=" + this.realBuyer + ", buyerBankAccount=" + this.buyerBankAccount + ", buyerBankName="
-                + this.buyerBankName + ", billFrom=" + this.billFrom + ", regDate=" + this.regDate + ", modiDate=" + this.modiDate + ", btBillNo="
-                + this.btBillNo + ", agreeNo=" + this.agreeNo + ", operId=" + this.operId + ", operName=" + this.operName + ", operOrg="
-                + this.operOrg + ", batchNo=" + this.batchNo  + ", description=" + this.description + ", coreCustNo="
-                + this.coreCustNo + ", modiOperId=" + this.modiOperId + ", modiOperName=" + this.modiOperName + ", modiTime=" + this.modiTime
-                + ", dataSource=" + this.dataSource + ", transferId=" + this.transferId + ", coreOperOrg=" + this.coreOperOrg + ", coreCustName="
-                + this.coreCustName + ", invoicer=" + this.invoicer + ", getRefNo()=" + this.getRefNo() + ", getVersion()=" + this.getVersion()
-                + ", getIsLatest()=" + this.getIsLatest() + ", getBusinStatus()=" + this.getBusinStatus() + ", getLockedStatus()="
-                + this.getLockedStatus() + ", getDocStatus()=" + this.getDocStatus() + ", getAuditOperId()=" + this.getAuditOperId()
-                + ", getAuditOperName()=" + this.getAuditOperName() + ", getAuditData()=" + this.getAuditData() + ", getAuditTime()="
-                + this.getAuditTime() + ", getId()=" + this.getId() + "]";
+                + ", invoiceDate=" + this.invoiceDate + ", custNo=" + this.custNo + ", custName=" + this.custName + ", invoiceCorp="
+                + this.invoiceCorp + ", drawerId=" + this.drawerId + ", endDate=" + this.endDate + ", cashDate=" + this.cashDate + ", holder="
+                + this.holder + ", holderNo=" + this.holderNo + ", holderBankAccount=" + this.holderBankAccount + ", acceptor=" + this.acceptor
+                + ", acceptorBankAccount=" + this.acceptorBankAccount + ", supplierNo=" + this.supplierNo + ", supplierName=" + this.supplierName
+                + ", supplier=" + this.supplier + ", suppBankAccount=" + this.suppBankAccount + ", suppBankName=" + this.suppBankName + ", buyerNo="
+                + this.buyerNo + ", buyerName=" + this.buyerName + ", buyer=" + this.buyer + ", realBuyer=" + this.realBuyer + ", buyerBankAccount="
+                + this.buyerBankAccount + ", buyerBankName=" + this.buyerBankName + ", billFrom=" + this.billFrom + ", regDate=" + this.regDate
+                + ", modiDate=" + this.modiDate + ", btBillNo=" + this.btBillNo + ", agreeNo=" + this.agreeNo + ", operId=" + this.operId
+                + ", operName=" + this.operName + ", operOrg=" + this.operOrg + ", batchNo=" + this.batchNo + ", description=" + this.description
+                + ", coreCustNo=" + this.coreCustNo + ", modiOperId=" + this.modiOperId + ", modiOperName=" + this.modiOperName + ", modiTime="
+                + this.modiTime + ", dataSource=" + this.dataSource + ", transferId=" + this.transferId + ", coreOperOrg=" + this.coreOperOrg
+                + ", coreCustName=" + this.coreCustName + ", invoicer=" + this.invoicer + "]";
     }
 
     public ScfAcceptBillDO() {
@@ -996,6 +1016,8 @@ public class ScfAcceptBillDO extends BaseVersionEntity {
         this.billFrom = "0";
         
         this.holderNo=this.supplierNo;//supplierNo 存放收款人
+        this.custNo=this.supplierNo;
+        this.custName=this.supplierName;
         //this.supplierName=this.supplier;
         this.holderBankAccount=this.suppBankAccount;
         this.holder=this.supplier;
@@ -1044,6 +1066,8 @@ public class ScfAcceptBillDO extends BaseVersionEntity {
         this.billFrom = "0";
         
         this.holderNo=this.supplierNo;//supplierNo 存放收款人
+        this.custNo=this.supplierNo;
+        this.custName=this.supplierName;
         this.holderBankAccount=this.suppBankAccount;
         this.holder=this.supplier;
         

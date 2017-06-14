@@ -15,6 +15,7 @@ import javax.persistence.Transient;
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
+import com.betterjr.common.mapper.CustTimeJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.modules.asset.data.AssetConstantCollentions;
@@ -172,6 +173,120 @@ public class ScfAsset implements BetterjrEntity {
     @Transient
     private Integer operationAuth;
     
+    /**
+     * 注册操作员编码
+     */
+    @Column(name = "L_REG_OPERID",  columnDefinition="INTEGER" )
+    @MetaData( value="注册操作员编码", comments = "注册操作员编码")
+    private Long regOperId ;
+
+    /**
+     * 注册操作员名字
+     */
+    @Column(name = "C_REG_OPERNAME",  columnDefinition="VARCHAR" )
+    @MetaData( value="注册操作员名字", comments = "注册操作员名字")
+    private String regOperName;
+    
+    /**
+     * 作废操作员编码
+     */
+    @Column(name = "L_ANNUL_OPERID",  columnDefinition="INTEGER" )
+    @MetaData( value="作废操作员编码", comments = "作废操作员编码")
+    private Long annulOperId ;
+
+    /**
+     * 作废操作员名字
+     */
+    @Column(name = "C_ANNUL_OPERNAME",  columnDefinition="VARCHAR" )
+    @MetaData( value="作废操作员名字", comments = "作废操作员名字")
+    private String annulOperName;
+    
+    /**
+     * 作废日期
+     */
+    @Column(name = "D_ANNUL_DATE",  columnDefinition="VARCHAR" )
+    @OrderBy("ASC")
+    @MetaData( value="作废日期", comments = "作废日期")
+    @JsonSerialize(using = CustDateJsonSerializer.class)
+    private String annulDate;
+    
+    /**
+     * 作废时间
+     */
+    @Column(name = "T_ANNUL_TIME",  columnDefinition="VARCHAR" )
+    @MetaData( value="作废日期", comments = "作废日期")
+    @JsonSerialize(using=CustTimeJsonSerializer.class)
+    private String annulTime;
+    
+    /**
+     * 上传的批次号，对账单附件
+     */
+    @Column(name = "N_STATEMENT_BATCHNO", columnDefinition = "INTEGER")
+    @MetaData(value = "对账单附件的批次号", comments = "对账单附件的批次号")
+    private Long statementBatchNo;
+    
+    /**
+     * 商品出库单附件
+     */
+    @Column(name = "N_GOODS_BATCHNO", columnDefinition = "INTEGER")
+    @MetaData(value = "商品出库单附件", comments = "商品出库单附件")
+    private Long goodsBatchNo;
+    
+    /**
+     * 其他附件
+     */
+    @Column(name = "N_OTHERS_BATCHNO", columnDefinition = "INTEGER")
+    @MetaData(value = "其他附件", comments = "其他附件")
+    private Long othersBatchNo;
+    
+    public Long getRegOperId() {
+        return this.regOperId;
+    }
+
+    public void setRegOperId(Long anRegOperId) {
+        this.regOperId = anRegOperId;
+    }
+
+    public String getRegOperName() {
+        return this.regOperName;
+    }
+
+    public void setRegOperName(String anRegOperName) {
+        this.regOperName = anRegOperName;
+    }
+
+    public Long getAnnulOperId() {
+        return this.annulOperId;
+    }
+
+    public void setAnnulOperId(Long anAnnulOperId) {
+        this.annulOperId = anAnnulOperId;
+    }
+
+    public String getAnnulOperName() {
+        return this.annulOperName;
+    }
+
+    public void setAnnulOperName(String anAnnulOperName) {
+        this.annulOperName = anAnnulOperName;
+    }
+
+    public String getAnnulDate() {
+        return this.annulDate;
+    }
+
+    public void setAnnulDate(String anAnnulDate) {
+        this.annulDate = anAnnulDate;
+    }
+
+    public String getAnnulTime() {
+        return this.annulTime;
+    }
+
+    public void setAnnulTime(String anAnnulTime) {
+        this.annulTime = anAnnulTime;
+    }
+
     public Integer getOperationAuth() {
         return this.operationAuth;
     }
@@ -307,34 +422,58 @@ public class ScfAsset implements BetterjrEntity {
         return this.custType;
     }
 
-
-
     public void setCustType(String anCustType) {
         this.custType = anCustType;
     }
+    
+    public Long getStatementBatchNo() {
+        return this.statementBatchNo;
+    }
 
-    @Override
-    public String toString() {
-        return "ScfAsset [Hash = "+hashCode()+", id=" + this.id + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", businStatus=" + this.businStatus
-                + ", assetName=" + this.assetName + ", assetType=" + this.assetType + ", sourceUseType=" + this.sourceUseType + ", custNo="
-                + this.custNo + ", custName=" + this.custName + ", operationAuth=" + this.operationAuth + ", coreCustNo=" + this.coreCustNo + ", coreCustName=" + this.coreCustName
-                + ", prefixId=" + this.prefixId + ", suffixId=" + this.suffixId + ", serialVersionUID="+serialVersionUID+"]";
+    public void setStatementBatchNo(Long anStatementBatchNo) {
+        this.statementBatchNo = anStatementBatchNo;
+    }
+
+    public Long getGoodsBatchNo() {
+        return this.goodsBatchNo;
+    }
+
+    public void setGoodsBatchNo(Long anGoodsBatchNo) {
+        this.goodsBatchNo = anGoodsBatchNo;
+    }
+
+    public Long getOthersBatchNo() {
+        return this.othersBatchNo;
+    }
+
+    public void setOthersBatchNo(Long anOthersBatchNo) {
+        this.othersBatchNo = anOthersBatchNo;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((this.annulDate == null) ? 0 : this.annulDate.hashCode());
+        result = prime * result + ((this.annulOperId == null) ? 0 : this.annulOperId.hashCode());
+        result = prime * result + ((this.annulOperName == null) ? 0 : this.annulOperName.hashCode());
+        result = prime * result + ((this.annulTime == null) ? 0 : this.annulTime.hashCode());
         result = prime * result + ((this.assetName == null) ? 0 : this.assetName.hashCode());
         result = prime * result + ((this.assetType == null) ? 0 : this.assetType.hashCode());
+        result = prime * result + ((this.basedataMap == null) ? 0 : this.basedataMap.hashCode());
         result = prime * result + ((this.businStatus == null) ? 0 : this.businStatus.hashCode());
         result = prime * result + ((this.coreCustName == null) ? 0 : this.coreCustName.hashCode());
         result = prime * result + ((this.coreCustNo == null) ? 0 : this.coreCustNo.hashCode());
+        result = prime * result + ((this.custMap == null) ? 0 : this.custMap.hashCode());
         result = prime * result + ((this.custName == null) ? 0 : this.custName.hashCode());
         result = prime * result + ((this.custNo == null) ? 0 : this.custNo.hashCode());
+        result = prime * result + ((this.custType == null) ? 0 : this.custType.hashCode());
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+        result = prime * result + ((this.operationAuth == null) ? 0 : this.operationAuth.hashCode());
         result = prime * result + ((this.prefixId == null) ? 0 : this.prefixId.hashCode());
         result = prime * result + ((this.regDate == null) ? 0 : this.regDate.hashCode());
+        result = prime * result + ((this.regOperId == null) ? 0 : this.regOperId.hashCode());
+        result = prime * result + ((this.regOperName == null) ? 0 : this.regOperName.hashCode());
         result = prime * result + ((this.regTime == null) ? 0 : this.regTime.hashCode());
         result = prime * result + ((this.sourceUseType == null) ? 0 : this.sourceUseType.hashCode());
         result = prime * result + ((this.suffixId == null) ? 0 : this.suffixId.hashCode());
@@ -347,6 +486,22 @@ public class ScfAsset implements BetterjrEntity {
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
         ScfAsset other = (ScfAsset) obj;
+        if (this.annulDate == null) {
+            if (other.annulDate != null) return false;
+        }
+        else if (!this.annulDate.equals(other.annulDate)) return false;
+        if (this.annulOperId == null) {
+            if (other.annulOperId != null) return false;
+        }
+        else if (!this.annulOperId.equals(other.annulOperId)) return false;
+        if (this.annulOperName == null) {
+            if (other.annulOperName != null) return false;
+        }
+        else if (!this.annulOperName.equals(other.annulOperName)) return false;
+        if (this.annulTime == null) {
+            if (other.annulTime != null) return false;
+        }
+        else if (!this.annulTime.equals(other.annulTime)) return false;
         if (this.assetName == null) {
             if (other.assetName != null) return false;
         }
@@ -355,6 +510,10 @@ public class ScfAsset implements BetterjrEntity {
             if (other.assetType != null) return false;
         }
         else if (!this.assetType.equals(other.assetType)) return false;
+        if (this.basedataMap == null) {
+            if (other.basedataMap != null) return false;
+        }
+        else if (!this.basedataMap.equals(other.basedataMap)) return false;
         if (this.businStatus == null) {
             if (other.businStatus != null) return false;
         }
@@ -367,6 +526,10 @@ public class ScfAsset implements BetterjrEntity {
             if (other.coreCustNo != null) return false;
         }
         else if (!this.coreCustNo.equals(other.coreCustNo)) return false;
+        if (this.custMap == null) {
+            if (other.custMap != null) return false;
+        }
+        else if (!this.custMap.equals(other.custMap)) return false;
         if (this.custName == null) {
             if (other.custName != null) return false;
         }
@@ -375,10 +538,18 @@ public class ScfAsset implements BetterjrEntity {
             if (other.custNo != null) return false;
         }
         else if (!this.custNo.equals(other.custNo)) return false;
+        if (this.custType == null) {
+            if (other.custType != null) return false;
+        }
+        else if (!this.custType.equals(other.custType)) return false;
         if (this.id == null) {
             if (other.id != null) return false;
         }
         else if (!this.id.equals(other.id)) return false;
+        if (this.operationAuth == null) {
+            if (other.operationAuth != null) return false;
+        }
+        else if (!this.operationAuth.equals(other.operationAuth)) return false;
         if (this.prefixId == null) {
             if (other.prefixId != null) return false;
         }
@@ -387,6 +558,14 @@ public class ScfAsset implements BetterjrEntity {
             if (other.regDate != null) return false;
         }
         else if (!this.regDate.equals(other.regDate)) return false;
+        if (this.regOperId == null) {
+            if (other.regOperId != null) return false;
+        }
+        else if (!this.regOperId.equals(other.regOperId)) return false;
+        if (this.regOperName == null) {
+            if (other.regOperName != null) return false;
+        }
+        else if (!this.regOperName.equals(other.regOperName)) return false;
         if (this.regTime == null) {
             if (other.regTime != null) return false;
         }
@@ -402,7 +581,17 @@ public class ScfAsset implements BetterjrEntity {
         return true;
     }
 
-
+    @Override
+    public String toString() {
+        return "ScfAsset [id=" + this.id + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", businStatus=" + this.businStatus
+                + ", assetName=" + this.assetName + ", assetType=" + this.assetType + ", sourceUseType=" + this.sourceUseType + ", custNo="
+                + this.custNo + ", custName=" + this.custName + ", coreCustNo=" + this.coreCustNo + ", coreCustName=" + this.coreCustName
+                + ", prefixId=" + this.prefixId + ", suffixId=" + this.suffixId + ", custType=" + this.custType + ", custMap=" + this.custMap
+                + ", basedataMap=" + this.basedataMap + ", operationAuth=" + this.operationAuth + ", regOperId=" + this.regOperId + ", regOperName="
+                + this.regOperName + ", annulOperId=" + this.annulOperId + ", annulOperName=" + this.annulOperName + ", annulDate=" + this.annulDate
+                + ", annulTime=" + this.annulTime + ", statementBatchNo=" + this.statementBatchNo + ", goodsBatchNo=" + this.goodsBatchNo
+                + ", othersBatchNo=" + this.othersBatchNo + "]";
+    }
 
     /**
      * 初始化资产信息，

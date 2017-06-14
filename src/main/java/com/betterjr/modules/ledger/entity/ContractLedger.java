@@ -3,6 +3,7 @@ package com.betterjr.modules.ledger.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
@@ -10,6 +11,8 @@ import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.document.entity.CustFileItem;
+import com.betterjr.modules.generator.SequenceFactory;
+import com.betterjr.modules.version.constant.VersionConstantCollentions;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.persistence.*;
@@ -105,6 +108,36 @@ public class ContractLedger  implements BetterjrEntity {
     
     @Column(name = "c_sign_addr",  columnDefinition="VARCHAR" )
     private String signAddr;
+    
+    @Column(name = "L_CUSTNO", columnDefinition = "INTEGER")
+    @MetaData(value = "供应商客户号", comments = "供应商客户号")
+    private Long custNo;
+    
+    @Column(name = "C_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "供应商名称", comments = "供应商名称")
+    private String custName;
+    
+    
+    @Column(name = "C_LOCKED_STATUS", columnDefinition = "VARCHAR")
+    @MetaData(value = "0 未锁定状态 1 锁定状态", comments = "0 未锁定状态 1 锁定状态")
+    private String lockedStatus;
+    
+    @Column(name = "C_Ref_NO", columnDefinition = "VARCHAR")
+    @MetaData(value = "凭证编号", comments = "凭证编号")
+    private String refNo;
+    
+    
+    @Column(name = "N_VERSION", columnDefinition = "VARCHAR")
+    @MetaData(value = "版本", comments = "版本")
+    private String version;
+    
+    @Column(name = "C_IS_LATEST", columnDefinition = "VARCHAR")
+    @MetaData(value = "是否是最新", comments = "是否是最新")
+    private String isLatest;
+    
+    //0 未核准 1：核准  2：已使用 3：转让 4废止 5 过期
+    @Column(name = "c_busin_version_status",  columnDefinition="VARCHAR" )
+    private String businVersionStatus;
     
     private List<CustFileItem> custFileList=new ArrayList<CustFileItem>();
 
@@ -245,6 +278,14 @@ public class ContractLedger  implements BetterjrEntity {
     public void setBusinStatus(String businStatus) {
         this.businStatus = businStatus;
     }
+    
+    public String getBusinVersionStatus() {
+        return this.businVersionStatus;
+    }
+
+    public void setBusinVersionStatus(String anBusinVersionStatus) {
+        this.businVersionStatus = anBusinVersionStatus;
+    }
 
     public Long getBuyerNo() {
         return buyerNo;
@@ -333,43 +374,68 @@ public class ContractLedger  implements BetterjrEntity {
     public void setCustFileList(List<CustFileItem> anCustFileList) {
         this.custFileList = anCustFileList;
     }
+    
+    public Long getCustNo() {
+        return this.custNo;
+    }
+
+    public void setCustNo(Long anCustNo) {
+        this.custNo = anCustNo;
+    }
+
+    public String getCustName() {
+        return this.custName;
+    }
+
+    public void setCustName(String anCustName) {
+        this.custName = anCustName;
+    }
+
+    public String getLockedStatus() {
+        return this.lockedStatus;
+    }
+
+    public void setLockedStatus(String anLockedStatus) {
+        this.lockedStatus = anLockedStatus;
+    }
+
+    public String getRefNo() {
+        return this.refNo;
+    }
+
+    public void setRefNo(String anRefNo) {
+        this.refNo = anRefNo;
+    }
+
+    public String getVersion() {
+        return this.version;
+    }
+
+    public void setVersion(String anVersion) {
+        this.version = anVersion;
+    }
+
+    public String getIsLatest() {
+        return this.isLatest;
+    }
+
+    public void setIsLatest(String anIsLatest) {
+        this.isLatest = anIsLatest;
+    }
+
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", agreeName=").append(agreeName);
-        sb.append(", agreeNo=").append(agreeNo);
-        sb.append(", supplier=").append(supplier);
-        sb.append(", buyer=").append(buyer);
-        sb.append(", balance=").append(balance);
-        sb.append(", deliveryDate=").append(deliveryDate);
-        sb.append(", deliveryAddr=").append(deliveryAddr);
-        sb.append(", checkAccept=").append(checkAccept);
-        sb.append(", objectionPeriod=").append(objectionPeriod);
-        sb.append(", agreeStartDate=").append(agreeStartDate);
-        sb.append(", agreeEndDate=").append(agreeEndDate);
-        sb.append(", regDate=").append(regDate);
-        sb.append(", regTime=").append(regTime);
-        sb.append(", modiDate=").append(modiDate);
-        sb.append(", modiTime=").append(modiTime);
-        sb.append(", businStatus=").append(businStatus);
-        sb.append(", buyerNo=").append(buyerNo);
-        sb.append(", supplierNo=").append(supplierNo);
-        sb.append(", operId=").append(operId);
-        sb.append(", operName=").append(operName);
-        sb.append(", operOrg=").append(operOrg);
-        sb.append(", batchNo=").append(batchNo);
-        sb.append(", default=").append(defaultFlag);
-        sb.append(", des=").append(des);
-        sb.append(", signDate=").append(signDate);
-        sb.append(", signAddr=").append(signAddr);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
+        return "ContractLedger [id=" + this.id + ", agreeName=" + this.agreeName + ", agreeNo=" + this.agreeNo + ", supplier=" + this.supplier
+                + ", buyer=" + this.buyer + ", balance=" + this.balance + ", deliveryDate=" + this.deliveryDate + ", deliveryAddr="
+                + this.deliveryAddr + ", checkAccept=" + this.checkAccept + ", objectionPeriod=" + this.objectionPeriod + ", agreeStartDate="
+                + this.agreeStartDate + ", agreeEndDate=" + this.agreeEndDate + ", regDate=" + this.regDate + ", regTime=" + this.regTime
+                + ", modiDate=" + this.modiDate + ", modiTime=" + this.modiTime + ", businStatus=" + this.businStatus + ", buyerNo=" + this.buyerNo
+                + ", supplierNo=" + this.supplierNo + ", operId=" + this.operId + ", operName=" + this.operName + ", operOrg=" + this.operOrg
+                + ", batchNo=" + this.batchNo + ", defaultFlag=" + this.defaultFlag + ", des=" + this.des + ", signDate=" + this.signDate
+                + ", signAddr=" + this.signAddr + ", custNo=" + this.custNo + ", custName=" + this.custName + ", lockedStatus=" + this.lockedStatus
+                + ", refNo=" + this.refNo + ", version=" + this.version + ", isLatest=" + this.isLatest + ", businVersionStatus="
+                + this.businVersionStatus + ", custFileList=" + this.custFileList + "]";
     }
 
     @Override
@@ -459,10 +525,18 @@ public class ContractLedger  implements BetterjrEntity {
         }
         this.regTime = BetterDateUtils.getNumTime();
         this.modiTime= BetterDateUtils.getNumTime();
+        this.custNo=this.supplierNo;
+        this.custName=this.supplier;
+        this.lockedStatus=VersionConstantCollentions.LOCKED_STATUS_INlOCKED;
+        this.isLatest=VersionConstantCollentions.IS_LATEST;
+        String pattern="TC#{Date:yy}#{Seq:14}";
+        this.refNo=SequenceFactory.generate("PLAT_"+this.getClass().getSimpleName(), pattern);
+        this.version="1";
+        this.businVersionStatus=this.businStatus;
     }
     
     public void modifyContractLedger(ContractLedger anContractLedger){
-        this.id=anContractLedger.getId();
+        this.id=SerialGenerator.getLongValue("ContractLedger.id");
         this.modiTime= BetterDateUtils.getNumTime();
         this.modiDate = BetterDateUtils.getNumDate();
         this.defaultFlag=anContractLedger.getDefaultFlag();
@@ -473,6 +547,13 @@ public class ContractLedger  implements BetterjrEntity {
         this.operName = anContractLedger.getOperName();
         this.operOrg = anContractLedger.getOperOrg();
         this.batchNo=anContractLedger.getBatchNo();
+        this.custNo=this.supplierNo;
+        this.custName=this.supplier;
+        this.lockedStatus=VersionConstantCollentions.LOCKED_STATUS_INlOCKED;
+        this.isLatest=VersionConstantCollentions.IS_LATEST;
+        this.refNo=anContractLedger.getRefNo();
+        this.version=(Integer.parseInt(anContractLedger.getVersion())+1)+"";
+        this.businVersionStatus=anContractLedger.getBusinStatus();
     }
     
     public void initModiDateValue(){

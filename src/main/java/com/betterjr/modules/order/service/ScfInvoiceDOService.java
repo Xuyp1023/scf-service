@@ -308,13 +308,14 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
                 anMap.put("custNo", getCustNoList(custInfos));
             }
             anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
-            
+            return this.selectPropertyByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
         }else{
             
             if (! anMap.containsKey("coreCustNo") ||  anMap.get("coreCustNo") ==null || StringUtils.isBlank(anMap.get("coreCustNo").toString())) {
                 anMap.put("coreCustNo", getCustNoList(custInfos));
             }
             //anMap.put("coreCustNo", getCustNoList(custInfos));
+            
         }
         
         Page<ScfInvoiceDO> invoiceList = this.selectPropertyEffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
@@ -335,10 +336,8 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
             anMap.put("custNo", getCustNoList(custInfos));
         }
         anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
+        //发票回收 已生效未被使用的发票
         Page<ScfInvoiceDO> invoiceList = this.selectPropertyByPageWithStatus(anMap, anPageNum, anPageSize,"1".equals(anFlag), "id desc", VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, VersionConstantCollentions.DOC_STATUS_CONFIRM, VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
-        
-        Page<ScfInvoiceDO> invoiceList2 = this.selectPropertyByPageWithStatus(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc",VersionConstantCollentions.BUSIN_STATUS_USED,VersionConstantCollentions.DOC_STATUS_CONFIRM,VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
-        invoiceList.addAll(invoiceList2);
         return invoiceList;
     }
     

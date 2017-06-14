@@ -144,6 +144,9 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
         logger.info("begin to saveCoreCustAnnulBill bill"+UserUtils.getOperatorInfo().getName());
         ScfAcceptBillDO bill = this.selectOneWithVersion(refNo, version);
         BTAssert.notNull(bill, "此票据异常!操作失败");
+        if(!VersionConstantCollentions.BILL_MODE_TYPE_PAPER_MONEY.equals(bill.getBillMode())){
+            BTAssert.notNull(null, "票据回收只能是纸票!当前票据不符合条件"); 
+        }
         Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
         List<Long> coreCustNoList = getCustNoList(custInfos);
         //bill.getCoreCustNo().
@@ -302,10 +305,10 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
                 anMap.put("coreCustNo", getCustNoList(custInfos));
             }
             anMap.put("coreOperOrg", UserUtils.getOperatorInfo().getOperOrg());
-            
+            return this.selectPropertyByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
         }
         
-        Page<ScfAcceptBillDO> billList = this.selectPropertyEffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo desc");
+        Page<ScfAcceptBillDO> billList = this.selectPropertyEffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
         
         return billList;
     }
@@ -343,7 +346,8 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
             Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
             anMap.put("coreCustNo", getCustNoList(custInfos));
         }
-        
+        // 票据回收只能是生效并且是纸票   BILL_MODE_TYPE_PAPER_MONEY
+        anMap.put("billMode", VersionConstantCollentions.BILL_MODE_TYPE_PAPER_MONEY);
         Page<ScfAcceptBillDO> billList = this.selectPropertyCanAunulByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "refNo desc");
         
         return billList;

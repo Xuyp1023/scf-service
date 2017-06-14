@@ -355,6 +355,7 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
                  anMap.put("coreCustNo", getCustNoList(custInfos));
              }
              //anMap.put("coreCustNo", getCustNoList(custInfos));
+             return this.selectPropertyByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
          }
          
          Page<ScfOrderDO> orderList = this.selectPropertyEffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");

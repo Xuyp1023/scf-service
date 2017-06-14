@@ -36,6 +36,8 @@ public class VersionConstantCollentions {
     
     public static final String LOCKED_STATUS_LOCKED="1";   //lockedstatus 锁定状态
     
+    public static final String BILL_MODE_TYPE_PAPER_MONEY="0"; //票据的流通方式纸票
+    
     
     
 
