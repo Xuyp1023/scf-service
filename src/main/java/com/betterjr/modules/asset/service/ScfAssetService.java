@@ -1,16 +1,20 @@
 package com.betterjr.modules.asset.service;
 
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.MathExtend;
 import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
@@ -18,18 +22,22 @@ import com.betterjr.modules.acceptbill.entity.ScfAcceptBillDO;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillDOService;
 import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
+import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.asset.dao.ScfAssetMapper;
 import com.betterjr.modules.asset.data.AssetConstantCollentions;
 import com.betterjr.modules.asset.entity.ScfAsset;
 import com.betterjr.modules.asset.entity.ScfAssetBasedata;
 import com.betterjr.modules.asset.entity.ScfAssetCompany;
 import com.betterjr.modules.customer.ICustMechBaseService;
+import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.ledger.entity.ContractLedger;
 import com.betterjr.modules.ledger.service.ContractLedgerService;
 import com.betterjr.modules.order.entity.ScfInvoiceDO;
 import com.betterjr.modules.order.entity.ScfOrderDO;
 import com.betterjr.modules.order.service.ScfInvoiceDOService;
 import com.betterjr.modules.order.service.ScfOrderDOService;
+import com.betterjr.modules.productconfig.entity.ScfAssetDict;
+import com.betterjr.modules.productconfig.sevice.ScfProductAssetDictRelationService;
 import com.betterjr.modules.receivable.entity.ScfReceivableDO;
 import com.betterjr.modules.receivable.service.ScfReceivableDOService;
 import com.betterjr.modules.version.entity.BaseVersionEntity;
@@ -60,32 +68,353 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
     
     @Reference(interfaceClass = ICustMechBaseService.class)
     private ICustMechBaseService custMechBaseService;
+    
+    
+    @Autowired
+    private CustAccountService custAccountService;
+    
+    @Autowired
+    private ScfProductAssetDictRelationService productAssetService;
+    
+    @Reference(interfaceClass = ICustFileService.class)
+    private ICustFileService custFileDubboService;
+    
     /**
      * 新增资产以及相关企业，基础数据信息
      * @param anAsset
      * @return
      */
-    public ScfAsset addAsset(ScfAsset anAsset){
+    public ScfAsset saveAddAsset(Map<String,Object> anAssetMap){
         
-        BTAssert.notNull(anAsset, "新增资产企业 失败-anAsset is null");
+        BTAssert.notNull(anAssetMap, "新增资产企业 失败-资产 is null");
+        
+        //将map转成资产对象
+        ScfAsset asset=convertBeanFromMap(anAssetMap);
+        asset.initAdd();
+        //封装资产数据中的基础信息
+        asset=packageAssetFromMap(asset,anAssetMap);
         logger.info("Begin to add anAsset");
-        anAsset.initAdd();
         
         //插入资产企业表信息
-        addAssetCompany(anAsset);
-        
+        assetCompanyService.saveAddAssetCompanyByAsset(asset);
+        //-------------------20170615
         //插入资产基础数据表信息
-        addAssetBasedata(anAsset);
+        addAssetBasedata(asset);
         
-        this.insert(anAsset);
+        this.insert(asset);
         logger.info("success to add anAsset");
-        anAsset.setOperationAuth(AssetConstantCollentions.ASSET_OPERATOR_AUTH_MAX);
+        //asset.setOperationAuth(AssetConstantCollentions.ASSET_OPERATOR_AUTH_MAX);
         
-        return anAsset; 
+        return asset; 
         
     }
     
+  
+    /**
+     * 封装资产数据中的基础信息
+     * @param anAsset
+     * @param anAssetMap
+     * @return
+     */
+   private ScfAsset packageAssetFromMap(ScfAsset anAsset, Map<String, Object> anAssetMap) {
+        
+       BTAssert.notNull(anAssetMap, "资产初始化 失败-资产 is null");
+       BTAssert.notNull(anAsset, "资产初始化 失败-资产 is null");
+       BTAssert.notNull(anAssetMap.get("custNo"),"资产初始化 失败-请选择供应商");
+       BTAssert.notNull(anAssetMap.get("coreCustNo"),"资产初始化 失败-请选择核心企业");
+       BTAssert.notNull(anAssetMap.get("factorNo"),"资产初始化 失败-请选择核心企业");
+       //将企业信息列表封装到资产中
+       packageAssetCompanyInfoFromMap(anAsset,anAssetMap);
+       //将基础资产信息封装到资产中
+       packageAssetBaseDataInfoFromMap(anAsset,anAssetMap);
+       //封装资产总金额
+       paceageAssetBalanceFromMap(anAsset,anAssetMap);
+       //封装资产附件各个批次号
+       packageAssetFileFromMap(anAsset,anAssetMap);
+        return anAsset;
+    }
+
    /**
+    * 
+    * 封装文件资产附件信息
+    * @param anAsset
+    * @param anAssetMap
+    */
+   
+   private void packageAssetFileFromMap(ScfAsset anAsset, Map<String, Object> anAssetMap) {
+        
+       //对账单附件列表
+       if(anAssetMap.containsKey("statementFileList") &&anAssetMap.get("statementFileList") !=null ){
+           
+           anAsset.setStatementBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anAssetMap.get("statementFileList").toString(), anAsset.getStatementBatchNo()));
+           
+       }
+       
+     //商品出库单附件列表
+       if(anAssetMap.containsKey("goodsFileList") &&anAssetMap.get("goodsFileList") !=null ){
+           
+           anAsset.setGoodsBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anAssetMap.get("goodsFileList").toString(), anAsset.getGoodsBatchNo()));
+           
+       }
+       
+       //其他附件列表
+       if(anAssetMap.containsKey("othersFileList") &&anAssetMap.get("othersFileList") !=null ){
+           
+           anAsset.setOthersBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anAssetMap.get("othersFileList").toString(), anAsset.getOthersBatchNo()));
+           
+       }
+        
+    }
+
+
+/**
+    * 封装资产的总金额
+    * @param anAsset
+    * @param anAssetMap
+    */
+   private ScfAsset paceageAssetBalanceFromMap(ScfAsset anAsset, Map<String, Object> anAssetMap) {
+        
+       //获取主体资产类型
+       String AssetType = findProductMainAssetType(anAssetMap);
+       BigDecimal totalBalance=new BigDecimal(0);
+       if(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL.equals(AssetType)){
+           Object object = anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_BILL_LIST_KEY);
+           if(object instanceof List){
+               List<ScfAcceptBillDO> billList=(List<ScfAcceptBillDO>) object;
+               for (ScfAcceptBillDO bill : billList) {
+                   totalBalance= MathExtend.add(totalBalance, bill.getBalance());
+               }
+           }
+       }
+       if(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT.equals(AssetType)){
+           Object object = anAsset.getBasedataMap().get(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY);
+           if(object instanceof List){
+               List<ContractLedger> agreeList=(List<ContractLedger>) object;
+               for (ContractLedger agree : agreeList) {
+                   totalBalance= MathExtend.add(totalBalance, new BigDecimal(agree.getBalance()));
+               }
+           }
+       }
+       
+       if(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE.equals(AssetType)){
+           Object object = anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_INVOICE_LIST_KEY);
+           if(object instanceof List){
+               List<ScfInvoiceDO> invoiceList=(List<ScfInvoiceDO>) object;
+               for (ScfInvoiceDO invoice : invoiceList) {
+                   totalBalance= MathExtend.add(totalBalance, invoice.getBalance());
+               }
+           }
+       }
+       
+       if(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_ORDER.equals(AssetType)){
+           Object object = anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_ORDER_LIST_KEY);
+           if(object instanceof List){
+               List<ScfOrderDO> orderList=(List<ScfOrderDO>) object;
+               for (ScfOrderDO order : orderList) {
+                   totalBalance= MathExtend.add(totalBalance, order.getBalance());
+               }
+           }
+       }
+       
+       if(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE.equals(AssetType)){
+           Object object = anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY);
+           if(object instanceof List){
+               List<ScfReceivableDO> receivableList=(List<ScfReceivableDO>) object;
+               for (ScfReceivableDO receivable : receivableList) {
+                   totalBalance= MathExtend.add(totalBalance, receivable.getBalance());
+               }
+           }
+       }
+       
+       anAsset.setBalance(totalBalance);
+       return anAsset;
+        
+    }
+
+
+/**
+    * 将基础资产信息封装到资产中秋
+    * @param anAsset
+    * @param anAssetMap
+    */
+   private ScfAsset packageAssetBaseDataInfoFromMap(ScfAsset anAsset, Map<String, Object> anAssetMap) {
+       
+       BTAssert.notNull(anAssetMap, "资产初始化 失败-资产 is null");
+       BTAssert.notNull(anAsset, "资产初始化 失败-资产 is null");
+       
+       if(anAssetMap.containsKey(AssetConstantCollentions.SCF_ORDER_LIST_KEY)){
+           List<ScfOrderDO> orderList=orderService.queryBaseVersionObjectByids(anAssetMap.get(AssetConstantCollentions.SCF_ORDER_LIST_KEY).toString());
+           anAsset.getBasedataMap().put(AssetConstantCollentions.SCF_ORDER_LIST_KEY, orderList);
+       }
+       if(anAssetMap.containsKey(AssetConstantCollentions.SCF_INVOICE_LIST_KEY)){
+           List<ScfInvoiceDO> invoiceList=invoiceService.queryBaseVersionObjectByids(anAssetMap.get(AssetConstantCollentions.SCF_INVOICE_LIST_KEY).toString());
+           anAsset.getBasedataMap().put(AssetConstantCollentions.SCF_INVOICE_LIST_KEY, invoiceList);
+       }
+       if(anAssetMap.containsKey(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY)){
+           List<ScfReceivableDO> receivableList=receivableService.queryBaseVersionObjectByids(anAssetMap.get(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY).toString());
+           anAsset.getBasedataMap().put(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY, receivableList);
+       }
+       if(anAssetMap.containsKey(AssetConstantCollentions.SCF_BILL_LIST_KEY)){
+           List<ScfAcceptBillDO> billList=billService.queryBaseVersionObjectByids(anAssetMap.get(AssetConstantCollentions.SCF_BILL_LIST_KEY).toString());
+           anAsset.getBasedataMap().put(AssetConstantCollentions.SCF_BILL_LIST_KEY, billList);
+       }
+       if(anAssetMap.containsKey(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY)){
+           List<ContractLedger> agreementList=contractLedgerService.queryBaseVersionObjectByids(anAssetMap.get(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY).toString());
+           anAsset.getBasedataMap().put(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY, agreementList);
+       }
+      
+       return anAsset;
+    }
+
+
+   /**
+    * 通过保理产品编号查询主资产的类型
+    * @param anAsset
+    * @param anAssetMap
+    */
+    private String findProductMainAssetType(Map<String, Object> anAssetMap) {
+        BTAssert.notNull(anAssetMap.get("productCode"),"资产初始化 失败-请选择保理产品");
+           List<ScfAssetDict> productAssetDictList = productAssetService.queryProductAssetDict(anAssetMap.get("productCode").toString());
+           BTAssert.notNull(productAssetDictList,"资产初始化 失败-请先配置当前保理产品");
+           for (ScfAssetDict scfAssetDict : productAssetDictList) {
+            if(scfAssetDict.getAssetType().equals("1")){
+                logger.info("融资核心资产类型为:"+scfAssetDict); 
+                if("1".equals(scfAssetDict.getDictType())){
+                    return AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL;
+                }else if("2".equals(scfAssetDict.getDictType())){
+                    return AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE;
+                }else if("3".equals(scfAssetDict.getDictType())){
+                    return AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT;
+                }else if("4".equals(scfAssetDict.getDictType())){
+                    return AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE;
+                }else if("5".equals(scfAssetDict.getDictType())){
+                    return AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_ORDER;
+                }else{
+                    BTAssert.notNull(null,"资产初始化 失败-当前保理产品主体资产不符合要求(只能是订单,应收应付账款,合同，发票，汇票)");
+                    return "";
+                }
+            }
+        }
+           
+        BTAssert.notNull(null,"资产初始化 失败-当前保理产品请选择主体资产");
+        return "";
+    }
+
+
+   /**
+    * 将企业信息列表封装到资产中
+    * @param anAsset
+    * @param anAssetMap
+    * @return
+    */
+   private ScfAsset packageAssetCompanyInfoFromMap(ScfAsset anAsset, Map<String, Object> anAssetMap) {
+        
+       if(!getCurrentUserCustNos().contains(anAsset.getCustNo())){
+           BTAssert.notNull(null, "资产初始化 失败-你不是当前供应商的用户!没有权限");
+       }
+       //Map<String, Object> custMap = anAsset.getCustMap();
+       //封装供应商信息
+       CustInfo custInfo=findCustInfoById(anAsset.getCustNo());
+       if(anAsset.getCustType().equals(AssetConstantCollentions.SCF_ASSET_ROLE_SUPPLY)){
+           
+           packageAssetCompanyFromCustInfo(anAsset,custInfo,AssetConstantCollentions.SCF_ASSET_ROLE_SUPPLY);
+       }else{
+           packageAssetCompanyFromCustInfo(anAsset,custInfo,AssetConstantCollentions.SCF_ASSET_ROLE_DEALER);
+           
+       }
+       //封装核心企业信息
+       CustInfo coreCustInfo=findCustInfoById(anAsset.getCoreCustNo());
+       packageAssetCompanyFromCustInfo(anAsset,coreCustInfo,AssetConstantCollentions.SCF_ASSET_ROLE_CORE);
+       //封装保理公司信息
+       CustInfo factorCustInfo=findCustInfoById(anAsset.getFactorNo());
+       packageAssetCompanyFromCustInfo(anAsset,factorCustInfo,AssetConstantCollentions.SCF_ASSET_ROLE_FACTORY);
+       
+       return anAsset;
+        
+    }
+
+
+   private ScfAsset packageAssetCompanyFromCustInfo(ScfAsset anAsset, CustInfo anCustInfo, String anScfAssetRoleSupply) {
+    
+       ScfAssetCompany company=new ScfAssetCompany();
+       company.setAssetId(anAsset.getId());
+       company.setBusinStatus(AssetConstantCollentions.ASSET_BUSIN_STATUS_OK);
+       company.setAssetRole(anScfAssetRoleSupply);
+       company.setCustInfo(anCustInfo);
+       company.setCustNo(anCustInfo.getCustNo());
+       if(AssetConstantCollentions.SCF_ASSET_ROLE_SUPPLY.equals(anScfAssetRoleSupply) ||AssetConstantCollentions.SCF_ASSET_ROLE_DEALER.equals(anScfAssetRoleSupply)){
+           
+           company.setCustName(anCustInfo.getCustName());
+           anAsset.setCustName(anCustInfo.getCustName());
+           anAsset.getCustMap().put(AssetConstantCollentions.CUST_INFO_KEY, company);
+       }else if(AssetConstantCollentions.SCF_ASSET_ROLE_CORE.equals(anScfAssetRoleSupply)){
+           company.setCustName(anCustInfo.getCustName());
+           anAsset.setCoreCustName(anCustInfo.getCustName());
+           anAsset.getCustMap().put(AssetConstantCollentions.CORE_CUST_INFO_KEY, company);
+       }else if(AssetConstantCollentions.SCF_ASSET_ROLE_FACTORY.equals(anScfAssetRoleSupply)){
+           company.setCustName(anCustInfo.getCustName());
+           //anAsset.setCoreCustName(anCustInfo.getCustName());
+           anAsset.getCustMap().put(AssetConstantCollentions.FACTORY_CUST_INFO_KEY, company);
+       }else{
+           
+       }
+       
+       
+       return  anAsset;
+    
+}
+
+
+/**
+    * 通过公司id查找公司详情
+    * @param anCustNo
+    * @return
+    */
+    private CustInfo findCustInfoById(Long anCustNo) {
+        
+        return custAccountService.findCustInfo(anCustNo);
+    }
+
+
+/**
+    * 将map中的数据转换成资产对象
+    * @param anAssetMap
+    * @return
+    */
+   private ScfAsset convertBeanFromMap(Map<String, Object> anAssetMap) {
+        
+       BTAssert.notNull(anAssetMap, "资产初始化 失败-资产 is null");
+       ScfAsset asset=new ScfAsset();
+       try {
+        BeanUtils.populate(asset, anAssetMap);
+        verificationAssetProperties(asset);
+        if(UserUtils.supplierUser()){
+            asset.setCustType(AssetConstantCollentions.SCF_ASSET_ROLE_SUPPLY); 
+        }else{
+            asset.setCustType(AssetConstantCollentions.SCF_ASSET_ROLE_DEALER);
+        }
+    }
+    catch (IllegalAccessException | InvocationTargetException e) {
+        logger.info("map-------->asset失败"+e.getMessage());
+        BTAssert.notNull(null, "资产初始化 失败-数据不符合要求"+e.getMessage());
+    }
+        return asset;
+    }
+   
+   private void verificationAssetProperties(ScfAsset asset){
+       
+       BTAssert.notNull(asset, "资产初始化 失败-资产 is null");
+       BTAssert.hasLength(asset.getBusinTypeId(),"资产初始化 失败-业务类型is null");
+       BTAssert.hasLength(asset.getProductCode(),"资产初始化 失败-保理产品is null");
+       BTAssert.hasLength(asset.getSourceUseType(),"资产初始化 失败-请指定业务类型(融资/询价)");
+       BTAssert.notNull(asset.getCustNo(),"资产初始化 失败-请选择供应商");
+       BTAssert.notNull(asset.getCoreCustNo(),"资产初始化 失败-请选择核心企业");
+       BTAssert.notNull(asset.getFactorNo(),"资产初始化 失败-请选择保理企业");
+       
+   }
+   
+
+/**
     *查询资产信息，
     * @param assetId  资产id
     * @param custNo   当前企业id(用来校验权限)
@@ -289,6 +618,10 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         
     }
     
+    /**
+     * 获取当前登录用户所在的所有公司id集合
+     * @return
+     */
     private Collection<Long> getCurrentUserCustNos(){
         
         CustOperatorInfo operInfo = UserUtils.getOperatorInfo();

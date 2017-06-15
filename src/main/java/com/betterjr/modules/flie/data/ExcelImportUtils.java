@@ -125,6 +125,8 @@ public class ExcelImportUtils {
 				String isMust = cell.getIsMust();//是否必须   1 必须  0 不必须
 				String regular = cell.getVailedRegular();//正则表达式
 				String cellValue = ExcelUtils.getStringCellValue(row.getCell(order));
+				
+				//当前值是必须的，如果为空，或者当前校验规则不为空需要通过校验规则，如果是数字类型，还需要通过数字校验
 				if(AnnoConstantCollection.IS_MUST_YES.equals(isMust) ){
 					if(StringUtils.isBlank(cellValue)){
 						throw new ImportExcelException(chineseName+" 默认不能 为空,请在导入文件中加入此值");
@@ -136,12 +138,37 @@ public class ExcelImportUtils {
 						}
 					}
 					
-				}
-				
-				if(AnnoConstantCollection.COLUMN_TYPE_NUMBER.equals(type)){
-					if( ! isNumber(cellValue)){
-						throw new ImportExcelException(chineseName+" 的值只能为数字,请注意");
-					}
+					if(AnnoConstantCollection.COLUMN_TYPE_NUMBER.equals(type)){
+	                    if( ! isNumber(cellValue)){
+	                        throw new ImportExcelException(chineseName+" 的值只能为数字,请注意");
+	                    }
+	                }
+					
+				}else{
+				    
+				    //说明当前值不是必须的   如果是当前值不为空，如果是数字类型，，通过是否是数字判断，如果不是数字类型通过正则判断
+				    if(StringUtils.isNoneBlank(cellValue)){
+				        if(AnnoConstantCollection.COLUMN_TYPE_NUMBER.equals(type)){
+		                    if( ! isNumber(cellValue)){
+		                        throw new ImportExcelException(chineseName+" 的值只能为数字,请注意");
+		                    }
+		                }else{
+                            if(StringUtils.isNoneBlank(regular)){
+                                if(!matchValue(cellValue, regular)){
+                                    throw new ImportExcelException(chineseName+" 的值不符合正则要求"+regular+",请注意");
+                                }
+                            }
+                        }
+				        
+				    }else{
+				        //解决如果是数字类型但是excel中没有值的情况无法转换的情况
+				        if(AnnoConstantCollection.COLUMN_TYPE_NUMBER.equals(type)){
+				            cellValue="0";
+                        }
+				        
+				        
+				    }
+				    
 				}
 				
 				map.put(properties, cellValue);

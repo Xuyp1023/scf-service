@@ -1,9 +1,12 @@
 package com.betterjr.modules.ledger.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -330,7 +333,33 @@ public class ContractLedgerService  extends BaseService<ContractLedgerMapper, Co
         return (Page) this.selectByProperty(paramMap, anOrderDesc);
     }
 
-    
+    /**
+     * 查询合同列表
+     * @param anIds
+     * @return
+     */
+    public List<ContractLedger> queryBaseVersionObjectByids(String anIds){
+        
+        Map<String,Object> paramMap=new HashMap<>();
+        if(StringUtils.isNoneBlank(anIds)){
+            
+            if(anIds.contains(",")){
+                
+                String[] ids = anIds.split(",");
+                List<String> asList = Arrays.asList(ids);
+                asList.remove(",");
+                paramMap.put("id", asList);
+                
+            }else{
+                
+                paramMap.put("id", anIds);
+            }
+            return this.selectByProperty(paramMap);
+            
+        }
+        
+        return new ArrayList<ContractLedger>();
+    }
     
     
 }

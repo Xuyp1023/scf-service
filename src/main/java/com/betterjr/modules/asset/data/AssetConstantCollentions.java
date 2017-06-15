@@ -2,6 +2,15 @@ package com.betterjr.modules.asset.data;
 
 public class AssetConstantCollentions {
     
+    //资产状态 0:未生效  1生效  2废止 3 转让
+    public static final String ASSET_INFO_BUSIN_STATUS_NOEFFECTIVE="0"; //资产状态 0:未生效
+    
+    public static final String ASSET_INFO_BUSIN_STATUS_EFFECTIVE="1";  //资产状态 1生效
+    
+    public static final String ASSET_INFO_BUSIN_STATUS_ANNUL="2";   //资产状态  2废止 
+    
+    public static final String ASSET_INFO_BUSIN_STATUS_ASSIGNMENT="3"; //资产状态 3 转让
+    
     public static final String ASSET_INFO_CAN_USE="10"; //资产状态可用
     
     public static final String ASSET_INFO_CAN_NO_USE="20"; //资产状态不可用

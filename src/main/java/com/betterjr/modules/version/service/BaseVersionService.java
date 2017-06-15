@@ -2,6 +2,8 @@ package com.betterjr.modules.version.service;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -554,5 +556,34 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
          int result = this.updateByPrimaryKeySelective(base);
          return result == VersionConstantCollentions.MODIFY_SUCCESS ? base : null;
      }
+     
+     /**
+      * 根据id字符串查询到所有的基础信息
+      * @param anIds
+      * @return
+      */
+     public List<T> queryBaseVersionObjectByids(String anIds){
+         
+         Map<String,Object> paramMap=new HashMap<>();
+         if(StringUtils.isNoneBlank(anIds)){
+             
+             if(anIds.contains(",")){
+                 
+                 String[] ids = anIds.split(",");
+                 List<String> asList = Arrays.asList(ids);
+                 asList.remove(",");
+                 paramMap.put("id", asList);
+                 
+             }else{
+                 
+                 paramMap.put("id", anIds);
+             }
+             return this.selectByProperty(paramMap);
+             
+         }
+         
+         return new ArrayList<T>();
+     }
+     
     
 }

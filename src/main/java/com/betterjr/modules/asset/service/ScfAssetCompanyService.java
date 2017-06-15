@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.account.service.CustAccountService;
@@ -101,6 +102,47 @@ public class ScfAssetCompanyService extends BaseService<ScfAssetCompanyMapper, S
         }
         
     }
+
+    /**
+     * 通过资产详情插入资产公司表信息
+     * @param anAsset
+     */
+    public void saveAddAssetCompanyByAsset(ScfAsset anAsset) {
+        
+        Map<String, Object> custMap = anAsset.getCustMap();
+        Object custInfo = custMap.get(AssetConstantCollentions.CUST_INFO_KEY);
+        if(custInfo instanceof CustInfo){
+            if(UserUtils.supplierUser()){
+                saveAddCompanyByCustInfo((CustInfo)custInfo, anAsset.getId(), AssetConstantCollentions.SCF_ASSET_ROLE_SUPPLY);
+            }else{
+                saveAddCompanyByCustInfo((CustInfo)custInfo, anAsset.getId(), AssetConstantCollentions.SCF_ASSET_ROLE_DEALER); 
+            }
+        }
+        Object coreCustInfo = custMap.get(AssetConstantCollentions.CORE_CUST_INFO_KEY);
+        if(coreCustInfo instanceof CustInfo){
+            
+            saveAddCompanyByCustInfo((CustInfo)coreCustInfo, anAsset.getId(), AssetConstantCollentions.SCF_ASSET_ROLE_CORE); 
+        }
+        Object factoryCustInfo = custMap.get(AssetConstantCollentions.FACTORY_CUST_INFO_KEY);
+        if(factoryCustInfo instanceof CustInfo){
+            saveAddCompanyByCustInfo((CustInfo)factoryCustInfo, anAsset.getId(), AssetConstantCollentions.SCF_ASSET_ROLE_FACTORY); 
+        }
+        
+    }
     
+    
+    private ScfAssetCompany saveAddCompanyByCustInfo(CustInfo anCustInfo,Long anAssetId,String anAssetRole){
+        
+        ScfAssetCompany company=new ScfAssetCompany();
+        company.setAssetId(anAssetId);
+        company.setAssetRole(anAssetRole);
+        company.setCustInfo(anCustInfo);
+        company.setCustName(anCustInfo.getCustName());
+        company.setCustNo(anCustInfo.getCustNo());
+        company.initAdd();
+        this.insert(company);
+        return company;
+        
+    }
     
 }
