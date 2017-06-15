@@ -31,7 +31,7 @@ public class ScfSupplyConfirmSchemeService extends ScfBaseApprovalService {
 			//throw new RuntimeException("操作失败：短信验证码错误");
 		}
 
-		this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.REQUEST_TRADING.getCode(), RequestLastStatus.APPROVE.getCode());
+		this.updateRequestStatus(requestNo, RequestTradeStatus.REQUEST_TRADING.getCode(), RequestLastStatus.APPROVE.getCode());
 		this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
 	}
 

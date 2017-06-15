@@ -38,7 +38,7 @@ public class ScfSupplyConfirmTradingBackgrandService extends ScfBaseApprovalServ
 			//throw new RuntimeException("操作失败：短信验证码错误");
 		}
 
-		this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.CONFIRM_LOAN.getCode(), RequestLastStatus.APPROVE.getCode());
+		this.updateRequestStatus(requestNo, RequestTradeStatus.CONFIRM_LOAN.getCode(), RequestLastStatus.APPROVE.getCode());
 		this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
 	}
 

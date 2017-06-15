@@ -16,7 +16,7 @@ public class ScfSupplyConfirmLoanService extends ScfBaseApprovalService{
 	public void processPass(ScfLoan loan){
 		BTAssert.notNull(loan, "放款信息不能为空！");
         //requestService.saveConfirmLoan(loan);
-        this.updateAndSendRequestStatus(loan.getRequestNo(), RequestTradeStatus.FINISH_LOAN.getCode(), RequestLastStatus.LOAN.getCode());
+        this.updateRequestStatus(loan.getRequestNo(), RequestTradeStatus.FINISH_LOAN.getCode(), RequestLastStatus.LOAN.getCode());
         this.pushOrderInfo(requestService.findRequestByRequestNo(loan.getRequestNo()));
 	}
 	
