@@ -49,6 +49,7 @@ import com.betterjr.modules.loan.entity.ScfPayPlan;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
 import com.betterjr.modules.loan.entity.ScfServiceFee;
+import com.betterjr.modules.loan.helper.RequestLastStatus;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
 import com.betterjr.modules.loan.helper.RequestType;
 import com.betterjr.modules.order.entity.ScfInvoice;
@@ -419,6 +420,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
 		BTAssert.notNull(request, "确认放款失败-找不到融资申请单");
 
 		// ---修申请表---------------------------------------------
+		request.setLastStatus(RequestLastStatus.REPLAYMENT.getCode());
 		request.setActualDate(anLoan.getLoanDate());
 		request.setEndDate(anLoan.getEndDate());
 		request.setConfirmBalance(anLoan.getLoanBalance());
