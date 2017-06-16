@@ -3,20 +3,20 @@ package com.betterjr.modules.ledger.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
-import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
+import com.betterjr.common.utils.Collections3;
+import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.mapper.pagehelper.PageHelper;
@@ -348,6 +348,10 @@ public class ContractLedgerService  extends BaseService<ContractLedgerMapper, Co
                 String[] ids = anIds.split(",");
                 List<String> asList = Arrays.asList(ids);
                 asList.remove(",");
+                //list  去重
+                HashSet<String> set=new HashSet<>(asList);
+                asList.clear();
+                asList.addAll(set);
                 paramMap.put("id", asList);
                 
             }else{
@@ -359,6 +363,31 @@ public class ContractLedgerService  extends BaseService<ContractLedgerMapper, Co
         }
         
         return new ArrayList<ContractLedger>();
+    }
+
+    public ContractLedger selectOneByRefNoAndVersion(String anRefNo, String anVersion) {
+        
+        Map<String,Object> paramMap= QueryTermBuilder.newInstance().put("refNo", anRefNo).put("version", anVersion).build();
+        List<ContractLedger> lists = selectByProperty(paramMap,"id desc");
+        return Collections3.getFirst(lists);
+        
+        
+    }
+    
+    /**
+     * 更新合同融资状态
+     * @param anRefNo
+     * @param anVersion
+     * @param anBusinStatusUsed
+     * @param anLockedStatusLocked
+     */
+    public void updateBaseAssetStatus(String anRefNo, String anVersion, String anBusinStatusUsed, String anLockedStatusLocked) {
+        
+        ContractLedger agreement = selectOneByRefNoAndVersion(anRefNo, anVersion);
+        agreement.setBusinVersionStatus(VersionConstantCollentions.BUSIN_STATUS_USED);
+        agreement.setBusinStatus(VersionConstantCollentions.BUSIN_STATUS_USED);
+        agreement.setLockedStatus(VersionConstantCollentions.LOCKED_STATUS_LOCKED);
+        this.updateByPrimaryKeySelective(agreement);
     }
     
     

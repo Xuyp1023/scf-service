@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -572,6 +573,10 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
                  String[] ids = anIds.split(",");
                  List<String> asList = Arrays.asList(ids);
                  asList.remove(",");
+                 //list  去重
+                 HashSet<String> set=new HashSet<>(asList);
+                 asList.clear();
+                 asList.addAll(set);
                  paramMap.put("id", asList);
                  
              }else{
@@ -585,5 +590,22 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
          return new ArrayList<T>();
      }
      
-    
+    /**
+     * 根据id更新基础数据的状态
+     * @param anId
+     * @param anBusinStatus
+     * @param anLockedStatus
+     * @param anDocStatus
+     * @return
+     */
+     public T updateStatusByPrimaryKey(Long anId,String anBusinStatus,String anLockedStatus,String anDocStatus){
+         T t = this.selectByPrimaryKey(anId);
+         t.setBusinStatus(anBusinStatus);
+         t.setDocStatus(anDocStatus);
+         t.setLockedStatus(anLockedStatus);
+         this.updateByPrimaryKeySelective(t);
+         return t;
+     }
+     
+     
 }

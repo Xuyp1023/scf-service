@@ -13,25 +13,25 @@ import com.betterjr.common.utils.BTAssert;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBillDO;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillDOService;
 import com.betterjr.modules.agreement.entity.CustAgreement;
-import com.betterjr.modules.agreement.service.ScfCustAgreementService;
 import com.betterjr.modules.asset.dao.ScfAssetBasedataMapper;
 import com.betterjr.modules.asset.data.AssetConstantCollentions;
 import com.betterjr.modules.asset.entity.ScfAsset;
 import com.betterjr.modules.asset.entity.ScfAssetBasedata;
+import com.betterjr.modules.ledger.entity.ContractLedger;
+import com.betterjr.modules.ledger.service.ContractLedgerService;
 import com.betterjr.modules.order.entity.ScfInvoiceDO;
 import com.betterjr.modules.order.entity.ScfOrderDO;
-import com.betterjr.modules.order.entity.ScfTransport;
 import com.betterjr.modules.order.service.ScfInvoiceDOService;
 import com.betterjr.modules.order.service.ScfOrderDOService;
-import com.betterjr.modules.order.service.ScfTransportService;
 import com.betterjr.modules.receivable.entity.ScfReceivableDO;
 import com.betterjr.modules.receivable.service.ScfReceivableDOService;
+import com.betterjr.modules.version.entity.BaseVersionEntity;
 
 @Service
 public class ScfAssetBasedataService extends BaseService<ScfAssetBasedataMapper, ScfAssetBasedata> {
 
     @Autowired
-    private ScfCustAgreementService custAgreementService;
+    private ContractLedgerService agreementService;
     @Autowired
     private ScfInvoiceDOService invoiceService;
     @Autowired
@@ -71,6 +71,7 @@ public class ScfAssetBasedataService extends BaseService<ScfAssetBasedataMapper,
         logger.info("Begin to query selectByAssetId"+anAsset.getId());
         Map<String, Object> paramMap=new HashMap<String,Object>();
         paramMap.put("assetId", anAsset.getId());
+        paramMap.put("businStatus", AssetConstantCollentions.ASSET_BUSIN_STATUS_OK);
         List<ScfAssetBasedata> assetBasedata = this.selectByProperty(paramMap);
         fillBasedata(anAsset, assetBasedata);
         logger.info("success to query selectByAssetId"+anAsset.getId());
@@ -80,14 +81,13 @@ public class ScfAssetBasedataService extends BaseService<ScfAssetBasedataMapper,
     private void fillBasedata(ScfAsset anAsset, List<ScfAssetBasedata> assetBasedata) {
         BTAssert.notNull(assetBasedata, "查询资产基础数据 失败-assetBasedata is null");
         List<ScfOrderDO> orderList=new ArrayList<ScfOrderDO>();
-        List<CustAgreement> agreementList=new ArrayList<CustAgreement>();
+        List<ContractLedger> agreementList=new ArrayList<ContractLedger>();
         List<ScfAcceptBillDO> billList=new ArrayList<ScfAcceptBillDO>();
-        List<ScfTransport> transportList=new ArrayList<ScfTransport>();
         List<ScfInvoiceDO> invoiceList=new ArrayList<ScfInvoiceDO>();
         List<ScfReceivableDO> receivableList=new ArrayList<ScfReceivableDO>();
         for (ScfAssetBasedata scfAssetBasedata : assetBasedata) {
-            String type=scfAssetBasedata.getInfoType();
             BTAssert.notNull(assetBasedata, "查询资产基础数据 失败-assetBasedata type is null");
+            String type=scfAssetBasedata.getInfoType();
             String refNo=scfAssetBasedata.getRefNo();
             BTAssert.notNull(assetBasedata, "查询资产基础数据 失败-assetBasedata refNo is null");
             String version=scfAssetBasedata.getVersion();
@@ -99,7 +99,7 @@ public class ScfAssetBasedataService extends BaseService<ScfAssetBasedataMapper,
                 continue;
             }
             if(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT.equals(type)){
-                CustAgreement agreement=new CustAgreement();
+                ContractLedger agreement=agreementService.selectOneByRefNoAndVersion(refNo, version);
                 //=custAgreementService.selectOneWithVersion(refNo, version);
                 agreementList.add(agreement);
                 continue;
@@ -124,7 +124,97 @@ public class ScfAssetBasedataService extends BaseService<ScfAssetBasedataMapper,
         anAsset.getBasedataMap().put(AssetConstantCollentions.SCF_BILL_LIST_KEY, billList);
         anAsset.getBasedataMap().put(AssetConstantCollentions.SCF_INVOICE_LIST_KEY, invoiceList);
         anAsset.getBasedataMap().put(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY, receivableList);
-        anAsset.getBasedataMap().put(AssetConstantCollentions.SCF_TRANSPORT_LIST_KEY, transportList);
         anAsset.getBasedataMap().put(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY, agreementList);
+    }
+
+    /**
+     * 通过资产详情插入资产基础数据信息
+     * @param anAsset
+     */
+    public void saveAddAssetBasedataByAsset(ScfAsset anAsset) {
+       
+        BTAssert.notNull(anAsset, "新增资产出错，资产为空");
+        BTAssert.notNull(anAsset.getBasedataMap(), "新增资产出错，资产为空");
+        
+        //新增订单 类型
+        if(anAsset.getBasedataMap() !=null && anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_ORDER_LIST_KEY)!=null){
+            
+            Object object = anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_ORDER_LIST_KEY);
+            if(object instanceof List){
+                
+                List<ScfOrderDO> orderList=(List<ScfOrderDO>) object;
+                saveBaseDataByBaseVersionList(orderList, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_ORDER, anAsset.getId());
+            }
+            
+        }
+        //票据类型
+        if(anAsset.getBasedataMap() !=null && anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_BILL_LIST_KEY)!=null){
+            
+            Object object = anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_BILL_LIST_KEY);
+            if(object instanceof List){
+                
+                List<ScfAcceptBillDO> billList=(List<ScfAcceptBillDO>) object;
+                saveBaseDataByBaseVersionList(billList, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL, anAsset.getId());
+            }
+            
+        }
+        //发票类型
+        if(anAsset.getBasedataMap() !=null && anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_INVOICE_LIST_KEY)!=null){
+            
+            Object object = anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_INVOICE_LIST_KEY);
+            if(object instanceof List){
+                
+                List<ScfInvoiceDO> invoiceList=(List<ScfInvoiceDO>) object;
+                saveBaseDataByBaseVersionList(invoiceList, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE, anAsset.getId());
+            }
+            
+        }
+        //应收账款新增
+        if(anAsset.getBasedataMap() !=null && anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY)!=null){
+            
+            Object object = anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY);
+            if(object instanceof List){
+                
+                List<ScfReceivableDO> invoiceList=(List<ScfReceivableDO>) object;
+                saveBaseDataByBaseVersionList(invoiceList, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE, anAsset.getId());
+            }
+            
+        }
+        
+        //合同新增
+        if(anAsset.getBasedataMap() !=null && anAsset.getBasedataMap().get(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY)!=null){
+            
+            Object object = anAsset.getBasedataMap().get(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY);
+            if(object instanceof List){
+                
+                List<ContractLedger> agreementList=(List<ContractLedger>) object;
+                //saveBaseDataByBaseVersionList(invoiceList, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE, anAsset.getId());
+                for (ContractLedger agreement : agreementList) {
+                    ScfAssetBasedata baseData=new ScfAssetBasedata();
+                    baseData.setAssetId(anAsset.getId());
+                    baseData.setInfoType(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT);
+                    baseData.setRefNo(agreement.getRefNo());
+                    baseData.setVersion(agreement.getVersion());
+                    addAssetBasedata(baseData);
+                }
+                
+                
+            }
+            
+        }
+        
+    }
+    
+    private void saveBaseDataByBaseVersionList(List<? extends BaseVersionEntity> anBaseList,String anInfoType,Long anAssetId){
+        
+        for (BaseVersionEntity baseVersion : anBaseList) {
+            ScfAssetBasedata baseData=new ScfAssetBasedata();
+            baseData.setAssetId(anAssetId);
+            baseData.setInfoType(anInfoType);
+            baseData.setRefNo(baseVersion.getRefNo());
+            baseData.setVersion(baseVersion.getVersion());
+            addAssetBasedata(baseData);
+        }
+        
     }
 }

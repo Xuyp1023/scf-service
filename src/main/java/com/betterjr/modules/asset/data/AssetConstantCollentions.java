@@ -11,6 +11,8 @@ public class AssetConstantCollentions {
     
     public static final String ASSET_INFO_BUSIN_STATUS_ASSIGNMENT="3"; //资产状态 3 转让
     
+    public static final String ASSET_INFO_BUSIN_STATUS_NOCAN_USE="4"; //资产状态 4 不可用
+    
     public static final String ASSET_INFO_CAN_USE="10"; //资产状态可用
     
     public static final String ASSET_INFO_CAN_NO_USE="20"; //资产状态不可用

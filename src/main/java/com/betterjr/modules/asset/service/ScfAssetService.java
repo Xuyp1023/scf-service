@@ -12,8 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.MathExtend;
 import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
@@ -40,6 +42,7 @@ import com.betterjr.modules.productconfig.entity.ScfAssetDict;
 import com.betterjr.modules.productconfig.sevice.ScfProductAssetDictRelationService;
 import com.betterjr.modules.receivable.entity.ScfReceivableDO;
 import com.betterjr.modules.receivable.service.ScfReceivableDOService;
+import com.betterjr.modules.version.constant.VersionConstantCollentions;
 import com.betterjr.modules.version.entity.BaseVersionEntity;
 
 @Service
@@ -99,7 +102,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         assetCompanyService.saveAddAssetCompanyByAsset(asset);
         //-------------------20170615
         //插入资产基础数据表信息
-        addAssetBasedata(asset);
+        //addAssetBasedata(asset);
+        assetBasedataService.saveAddAssetBasedataByAsset(asset);
         
         this.insert(asset);
         logger.info("success to add anAsset");
@@ -167,7 +171,7 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
     }
 
 
-/**
+   /**
     * 封装资产的总金额
     * @param anAsset
     * @param anAssetMap
@@ -393,6 +397,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         }else{
             asset.setCustType(AssetConstantCollentions.SCF_ASSET_ROLE_DEALER);
         }
+        //区分是新增还是修改资产
+        saveModifyAsset(asset);
     }
     catch (IllegalAccessException | InvocationTargetException e) {
         logger.info("map-------->asset失败"+e.getMessage());
@@ -414,21 +420,18 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
    }
    
 
-/**
+   /**
     *查询资产信息，
     * @param assetId  资产id
     * @param custNo   当前企业id(用来校验权限)
     * onOff: true 表示需要查询资产企业的详情信息   false 只需要查询一些基础数据信息 企业查询编号和企业名字  true 需要查询企业的全部信息
     * @return   返回的资产全部信息，并且封装好当前企业的操作权限
     */
-    public ScfAsset findAssetByid(Long assetId,Long custNo,boolean onOff){
+    public ScfAsset findAssetByid(Long assetId){
         
-        ScfAsset asset=new ScfAsset();
-        asset.setId(assetId);
-        asset.setBusinStatus(AssetConstantCollentions.ASSET_INFO_CAN_USE);
-        asset=this.selectOne(asset);
+        ScfAsset asset=this.selectByPrimaryKey(assetId);
         //查询资产企业信息
-        asset=assetCompanyService.selectByAssetId(asset,custNo,onOff);
+        asset=assetCompanyService.selectByAssetId(asset);
         if (asset.getCustMap().isEmpty()) {
             BTAssert.notNull(null, "查询资产企业 失败-该公司没有权限 is null");
         }
@@ -634,4 +637,243 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         }
         return  custNos;
     }
+    
+    /**
+     * 资产修改
+     * @param anAsset
+     * @return
+     */
+    private ScfAsset saveModifyAsset(ScfAsset anAsset){
+        
+        if(anAsset !=null && anAsset.getId() !=null){
+            ScfAsset asset = this.selectByPrimaryKey(anAsset.getId());
+            BTAssert.notNull(asset, "修改资产 失败-未找到资产信息");
+            logger.info("Begin to saveModifyAsset anAsset="+asset+"  当前操作用户为:"+UserUtils.getOperatorInfo().getName());
+            if(!getCurrentUserCustNos().contains(asset.getCustNo())){
+                BTAssert.notNull(null, "修改资产 失败-原资产公司成员!没有权限");
+            }
+            checkModifyStatus(asset);
+            asset.initModifyValue(UserUtils.getOperatorInfo());
+            this.updateByPrimaryKeySelective(asset);
+            anAsset.setPrefixId(asset.getId());
+            anAsset.setId(null);
+            logger.info("end to saveModifyAsset anAsset="+asset+"  当前操作用户为:"+UserUtils.getOperatorInfo().getName());
+        }
+        return anAsset;
+    }
+    
+    /**
+     * 资产确认提交，走融资流程
+     * @param anAssetId
+     * @return
+     */
+    public  synchronized ScfAsset saveConfirmAsset(Long anAssetId){
+        
+        //查找资产信息
+        ScfAsset asset = findAssetByid(anAssetId);
+        //校验资产状态
+        checkConfirmStatus(asset);
+        //校验当前公司是否有权限
+        checkCurrentCompanyPermission(asset);
+        //校验资产包含的所有基础资料的状态
+        checkBaseDataStatusAndUpdateBaseData(asset);
+        //更新资产的状态
+        asset.setBusinStatus(AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_EFFECTIVE);
+        this.updateByPrimaryKeySelective(asset);
+        
+        return  asset;
+    }
+    
+    /**
+     * 资产作废
+     * @param anAssetId
+     * @return
+     */
+    public ScfAsset saveAnnulAsset(Long anAssetId){
+        
+        //查找资产信息
+        ScfAsset asset = findAssetByid(anAssetId);
+        //校验资产状态
+        checkAnnulStatus(asset);
+        //校验当前公司是否有权限
+        checkCurrentCompanyPermission(asset);
+        //更新资产的状态
+        
+        asset.initAnnulAsset(UserUtils.getOperatorInfo());
+        this.updateByPrimaryKeySelective(asset);
+        
+        return  asset;
+    }
+    
+    private void checkAnnulStatus(ScfAsset anAsset) {
+        
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ANNUL, true, "当前资产已经废止,不能进行废止"); 
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ASSIGNMENT, true, "当前资产已经转让,不能进行废止"); 
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_EFFECTIVE, true, "当前资产已经在融资流程中,不能进行废止"); 
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_NOCAN_USE, true, "当前资产已经过期,不能进行废止"); 
+      
+        
+    }
+
+
+    /**
+     * 校验基础资产的状态和修改基础资产的数据记录
+     * @param anAsset
+     */
+    private void checkBaseDataStatusAndUpdateBaseData(ScfAsset anAsset) {
+        
+        BTAssert.notNull(anAsset, "修改资产 失败-未找到资产信息");
+        BTAssert.notNull(anAsset.getBasedataMap(), "修改资产 失败-未找到资产信息");
+        Object orderObj = anAsset.getBasedataMap().get(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_ORDER);
+        Object agreementObj = anAsset.getBasedataMap().get(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT);
+        Object billObj = anAsset.getBasedataMap().get(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL);
+        Object invoiceObj = anAsset.getBasedataMap().get(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE);
+        Object receivableObj = anAsset.getBasedataMap().get(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE);
+        //更新订单
+        if(orderObj !=null && orderObj instanceof List){
+            
+            List<ScfOrderDO> orderList=(List<ScfOrderDO>) orderObj;
+            for (ScfOrderDO order : orderList) {
+                //校验单据的状态
+                order.checkFinanceStatus();
+                orderService.updateBaseAssetStatus(order.getRefNo(), order.getVersion(),
+                        VersionConstantCollentions.BUSIN_STATUS_USED, VersionConstantCollentions.LOCKED_STATUS_LOCKED, order.getDocStatus());
+            }
+            
+        }
+        
+        //更新票据
+        if(billObj !=null && billObj instanceof List){
+            
+            List<ScfAcceptBillDO> billList=(List<ScfAcceptBillDO>) billObj;
+            for (ScfAcceptBillDO bill : billList) {
+                //校验单据的状态
+                bill.checkFinanceStatus();
+                billService.updateBaseAssetStatus(bill.getRefNo(), bill.getVersion(),
+                        VersionConstantCollentions.BUSIN_STATUS_USED, VersionConstantCollentions.LOCKED_STATUS_LOCKED, bill.getDocStatus());
+            }
+            
+        }
+        //更新发票
+        if(invoiceObj !=null && invoiceObj instanceof List){
+            
+            List<ScfInvoiceDO> invoiceList=(List<ScfInvoiceDO>) invoiceObj;
+            for (ScfInvoiceDO invoice : invoiceList) {
+                //校验单据的状态
+                invoice.checkFinanceStatus();
+                invoiceService.updateBaseAssetStatus(invoice.getRefNo(), invoice.getVersion(),
+                        VersionConstantCollentions.BUSIN_STATUS_USED, VersionConstantCollentions.LOCKED_STATUS_LOCKED, invoice.getDocStatus());
+            }
+            
+        }
+        //更新应收应付账款
+        if(receivableObj !=null && receivableObj instanceof List){
+            
+            List<ScfReceivableDO> receivableList=(List<ScfReceivableDO>) receivableObj;
+            for (ScfReceivableDO receivable : receivableList) {
+                //校验单据的状态
+                receivable.checkFinanceStatus();
+                invoiceService.updateBaseAssetStatus(receivable.getRefNo(), receivable.getVersion(),
+                        VersionConstantCollentions.BUSIN_STATUS_USED, VersionConstantCollentions.LOCKED_STATUS_LOCKED, receivable.getDocStatus());
+            }
+            
+        }
+        
+        //更新贸易合同的状态agreementObj
+        if(agreementObj !=null && agreementObj instanceof List){
+            
+            List<ContractLedger> agreementList=(List<ContractLedger>) agreementObj;
+            for (ContractLedger agreement : agreementList) {
+                //校验单据的状态
+                agreement.checkFinanceStatus();
+                contractLedgerService.updateBaseAssetStatus(agreement.getRefNo(), agreement.getVersion(),
+                        VersionConstantCollentions.BUSIN_STATUS_USED, VersionConstantCollentions.LOCKED_STATUS_LOCKED);
+            }
+            
+        }
+        
+    }
+
+
+    /**
+     * 校验当前公司是否有权限
+     * @param anAsset
+     */
+    private void checkCurrentCompanyPermission(ScfAsset anAsset) {
+        
+        BTAssert.notNull(anAsset, "修改资产 失败-未找到资产信息");
+        BTAssert.notNull(anAsset.getCustMap(), "修改资产 失败-未找到资产信息");
+        Map<String, Object> custMap = anAsset.getCustMap();
+        Object custInfo = custMap.get(AssetConstantCollentions.CUST_INFO_KEY);
+        Object coreCustInfo = custMap.get(AssetConstantCollentions.CORE_CUST_INFO_KEY);
+        Object factoryCustInfo = custMap.get(AssetConstantCollentions.FACTORY_CUST_INFO_KEY);
+        Collection<Long> custNos = getCurrentUserCustNos();
+        boolean flag=false;
+        if(custInfo instanceof CustInfo){
+            
+            CustInfo cust=(CustInfo) custInfo;
+            if(custNos.contains(cust.getCustNo())){
+                flag=true;
+            }
+        }
+        
+        if(coreCustInfo instanceof CustInfo){
+            
+            CustInfo coreCust=(CustInfo) coreCustInfo;
+            if(custNos.contains(coreCust.getCustNo())){
+                flag=true;
+            }
+        }
+        
+        if(factoryCustInfo instanceof CustInfo){
+            
+            CustInfo factoryCust=(CustInfo) factoryCustInfo;
+            if(custNos.contains(factoryCust.getCustNo())){
+                flag=true;
+            }
+        }
+        
+        if(!flag){
+            
+            BTAssert.notNull(anAsset, "校验公司权限失败!你没有当前资产的操作权限"); 
+        }
+        
+    }
+
+
+    private void checkConfirmStatus(ScfAsset anAsset) {
+        
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ANNUL, true, "当前资产已经废止,不能进行融资"); 
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ASSIGNMENT, true, "当前资产已经转让,不能进行融资"); 
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_EFFECTIVE, true, "当前资产已经在融资流程中,不能进行融资"); 
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_NOCAN_USE, true, "当前资产已经废止,不能进行融资"); 
+      
+        
+    }
+
+
+    /**
+     * 校验当前资产是否符合修改条件
+     * @param anAsset
+     */
+    private void checkModifyStatus(ScfAsset anAsset){
+        
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ANNUL, true, "当前资产已经废止,不能修改"); 
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ASSIGNMENT, true, "当前资产已经转让,不能修改"); 
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_EFFECTIVE, true, "当前资产已经在融资流程中,不能修改"); 
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_NOCAN_USE, true, "当前资产已经废止,不能修改"); 
+        
+    }
+    
+    /**
+     * 检查状态信息
+     */
+    public void checkStatus(String anBusinStatus, String anTargetStatus, boolean anFlag, String anMessage) {
+        if (BetterStringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
+            logger.warn(anMessage);
+            throw new BytterTradeException(40001, anMessage);
+        }
+    }
+    
+    
 }

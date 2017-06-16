@@ -1,7 +1,9 @@
 package com.betterjr.modules.asset.entity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Access;
@@ -59,10 +61,10 @@ public class ScfAsset implements BetterjrEntity {
     private String regTime;
     
     /**
-     * 资产状态 资产状态 0:未生效  1生效  2废止 3 转让
+     * 资产状态 资产状态 0:未生效  1生效  2废止 3 转让 4不可用
      */
     @Column(name = "C_BUSIN_STATU",  columnDefinition="VARCHAR" )
-    @MetaData( value="资产状态 0:未生效  1生效  2废止 3 转让", comments = "资产状态 0:未生效  1生效  2废止 3 转让")
+    @MetaData( value="资产状态 0:未生效  1生效  2废止 3 转让 4不可用", comments = "资产状态 0:未生效  1生效  2废止 3 转让 4不可用")
     private String businStatus;
 
     /**
@@ -169,7 +171,7 @@ public class ScfAsset implements BetterjrEntity {
      * 汇票类型 key: acceptBillList   value:List<ScfAcceptBill> 
      */
     private Map<String,Object> basedataMap=new HashMap<String,Object>();
-    
+   
     /**
      * 此条记录是否权限
      */
@@ -662,6 +664,24 @@ public class ScfAsset implements BetterjrEntity {
         this.setBusinStatus(AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_NOEFFECTIVE);
         this.regOperId=operatorInfo.getId();
         this.regOperName=operatorInfo.getName();
+    }
+
+    public void initModifyValue(CustOperatorInfo anOperatorInfo) {
+        
+        this.annulDate=BetterDateUtils.getNumDate();
+        this.annulOperId=anOperatorInfo.getId();
+        this.annulOperName=anOperatorInfo.getName();
+        this.annulTime=BetterDateUtils.getNumTime();
+        this.businStatus=AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_NOCAN_USE;
+    }
+
+    public void initAnnulAsset(CustOperatorInfo anOperatorInfo) {
+        
+        this.setBusinStatus(AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ANNUL);
+        this.annulDate=BetterDateUtils.getNumDate();
+        this.annulOperId=anOperatorInfo.getId();
+        this.annulOperName=anOperatorInfo.getName();
+        this.annulTime=BetterDateUtils.getNumTime();
     }
     
     
