@@ -52,10 +52,24 @@ public class ScfBaseApprovalService {
 	 * @param anContext
 	 * @return
 	 */
-	public void updateAndSendRequestStatus(String anRequestNo, String anStatus, String anLastStatus) {
+	public void updateRequestStatus(String anRequestNo, String anStatus, String anLastStatus) {
 		ScfRequest request = requestService.selectByPrimaryKey(anRequestNo);
         if (request != null) {
         	request.setTradeStatus(anStatus);
+            request.setLastStatus(anLastStatus);
+            requestService.saveModifyRequest(request, anRequestNo);
+        }  
+	}
+	
+	/**
+	 * 修改项目状态
+	 * 
+	 * @param anContext
+	 * @return
+	 */
+	public void updateRequestLastStatus(String anRequestNo, String anLastStatus) {
+		ScfRequest request = requestService.selectByPrimaryKey(anRequestNo);
+        if (request != null) {
             request.setLastStatus(anLastStatus);
             requestService.saveModifyRequest(request, anRequestNo);
         }  
@@ -138,30 +152,6 @@ public class ScfBaseApprovalService {
 		//}
 	}
 	
-	/**
-	 * 修改项目状态
-	 * 
-	 * @param anContext
-	 * @param isNext， ture前进，false后退
-	 * @return
-	 */
-	public void updateRequestLastStatus(ScfRequest anRequest, boolean isNext) {
-		List<String> statusList = new ArrayList<String>();
-		for (int i = 1000; i < 1010; i++) {
-			statusList.add(i+"");
-		}
-		
-		for (int i=0; i<statusList.size(); i++) {
-			String status = statusList.get(i);
-			if(anRequest.getLastStatus().equals(status)){
-				status = isNext? statusList.get(i+1) : statusList.get(i-1);
-				anRequest.setLastStatus(status);
-				break;
-			}
-		}
-        requestService.saveModifyRequest(anRequest, anRequest.getRequestNo());
-	}
-
 	public ScfRequest getReqtuest(String anRequestNo){
 		return requestService.findRequestByRequestNo(anRequestNo);
 	}

@@ -12,7 +12,7 @@ public class ScfSellerApplicationService extends ScfBaseApprovalService{
 	public ScfRequest saveApplication(ScfRequest anRequest){
 		anRequest.setCustType(REQUEST_CUST_TYPE_SELLER);
 		anRequest = requestService.addRequest(anRequest);
-        this.updateAndSendRequestStatus(anRequest.getRequestNo(), RequestTradeStatus.OFFER_SCHEME.getCode(), RequestLastStatus.REQUEST.getCode());
+        this.updateRequestStatus(anRequest.getRequestNo(), RequestTradeStatus.OFFER_SCHEME.getCode(), RequestLastStatus.REQUEST.getCode());
         this.forzenSource(anRequest);
         this.pushOrderInfo(requestService.findRequestByRequestNo(anRequest.getRequestNo()));
 		return anRequest;

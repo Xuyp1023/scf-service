@@ -28,7 +28,7 @@ public class ScfSupplyOfferSchemeService extends ScfBaseApprovalService{
         //保存融资方案
         requestService.saveOfferScheme(scheme);
         this.pushSingInfo(scheme);
-        this.updateAndSendRequestStatus(scheme.getRequestNo(), RequestTradeStatus.CONFIRM_SCHEME.getCode(), RequestLastStatus.APPROVE.getCode());
+        this.updateRequestStatus(scheme.getRequestNo(), RequestTradeStatus.CONFIRM_SCHEME.getCode(), RequestLastStatus.APPROVE.getCode());
         this.pushOrderInfo(requestService.findRequestByRequestNo(scheme.getRequestNo()));
 	}
 

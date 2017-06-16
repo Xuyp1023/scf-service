@@ -42,7 +42,7 @@ public class ScfAssetCheckService extends BaseService<ScfAssetCheckMapper, ScfAs
     	BTAssert.notNull(anRequestNo, "查询失败anId不能为空");
     	Map<String, Object> map = QueryTermBuilder.newInstance().put("requestNo", anRequestNo).build();
     	List<ScfAssetCheck> list = this.selectByClassProperty(ScfAssetCheck.class, map);
-    	ScfAssetCheck check = new ScfAssetCheck();
+    	ScfAssetCheck check = null;
     	if(!Collections3.isEmpty(list)){
     		check = list.get(0);
     		ScfRequest request = requestService.findRequestByRequestNo(check.getRequestNo());

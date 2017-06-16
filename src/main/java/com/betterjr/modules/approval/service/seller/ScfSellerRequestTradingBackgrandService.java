@@ -35,7 +35,7 @@ public class ScfSellerRequestTradingBackgrandService extends ScfBaseApprovalServ
          }
          
          this.pushSingInof(request);
-         this.updateAndSendRequestStatus(requestNo, RequestTradeStatus.CONFIRM_TRADING.getCode(), RequestLastStatus.APPROVE.getCode());
+         this.updateRequestStatus(requestNo, RequestTradeStatus.CONFIRM_TRADING.getCode(), RequestLastStatus.APPROVE.getCode());
          this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
 	}
 

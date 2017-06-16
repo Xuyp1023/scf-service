@@ -17,7 +17,6 @@ public class ScfSignService extends ScfBaseApprovalService{
 	
 	public void processHandle(Map<String, Object> anContext){
 		ScfRequest request = this.getReqtuest(anContext.get("requestNo").toString());
-		//this.updateRequestLastStatus(request, true);
 	}
 
 }

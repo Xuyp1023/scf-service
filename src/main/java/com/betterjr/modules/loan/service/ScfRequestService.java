@@ -49,6 +49,7 @@ import com.betterjr.modules.loan.entity.ScfPayPlan;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestScheme;
 import com.betterjr.modules.loan.entity.ScfServiceFee;
+import com.betterjr.modules.loan.helper.RequestLastStatus;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
 import com.betterjr.modules.loan.helper.RequestType;
 import com.betterjr.modules.order.entity.ScfInvoice;
@@ -82,13 +83,10 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
 	private ScfServiceFeeService serviceFeeService;
 	@Autowired
 	private ScfOrderService orderService;
-
 	@Autowired
 	private ScfProductService productService;
-	
 	@Autowired
 	private ScfProductConfigService productConfigService;
-	
 	@Autowired
 	private ScfOfferService offerService;
 	@Autowired
@@ -417,17 +415,12 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
 		return schemeService.saveModifyScheme(scheme);
 	}
 
-	/**
-	 * 资方-确认放款（收取放款手续费,计算利息，生成还款计划）
-	 * 
-	 * @param anMap
-	 * @return
-	 */
 	public ScfRequest saveConfirmLoan(ScfLoan anLoan) {
 		ScfRequest request = this.selectByPrimaryKey(anLoan.getRequestNo());
 		BTAssert.notNull(request, "确认放款失败-找不到融资申请单");
 
 		// ---修申请表---------------------------------------------
+		request.setLastStatus(RequestLastStatus.REPLAYMENT.getCode());
 		request.setActualDate(anLoan.getLoanDate());
 		request.setEndDate(anLoan.getEndDate());
 		request.setConfirmBalance(anLoan.getLoanBalance());
@@ -448,6 +441,19 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
 		anLoan.setServicefeeBalance(servicefeeBalance);
 		anLoan.setFactorNo(request.getFactorNo());
 		loanService.addLoan(anLoan);
+		
+		//----占用授信处理----
+		this.occupyCredit(anLoan);
+		
+		return request;
+	}
+	
+	/**
+	 * 占用授信处理
+	 */
+	private ScfRequest occupyCredit(ScfLoan anLoan) {
+		ScfRequest request = this.selectByPrimaryKey(anLoan.getRequestNo());
+		BTAssert.notNull(request, "确认放款失败-找不到融资申请单");
 
 		// 占用授信额度
 		ScfCreditInfo anCreditInfo = new ScfCreditInfo();
@@ -458,6 +464,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
 		anCreditInfo.setFactorNo(request.getFactorNo());
 		anCreditInfo.setRequestNo(request.getRequestNo());
 		anCreditInfo.setDescription(request.getDescription());
+		
 		// 微信
 		if (BetterStringUtils.equals("2", request.getRequestFrom())) {
 			anCreditInfo.setBusinFlag("2");// 业务类型(1:应收账款融资;2:应收账款票据质押融资;3:预付款融资;)
@@ -466,7 +473,28 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
 			anCreditInfo.setBusinFlag(request.getRequestType());
 			anCreditInfo.setCreditMode(request.getCreditMode());
 		}
-		creditDetailService.saveOccupyCredit(anCreditInfo);
+
+		//2.3版以后的申请编号以“SQ”开头
+		if(request.getRequestNo().startsWith("SQ")){
+			
+			//根据产品判断是否占用授信额度
+			ScfProductConfig product = productConfigService.findProductByCode(request.getProductCode());
+			if(product.getBusinId() != null){
+				//TODO 调用根据产品中的业务类型ID，查找业务类型，由业务类型中的授信标识决定是否暂用申请企业授信额度。
+				//if(){
+					creditDetailService.saveOccupyCustCredit(anCreditInfo);
+				//}
+			}
+			
+			//由产品中的授信标识决定是否暂用申请企业授信额度。
+			if(BetterStringUtils.equals(product.getCoreCredict(), "1")){
+				creditDetailService.saveOccupyCoreCredit(anCreditInfo);
+			}
+			
+		}else{
+			//2.0时期的方法
+			creditDetailService.saveOccupyCredit(anCreditInfo);
+		}
 
 		return request;
 	}
@@ -967,6 +995,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
 		request.setApprovedRatio(anScheme.getApprovedRatio());
 		request.setApprovedBalance(anScheme.getApprovedBalance());
 		request.setConfirmBalance(anScheme.getApprovedBalance());
+		request.setOverdueRatio(anScheme.getOverdueRatio());
 		this.saveModifyRequest(request, anScheme.getRequestNo());
 		return schemeService.addScheme(anScheme);
 	}

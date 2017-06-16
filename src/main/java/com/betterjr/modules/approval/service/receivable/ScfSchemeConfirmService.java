@@ -20,22 +20,13 @@ public class ScfSchemeConfirmService extends ScfBaseApprovalService {
 	 */
 	public void processPass(Map<String, Object> anContext) {
 		String requestNo = anContext.get("requestNo").toString();
-		//String smsCode = anContext.get("smsCode").toString();
 		BTAssert.notNull(requestNo, "申请编号不能为空！");
-		//BTAssert.notNull(smsCode, "短信验证码不能为空！");
-
-		//if (false == agreementService.sendValidCodeByRequestNo(requestNo, AGREEMENT_TYPE_NOTICE, smsCode)) {
-			//throw new RuntimeException("操作失败：短信验证码错误");
-		//}
-		
 		ScfRequest request = this.getReqtuest(anContext.get("requestNo").toString());
-		//this.updateRequestLastStatus(request, true);
 		//this.pushOrderInfo(request);
 	}
 
 	public void processReject(Map<String, Object> anContext) {
 		ScfRequest request = this.getReqtuest(anContext.get("requestNo").toString());
-		this.updateRequestLastStatus(request, true);
 	}
 
 }

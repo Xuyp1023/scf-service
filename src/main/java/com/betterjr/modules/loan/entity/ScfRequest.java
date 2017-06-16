@@ -413,6 +413,15 @@ public class ScfRequest implements BetterjrEntity {
     @MetaData( value="收款方银行账户", comments = "收款方银行账户")
     private String suppBankAccount;
     
+    @Column(name = "F_EXTENSION_RATIO",  columnDefinition="VARCHAR" )
+    @MetaData( value="展期利率", comments = "展期利率")
+    private BigDecimal extensionRatio;    
+
+    
+    @Column(name = "F_OVERDUE_RATIO",  columnDefinition="VARCHAR" )
+    @MetaData( value="逾期利率", comments = "逾期利率")
+    private BigDecimal overdueRatio;
+    
     private static final long serialVersionUID = 1474419650663L;
 
     public String getRequestNo() {
@@ -941,8 +950,24 @@ public class ScfRequest implements BetterjrEntity {
 	public void setSuppBankAccount(String suppBankAccount) {
 		this.suppBankAccount = suppBankAccount;
 	}
+	
+    public BigDecimal getExtensionRatio() {
+		return extensionRatio;
+	}
 
-    @Override
+	public void setExtensionRatio(BigDecimal extensionRatio) {
+		this.extensionRatio = extensionRatio;
+	}
+
+	public BigDecimal getOverdueRatio() {
+		return overdueRatio;
+	}
+
+	public void setOverdueRatio(BigDecimal overdueRatio) {
+		this.overdueRatio = overdueRatio;
+	}
+
+	@Override
 	public String toString() {
 		return "ScfRequest [requestNo=" + requestNo + ", productCode=" + productCode + ", buyerNo=" + buyerNo
 				+ ", supplierNo=" + supplierNo + ", billNo=" + billNo + ", balance=" + balance + ", approvedBalance="
@@ -965,11 +990,11 @@ public class ScfRequest implements BetterjrEntity {
 				+ ", regOperName=" + regOperName + ", regDate=" + regDate + ", regTime=" + regTime + ", orders="
 				+ orders + ", outStatus=" + outStatus + ", requestFrom=" + requestFrom + ", offerId=" + offerId
 				+ ", batchNo=" + batchNo + ", loanNo=" + loanNo + ", suppBankAccount=" + suppBankAccount
-				+ ", coreCustName=" + coreCustName + ", factorName=" + factorName + ", payPlan=" + payPlan
-				+ ", orderBalance=" + orderBalance + ", productName=" + productName + ", servicefeeBalance="
-				+ servicefeeBalance + "]";
+				+ ", extensionRatio=" + extensionRatio + ", overdueRatio=" + overdueRatio + ", coreCustName="
+				+ coreCustName + ", factorName=" + factorName + ", payPlan=" + payPlan + ", orderBalance="
+				+ orderBalance + ", productName=" + productName + ", servicefeeBalance=" + servicefeeBalance + "]";
 	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -1002,6 +1027,7 @@ public class ScfRequest implements BetterjrEntity {
 		result = prime * result + ((custType == null) ? 0 : custType.hashCode());
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
+		result = prime * result + ((extensionRatio == null) ? 0 : extensionRatio.hashCode());
 		result = prime * result + ((factorName == null) ? 0 : factorName.hashCode());
 		result = prime * result + ((factorNo == null) ? 0 : factorNo.hashCode());
 		result = prime * result + ((factorRequestNo == null) ? 0 : factorRequestNo.hashCode());
@@ -1023,6 +1049,7 @@ public class ScfRequest implements BetterjrEntity {
 		result = prime * result + ((orderBalance == null) ? 0 : orderBalance.hashCode());
 		result = prime * result + ((orders == null) ? 0 : orders.hashCode());
 		result = prime * result + ((outStatus == null) ? 0 : outStatus.hashCode());
+		result = prime * result + ((overdueRatio == null) ? 0 : overdueRatio.hashCode());
 		result = prime * result + ((payPlan == null) ? 0 : payPlan.hashCode());
 		result = prime * result + ((period == null) ? 0 : period.hashCode());
 		result = prime * result + ((periodUnit == null) ? 0 : periodUnit.hashCode());
@@ -1198,6 +1225,11 @@ public class ScfRequest implements BetterjrEntity {
 				return false;
 		} else if (!endDate.equals(other.endDate))
 			return false;
+		if (extensionRatio == null) {
+			if (other.extensionRatio != null)
+				return false;
+		} else if (!extensionRatio.equals(other.extensionRatio))
+			return false;
 		if (factorName == null) {
 			if (other.factorName != null)
 				return false;
@@ -1302,6 +1334,11 @@ public class ScfRequest implements BetterjrEntity {
 			if (other.outStatus != null)
 				return false;
 		} else if (!outStatus.equals(other.outStatus))
+			return false;
+		if (overdueRatio == null) {
+			if (other.overdueRatio != null)
+				return false;
+		} else if (!overdueRatio.equals(other.overdueRatio))
 			return false;
 		if (payPlan == null) {
 			if (other.payPlan != null)
@@ -1420,6 +1457,8 @@ public class ScfRequest implements BetterjrEntity {
 			return false;
 		return true;
 	}
+
+
 
 
 

@@ -216,6 +216,52 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         // 处理核心企业冻结和占用的授信额度
         saveFreezeAndOccupyData(anCreditInfo, coreCredit, occupyBalance);
     }
+    
+    /**
+     * 融资企业授信额度占用,供融资放款业务调用
+     * @param anCreditInfo
+     */
+    public void saveOccupyCustCredit (ScfCreditInfo anCreditInfo) {
+    	 // 检查入参
+        checkValue(anCreditInfo);
+
+        // 获取客户授信记录
+        ScfCredit custCredit = scfCreditService.findCredit(anCreditInfo.getCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),
+                anCreditInfo.getCreditMode());
+
+        if (custCredit != null) {
+            // 检查授信有效期
+            checkCreditValidDate(custCredit, custAccountService.queryCustName(anCreditInfo.getCustNo()));
+
+            // 处理客户冻结和占用的授信额度
+            saveFreezeAndOccupyData(anCreditInfo, custCredit, anCreditInfo.getBalance());
+        }
+    }
+    
+    /**
+     * 核心企业授信额度占用,供融资放款业务调用
+     * @param anCreditInfo
+     */
+    public void saveOccupyCoreCredit (ScfCreditInfo anCreditInfo) {
+    	 // 检查入参
+        checkValue(anCreditInfo);
+        
+        // 占用额度
+        BigDecimal occupyBalance = anCreditInfo.getBalance();
+        String coreCustName = custAccountService.queryCustName(anCreditInfo.getCoreCustNo());
+        String factorName = custAccountService.queryCustName(anCreditInfo.getFactorNo());
+
+        // 获取核心企业授信记录
+        ScfCredit coreCredit = scfCreditService.findCredit(anCreditInfo.getCoreCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),
+                anCreditInfo.getCreditMode());
+        BTAssert.notNull(coreCredit, "当前业务将占用" + coreCustName + "该类型的授信额度，该企业未获得" + factorName + "该类型的授信，请等待授信结束后继续办理业务！");
+
+        // 检查授信有效期
+        checkCreditValidDate(coreCredit, coreCustName);
+
+        // 处理核心企业冻结和占用的授信额度
+        saveFreezeAndOccupyData(anCreditInfo, coreCredit, occupyBalance);
+    }
 
     private void saveFreezeAndOccupyData(ScfCreditInfo anCreditInfo, ScfCredit anCredit, BigDecimal anOccupyBalance) {
         // 获取授信额度冻结记录

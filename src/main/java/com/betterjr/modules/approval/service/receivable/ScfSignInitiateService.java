@@ -17,7 +17,6 @@ import com.betterjr.modules.loan.entity.ScfRequest;
 public class ScfSignInitiateService extends ScfBaseApprovalService {
 	public void processHandle(Map<String, Object> anContext) {
 		ScfRequest request = this.getReqtuest(anContext.get("requestNo").toString());
-		//this.updateRequestLastStatus(request, true);
 		//this.pushOrderInfo(request);
 	}
 

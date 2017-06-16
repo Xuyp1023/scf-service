@@ -55,8 +55,10 @@ public class ScfApplicationService extends ScfBaseApprovalService{
 		request.setDescription(anTemp.getDescription());
 		request.setSuppBankAccount(anTemp.getSuppBankAccount());
 		request.setOrders(anTemp.getOrders());
+		request.setRequestFrom("1");
 		ScfProductConfig product = productConfigService.findProductByCode(request.getProductCode());
 		request.setProductId(product.getId());
+		request.setLastStatus("1");
 		requestService.insert(request);
 		requestService.fillCustName(request);
 		return request;

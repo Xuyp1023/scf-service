@@ -28,7 +28,6 @@ public class ScfLoanService extends BaseService<ScfLoanMapper, ScfLoan> {
      */
     public ScfLoan addLoan(ScfLoan anLoan) {
         BTAssert.notNull(anLoan, "新增放款记录失败-anLoan不能为空");
-        
         anLoan.init();
         this.insert(anLoan);
         
