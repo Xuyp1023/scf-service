@@ -52,7 +52,7 @@ public interface CommissionPayResultRecordMapper extends Mapper<CommissionPayRes
 
     @Select("SELECT t1.balance AS totalBalance, t1.amount AS totalAmount, t2.balance AS paySuccessBalance, t2.amount AS paySuccessAmount, "
             + "t3.balance AS payFailureBalance, t3.amount AS payFailureAmount, t4.balance AS unconfirmBalance, t4.amount AS unconfirmAmount FROM "
-            + "(SELECT SUM(F_PAY_BALANCE) AS balance, COUNT(ID) AS amount FROM t_cps_pay_result_record WHERE D_PAY_DATE=#{payDate} AND L_CUSTNO=#{custNo}) AS t1, "
+            + "(SELECT SUM(F_PAY_BALANCE) AS balance, COUNT(ID) AS amount FROM t_cps_pay_result_record WHERE D_PAY_DATE=#{payDate} AND L_CUSTNO=#{custNo} AND C_BUSIN_STATUS IN ('0','1','2')) AS t1, "
             + "(SELECT SUM(F_PAY_BALANCE) AS balance, COUNT(ID) AS amount FROM t_cps_pay_result_record WHERE D_PAY_DATE=#{payDate} AND C_PAY_RESULT='1' AND L_CUSTNO=#{custNo} AND C_BUSIN_STATUS IN ('0','1','2')) AS t2, "
             + "(SELECT SUM(F_PAY_BALANCE) AS balance, COUNT(ID) AS amount FROM t_cps_pay_result_record WHERE D_PAY_DATE=#{payDate} AND C_PAY_RESULT='2' AND L_CUSTNO=#{custNo} AND C_BUSIN_STATUS IN ('0','1','2')) AS t3, "
             + "(SELECT SUM(F_PAY_BALANCE) AS balance, COUNT(ID) AS amount FROM t_cps_pay_result_record WHERE D_PAY_DATE=#{payDate} AND C_PAY_RESULT='0' AND L_CUSTNO=#{custNo} AND C_BUSIN_STATUS IN ('0','1','2')) AS t4 ")

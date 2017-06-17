@@ -31,7 +31,7 @@ import com.betterjr.modules.commission.entity.CommissionPayResultRecord;
 import com.betterjr.modules.commission.util.CommissionDateUtils;
 import com.betterjr.modules.config.dubbo.interfaces.IDomainAttributeService;
 import com.betterjr.modules.document.entity.CustFileItem;
-import com.betterjr.modules.flie.service.FileDownService;
+import com.betterjr.modules.flie.service.JxlsFileService;
 import com.betterjr.modules.generator.SequenceFactory;
 /***
  * 日账单服务类
@@ -43,8 +43,6 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
     
     @Autowired
     private CommissionPayResultRecordService payResultRecordService;
-//    @Resource
-//    private DomainAttributeDubboClientService domainAttributeDubboClientService;
     @Reference(interfaceClass=IDomainAttributeService.class)
     private IDomainAttributeService domainAttributeDubboClientService;
     @Autowired
@@ -54,7 +52,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
     @Autowired
     private CommissionMonthlyStatementService monthlyStatementService;
     @Autowired
-    private FileDownService fileDownService;
+    private JxlsFileService jxlsFileService;
     
     public Page<CommissionDailyStatement> queryDailyStatement(Map<String, Object> anParam, int anPageNum, int anPageSize){
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
@@ -401,12 +399,17 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         
         Map<String, Object> fileMap=new HashMap<String, Object>();
         fileMap.put("daily", dailyStatement);
-        fileMap.put("recordList", recordList);
-        CustFileItem custFile = fileDownService.uploadCommissionRecordFileis(fileMap, fileId, BetterDateUtils.formatDispay(dailyStatement.getPayDate())+"-对账单"+fileType);
-        logger.info("生成后的文件，custFile:"+custFile);
-        dailyStatement.setFileId(custFile.getId());
-        dailyStatement.setBatchNo(custFile.getBatchNo());
-        this.updateByPrimaryKey(dailyStatement);
+        
+        try {
+            CustFileItem custFile =jxlsFileService.transformXLSFile(recordList, fileMap, fileId, 22, 24, BetterDateUtils.formatDispay(dailyStatement.getPayDate())+"-对账单"+fileType);
+            logger.info("生成后的文件，custFile:"+custFile);
+            dailyStatement.setFileId(custFile.getId());
+            dailyStatement.setBatchNo(custFile.getBatchNo());
+            this.updateByPrimaryKey(dailyStatement);
+        }
+        catch (Exception e) {
+            logger.error("异常："+e);
+        }
         
         // 回写生成日报表的记录状态      
         saveRecordStatus(anPayDate,anOwnCustNo,"3");
