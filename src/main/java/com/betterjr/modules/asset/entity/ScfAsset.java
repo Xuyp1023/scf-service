@@ -1,9 +1,7 @@
 package com.betterjr.modules.asset.entity;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Access;
@@ -14,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
@@ -171,6 +170,20 @@ public class ScfAsset implements BetterjrEntity {
      * 汇票类型 key: acceptBillList   value:List<ScfAcceptBill> 
      */
     private Map<String,Object> basedataMap=new HashMap<String,Object>();
+    
+    /**
+     * 订单id集合以 ,分割
+     */
+    @Transient
+    private String orderIds;
+    @Transient
+    private String invoiceIds;
+    @Transient
+    private String agreementIds;
+    @Transient
+    private String receivableIds;
+    @Transient
+    private String billIds;
    
     /**
      * 此条记录是否权限
@@ -483,6 +496,46 @@ public class ScfAsset implements BetterjrEntity {
         this.factorNo = anFactorNo;
     }
     
+    public String getOrderIds() {
+        return this.orderIds;
+    }
+
+    public void setOrderIds(String anOrderIds) {
+        this.orderIds = anOrderIds;
+    }
+
+    public String getInvoiceIds() {
+        return this.invoiceIds;
+    }
+
+    public void setInvoiceIds(String anInvoiceIds) {
+        this.invoiceIds = anInvoiceIds;
+    }
+
+    public String getAgreementIds() {
+        return this.agreementIds;
+    }
+
+    public void setAgreementIds(String anAgreementIds) {
+        this.agreementIds = anAgreementIds;
+    }
+
+    public String getReceivableIds() {
+        return this.receivableIds;
+    }
+
+    public void setReceivableIds(String anReceivableIds) {
+        this.receivableIds = anReceivableIds;
+    }
+
+    public String getBillIds() {
+        return this.billIds;
+    }
+
+    public void setBillIds(String anBillIds) {
+        this.billIds = anBillIds;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

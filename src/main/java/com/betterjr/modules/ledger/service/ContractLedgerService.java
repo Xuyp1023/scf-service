@@ -346,12 +346,25 @@ public class ContractLedgerService  extends BaseService<ContractLedgerMapper, Co
             if(anIds.contains(",")){
                 
                 String[] ids = anIds.split(",");
-                List<String> asList = Arrays.asList(ids);
+               /* List<String> asList = Arrays.asList(ids);
                 asList.remove(",");
                 //list  去重
                 HashSet<String> set=new HashSet<>(asList);
                 asList.clear();
-                asList.addAll(set);
+                asList.addAll(set);*/
+                List<String> asList = new ArrayList<>();
+                for (String id : ids) {
+                   
+                    if(!asList.contains(id)){
+                        try{
+                           Long.parseLong(id);
+                           asList.add(id);
+                        }catch(Exception e){
+                            
+                        }
+                    }
+                    
+               }
                 paramMap.put("id", asList);
                 
             }else{

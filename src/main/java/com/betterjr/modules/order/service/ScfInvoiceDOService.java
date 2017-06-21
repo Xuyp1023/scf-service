@@ -165,7 +165,7 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
             anModiInvoice.setDocStatus(VersionConstantCollentions.DOC_STATUS_CONFIRM); 
         }
         //ScfOrderDO order2 = this.selectOneWithVersion(order.getRefNo(),order.getVersion());
-        anModiInvoice=this.updateVersionByPrimaryKeySelective(anModiInvoice,invoice.getRefNo(),invoice.getVersion());
+        anModiInvoice=this.updateVersionByPrimaryKeySelective(anModiInvoice,invoice.getId());
         BTAssert.notNull(anModiInvoice, "修改发票失败");
       //保存发票明细项
         if(anInvoiceItemList !=null && !anInvoiceItemList.isEmpty()){

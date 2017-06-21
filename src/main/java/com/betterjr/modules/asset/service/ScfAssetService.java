@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
+import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.MathExtend;
 import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
@@ -90,7 +92,10 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
     public ScfAsset saveAddAsset(Map<String,Object> anAssetMap){
         
         BTAssert.notNull(anAssetMap, "新增资产企业 失败-资产 is null");
-        
+        anAssetMap=Collections3.filterMap(anAssetMap, new String[]{"businTypeId","productCode",
+                "sourceUseType","custNo","coreCustNo","factorNo","orderList",
+                "invoiceList","agreementList","receivableList","acceptBillList",
+                "statementFileList","goodsFileList","othersFileList","id"});
         //将map转成资产对象
         ScfAsset asset=convertBeanFromMap(anAssetMap);
         asset.initAdd();
@@ -346,17 +351,17 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
        company.setAssetRole(anScfAssetRoleSupply);
        company.setCustInfo(anCustInfo);
        company.setCustNo(anCustInfo.getCustNo());
+       company.setCustName(anCustInfo.getCustName());
        if(AssetConstantCollentions.SCF_ASSET_ROLE_SUPPLY.equals(anScfAssetRoleSupply) ||AssetConstantCollentions.SCF_ASSET_ROLE_DEALER.equals(anScfAssetRoleSupply)){
            
-           company.setCustName(anCustInfo.getCustName());
            anAsset.setCustName(anCustInfo.getCustName());
            anAsset.getCustMap().put(AssetConstantCollentions.CUST_INFO_KEY, company);
        }else if(AssetConstantCollentions.SCF_ASSET_ROLE_CORE.equals(anScfAssetRoleSupply)){
-           company.setCustName(anCustInfo.getCustName());
+           //company.setCustName(anCustInfo.getCustName());
            anAsset.setCoreCustName(anCustInfo.getCustName());
            anAsset.getCustMap().put(AssetConstantCollentions.CORE_CUST_INFO_KEY, company);
        }else if(AssetConstantCollentions.SCF_ASSET_ROLE_FACTORY.equals(anScfAssetRoleSupply)){
-           company.setCustName(anCustInfo.getCustName());
+           //company.setCustName(anCustInfo.getCustName());
            //anAsset.setCoreCustName(anCustInfo.getCustName());
            anAsset.getCustMap().put(AssetConstantCollentions.FACTORY_CUST_INFO_KEY, company);
        }else{
@@ -587,13 +592,15 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
      * @param anCustNo  供应商id
      * @param anDataType  资产类型   关联的基础数据的类型1订单2票据3应收账款4发票5贸易合同6运输单单据类型
      * @param anFlag
+     * @param anFlag 
      * @param anPageNum
      * @param anPageSize
      * @return
      */
-    public Page queryFinanceBaseDataList(Long anCustNo,String anDataType,String anFlag, int anPageNum, int anPageSize){
+    public Page queryFinanceBaseDataList(Long anCustNo,Long anCoreCustNo,String anDataType,String anIds, String anFlag, int anPageNum, int anPageSize){
         
         BTAssert.notNull(anCustNo, "查询可用资产失败!供应商id不存在");
+        BTAssert.notNull(anCoreCustNo, "查询可用资产失败!核心企业id不存在");
         BTAssert.notNull(anDataType, "查询可用资产失败!请选择要查询的数据");
         if(!getCurrentUserCustNos().contains(anCustNo)){
             BTAssert.notNull(null, "查询可用资产失败!你没有当前企业资产的操作权限");  
@@ -601,7 +608,14 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         
         Map<String,Object> paramMap = QueryTermBuilder.newInstance()
                 .put("custNo", anCustNo)
+                .put("coreCustNo", anCoreCustNo)
                 .build();
+        if(StringUtils.isNoneBlank(anIds)){
+            
+            List<Long> idList=convertStringToList(anIds);
+            paramMap.put("NEid", idList);
+            
+        }
         if(anDataType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_ORDER)){
             Page<ScfOrderDO> orderPage = orderService.selectCanUsePageWithVersion(paramMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
             return orderPage;
@@ -621,6 +635,35 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         
     }
     
+    private List<Long> convertStringToList(String anIds) {
+        
+        List<Long> idList=new ArrayList<Long>();
+        if(StringUtils.isNotBlank(anIds)){
+            
+            if(anIds.contains(",")){
+                
+                String[] strs = anIds.split(",");
+                for (String string : strs) {
+                    if(StringUtils.isNoneBlank(string)){
+                        try{
+                            
+                            idList.add(Long.parseLong(string));
+                        }catch(Exception e){
+                            
+                        }
+                        
+                    }
+                }
+                
+            }else{
+                idList.add(Long.parseLong(anIds));  
+            }
+            
+        }
+        return idList;
+    }
+
+
     /**
      * 获取当前登录用户所在的所有公司id集合
      * @return

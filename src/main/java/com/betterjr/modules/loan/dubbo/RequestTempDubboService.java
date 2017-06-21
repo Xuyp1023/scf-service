@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.betterjr.common.web.AjaxObject;
+import com.betterjr.modules.asset.entity.ScfAsset;
+import com.betterjr.modules.asset.service.ScfAssetService;
 import com.betterjr.modules.loan.IScfRequestTempService;
 import com.betterjr.modules.loan.entity.ScfRequestTemp;
 import com.betterjr.modules.loan.service.ScfRequestTempService;
@@ -17,9 +19,14 @@ public class RequestTempDubboService implements IScfRequestTempService {
 	@Autowired
 	private ScfRequestTempService requestTempService;
 	
+	@Autowired
+	private ScfAssetService assetService;
+	
 	@Override
 	public String webAddRequestTemp(Map<String, Object> anMap) {
 		ScfRequestTemp requestTemp = (ScfRequestTemp) RuleServiceDubboFilterInvoker.getInputObj();
+		ScfAsset asset = assetService.saveAddAsset(anMap);
+		requestTemp.setOrders(asset.getId()+"");
 		return AjaxObject.newOk(requestTempService.addRequestTemp(requestTemp)).toJson();
 	}
 

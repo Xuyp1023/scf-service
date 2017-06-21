@@ -571,17 +571,34 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
              if(anIds.contains(",")){
                  
                  String[] ids = anIds.split(",");
-                 List<String> asList = Arrays.asList(ids);
-                 asList.remove(",");
+                 List<String> asList = new ArrayList<>();
+                 for (String id : ids) {
+                    
+                     if(!asList.contains(id)){
+                         try{
+                            Long.parseLong(id);
+                            asList.add(id);
+                         }catch(Exception e){
+                             
+                         }
+                     }
+                     
+                }
                  //list  去重
-                 HashSet<String> set=new HashSet<>(asList);
+                 /*HashSet<String> set=new HashSet<>(asList);
                  asList.clear();
                  asList.addAll(set);
+                 asList.remove(",");
+                 asList.remove("undefined");*/
                  paramMap.put("id", asList);
                  
              }else{
-                 
-                 paramMap.put("id", anIds);
+                 try{
+                     Long.parseLong(anIds);
+                     paramMap.put("id", anIds);
+                 }catch(Exception e){
+                     
+                 }
              }
              return this.selectByProperty(paramMap);
              

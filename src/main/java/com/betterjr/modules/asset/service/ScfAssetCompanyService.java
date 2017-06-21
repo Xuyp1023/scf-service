@@ -89,34 +89,34 @@ public class ScfAssetCompanyService extends BaseService<ScfAssetCompanyMapper, S
         
         Map<String, Object> custMap = anAsset.getCustMap();
         Object custInfo = custMap.get(AssetConstantCollentions.CUST_INFO_KEY);
-        if(custInfo instanceof CustInfo){
+        if(custInfo instanceof ScfAssetCompany){
             if(UserUtils.supplierUser()){
-                saveAddCompanyByCustInfo((CustInfo)custInfo, anAsset.getId(), AssetConstantCollentions.SCF_ASSET_ROLE_SUPPLY);
+                saveAddCompanyByCustInfo((ScfAssetCompany)custInfo, anAsset.getId(), AssetConstantCollentions.SCF_ASSET_ROLE_SUPPLY);
             }else{
-                saveAddCompanyByCustInfo((CustInfo)custInfo, anAsset.getId(), AssetConstantCollentions.SCF_ASSET_ROLE_DEALER); 
+                saveAddCompanyByCustInfo((ScfAssetCompany)custInfo, anAsset.getId(), AssetConstantCollentions.SCF_ASSET_ROLE_DEALER); 
             }
         }
         Object coreCustInfo = custMap.get(AssetConstantCollentions.CORE_CUST_INFO_KEY);
-        if(coreCustInfo instanceof CustInfo){
+        if(coreCustInfo instanceof ScfAssetCompany){
             
-            saveAddCompanyByCustInfo((CustInfo)coreCustInfo, anAsset.getId(), AssetConstantCollentions.SCF_ASSET_ROLE_CORE); 
+            saveAddCompanyByCustInfo((ScfAssetCompany)coreCustInfo, anAsset.getId(), AssetConstantCollentions.SCF_ASSET_ROLE_CORE); 
         }
         Object factoryCustInfo = custMap.get(AssetConstantCollentions.FACTORY_CUST_INFO_KEY);
-        if(factoryCustInfo instanceof CustInfo){
-            saveAddCompanyByCustInfo((CustInfo)factoryCustInfo, anAsset.getId(), AssetConstantCollentions.SCF_ASSET_ROLE_FACTORY); 
+        if(factoryCustInfo instanceof ScfAssetCompany){
+            saveAddCompanyByCustInfo((ScfAssetCompany)factoryCustInfo, anAsset.getId(), AssetConstantCollentions.SCF_ASSET_ROLE_FACTORY); 
         }
         
     }
     
     
-    private ScfAssetCompany saveAddCompanyByCustInfo(CustInfo anCustInfo,Long anAssetId,String anAssetRole){
+    private ScfAssetCompany saveAddCompanyByCustInfo(ScfAssetCompany company,Long anAssetId,String anAssetRole){
         
-        ScfAssetCompany company=new ScfAssetCompany();
+        //ScfAssetCompany company=new ScfAssetCompany();
         company.setAssetId(anAssetId);
         company.setAssetRole(anAssetRole);
-        company.setCustInfo(anCustInfo);
-        company.setCustName(anCustInfo.getCustName());
-        company.setCustNo(anCustInfo.getCustNo());
+        //company.setCustInfo(anCustInfo);
+        //company.setCustName(anCustInfo.getCustName());
+        //company.setCustNo(anCustInfo.getCustNo());
         company.initAdd();
         this.insert(company);
         return company;

@@ -20,10 +20,10 @@ public class AssetDubboService implements IScfAssetService {
         
     }
     @Override
-    public String webQueryCanUseBaseData(Long anCustNo, String anDataType, int anPageNum, int anPageSize, String anFlag) {
+    public String webQueryCanUseBaseData(Long anCustNo, Long anCoreCustNo,String anDataType, String anIds,int anPageNum, int anPageSize, String anFlag) {
         
         return AjaxObject
-                .newOkWithPage("资产基础信息查询成功", assetService.queryFinanceBaseDataList(anCustNo, anDataType, anFlag, anPageNum, anPageSize))
+                .newOkWithPage("资产基础信息查询成功", assetService.queryFinanceBaseDataList(anCustNo,anCoreCustNo, anDataType,anIds, anFlag, anPageNum, anPageSize))
                 .toJson();
     }
     @Override

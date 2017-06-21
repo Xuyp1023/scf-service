@@ -22,6 +22,7 @@ import com.betterjr.modules.approval.service.receivable.ScfSchemeReviewService;
 import com.betterjr.modules.approval.service.receivable.ScfSignInitiateService;
 import com.betterjr.modules.approval.service.receivable.ScfSignReviewService;
 import com.betterjr.modules.approval.service.receivable.ScfSignService;
+import com.betterjr.modules.asset.service.ScfAssetService;
 import com.betterjr.modules.loan.entity.ScfRequestTemp;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 
@@ -66,10 +67,13 @@ public class ScfReceApprovalDubboService implements IScfReceApprovalFlowDubboSer
 	private ScfSignService signService;
 	@Autowired
 	private ScfManagerFlowService managerFlowService;
+	@Autowired
+	private ScfAssetService assetService;
 	
 	@Override
 	public Map<String, Object> application(Map<String, Object> anContext){
 		ScfRequestTemp anTemp = applicationService.savApplication(anContext);
+		assetService.saveConfirmAsset(Long.parseLong(anTemp.getOrders()));
 		applicationService.savRequest(anTemp);
 		return anContext;
 	}
