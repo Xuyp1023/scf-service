@@ -19,21 +19,17 @@ public class RequestTempDubboService implements IScfRequestTempService {
 	@Autowired
 	private ScfRequestTempService requestTempService;
 	
-	@Autowired
-	private ScfAssetService assetService;
-	
 	@Override
 	public String webAddRequestTemp(Map<String, Object> anMap) {
 		ScfRequestTemp requestTemp = (ScfRequestTemp) RuleServiceDubboFilterInvoker.getInputObj();
-		ScfAsset asset = assetService.saveAddAsset(anMap);
-		requestTemp.setOrders(asset.getId()+"");
-		return AjaxObject.newOk(requestTempService.addRequestTemp(requestTemp)).toJson();
+		
+		return AjaxObject.newOk(requestTempService.addRequestTemp(requestTemp,anMap)).toJson();
 	}
 
 	@Override
 	public String webSaveModifyRequestTemp(Map<String, Object> anMap, String anRequestNo) {
 		ScfRequestTemp requestTemp = (ScfRequestTemp) RuleServiceDubboFilterInvoker.getInputObj();
-		return AjaxObject.newOk(requestTempService.saveModifyTemp(requestTemp, anRequestNo)).toJson();
+		return AjaxObject.newOk(requestTempService.saveModifyTemp(requestTemp, anRequestNo,anMap)).toJson();
 	}
 
 	@Override

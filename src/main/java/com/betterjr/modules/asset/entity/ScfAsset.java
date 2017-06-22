@@ -175,15 +175,15 @@ public class ScfAsset implements BetterjrEntity {
      * 订单id集合以 ,分割
      */
     @Transient
-    private String orderIds;
+    private String orderList;
     @Transient
-    private String invoiceIds;
+    private String invoiceList;
     @Transient
-    private String agreementIds;
+    private String agreementList;
     @Transient
-    private String receivableIds;
+    private String receivableList;
     @Transient
-    private String billIds;
+    private String acceptBillList;
    
     /**
      * 此条记录是否权限
@@ -495,45 +495,45 @@ public class ScfAsset implements BetterjrEntity {
     public void setFactorNo(Long anFactorNo) {
         this.factorNo = anFactorNo;
     }
-    
-    public String getOrderIds() {
-        return this.orderIds;
+
+    public String getOrderList() {
+        return this.orderList;
     }
 
-    public void setOrderIds(String anOrderIds) {
-        this.orderIds = anOrderIds;
+    public void setOrderList(String anOrderList) {
+        this.orderList = anOrderList;
     }
 
-    public String getInvoiceIds() {
-        return this.invoiceIds;
+    public String getInvoiceList() {
+        return this.invoiceList;
     }
 
-    public void setInvoiceIds(String anInvoiceIds) {
-        this.invoiceIds = anInvoiceIds;
+    public void setInvoiceList(String anInvoiceList) {
+        this.invoiceList = anInvoiceList;
     }
 
-    public String getAgreementIds() {
-        return this.agreementIds;
+    public String getAgreementList() {
+        return this.agreementList;
     }
 
-    public void setAgreementIds(String anAgreementIds) {
-        this.agreementIds = anAgreementIds;
+    public void setAgreementList(String anAgreementList) {
+        this.agreementList = anAgreementList;
     }
 
-    public String getReceivableIds() {
-        return this.receivableIds;
+    public String getReceivableList() {
+        return this.receivableList;
     }
 
-    public void setReceivableIds(String anReceivableIds) {
-        this.receivableIds = anReceivableIds;
+    public void setReceivableList(String anReceivableList) {
+        this.receivableList = anReceivableList;
     }
 
-    public String getBillIds() {
-        return this.billIds;
+    public String getAcceptBillList() {
+        return this.acceptBillList;
     }
 
-    public void setBillIds(String anBillIds) {
-        this.billIds = anBillIds;
+    public void setAcceptBillList(String anAcceptBillList) {
+        this.acceptBillList = anAcceptBillList;
     }
 
     @Override
@@ -692,16 +692,19 @@ public class ScfAsset implements BetterjrEntity {
         return true;
     }
 
+
     @Override
     public String toString() {
         return "ScfAsset [id=" + this.id + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", businStatus=" + this.businStatus
                 + ", businTypeId=" + this.businTypeId + ", productCode=" + this.productCode + ", sourceUseType=" + this.sourceUseType + ", custNo="
                 + this.custNo + ", custName=" + this.custName + ", coreCustNo=" + this.coreCustNo + ", coreCustName=" + this.coreCustName
                 + ", prefixId=" + this.prefixId + ", suffixId=" + this.suffixId + ", custType=" + this.custType + ", custMap=" + this.custMap
-                + ", basedataMap=" + this.basedataMap + ", operationAuth=" + this.operationAuth + ", factorNo=" + this.factorNo + ", regOperId="
-                + this.regOperId + ", regOperName=" + this.regOperName + ", annulOperId=" + this.annulOperId + ", annulOperName=" + this.annulOperName
-                + ", annulDate=" + this.annulDate + ", annulTime=" + this.annulTime + ", statementBatchNo=" + this.statementBatchNo
-                + ", goodsBatchNo=" + this.goodsBatchNo + ", othersBatchNo=" + this.othersBatchNo + ", balance=" + this.balance + "]";
+                + ", basedataMap=" + this.basedataMap + ", orderList=" + this.orderList + ", invoiceList=" + this.invoiceList + ", agreementList="
+                + this.agreementList + ", receivableList=" + this.receivableList + ", acceptBillList=" + this.acceptBillList + ", operationAuth="
+                + this.operationAuth + ", factorNo=" + this.factorNo + ", regOperId=" + this.regOperId + ", regOperName=" + this.regOperName
+                + ", annulOperId=" + this.annulOperId + ", annulOperName=" + this.annulOperName + ", annulDate=" + this.annulDate + ", annulTime="
+                + this.annulTime + ", statementBatchNo=" + this.statementBatchNo + ", goodsBatchNo=" + this.goodsBatchNo + ", othersBatchNo="
+                + this.othersBatchNo + ", balance=" + this.balance + "]";
     }
 
     /**

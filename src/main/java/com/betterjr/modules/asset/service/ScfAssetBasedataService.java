@@ -96,32 +96,32 @@ public class ScfAssetBasedataService extends BaseService<ScfAssetBasedataMapper,
                
                 ScfOrderDO order=orderService.selectOneWithVersion(refNo, version);
                 orderList.add(order);
-                anAsset.setOrderIds(anAsset.getOrderIds()+","+order.getId());
+                anAsset.setOrderList(anAsset.getOrderList()+","+order.getId());
                 continue;
             }
             if(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT.equals(type)){
                 ContractLedger agreement=agreementService.selectOneByRefNoAndVersion(refNo, version);
                 //=custAgreementService.selectOneWithVersion(refNo, version);
                 agreementList.add(agreement);
-                anAsset.setAgreementIds(anAsset.getAgreementIds()+","+agreement.getId());
+                anAsset.setAgreementList(anAsset.getAgreementList()+","+agreement.getId());
                 continue;
             }
             if(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL.equals(type)){
                 ScfAcceptBillDO bill=acceptBillService.selectOneWithVersion(refNo, version);
                 billList.add(bill);
-                anAsset.setBillIds(anAsset.getBillIds()+","+bill.getId());
+                anAsset.setAcceptBillList(anAsset.getAcceptBillList()+","+bill.getId());
                 continue;
             }
             
             if(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE.equals(type)){
                 ScfReceivableDO receivable=receivableService.selectOneWithVersion(refNo, version);
                 receivableList.add(receivable);
-                anAsset.setReceivableIds(anAsset.getReceivableIds()+","+receivable.getId());
+                anAsset.setReceivableList(anAsset.getReceivableList()+","+receivable.getId());
                 continue;
             }
             if(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE.equals(type)){
                 ScfInvoiceDO invoice=invoiceService.selectOneWithVersion(refNo, version);
-                anAsset.setInvoiceIds(anAsset.getInvoiceIds()+","+invoice.getId());
+                anAsset.setInvoiceList(anAsset.getInvoiceList()+","+invoice.getId());
                 invoiceList.add(invoice);
             }
         }

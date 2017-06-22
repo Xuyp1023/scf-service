@@ -67,13 +67,11 @@ public class ScfReceApprovalDubboService implements IScfReceApprovalFlowDubboSer
 	private ScfSignService signService;
 	@Autowired
 	private ScfManagerFlowService managerFlowService;
-	@Autowired
-	private ScfAssetService assetService;
 	
 	@Override
 	public Map<String, Object> application(Map<String, Object> anContext){
 		ScfRequestTemp anTemp = applicationService.savApplication(anContext);
-		assetService.saveConfirmAsset(Long.parseLong(anTemp.getOrders()));
+		
 		applicationService.savRequest(anTemp);
 		return anContext;
 	}

@@ -182,7 +182,9 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
      */
     public T selectOneWithVersion(String refNo,String version) {
         
-        Map<String,Object> paramMap= QueryTermBuilder.newInstance().put("refNo", refNo).put("version", version).build();
+        Map<String,Object> paramMap= QueryTermBuilder.newInstance()
+                .put("refNo", refNo)
+                .put("version", version).build();
         List<T> lists = selectByProperty(paramMap,"id desc");
         return Collections3.getFirst(lists);
     }
@@ -549,6 +551,23 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
          
          if(base.getIsLatest().equals(VersionConstantCollentions.IS_NOT_LATEST)){
             BTAssert.notNull(base,"当前资产已经修改，不允许再次修改");  
+         }
+         
+         base.setBusinStatus(anBusinStatus);
+         base.setLockedStatus(anLockedStatus);
+         base.setDocStatus(anDocStatus);
+         int result = this.updateByPrimaryKeySelective(base);
+         return result == VersionConstantCollentions.MODIFY_SUCCESS ? base : null;
+     }
+     
+     public T updateBaseAssetStatus(Long anId,String anBusinStatus,String anLockedStatus,String anDocStatus){
+         
+         T base = this.selectByPrimaryKey(anId);
+         
+         BTAssert.notNull(base,"对象为空，操作失败");
+         
+         if(base.getIsLatest().equals(VersionConstantCollentions.IS_NOT_LATEST)){
+             BTAssert.notNull(base,"当前资产已经修改，不允许再次修改");  
          }
          
          base.setBusinStatus(anBusinStatus);

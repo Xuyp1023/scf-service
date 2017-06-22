@@ -610,7 +610,7 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
                 .put("custNo", anCustNo)
                 .put("coreCustNo", anCoreCustNo)
                 .build();
-        if(StringUtils.isNoneBlank(anIds)){
+        if(StringUtils.isNoneBlank(anIds) && !"null".equals(anIds)){
             
             List<Long> idList=convertStringToList(anIds);
             paramMap.put("NEid", idList);
@@ -767,11 +767,11 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         
         BTAssert.notNull(anAsset, "修改资产 失败-未找到资产信息");
         BTAssert.notNull(anAsset.getBasedataMap(), "修改资产 失败-未找到资产信息");
-        Object orderObj = anAsset.getBasedataMap().get(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_ORDER);
-        Object agreementObj = anAsset.getBasedataMap().get(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT);
-        Object billObj = anAsset.getBasedataMap().get(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL);
-        Object invoiceObj = anAsset.getBasedataMap().get(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE);
-        Object receivableObj = anAsset.getBasedataMap().get(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE);
+        Object orderObj = anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_ORDER_LIST_KEY);
+        Object agreementObj = anAsset.getBasedataMap().get(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY);
+        Object billObj = anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_BILL_LIST_KEY);
+        Object invoiceObj = anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_INVOICE_LIST_KEY);
+        Object receivableObj = anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY);
         //更新订单
         if(orderObj !=null && orderObj instanceof List){
             
@@ -816,7 +816,7 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
             for (ScfReceivableDO receivable : receivableList) {
                 //校验单据的状态
                 receivable.checkFinanceStatus();
-                invoiceService.updateBaseAssetStatus(receivable.getRefNo(), receivable.getVersion(),
+                receivableService.updateBaseAssetStatus(receivable.getId(),
                         VersionConstantCollentions.BUSIN_STATUS_USED, VersionConstantCollentions.LOCKED_STATUS_LOCKED, receivable.getDocStatus());
             }
             

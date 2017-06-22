@@ -35,7 +35,6 @@ public class BaseVersionEntity implements BetterjrEntity{
      */
     @Column(name = "C_Ref_NO",  columnDefinition="VARCHAR" )
     @MetaData( value="特性编码", comments = "单特性编码")
-    @OrderBy("DESC")
     private String refNo;
     
     /**
@@ -43,7 +42,6 @@ public class BaseVersionEntity implements BetterjrEntity{
      */
     @Column(name = "N_VERSION",  columnDefinition="VARCHAR" )
     @MetaData( value="版本", comments = "版本")
-    @OrderBy("DESC")
     private String version;
     
     /**

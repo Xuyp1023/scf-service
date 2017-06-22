@@ -470,12 +470,21 @@ public class ScfRequestTemp implements BetterjrEntity {
         this.businStatus = "1";
     }
 
-	public void initModify() {
+	public void initModify(String anBusinStatus) {
 		this.modiOperId = UserUtils.getOperatorInfo().getId();
         this.modiOperName = UserUtils.getUserName();
         this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
+        this.businStatus = anBusinStatus;
+	}
+	public void initModify() {
+	    this.modiOperId = UserUtils.getOperatorInfo().getId();
+	    this.modiOperName = UserUtils.getUserName();
+	    this.operOrg = UserUtils.getOperatorInfo().getOperOrg();
+	    this.modiDate = BetterDateUtils.getNumDate();
+	    this.modiTime = BetterDateUtils.getNumTime();
+	    //this.businStatus = "1";
 	}
 	
 	@Transient
