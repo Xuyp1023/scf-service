@@ -2,9 +2,7 @@ package com.betterjr.modules.version.service;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +23,9 @@ import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.mapper.pagehelper.PageHelper;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.generator.SequenceFactory;
+import com.betterjr.modules.joblog.data.LogConstantCollections;
+import com.betterjr.modules.joblog.entity.ScfJoblog;
+import com.betterjr.modules.joblog.service.ScfJoblogService;
 import com.betterjr.modules.version.constant.VersionConstantCollentions;
 import com.betterjr.modules.version.entity.BaseVersionEntity;
 
@@ -42,6 +43,9 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
     protected D mapper;
     @Autowired
     protected SqlMapper sqlMapper;
+    
+    @Autowired
+    private ScfJoblogService logService;
     
     /**
      * 将对象新增版本信息插入数据库并返回该对象
@@ -643,5 +647,106 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
          return t;
      }
      
+     /**
+      * 获取当前票据和应收应付账款过期的票据集合
+      * 
+      */
+     
+     public List<T> queryEndedDataList(){
+         
+         List<String> businStatusListParam=new ArrayList<>();
+         businStatusListParam.add(VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE);
+         businStatusListParam.add(VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE);
+         //设置过期时间
+         String numDate = BetterDateUtils.getNumDate();
+         //long parseLong = Long.parseLong(numDate);
+         
+         Map<String,Object> paramMap= QueryTermBuilder.newInstance()
+                 .put("businStatus", businStatusListParam)
+                 .put("lockedStatus", VersionConstantCollentions.LOCKED_STATUS_INlOCKED)
+                 .put("LTEendDate", numDate)
+                 .build();
+         
+         List<T> endedData = this.selectByProperty(paramMap);
+         
+         return endedData;
+         
+         
+     }
+     
+     /**
+      * 将票据信息设置为过期状态
+      * @param t
+      * @return
+      */
+     public T saveExpireBusinStatus(T t){
+         
+         checkExpireStatus(t);
+         t.setDocStatus(VersionConstantCollentions.DOC_STATUS_ANNUL);
+         t.setBusinStatus(VersionConstantCollentions.BUSIN_STATUS_EXPIRE);
+         this.updateByPrimaryKeySelective(t);
+         
+         return t;
+         
+     }
+     
+     public List<T> saveExpireList(List<T> anList,String anDataType,String anOrderBy){
+         
+         if(anList !=null){
+             
+             String showSuccessMessage="";
+             String showFailureMessage="";
+             
+             for (T t : anList) {
+                 try {
+                     
+                     saveExpireBusinStatus(t);
+                     showSuccessMessage += t.getId()+",";
+                     
+                 }
+                 catch (Exception e) {
+                     showFailureMessage += t.getId()+",";
+                 }
+            }
+             
+             if(StringUtils.isNotBlank(showSuccessMessage)){
+                 ScfJoblog log=new ScfJoblog();
+                 log.setBusinType(LogConstantCollections.LOG_BUSIN_TYPE_EXPIRE);
+                 log.setDataType(anDataType);
+                 log.setOrderBy(anOrderBy);
+                 log.setBusinStatus(LogConstantCollections.LOG_BUSIN_STATUS_SUCCESS);
+                 log.setShowMessage(showSuccessMessage);
+                 log.initAddValue();
+                 logService.saveAddLog(log);
+             }
+             
+             if(StringUtils.isNotBlank(showFailureMessage)){
+                 ScfJoblog log=new ScfJoblog();
+                 log.setBusinType(LogConstantCollections.LOG_BUSIN_TYPE_EXPIRE);
+                 log.setDataType(anDataType);
+                 log.setOrderBy(anOrderBy);
+                 log.setBusinStatus(LogConstantCollections.LOG_BUSIN_STATUS_FAILURE);
+                 log.setShowMessage(showFailureMessage);
+                 log.initAddValue();
+                 logService.saveAddLog(log);
+             }
+             
+         }
+         
+         return anList;
+         
+         
+     }
+     
+     
+     
+     public void checkExpireStatus(T anAnOrder) {
+         
+         checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true, "当前单据已经转让,不允许被编辑");
+         checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_ANNUL, true, "当前单据已经废止,不允许被编辑");
+         checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EXPIRE, true, "当前单据已经过期,不允许被编辑");
+         checkStatus(anAnOrder.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true, "当前单据已经冻结,不允许被编辑");
+         checkStatus(anAnOrder.getDocStatus(), VersionConstantCollentions.DOC_STATUS_ANNUL, true, "当前单据已经废止,不允许被编辑");
+     }
      
 }
