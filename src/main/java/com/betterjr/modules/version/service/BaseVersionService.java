@@ -2,6 +2,9 @@ package com.betterjr.modules.version.service;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -179,7 +182,9 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
      */
     public T selectOneWithVersion(String refNo,String version) {
         
-        Map<String,Object> paramMap= QueryTermBuilder.newInstance().put("refNo", refNo).put("version", version).build();
+        Map<String,Object> paramMap= QueryTermBuilder.newInstance()
+                .put("refNo", refNo)
+                .put("version", version).build();
         List<T> lists = selectByProperty(paramMap,"id desc");
         return Collections3.getFirst(lists);
     }
@@ -554,5 +559,89 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
          int result = this.updateByPrimaryKeySelective(base);
          return result == VersionConstantCollentions.MODIFY_SUCCESS ? base : null;
      }
-    
+     
+     public T updateBaseAssetStatus(Long anId,String anBusinStatus,String anLockedStatus,String anDocStatus){
+         
+         T base = this.selectByPrimaryKey(anId);
+         
+         BTAssert.notNull(base,"对象为空，操作失败");
+         
+         if(base.getIsLatest().equals(VersionConstantCollentions.IS_NOT_LATEST)){
+             BTAssert.notNull(base,"当前资产已经修改，不允许再次修改");  
+         }
+         
+         base.setBusinStatus(anBusinStatus);
+         base.setLockedStatus(anLockedStatus);
+         base.setDocStatus(anDocStatus);
+         int result = this.updateByPrimaryKeySelective(base);
+         return result == VersionConstantCollentions.MODIFY_SUCCESS ? base : null;
+     }
+     
+     /**
+      * 根据id字符串查询到所有的基础信息
+      * @param anIds
+      * @return
+      */
+     public List<T> queryBaseVersionObjectByids(String anIds){
+         
+         Map<String,Object> paramMap=new HashMap<>();
+         if(StringUtils.isNoneBlank(anIds)){
+             
+             if(anIds.contains(",")){
+                 
+                 String[] ids = anIds.split(",");
+                 List<String> asList = new ArrayList<>();
+                 for (String id : ids) {
+                    
+                     if(!asList.contains(id)){
+                         try{
+                            Long.parseLong(id);
+                            asList.add(id);
+                         }catch(Exception e){
+                             
+                         }
+                     }
+                     
+                }
+                 //list  去重
+                 /*HashSet<String> set=new HashSet<>(asList);
+                 asList.clear();
+                 asList.addAll(set);
+                 asList.remove(",");
+                 asList.remove("undefined");*/
+                 paramMap.put("id", asList);
+                 
+             }else{
+                 try{
+                     Long.parseLong(anIds);
+                     paramMap.put("id", anIds);
+                 }catch(Exception e){
+                     
+                 }
+             }
+             return this.selectByProperty(paramMap);
+             
+         }
+         
+         return new ArrayList<T>();
+     }
+     
+    /**
+     * 根据id更新基础数据的状态
+     * @param anId
+     * @param anBusinStatus
+     * @param anLockedStatus
+     * @param anDocStatus
+     * @return
+     */
+     public T updateStatusByPrimaryKey(Long anId,String anBusinStatus,String anLockedStatus,String anDocStatus){
+         T t = this.selectByPrimaryKey(anId);
+         t.setBusinStatus(anBusinStatus);
+         t.setDocStatus(anDocStatus);
+         t.setLockedStatus(anLockedStatus);
+         this.updateByPrimaryKeySelective(t);
+         return t;
+     }
+     
+     
 }

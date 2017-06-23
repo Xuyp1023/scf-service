@@ -5,9 +5,11 @@ import java.util.List;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.document.entity.CustFileItem;
@@ -80,6 +82,9 @@ public class ContractLedger  implements BetterjrEntity {
 
     @Column(name = "l_buyer_no",  columnDefinition="INTEGER" )
     private Long buyerNo;
+    
+    @Column(name = "l_core_custNo",  columnDefinition="INTEGER" )
+    private Long coreCustNo;
 
     @Column(name = "l_supplier_no",  columnDefinition="INTEGER" )
     private Long supplierNo;
@@ -142,6 +147,15 @@ public class ContractLedger  implements BetterjrEntity {
     private List<CustFileItem> custFileList=new ArrayList<CustFileItem>();
 
     private static final long serialVersionUID = -2337760108713768519L;
+
+    
+    public Long getCoreCustNo() {
+        return this.coreCustNo;
+    }
+
+    public void setCoreCustNo(Long anCoreCustNo) {
+        this.coreCustNo = anCoreCustNo;
+    }
 
     public Long getId() {
         return id;
@@ -423,7 +437,6 @@ public class ContractLedger  implements BetterjrEntity {
         this.isLatest = anIsLatest;
     }
 
-
     @Override
     public String toString() {
         return "ContractLedger [id=" + this.id + ", agreeName=" + this.agreeName + ", agreeNo=" + this.agreeNo + ", supplier=" + this.supplier
@@ -431,11 +444,11 @@ public class ContractLedger  implements BetterjrEntity {
                 + this.deliveryAddr + ", checkAccept=" + this.checkAccept + ", objectionPeriod=" + this.objectionPeriod + ", agreeStartDate="
                 + this.agreeStartDate + ", agreeEndDate=" + this.agreeEndDate + ", regDate=" + this.regDate + ", regTime=" + this.regTime
                 + ", modiDate=" + this.modiDate + ", modiTime=" + this.modiTime + ", businStatus=" + this.businStatus + ", buyerNo=" + this.buyerNo
-                + ", supplierNo=" + this.supplierNo + ", operId=" + this.operId + ", operName=" + this.operName + ", operOrg=" + this.operOrg
-                + ", batchNo=" + this.batchNo + ", defaultFlag=" + this.defaultFlag + ", des=" + this.des + ", signDate=" + this.signDate
-                + ", signAddr=" + this.signAddr + ", custNo=" + this.custNo + ", custName=" + this.custName + ", lockedStatus=" + this.lockedStatus
-                + ", refNo=" + this.refNo + ", version=" + this.version + ", isLatest=" + this.isLatest + ", businVersionStatus="
-                + this.businVersionStatus + ", custFileList=" + this.custFileList + "]";
+                + ", coreCustNo=" + this.coreCustNo + ", supplierNo=" + this.supplierNo + ", operId=" + this.operId + ", operName=" + this.operName
+                + ", operOrg=" + this.operOrg + ", batchNo=" + this.batchNo + ", defaultFlag=" + this.defaultFlag + ", des=" + this.des
+                + ", signDate=" + this.signDate + ", signAddr=" + this.signAddr + ", custNo=" + this.custNo + ", custName=" + this.custName
+                + ", lockedStatus=" + this.lockedStatus + ", refNo=" + this.refNo + ", version=" + this.version + ", isLatest=" + this.isLatest
+                + ", businVersionStatus=" + this.businVersionStatus + ", custFileList=" + this.custFileList + "]";
     }
 
     @Override
@@ -525,6 +538,7 @@ public class ContractLedger  implements BetterjrEntity {
         }
         this.regTime = BetterDateUtils.getNumTime();
         this.modiTime= BetterDateUtils.getNumTime();
+        this.coreCustNo=this.buyerNo;
         this.custNo=this.supplierNo;
         this.custName=this.supplier;
         this.lockedStatus=VersionConstantCollentions.LOCKED_STATUS_INlOCKED;
@@ -547,6 +561,7 @@ public class ContractLedger  implements BetterjrEntity {
         this.operName = anContractLedger.getOperName();
         this.operOrg = anContractLedger.getOperOrg();
         this.batchNo=anContractLedger.getBatchNo();
+        this.coreCustNo=this.buyerNo;
         this.custNo=this.supplierNo;
         this.custName=this.supplier;
         this.lockedStatus=VersionConstantCollentions.LOCKED_STATUS_INlOCKED;
@@ -565,5 +580,26 @@ public class ContractLedger  implements BetterjrEntity {
         }
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime= BetterDateUtils.getNumTime();
+    }
+
+    public void checkFinanceStatus(){
+      
+        checkStatus(this.getBusinVersionStatus(), VersionConstantCollentions.BUSIN_STATUS_ANNUL, true, "当前单据已经废止,无法进行融资,凭证编号为："+this.refNo);
+        checkStatus(this.getBusinVersionStatus(), VersionConstantCollentions.BUSIN_STATUS_EXPIRE, true, "当前单据已经过期,无法进行融资,凭证编号为："+this.refNo);
+        checkStatus(this.getBusinVersionStatus(), VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE, true, "当前单据还未生效,无法进行融资,凭证编号为："+this.refNo);
+        checkStatus(this.getBusinVersionStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true, "当前单据已经转让,无法进行融资,凭证编号为："+this.refNo);
+        checkStatus(this.getBusinVersionStatus(), VersionConstantCollentions.BUSIN_STATUS_USED, true, "当前单据已经进行融资,无法进行融资,凭证编号为："+this.refNo);
+        checkStatus(this.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true, "当前单据已经进行融资,无法进行融资,凭证编号为："+this.refNo);
+        checkStatus(this.getIsLatest(), VersionConstantCollentions.IS_NOT_LATEST, true, "当前单据已经进行修改,无法对旧版本资产进行融资,凭证编号为："+this.refNo);
+    }
+    
+    /**
+     * 检查状态信息
+     */
+    public void checkStatus(String anBusinStatus, String anTargetStatus, boolean anFlag, String anMessage) {
+        if (BetterStringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
+            
+            throw new BytterTradeException(40001, anMessage);
+        }
     }
 }

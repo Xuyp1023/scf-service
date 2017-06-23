@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.modules.approval.service.ScfBaseApprovalService;
+import com.betterjr.modules.asset.service.ScfAssetService;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestTemp;
 import com.betterjr.modules.loan.service.ScfRequestService;
@@ -27,6 +28,8 @@ public class ScfApplicationService extends ScfBaseApprovalService{
 	private ScfRequestService requestService;
 	@Autowired
 	private ScfProductConfigService productConfigService;
+	@Autowired
+    private ScfAssetService assetService;
 	
 	public ScfRequestTemp savApplication(Map<String, Object> anContext){
 		ScfRequestTemp temp = requestTempService.findRequestTemp(anContext.get("requestNo").toString());
@@ -41,6 +44,7 @@ public class ScfApplicationService extends ScfBaseApprovalService{
 	 * @return
 	 */
 	public ScfRequest savRequest(ScfRequestTemp anTemp){
+	    assetService.saveConfirmAsset(Long.parseLong(anTemp.getOrders()));
 		ScfRequest request = new ScfRequest();
 		request.setRequestNo(anTemp.getRequestNo());
 		request.setLoanNo(anTemp.getRequestNo());

@@ -39,7 +39,6 @@ public class ScfAssetCompany implements BetterjrEntity{
      * 创建日期
      */
     @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
-    @OrderBy("ASC")
     @MetaData( value="创建日期", comments = "创建日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
@@ -80,7 +79,7 @@ public class ScfAssetCompany implements BetterjrEntity{
     private String assetRole;
     
     /**
-     * 企业名称
+     * 企业对此资产的操作权限 
      */
     @Column(name = "N_OPERATOR_STATUS",  columnDefinition="INTEGER" )
     @MetaData( value="企业对此资产的操作权限 1 读 2 写 4 删除", comments = "企业对此资产的操作权限 1 读 2 写 4 删除")

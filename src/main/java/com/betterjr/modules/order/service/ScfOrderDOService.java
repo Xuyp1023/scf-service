@@ -101,11 +101,11 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
          checkOperatorModifyStatus(UserUtils.getOperatorInfo(),order);
          // 应收账款信息变更迁移初始化
          //anModiOrder.setId(anOrder.getId());
+         order=anModiOrder.initModifyValue(order);
          order.setCustName(custAccountService.queryCustName(anModiOrder.getCustNo()));
          order.setCoreCustName(custAccountService.queryCustName(anModiOrder.getCoreCustNo()));
          // 操作机构设置为供应商
          order.setOperOrg(baseService.findBaseInfo(order.getCustNo()).getOperOrg());
-         order=anModiOrder.initModifyValue(order);
          // 保存附件信息
          if(StringUtils.isNotBlank(anFileList)){
              order.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anFileList, order.getBatchNo()));

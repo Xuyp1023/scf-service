@@ -9,6 +9,9 @@ import javax.persistence.OrderBy;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.exception.BytterTradeException;
+import com.betterjr.common.utils.BetterStringUtils;
+import com.betterjr.modules.version.constant.VersionConstantCollentions;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -32,7 +35,6 @@ public class BaseVersionEntity implements BetterjrEntity{
      */
     @Column(name = "C_Ref_NO",  columnDefinition="VARCHAR" )
     @MetaData( value="特性编码", comments = "单特性编码")
-    @OrderBy("DESC")
     private String refNo;
     
     /**
@@ -40,7 +42,6 @@ public class BaseVersionEntity implements BetterjrEntity{
      */
     @Column(name = "N_VERSION",  columnDefinition="VARCHAR" )
     @MetaData( value="版本", comments = "版本")
-    @OrderBy("DESC")
     private String version;
     
     /**
@@ -205,5 +206,26 @@ public class BaseVersionEntity implements BetterjrEntity{
         this.id = anId;
     }
     
+    public void checkFinanceStatus(){
+      
+        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_ANNUL, true, "当前单据已经废止,无法进行融资,凭证编号为："+this.refNo);
+        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EXPIRE, true, "当前单据已经过期,无法进行融资,凭证编号为："+this.refNo);
+        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE, true, "当前单据还未生效,无法进行融资,凭证编号为："+this.refNo);
+        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true, "当前单据已经转让,无法进行融资,凭证编号为："+this.refNo);
+        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_USED, true, "当前单据已经进行融资,无法进行融资,凭证编号为："+this.refNo);
+        checkStatus(this.getDocStatus(), VersionConstantCollentions.DOC_STATUS_ANNUL, true, "当前单据已经废止,无法进行融资,凭证编号为："+this.refNo);
+        checkStatus(this.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true, "当前单据已经进行融资,无法进行融资,凭证编号为："+this.refNo);
+        checkStatus(this.getIsLatest(), VersionConstantCollentions.IS_NOT_LATEST, true, "当前单据已经进行修改,无法对旧版本资产进行融资,凭证编号为："+this.refNo);
+        
+    }
     
+    /**
+     * 检查状态信息
+     */
+    public void checkStatus(String anBusinStatus, String anTargetStatus, boolean anFlag, String anMessage) {
+        if (BetterStringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
+            
+            throw new BytterTradeException(40001, anMessage);
+        }
+    }
 }

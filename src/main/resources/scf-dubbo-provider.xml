@@ -25,6 +25,7 @@
 		com.betterjr.modules.enquiry,
 		com.betterjr.modules.order,
 		com.betterjr.modules.asset,
+        com.betterjr.modules.busintype,
 		com.betterjr.modules.receivable,
 		com.betterjr.modules.acceptbill,
         com.betterjr.modules.cert.dubbo,
