@@ -14,8 +14,10 @@ import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.account.service.CustAccountService;
+import com.betterjr.modules.asset.data.AssetConstantCollentions;
 import com.betterjr.modules.customer.ICustMechBaseService;
 import com.betterjr.modules.document.ICustFileService;
+import com.betterjr.modules.joblog.data.LogConstantCollections;
 import com.betterjr.modules.receivable.dao.ScfReceivableDOMapper;
 import com.betterjr.modules.receivable.entity.ScfReceivableDO;
 import com.betterjr.modules.version.constant.VersionConstantCollentions;
@@ -253,6 +255,36 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
     public List<ScfReceivableDO> saveResolveFile(List<Map<String,Object>> listMap) {
         
         return null;
+    }
+
+
+    /**
+     * 定时任务自动处理过期的票据信息
+     */
+    public void saveExpireEndDataList() {
+        
+        
+        List<ScfReceivableDO> endDataList = this.queryEndedDataList();
+        if(!Collections3.isEmpty(endDataList)){
+            
+            int size = endDataList.size();
+            int numEach=size %LogConstantCollections.LOG_RECORD_SIZE==0?size/LogConstantCollections.LOG_RECORD_SIZE:size/LogConstantCollections.LOG_RECORD_SIZE+1;
+            for (int i=0;i<numEach;i++) {
+                
+                if(i+1==numEach){
+                    saveExpireList(endDataList.subList(LogConstantCollections.LOG_RECORD_SIZE*i, size), AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL, (i+1)+"");
+                    
+                }else{
+                    
+                    saveExpireList(endDataList.subList(LogConstantCollections.LOG_RECORD_SIZE*i, LogConstantCollections.LOG_RECORD_SIZE*(i+1)), AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL, (i+1)+"");
+                    
+                }
+                
+            }
+            
+            
+        }
+        
     }
     
 }

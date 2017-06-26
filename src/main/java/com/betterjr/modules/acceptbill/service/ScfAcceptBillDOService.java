@@ -20,8 +20,10 @@ import com.betterjr.modules.acceptbill.entity.ScfAcceptBillDO;
 import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.account.service.CustAccountService;
+import com.betterjr.modules.asset.data.AssetConstantCollentions;
 import com.betterjr.modules.customer.ICustMechBaseService;
 import com.betterjr.modules.document.ICustFileService;
+import com.betterjr.modules.joblog.data.LogConstantCollections;
 import com.betterjr.modules.version.constant.VersionConstantCollentions;
 import com.betterjr.modules.version.service.BaseVersionService;
 
@@ -400,6 +402,35 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
             logger.warn(anMessage);
             throw new BytterTradeException(40001, anMessage);
         }
+    }
+
+    /**
+     * 定时任务自动处理过期的票据信息
+     */
+    public void saveExpireEndDataList() {
+        
+        
+        List<ScfAcceptBillDO> endDataList = this.queryEndedDataList();
+        if(!Collections3.isEmpty(endDataList)){
+            
+            int size = endDataList.size();
+            int numEach=size %LogConstantCollections.LOG_RECORD_SIZE==0?size/LogConstantCollections.LOG_RECORD_SIZE:size/LogConstantCollections.LOG_RECORD_SIZE+1;
+            for (int i=0;i<numEach;i++) {
+                
+                if(i+1==numEach){
+                    saveExpireList(endDataList.subList(LogConstantCollections.LOG_RECORD_SIZE*i, size), AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL, (i+1)+"");
+                    
+                }else{
+                    
+                    saveExpireList(endDataList.subList(LogConstantCollections.LOG_RECORD_SIZE*i, LogConstantCollections.LOG_RECORD_SIZE*(i+1)), AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL, (i+1)+"");
+                    
+                }
+                
+            }
+            
+            
+        }
+        
     }
     
     
