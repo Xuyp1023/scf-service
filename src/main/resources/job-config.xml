@@ -14,25 +14,25 @@
 	<reg:zookeeper id="scfCenter" server-lists="${elastic.job.serverLists}"
 		namespace="${elastic.job.namespace}" base-sleep-time-milliseconds="${elastic.job.baseSleepTimeMilliseconds}"
 		max-sleep-time-milliseconds="${elastic.job.maxSleepTimeMilliseconds}"
-		max-retries="${elastic.job.maxRetries}" />
+		max-retries="${elastic.job.maxRetries}" overwrite="true" />
     
     <!-- 每天凌晨一点半执行票据过期 -->
 	<job:simple id="acceptBillExpireplanJob"
 		class="com.betterjr.modules.joblog.job.ScfAcceptBillExpirePlanJob"
-		registry-center-ref="scfCenter" cron="0 30 1 1/1 * ?"
-		sharding-total-count="1" sharding-item-parameters="0=A" />
+		registry-center-ref="scfCenter" cron="0 30 1 * * ?"
+        sharding-total-count="3" sharding-item-parameters="0=A,1=B,2=C" overwrite="true" />
   
    <!-- 每天凌晨一点执行应收应付账款过期 -->
 	<job:simple id="receivableExpireplanJob"
 		class="com.betterjr.modules.joblog.job.ScfReceivableExpirePlanJob"
-		registry-center-ref="scfCenter" cron="0 0 1 1/1 * ?"
-		sharding-total-count="1" sharding-item-parameters="0=A" />
+		registry-center-ref="scfCenter" cron="0 30 1 * * ?"
+		sharding-total-count="1" sharding-item-parameters="0=A" overwrite="true" />
   
   
 	<job:simple id="payplanJob"
 		class="com.betterjr.modules.loan.job.PayPlanJob"
 		registry-center-ref="scfCenter" cron="0 0 0 1/1 * ?"
-		sharding-total-count="1" sharding-item-parameters="0=A" />
+		sharding-total-count="3" sharding-item-parameters="0=A,1=B,2=C" />
 
    <job:simple id="queryProductJob"
     class="com.betterjr.modules.supplychain.job.QueryProductInfoJob"

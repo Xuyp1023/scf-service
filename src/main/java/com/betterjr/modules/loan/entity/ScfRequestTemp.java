@@ -37,6 +37,10 @@ public class ScfRequestTemp implements BetterjrEntity {
 	@Column(name = "L_BALANCE",  columnDefinition="DOUBLE" )
     @MetaData( value="申请金额", comments = "申请金额")
     private BigDecimal balance;
+	
+	@Column(name = "F_TOTALBALANCE",  columnDefinition="DOUBLE" )
+	@MetaData( value="申请总金额（来自资产）", comments = "申请总金额（来自资产）")
+	private BigDecimal totalBalance;
 
 	@Column(name = "N_PERIOD",  columnDefinition="INT" )
     @MetaData( value="申请期限", comments = "申请期限")
@@ -447,19 +451,20 @@ public class ScfRequestTemp implements BetterjrEntity {
 		return true;
 	}
 	
-	@Override
-	public String toString() {
-		return "ScfRequestTemp [requestNo=" + requestNo + ", balance=" + balance + ", period=" + period + ", factorNo="
-				+ factorNo + ", periodUnit=" + periodUnit + ", productCode=" + productCode + ", custNo=" + custNo
-				+ ", coreCustNo=" + coreCustNo + ", suppBankAccount=" + suppBankAccount + ", businStatus=" + businStatus
-				+ ", regOperId=" + regOperId + ", modiOperId=" + modiOperId + ", modiOperName=" + modiOperName
-				+ ", modiDate=" + modiDate + ", modiTime=" + modiTime + ", version=" + version + ", regOperName="
-				+ regOperName + ", regDate=" + regDate + ", regTime=" + regTime + ", operOrg=" + operOrg + ", orders="
-				+ orders + ", description=" + description + ", factorName=" + factorName + ", productName="
-				+ productName + ", custName=" + custName + ", coreCustName=" + coreCustName + "]";
-	}
 
-	public void init() {
+	@Override
+    public String toString() {
+        return "ScfRequestTemp [requestNo=" + this.requestNo + ", balance=" + this.balance + ", totalBalance=" + this.totalBalance + ", period="
+                + this.period + ", factorNo=" + this.factorNo + ", periodUnit=" + this.periodUnit + ", productCode=" + this.productCode + ", custNo="
+                + this.custNo + ", coreCustNo=" + this.coreCustNo + ", suppBankAccount=" + this.suppBankAccount + ", businStatus=" + this.businStatus
+                + ", regOperId=" + this.regOperId + ", modiOperId=" + this.modiOperId + ", modiOperName=" + this.modiOperName + ", modiDate="
+                + this.modiDate + ", modiTime=" + this.modiTime + ", version=" + this.version + ", regOperName=" + this.regOperName + ", regDate="
+                + this.regDate + ", regTime=" + this.regTime + ", operOrg=" + this.operOrg + ", orders=" + this.orders + ", description="
+                + this.description + ", factorName=" + this.factorName + ", productName=" + this.productName + ", custName=" + this.custName
+                + ", coreCustName=" + this.coreCustName + "]";
+    }
+
+    public void init() {
         this.businStatus = "1";
         this.requestNo = SequenceFactory.generate("PLAT_FACTOR_PRODUCT", "SQ#{Date:yy}#{Seq:14}");
         this.regOperName = UserUtils.getUserName();
@@ -496,8 +501,15 @@ public class ScfRequestTemp implements BetterjrEntity {
 	@Transient
     private String coreCustName;
 
+	public BigDecimal getTotalBalance() {
+        return this.totalBalance;
+    }
 
-	public String getFactorName() {
+    public void setTotalBalance(BigDecimal anTotalBalance) {
+        this.totalBalance = anTotalBalance;
+    }
+
+    public String getFactorName() {
 		return factorName;
 	}
 
