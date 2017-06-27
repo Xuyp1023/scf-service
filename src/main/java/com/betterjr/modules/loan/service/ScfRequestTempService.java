@@ -31,6 +31,7 @@ public class ScfRequestTempService extends BaseService<ScfRequestTempMapper, Scf
 		BTAssert.notNull(anRequest, "保存失败，anRequest不能为空");
 		ScfAsset asset = assetService.saveAddAsset(anMap);
 		anRequest.setOrders(asset.getId()+"");
+		anRequest.setTotalBalance(asset.getBalance());
 		anRequest.init();
 		this.insert(anRequest);
 		setName(anRequest);
@@ -46,11 +47,29 @@ public class ScfRequestTempService extends BaseService<ScfRequestTempMapper, Scf
 		}
 		ScfAsset asset = assetService.saveAddAsset(anMap);
 		anRequest.setOrders(asset.getId()+"");
+		anRequest.setTotalBalance(asset.getBalance());;
 		anRequest.initModify("1");
 		this.updateByPrimaryKeySelective(anRequest);
 		anRequest  = this.selectByPrimaryKey(anRequest.getRequestNo());
 		setName(anRequest);
 		return anRequest;
+	}
+	
+	/**
+	 * 融资申请作废
+	 * @param anRequestNo
+	 * @return
+	 */
+	public ScfRequestTemp saveAnnulRequestTemp(String anRequestNo){
+	    
+	    BTAssert.notNull(anRequestNo, "修改失败，anRequest不能为空");
+	    ScfRequestTemp request = this.selectByPrimaryKey(anRequestNo);
+	    BTAssert.notNull(request, "修改失败，anRequest不能为空");
+	    request.setBusinStatus("3");
+	    assetService.saveAnnulAsset(Long.parseLong(request.getOrders()));
+	    this.updateByPrimaryKeySelective(request);
+	    return request;
+	    
 	}
 	
 	public ScfRequestTemp saveModifyTemp(ScfRequestTemp anRequest, String anRequestNo) {

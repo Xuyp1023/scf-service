@@ -1,14 +1,16 @@
 package com.betterjr.modules.receivable.entity;
 
 import java.math.BigDecimal;
+
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
+
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
+import com.betterjr.common.mapper.CustTimeJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
@@ -148,6 +150,7 @@ public class ScfReceivableDO extends BaseVersionEntity{
      */
     @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
     @MetaData( value="数据创建时间", comments = "数据创建时间")
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String regTime;
 
     /**
@@ -186,6 +189,7 @@ public class ScfReceivableDO extends BaseVersionEntity{
      */
     @Column(name = "T_MODI_TIME",  columnDefinition="VARCHAR" )
     @MetaData( value="编辑时间", comments = "编辑时间")
+    @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String modiTime;
 
 

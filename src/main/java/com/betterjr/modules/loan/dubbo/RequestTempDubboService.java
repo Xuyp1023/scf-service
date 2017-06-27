@@ -31,6 +31,12 @@ public class RequestTempDubboService implements IScfRequestTempService {
 		ScfRequestTemp requestTemp = (ScfRequestTemp) RuleServiceDubboFilterInvoker.getInputObj();
 		return AjaxObject.newOk(requestTempService.saveModifyTemp(requestTemp, anRequestNo,anMap)).toJson();
 	}
+	
+	@Override
+	public String webSaveAnnulRequestTemp(String anRequestNo) {
+	    //ScfRequestTemp requestTemp = (ScfRequestTemp) RuleServiceDubboFilterInvoker.getInputObj();
+	    return AjaxObject.newOk(requestTempService.saveAnnulRequestTemp(anRequestNo)).toJson();
+	}
 
 	@Override
 	public String webQueryRequestTempList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {

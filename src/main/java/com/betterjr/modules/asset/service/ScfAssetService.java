@@ -610,7 +610,7 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
                 .put("custNo", anCustNo)
                 .put("coreCustNo", anCoreCustNo)
                 .build();
-        if(StringUtils.isNoneBlank(anIds) && !"null".equals(anIds)){
+        if(StringUtils.isNoneBlank(anIds) && !"null".equals(anIds) && !"undefined".equals(anIds) && !"undefined,".equals(anIds)){
             
             List<Long> idList=convertStringToList(anIds);
             paramMap.put("NEid", idList);
@@ -750,10 +750,10 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
     
     private void checkAnnulStatus(ScfAsset anAsset) {
         
-        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ANNUL, true, "当前资产已经废止,不能进行废止"); 
+        //checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ANNUL, true, "当前资产已经废止,不能进行废止"); 
         checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ASSIGNMENT, true, "当前资产已经转让,不能进行废止"); 
         checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_EFFECTIVE, true, "当前资产已经在融资流程中,不能进行废止"); 
-        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_NOCAN_USE, true, "当前资产已经过期,不能进行废止"); 
+        //checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_NOCAN_USE, true, "当前资产已经过期,不能进行废止"); 
       
         
     }

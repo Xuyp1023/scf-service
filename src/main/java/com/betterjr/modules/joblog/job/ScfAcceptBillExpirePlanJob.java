@@ -18,7 +18,7 @@ public class ScfAcceptBillExpirePlanJob extends AbstractSimpleElasticJob{
     @Override
     public void process(JobExecutionMultipleShardingContext anShardingContext) {
         
-        //System.out.println("123");
+        System.out.println("123");
         
         billService.saveExpireEndDataList();
         
