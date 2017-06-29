@@ -300,7 +300,8 @@ public class ScfAcceptBillDOService extends BaseVersionService<ScfAcceptBillDOMa
             
             //供应商去除已经废止的票据信息
             anMap.put("NEbusinStatus",VersionConstantCollentions.BUSIN_STATUS_ANNUL);
-            
+            //票据/应收账款，在未生效时 已过期，供应商应无法查看到。
+            anMap.put("NEexpireFlagStatus",VersionConstantCollentions.EXPIRE_FLAG_STATUS_INEFFECTIVE);
         }else{
             
             if (! anMap.containsKey("coreCustNo") ||  anMap.get("coreCustNo") ==null || StringUtils.isBlank(anMap.get("coreCustNo").toString())) {

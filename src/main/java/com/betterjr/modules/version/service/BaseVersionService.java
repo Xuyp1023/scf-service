@@ -1,10 +1,13 @@
 package com.betterjr.modules.version.service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -189,6 +192,17 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
         Map<String,Object> paramMap= QueryTermBuilder.newInstance()
                 .put("refNo", refNo)
                 .put("version", version).build();
+        List<T> lists = selectByProperty(paramMap,"id desc");
+        return Collections3.getFirst(lists);
+    }
+    
+    public T selectOneLastestWithVersion(String refNo,String version) {
+        
+        Map<String,Object> paramMap= QueryTermBuilder.newInstance()
+                .put("refNo", refNo)
+                .put("version", version)
+                .put("isLatest", VersionConstantCollentions.IS_LATEST)
+                .build();
         List<T> lists = selectByProperty(paramMap,"id desc");
         return Collections3.getFirst(lists);
     }
@@ -512,6 +526,7 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
              arg0.setAuditOperName(anOperatorInfo.getName());
              arg0.setAuditData(BetterDateUtils.getNumDate());
              arg0.setAuditTime(BetterDateUtils.getNumTime());
+             arg0.setExpireFlagStatus(VersionConstantCollentions.EXPIRE_FLAG_STATUS_EFFECTIVE);
              int result = this.updateByPrimaryKey(arg0);
              return result == VersionConstantCollentions.MODIFY_SUCCESS ? arg0 : null;
          }
@@ -658,7 +673,7 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
          businStatusListParam.add(VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE);
          businStatusListParam.add(VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE);
          //设置过期时间
-         String numDate = BetterDateUtils.getNumDate();
+         String numDate = BetterDateUtils.getForwardDay();
          //long parseLong = Long.parseLong(numDate);
          
          Map<String,Object> paramMap= QueryTermBuilder.newInstance()
@@ -683,6 +698,15 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
          
          checkExpireStatus(t);
          t.setDocStatus(VersionConstantCollentions.DOC_STATUS_ANNUL);
+         if(VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE.equals(t.getBusinStatus())){
+             
+             t.setExpireFlagStatus(VersionConstantCollentions.EXPIRE_FLAG_STATUS_INEFFECTIVE);
+             
+         }else{
+             
+             t.setExpireFlagStatus(VersionConstantCollentions.EXPIRE_FLAG_STATUS_EFFECTIVE);
+             
+         }
          t.setBusinStatus(VersionConstantCollentions.BUSIN_STATUS_EXPIRE);
          this.updateByPrimaryKeySelective(t);
          
@@ -748,5 +772,61 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
          checkStatus(anAnOrder.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true, "当前单据已经冻结,不允许被编辑");
          checkStatus(anAnOrder.getDocStatus(), VersionConstantCollentions.DOC_STATUS_ANNUL, true, "当前单据已经废止,不允许被编辑");
      }
+     
+     
+     /**
+      * 融资申请过程中驳回使资产状态版本升级
+      * @param anRefNo
+      * @param anVersion
+      * @return
+      */
+     public T updateVersionByRefNoVersion(String anRefNo,String anVersion){
+         
+         BTAssert.notNull(anRefNo,"对象为空，操作失败");
+         BTAssert.notNull(anVersion,"对象为空，操作失败");
+         T t = this.selectOneLastestWithVersion(anRefNo, anVersion);
+         BTAssert.notNull(t,"对象为空，操作失败");
+         //校验当前单据是否是符合条件
+         checkRejectStatus(t);
+         //根据状态
+         t.setIsLatest(VersionConstantCollentions.IS_NOT_LATEST);
+         this.updateByPrimaryKeySelective(t);
+         try {
+             T newT = (T) t.getClass().newInstance();
+            BeanUtils.copyProperties(newT, t);
+            newT.setBusinStatus(VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE);
+            newT.setLockedStatus(VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
+            newT.setIsLatest(VersionConstantCollentions.IS_LATEST);
+            newT.setVersion(stringIncrOne(newT.getVersion()));
+            newT.setId(SerialGenerator.getLongValue(newT.getClass().getSimpleName()+".id"));
+            this.insert(newT);
+            return newT;
+        }
+        catch (IllegalAccessException | InvocationTargetException e) {
+            
+            e.printStackTrace();
+        }
+        catch (InstantiationException e) {
+            
+            e.printStackTrace();
+        }
+        catch (Exception e) {
+            logger.info("融资 解除使用失败!"+e.getMessage());
+            BTAssert.notNull(null,"融资 解除使用失败!请稍后再试");
+         }
+         
+         return null;
+     }
+     
+     
+     public void checkRejectStatus(T anAnOrder) {
+         
+         checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true, "当前单据已经转让,不允许被编辑");
+         checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_ANNUL, true, "当前单据已经废止,不允许被编辑");
+         checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EXPIRE, true, "当前单据已经过期,不允许被编辑");
+         checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_USED, false, "当前单据未被用来融资,不允许被驳回");
+         checkStatus(anAnOrder.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, false, "当前单据未被用来融资,不允许被驳回");
+     }
+     
      
 }

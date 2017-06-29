@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBillDO;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillDOService;
 import com.betterjr.modules.agreement.entity.CustAgreement;
@@ -69,10 +70,8 @@ public class ScfAssetBasedataService extends BaseService<ScfAssetBasedataMapper,
         BTAssert.notNull(anAsset, "查询资产 失败-anAsset is null");
         BTAssert.notNull(anAsset.getId(), "查询资产 失败-anAsset.getId is null");
         logger.info("Begin to query selectByAssetId"+anAsset.getId());
-        Map<String, Object> paramMap=new HashMap<String,Object>();
-        paramMap.put("assetId", anAsset.getId());
-        paramMap.put("businStatus", AssetConstantCollentions.ASSET_BUSIN_STATUS_OK);
-        List<ScfAssetBasedata> assetBasedata = this.selectByProperty(paramMap);
+        
+        List<ScfAssetBasedata> assetBasedata = queryBasedataByAssetId(anAsset.getId());
         fillBasedata(anAsset, assetBasedata);
         logger.info("success to query selectByAssetId"+anAsset.getId());
         return anAsset;
@@ -220,6 +219,61 @@ public class ScfAssetBasedataService extends BaseService<ScfAssetBasedataMapper,
             baseData.setVersion(baseVersion.getVersion());
             addAssetBasedata(baseData);
         }
+        
+    }
+
+    /**
+     * 通过资产id将基础资产初始化到最初的状态
+     * @param anAssetId
+     */
+    public void saveRejectOrBreakAssetByAssetId(Long anAssetId) {
+        
+        List<ScfAssetBasedata> basedataList = queryBasedataByAssetId(anAssetId);
+        for (ScfAssetBasedata basedata : basedataList) {
+            if(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_ORDER.equals(basedata.getInfoType())){
+                
+                orderService.updateVersionByRefNoVersion(basedata.getRefNo(), basedata.getVersion());
+            }else if(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT.equals(basedata.getInfoType())){
+                
+                agreementService.updateVersionByRefNoVersion(basedata.getRefNo(), basedata.getVersion());
+                
+            }else if(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL.equals(basedata.getInfoType())){
+                
+                acceptBillService.updateVersionByRefNoVersion(basedata.getRefNo(), basedata.getVersion());
+                
+            }else if(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE.equals(basedata.getInfoType())){
+                
+                invoiceService.updateVersionByRefNoVersion(basedata.getRefNo(), basedata.getVersion());
+                
+            }else if(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE.equals(basedata.getInfoType())){
+                
+                receivableService.updateVersionByRefNoVersion(basedata.getRefNo(), basedata.getVersion());
+                
+            }else{
+                
+                
+                
+            }
+            
+            
+        }
+        
+    }
+    
+    /**
+     * 通过资产Id查询到所有的关联的资产信息
+     * @param anAssetId
+     * @return
+     */
+    private List<ScfAssetBasedata> queryBasedataByAssetId(Long anAssetId){
+        
+        Map<String, Object> paramMap=QueryTermBuilder.newInstance()
+                    .put("assetId", anAssetId)
+                    .put("businStatus", AssetConstantCollentions.ASSET_BUSIN_STATUS_OK)
+                    .build();
+        List<ScfAssetBasedata> assetBasedata = this.selectByProperty(paramMap);
+        
+        return assetBasedata;
         
     }
 }

@@ -16,7 +16,7 @@ public class ScfReceivableExpirePlanJob extends AbstractSimpleElasticJob{
     @Override
     public void process(JobExecutionMultipleShardingContext anShardingContext) {
         
-        System.out.println("ScfReceivableExpirePlanJob..........");
+        //System.out.println("ScfReceivableExpirePlanJob..........");
         receivableService.saveExpireEndDataList();
         
     }

@@ -108,6 +108,13 @@ public class BaseVersionEntity implements BetterjrEntity{
     @MetaData(value = "审核时间", comments = "审核时间")
     private String auditTime;
     
+    /**
+     * 0: 未生效单据自动任务过期来源  1：已生效的单据自动任务过期来源
+     */
+    @Column(name = "C_EXPIRE_FLAG_STATUS", columnDefinition = "VARCHAR")
+    @MetaData(value = "0: 未生效单据自动任务过期来源  1：已生效的单据自动任务过期来源", comments = "0: 未生效单据自动任务过期来源  1：已生效的单据自动任务过期来源")
+    private String expireFlagStatus;
+    
     
     public String getRefNo() {
         return this.refNo;
@@ -206,6 +213,14 @@ public class BaseVersionEntity implements BetterjrEntity{
         this.id = anId;
     }
     
+    public String getExpireFlagStatus() {
+        return this.expireFlagStatus;
+    }
+
+    public void setExpireFlagStatus(String anExpireFlagStatus) {
+        this.expireFlagStatus = anExpireFlagStatus;
+    }
+
     public void checkFinanceStatus(){
       
         checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_ANNUL, true, "当前单据已经废止,无法进行融资,凭证编号为："+this.refNo);
