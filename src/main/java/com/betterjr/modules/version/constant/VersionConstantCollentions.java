@@ -38,6 +38,10 @@ public class VersionConstantCollentions {
     
     public static final String BILL_MODE_TYPE_PAPER_MONEY="0"; //票据的流通方式纸票
     
+    public static final String EXPIRE_FLAG_STATUS_INEFFECTIVE="0"; //0: 未生效单据自动任务过期来源    expireFlagStatus
+    
+    public static final String EXPIRE_FLAG_STATUS_EFFECTIVE="1"; //1：已生效的单据自动任务过期来源
+    
     
     
 

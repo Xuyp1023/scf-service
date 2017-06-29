@@ -2,15 +2,18 @@ package com.betterjr.modules.approval.service.receivable;
 
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.modules.approval.service.ScfBaseApprovalService;
+import com.betterjr.modules.asset.service.ScfAssetService;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.helper.RequestLastStatus;
 
 @Service
 public class ScfManagerFlowService extends ScfBaseApprovalService{
+    
 	
 	/**
 	 * 流程中止-非正常
@@ -20,7 +23,8 @@ public class ScfManagerFlowService extends ScfBaseApprovalService{
 		String requestNo  = anContext.get("requestNo").toString();
 		BTAssert.notNull(requestNo);
 		ScfRequest request = this.getReqtuest(requestNo);
-		this.updateRequestLastStatus(requestNo, RequestLastStatus.CLOSED.getCode());
+		
+		this.updateAnnulAsset(requestNo, RequestLastStatus.CLOSED.getCode());
 		//this.releaseSource(request);
 		//this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
 	}

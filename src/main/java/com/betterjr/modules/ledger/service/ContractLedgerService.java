@@ -1,11 +1,14 @@
 package com.betterjr.modules.ledger.service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterTradeException;
+import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.service.BaseService;
+import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.QueryTermBuilder;
@@ -387,6 +392,19 @@ public class ContractLedgerService  extends BaseService<ContractLedgerMapper, Co
         
     }
     
+    public ContractLedger selectLastestOneByRefNoAndVersion(String anRefNo, String anVersion) {
+        
+        Map<String,Object> paramMap= QueryTermBuilder.newInstance()
+                .put("refNo", anRefNo)
+                .put("version", anVersion)
+                .put("isLatest", VersionConstantCollentions.IS_LATEST)
+                .build();
+        List<ContractLedger> lists = selectByProperty(paramMap,"id desc");
+        return Collections3.getFirst(lists);
+        
+        
+    }
+    
     /**
      * 更新合同融资状态
      * @param anRefNo
@@ -403,5 +421,54 @@ public class ContractLedgerService  extends BaseService<ContractLedgerMapper, Co
         this.updateByPrimaryKeySelective(agreement);
     }
     
+    /**
+     * 融资申请过程中驳回使资产状态版本升级
+     * @param anRefNo
+     * @param anVersion
+     * @return
+     */
+    public ContractLedger updateVersionByRefNoVersion(String anRefNo,String anVersion){
+        
+        BTAssert.notNull(anRefNo,"对象为空，操作失败");
+        BTAssert.notNull(anVersion,"对象为空，操作失败");
+        ContractLedger agreement = this.selectLastestOneByRefNoAndVersion(anRefNo, anVersion);
+        BTAssert.notNull(agreement,"对象为空，操作失败");
+        //校验当前单据是否是符合条件
+        //checkRejectStatus(agreement);
+        //根据状态
+        agreement.setIsLatest(VersionConstantCollentions.IS_NOT_LATEST);
+        this.updateByPrimaryKeySelective(agreement);
+        try {
+            ContractLedger newAgreement = new ContractLedger();
+           BeanUtils.copyProperties(newAgreement, agreement);
+           newAgreement.setBusinStatus(VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE);
+           newAgreement.setBusinVersionStatus(VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE);
+           newAgreement.setLockedStatus(VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
+           newAgreement.setIsLatest(VersionConstantCollentions.IS_LATEST);
+           newAgreement.setVersion(stringIncrOne(newAgreement.getVersion()));
+           newAgreement.setId(SerialGenerator.getLongValue("ContractLedger.id"));
+           this.insert(newAgreement);
+           return newAgreement;
+       }
+       catch (IllegalAccessException | InvocationTargetException e) {
+           
+           e.printStackTrace();
+       }
+       catch (Exception e) {
+           logger.info("融资 解除使用失败!"+e.getMessage());
+           BTAssert.notNull(null,"融资 解除使用失败!请稍后再试");
+        }
+        
+        return null;
+    }
     
+    private String stringIncrOne(String value){
+        
+        try{
+            return (Integer.parseInt(value)+VersionConstantCollentions.VERSION_INCR_RANGE)+"";
+        }catch(Exception e){
+            return value;
+        }
+        
+    }
 }

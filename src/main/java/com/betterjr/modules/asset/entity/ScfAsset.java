@@ -740,6 +740,15 @@ public class ScfAsset implements BetterjrEntity {
         this.annulTime=BetterDateUtils.getNumTime();
     }
     
+    public void initRejectOrBreakAsset(CustOperatorInfo anOperatorInfo) {
+        
+        this.setBusinStatus(AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_NOCAN_USE);
+        this.annulDate=BetterDateUtils.getNumDate();
+        this.annulOperId=anOperatorInfo.getId();
+        this.annulOperName=anOperatorInfo.getName();
+        this.annulTime=BetterDateUtils.getNumTime();
+    }
+    
     
 
 }

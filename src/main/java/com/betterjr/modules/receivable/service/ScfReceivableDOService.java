@@ -237,6 +237,8 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
             anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
             //供应商去除已经废止的票据信息
             anMap.put("NEbusinStatus",VersionConstantCollentions.BUSIN_STATUS_ANNUL);
+            //票据/应收账款，在未生效时 已过期，供应商应无法查看到。
+            anMap.put("NEexpireFlagStatus",VersionConstantCollentions.EXPIRE_FLAG_STATUS_INEFFECTIVE);
             
         }else{
             //核心企业查询已经生效的数据

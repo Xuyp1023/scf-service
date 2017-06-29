@@ -740,9 +740,31 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         checkAnnulStatus(asset);
         //校验当前公司是否有权限
         checkCurrentCompanyPermission(asset);
-        //更新资产的状态
         
         asset.initAnnulAsset(UserUtils.getOperatorInfo());
+        this.updateByPrimaryKeySelective(asset);
+        
+        return  asset;
+    }
+    
+    
+    /**
+     * 资产融资过程中驳回中止资产信息
+     * @param anAssetId
+     * @return
+     */
+    public ScfAsset saveRejectOrBreakAsset(Long anAssetId){
+        
+        //查找资产信息
+        ScfAsset asset = findAssetByid(anAssetId);
+        //校验资产状态
+        checkAnnulStatus(asset);
+        //校验当前公司是否有权限
+        checkCurrentCompanyPermission(asset);
+        //更新资产的状态(将现在的资产设置为不是最新状态，重新升级资产的版本)
+        assetBasedataService.saveRejectOrBreakAssetByAssetId(anAssetId);
+        
+        asset.initRejectOrBreakAsset(UserUtils.getOperatorInfo());
         this.updateByPrimaryKeySelective(asset);
         
         return  asset;
@@ -752,8 +774,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         
         //checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ANNUL, true, "当前资产已经废止,不能进行废止"); 
         checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ASSIGNMENT, true, "当前资产已经转让,不能进行废止"); 
-        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_EFFECTIVE, true, "当前资产已经在融资流程中,不能进行废止"); 
-        //checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_NOCAN_USE, true, "当前资产已经过期,不能进行废止"); 
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_EFFECTIVE, false, "当前资产尚未在融资过程中,不能进行驳回"); 
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_NOCAN_USE, true, "当前资产已经过期,不能进行废止"); 
       
         
     }
@@ -916,6 +938,17 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
             logger.warn(anMessage);
             throw new BytterTradeException(40001, anMessage);
         }
+    }
+
+
+    public ScfAsset saveAssetToOne(Long anAssetId) {
+        
+        BTAssert.notNull(anAssetId, "修改资产 失败-未找到资产信息");
+        ScfAsset scfAsset = this.selectByPrimaryKey(anAssetId);
+        BTAssert.notNull(scfAsset, "修改资产 失败-未找到资产信息");
+        scfAsset.setSuffixId(123213123l);
+        this.updateByPrimaryKeySelective(scfAsset);
+        return scfAsset;
     }
     
     

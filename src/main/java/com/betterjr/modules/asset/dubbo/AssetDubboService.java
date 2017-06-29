@@ -31,5 +31,11 @@ public class AssetDubboService implements IScfAssetService {
         
         return AjaxObject.newOk("查询成功", assetService.findAssetByid(anAssetId)).toJson();
     }
+    
+    @Override
+    public String webSaveRejectOrBreakAsset(Long anAssetId) {
+        
+        return AjaxObject.newOk("驳回成功", assetService.saveRejectOrBreakAsset(anAssetId)).toJson();
+    }
 
 }

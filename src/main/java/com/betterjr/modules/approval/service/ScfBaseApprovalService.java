@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.betterjr.modules.asset.service.ScfAssetService;
 import com.betterjr.modules.credit.entity.ScfCreditInfo;
 import com.betterjr.modules.credit.service.ScfCreditDetailService;
 import com.betterjr.modules.enquiry.entity.ScfOffer;
@@ -45,6 +46,9 @@ public class ScfBaseApprovalService {
 	public ScfSupplierPushService supplierPushService;
 	@Autowired
 	private ScfEnquiryService enquiryService;
+	
+	@Autowired 
+    private ScfAssetService assetService;
 
 	/**
 	 * 修改项目状态
@@ -67,13 +71,32 @@ public class ScfBaseApprovalService {
 	 * @param anContext
 	 * @return
 	 */
-	public void updateRequestLastStatus(String anRequestNo, String anLastStatus) {
+	public ScfRequest updateRequestLastStatus(String anRequestNo, String anLastStatus) {
+	    
 		ScfRequest request = requestService.selectByPrimaryKey(anRequestNo);
+		//基础资产驳回
+        //assetService.saveRejectOrBreakAsset(Long.parseLong(request.getOrders()));
         if (request != null) {
             request.setLastStatus(anLastStatus);
             requestService.saveModifyRequest(request, anRequestNo);
-        }  
+        } 
+        return request;
 	}
+	
+	/**
+	 * 流程作废
+	 * @param anRequestNo
+	 * @param anLastStatus
+	 */
+	public void updateAnnulAsset(String anRequestNo, String anLastStatus) {
+	    
+	    ScfRequest request = updateRequestLastStatus(anRequestNo, anLastStatus);
+	    
+	    //基础资产驳回
+	    assetService.saveRejectOrBreakAsset(Long.parseLong(request.getOrders()));
+	   
+	}
+
 
 	/**
 	 * 冻结资源
