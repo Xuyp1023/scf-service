@@ -5,10 +5,13 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.approval.service.ScfBaseApprovalService;
 import com.betterjr.modules.asset.service.ScfAssetService;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.entity.ScfRequestTemp;
+import com.betterjr.modules.loan.helper.RequestType;
 import com.betterjr.modules.loan.service.ScfRequestService;
 import com.betterjr.modules.loan.service.ScfRequestTempService;
 import com.betterjr.modules.productconfig.entity.ScfProductConfig;
@@ -59,7 +62,13 @@ public class ScfApplicationService extends ScfBaseApprovalService{
 		request.setDescription(anTemp.getDescription());
 		request.setSuppBankAccount(anTemp.getSuppBankAccount());
 		request.setOrders(anTemp.getOrders());
+		request.setRequestType(RequestType.RECEIVABLE.getCode());
 		request.setRequestFrom("1");
+		request.setRegOperName(anTemp.getRegOperName());
+        request.setRegOperId(anTemp.getRegOperId());
+        request.setOperOrg(anTemp.getOperOrg());
+        request.setRegDate(anTemp.getRegDate());
+        request.setRegTime(anTemp.getRegTime());
 		ScfProductConfig product = productConfigService.findProductByCode(request.getProductCode());
 		request.setProductId(product.getId());
 		request.setLastStatus("1");
