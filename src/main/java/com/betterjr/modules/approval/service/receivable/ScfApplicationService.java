@@ -69,6 +69,7 @@ public class ScfApplicationService extends ScfBaseApprovalService{
         request.setOperOrg(anTemp.getOperOrg());
         request.setRegDate(anTemp.getRegDate());
         request.setRegTime(anTemp.getRegTime());
+        request.setRequestDate(anTemp.getRegDate());
 		ScfProductConfig product = productConfigService.findProductByCode(request.getProductCode());
 		request.setProductId(product.getId());
 		request.setLastStatus("1");
