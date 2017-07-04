@@ -160,6 +160,10 @@ public class CommissionMonthlyStatementRecord implements BetterjrEntity {
     @MetaData( value="", comments = "")
     private Long version;
 
+    @Column(name = "F_DAYS",  columnDefinition="INTEGER" )
+    @MetaData( value="结算利息的天数", comments = "结算利息的天数")
+    private Long days;
+
     private static final long serialVersionUID = 1493796206917L;
 
     public Long getId() {
@@ -338,6 +342,14 @@ public class CommissionMonthlyStatementRecord implements BetterjrEntity {
         this.version = version;
     }
 
+    public Long getDays() {
+        return this.days;
+    }
+
+    public void setDays(Long anDays) {
+        this.days = anDays;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -366,6 +378,7 @@ public class CommissionMonthlyStatementRecord implements BetterjrEntity {
         sb.append(", regDate=").append(regDate);
         sb.append(", regTime=").append(regTime);
         sb.append(", version=").append(version);
+        sb.append(", days=").append(days);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -452,6 +465,7 @@ public class CommissionMonthlyStatementRecord implements BetterjrEntity {
             this.interestRate=anDailyStatement.getInterestRate();
             this.custName=anDailyStatement.getOwnCustName();
             this.custNo=anDailyStatement.getOwnCustNo();
+            this.days=anDailyStatement.getDays();
         }
         this.regDate=BetterDateUtils.getNumDate();
         this.regTime=BetterDateUtils.getNumTime();

@@ -1,4 +1,4 @@
-package com.betterjr.modules.commission.service;
+    package com.betterjr.modules.commission.service;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -206,6 +206,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
             dailyStatement.setInterest(interset);
             dailyStatement.setInterestRate(rate);
             dailyStatement.setEndInterestDate(anEndInterestDate);
+            dailyStatement.setDays(lTerm);
             this.updateByPrimaryKey(dailyStatement);
             resultDailyStatementList.add(dailyStatement);
         }
@@ -320,7 +321,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
          Map<String, Object> resultMp=new HashMap<String, Object>();
          resultMp=getConfigData();
          final CustOperatorInfo custOperator = (CustOperatorInfo) UserUtils.getPrincipal().getUser();
-         resultMp.put("dailyRefNo",SequenceFactory.generate("PLAT_COMMISSION_DAILY_REFNO",custOperator.getOperOrg(), "DB#{Date:yyyyMMdd}#{Seq:8}", "D"));
+         resultMp.put("refNo",SequenceFactory.generate("PLAT_COMMISSION_DAILY_REFNO",custOperator.getOperOrg(), "DB#{Date:yyyyMMdd}#{Seq:8}", "D"));
          resultMp.put("totalBalance", payResult.getTotalBalance());
          resultMp.put("payDate", anPayDate);
          resultMp.put("ownCustNo", anOwnCustNo);
