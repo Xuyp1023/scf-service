@@ -250,6 +250,11 @@ public class CommissionDailyStatement implements BetterjrEntity {
     @MetaData( value="文件ID", comments = "文件ID")
     private Long fileId;
     
+
+    @Column(name = "F_DAYS",  columnDefinition="INTEGER" )
+    @MetaData( value="结算利息的天数", comments = "结算利息的天数")
+    private Long days;
+    
     @Transient
     private String makeDateTime;
 
@@ -567,6 +572,14 @@ public class CommissionDailyStatement implements BetterjrEntity {
         this.makeDateTime = anMakeDateTime;
     }
 
+    public Long getDays() {
+        return this.days;
+    }
+
+    public void setDays(Long anDays) {
+        this.days = anDays;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -610,6 +623,7 @@ public class CommissionDailyStatement implements BetterjrEntity {
         sb.append(", endInterestDate=").append(endInterestDate);
         sb.append(", interest=").append(interest);
         sb.append(", interestRate=").append(interestRate);
+        sb.append(", days=").append(days);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
