@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.modules.account.service.CustAccountService;
@@ -17,11 +18,19 @@ import com.betterjr.modules.loan.entity.ScfAssetRegister;
 @Service
 public class ScfAssetRegisterService extends BaseService<ScfAssetRegisterMapper, ScfAssetRegister> {
 	
-	 @Autowired
-	    private CustAccountService custAccountService;
+	@Autowired
+	private CustAccountService custAccountService;
 
 	public ScfAssetRegister addRegister(ScfAssetRegister anRegister) {
 		BTAssert.notNull(anRegister, "保存记录失败-anRegister不能为空");
+		if (BetterStringUtils.isNotEmpty(anRegister.getRequestNo())) {
+			// 删除原有的登记
+			ScfAssetRegister oldRegister = findAssestRegisterByRequestNo(anRegister.getRequestNo());
+			if (oldRegister != null) {
+				this.delete(anRegister);
+			}
+		}
+		
 		anRegister.init();
 		anRegister.setRegisterCustName(custAccountService.queryCustName(anRegister.getRegisterCustNo()));
 		this.insert(anRegister);

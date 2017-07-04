@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.modules.account.service.CustAccountService;
@@ -25,6 +26,15 @@ public class ScfAssetCheckService extends BaseService<ScfAssetCheckMapper, ScfAs
 
     public ScfAssetCheck addAssetCheck(ScfAssetCheck anCheck) {
         BTAssert.notNull(anCheck, "保存记录失败-anCheck不能为空");
+        
+        if(BetterStringUtils.isNotEmpty(anCheck.getRequestNo())){
+        	//删除原有的登记
+        	ScfAssetCheck oldCheck = findAssestCheckByRequestNo(anCheck.getRequestNo());
+        	if(oldCheck != null){
+        		this.delete(oldCheck);
+        	}
+        }
+        
         anCheck.init();
         this.insert(anCheck);
         return anCheck;
