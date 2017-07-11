@@ -30,6 +30,7 @@ import com.betterjr.modules.agreement.entity.ScfRequestOpinion;
 import com.betterjr.modules.agreement.entity.ScfRequestProtacal;
 import com.betterjr.modules.agreement.service.ScfAgreementService;
 import com.betterjr.modules.agreement.service.ScfFactorRemoteHelper;
+import com.betterjr.modules.asset.service.ScfAssetService;
 import com.betterjr.modules.credit.entity.ScfCredit;
 import com.betterjr.modules.credit.entity.ScfCreditInfo;
 import com.betterjr.modules.credit.service.ScfCreditDetailService;
@@ -101,6 +102,9 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
 	private ScfAgreementService agreementService;
 	@Autowired
 	private ScfContractTemplateService contractTemplateService;
+	
+	@Autowired
+	private ScfAssetService assetService;
 
 	@Reference(interfaceClass = ICustMechLawService.class)
 	private ICustMechLawService mechLawService;
@@ -444,6 +448,9 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
 		
 		//----占用授信处理----
 		this.occupyCredit(anLoan);
+		
+		//修改资产的状态
+		assetService.saveAssignmentAssetToFactory(Long.parseLong(request.getOrders()));
 		
 		return request;
 	}
