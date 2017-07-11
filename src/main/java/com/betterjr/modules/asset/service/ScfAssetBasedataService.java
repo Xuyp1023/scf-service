@@ -276,4 +276,20 @@ public class ScfAssetBasedataService extends BaseService<ScfAssetBasedataMapper,
         return assetBasedata;
         
     }
+
+    /**
+     * 将旧的资产记录信息转移到新的资产记录信息
+     * @param anOldId
+     * @param anNewId
+     */
+    public void saveInsertBaseDataFromOldToNewWithId(Long anOldId, Long anNewId) {
+        
+        List<ScfAssetBasedata> baseDataList = queryBasedataByAssetId(anOldId);
+        for (ScfAssetBasedata baseData : baseDataList) {
+            baseData.setAssetId(anNewId);
+            baseData.initAdd();
+            this.insertSelective(baseData);
+        }
+        
+    }
 }
