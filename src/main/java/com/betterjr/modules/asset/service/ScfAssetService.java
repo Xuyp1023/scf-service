@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.math.analysis.integration.LegendreGaussIntegrator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -712,8 +713,11 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
      */
     public  synchronized ScfAsset saveConfirmAsset(Long anAssetId){
         
+        BTAssert.notNull(anAssetId, "资产确认失败,请选择要确认的资产");
         //查找资产信息
         ScfAsset asset = findAssetByid(anAssetId);
+        BTAssert.notNull(asset, "资产确认失败,请选择要确认的资产");
+        logger.info("saveConfirmAsset begin:..资产确认提交，走融资流程 Asset="+asset+"  当前操作用户为:"+UserUtils.getOperatorInfo().getName());
         //校验资产状态
         checkConfirmStatus(asset);
         //校验当前公司是否有权限
@@ -724,6 +728,7 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         asset.setBusinStatus(AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_EFFECTIVE);
         this.updateByPrimaryKeySelective(asset);
         
+        logger.info("saveConfirmAsset end:..资产确认提交，走融资流程 Asset="+asset+"  当前操作用户为:"+UserUtils.getOperatorInfo().getName());
         return  asset;
     }
     
@@ -734,8 +739,11 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
      */
     public ScfAsset saveAnnulAsset(Long anAssetId){
         
+        BTAssert.notNull(anAssetId, "资产作废失败,请选择要作废的资产");
         //查找资产信息
         ScfAsset asset = findAssetByid(anAssetId);
+        BTAssert.notNull(asset, "资产作废失败,请选择要作废的资产");
+        logger.info("saveAnnulAsset begin:..资产作废资产信息 Asset="+asset+"  当前操作用户为:"+UserUtils.getOperatorInfo().getName());
         //校验资产状态
         checkAnnulStatus(asset);
         //校验当前公司是否有权限
@@ -744,6 +752,7 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         asset.initAnnulAsset(UserUtils.getOperatorInfo());
         this.updateByPrimaryKeySelective(asset);
         
+        logger.info("saveAnnulAsset end:..资产作废资产信息 Asset="+asset+"  当前操作用户为:"+UserUtils.getOperatorInfo().getName());
         return  asset;
     }
     
@@ -755,8 +764,12 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
      */
     public ScfAsset saveRejectOrBreakAsset(Long anAssetId){
         
+        
+        BTAssert.notNull(anAssetId, "资产驳回失败,请选择要驳回的资产");
         //查找资产信息
         ScfAsset asset = findAssetByid(anAssetId);
+        BTAssert.notNull(asset, "资产驳回失败,请选择要驳回的资产");
+        logger.info("saveRejectOrBreakAsset begin:..资产融资过程中驳回中止资产信息 Asset="+asset+"  当前操作用户为:"+UserUtils.getOperatorInfo().getName());
         //校验资产状态
         checkAnnulStatus(asset);
         //校验当前公司是否有权限
@@ -766,7 +779,7 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         
         asset.initRejectOrBreakAsset(UserUtils.getOperatorInfo());
         this.updateByPrimaryKeySelective(asset);
-        
+        logger.info("saveRejectOrBreakAsset end:..资产融资过程中驳回中止资产信息 Asset="+asset+"  当前操作用户为:"+UserUtils.getOperatorInfo().getName());
         return  asset;
     }
     
@@ -949,6 +962,163 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         scfAsset.setSuffixId(123213123l);
         this.updateByPrimaryKeySelective(scfAsset);
         return scfAsset;
+    }
+    
+    
+    /**
+     * 融资结束，修改资产相关信息
+     * @param anAssetId
+     * @return
+     */
+    public ScfAsset saveAssignmentAssetToFactory(Long anAssetId){
+        
+        
+        BTAssert.notNull(anAssetId, "资产转移出错，请传递资产信息");
+        //查找当前资产信息
+        ScfAsset oldAsset = this.findAssetByid(anAssetId);
+        BTAssert.notNull(oldAsset, "资产转移出错，没有找到相关资产信息");
+        logger.info("saveAssignmentAssetToFactory begin:..资产转让：资产详细信息 oldAsset="+oldAsset+"  当前操作用户为:"+UserUtils.getOperatorInfo().getName());
+        
+        //校验当前公司是否有权限
+        checkCurrentCompanyPermission(oldAsset);
+        
+        //将原来的资产信息状态修改为已转让
+        oldAsset.setBusinStatus(AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ASSIGNMENT);
+        
+        //新增新的资产信息(拥有者变成保理公司)
+        ScfAsset newAsset = new ScfAsset();
+        try {
+            BeanUtils.copyProperties(newAsset, oldAsset);
+        }
+        catch (Exception e) {
+            BTAssert.notNull(null, "资产转移出错，请查询当前资产详细信息");
+            logger.info("资产转移出错，请查询当前资产详细信息 anAsset="+oldAsset+"  当前操作用户为:"+UserUtils.getOperatorInfo().getName()+" 错误信息为:"+e.getMessage());
+        }
+        BTAssert.notNull(newAsset, "资产转移出错，请查询当前资产详细信息");
+        newAsset.initAdd();
+        Object object = newAsset.getCustMap().get(AssetConstantCollentions.FACTORY_CUST_INFO_KEY);
+        if(object !=null && object instanceof CustInfo){
+            
+            CustInfo factoryCustInfo=(CustInfo) object;
+            newAsset.setCustNo(factoryCustInfo.getCustNo());
+            newAsset.setCustName(factoryCustInfo.getCustName());
+        }
+        newAsset.setPrefixId(oldAsset.getId());
+        oldAsset.setSuffixId(newAsset.getId());
+        //修改资产基础数据的状态（变成已经转让的状态）
+        saveBaseDataStatusToAssignment(oldAsset.getBasedataMap());
+        //新增资产公司记录
+        assetCompanyService.saveInsertCompanyFromOldToNewWithId(oldAsset.getId(),newAsset.getId());
+        //新增资产基础数据记录
+        assetBasedataService.saveInsertBaseDataFromOldToNewWithId(oldAsset.getId(),newAsset.getId());
+        //回写数据
+        this.insertSelective(newAsset);
+        this.updateByPrimaryKeySelective(oldAsset);
+        logger.info("saveAssignmentAssetToFactory begin:..资产转让：资产详细信息 newAsset="+newAsset+"  当前操作用户为:"+UserUtils.getOperatorInfo().getName());
+        //返回最新的资产信息
+        return newAsset;
+        
+        
+    }
+
+
+    /**
+     * 将资产的基础数据信息的状态改成已经转让
+     * @param anBasedataMap
+     */
+    private void saveBaseDataStatusToAssignment(Map<String, Object> anBasedataMap) {
+        
+        if(anBasedataMap !=null){
+            
+            //保存订单状态转变
+            Object orderList = anBasedataMap.get(AssetConstantCollentions.SCF_ORDER_LIST_KEY);
+            saveOrderListToAssignment(orderList);
+            
+            //票据
+            Object billList = anBasedataMap.get(AssetConstantCollentions.SCF_BILL_LIST_KEY);
+            saveBillListToAssignment(billList);
+            
+            //发票
+            Object invoiceList = anBasedataMap.get(AssetConstantCollentions.SCF_INVOICE_LIST_KEY);
+            saveInvoiceListToAssignment(invoiceList);
+            
+            //应收应付账款
+            Object receivableList = anBasedataMap.get(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY);
+            saveReceivableListToAssignment(receivableList);
+            
+            //合同
+            Object agreementList = anBasedataMap.get(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY);
+            saveAgreementListToAssignment(agreementList);
+            
+            
+        }
+        
+        
+    }
+
+
+    private void saveAgreementListToAssignment(Object object) {
+        
+        if(object !=null && object instanceof List){
+            List<ContractLedger> agreementList=(List<ContractLedger>) object;
+            for (ContractLedger agreement : agreementList) {
+                agreement.setBusinStatus(VersionConstantCollentions.BUSIN_STATUS_TRANSFER);
+                agreement.setBusinVersionStatus(VersionConstantCollentions.BUSIN_STATUS_TRANSFER);
+                contractLedgerService.updateByPrimaryKeySelective(agreement);
+            }
+        }
+        
+        
+    }
+
+
+    private void saveReceivableListToAssignment(Object object) {
+        
+        if(object !=null && object instanceof List){
+            List<ScfReceivableDO> receivableList=(List<ScfReceivableDO>) object;
+            for (ScfReceivableDO receivable : receivableList) {
+                receivable.setBusinStatus(VersionConstantCollentions.BUSIN_STATUS_TRANSFER);
+                receivableService.updateByPrimaryKeySelective(receivable);
+            }
+        }
+        
+    }
+
+
+    private void saveInvoiceListToAssignment(Object object) {
+       
+        if(object !=null && object instanceof List){
+            List<ScfInvoiceDO> invoiceList=(List<ScfInvoiceDO>) object;
+            for (ScfInvoiceDO invoice : invoiceList) {
+                invoice.setBusinStatus(VersionConstantCollentions.BUSIN_STATUS_TRANSFER);
+                invoiceService.updateByPrimaryKeySelective(invoice);
+            }
+        }
+        
+    }
+
+
+    private void saveBillListToAssignment(Object object) {
+        
+        if(object !=null && object instanceof List){
+            List<ScfAcceptBillDO> billList=(List<ScfAcceptBillDO>) object;
+            for (ScfAcceptBillDO bill : billList) {
+                bill.setBusinStatus(VersionConstantCollentions.BUSIN_STATUS_TRANSFER);
+                billService.updateByPrimaryKeySelective(bill);
+            }
+        }
+        
+    }
+
+
+    private void saveOrderListToAssignment(Object object) {
+        if(object !=null && object instanceof List){
+            List<ScfOrderDO> orderList=(List<ScfOrderDO>) object;
+            for (ScfOrderDO order : orderList) {
+                order.setBusinStatus(VersionConstantCollentions.BUSIN_STATUS_TRANSFER);
+                orderService.updateByPrimaryKeySelective(order);
+            }
+        }
     }
     
     

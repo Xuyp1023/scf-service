@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustInfo;
@@ -17,6 +18,7 @@ import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.asset.dao.ScfAssetCompanyMapper;
 import com.betterjr.modules.asset.data.AssetConstantCollentions;
 import com.betterjr.modules.asset.entity.ScfAsset;
+import com.betterjr.modules.asset.entity.ScfAssetBasedata;
 import com.betterjr.modules.asset.entity.ScfAssetCompany;
 
 @Service
@@ -120,6 +122,43 @@ public class ScfAssetCompanyService extends BaseService<ScfAssetCompanyMapper, S
         company.initAdd();
         this.insert(company);
         return company;
+        
+    }
+
+    /**
+     * 将旧的资产记录信息转移到新的资产记录信息
+     * @param anId
+     * @param anId2
+     */
+    public void saveInsertCompanyFromOldToNewWithId(Long anOldId, Long anNewId) {
+        
+        
+        List<ScfAssetCompany> companyList = queryCompanyByAssetId(anOldId);
+        
+        for (ScfAssetCompany company : companyList) {
+            
+            if(!(company.getAssetRole().equals(AssetConstantCollentions.SCF_ASSET_ROLE_SUPPLY) || company.getAssetRole().equals(AssetConstantCollentions.SCF_ASSET_ROLE_DEALER))){
+                //只插入保理公司和核心企业的企业关系
+                if(company.getAssetRole().equals(AssetConstantCollentions.SCF_ASSET_ROLE_FACTORY)){
+                    company.setAssetRole(AssetConstantCollentions.SCF_ASSET_ROLE_SUPPLY); 
+                }
+                company.setAssetId(anNewId);
+                company.initAdd();
+                this.insert(company);
+            }
+        }
+        
+    }
+    
+    private List<ScfAssetCompany> queryCompanyByAssetId(Long anAssetId){
+        
+        Map<String, Object> paramMap=QueryTermBuilder.newInstance()
+                .put("assetId", anAssetId)
+                .put("businStatus", AssetConstantCollentions.ASSET_BUSIN_STATUS_OK)
+                .build();
+        List<ScfAssetCompany> companyList = this.selectByProperty(paramMap);
+        
+        return companyList;
         
     }
     
