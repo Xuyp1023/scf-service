@@ -261,6 +261,7 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
        //final BigDecimal taxRate = domainAttributeDubboClientService.findMoney(custOperator.getOperOrg(), "PLAT_COMMISSION_TAX_RATE");
        final String monthlyTemplate = domainAttributeDubboClientService.findString("GLOBAL_COMMISSION_MONTHLY_TEMPLATE");
        CommissionParam param = paramService.findParamByCustNo(Collections3.getFirst(getCurrentUserCustNos()), anCoreCustNo);
+       BTAssert.notNull(param, "请配置企业的默认利率，税率");
        //final BigDecimal interestRate = domainAttributeDubboClientService.findMoney(custOperator.getOperOrg(), "PLAT_COMMISSION_INTEREST_RATE");
        //final BigDecimal taxRate = domainAttributeDubboClientService.findMoney(custOperator.getOperOrg(), "PLAT_COMMISSION_TAX_RATE");
        final BigDecimal interestRate = param.getInterestRate();
