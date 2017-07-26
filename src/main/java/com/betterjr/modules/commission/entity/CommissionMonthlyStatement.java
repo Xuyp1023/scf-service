@@ -738,5 +738,7 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
             this.modiOperId=custOperator.getId();
             this.modiOperName=custOperator.getName();
         }
+        this.setPlainInvoiceFlag("0");
+        this.setSpecialInvoiceFlag("0");
     }
 }
