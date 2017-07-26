@@ -2,6 +2,8 @@ package com.betterjr.modules.commission.service;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +18,7 @@ import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
+import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustInfo;
@@ -26,7 +29,9 @@ import com.betterjr.modules.commission.data.CalcPayResult;
 import com.betterjr.modules.commission.entity.CommissionDailyStatement;
 import com.betterjr.modules.commission.entity.CommissionMonthlyStatement;
 import com.betterjr.modules.commission.entity.CommissionMonthlyStatementRecord;
+import com.betterjr.modules.commission.entity.CommissionParam;
 import com.betterjr.modules.config.dubbo.interfaces.IDomainAttributeService;
+import com.betterjr.modules.customer.ICustMechBaseService;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.flie.service.JxlsFileService;
 
@@ -48,6 +53,11 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
     private CustAccountService custAccountService; 
     @Autowired
     private JxlsFileService jxlsFileService;
+    
+    @Autowired
+    private CommissionParamService paramService;
+    @Reference(interfaceClass = ICustMechBaseService.class)
+    private ICustMechBaseService custMechBaseService;
      
     /***
      * 保存月报表记录
@@ -80,7 +90,7 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
         monthlyStatement.setPayFailureAmount(new BigDecimal(payResult.getPayFailureAmount()));
         monthlyStatement.setPayFailureBalance(payResult.getPayFailureBalance()==null?new BigDecimal(0):payResult.getPayFailureBalance());
         
-        Map<String,Object> configMap=getConfigData();
+        Map<String,Object> configMap=getConfigData(monthlyStatement.getOwnCustNo());
         monthlyStatement.setMakeCustName(configMap.get("makeCustName").toString());
         monthlyStatement.setMakeOperName(configMap.get("makeOperName").toString());
         monthlyStatement.setInterestRate(new BigDecimal(configMap.get("interestRate").toString()));
@@ -159,6 +169,7 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
 
         return monthlyStatement;
     }
+    
     
     /**
      * 查询需要添加到快递中的月账单，并且修改月账单状态
@@ -241,15 +252,19 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
     * 获取参数表里面的信息
     * @return
     */
-   public Map<String,Object> getConfigData(){
+   public Map<String,Object> getConfigData(Long anCoreCustNo){
        Map<String, Object> map=new HashMap<String, Object>();
        final CustOperatorInfo custOperator = (CustOperatorInfo) UserUtils.getPrincipal().getUser();
        final String cusrName = domainAttributeDubboClientService.findString(custOperator.getOperOrg(), "PLAT_COMMISSION_MAKE_CUSTNAME");
        final String operator = domainAttributeDubboClientService.findString(custOperator.getOperOrg(), "PLAT_COMMISSION_MAKE_OPERATOR");
-       final BigDecimal interestRate = domainAttributeDubboClientService.findMoney(custOperator.getOperOrg(), "PLAT_COMMISSION_INTEREST_RATE");
-       final BigDecimal taxRate = domainAttributeDubboClientService.findMoney(custOperator.getOperOrg(), "PLAT_COMMISSION_TAX_RATE");
+       //final BigDecimal interestRate = domainAttributeDubboClientService.findMoney(custOperator.getOperOrg(), "PLAT_COMMISSION_INTEREST_RATE");
+       //final BigDecimal taxRate = domainAttributeDubboClientService.findMoney(custOperator.getOperOrg(), "PLAT_COMMISSION_TAX_RATE");
        final String monthlyTemplate = domainAttributeDubboClientService.findString("GLOBAL_COMMISSION_MONTHLY_TEMPLATE");
-
+       CommissionParam param = paramService.findParamByCustNo(Collections3.getFirst(getCurrentUserCustNos()), anCoreCustNo);
+       //final BigDecimal interestRate = domainAttributeDubboClientService.findMoney(custOperator.getOperOrg(), "PLAT_COMMISSION_INTEREST_RATE");
+       //final BigDecimal taxRate = domainAttributeDubboClientService.findMoney(custOperator.getOperOrg(), "PLAT_COMMISSION_TAX_RATE");
+       final BigDecimal interestRate = param.getInterestRate();
+       final BigDecimal taxRate = param.getTaxRate();
        map.put("makeCustName", cusrName);
        map.put("makeOperName", operator);
        map.put("interestRate", interestRate);
@@ -258,5 +273,23 @@ public class CommissionMonthlyStatementService extends BaseService<CommissionMon
        
        return map;
    }
+   
+   /**
+    * 获取当前登录用户所在的所有公司id集合
+    * @return
+    */
+   private Collection<Long> getCurrentUserCustNos(){
+       
+       CustOperatorInfo operInfo = UserUtils.getOperatorInfo();
+       BTAssert.notNull(operInfo, "查询参数配置失败!请先登录");
+       Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
+       BTAssert.notNull(custInfos, "查询参数配置失败!获取当前企业失败");
+       Collection<Long> custNos=new ArrayList<>();
+       for (CustInfo custInfo : custInfos) {
+           custNos.add(custInfo.getId());
+       }
+       return  custNos;
+   }
+   
     
 }

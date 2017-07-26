@@ -281,6 +281,14 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     @Column(name = "D_BILL_MONTH",  columnDefinition="VARCHAR" )
     private String billMonth;
     
+    //是否用于普通发票 默认为0 未使用  1已经使用
+    @Column(name = "C_PLAININVOICE_FLAG",  columnDefinition="CHAR" )
+    private String plainInvoiceFlag;
+    
+    //是否用于专用发票 默认为0 未使用  1已经使用
+    @Column(name = "C_SPECIALINVOICE_FLAG",  columnDefinition="CHAR" )
+    private String specialInvoiceFlag;
+    
     /**
      * 结算金额
      */
@@ -656,57 +664,45 @@ public class CommissionMonthlyStatement implements BetterjrEntity {
     public void setInterestBalance(BigDecimal anInterestBalance) {
         this.interestBalance = anInterestBalance;
     }
+    
 
+    public String getPlainInvoiceFlag() {
+        return this.plainInvoiceFlag;
+    }
+
+
+    public void setPlainInvoiceFlag(String anPlainInvoiceFlag) {
+        this.plainInvoiceFlag = anPlainInvoiceFlag;
+    }
+
+
+    public String getSpecialInvoiceFlag() {
+        return this.specialInvoiceFlag;
+    }
+
+
+    public void setSpecialInvoiceFlag(String anSpecialInvoiceFlag) {
+        this.specialInvoiceFlag = anSpecialInvoiceFlag;
+    }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", refNo=").append(refNo);
-        sb.append(", unit=").append(unit);
-        sb.append(", curreny=").append(curreny);
-        sb.append(", payBeginDate=").append(payBeginDate);
-        sb.append(", payEndDate=").append(payEndDate);
-        sb.append(", totalBalance=").append(totalBalance);
-        sb.append(", totalAmount=").append(totalAmount);
-        sb.append(", payTotalBalance=").append(payTotalBalance);
-        sb.append(", payTotalAmount=").append(payTotalAmount);
-        sb.append(", paySuccessBalance=").append(paySuccessBalance);
-        sb.append(", paySuccessAmount=").append(paySuccessAmount);
-        sb.append(", payFailureBalance=").append(payFailureBalance);
-        sb.append(", payFailureAmount=").append(payFailureAmount);
-        sb.append(", ownCustNo=").append(ownCustNo);
-        sb.append(", ownCustName=").append(ownCustName);
-        sb.append(", ownOperOrg=").append(ownOperOrg);
-        sb.append(", makeCustName=").append(makeCustName);
-        sb.append(", makeOperName=").append(makeOperName);
-        sb.append(", makeDate=").append(makeDate);
-        sb.append(", makeTime=").append(makeTime);
-        sb.append(", businStatus=").append(businStatus);
-        sb.append(", lastStatus=").append(lastStatus);
-        sb.append(", interest=").append(interest);
-        sb.append(", interestRate=").append(interestRate);
-        sb.append(", taxBalance=").append(taxBalance);
-        sb.append(", taxRate=").append(taxRate);
-        sb.append(", batchNo=").append(batchNo);
-        sb.append(", operOrg=").append(operOrg);
-        sb.append(", regOperId=").append(regOperId);
-        sb.append(", regOperName=").append(regOperName);
-        sb.append(", regDate=").append(regDate);
-        sb.append(", regTime=").append(regTime);
-        sb.append(", modiOperId=").append(modiOperId);
-        sb.append(", modiOperName=").append(modiOperName);
-        sb.append(", modiDate=").append(modiDate);
-        sb.append(", modiTime=").append(modiTime);
-        sb.append(", version=").append(version);
-        sb.append(", endInterestDate=").append(endInterestDate);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
+        return "CommissionMonthlyStatement [id=" + this.id + ", refNo=" + this.refNo + ", unit=" + this.unit + ", curreny=" + this.curreny
+                + ", payBeginDate=" + this.payBeginDate + ", payEndDate=" + this.payEndDate + ", totalBalance=" + this.totalBalance + ", totalAmount="
+                + this.totalAmount + ", payTotalBalance=" + this.payTotalBalance + ", payTotalAmount=" + this.payTotalAmount + ", paySuccessBalance="
+                + this.paySuccessBalance + ", paySuccessAmount=" + this.paySuccessAmount + ", payFailureBalance=" + this.payFailureBalance
+                + ", payFailureAmount=" + this.payFailureAmount + ", ownCustNo=" + this.ownCustNo + ", ownCustName=" + this.ownCustName
+                + ", ownOperOrg=" + this.ownOperOrg + ", makeCustName=" + this.makeCustName + ", makeOperName=" + this.makeOperName + ", makeDate="
+                + this.makeDate + ", makeTime=" + this.makeTime + ", businStatus=" + this.businStatus + ", lastStatus=" + this.lastStatus
+                + ", interest=" + this.interest + ", interestRate=" + this.interestRate + ", taxBalance=" + this.taxBalance + ", taxRate="
+                + this.taxRate + ", batchNo=" + this.batchNo + ", fileId=" + this.fileId + ", operOrg=" + this.operOrg + ", regOperId="
+                + this.regOperId + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", modiOperId="
+                + this.modiOperId + ", modiOperName=" + this.modiOperName + ", modiDate=" + this.modiDate + ", modiTime=" + this.modiTime
+                + ", version=" + this.version + ", endInterestDate=" + this.endInterestDate + ", billMonth=" + this.billMonth + ", plainInvoiceFlag="
+                + this.plainInvoiceFlag + ", specialInvoiceFlag=" + this.specialInvoiceFlag + ", interestBalance=" + this.interestBalance
+                + ", makeDateTime=" + this.makeDateTime + ", dailyList=" + this.dailyList + "]";
     }
+
 
     public void initMonthlyStatement(Map<String,Object> anMap) {
         this.id = SerialGenerator.getLongValue("CommissionMonthlyStatement.id");         
