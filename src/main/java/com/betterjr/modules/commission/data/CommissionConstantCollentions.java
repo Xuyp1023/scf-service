@@ -44,5 +44,20 @@ public class CommissionConstantCollentions {
     public static final String COMMISSION_FILE_CONFIRM_STATUS_INEFFECTIVE="1";//确认不合规(确认未通过)
     
     public static final String COMMISSION_FILE_CONFIRM_STATUS_UNCONFIRMED="0";//还没有确认
+    
+    public static final String COMMISSION_INVOICE_PARAM_CUST_BUSINSTATUS_OK="1"; //发票参数状态为可用  1
+    
+    public static final String COMMISSION_INVOICE_PARAM_CUST_BUSINSTATUS_FAILER="0"; //发票参数状态为不可用  0
 
+    public static final String COMMISSION_INVOICE_CUSTINFO_CUSTTYPE_ENTERPRISE = "1"; //  发票抬头的类型  1  企业    
+    
+    public static final String COMMISSION_INVOICE_CUSTINFO_CUSTTYPE_PERSION = "0";    //发票抬头的类型       0个人
+   
+    public static final String COMMISSION_INVOICE_CUSTINFO_IS_LAEST_OK = "1";    //是否默认  1是默认
+   
+    public static final String COMMISSION_INVOICE_CUSTINFO_IS_LAEST_FAILER = "0";    //是否默认  0 不是默认  
+   
+    public static final String COMMISSION_INVOICE_CUSTINFO_CUSTTYPE_PLAIN = "0";    //发票类型   0  普通发票  
+    
+    public static final String COMMISSION_INVOICE_CUSTINFO_CUSTTYPE_SPECIAL = "1";    //发票类型  1  专用发票
 }

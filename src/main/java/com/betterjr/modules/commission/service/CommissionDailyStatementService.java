@@ -3,6 +3,7 @@
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,9 +18,11 @@ import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
+import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.MathExtend;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
+import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.commission.dao.CommissionDailyStatementMapper;
@@ -27,9 +30,11 @@ import com.betterjr.modules.commission.data.CalcPayResult;
 import com.betterjr.modules.commission.entity.CommissionDailyStatement;
 import com.betterjr.modules.commission.entity.CommissionDailyStatementRecord;
 import com.betterjr.modules.commission.entity.CommissionMonthlyStatement;
+import com.betterjr.modules.commission.entity.CommissionParam;
 import com.betterjr.modules.commission.entity.CommissionPayResultRecord;
 import com.betterjr.modules.commission.util.CommissionDateUtils;
 import com.betterjr.modules.config.dubbo.interfaces.IDomainAttributeService;
+import com.betterjr.modules.customer.ICustMechBaseService;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.flie.service.JxlsFileService;
 import com.betterjr.modules.generator.SequenceFactory;
@@ -53,6 +58,11 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
     private CommissionMonthlyStatementService monthlyStatementService;
     @Autowired
     private JxlsFileService jxlsFileService;
+    
+    @Autowired
+    private CommissionParamService paramService;
+    @Reference(interfaceClass = ICustMechBaseService.class)
+    private ICustMechBaseService custMechBaseService;
     
     public Page<CommissionDailyStatement> queryDailyStatement(Map<String, Object> anParam, int anPageNum, int anPageSize){
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
@@ -173,7 +183,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         
         List<CommissionDailyStatement> resultDailyStatementList=new ArrayList<CommissionDailyStatement>();
         
-        monthMap=getConfigData();
+        monthMap=getConfigData(anOwnCustNo);
         
         BigDecimal rate=new BigDecimal(monthMap.get("interestRate").toString()); 
         BigDecimal taxRate=new BigDecimal(monthMap.get("taxRate").toString());
@@ -229,6 +239,25 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         monthMap.put("paySuccessBalance", paySuccessBalance);
         return monthMap;
     }
+    
+    
+    /**
+     * 获取当前登录用户所在的所有公司id集合
+     * @return
+     */
+    private Collection<Long> getCurrentUserCustNos(){
+        
+        CustOperatorInfo operInfo = UserUtils.getOperatorInfo();
+        BTAssert.notNull(operInfo, "查询参数配置失败!请先登录");
+        Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
+        BTAssert.notNull(custInfos, "查询参数配置失败!获取当前企业失败");
+        Collection<Long> custNos=new ArrayList<>();
+        for (CustInfo custInfo : custInfos) {
+            custNos.add(custInfo.getId());
+        }
+        return  custNos;
+    }
+    
     
     /***
      * 查询日账单统计的数据
@@ -319,7 +348,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
          
          
          Map<String, Object> resultMp=new HashMap<String, Object>();
-         resultMp=getConfigData();
+         resultMp=getConfigData(anOwnCustNo);
          final CustOperatorInfo custOperator = (CustOperatorInfo) UserUtils.getPrincipal().getUser();
          resultMp.put("refNo",SequenceFactory.generate("PLAT_COMMISSION_DAILY_REFNO",custOperator.getOperOrg(), "DB#{Date:yyyyMMdd}#{Seq:8}", "D"));
          resultMp.put("totalBalance", payResult.getTotalBalance());
@@ -338,15 +367,17 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
      * 获取参数表里面的信息
      * @return
      */
-    public Map<String,Object> getConfigData(){
+    public Map<String,Object> getConfigData(Long anCoreCustNo){
         Map<String, Object> map=new HashMap<String, Object>();
         final CustOperatorInfo custOperator = (CustOperatorInfo) UserUtils.getPrincipal().getUser();
         final String cusrName = domainAttributeDubboClientService.findString(custOperator.getOperOrg(), "PLAT_COMMISSION_MAKE_CUSTNAME");
         final String operator = domainAttributeDubboClientService.findString(custOperator.getOperOrg(), "PLAT_COMMISSION_MAKE_OPERATOR");
-        final BigDecimal interestRate = domainAttributeDubboClientService.findMoney(custOperator.getOperOrg(), "PLAT_COMMISSION_INTEREST_RATE");
-        final BigDecimal taxRate = domainAttributeDubboClientService.findMoney(custOperator.getOperOrg(), "PLAT_COMMISSION_TAX_RATE");
+        CommissionParam param = paramService.findParamByCustNo(Collections3.getFirst(getCurrentUserCustNos()), anCoreCustNo);
+        //final BigDecimal interestRate = domainAttributeDubboClientService.findMoney(custOperator.getOperOrg(), "PLAT_COMMISSION_INTEREST_RATE");
+        //final BigDecimal taxRate = domainAttributeDubboClientService.findMoney(custOperator.getOperOrg(), "PLAT_COMMISSION_TAX_RATE");
+        final BigDecimal interestRate = param.getInterestRate();
+        final BigDecimal taxRate = param.getTaxRate();
         final String dailyTemplate = domainAttributeDubboClientService.findString("GLOBAL_COMMISSION_DAILY_TEMPLATE");
-
         map.put("makeCustName", cusrName);
         map.put("makeOperName", operator);
         map.put("interestRate", interestRate);
@@ -363,7 +394,7 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         dailyStatement.setPayDate(anPayDate);
         dailyStatement.setOwnCustNo(anOwnCustNo);
         dailyStatement.setOwnCustName(custAccountService.queryCustName(anOwnCustNo));
-        Map<String,Object> configMap=getConfigData();
+        Map<String,Object> configMap=getConfigData(anOwnCustNo);
         dailyStatement.setMakeCustName((String)configMap.get("makeCustName"));
         dailyStatement.setOperName((String)configMap.get("makeOperName"));
         
