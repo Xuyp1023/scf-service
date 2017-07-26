@@ -73,7 +73,7 @@ public class CommissionParamService extends BaseService<CommissionParamMapper, C
         .build();
         
         List<CommissionParam> list = this.selectByProperty(anMap);
-        BTAssert.notEmpty(list,"请配置企业的默认利率，税率");
+        //BTAssert.notEmpty(list,"请配置企业的默认利率，税率");
         return Collections3.getFirst(list);
         
     }
