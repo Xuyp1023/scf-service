@@ -296,15 +296,29 @@ public class CommissionInvoiceService extends BaseService<CommissionInvoiceMappe
         BTAssert.notNull(invoice.getCustNo(), "查询发票失败！条件为空");  
         BTAssert.notNull(invoice.getCoreCustNo(), "查询发票失败！条件为空");  
         //核心企业的发票抬头
-        CommissionInvoiceCustInfo coreCustInfo = custInfoService.findInvoiceCustInfoEffectiveByCustNo(invoice.getCustNo(), invoice.getCoreCustNo());
-         BTAssert.notNull(coreCustInfo, "当前核心企业没有默认生效的发票抬头信息，请新建");
-        //平台的发票抬头
-        CommissionInvoiceCustInfo custInfo = custInfoService.findInvoiceCustInfoEffectiveByCustNo(invoice.getCustNo(), invoice.getCustNo());
-        BTAssert.notNull(custInfo, "当前平台没有默认生效的发票抬头信息，请新建");
-        invoice.setCustInvoiceInfo(custInfo);
-        invoice.setCustInvoiceId(custInfo.getId());
+        CommissionInvoiceCustInfo coreCustInfo = new CommissionInvoiceCustInfo();
+        if(invoice.getCoreCustInvoiceId()==null){
+            
+            coreCustInfo = custInfoService.findInvoiceCustInfoEffectiveByCustNo(invoice.getCustNo(), invoice.getCoreCustNo());
+            BTAssert.notNull(coreCustInfo.getId(), "当前核心企业没有默认生效的发票抬头信息，请新建");
+        }else{
+            coreCustInfo = custInfoService.selectByPrimaryKey(invoice.getCoreCustInvoiceId());
+            BTAssert.notNull(coreCustInfo, "票据抬头缺失,请重新开票");
+        }
         invoice.setCoreCustInvoiceInfo(coreCustInfo);
         invoice.setCoreCustInvoiceId(coreCustInfo.getId());
+        //平台的发票抬头
+        CommissionInvoiceCustInfo custInfo =  new CommissionInvoiceCustInfo();
+        if(invoice.getCustInvoiceId() == null){
+            
+            custInfo  = custInfoService.findInvoiceCustInfoEffectiveByCustNo(invoice.getCustNo(), invoice.getCustNo());
+            BTAssert.notNull(custInfo, "当前平台没有默认生效的发票抬头信息，请新建");
+        }else{
+            custInfo =  custInfoService.selectByPrimaryKey(invoice.getCustInvoiceId());
+            BTAssert.notNull(custInfo, "票据抬头缺失,请重新开票");
+        }
+        invoice.setCustInvoiceInfo(custInfo);
+        invoice.setCustInvoiceId(custInfo.getId());
     }
     
     
