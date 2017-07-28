@@ -108,7 +108,7 @@ public class CommissionInvoiceRecordService extends BaseService<CommissionInvoic
             }else{
                 
                 if(anInvoice.getTaxRate().compareTo(monthly.getTaxRate())!=0){
-                    BTAssert.notNull(null, "此账单的税率和其他不同，账单编号为："+monthly.getRefNo());
+                    BTAssert.notNull(null, "选择的账单税率不一致，请重新选择");
                 }
                 
             }
