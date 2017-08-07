@@ -51,7 +51,7 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
     public Page<ScfCredit> queryCredit(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
         // 入参检查
         checkCreditCondition(anMap);
-
+        anMap=Collections3.filterMapEmptyObject(anMap);
         // 查询授信记录
         return this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "custNo,creditMode");
     }
