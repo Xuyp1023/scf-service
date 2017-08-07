@@ -300,7 +300,7 @@ public class CommissionInvoiceService extends BaseService<CommissionInvoiceMappe
         if(invoice.getCoreCustInvoiceId()==null){
             
             coreCustInfo = custInfoService.findInvoiceCustInfoEffectiveByCustNo(invoice.getCustNo(), invoice.getCoreCustNo());
-            BTAssert.notNull(coreCustInfo, "当前核心企业没有默认生效的发票抬头信息，请新建");
+            BTAssert.notNull(coreCustInfo, "当前委托企业没有默认生效的发票抬头信息，请新建");
         }else{
             coreCustInfo = custInfoService.selectByPrimaryKey(invoice.getCoreCustInvoiceId());
             BTAssert.notNull(coreCustInfo, "票据抬头缺失,请重新开票");
@@ -312,7 +312,7 @@ public class CommissionInvoiceService extends BaseService<CommissionInvoiceMappe
         if(invoice.getCustInvoiceId() == null){
             
             custInfo  = custInfoService.findInvoiceCustInfoEffectiveByCustNo(invoice.getCustNo(), invoice.getCustNo());
-            BTAssert.notNull(custInfo, "当前平台没有默认生效的发票抬头信息，请新建");
+            BTAssert.notNull(custInfo, "当前开票方没有默认生效的发票抬头信息，请新建");
         }else{
             custInfo =  custInfoService.selectByPrimaryKey(invoice.getCustInvoiceId());
             BTAssert.notNull(custInfo, "票据抬头缺失,请重新开票");
