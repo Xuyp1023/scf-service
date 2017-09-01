@@ -4,66 +4,22 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OrderBy;
-
 import com.betterjr.common.annotation.MetaData;
-import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.modules.version.constant.VersionConstantCollentions;
 
 @Access(AccessType.FIELD)
 @Entity
-public class BaseVersionEntity implements BetterjrEntity{
+public class BaseVersionEntity extends BetterjrBaseEntity{
     
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
     
-    /**
-     * 流水号
-     */
-    @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
-    @MetaData( value="流水号", comments = "流水号")
-    private Long id;
     
-    /**
-     * 特性编码
-     */
-    @Column(name = "C_Ref_NO",  columnDefinition="VARCHAR" )
-    @MetaData( value="特性编码", comments = "单特性编码")
-    private String refNo;
-    
-    /**
-     * 版本信息
-     */
-    @Column(name = "N_VERSION",  columnDefinition="VARCHAR" )
-    @MetaData( value="版本", comments = "版本")
-    private String version;
-    
-    /**
-     * 是否是最新编码
-     */
-    @Column(name = "C_IS_LATEST",  columnDefinition="VARCHAR" )
-    @MetaData( value="最新", comments = "最新")
-    private String isLatest;
-    
-    /**
-     * 0 未核准 1：核准  2：已使用 3：转让 4废止 5 过期
-     */
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="0 未核准 1：核准  2：已使用 3：转让 4废止 5 过期", comments = "0 未核准 1：核准  2：已使用 3：转让 4废止 5 过期")
-    private String businStatus;
-    
-    /**
-     * 0 未锁定状态 1 锁定状态
-     */
-    @Column(name = "C_LOCKED_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="0 未锁定状态 1 锁定状态", comments = "0 未锁定状态 1 锁定状态")
-    private String lockedStatus;
     
     /**
      * 0：草稿 1：确认 2废止
@@ -116,46 +72,7 @@ public class BaseVersionEntity implements BetterjrEntity{
     private String expireFlagStatus;
     
     
-    public String getRefNo() {
-        return this.refNo;
-    }
-
-    public void setRefNo(String anRefNo) {
-        this.refNo = anRefNo;
-    }
-
-    public String getVersion() {
-        return this.version;
-    }
-
-    public void setVersion(String anVersion) {
-        this.version = anVersion;
-    }
-
-    public String getIsLatest() {
-        return this.isLatest;
-    }
-
-    public void setIsLatest(String anIsLatest) {
-        this.isLatest = anIsLatest;
-    }
-
-    public String getBusinStatus() {
-        return businStatus;
-    }
-
-    public void setBusinStatus(String businStatus) {
-        this.businStatus = businStatus == null ? null : businStatus.trim();
-    }
-
-
-    public String getLockedStatus() {
-        return this.lockedStatus;
-    }
-
-    public void setLockedStatus(String anLockedStatus) {
-        this.lockedStatus = anLockedStatus==null ? null : anLockedStatus.trim();
-    }
+   
 
     public String getDocStatus() {
         return this.docStatus;
@@ -205,13 +122,6 @@ public class BaseVersionEntity implements BetterjrEntity{
         this.auditTime = anAuditTime;
     }
 
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long anId) {
-        this.id = anId;
-    }
     
     public String getExpireFlagStatus() {
         return this.expireFlagStatus;
@@ -223,14 +133,14 @@ public class BaseVersionEntity implements BetterjrEntity{
 
     public void checkFinanceStatus(){
       
-        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_ANNUL, true, "当前单据已经废止,无法进行融资,凭证编号为："+this.refNo);
-        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EXPIRE, true, "当前单据已经过期,无法进行融资,凭证编号为："+this.refNo);
-        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE, true, "当前单据还未生效,无法进行融资,凭证编号为："+this.refNo);
-        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true, "当前单据已经转让,无法进行融资,凭证编号为："+this.refNo);
-        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_USED, true, "当前单据已经进行融资,无法进行融资,凭证编号为："+this.refNo);
-        checkStatus(this.getDocStatus(), VersionConstantCollentions.DOC_STATUS_ANNUL, true, "当前单据已经废止,无法进行融资,凭证编号为："+this.refNo);
-        checkStatus(this.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true, "当前单据已经进行融资,无法进行融资,凭证编号为："+this.refNo);
-        checkStatus(this.getIsLatest(), VersionConstantCollentions.IS_NOT_LATEST, true, "当前单据已经进行修改,无法对旧版本资产进行融资,凭证编号为："+this.refNo);
+        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_ANNUL, true, "当前单据已经废止,无法进行融资,凭证编号为："+this.getRefNo());
+        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EXPIRE, true, "当前单据已经过期,无法进行融资,凭证编号为："+this.getRefNo());
+        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE, true, "当前单据还未生效,无法进行融资,凭证编号为："+this.getRefNo());
+        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true, "当前单据已经转让,无法进行融资,凭证编号为："+this.getRefNo());
+        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_USED, true, "当前单据已经进行融资,无法进行融资,凭证编号为："+this.getRefNo());
+        checkStatus(this.getDocStatus(), VersionConstantCollentions.DOC_STATUS_ANNUL, true, "当前单据已经废止,无法进行融资,凭证编号为："+this.getRefNo());
+        checkStatus(this.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true, "当前单据已经进行融资,无法进行融资,凭证编号为："+this.getRefNo());
+        checkStatus(this.getIsLatest(), VersionConstantCollentions.IS_NOT_LATEST, true, "当前单据已经进行修改,无法对旧版本资产进行融资,凭证编号为："+this.getRefNo());
         
     }
     

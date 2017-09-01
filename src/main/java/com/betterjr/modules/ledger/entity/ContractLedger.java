@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.betterjr.common.annotation.MetaData;
-import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
@@ -15,6 +14,7 @@ import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.generator.SequenceFactory;
 import com.betterjr.modules.version.constant.VersionConstantCollentions;
+import com.betterjr.modules.version.entity.BetterjrBaseEntity;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.persistence.*;
@@ -22,11 +22,8 @@ import javax.persistence.*;
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "t_contract_ledger")
-public class ContractLedger  implements BetterjrEntity {
-    @Id
-    @Column(name = "id",  columnDefinition="INTEGER" )
-    private Long id;
-
+public class ContractLedger  extends BetterjrBaseEntity {
+    
     @Column(name = "c_agreename",  columnDefinition="VARCHAR" )
     private String agreeName;
 
@@ -77,9 +74,6 @@ public class ContractLedger  implements BetterjrEntity {
     @Column(name = "d_moditime",  columnDefinition="VARCHAR" )
     private String modiTime;
 
-    @Column(name = "c_busin_status",  columnDefinition="VARCHAR" )
-    private String businStatus;
-
     @Column(name = "l_buyer_no",  columnDefinition="INTEGER" )
     private Long buyerNo;
     
@@ -121,25 +115,7 @@ public class ContractLedger  implements BetterjrEntity {
     @Column(name = "C_CUSTNAME", columnDefinition = "VARCHAR")
     @MetaData(value = "供应商名称", comments = "供应商名称")
     private String custName;
-    
-    
-    @Column(name = "C_LOCKED_STATUS", columnDefinition = "VARCHAR")
-    @MetaData(value = "0 未锁定状态 1 锁定状态", comments = "0 未锁定状态 1 锁定状态")
-    private String lockedStatus;
-    
-    @Column(name = "C_Ref_NO", columnDefinition = "VARCHAR")
-    @MetaData(value = "凭证编号", comments = "凭证编号")
-    private String refNo;
-    
-    
-    @Column(name = "N_VERSION", columnDefinition = "VARCHAR")
-    @MetaData(value = "版本", comments = "版本")
-    private String version;
-    
-    @Column(name = "C_IS_LATEST", columnDefinition = "VARCHAR")
-    @MetaData(value = "是否是最新", comments = "是否是最新")
-    private String isLatest;
-    
+   
     //0 未核准 1：核准  2：已使用 3：转让 4废止 5 过期
     @Column(name = "c_busin_version_status",  columnDefinition="VARCHAR" )
     private String businVersionStatus;
@@ -157,13 +133,7 @@ public class ContractLedger  implements BetterjrEntity {
         this.coreCustNo = anCoreCustNo;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+   
 
     public String getAgreeName() {
         return agreeName;
@@ -284,14 +254,6 @@ public class ContractLedger  implements BetterjrEntity {
     public void setModiTime(String modiTime) {
         this.modiTime = modiTime;
     }
-
-    public String getBusinStatus() {
-        return businStatus;
-    }
-
-    public void setBusinStatus(String businStatus) {
-        this.businStatus = businStatus;
-    }
     
     public String getBusinVersionStatus() {
         return this.businVersionStatus;
@@ -405,49 +367,18 @@ public class ContractLedger  implements BetterjrEntity {
         this.custName = anCustName;
     }
 
-    public String getLockedStatus() {
-        return this.lockedStatus;
-    }
-
-    public void setLockedStatus(String anLockedStatus) {
-        this.lockedStatus = anLockedStatus;
-    }
-
-    public String getRefNo() {
-        return this.refNo;
-    }
-
-    public void setRefNo(String anRefNo) {
-        this.refNo = anRefNo;
-    }
-
-    public String getVersion() {
-        return this.version;
-    }
-
-    public void setVersion(String anVersion) {
-        this.version = anVersion;
-    }
-
-    public String getIsLatest() {
-        return this.isLatest;
-    }
-
-    public void setIsLatest(String anIsLatest) {
-        this.isLatest = anIsLatest;
-    }
 
     @Override
     public String toString() {
-        return "ContractLedger [id=" + this.id + ", agreeName=" + this.agreeName + ", agreeNo=" + this.agreeNo + ", supplier=" + this.supplier
+        return "ContractLedger [id=" + this.getId() + ", agreeName=" + this.agreeName + ", agreeNo=" + this.agreeNo + ", supplier=" + this.supplier
                 + ", buyer=" + this.buyer + ", balance=" + this.balance + ", deliveryDate=" + this.deliveryDate + ", deliveryAddr="
                 + this.deliveryAddr + ", checkAccept=" + this.checkAccept + ", objectionPeriod=" + this.objectionPeriod + ", agreeStartDate="
                 + this.agreeStartDate + ", agreeEndDate=" + this.agreeEndDate + ", regDate=" + this.regDate + ", regTime=" + this.regTime
-                + ", modiDate=" + this.modiDate + ", modiTime=" + this.modiTime + ", businStatus=" + this.businStatus + ", buyerNo=" + this.buyerNo
+                + ", modiDate=" + this.modiDate + ", modiTime=" + this.modiTime + ", businStatus=" + this.getBusinStatus() + ", buyerNo=" + this.buyerNo
                 + ", coreCustNo=" + this.coreCustNo + ", supplierNo=" + this.supplierNo + ", operId=" + this.operId + ", operName=" + this.operName
                 + ", operOrg=" + this.operOrg + ", batchNo=" + this.batchNo + ", defaultFlag=" + this.defaultFlag + ", des=" + this.des
                 + ", signDate=" + this.signDate + ", signAddr=" + this.signAddr + ", custNo=" + this.custNo + ", custName=" + this.custName
-                + ", lockedStatus=" + this.lockedStatus + ", refNo=" + this.refNo + ", version=" + this.version + ", isLatest=" + this.isLatest
+                + ", lockedStatus=" + this.getLockedStatus() + ", refNo=" + this.getRefNo() + ", version=" + this.getVersion() + ", isLatest=" + this.getIsLatest()
                 + ", businVersionStatus=" + this.businVersionStatus + ", custFileList=" + this.custFileList + "]";
     }
 
@@ -525,11 +456,11 @@ public class ContractLedger  implements BetterjrEntity {
     }
     
     public void initValue(){
-        this.id = SerialGenerator.getLongValue("ContractLedger.id");
+        this.setId( SerialGenerator.getLongValue("ContractLedger.id"));
         this.regDate = BetterDateUtils.getNumDate();
         this.modiDate = BetterDateUtils.getNumDate();
         this.defaultFlag="1";
-        this.businStatus="0";
+        this.setBusinStatus("0");
         CustOperatorInfo operator = UserUtils.getOperatorInfo();
         if (operator != null){
             this.operId = operator.getId();
@@ -541,20 +472,20 @@ public class ContractLedger  implements BetterjrEntity {
         this.coreCustNo=this.buyerNo;
         this.custNo=this.supplierNo;
         this.custName=this.supplier;
-        this.lockedStatus=VersionConstantCollentions.LOCKED_STATUS_INlOCKED;
-        this.isLatest=VersionConstantCollentions.IS_LATEST;
+        this.setLockedStatus(VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
+        this.setIsLatest(VersionConstantCollentions.IS_LATEST);
         String pattern="TC#{Date:yy}#{Seq:14}";
-        this.refNo=SequenceFactory.generate("PLAT_"+this.getClass().getSimpleName(), pattern);
-        this.version="1";
-        this.businVersionStatus=this.businStatus;
+        this.setRefNo(SequenceFactory.generate("PLAT_"+this.getClass().getSimpleName(), pattern));
+        this.setVersion("1");
+        this.businVersionStatus=this.getBusinStatus();
     }
     
     public void modifyContractLedger(ContractLedger anContractLedger){
-        this.id=SerialGenerator.getLongValue("ContractLedger.id");
+        this.setId( SerialGenerator.getLongValue("ContractLedger.id"));
         this.modiTime= BetterDateUtils.getNumTime();
         this.modiDate = BetterDateUtils.getNumDate();
         this.defaultFlag=anContractLedger.getDefaultFlag();
-        this.businStatus=anContractLedger.getBusinStatus();
+        this.setBusinStatus(anContractLedger.getBusinStatus());
         this.regDate=anContractLedger.getRegDate();
         this.regTime=anContractLedger.getRegTime();
         this.operId=anContractLedger.getOperId();
@@ -564,10 +495,10 @@ public class ContractLedger  implements BetterjrEntity {
         this.coreCustNo=this.buyerNo;
         this.custNo=this.supplierNo;
         this.custName=this.supplier;
-        this.lockedStatus=VersionConstantCollentions.LOCKED_STATUS_INlOCKED;
-        this.isLatest=VersionConstantCollentions.IS_LATEST;
-        this.refNo=anContractLedger.getRefNo();
-        this.version=(Integer.parseInt(anContractLedger.getVersion())+1)+"";
+        this.setLockedStatus(VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
+        this.setIsLatest(VersionConstantCollentions.IS_LATEST);
+        this.setRefNo(anContractLedger.getRefNo());
+        this.setVersion((Integer.parseInt(anContractLedger.getVersion())+1)+"");
         this.businVersionStatus=anContractLedger.getBusinStatus();
     }
     
@@ -584,13 +515,22 @@ public class ContractLedger  implements BetterjrEntity {
 
     public void checkFinanceStatus(){
       
-        checkStatus(this.getBusinVersionStatus(), VersionConstantCollentions.BUSIN_STATUS_ANNUL, true, "当前单据已经废止,无法进行融资,凭证编号为："+this.refNo);
-        checkStatus(this.getBusinVersionStatus(), VersionConstantCollentions.BUSIN_STATUS_EXPIRE, true, "当前单据已经过期,无法进行融资,凭证编号为："+this.refNo);
-        checkStatus(this.getBusinVersionStatus(), VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE, true, "当前单据还未生效,无法进行融资,凭证编号为："+this.refNo);
-        checkStatus(this.getBusinVersionStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true, "当前单据已经转让,无法进行融资,凭证编号为："+this.refNo);
-        checkStatus(this.getBusinVersionStatus(), VersionConstantCollentions.BUSIN_STATUS_USED, true, "当前单据已经进行融资,无法进行融资,凭证编号为："+this.refNo);
-        checkStatus(this.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true, "当前单据已经进行融资,无法进行融资,凭证编号为："+this.refNo);
-        checkStatus(this.getIsLatest(), VersionConstantCollentions.IS_NOT_LATEST, true, "当前单据已经进行修改,无法对旧版本资产进行融资,凭证编号为："+this.refNo);
+        checkStatus(this.getBusinVersionStatus(), VersionConstantCollentions.BUSIN_STATUS_ANNUL, true, "当前单据已经废止,无法进行融资,凭证编号为："+this.getRefNo());
+        checkStatus(this.getBusinVersionStatus(), VersionConstantCollentions.BUSIN_STATUS_EXPIRE, true, "当前单据已经过期,无法进行融资,凭证编号为："+this.getRefNo());
+        checkStatus(this.getBusinVersionStatus(), VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE, true, "当前单据还未生效,无法进行融资,凭证编号为："+this.getRefNo());
+        checkStatus(this.getBusinVersionStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true, "当前单据已经转让,无法进行融资,凭证编号为："+this.getRefNo());
+        checkStatus(this.getBusinVersionStatus(), VersionConstantCollentions.BUSIN_STATUS_USED, true, "当前单据已经进行融资,无法进行融资,凭证编号为："+this.getRefNo());
+        checkStatus(this.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true, "当前单据已经进行融资,无法进行融资,凭证编号为："+this.getRefNo());
+        checkStatus(this.getIsLatest(), VersionConstantCollentions.IS_NOT_LATEST, true, "当前单据已经进行修改,无法对旧版本资产进行融资,凭证编号为："+this.getRefNo());
+    }
+    
+    public void checkReceivableFinanceStatus(){
+        
+        checkStatus(this.getBusinVersionStatus(), VersionConstantCollentions.BUSIN_STATUS_ANNUL, true, "当前单据已经废止,无法进行融资,凭证编号为："+this.getRefNo());
+        checkStatus(this.getBusinVersionStatus(), VersionConstantCollentions.BUSIN_STATUS_EXPIRE, true, "当前单据已经过期,无法进行融资,凭证编号为："+this.getRefNo());
+        checkStatus(this.getBusinVersionStatus(), VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE, true, "当前单据还未生效,无法进行融资,凭证编号为："+this.getRefNo());
+        checkStatus(this.getBusinVersionStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true, "当前单据已经转让,无法进行融资,凭证编号为："+this.getRefNo());
+        checkStatus(this.getIsLatest(), VersionConstantCollentions.IS_NOT_LATEST, true, "当前单据已经进行修改,无法对旧版本资产进行融资,凭证编号为："+this.getRefNo());
     }
     
     /**

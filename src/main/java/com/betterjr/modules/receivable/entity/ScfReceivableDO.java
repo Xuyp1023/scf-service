@@ -160,6 +160,13 @@ public class ScfReceivableDO extends BaseVersionEntity{
     @MetaData( value="编辑操作员编码", comments = "编辑操作员编码")
     @JsonIgnore
     private Long modiOperId ;
+    
+    /**
+     * 佣金文件导入佣金文件id
+     */
+    @Column(name = "L_CCOMMISSIONFILE_ID",  columnDefinition="INTEGER" )
+    @MetaData( value="佣金文件导入佣金文件id", comments = "佣金文件导入佣金文件id")
+    private Long fileId ;
 
     /**
      * 编辑操作员名字
@@ -399,6 +406,13 @@ public class ScfReceivableDO extends BaseVersionEntity{
         this.description = anDescription;
     }
 
+    public Long getFileId() {
+        return this.fileId;
+    }
+
+    public void setFileId(Long anFileId) {
+        this.fileId = anFileId;
+    }
 
     @Override
     public String toString() {

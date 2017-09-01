@@ -45,10 +45,10 @@ public class CommissionFileDubboService implements ICommissionFileService {
     }
 
     @Override
-    public String webSaveDeleteFile(String anRefNo) {
+    public String webSaveDeleteFile(String anRefNo,Map<String, Object> anMap) {
         
         return AjaxObject
-                .newOk("佣金文件删除成功", commissionFileService.saveDeleteFile(anRefNo))
+                .newOk("佣金文件删除成功", commissionFileService.saveDeleteFile(anRefNo,anMap))
                 .toJson();
     }
     
@@ -62,9 +62,9 @@ public class CommissionFileDubboService implements ICommissionFileService {
 
 
     @Override
-    public String webSaveResolveFile(String anRefNo) {
+    public String webSaveResolveFile(String anRefNo,Map<String, Object> anAnMap) {
         
-        CommissionFile resolveFile = commissionFileService.saveResolveFile(anRefNo);
+        CommissionFile resolveFile = commissionFileService.saveResolveFile(anRefNo,anAnMap);
         BTAssert.notNull(resolveFile,"文件解析失败,当前文件不存在或已删除");
         if(resolveFile.getResolveStatus().equals(CommissionConstantCollentions.COMMISSION_RESOLVE_STATUS_FAILURE)){
             return AjaxObject

@@ -25,6 +25,7 @@ import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.mapper.pagehelper.PageHelper;
+import com.betterjr.modules.asset.data.AssetConstantCollentions;
 import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.ledger.dao.ContractLedgerMapper;
@@ -448,6 +449,14 @@ public class ContractLedgerService  extends BaseService<ContractLedgerMapper, Co
            newAgreement.setVersion(stringIncrOne(newAgreement.getVersion()));
            newAgreement.setId(SerialGenerator.getLongValue("ContractLedger.id"));
            this.insert(newAgreement);
+           
+           //新增贸易合同企业银行信息
+           CustContractLedger custAgreement = custContractLedgerService.findCustContractByCustNoAndContractId(agreement.getCustNo(), agreement.getId());
+           CustContractLedger coreCustAgreement = custContractLedgerService.findCustContractByCustNoAndContractId(agreement.getCoreCustNo(), agreement.getId());
+           custAgreement.setContractId(newAgreement.getId());
+           coreCustAgreement.setContractId(newAgreement.getId());
+           custContractLedgerService.insertSelective(custAgreement);
+           custContractLedgerService.insertSelective(coreCustAgreement);
            return newAgreement;
        }
        catch (IllegalAccessException | InvocationTargetException e) {
@@ -468,6 +477,27 @@ public class ContractLedgerService  extends BaseService<ContractLedgerMapper, Co
             return (Integer.parseInt(value)+VersionConstantCollentions.VERSION_INCR_RANGE)+"";
         }catch(Exception e){
             return value;
+        }
+        
+    }
+
+    /**
+     * 根据贸易合同编号查询贸易合同信息
+     * @param anAgreeNo
+     */
+    public ContractLedger selectOneByAgreeNo(String anAgreeNo) {
+        
+        Map paramMap = QueryTermBuilder.newInstance()
+        .put("agreeNo", anAgreeNo)
+        .put("isLatest", VersionConstantCollentions.IS_LATEST)
+        .build();
+        
+        List<ContractLedger> list = this.selectByProperty(paramMap,"id Desc");
+        
+        if(!Collections3.isEmpty(list)){
+            return Collections3.getFirst(list);
+        }else{
+            return null;
         }
         
     }

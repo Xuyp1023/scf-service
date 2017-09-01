@@ -92,6 +92,27 @@ public class ScfAssetCompany implements BetterjrEntity{
     @MetaData( value="是否关联资产 10 关联  20已经被中止关联", comments = "是否关联资产 10 关联  20已经被中止关联")
     private String businStatus;
     
+    /**
+     * 开户银行行名称
+     */
+    @Column(name = "c_bankName",  columnDefinition="VARCHAR" )
+    @MetaData( value="开户银行行名称", comments = "开户银行行名称")
+    private String bankName;
+    
+    /**
+     * 银行帐号
+     */
+    @Column(name = "c_bankAccount",  columnDefinition="VARCHAR" )
+    @MetaData( value="银行帐号", comments = "银行帐号")
+    private String bankAccount;
+    
+    /**
+     * 开户人户名名称
+     */
+    @Column(name = "c_bankAccountName",  columnDefinition="VARCHAR" )
+    @MetaData( value="开户人户名名称", comments = "开户人户名名称")
+    private String bankAccountName;
+    
     @Transient
     private CustInfo custInfo;
     
@@ -175,11 +196,36 @@ public class ScfAssetCompany implements BetterjrEntity{
         this.custInfo = anCustInfo;
     }
 
+    public String getBankName() {
+        return this.bankName;
+    }
+
+    public void setBankName(String anBankName) {
+        this.bankName = anBankName;
+    }
+
+    public String getBankAccount() {
+        return this.bankAccount;
+    }
+
+    public void setBankAccount(String anBankAccount) {
+        this.bankAccount = anBankAccount;
+    }
+
+    public String getBankAccountName() {
+        return this.bankAccountName;
+    }
+
+    public void setBankAccountName(String anBankAccountName) {
+        this.bankAccountName = anBankAccountName;
+    }
+
     @Override
     public String toString() {
-        return "ScfAssetCompany [Hash = "+hashCode()+", id=" + this.id + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", assetId=" + this.assetId
-                + ", custNo=" + this.custNo + ", businStatus=" + this.businStatus + ", custName=" + this.custName + ", assetRole=" + this.assetRole + ", operatorStatus="
-                + this.operatorStatus + ", serialVersionUID="+serialVersionUID+"]";
+        return "ScfAssetCompany [id=" + this.id + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", assetId=" + this.assetId
+                + ", custNo=" + this.custNo + ", custName=" + this.custName + ", assetRole=" + this.assetRole + ", operatorStatus="
+                + this.operatorStatus + ", businStatus=" + this.businStatus + ", bankName=" + this.bankName + ", bankAccount=" + this.bankAccount
+                + ", bankAccountName=" + this.bankAccountName + ", custInfo=" + this.custInfo + "]";
     }
 
     @Override
@@ -188,6 +234,11 @@ public class ScfAssetCompany implements BetterjrEntity{
         int result = 1;
         result = prime * result + ((this.assetId == null) ? 0 : this.assetId.hashCode());
         result = prime * result + ((this.assetRole == null) ? 0 : this.assetRole.hashCode());
+        result = prime * result + ((this.bankAccount == null) ? 0 : this.bankAccount.hashCode());
+        result = prime * result + ((this.bankAccountName == null) ? 0 : this.bankAccountName.hashCode());
+        result = prime * result + ((this.bankName == null) ? 0 : this.bankName.hashCode());
+        result = prime * result + ((this.businStatus == null) ? 0 : this.businStatus.hashCode());
+        result = prime * result + ((this.custInfo == null) ? 0 : this.custInfo.hashCode());
         result = prime * result + ((this.custName == null) ? 0 : this.custName.hashCode());
         result = prime * result + ((this.custNo == null) ? 0 : this.custNo.hashCode());
         result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
@@ -211,6 +262,26 @@ public class ScfAssetCompany implements BetterjrEntity{
             if (other.assetRole != null) return false;
         }
         else if (!this.assetRole.equals(other.assetRole)) return false;
+        if (this.bankAccount == null) {
+            if (other.bankAccount != null) return false;
+        }
+        else if (!this.bankAccount.equals(other.bankAccount)) return false;
+        if (this.bankAccountName == null) {
+            if (other.bankAccountName != null) return false;
+        }
+        else if (!this.bankAccountName.equals(other.bankAccountName)) return false;
+        if (this.bankName == null) {
+            if (other.bankName != null) return false;
+        }
+        else if (!this.bankName.equals(other.bankName)) return false;
+        if (this.businStatus == null) {
+            if (other.businStatus != null) return false;
+        }
+        else if (!this.businStatus.equals(other.businStatus)) return false;
+        if (this.custInfo == null) {
+            if (other.custInfo != null) return false;
+        }
+        else if (!this.custInfo.equals(other.custInfo)) return false;
         if (this.custName == null) {
             if (other.custName != null) return false;
         }

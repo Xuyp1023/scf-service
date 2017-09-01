@@ -102,6 +102,36 @@ public class CustFileCloumn implements BetterjrEntity {
     @Column(name = "L_IS_MUST", columnDefinition = "INTEGER")
     @MetaData(value = "1 必须  0 不必须", comments = "1 必须  0 不必须")
     private Integer isMust;
+    
+    /**
+     * 解析开始行
+     */
+    @Column(name = "N_BEGIN_ROW", columnDefinition = "INTEGER")
+    @MetaData(value = "解析开始行", comments = "解析开始行")
+    private Integer beginRow;
+    
+    /**
+     * 末尾有几行数据无法使用
+     */
+    @Column(name = "N_END_ROW", columnDefinition = "INTEGER")
+    @MetaData(value = "末尾有几行数据无法使用", comments = "末尾有几行数据无法使用")
+    private Integer endRow;
+    
+    public Integer getBeginRow() {
+        return this.beginRow;
+    }
+
+    public void setBeginRow(Integer anBeginRow) {
+        this.beginRow = anBeginRow;
+    }
+
+    public Integer getEndRow() {
+        return this.endRow;
+    }
+
+    public void setEndRow(Integer anEndRow) {
+        this.endRow = anEndRow;
+    }
 
     public Long getId() {
         return this.id;
