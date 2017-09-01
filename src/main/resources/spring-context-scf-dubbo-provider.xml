@@ -53,6 +53,7 @@
         com.betterjr.modules.asset;
         com.betterjr.modules.busintype;
         com.betterjr.modules.joblog;
+        com.betterjr.modules.supplieroffer;
 		com.betterjr.common" />
 	<!-- <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" 
 		p:host-name="192.168.2.49" p:port="6379" /> <bean id="stringRedisSerializer" 

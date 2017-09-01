@@ -1,15 +1,22 @@
 package com.betterjr.modules.receivable.service;
 
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.Collections3;
+import com.betterjr.common.utils.MathExtend;
+import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustInfo;
@@ -20,11 +27,13 @@ import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.joblog.data.LogConstantCollections;
 import com.betterjr.modules.receivable.dao.ScfReceivableDOMapper;
 import com.betterjr.modules.receivable.entity.ScfReceivableDO;
+import com.betterjr.modules.supplieroffer.BaseResolveInterface;
+import com.betterjr.modules.supplieroffer.entity.ResolveResult;
 import com.betterjr.modules.version.constant.VersionConstantCollentions;
 import com.betterjr.modules.version.service.BaseVersionService;
 
 @Service
-public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMapper, ScfReceivableDO> {
+public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMapper, ScfReceivableDO> implements BaseResolveInterface{
 
     @Autowired
     private CustAccountService custAccountService;
@@ -47,7 +56,7 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
      */
     public ScfReceivableDO addReceivable(ScfReceivableDO anReceivable, String anFileList,boolean anConfirmFlag) {
         
-        BTAssert.notNull(anReceivable,"插入订单为空,操作失败");
+        BTAssert.notNull(anReceivable,"插入应收账款为空,操作失败");
         logger.info("Begin to add addReceivable"+UserUtils.getOperatorInfo().getName());
         anReceivable.initAddValue(UserUtils.getOperatorInfo(),anConfirmFlag);
         // 操作机构设置为供应商
@@ -256,6 +265,9 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
 
     public List<ScfReceivableDO> saveResolveFile(List<Map<String,Object>> listMap) {
         
+        
+        
+        
         return null;
     }
 
@@ -288,5 +300,84 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
         }
         
     }
+
+
+    @Override
+    public ResolveResult invokeResolve(List<Map<String, Object>> anListData) {
+        
+        ResolveResult result = ResolveResult.getInitValue();
+        int recordAmount=0;
+        BigDecimal blance=new BigDecimal(0);
+        if(!Collections3.isEmpty(anListData) && anListData.size()>0){
+            
+            for (Map<String, Object> map : anListData) {
+                ScfReceivableDO receivable = covernMapToReceivable(map);
+                this.insertVersion(receivable);
+                recordAmount++;
+                blance= MathExtend.add(blance, receivable.getBalance());
+            }
+            
+            result.setRecordAmount(recordAmount);
+            result.setBlance(blance);
+            
+        }
+        
+        return result;
+    }
+    
+  public ScfReceivableDO  covernMapToReceivable(Map<String, Object> map){
+      
+      ScfReceivableDO receivable=new ScfReceivableDO();
+      String coreCustName = map.get("coreCustName").toString();
+      try {
+        BeanUtils.populate(receivable, map);
+    }
+    catch (IllegalAccessException | InvocationTargetException e) {
+        
+        e.printStackTrace();
+    }
+      receivable.setCoreCustNo(receivable.getCustNo());
+      receivable.setCoreCustName(receivable.getCustName());
+      receivable.setCustNo(null);
+      receivable.setSurplusBalance(receivable.getBalance());
+      receivable.initAddValue(UserUtils.getOperatorInfo(), true);
+      receivable.setOperOrg("");
+      receivable.setCustName(coreCustName);
+      CustInfo custInfo = custAccountService.queryCustByCustName(coreCustName);
+      if(custInfo!=null){
+          receivable.setCustNo(custInfo.getCustNo());
+          receivable.setOperOrg(baseService.findBaseInfo(receivable.getCustNo()).getOperOrg());
+      }
+      return receivable;
+      
+      
+  }
+
+
+@Override
+public ResolveResult invokeDelete(Long anCommissionFileId) {
+    
+    
+    ResolveResult result = ResolveResult.getInitValue();
+    int recordAmount=0;
+    BigDecimal blance=new BigDecimal(0);
+    Map<String,Object> paramMap= QueryTermBuilder.newInstance()
+            .put("fileId", anCommissionFileId)
+            .put("isLatest", VersionConstantCollentions.IS_LATEST)
+            .build();
+    List<ScfReceivableDO> receivableList = this.selectByProperty(paramMap);
+    for (ScfReceivableDO receivable : receivableList) {
+        checkStatus(receivable.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_USED, true, "已经有应付账款用于融资申请,无法删除");
+        checkStatus(receivable.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, true, "已经有应付账款审核生效,无法删除");
+        checkStatus(receivable.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true, "已经有应付账款发生融资完成,无法删除");
+        receivable.setBusinStatus(VersionConstantCollentions.BUSIN_STATUS_ANNUL);
+        recordAmount++;
+        blance= MathExtend.add(blance, receivable.getBalance());
+        this.updateByPrimaryKeySelective(receivable);
+    }
+    result.setRecordAmount(recordAmount);
+    result.setBlance(blance);
+    return result;
+}
     
 }

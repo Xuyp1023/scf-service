@@ -64,6 +64,13 @@ public class ScfAssetBasedata implements BetterjrEntity{
     private Long assetId;
     
     /**
+     * 资产基础数据主键id
+     */
+    @Column(name = "L_RELATION_INFO_ID",  columnDefinition="INTEGER" )
+    @MetaData( value="资产基础数据主键id", comments = "资产基础数据主键id")
+    private Long infoId;
+    
+    /**
      * 关联的基础的版本
      */
     @Column(name = "C_RELATION_INFO_VERSION",  columnDefinition="VARCHAR" )
@@ -240,6 +247,14 @@ public class ScfAssetBasedata implements BetterjrEntity{
 
     public void setBusinStatus(String anBusinStatus) {
         this.businStatus = anBusinStatus;
+    }
+
+    public Long getInfoId() {
+        return this.infoId;
+    }
+
+    public void setInfoId(Long anInfoId) {
+        this.infoId = anInfoId;
     }
 
     @Override

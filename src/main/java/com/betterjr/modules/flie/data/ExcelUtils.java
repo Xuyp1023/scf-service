@@ -98,6 +98,35 @@ public class ExcelUtils {
 		}
 		return sheet.rowIterator();
 	}
+	public static Sheet parseFileToSheet(InputStream is,String fileType)
+	        throws IOException {
+	    Workbook wb = checkFileType(is,fileType);
+	    BTAssert.notNull(wb,"文件格式错误!请重新上传");
+	    Sheet sheet = wb.getSheetAt(0);
+	    if (sheet == null) {
+	        return null;
+	    }
+	    int totals = sheet.getLastRowNum(); // 总行数
+	    if (totals < 1) {
+	        BTAssert.notNull(null,"您上传的文件中无数据！");
+	    }
+	    return sheet;
+	}
+	
+	public static int getLastRowNum(InputStream is,String fileType)
+	        throws IOException {
+	    Workbook wb = checkFileType(is,fileType);
+	    BTAssert.notNull(wb,"文件格式错误!请重新上传");
+	    Sheet sheet = wb.getSheetAt(0);
+	    if (sheet == null) {
+	        return 0;
+	    }
+	    int totals = sheet.getLastRowNum(); // 总行数
+	    if (totals < 1) {
+	        BTAssert.notNull(null,"您上传的文件中无数据！");
+	    }
+	    return totals;
+	}
 	
 	public static Iterator<Row> parseFile(File anFile,String fileType)
 	        throws IOException {

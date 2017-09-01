@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.math.analysis.integration.LegendreGaussIntegrator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +35,9 @@ import com.betterjr.modules.asset.entity.ScfAssetCompany;
 import com.betterjr.modules.customer.ICustMechBaseService;
 import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.ledger.entity.ContractLedger;
+import com.betterjr.modules.ledger.entity.CustContractLedger;
 import com.betterjr.modules.ledger.service.ContractLedgerService;
+import com.betterjr.modules.ledger.service.CustContractLedgerService;
 import com.betterjr.modules.order.entity.ScfInvoiceDO;
 import com.betterjr.modules.order.entity.ScfOrderDO;
 import com.betterjr.modules.order.service.ScfInvoiceDOService;
@@ -47,6 +48,7 @@ import com.betterjr.modules.receivable.entity.ScfReceivableDO;
 import com.betterjr.modules.receivable.service.ScfReceivableDOService;
 import com.betterjr.modules.version.constant.VersionConstantCollentions;
 import com.betterjr.modules.version.entity.BaseVersionEntity;
+import com.betterjr.modules.version.entity.BetterjrBaseEntity;
 
 @Service
 public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
@@ -71,6 +73,9 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
     
     @Autowired
     private ContractLedgerService contractLedgerService;//合同
+    
+    @Autowired 
+    private CustContractLedgerService custLedgerService;
     
     @Reference(interfaceClass = ICustMechBaseService.class)
     private ICustMechBaseService custMechBaseService;
@@ -119,7 +124,399 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         
     }
     
+    /**
+     * 模式4新增资产信息
+     * @param anMap
+     * @return
+     */
+    public ScfAsset saveAddAssetFour(Map<String, Object> anMap) {
+        
+        BTAssert.notNull(anMap, "新增资产企业 失败-资产 is null");
+        anMap=Collections3.filterMap(anMap, new String[]{"description","custBankName","custBankAccount","custBankAccountName","custNo","coreCustNo","factoryNo","orderList",
+                "invoiceList","agreementList","receivableList","acceptBillList"});
+        ScfAsset asset=new ScfAsset();
+        try {
+            BeanUtils.populate(asset, anMap);
+        }
+        catch (IllegalAccessException | InvocationTargetException e) {
+            
+            e.printStackTrace();
+        }
+        asset.initAdd();
+        if(anMap.containsKey("factoryNo")){
+            
+            asset.setFactorNo(Long.parseLong(anMap.get("factoryNo").toString()));
+        }
+        asset.setBusinStatus(AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_EFFECTIVE);
+        //封装基础数据信息
+        covernAssetByMapBaseDataList(asset,anMap,true);
+        //封装企业信息 并且插入企业信息
+        convernAssetCompany(asset);
+        this.insertSelective(asset);
+        //查询完整的资产信息
+        asset = findAssetByid(asset.getId());
+        return asset;
+    }
+    
+    /**
+     * 封装企业信息并且插入到数据库
+     * @param anAsset
+     */
+    private void convernAssetCompany(ScfAsset anAsset) {
+        
+        CustInfo custInfo = custAccountService.findCustInfo(anAsset.getCustNo());
+        packageCustInfoToAssetCompany(anAsset, custInfo, AssetConstantCollentions.SCF_ASSET_ROLE_SUPPLY);
+        CustInfo coreCustInfo = custAccountService.findCustInfo(anAsset.getCoreCustNo());
+        packageCustInfoToAssetCompany(anAsset, coreCustInfo, AssetConstantCollentions.SCF_ASSET_ROLE_CORE);
+        CustInfo factoryInfo = custAccountService.findCustInfo(anAsset.getFactorNo());
+        packageCustInfoToAssetCompany(anAsset, factoryInfo, AssetConstantCollentions.SCF_ASSET_ROLE_FACTORY);
+    }
+    
+    private void packageCustInfoToAssetCompany(ScfAsset anAsset, CustInfo custInfo, String companyType) {
+        
+        if(custInfo ==null){
+            return;
+        }
+        ScfAssetCompany company=new ScfAssetCompany();
+        company.setAssetId(anAsset.getId());
+        company.setAssetRole(companyType);
+        if(company.equals(AssetConstantCollentions.SCF_ASSET_ROLE_SUPPLY) || company.equals(AssetConstantCollentions.SCF_ASSET_ROLE_DEALER)){
+            company.setBankAccount(anAsset.getCustBankAccount());
+            company.setBankAccountName(anAsset.getCustBankAccountName());
+            company.setBankName(anAsset.getCustBankName());
+        }else if(company.equals(AssetConstantCollentions.SCF_ASSET_ROLE_CORE)){
+            company.setBankAccount(anAsset.getCoreCustBankAccount());
+            company.setBankAccountName(anAsset.getCoreCustBankAccountName());
+            company.setBankName(anAsset.getCoreCustBankName());
+        }else{
+            
+        }
+        company.setCustName(custInfo.getCustName());
+        company.setCustNo(custInfo.getCustNo());
+        company.initAdd();
+        assetCompanyService.insertSelective(company);
+        
+    }
+
+    /**
+     * 封装基础资产信息并且插入到数据库中去
+     * @param anAsset
+     * @param anMap
+     */
+    private void covernAssetByMapBaseDataList(ScfAsset anAsset, Map<String, Object> anMap,boolean flag) {
+        
+        //将基础数据封装到  getBasedataMap
+        //查询所有的发票信息
+        List<ScfInvoiceDO> invoiceList = invoiceService.queryBaseVersionObjectByids(anMap.get(AssetConstantCollentions.SCF_INVOICE_LIST_KEY).toString());
+        packageBaseVersionEntityListToAsset(anAsset, invoiceList, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE,flag);
+        //查询所有的应付账款信息
+        List<ScfReceivableDO> receivableList=receivableService.queryBaseVersionObjectByids(anMap.get(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY).toString());
+        packageBaseVersionEntityListToAsset(anAsset, receivableList, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE,flag);
+        for (ScfReceivableDO receivable : receivableList) {
+            anAsset.setBalance(MathExtend.add(anAsset.getBalance(), receivable.getSurplusBalance()));
+        }
+        //查询所有的贸易合同信息 并且插入贸易合同信息
+        List<ContractLedger> agreementList=contractLedgerService.queryBaseVersionObjectByids(anMap.get(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY).toString());
+        packageBaseVersionEntityListToAsset(anAsset, agreementList, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT,flag);
+    }
+    
+    private void packageBaseVersionEntityListToAsset(ScfAsset anAsset, List<? extends BetterjrBaseEntity> baseVersionList, String baseInfoType,boolean flag){
+        
+        for (BetterjrBaseEntity baseVersion : baseVersionList) {
+            checkStatus(baseVersion.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false, "单据不符合要求,请选择生效的单据");
+            packageBaseVersionEntityToAsset(anAsset, baseVersion, baseInfoType,flag);
+        }
+        
+    }
+
+    /**
+     * 应收账款融资新增资产明细信息
+     * @param anAssetMap
+     * @return
+     */
+    public ScfAsset saveAddAssetNew(Map<String,Object> anAssetMap){
+        
+        BTAssert.notNull(anAssetMap, "新增资产企业 失败-资产 is null");
+        BTAssert.notNull(anAssetMap.get(AssetConstantCollentions.RECEIVABLE_REQUEST_BY_RECEIVABLEID_KEY), "请选择应收账款!");
+        
+        List<ScfReceivableDO> receivableList=queryReceivableList(anAssetMap);
+        ScfAsset asset=new ScfAsset();
+        try {
+            BeanUtils.populate(asset, anAssetMap);
+        }
+        catch (Exception e) {
+            
+            e.printStackTrace();
+        }
+        
+        asset.initAdd();
+        for (ScfReceivableDO receivable : receivableList) {
+            //创建asset对象和公司，基础数据等对象信息 并且插入企业表和基础数据表
+            asset=createAndBuilderAsset(asset,receivable);
+        }
+       
+        this.insert(asset);
+        //查询完整的资产信息
+        ScfAsset findAssetByid = findAssetByid(asset.getId());
+        //------------
+        return findAssetByid;
+        
+    }
+    
   
+    /**
+     * 创建asset对象和公司，基础数据等对象信息
+     * 根据单条的应收应付账款信息封装到资产信息中去
+     * @param anAsset
+     * @param anReceivable
+     * @return
+     */
+    private ScfAsset createAndBuilderAsset(ScfAsset anAsset, ScfReceivableDO anReceivable) {
+        
+        //处理发票信息
+        packageInvoiceToAsset(anAsset,anReceivable);
+        //处理贸易合同
+        packageAgreementToAsset(anAsset,anReceivable);
+        //将应收账款信息封装到资产中 （并且插入公司表记录）并且将应收账款信息插入到资产基础数据表中去
+        packageReceivableToAsset(anAsset,anReceivable);
+        return anAsset;
+    }
+
+    /**
+     * 将应收账款信息封装到资产中 （并且插入公司表记录）
+     * @param anAsset
+     * @param anReceivable
+     */
+    private void packageReceivableToAsset(ScfAsset anAsset, ScfReceivableDO anReceivable) {
+        
+        anAsset.setBalance(MathExtend.add(anAsset.getBalance(),anReceivable.getSurplusBalance()));
+        anAsset.setCoreCustNo(anReceivable.getCoreCustNo());
+        anAsset.setCoreCustName(anReceivable.getCoreCustName());
+        anAsset.setCustNo(anReceivable.getCustNo());
+        anAsset.setCustName(anReceivable.getCustName());
+        anAsset.setEndDate(anReceivable.getEndDate());
+        anAsset.setFactorNo(anReceivable.getCoreCustNo());
+        assetCompanyService.saveAddCompanyByAssetBean(anAsset);
+        insertReceivableToBaseData(anReceivable,anAsset.getId());
+        
+    }
+
+    /**
+     * 封装应收账款信息进入资产管理中
+     * @param anReceivable
+     * @param anId
+     */
+    private void insertReceivableToBaseData(ScfReceivableDO anReceivable, Long anId) {
+        
+        ScfAssetBasedata baseData=new ScfAssetBasedata();
+        baseData.setAssetId(anId);
+        baseData.setInfoId(anReceivable.getId());
+        baseData.setInfoType(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE);
+        baseData.setRefNo(anReceivable.getRefNo());
+        baseData.setVersion(anReceivable.getVersion());
+        baseData.initAdd();
+        assetBasedataService.insertSelective(baseData);
+        
+    }
+
+    /**
+     * 将贸易合同信息存入到数据库中
+     * 将银行信息封装到asset中
+     * @param anAsset
+     * @param anReceivable
+     */
+    private void packageAgreementToAsset(ScfAsset anAsset, ScfReceivableDO anReceivable) {
+        
+        String agreeNo = anReceivable.getAgreeNo();
+        if(StringUtils.isBlank(agreeNo)){
+            BTAssert.notNull(null, "应收账款的贸易合同号为空!操作失败");
+        }
+        //根据贸易合同编号查询贸易合同
+        ContractLedger agreement = contractLedgerService.selectOneByAgreeNo(agreeNo);
+        BTAssert.notNull(agreement, "应收账款的贸易合同未找到!操作失败");
+        checkStatus(anReceivable.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false, "请核准贸易合同");
+        checkStatus(anReceivable.getCustNo()+"", agreement.getCustNo()+"", false, "应收账款和贸易合同对应的企业不一致");
+        CustContractLedger custAgreement = custLedgerService.findCustContractByCustNoAndContractId(anReceivable.getCustNo(), agreement.getId());
+        CustContractLedger coreCustAgreement = custLedgerService.findCustContractByCustNoAndContractId(anReceivable.getCoreCustNo(), agreement.getId());
+        //将合同插入到资产数据表中
+        packageBaseVersionEntityToAsset(anAsset, agreement, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT,false);
+        //封装银行信息到资产中 1表示是供应商   2 表示是核心企业
+        packageCustContractToAsset(anAsset,custAgreement,"1");
+        packageCustContractToAsset(anAsset,coreCustAgreement,"2");
+    }
+
+    /**
+     * 封装银行信息到资产中 
+     * @param anAsset
+     * @param anCustAgreement
+     * @param anType  1表示是供应商   2 表示是核心企业
+     */
+    private void packageCustContractToAsset(ScfAsset anAsset, CustContractLedger anCustAgreement, String anType) {
+        
+        if("1".equals(anType)){
+            //供应商封装银行信息
+            
+            //封装银行名称
+            if(StringUtils.isNoneBlank(anAsset.getCustBankName())){
+                if(!anAsset.getCustBankName().equals(anCustAgreement.getBankName())){
+                    BTAssert.notNull(null, "应收账款的贸易合同号对应的银行信息不对等!操作失败"); 
+                }
+            }else{
+                anAsset.setCustBankName(anCustAgreement.getBankName());
+            }
+            
+            //封装银行开户行
+            if(StringUtils.isNoneBlank(anAsset.getCustBankAccountName())){
+                if(!anAsset.getCustBankAccountName().equals(anCustAgreement.getBankAccountName())){
+                    BTAssert.notNull(null, "应收账款的贸易合同号对应的银行信息不对等!操作失败"); 
+                }
+            }else{
+                anAsset.setCustBankAccountName(anCustAgreement.getBankAccountName());
+            }
+            
+            //封装银行账户信息
+            if(StringUtils.isNoneBlank(anAsset.getCustBankAccount())){
+                if(!anAsset.getCustBankAccount().equals(anCustAgreement.getBankAccount())){
+                    BTAssert.notNull(null, "应收账款的贸易合同号对应的银行信息不对等!操作失败"); 
+                }
+            }else{
+                anAsset.setCustBankAccount(anCustAgreement.getBankAccount());
+            }
+        }else{
+            
+            //核心企业封装
+          //封装银行名称
+            if(StringUtils.isNoneBlank(anAsset.getCoreCustBankName())){
+                if(!anAsset.getCoreCustBankName().equals(anCustAgreement.getBankName())){
+                    BTAssert.notNull(null, "应收账款的贸易合同号对应的银行信息不对等!操作失败"); 
+                }
+            }else{
+                anAsset.setCoreCustBankName(anCustAgreement.getBankName());
+            }
+            
+            //封装银行开户行
+            if(StringUtils.isNoneBlank(anAsset.getCoreCustBankAccountName())){
+                if(!anAsset.getCoreCustBankAccountName().equals(anCustAgreement.getBankAccountName())){
+                    BTAssert.notNull(null, "应收账款的贸易合同号对应的银行信息不对等!操作失败"); 
+                }
+            }else{
+                anAsset.setCoreCustBankAccountName(anCustAgreement.getBankAccountName());
+            }
+            
+            //封装银行账户信息
+            if(StringUtils.isNoneBlank(anAsset.getCoreCustBankAccount())){
+                if(!anAsset.getCoreCustBankAccount().equals(anCustAgreement.getBankAccount())){
+                    BTAssert.notNull(null, "应收账款的贸易合同号对应的银行信息不对等!操作失败"); 
+                }
+            }else{
+                anAsset.setCoreCustBankAccount(anCustAgreement.getBankAccount());
+            }
+        }
+        
+    }
+
+    /**
+     * 将发票信息插入到数据库中
+     * @param anAsset
+     * @param anReceivable
+     */
+    private void packageInvoiceToAsset(ScfAsset anAsset,ScfReceivableDO anReceivable) {
+        
+        //查询发票列表
+        if(StringUtils.isNoneBlank(anReceivable.getInvoiceNos())){
+            
+            List<ScfInvoiceDO> invoiceList = invoiceService.queryReceivableList(anReceivable.getInvoiceNos());
+            //当一条记录都没有找到
+            if(Collections3.isEmpty(invoiceList)){
+                BTAssert.notNull(null, "当前应收账款对应的发票未找到!"); 
+            }
+            
+            //当未找全所有的发票信息
+            if(anReceivable.getInvoiceNos().split(",").length != invoiceList.size()){
+                BTAssert.notNull(null, "当前应收账款对应的发票还有未找到!"); 
+                
+            }
+            
+            for (ScfInvoiceDO invoiceDo : invoiceList) {
+                if(!invoiceDo.getBusinStatus().equals(VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE)){
+                    BTAssert.notNull(null, "发票号码不可用来使用,请先核准"+invoiceDo.getInvoiceNo()); 
+                    
+                }
+                //将发票信息存入到asset中
+                packageBaseVersionEntityToAsset(anAsset,invoiceDo,AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE,false);
+            }
+            
+        }
+    }
+
+    /**
+     * 将基础数据资产封装进资产中  并且插入到数据库中区
+     * @param anAsset
+     * @param baseVersion    基础数据信息
+     * @param baseInfoType  基础数据类型
+     */
+    private void packageBaseVersionEntityToAsset(ScfAsset anAsset, BetterjrBaseEntity baseVersion, String baseInfoType,boolean flag) {
+       
+        ScfAssetBasedata baseData=new ScfAssetBasedata();
+        baseData.setAssetId(anAsset.getId());
+        baseData.initAdd();
+        baseData.setInfoType(baseInfoType);
+        baseData.setRefNo(baseVersion.getRefNo());
+        baseData.setVersion(baseVersion.getVersion());
+        baseData.setInfoId(baseVersion.getId());
+        assetBasedataService.insertSelective(baseData);
+        lockedAssetBasedata(baseVersion,baseInfoType,flag);
+        
+    }
+    
+
+    /**
+     * 锁定基础资产信息
+     * @param anBaseVersion
+     * @param anFlag
+     */
+    private void lockedAssetBasedata(BetterjrBaseEntity anBaseVersion,  String baseInfoType,boolean anFlag) {
+        if(anFlag){
+            
+            anBaseVersion.setBusinStatus(VersionConstantCollentions.BUSIN_STATUS_USED);
+            anBaseVersion.setLockedStatus(VersionConstantCollentions.LOCKED_STATUS_LOCKED);
+            if(baseInfoType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_ORDER)){
+                orderService.updateByPrimaryKeySelective((ScfOrderDO) anBaseVersion);
+                
+            }else if(baseInfoType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL)){
+               billService.updateByPrimaryKeySelective((ScfAcceptBillDO) anBaseVersion) ;
+            }else if(baseInfoType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE)){
+                invoiceService.updateByPrimaryKeySelective((ScfInvoiceDO) anBaseVersion) ;
+             }else if(baseInfoType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT)){
+                contractLedgerService.updateByPrimaryKeySelective( (ContractLedger) anBaseVersion) ;
+             }else if(baseInfoType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE)){
+                 receivableService.updateByPrimaryKeySelective((ScfReceivableDO) anBaseVersion) ;
+              }else{
+                  
+              }
+        }
+        
+        
+    }
+
+    /**
+     * 根据条件查询到用于融资的应收账款列表
+     * @param anAssetMap
+     * @return
+     */
+    private List<ScfReceivableDO> queryReceivableList(Map<String, Object> anAssetMap) {
+        
+        List<ScfReceivableDO> receivableList=new ArrayList<>();
+        Object receivableId = anAssetMap.get(AssetConstantCollentions.RECEIVABLE_REQUEST_BY_RECEIVABLEID_KEY);
+        ScfReceivableDO receivableDO = receivableService.selectByPrimaryKey(Long.parseLong(receivableId.toString()));
+        BTAssert.notNull(receivableDO, "当前应收账款对应的发票未找到!");
+        checkStatus(receivableDO.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false, "当前应收账款状态不是审核生效!");
+        checkStatus(receivableDO.getIsLatest(), VersionConstantCollentions.IS_LATEST, false, "当前应收账款已不是最新版本!");
+        checkStatus(receivableDO.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true, "当前应收账款已经在进行融资!");
+        receivableList.add(receivableDO);
+        return receivableList;
+    }
+
     /**
      * 封装资产数据中的基础信息
      * @param anAsset
@@ -863,7 +1260,7 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
             List<ContractLedger> agreementList=(List<ContractLedger>) agreementObj;
             for (ContractLedger agreement : agreementList) {
                 //校验单据的状态
-                agreement.checkFinanceStatus();
+                agreement.checkReceivableFinanceStatus();
                 contractLedgerService.updateBaseAssetStatus(agreement.getRefNo(), agreement.getVersion(),
                         VersionConstantCollentions.BUSIN_STATUS_USED, VersionConstantCollentions.LOCKED_STATUS_LOCKED);
             }
@@ -1120,6 +1517,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
             }
         }
     }
+
+    
     
     
 }

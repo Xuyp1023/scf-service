@@ -9,14 +9,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.mapper.JsonMapper;
 import com.betterjr.common.service.BaseService;
+import com.betterjr.common.service.SpringContextHolder;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
@@ -43,6 +47,8 @@ import com.betterjr.modules.flie.data.FileResolveConstants;
 import com.betterjr.modules.flie.entity.CustFileCloumn;
 import com.betterjr.modules.flie.service.CustFileCloumnService;
 import com.betterjr.modules.jedis.JedisUtils;
+import com.betterjr.modules.supplieroffer.BaseResolveInterface;
+import com.betterjr.modules.supplieroffer.entity.ResolveResult;
 
 @Service
 public class CommissionFileService extends BaseService<CommissionFileMapper, CommissionFile> {
@@ -144,7 +150,7 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
      * @param anRefNo
      * @return
      */
-    public synchronized CommissionFile saveDeleteFile(String anRefNo) {
+    public synchronized CommissionFile saveDeleteFile(String anRefNo,Map<String, Object> anMap) {
         
         BTAssert.notNull(anRefNo,"删除佣金文件条件不符,");
         logger.info("Begin to delete 佣金文件 saveDeleteFile"+UserUtils.getOperatorInfo().getName()+"  refNo="+anRefNo);
@@ -152,8 +158,18 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         CommissionFile file = this.selectOne(new CommissionFile(anRefNo));
         //校验文件状态
         checkDeleteFileStatus(file,UserUtils.getOperatorInfo());
-        //设置文件删除状态和佣金记录的删除状态
-        recordService.saveDeleteStatusByRefNo(file.getId());
+        if(anMap !=null && anMap.containsKey("beanName")){
+            String beanName = anMap.get("beanName").toString();
+            Object bean = SpringContextHolder.getBean(beanName);
+            if(bean instanceof BaseResolveInterface){
+                BaseResolveInterface resolveInterface=(BaseResolveInterface) bean;   
+                resolveInterface.invokeDelete(file.getId());
+            }
+        }else{
+          
+            //设置文件删除状态和佣金记录的删除状态
+            recordService.saveDeleteStatusByRefNo(file.getId());
+        }
         file.setBusinStatus(CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_DELETE);
         this.updateByPrimaryKeySelective(file);
         logger.info("success to delete 佣金文件 saveDeleteFile"+UserUtils.getOperatorInfo().getName()+"  refNo="+anRefNo);
@@ -205,7 +221,7 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
      * @param anRefNo
      * @return
      */
-    public CommissionFile saveResolveFile(String anRefNo) {
+    public CommissionFile saveResolveFile(String anRefNo,Map<String, Object> anAnMap) {
         
         BTAssert.notNull(anRefNo,"删除佣金文件条件不符,");
         logger.info("Begin to resolve 佣金文件 saveResolveFile"+UserUtils.getOperatorInfo().getName()+"  refNo="+anRefNo);
@@ -214,8 +230,18 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         CommissionFile file = this.selectOne(new CommissionFile(anRefNo));
         checkResolveFileStatus(file,UserUtils.getOperatorInfo());
         try {
-            //解析文件
-            file=resolveCommissionFile(file);
+            if(anAnMap !=null && anAnMap.containsKey("beanName")){
+                String beanName = anAnMap.get("beanName").toString();
+                Object bean = SpringContextHolder.getBean(beanName);
+                if(bean instanceof BaseResolveInterface){
+                    BaseResolveInterface resolveInterface=(BaseResolveInterface) bean;   
+                    file=resolveCommissionFile(file,resolveInterface);
+                }
+            }else{
+                
+                //解析文件
+                file=resolveCommissionFile(file,null);
+            }
         }
         catch (Exception e) {
             //BTAssert.notNull(null,"解析的佣金文件失败"+file.getShowMessage());
@@ -232,7 +258,7 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
      * @param anFile
      * @return
      */
-    private CommissionFile resolveCommissionFile(CommissionFile anFile) {
+    private CommissionFile resolveCommissionFile(CommissionFile anFile,BaseResolveInterface resolveInterface) {
         
         try{
             
@@ -258,17 +284,24 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
             }
             //得到佣金记录的数据集合
             List<Map<String,Object>> listData=resolveFileToListMap(is,fileCloumnList,anFile);
-            //插入佣金记录信息
-            List<CommissionRecord> recordList = recordService.saveRecordListWithMap(listData);
-            int recordAmount=0;
-            BigDecimal blance=new BigDecimal(0);
-            for (CommissionRecord commissionRecord : recordList) {
-                recordAmount++;
-                blance= MathExtend.add(blance, commissionRecord.getBalance());
-                //blance=MathExtend  //blance+commissionRecord.getBalance();
+            if(resolveInterface==null){
+                
+                //插入佣金记录信息
+                List<CommissionRecord> recordList = recordService.saveRecordListWithMap(listData);
+                int recordAmount=0;
+                BigDecimal blance=new BigDecimal(0);
+                for (CommissionRecord commissionRecord : recordList) {
+                    recordAmount++;
+                    blance= MathExtend.add(blance, commissionRecord.getBalance());
+                    //blance=MathExtend  //blance+commissionRecord.getBalance();
+                }
+                anFile.setTotalAmount(recordAmount);
+                anFile.setTotalBlance(blance);
+            }else{
+                ResolveResult invokeResolve = resolveInterface.invokeResolve(listData);
+                anFile.setTotalAmount(invokeResolve.getRecordAmount());
+                anFile.setTotalBlance(invokeResolve.getBlance());
             }
-            anFile.setTotalAmount(recordAmount);
-            anFile.setTotalBlance(blance);
             setResolveSuccess("文件解析成功", anFile);
         }
         catch(IOException e){
@@ -298,7 +331,17 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         //文件后缀
         //FileUtils.copyInputStreamToFile(anIs, new File("d:\\123.xlsx"));
         String fileType=anFile.getFileName().substring(anFile.getFileName().indexOf(".")+1);
-        Iterator<Row> rows = ExcelUtils.parseFile(anIs, fileType);
+        Integer beginRow = anFileCloumnList.get(0).getBeginRow();
+        if(beginRow ==null || beginRow==0){
+            beginRow=1; 
+        }
+        Integer endRow = anFileCloumnList.get(0).getEndRow();
+        if(endRow==null){
+            endRow=0;
+        }
+        Sheet sheet = ExcelUtils.parseFileToSheet(anIs, fileType);
+        Iterator<Row> rows = sheet.rowIterator();
+        int lastRowNum = sheet.getLastRowNum();
         //File file = ExcelUtils.createFile(anIs, fileType);
         //Iterator<Row> rows = ExcelUtils.parseFile(file, fileType);
              BTAssert.notNull(rows,"文件读取失败");
@@ -307,9 +350,10 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
                 Map<String, Object> map=new HashMap<>();
                 Row currentRow = rows.next();
                 // 模板里的表头，该行跳过
-                if (currentRow.getRowNum() < CommissionConstantCollentions.COMMISSION_FILE_BEGIN_ROW) {
+                if (currentRow.getRowNum() < beginRow) {
                     continue;
                 }
+                
                 /*if(currentRow.getRowNum() > CommissionConstantCollentions.COMMISSION_FILE_BEGIN_ROW ){
                     
                     if(StringUtils.isBlank(ExcelUtils.getStringCellValue(currentRow.getCell(0))) 
@@ -320,7 +364,9 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
                     
                 }*/
                 int rowNum = currentRow.getRowNum() + 1;
-                
+                if (rowNum > lastRowNum-endRow+1) {
+                    continue;
+                }
                 for (CustFileCloumn  fileColumn : anFileCloumnList) {
                    
                     String fileColumnProperties=fileColumn.getCloumnProperties();

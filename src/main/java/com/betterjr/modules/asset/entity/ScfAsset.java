@@ -53,6 +53,14 @@ public class ScfAsset implements BetterjrEntity {
     private String regDate;
     
     /**
+     * 融资到期时间
+     */
+    @Column(name = "D_END_DATE",  columnDefinition="VARCHAR" )
+    @MetaData( value="创建日期", comments = "创建日期")
+    @JsonSerialize(using = CustDateJsonSerializer.class)
+    private String endDate;
+    
+    /**
      * 创建时间
      */
     @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
@@ -261,6 +269,49 @@ public class ScfAsset implements BetterjrEntity {
     private Long othersBatchNo;
     
     /**
+     * 供应商的银行名称
+     */
+    @Column(name = "c_cust_bankName", columnDefinition = "VARCHAR")
+    @MetaData(value = "供应商的银行名称", comments = "供应商的银行名称")
+    private String custBankName;
+    
+    /**
+     * 供应商的银行帐户名称
+     */
+    @Column(name = "c_cust_bankAccount", columnDefinition = "VARCHAR")
+    @MetaData(value = "供应商的银行帐户名称", comments = "供应商的银行帐户名称")
+    private String custBankAccount;
+    
+    /**
+     * 供应商的开户人名称
+     */
+    @Column(name = "c_cust_bankAccountName", columnDefinition = "VARCHAR")
+    @MetaData(value = "供应商的开户人名称", comments = "供应商的开户人名称")
+    private String custBankAccountName;
+    
+    
+    /**
+     * 核心企业的银行名称
+     */
+    @Column(name = "c_corecust_bankName", columnDefinition = "VARCHAR")
+    @MetaData(value = "核心企业的银行名称", comments = "核心企业的银行名称")
+    private String coreCustBankName;
+    
+    /**
+     * 核心企业的银行帐户名称
+     */
+    @Column(name = "c_corecust_bankAccount", columnDefinition = "VARCHAR")
+    @MetaData(value = "核心企业的银行帐户名称", comments = "核心企业的银行帐户名称")
+    private String coreCustBankAccount;
+    
+    /**
+     * 核心企业的开户人名称
+     */
+    @Column(name = "c_corecust_bankAccountName", columnDefinition = "VARCHAR")
+    @MetaData(value = "核心企业的开户人名称", comments = "核心企业的开户人名称")
+    private String coreCustBankAccountName;
+    
+    /**
      * 资产总额
      */
     @Column(name = "F_BALANCE",  columnDefinition="DOUBLE" )
@@ -281,6 +332,14 @@ public class ScfAsset implements BetterjrEntity {
 
     public void setRegOperId(Long anRegOperId) {
         this.regOperId = anRegOperId;
+    }
+
+    public String getEndDate() {
+        return this.endDate;
+    }
+
+    public void setEndDate(String anEndDate) {
+        this.endDate = anEndDate;
     }
 
     public String getRegOperName() {
@@ -536,6 +595,54 @@ public class ScfAsset implements BetterjrEntity {
         this.acceptBillList = anAcceptBillList;
     }
 
+    public String getCustBankName() {
+        return this.custBankName;
+    }
+
+    public void setCustBankName(String anCustBankName) {
+        this.custBankName = anCustBankName;
+    }
+
+    public String getCustBankAccount() {
+        return this.custBankAccount;
+    }
+
+    public void setCustBankAccount(String anCustBankAccount) {
+        this.custBankAccount = anCustBankAccount;
+    }
+
+    public String getCustBankAccountName() {
+        return this.custBankAccountName;
+    }
+
+    public void setCustBankAccountName(String anCustBankAccountName) {
+        this.custBankAccountName = anCustBankAccountName;
+    }
+
+    public String getCoreCustBankName() {
+        return this.coreCustBankName;
+    }
+
+    public void setCoreCustBankName(String anCoreCustBankName) {
+        this.coreCustBankName = anCoreCustBankName;
+    }
+
+    public String getCoreCustBankAccount() {
+        return this.coreCustBankAccount;
+    }
+
+    public void setCoreCustBankAccount(String anCoreCustBankAccount) {
+        this.coreCustBankAccount = anCoreCustBankAccount;
+    }
+
+    public String getCoreCustBankAccountName() {
+        return this.coreCustBankAccountName;
+    }
+
+    public void setCoreCustBankAccountName(String anCoreCustBankAccountName) {
+        this.coreCustBankAccountName = anCoreCustBankAccountName;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -692,19 +799,21 @@ public class ScfAsset implements BetterjrEntity {
         return true;
     }
 
-
     @Override
     public String toString() {
-        return "ScfAsset [id=" + this.id + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", businStatus=" + this.businStatus
-                + ", businTypeId=" + this.businTypeId + ", productCode=" + this.productCode + ", sourceUseType=" + this.sourceUseType + ", custNo="
-                + this.custNo + ", custName=" + this.custName + ", coreCustNo=" + this.coreCustNo + ", coreCustName=" + this.coreCustName
-                + ", prefixId=" + this.prefixId + ", suffixId=" + this.suffixId + ", custType=" + this.custType + ", custMap=" + this.custMap
-                + ", basedataMap=" + this.basedataMap + ", orderList=" + this.orderList + ", invoiceList=" + this.invoiceList + ", agreementList="
-                + this.agreementList + ", receivableList=" + this.receivableList + ", acceptBillList=" + this.acceptBillList + ", operationAuth="
-                + this.operationAuth + ", factorNo=" + this.factorNo + ", regOperId=" + this.regOperId + ", regOperName=" + this.regOperName
-                + ", annulOperId=" + this.annulOperId + ", annulOperName=" + this.annulOperName + ", annulDate=" + this.annulDate + ", annulTime="
-                + this.annulTime + ", statementBatchNo=" + this.statementBatchNo + ", goodsBatchNo=" + this.goodsBatchNo + ", othersBatchNo="
-                + this.othersBatchNo + ", balance=" + this.balance + "]";
+        return "ScfAsset [id=" + this.id + ", regDate=" + this.regDate + ", endDate=" + this.endDate + ", regTime=" + this.regTime + ", businStatus="
+                + this.businStatus + ", businTypeId=" + this.businTypeId + ", productCode=" + this.productCode + ", sourceUseType="
+                + this.sourceUseType + ", custNo=" + this.custNo + ", custName=" + this.custName + ", coreCustNo=" + this.coreCustNo
+                + ", coreCustName=" + this.coreCustName + ", prefixId=" + this.prefixId + ", suffixId=" + this.suffixId + ", custType="
+                + this.custType + ", custMap=" + this.custMap + ", basedataMap=" + this.basedataMap + ", orderList=" + this.orderList
+                + ", invoiceList=" + this.invoiceList + ", agreementList=" + this.agreementList + ", receivableList=" + this.receivableList
+                + ", acceptBillList=" + this.acceptBillList + ", operationAuth=" + this.operationAuth + ", factorNo=" + this.factorNo + ", regOperId="
+                + this.regOperId + ", regOperName=" + this.regOperName + ", annulOperId=" + this.annulOperId + ", annulOperName=" + this.annulOperName
+                + ", annulDate=" + this.annulDate + ", annulTime=" + this.annulTime + ", statementBatchNo=" + this.statementBatchNo
+                + ", goodsBatchNo=" + this.goodsBatchNo + ", othersBatchNo=" + this.othersBatchNo + ", custBankName=" + this.custBankName
+                + ", custBankAccount=" + this.custBankAccount + ", custBankAccountName=" + this.custBankAccountName + ", coreCustBankName="
+                + this.coreCustBankName + ", coreCustBankAccount=" + this.coreCustBankAccount + ", coreCustBankAccountName="
+                + this.coreCustBankAccountName + ", balance=" + this.balance + "]";
     }
 
     /**

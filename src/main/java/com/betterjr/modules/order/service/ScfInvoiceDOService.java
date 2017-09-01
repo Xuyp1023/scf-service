@@ -369,4 +369,27 @@ public class ScfInvoiceDOService extends BaseVersionService<ScfInvoiceDOMapper, 
         
         return null;
     }
+    
+    /**
+     * 查询给定发票号码的所有可查询的发票列表
+     * @param receivableIds
+     * @return
+     */
+    public List<ScfInvoiceDO> queryReceivableList(String receivableIds){
+        
+        if(StringUtils.isNoneBlank(receivableIds)){
+            
+            String[] receivableArray = receivableIds.split(",");
+            Map<String,Object> paramMap= QueryTermBuilder.newInstance()
+                    .put("invoiceNo", receivableArray)
+                    .put("businStatus", VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE)
+                    .build();
+            List<ScfInvoiceDO> list = this.selectByMapPropertyWithVersion(paramMap,"id desc");
+            return list;
+            
+        }
+        
+        return new ArrayList<ScfInvoiceDO>();
+        
+    }
 }

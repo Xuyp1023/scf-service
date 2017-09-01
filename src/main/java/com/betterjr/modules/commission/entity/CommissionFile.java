@@ -669,7 +669,10 @@ public class CommissionFile implements BetterjrEntity {
         this.setPayStatus(CommissionConstantCollentions.COMMISSION_PAY_STATUS_NO_HANDLE);
         this.setImportDate(BetterDateUtils.getNumDate());
         this.setImportTime(BetterDateUtils.getNumTime());
-        this.setInfoType(CommissionConstantCollentions.COMMISSION_FILE_INFO_TYPE);
+        if(StringUtils.isBlank(this.getInfoType())){
+            
+            this.setInfoType(CommissionConstantCollentions.COMMISSION_FILE_INFO_TYPE);
+        }
         this.setOperOrg(anOperatorInfo.getOperOrg());
         this.setRegDate(BetterDateUtils.getNumDate());
         this.setRegTime(BetterDateUtils.getNumTime());

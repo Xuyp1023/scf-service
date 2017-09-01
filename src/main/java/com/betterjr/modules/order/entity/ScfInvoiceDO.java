@@ -34,18 +34,18 @@ public class ScfInvoiceDO extends BaseVersionEntity {
     
     /**
      * 
-     * 发票号码
+     * 发票代码
      */
     @Column(name = "C_INVOICE_CODE",  columnDefinition="VARCHAR" )
-    @MetaData( value="发票号码", comments = "发票号码")
+    @MetaData( value="发票代码", comments = "发票代码")
     private String invoiceCode;
 
     /**
      * 
-     * 发票代码
+     * 发票号码
      */
     @Column(name = "C_INVOICE_NO",  columnDefinition="VARCHAR" )
-    @MetaData( value="发票代码", comments = "发票代码")
+    @MetaData( value="发票号码", comments = "发票号码")
     private String invoiceNo;
 
     /**

@@ -161,5 +161,71 @@ public class ScfAssetCompanyService extends BaseService<ScfAssetCompanyMapper, S
         return companyList;
         
     }
+
+    /**
+     * 通过asset本事基本的信息插入公司表
+     * @param anAsset
+     */
+    public void saveAddCompanyByAssetBean(ScfAsset anAsset) {
+        
+        saveAddCustInfoCompanyByAsset(anAsset);
+        
+        saveAddCoreCustInfoCompanyByAsset(anAsset);
+        
+        saveAddFactoryCustInfoCompanyByAsset(anAsset);
+        
+        
+    }
+
+    private void saveAddFactoryCustInfoCompanyByAsset(ScfAsset anAsset) {
+        
+        if(anAsset.getFactorNo()!=null){
+            
+            CustInfo custInfo = custAccountService.selectByPrimaryKey(anAsset.getFactorNo());
+            if(custInfo!=null){
+                ScfAssetCompany company=new ScfAssetCompany();
+                company.initAdd();
+                company.setAssetId(anAsset.getId());
+                company.setAssetRole(AssetConstantCollentions.SCF_ASSET_ROLE_FACTORY);
+                //company.setBankAccount(anAsset.getCoreCustBankAccount());
+                //company.setBankAccountName(anAsset.getCoreCustBankAccountName());
+                //company.setBankName(anAsset.getCoreCustBankName());
+                company.setCustName(custInfo.getCustName());
+                company.setCustNo(anAsset.getFactorNo());
+                this.insert(company);
+            }
+        }
+        
+    }
+
+    private void saveAddCoreCustInfoCompanyByAsset(ScfAsset anAsset) {
+        
+        ScfAssetCompany company=new ScfAssetCompany();
+        company.initAdd();
+        company.setAssetId(anAsset.getId());
+        company.setAssetRole(AssetConstantCollentions.SCF_ASSET_ROLE_CORE);
+        company.setBankAccount(anAsset.getCoreCustBankAccount());
+        company.setBankAccountName(anAsset.getCoreCustBankAccountName());
+        company.setBankName(anAsset.getCoreCustBankName());
+        company.setCustName(anAsset.getCoreCustName());
+        company.setCustNo(anAsset.getCoreCustNo());
+        this.insert(company);
+        
+    }
+
+    private void saveAddCustInfoCompanyByAsset(ScfAsset anAsset) {
+        
+        ScfAssetCompany company=new ScfAssetCompany();
+        company.initAdd();
+        company.setAssetId(anAsset.getId());
+        company.setAssetRole(AssetConstantCollentions.SCF_ASSET_ROLE_SUPPLY);
+        company.setBankAccount(anAsset.getCustBankAccount());
+        company.setBankAccountName(anAsset.getCustBankAccountName());
+        company.setBankName(anAsset.getCustBankName());
+        company.setCustName(anAsset.getCustName());
+        company.setCustNo(anAsset.getCustNo());
+        this.insert(company);
+        
+    }
     
 }
