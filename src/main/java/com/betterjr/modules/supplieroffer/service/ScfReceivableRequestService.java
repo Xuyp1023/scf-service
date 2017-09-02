@@ -154,7 +154,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         
         for (ScfInvoiceDO invoiceDo : invoiceList) {
             checkStatus(invoiceDo.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false, "对应的发票不是生效状态");
-            checkStatus(invoiceDo.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, false, "对应的发票已经用于融资申请");
+            checkStatus(invoiceDo.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true, "对应的发票已经用于融资申请");
             
         }
         
