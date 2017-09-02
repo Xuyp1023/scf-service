@@ -52,6 +52,7 @@ public class ScfReceivableRequestAgreementService extends BaseService<ScfReceiva
         }
         anMap=Collections3.filterMapEmptyObject(anMap);
         anMap=Collections3.filterMap(anMap, new String[]{"custNo","coreCustNo"});
+        anMap.put("NEbusinStatus", "3");
         Page<ScfReceivableRequestAgreement> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
         return page;
     }
@@ -74,6 +75,7 @@ public class ScfReceivableRequestAgreementService extends BaseService<ScfReceiva
         }
         anMap=Collections3.filterMapEmptyObject(anMap);
         anMap=Collections3.filterMap(anMap, new String[]{"custNo","coreCustNo","agreementType"});
+        anMap.put("NEbusinStatus", "3");
         Page<ScfReceivableRequestAgreement> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
         return page;
     }
@@ -132,6 +134,7 @@ public class ScfReceivableRequestAgreementService extends BaseService<ScfReceiva
         agreement.setCoreCustName(custAccountService.queryCustName(agreement.getCoreCustNo()));
         agreement.setCustNo(anRequest.getCustNo());
         agreement.setCustName(anRequest.getCustName());
+        agreement.setAgreementName("企e金服服务合同");
         agreement.setReceivableRequestNo(anRequest.getRequestNo());
         agreement.setAgreementType("0");
         this.insertSelective(agreement);
