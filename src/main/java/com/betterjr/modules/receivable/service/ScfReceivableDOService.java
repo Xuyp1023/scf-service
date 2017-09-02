@@ -181,6 +181,26 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
         
     }
     
+    public ScfReceivableDO saveAuditReceivable(String anRefNo,String anVersion,Map<String, Object> anAnMap){
+        
+        BTAssert.notNull(anRefNo, "应收账款凭证单号为空!操作失败");
+        BTAssert.notNull(anVersion, "操作异常为空!操作失败");
+        ScfReceivableDO receivable = this.selectOneWithVersion(anRefNo, anVersion);
+        BTAssert.notNull(receivable, "此应收账款异常!操作失败");
+        Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
+        BTAssert.notNull(custInfos, "获取当前企业失败!操作失败");
+        if(! getCustNoList(custInfos).contains(receivable.getCoreCustNo())){
+            BTAssert.notNull(receivable, "您没有审核权限!操作失败"); 
+        }
+        if(anAnMap!=null && anAnMap.containsKey("custCoreRate")){
+            
+            receivable.setCustCoreRate(new BigDecimal(anAnMap.get("custCoreRate").toString()));
+        }
+        this.auditOperator(UserUtils.getOperatorInfo(), receivable);
+        return receivable;
+        
+    }
+    
     /**
      * 将给定的企业集合中提取企业的id
      * @param custInfos

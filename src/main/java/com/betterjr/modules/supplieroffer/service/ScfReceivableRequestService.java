@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,10 +32,17 @@ import com.betterjr.modules.asset.data.AssetConstantCollentions;
 import com.betterjr.modules.asset.entity.ScfAsset;
 import com.betterjr.modules.asset.service.ScfAssetService;
 import com.betterjr.modules.customer.ICustMechBaseService;
+import com.betterjr.modules.ledger.entity.ContractLedger;
+import com.betterjr.modules.ledger.service.ContractLedgerService;
+import com.betterjr.modules.order.entity.ScfInvoiceDO;
+import com.betterjr.modules.order.service.ScfInvoiceDOService;
+import com.betterjr.modules.receivable.entity.ScfReceivableDO;
+import com.betterjr.modules.receivable.service.ScfReceivableDOService;
 import com.betterjr.modules.supplieroffer.dao.ScfReceivableRequestMapper;
 import com.betterjr.modules.supplieroffer.data.ReceivableRequestConstantCollentions;
 import com.betterjr.modules.supplieroffer.entity.ScfReceivableRequest;
 import com.betterjr.modules.supplieroffer.entity.ScfSupplierOffer;
+import com.betterjr.modules.version.constant.VersionConstantCollentions;
 
 @Service
 public class ScfReceivableRequestService extends BaseService<ScfReceivableRequestMapper, ScfReceivableRequest>{
@@ -57,6 +65,15 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
     
     @Autowired
     private CustAccountService custAccountService;
+    
+    @Autowired
+    private ScfReceivableDOService receivableService;
+    
+    @Autowired
+    private ScfInvoiceDOService invoiceService;
+    
+    @Autowired
+    private ContractLedgerService contractLedgerService;//合同
     
     /*
      * 模式一应收账款申请
@@ -82,6 +99,68 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         return request;
         
     }
+    
+    /**
+     * 校验是否是可用的应付账款信息
+     * @param receivableId
+     * @return
+     */
+    public ScfReceivableDO checkVerifyReceivable(Long receivableId){
+        
+        BTAssert.notNull(receivableId, "请选择应付账款,操作失败");
+        ScfReceivableDO receivable = receivableService.selectByPrimaryKey(receivableId) ;
+        BTAssert.notNull(receivable, "请选择应付账款,操作失败");
+        checkStatus(receivable.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false, "请选择审核生效的应付账款进行申请");
+        checkStatus(receivable.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, false, "当前应付账款已经进行申请");
+        String agreeNo = receivable.getAgreeNo();
+        String invoiceNos = receivable.getInvoiceNos();
+        if(StringUtils.isBlank(agreeNo)){
+            BTAssert.notNull(receivable, "请应付账款关联贸易合同");
+        }
+        if(StringUtils.isBlank(invoiceNos)){
+            BTAssert.notNull(receivable, "请应付账款关联发票信息");
+        }
+        checkReceivableContainInvoices(invoiceNos);
+        
+        //根据贸易合同编号查询贸易合同
+        ContractLedger agreement = contractLedgerService.selectOneByAgreeNo(agreeNo);
+        BTAssert.notNull(agreement, "应收账款的贸易合同未找到!操作失败");
+        checkStatus(agreement.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false, "请核准贸易合同");
+        checkStatus(receivable.getCustNo()+"", agreement.getCustNo()+"", false, "应收账款和贸易合同对应的企业不一致");
+        //查找利率
+        ScfSupplierOffer offer = offerService.findOffer(receivable.getCustNo(), receivable.getCoreCustNo());
+        BTAssert.notNull(offer, "请通知核心企业设置融资利率,操作失败");
+        
+        ScfSupplierOffer platOffer = offerService.findOffer(receivable.getCustNo(), findPlatCustInfo());
+        BTAssert.notNull(platOffer, "请通知平台设置服务费利率,操作失败");
+        return  receivable;
+        
+    }
+    
+    private void checkReceivableContainInvoices(String invoiceIds){
+        
+        
+        List<ScfInvoiceDO> invoiceList = invoiceService.queryReceivableList(invoiceIds);
+        //当一条记录都没有找到
+        if(Collections3.isEmpty(invoiceList)){
+            BTAssert.notNull(null, "当前应收账款对应的发票未找到!"); 
+        }
+        
+        //当未找全所有的发票信息
+        if(invoiceIds.split(",").length != invoiceList.size()){
+            BTAssert.notNull(null, "当前应收账款对应的发票还有未找到!"); 
+            
+        }
+        
+        for (ScfInvoiceDO invoiceDo : invoiceList) {
+            checkStatus(invoiceDo.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false, "对应的发票不是生效状态");
+            checkStatus(invoiceDo.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, false, "对应的发票已经用于融资申请");
+            
+        }
+        
+    }
+    
+    
     
     /**
      * 供应商提交申请融资信息  并且生成电子合同
