@@ -80,9 +80,9 @@ public class ScfReceivableDubboService implements IScfReceivableService {
     }
 
     @Override
-    public String webSaveAuditReceivableByRefNoVersion(String anRefNo, String anVersion) {
+    public String webSaveAuditReceivableByRefNoVersion(String anRefNo, String anVersion,Map<String, Object> anAnMap) {
         
-        return AjaxObject.newOk("应收账款审核成功", receivableService.saveAuditReceivable(anRefNo, anVersion)).toJson();
+        return AjaxObject.newOk("应收账款审核成功", receivableService.saveAuditReceivable(anRefNo, anVersion,anAnMap)).toJson();
     }
 
     @Override

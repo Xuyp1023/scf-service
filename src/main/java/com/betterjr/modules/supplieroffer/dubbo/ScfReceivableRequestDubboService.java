@@ -112,4 +112,10 @@ public class ScfReceivableRequestDubboService implements IScfReceivableRequestSe
         return AjaxObject.newOk("拒绝成功", requestService.saveRejectReceivableRequestFour(anRequestNo)).toJson();
     }
 
+    @Override
+    public String webCheckVerifyReceivable(Long anReceivableId) {
+        
+        return AjaxObject.newOk("校验是否可以进行融资申请", requestService.checkVerifyReceivable(anReceivableId)).toJson();
+    }
+
 }

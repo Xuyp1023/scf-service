@@ -334,7 +334,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         //根据贸易合同编号查询贸易合同
         ContractLedger agreement = contractLedgerService.selectOneByAgreeNo(agreeNo);
         BTAssert.notNull(agreement, "应收账款的贸易合同未找到!操作失败");
-        checkStatus(anReceivable.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false, "请核准贸易合同");
+        checkStatus(agreement.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false, "请核准贸易合同");
+        checkStatus(anReceivable.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false, "应付账款不是生效状态，无法进行申请");
         checkStatus(anReceivable.getCustNo()+"", agreement.getCustNo()+"", false, "应收账款和贸易合同对应的企业不一致");
         CustContractLedger custAgreement = custLedgerService.findCustContractByCustNoAndContractId(anReceivable.getCustNo(), agreement.getId());
         CustContractLedger coreCustAgreement = custLedgerService.findCustContractByCustNoAndContractId(anReceivable.getCoreCustNo(), agreement.getId());

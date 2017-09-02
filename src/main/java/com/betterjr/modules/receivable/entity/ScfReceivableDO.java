@@ -95,6 +95,13 @@ public class ScfReceivableDO extends BaseVersionEntity{
     private BigDecimal balance;
     
     /**
+     * 折扣率
+     */
+    @Column(name = "F_CUST_CORE_RATE",  columnDefinition="DOUBLE" )
+    @MetaData( value="折扣率", comments = "折扣率")
+    private BigDecimal custCoreRate;
+    
+    /**
      * 余额(应付账款余额)
      */
     @Column(name = "F_SURPLUS_BALANCE",  columnDefinition="DOUBLE" )
@@ -220,6 +227,14 @@ public class ScfReceivableDO extends BaseVersionEntity{
 
     public void setReceivableNo(String anReceivableNo) {
         this.receivableNo = anReceivableNo;
+    }
+    
+    public BigDecimal getCustCoreRate() {
+        return this.custCoreRate;
+    }
+
+    public void setCustCoreRate(BigDecimal anCustCoreRate) {
+        this.custCoreRate = anCustCoreRate;
     }
 
     public String getBtNo() {
