@@ -75,6 +75,9 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         request.setReceivableRequestType("1");
         request.saveAddValue();
         fillRequestRaxInfo(request,BetterDateUtils.getNumDate());
+        //插入电子合同信息
+        agreementService.saveAddCoreAgreementByRequest(request);
+        agreementService.saveAddPlatAgreementByRequest(request);
         this.insert(request);
         return request;
         
@@ -101,9 +104,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         //封装应付款钱信息
         fillRequestRaxInfo(request,anRequestPayDate);
         request.setDescription(anDescription);
-        //插入电子合同信息
-        agreementService.saveAddCoreAgreementByRequest(request);
-        agreementService.saveAddPlatAgreementByRequest(request);
+        
         this.updateByPrimaryKeySelective(request);
         return request;
         
