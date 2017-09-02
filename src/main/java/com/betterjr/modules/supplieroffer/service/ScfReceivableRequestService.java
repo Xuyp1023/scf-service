@@ -111,7 +111,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         ScfReceivableDO receivable = receivableService.selectByPrimaryKey(receivableId) ;
         BTAssert.notNull(receivable, "请选择应付账款,操作失败");
         checkStatus(receivable.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false, "请选择审核生效的应付账款进行申请");
-        checkStatus(receivable.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, false, "当前应付账款已经进行申请");
+        checkStatus(receivable.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true, "当前应付账款已经进行申请");
         String agreeNo = receivable.getAgreeNo();
         String invoiceNos = receivable.getInvoiceNos();
         if(StringUtils.isBlank(agreeNo)){
@@ -348,6 +348,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
                 ,ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_SIGN_AGREEMENT
                 ,ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_PAY_CONFIRM
                 ,ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_REQUEST_END});
+        anMap.put("receivableRequestType", "1");
         Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
         return page;
     }
@@ -369,6 +370,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         anMap=Collections3.filterMapEmptyObject(anMap);
         anMap=Collections3.filterMap(anMap, new String[]{"custNo","coreCustNo","GTEendDate","LTEendDate","receivableRequestType"});
         anMap.put("businStatus", ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_REQUEST_END);
+        anMap.put("receivableRequestType", "1");
         Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
         return page;
     }
@@ -391,6 +393,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         anMap=Collections3.filterMap(anMap, new String[]{"custNo","coreCustNo","requestNo","GTEregDate","LTEregDate","receivableRequestType"});
         anMap=Collections3.fuzzyMap(anMap, new String[]{"requestNo"});
         anMap.put("businStatus", new String[]{ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TRANSFER_AGREEMENT_CORE,ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_SIGN_AGREEMENT});
+        anMap.put("receivableRequestType", "1");
         Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
         return page;
     }
@@ -412,6 +415,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         anMap=Collections3.filterMapEmptyObject(anMap);
         anMap=Collections3.filterMap(anMap, new String[]{"custNo","coreCustNo","GTEendDate","LTEendDate","receivableRequestType"});
         anMap.put("businStatus", ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_REQUEST_END);
+        anMap.put("receivableRequestType", "1");
         Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
         return page;
     }
@@ -506,6 +510,19 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
      */
     private ScfReceivableRequest convertAssetToReceviableRequest(ScfAsset anAsset) {
         ScfReceivableRequest request=new ScfReceivableRequest();
+        request=convertAssetToReceviableRequest(request, anAsset);
+        ScfSupplierOffer offer = offerService.findOffer(anAsset.getCustNo(), anAsset.getCoreCustNo());
+        BTAssert.notNull(offer, "请通知核心企业设置融资利率,操作失败");
+        request.setCustCoreRate(offer.getCoreCustRate());
+        
+        ScfSupplierOffer platOffer = offerService.findOffer(anAsset.getCustNo(), findPlatCustInfo());
+        BTAssert.notNull(platOffer, "请通知平台设置服务费利率,操作失败");
+        request.setCustOpatRate(platOffer.getCoreCustRate());
+        
+        return request;
+    }
+    private ScfReceivableRequest convertAssetToReceviableRequest(ScfReceivableRequest request,ScfAsset anAsset){
+        
         request.setAssetId(anAsset.getId());
         request.setBalance(anAsset.getBalance());
         request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_NOEFFECTIVE);
@@ -514,19 +531,15 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         request.setCustBankAccount(anAsset.getCustBankAccount());
         request.setCustBankAccountName(anAsset.getCustBankAccountName());
         request.setCustBankName(anAsset.getCustBankName());
-        ScfSupplierOffer offer = offerService.findOffer(anAsset.getCustNo(), anAsset.getCoreCustNo());
-        BTAssert.notNull(offer, "请通知核心企业设置融资利率,操作失败");
-        request.setCustCoreRate(offer.getCoreCustRate());
         request.setCustName(anAsset.getCustName());
         request.setCustNo(anAsset.getCustNo());
-        ScfSupplierOffer platOffer = offerService.findOffer(anAsset.getCustNo(), findPlatCustInfo());
-        BTAssert.notNull(platOffer, "请通知平台设置服务费利率,操作失败");
-        request.setCustOpatRate(platOffer.getCoreCustRate());
         request.setOperOrg(baseService.findBaseInfo(anAsset.getCustNo()).getOperOrg());
         request.setOwnCompany(anAsset.getCustNo());
         request.setEndDate(anAsset.getEndDate());
         request.setAsset(anAsset);
         return request;
+        
+        
     }
     
 
@@ -649,6 +662,33 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         assetService.saveRejectOrBreakAsset(request.getAssetId());
         this.updateByPrimaryKey(request);
         return request;
+    }
+    
+    /**
+     * 模式2新增融资申请
+     * @param anMap
+     * @return
+     */
+    public ScfReceivableRequest saveAddRequestTwo(Map<String,Object> anMap){
+        
+        BTAssert.notNull(anMap, "融资信息为空,操作失败");
+        BTAssert.notNull(anMap.get(AssetConstantCollentions.RECEIVABLE_REQUEST_BY_RECEIVABLEID_KEY), "请选择应收账款!");
+        
+        ScfAsset asset = assetService.saveAddAssetNew(anMap);
+        //将资产信息封装到融资中去
+        ScfReceivableRequest request=new ScfReceivableRequest();
+        request=convertAssetToReceviableRequest(request,asset);
+        //设置利率
+        
+        request.setReceivableRequestType("2");
+        request.saveAddValue();
+        fillRequestRaxInfo(request,BetterDateUtils.getNumDate());
+        //插入电子合同信息
+        agreementService.saveAddCoreAgreementByRequest(request);
+        agreementService.saveAddPlatAgreementByRequest(request);
+        this.insert(request);
+        return request;
+        
     }
     
 }
