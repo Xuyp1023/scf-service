@@ -205,4 +205,17 @@ public class ScfSupplierOfferService extends BaseService<ScfSupplierOfferMapper,
         
     }
     
+    /**
+     * 
+     * @param anCustNo
+     * @return
+     */
+    public List<ScfSupplierOffer> queryAllFactoryByCustNo(Long anCustNo){
+        
+        List<ScfSupplierOffer> list=new ArrayList<>();
+        list=this.mapper.queryAllFactoryByCustNo(anCustNo);
+        return list;
+        
+    }
+    
 }

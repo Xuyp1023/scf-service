@@ -21,4 +21,13 @@ public class ReceivableRequestConstantCollentions {
     public static final String OFFER_BUSIN_STATUS_REQUEST_ANNUL="7"; //7废止
     
     public static final Long PLATFORM_CUST_NO=123456L; //6完结
+    
+    public static final String OFFER_BUSIN_STATUS_TWO_CORE_CONFIRM="5"; //核心企业确认申请
+    
+    public static final String OFFER_BUSIN_STATUS_TWO_FACTORY_SIGN_AGREEMENT="6"; //结算中心签署合同
+    
+    public static final String OFFER_BUSIN_STATUS_TWO_FACTORY_PAY_CONFIRM="8"; //结算中心确认付款
+    
+    public static final String OFFER_BUSIN_STATUS_TWO_REQUEST_END="9"; //模式2完成申请
+    
 }

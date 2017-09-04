@@ -221,6 +221,7 @@ public class ScfReceivableRequest implements BetterjrEntity{
      */
     @Column(name = "D_END_DATE",  columnDefinition="VARCHAR" )
     @MetaData( value="到期时间", comments = "到期时间")
+    @JsonSerialize(using = CustDateJsonSerializer.class)
     private String endDate;
     
     /**

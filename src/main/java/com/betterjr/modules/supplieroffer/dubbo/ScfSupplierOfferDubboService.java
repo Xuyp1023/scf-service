@@ -54,4 +54,10 @@ public class ScfSupplierOfferDubboService implements IScfSupplierOfferService {
         return AjaxObject.newOk("查询供应商成功", offerService.queryAllCust(anCoreCustNo)).toJson();
     }
 
+    @Override
+    public String webQueryAllFactoryByCustNo(Long anCustNo) {
+        
+        return AjaxObject.newOk("查询成功", offerService.queryAllFactoryByCustNo(anCustNo)).toJson();
+    }
+
 }

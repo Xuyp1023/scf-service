@@ -2,13 +2,16 @@ package com.betterjr.modules.supplieroffer.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.betterjr.common.data.SimpleDataEntity;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
@@ -19,6 +22,8 @@ import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.customer.ICustMechBaseService;
+import com.betterjr.modules.customer.constants.CustomerConstants;
+import com.betterjr.modules.customer.entity.CustRelation;
 import com.betterjr.modules.supplieroffer.dao.ScfReceivableRequestAgreementMapper;
 import com.betterjr.modules.supplieroffer.data.AgreementConstantCollentions;
 import com.betterjr.modules.supplieroffer.data.ReceivableRequestConstantCollentions;
@@ -51,8 +56,12 @@ public class ScfReceivableRequestAgreementService extends BaseService<ScfReceiva
             anMap.put("coreCustNo", getCurrentUserCustNos());
         }
         anMap=Collections3.filterMapEmptyObject(anMap);
-        anMap=Collections3.filterMap(anMap, new String[]{"custNo","coreCustNo"});
-        anMap.put("NEbusinStatus", "3");
+        anMap=Collections3.filterMap(anMap, new String[]{"custNo","coreCustNo","agreementType"});
+        /*anMap.put("NEbusinStatus", "3");*/
+        List<String> list=new ArrayList<>();
+        list.add("0");
+        list.add("3");
+        anMap.put("NEbusinStatus", list);
         Page<ScfReceivableRequestAgreement> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
         return page;
     }
@@ -75,7 +84,10 @@ public class ScfReceivableRequestAgreementService extends BaseService<ScfReceiva
         }
         anMap=Collections3.filterMapEmptyObject(anMap);
         anMap=Collections3.filterMap(anMap, new String[]{"custNo","coreCustNo","agreementType"});
-        anMap.put("NEbusinStatus", "3");
+        List<String> list=new ArrayList<>();
+        list.add("0");
+        list.add("3");
+        anMap.put("NEbusinStatus", list);
         Page<ScfReceivableRequestAgreement> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
         return page;
     }
@@ -103,8 +115,9 @@ public class ScfReceivableRequestAgreementService extends BaseService<ScfReceiva
      * 通过融资请求新增电子合同信息
      * @param anRequest
      * @return
+     * 1: 模式1   2 表示模式2签署的合同
      */
-    public ScfReceivableRequestAgreement saveAddCoreAgreementByRequest(ScfReceivableRequest anRequest) {
+    public ScfReceivableRequestAgreement saveAddCoreAgreementByRequest(ScfReceivableRequest anRequest,String agreementType) {
         
         ScfReceivableRequestAgreement agreement=new ScfReceivableRequestAgreement();
         agreement.saveAddValue(UserUtils.getOperatorInfo());
@@ -116,7 +129,20 @@ public class ScfReceivableRequestAgreementService extends BaseService<ScfReceiva
         agreement.setCustNo(anRequest.getCustNo());
         agreement.setCustName(anRequest.getCustName());
         agreement.setReceivableRequestNo(anRequest.getRequestNo());
-        agreement.setAgreementType("1");
+        if(anRequest.getFactoryNo() !=null){
+            agreement.setFactoryNo(anRequest.getFactoryNo());
+        }
+        if(StringUtils.isNoneBlank(anRequest.getFactoryName())){
+            agreement.setFactoryName(anRequest.getFactoryName());
+        }
+        
+        agreement.setAgreementType(agreementType);
+        agreement.setAgreementName("应收账款提前付款电子合同");
+        if("2".equals(agreementType)){
+            agreement.setAgreementName("应收账款转让合同");
+            agreement.setCoreCustNo(anRequest.getFactoryNo());
+            agreement.setCoreCustName(anRequest.getFactoryName());
+        }
         this.insertSelective(agreement);
         anRequest.setCoreAgreement(agreement);
         anRequest.setCoreAgreementId(agreement.getId());
@@ -212,8 +238,27 @@ public class ScfReceivableRequestAgreementService extends BaseService<ScfReceiva
         
     }
 
-    
 
+    public void saveFactorySignAgreement(ScfReceivableRequest anRequest) {
+        
+        ScfReceivableRequestAgreement coreAgreement = this.selectByPrimaryKey(anRequest.getCoreAgreementId());
+        coreAgreement.saveFactorySignValue(UserUtils.getOperatorInfo());
+        this.updateByPrimaryKeySelective(coreAgreement);
+        anRequest.setCoreAgreement(coreAgreement);
+        
+    }
+
+    
+    public List<SimpleDataEntity> queryFactory() {
+        final List<SimpleDataEntity> result = new ArrayList<SimpleDataEntity>();
+        
+        for ( ScfReceivableRequestAgreement agreement : this.mapper.queryDictFactory()) {
+            if(agreement !=null && agreement.getFactoryNo()!=null && StringUtils.isNoneBlank(agreement.getFactoryName())){
+                result.add(new SimpleDataEntity(agreement.getFactoryName(), String.valueOf(agreement.getFactoryNo())));
+            }
+        }
+        return result;
+    } 
    
 
    

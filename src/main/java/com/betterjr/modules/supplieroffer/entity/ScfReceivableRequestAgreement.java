@@ -194,6 +194,36 @@ public class ScfReceivableRequestAgreement implements BetterjrEntity{
     @MetaData( value="各方签署合同的文件上传到服务器存放id", comments = "各方签署合同的文件上传到服务器存放id")
     private Long agreementConfirmFileId ;
     
+    /**
+     * 保理公司名称
+     */
+    @Column(name = "C_FACTORYNAME",  columnDefinition="VARCHAR" )
+    @MetaData( value="保理公司名称", comments = "保理公司名称")
+    private String factoryName;
+    
+    /**
+     * 保理公司Id
+     */
+    @Column(name = "L_FACTORYNO",  columnDefinition="INTEGER" )
+    @MetaData( value="保理公司Id", comments = "保理公司Id")
+    private Long factoryNo;
+    
+    public String getFactoryName() {
+        return this.factoryName;
+    }
+
+    public void setFactoryName(String anFactoryName) {
+        this.factoryName = anFactoryName;
+    }
+
+    public Long getFactoryNo() {
+        return this.factoryNo;
+    }
+
+    public void setFactoryNo(Long anFactoryNo) {
+        this.factoryNo = anFactoryNo;
+    }
+
     public String getSignDate() {
         return this.signDate;
     }
@@ -392,7 +422,7 @@ public class ScfReceivableRequestAgreement implements BetterjrEntity{
     public void saveAddValue(CustOperatorInfo anOperatorInfo) {
         
         this.setAgreementCode(SequenceFactory.generate("PLAT_ReceivableRequestAgreementCode", "TZBL-ZR#{Date:yy}#{Seq:8}"));
-        this.setAgreementName("应收账款提前付款电子合同");
+        
         this.setBusinStatus(AgreementConstantCollentions.AGREMENT_BUSIN_STATUS_NOEFFECTIVE);
         this.setCustDate(BetterDateUtils.getNumDate());
         this.setCustOperId(anOperatorInfo.getId());
@@ -416,6 +446,16 @@ public class ScfReceivableRequestAgreement implements BetterjrEntity{
     }
     
     public void saveCoreSignValue(CustOperatorInfo anOperatorInfo) {
+        
+        this.setBusinStatus(AgreementConstantCollentions.AGREMENT_BUSIN_STATUS_CORE_SIGNED);
+        this.setCoreDate(BetterDateUtils.getNumDate());
+        this.setCoreTime(BetterDateUtils.getNumTime());
+        this.setCoreOperId(anOperatorInfo.getId());
+        this.setCoreOperName(anOperatorInfo.getName());
+        this.setSignDate(BetterDateUtils.getNumDate());
+        
+    }
+    public void saveFactorySignValue(CustOperatorInfo anOperatorInfo) {
         
         this.setBusinStatus(AgreementConstantCollentions.AGREMENT_BUSIN_STATUS_CORE_SIGNED);
         this.setCoreDate(BetterDateUtils.getNumDate());

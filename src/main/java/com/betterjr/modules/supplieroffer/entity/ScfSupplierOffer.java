@@ -117,9 +117,24 @@ public class ScfSupplierOffer implements BetterjrEntity{
     @MetaData( value="操作机构", comments = "操作机构")
     @JsonIgnore
     private String operOrg;
+    
+    /**
+     * 新增利率的角色1 核心企业  2 平台   3 保理公司
+     */
+    @Column(name = "C_OPER_ROLE",  columnDefinition="VARCHAR" )
+    @MetaData( value="新增利率的角色1 核心企业  2 平台   3 保理公司", comments = "新增利率的角色1 核心企业  2 平台   3 保理公司")
+    private String operRole;
 
     public Long getId() {
         return this.id;
+    }
+
+    public String getOperRole() {
+        return this.operRole;
+    }
+
+    public void setOperRole(String anOperRole) {
+        this.operRole = anOperRole;
     }
 
     public void setId(Long anId) {
@@ -290,12 +305,14 @@ public class ScfSupplierOffer implements BetterjrEntity{
         return true;
     }
 
+   
+
     @Override
     public String toString() {
         return "ScfSupplierOffer [id=" + this.id + ", custNo=" + this.custNo + ", custName=" + this.custName + ", coreCustNo=" + this.coreCustNo
                 + ", coreCustName=" + this.coreCustName + ", coreCustRate=" + this.coreCustRate + ", businStatus=" + this.businStatus + ", regDate="
                 + this.regDate + ", regTime=" + this.regTime + ", regOperId=" + this.regOperId + ", regOperName=" + this.regOperName + ", operOrg="
-                + this.operOrg + "]";
+                + this.operOrg + ", operRole=" + this.operRole + "]";
     }
 
     public void saveAddValue(CustOperatorInfo anOperatorInfo) {
