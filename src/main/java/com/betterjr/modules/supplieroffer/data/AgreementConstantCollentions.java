@@ -21,5 +21,7 @@ public class AgreementConstantCollentions {
     public static final String AGREMENT_BUSIN_STATUS_CORE_SIGNED="2"; //2采购商已签
     
     public static final String AGREMENT_BUSIN_STATUS_ANNUL="3"; //3 作废
+    
+    public static final String AGREMENT_BUSIN_STATUS_FACTORY_SIGNED="4"; //4保理公司已签
 
 }

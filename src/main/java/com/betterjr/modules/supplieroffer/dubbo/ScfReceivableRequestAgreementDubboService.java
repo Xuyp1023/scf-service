@@ -27,4 +27,10 @@ public class ScfReceivableRequestAgreementDubboService implements IScfReceivable
         
         return AjaxObject.newOkWithPage("查询合同成功",agreementService.queryAgreementWithSupplier(anMap, anFlag, anPageNum, anPageSize)).toJson();
     }
+
+    @Override
+    public String webQueryDictFactory() {
+        
+        return AjaxObject.newOk("查询成功",agreementService.queryFactory()).toJson();
+    }
 }
