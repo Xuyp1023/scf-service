@@ -430,7 +430,7 @@ public class ScfReceivableRequestAgreement implements BetterjrEntity{
         this.setCustTime(BetterDateUtils.getNumTime());
         this.setRefNo("");
         this.setId(SerialGenerator.getLongValue("ScfReceivableRequestAgreement.id"));
-        this.setSignDate(BetterDateUtils.getNumDate());
+        //this.setSignDate(BetterDateUtils.getNumDate());
         
     }
 
