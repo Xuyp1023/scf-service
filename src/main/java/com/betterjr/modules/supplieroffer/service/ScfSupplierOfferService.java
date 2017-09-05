@@ -51,7 +51,7 @@ public class ScfSupplierOfferService extends BaseService<ScfSupplierOfferMapper,
         BTAssert.notNull(anOffer.getCoreCustNo(),"请选择核心企业,操作失败");
         BTAssert.notNull(anOffer.getCoreCustRate(),"请填写利率,操作失败");
         BTAssert.notNull(UserUtils.getOperatorInfo(),"请先登录,操作失败");
-        logger.info("Begin to add saveAddSupplierOffer"+UserUtils.getOperatorInfo().getName());
+        logger.info("Begin to add saveAddSupplierOffer"+UserUtils.getOperatorInfo().getName()+" anOffer="+anOffer);
         ScfSupplierOffer supplierOffer = checkIsOrNotExit(anOffer.getCustNo(), anOffer.getCoreCustNo(), OfferConstantCollentions.OFFER_BUSIN_STATUS_EFFECTIVE);
         BTAssert.isNull(supplierOffer,"当前企业已经设置了利率，请修改!");
         anOffer.saveAddValue(UserUtils.getOperatorInfo());
