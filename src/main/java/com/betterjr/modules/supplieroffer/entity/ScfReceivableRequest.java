@@ -144,6 +144,13 @@ public class ScfReceivableRequest implements BetterjrEntity{
     private BigDecimal custCoreRate;
     
     /**
+     * 供应商折扣率
+     */
+    @Column(name = "F_DEPOSIT_RATE",  columnDefinition="DECIMAL" )
+    @MetaData( value="供应商折扣率", comments = "供应商折扣率")
+    private BigDecimal depositRate;
+    
+    /**
      * 申请提前付款金额
      */
     @Column(name = "F_REQUEST_PAY_BALANCE",  columnDefinition="DECIMAL" )
@@ -274,6 +281,14 @@ public class ScfReceivableRequest implements BetterjrEntity{
 
     public Long getFactoryNo() {
         return this.factoryNo;
+    }
+
+    public BigDecimal getDepositRate() {
+        return this.depositRate;
+    }
+
+    public void setDepositRate(BigDecimal anDepositRate) {
+        this.depositRate = anDepositRate;
     }
 
     public void setFactoryNo(Long anFactoryNo) {
@@ -518,15 +533,20 @@ public class ScfReceivableRequest implements BetterjrEntity{
         this.requestPayPlatBalance = anRequestPayPlatBalance;
     }
 
+
     @Override
     public String toString() {
         return "ScfReceivableRequest [requestNo=" + this.requestNo + ", equityNo=" + this.equityNo + ", custNo=" + this.custNo + ", custName="
                 + this.custName + ", custBankName=" + this.custBankName + ", custBankAccount=" + this.custBankAccount + ", custBankAccountName="
                 + this.custBankAccountName + ", coreCustNo=" + this.coreCustNo + ", coreCustName=" + this.coreCustName + ", businTypeNo="
-                + this.businTypeNo + ", assetId=" + this.assetId + ", balance=" + this.balance + ", custCoreRate=" + this.custCoreRate
-                + ", requestPayBalance=" + this.requestPayBalance + ", custOpatRate=" + this.custOpatRate + ", requestPayDate=" + this.requestPayDate
-                + ", description=" + this.description + ", businStatus=" + this.businStatus + ", operOrg=" + this.operOrg + ", ownCompany="
-                + this.ownCompany + ", regDate=" + this.regDate + ", regTime=" + this.regTime + "]";
+                + this.businTypeNo + ", assetId=" + this.assetId + ", factoryNo=" + this.factoryNo + ", factoryName=" + this.factoryName
+                + ", balance=" + this.balance + ", requestBalance=" + this.requestBalance + ", custCoreRate=" + this.custCoreRate + ", depositRate="
+                + this.depositRate + ", requestPayBalance=" + this.requestPayBalance + ", requestPayPlatBalance=" + this.requestPayPlatBalance
+                + ", custOpatRate=" + this.custOpatRate + ", requestPayDate=" + this.requestPayDate + ", description=" + this.description
+                + ", businStatus=" + this.businStatus + ", operOrg=" + this.operOrg + ", ownCompany=" + this.ownCompany + ", regDate=" + this.regDate
+                + ", regTime=" + this.regTime + ", endDate=" + this.endDate + ", receivableRequestType=" + this.receivableRequestType + ", asset="
+                + this.asset + ", coreAgreementId=" + this.coreAgreementId + ", coreAgreement=" + this.coreAgreement + ", platAgreementId="
+                + this.platAgreementId + ", platAgreement=" + this.platAgreement + "]";
     }
 
     public void saveAddValue() {

@@ -381,7 +381,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
             anMap.put("custNo", getCurrentUserCustNos());
         }
         anMap=Collections3.filterMapEmptyObject(anMap);
-        anMap=Collections3.filterMap(anMap, new String[]{"custNo","coreCustNo","GTEendDate","LTEendDate","receivableRequestType"});
+        anMap=Collections3.filterMap(anMap, new String[]{"custNo","coreCustNo","GTEregDate","LTEregDate","GTEendDate","LTEendDate","receivableRequestType"});
         anMap.put("businStatus", ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_REQUEST_END);
         anMap.put("receivableRequestType", "1");
         Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
@@ -426,7 +426,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
             anMap.put("coreCustNo", getCurrentUserCustNos());
         }
         anMap=Collections3.filterMapEmptyObject(anMap);
-        anMap=Collections3.filterMap(anMap, new String[]{"custNo","coreCustNo","GTEendDate","LTEendDate","receivableRequestType"});
+        anMap=Collections3.filterMap(anMap, new String[]{"custNo","coreCustNo","GTEregDate","LTEregDate","GTEendDate","LTEendDate","receivableRequestType"});
         anMap.put("businStatus", ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_REQUEST_END);
         anMap.put("receivableRequestType", "1");
         Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
@@ -459,6 +459,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
             payPlatBalance=MathExtend.divide(payPlatBalance, new BigDecimal(36500));
             anRequest.setRequestPayPlatBalance(payPlatBalance);
             anRequest.setRequestPayDate(anRequestPayDate.replaceAll("-", ""));
+            BigDecimal depositBalance = anRequest.getRequestPayBalance().multiply(new BigDecimal(100));
+            anRequest.setDepositRate(MathExtend.divide(depositBalance,balance));
         }
         
     }
@@ -915,7 +917,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
             anMap.put("custNo", getCurrentUserCustNos());
         }
         anMap=Collections3.filterMapEmptyObject(anMap);
-        anMap=Collections3.filterMap(anMap, new String[]{"custNo","coreCustNo","GTEendDate","LTEendDate","receivableRequestType"});
+        anMap=Collections3.filterMap(anMap, new String[]{"custNo","coreCustNo","GTEregDate","LTEregDate","GTEendDate","LTEendDate","receivableRequestType"});
         anMap.put("businStatus", ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_REQUEST_END);
         anMap.put("receivableRequestType", "2");
         Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
@@ -965,7 +967,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
             anMap.put("coreCustNo", getCurrentUserCustNos());
         }
         anMap=Collections3.filterMapEmptyObject(anMap);
-        anMap=Collections3.filterMap(anMap, new String[]{"custNo","coreCustNo","GTEendDate","LTEendDate","receivableRequestType"});
+        anMap=Collections3.filterMap(anMap, new String[]{"custNo","coreCustNo","GTEregDate","LTEregDate","GTEendDate","LTEendDate","receivableRequestType"});
         anMap.put("businStatus", ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_REQUEST_END);
         anMap.put("receivableRequestType", "2");
         Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
@@ -1015,7 +1017,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
             anMap.put("factoryNo", getCurrentUserCustNos());
         }
         anMap=Collections3.filterMapEmptyObject(anMap);
-        anMap=Collections3.filterMap(anMap, new String[]{"custNo","coreCustNo","GTEendDate","LTEendDate","factoryNo"});
+        anMap=Collections3.filterMap(anMap, new String[]{"custNo","coreCustNo","GTEregDate","LTEregDate","GTEendDate","LTEendDate","factoryNo"});
         anMap.put("businStatus", ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_REQUEST_END);
         anMap.put("receivableRequestType", "2");
         Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
