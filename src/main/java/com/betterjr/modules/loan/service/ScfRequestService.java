@@ -450,7 +450,7 @@ public class ScfRequestService extends BaseService<ScfRequestMapper, ScfRequest>
 		this.occupyCredit(anLoan);
 		
 		//修改资产的状态
-		assetService.saveAssignmentAssetToFactory(Long.parseLong(request.getOrders()));
+		//assetService.saveAssignmentAssetToFactory(Long.parseLong(request.getOrders()));
 		
 		return request;
 	}
