@@ -101,6 +101,14 @@ public class ScfReceivableRequest implements BetterjrEntity{
     @MetaData( value="业务类型编号", comments = "业务类型编号")
     private int businTypeNo;
     
+    
+    /**
+     * 保理产品编号
+     */
+    @Column(name = "N_REQUEST_PRODUCT_CODE",  columnDefinition="VARCHAR" )
+    @MetaData( value="保理产品Id", comments = "保理产品Id")
+    private String requestProductCode;
+    
     /**
      * 资产Id
      */
@@ -461,6 +469,14 @@ public class ScfReceivableRequest implements BetterjrEntity{
 
     public BigDecimal getCustOpatRate() {
         return this.custOpatRate;
+    }
+
+    public String getRequestProductCode() {
+        return this.requestProductCode;
+    }
+
+    public void setRequestProductCode(String anRequestProductCode) {
+        this.requestProductCode = anRequestProductCode;
     }
 
     public void setCustOpatRate(BigDecimal anCustOpatRate) {

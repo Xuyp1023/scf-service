@@ -1520,6 +1520,165 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
     }
 
     
+    /**
+     * 整合模式申请总的入口
+     * @param anAssetMap
+     * @return
+     */
+    public ScfAsset saveAddAssetNewTotal(Map<String,Object> anAssetMap){
+        
+        BTAssert.notNull(anAssetMap, "新增资产企业 失败-资产 is null");
+        BTAssert.notNull(anAssetMap.get(AssetConstantCollentions.RECEIVABLE_REQUEST_BY_RECEIVABLEID_KEY), "请选择应收账款!");
+        
+        List<ScfReceivableDO> receivableList=queryReceivableList(anAssetMap);
+        ScfAsset asset=new ScfAsset();
+        try {
+            BeanUtils.populate(asset, anAssetMap);
+        }
+        catch (Exception e) {
+            
+            e.printStackTrace();
+        }
+        boolean isRequestAsset=true;
+        boolean isLockedAsset=true;
+        if(anAssetMap.containsKey(AssetConstantCollentions.RECEIVABLE_REQUEST_IS_REQUEST_ASSET) 
+                && "false".equals(anAssetMap.get(AssetConstantCollentions.RECEIVABLE_REQUEST_IS_REQUEST_ASSET).toString()) ){
+            isRequestAsset=false;  
+        }
+        
+        if(anAssetMap.containsKey(AssetConstantCollentions.RECEIVABLE_REQUEST_IS_LOCKED_ASSET) 
+                && "false".equals(anAssetMap.get(AssetConstantCollentions.RECEIVABLE_REQUEST_IS_LOCKED_ASSET).toString()) ){
+            isLockedAsset=false;  
+        }
+        
+        asset.initAdd();
+        for (ScfReceivableDO receivable : receivableList) {
+            //创建asset对象和公司，基础数据等对象信息 并且插入企业表和基础数据表
+            asset=createAndBuilderAssetTotal(asset,receivable,isRequestAsset,isLockedAsset);
+        }
+       
+        this.insert(asset);
+        //查询完整的资产信息
+        ScfAsset findAssetByid = findAssetByid(asset.getId());
+        //------------
+        return findAssetByid;
+        
+    }
     
+    
+    /**
+     * 
+     * @param anAsset
+     * @param anReceivable
+     * @param isRequestAsset  是否必须要
+     * @param isLockedAsset   是否锁定资产
+     * @return
+     */
+    private ScfAsset createAndBuilderAssetTotal(ScfAsset anAsset, ScfReceivableDO anReceivable,boolean isRequestAsset,boolean isLockedAsset) {
+        
+        //处理发票信息
+        packageInvoiceToAssetRequsetLocket(anAsset,anReceivable,isRequestAsset,isLockedAsset);
+        //处理贸易合同
+        packageAgreementToAssetRequsetLocket(anAsset,anReceivable,isRequestAsset,isLockedAsset);
+        //将应收账款信息封装到资产中 （并且插入公司表记录）并且将应收账款信息插入到资产基础数据表中去
+        packageReceivableToAsset(anAsset,anReceivable);
+        return anAsset;
+    }
+    
+    /**
+     * 封装贸易合同信息
+     * @param anAsset
+     * @param anReceivable
+     * @param isRequestAsset  是否必须要
+     * @param isLockedAsset   是否锁定资产
+     */
+    private void packageAgreementToAssetRequsetLocket(ScfAsset anAsset, ScfReceivableDO anReceivable, boolean anIsRequestAsset,
+            boolean anIsLockedAsset) {
+        
+        
+        if(anIsRequestAsset){
+            
+            String agreeNo = anReceivable.getAgreeNo();
+            if(StringUtils.isBlank(agreeNo)){
+                BTAssert.notNull(null, "应收账款的贸易合同号为空!操作失败");
+            }
+            //根据贸易合同编号查询贸易合同
+            ContractLedger agreement = contractLedgerService.selectOneByAgreeNo(agreeNo);
+            BTAssert.notNull(agreement, "应收账款的贸易合同未找到!操作失败");
+            checkStatus(agreement.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false, "请核准贸易合同");
+            checkStatus(anReceivable.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false, "应付账款不是生效状态，无法进行申请");
+            checkStatus(anReceivable.getCustNo()+"", agreement.getCustNo()+"", false, "应收账款和贸易合同对应的企业不一致");
+             //将合同插入到资产数据表中
+            packageBaseVersionEntityToAsset(anAsset, agreement, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT,anIsLockedAsset);
+            
+            
+        }else{
+            
+           if(StringUtils.isBlank(anReceivable.getAgreeNo())) {
+               ContractLedger agreement = contractLedgerService.selectOneByAgreeNo(anReceivable.getAgreeNo()); 
+               if(agreement!=null && agreement.getBusinStatus().equals(VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE)
+                       && agreement.getLockedStatus().equals(VersionConstantCollentions.LOCKED_STATUS_INlOCKED)){
+                   //将合同插入到资产数据表中
+                   packageBaseVersionEntityToAsset(anAsset, agreement, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT,anIsLockedAsset);
+                   
+               }
+               
+           }
+            
+        }
+        
+        
+    }
+
+    /**
+     * 关联发票信息
+     * @param anAsset
+     * @param anReceivable
+     * @param isRequestAsset
+     * @param isLockedAsset
+     */
+    private void packageInvoiceToAssetRequsetLocket(ScfAsset anAsset,ScfReceivableDO anReceivable,boolean isRequestAsset,boolean isLockedAsset){
+        
+        //查询发票列表
+        if(StringUtils.isNoneBlank(anReceivable.getInvoiceNos())){
+            
+            List<ScfInvoiceDO> invoiceList = invoiceService.queryReceivableList(anReceivable.getInvoiceNos());
+            //当一条记录都没有找到
+            if(Collections3.isEmpty(invoiceList)){
+                if(isRequestAsset){
+                    BTAssert.notNull(null, "当前应收账款对应的发票未找到!"); 
+                }
+            }
+            
+            //当未找全所有的发票信息
+            if(anReceivable.getInvoiceNos().split(",").length != invoiceList.size()){
+                if(isRequestAsset){
+                    BTAssert.notNull(null, "当前应收账款对应的发票还有未找到!"); 
+                }
+            }
+            
+            for (ScfInvoiceDO invoiceDo : invoiceList) {
+                
+                if(isRequestAsset){
+                    
+                    if(!invoiceDo.getBusinStatus().equals(VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE)){
+                        BTAssert.notNull(null, "发票号码不可用来使用,请先核准"+invoiceDo.getInvoiceNo()); 
+                        
+                    }
+                    
+                    
+                }
+                
+                //将发票信息存入到asset中
+                packageBaseVersionEntityToAsset(anAsset,invoiceDo,AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE,isLockedAsset);
+            }
+            
+        }else{
+            if(isRequestAsset){
+                BTAssert.notNull(null, "请应收账款关联发票信息");  
+            }
+        }
+        
+    }
     
 }

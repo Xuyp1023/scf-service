@@ -1,6 +1,8 @@
 package com.betterjr.modules.productconfig.entity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -9,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
@@ -137,7 +140,13 @@ public class ScfProductConfig implements BetterjrEntity {
 	@Column(name = "C_BUSIN_STATUS", columnDefinition = "VARCHAR")
 	@MetaData(value = "状态(0:登记;1:上架;2:下架,3:草稿)", comments = "状态(0:登记;1:上架;2:下架,3:草稿)")
 	private String businStatus;
-
+	
+	/**
+     * 应收账款融资类型  1 采购方提前付款  2结算中心提前付款 3：内部保理付款  4 银行保理 5 外部保理付款',
+     */
+    @Column(name = "C_RECEIVABLE_REQUEST_TYPE",  columnDefinition="VARCHAR" )
+    @MetaData( value="应收账款融资类型", comments = "应收账款融资类型")
+    private String receivableRequestType;
 	
 
 	@Column(name = "L_BUSIN_ID", columnDefinition = "BIGINT")
@@ -251,6 +260,9 @@ public class ScfProductConfig implements BetterjrEntity {
 	@Column(name = "T_OFFLINE_TIME", columnDefinition = "VARCHAR")
 	@MetaData(value = "产品下架时间", comments = "产品下架时间")
 	private String offLineTime;
+	
+	@Transient
+	private List<ScfAssetDict> assetDictList=new ArrayList<>();
 
 	public Long getId() {
 		return id;
@@ -260,7 +272,15 @@ public class ScfProductConfig implements BetterjrEntity {
 		this.id = id;
 	}
 
-	public Long getFactorNo() {
+	public List<ScfAssetDict> getAssetDictList() {
+        return this.assetDictList;
+    }
+
+    public void setAssetDictList(List<ScfAssetDict> anAssetDictList) {
+        this.assetDictList = anAssetDictList;
+    }
+
+    public Long getFactorNo() {
 		return factorNo;
 	}
 
@@ -268,7 +288,15 @@ public class ScfProductConfig implements BetterjrEntity {
 		this.factorNo = factorNo;
 	}
 
-	public String getFactorName() {
+	public String getReceivableRequestType() {
+        return this.receivableRequestType;
+    }
+
+    public void setReceivableRequestType(String anReceivableRequestType) {
+        this.receivableRequestType = anReceivableRequestType;
+    }
+
+    public String getFactorName() {
 		return factorName;
 	}
 

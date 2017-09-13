@@ -184,4 +184,22 @@ public class ScfReceivableRequestDubboService implements IScfReceivableRequestSe
         return AjaxObject.newOk("融资请求申请成功", requestService.saveSubmitRequestTwo(anRequestNo, anRequestPayDate, anDescription,anFactoryNo)).toJson();
     }
 
+    @Override
+    public String webSaveAddRequestTotal(Map<String, Object> anMap) {
+        
+        return AjaxObject.newOk("融资请求申请成功", requestService.saveAddRequestTotal(anMap)).toJson();
+    }
+
+    @Override
+    public String webSaveSubmitRequestTotal(Map<String, Object> anMap, String anRequestNo, String anRequestPayDate, String anDescription) {
+        
+        return AjaxObject.newOk("提交成功", requestService.saveSubmitRequestTotal(anMap,anRequestNo,anRequestPayDate,anDescription)).toJson();
+    }
+
+    @Override
+    public String webQueryProductByRequestNo(String anRequestNo) {
+        
+        return AjaxObject.newOk("查询成功", requestService.queryProductByRequestNo(anRequestNo)).toJson();
+    }
+
 }

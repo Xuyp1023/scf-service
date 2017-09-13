@@ -39,11 +39,15 @@ import com.betterjr.modules.ledger.entity.ContractLedger;
 import com.betterjr.modules.ledger.service.ContractLedgerService;
 import com.betterjr.modules.order.entity.ScfInvoiceDO;
 import com.betterjr.modules.order.service.ScfInvoiceDOService;
+import com.betterjr.modules.productconfig.entity.ScfAssetDict;
+import com.betterjr.modules.productconfig.entity.ScfProductConfig;
+import com.betterjr.modules.productconfig.sevice.ScfProductConfigService;
 import com.betterjr.modules.receivable.entity.ScfReceivableDO;
 import com.betterjr.modules.receivable.service.ScfReceivableDOService;
 import com.betterjr.modules.supplieroffer.dao.ScfReceivableRequestMapper;
 import com.betterjr.modules.supplieroffer.data.OfferConstantCollentions;
 import com.betterjr.modules.supplieroffer.data.ReceivableRequestConstantCollentions;
+import com.betterjr.modules.supplieroffer.entity.ScfCoreProductCust;
 import com.betterjr.modules.supplieroffer.entity.ScfReceivableRequest;
 import com.betterjr.modules.supplieroffer.entity.ScfSupplierOffer;
 import com.betterjr.modules.version.constant.VersionConstantCollentions;
@@ -82,6 +86,12 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
     @Autowired
     private ContractLedgerService contractLedgerService;//合同
     
+    @Autowired
+    private ScfProductConfigService productConfigService;
+    
+    @Autowired
+    private ScfCoreProductCustService productService;
+    
     /*
      * 模式一应收账款申请
      * 融资资产新增
@@ -106,6 +116,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         return request;
         
     }
+    
     
     /**
      * 校验是否是可用的应付账款信息
@@ -897,7 +908,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
                 ,ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_REQUEST_END
                 ,ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_FACTORY_PAY_CONFIRM
                 ,ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_REQUEST_END});
-        anMap.put("receivableRequestType", "2");
+        //anMap.put("receivableRequestType", "2");
         Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
         return page;
     }
@@ -1061,6 +1072,205 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         anRequest.setCustCoreRate(Collections3.getFirst(factoryList).getCoreCustRate());
         anRequest.setFactoryNo(Collections3.getFirst(factoryList).getCoreCustNo());
         anRequest.setFactoryName(Collections3.getFirst(factoryList).getCoreCustName());
+        
+    }
+    
+    /**
+     * 整合模式申请总的入口
+     * @param anMap
+     * @return
+     * 
+     * receivableId  应收账款id
+     * 
+     * isRequestAsset 是否必须  false  不锁定
+     * isLockedAsset  是否锁定  true   锁定
+     */
+    public  ScfReceivableRequest saveAddRequestTotal(Map<String,Object> anMap){
+        
+        BTAssert.notNull(anMap, "融资信息为空,操作失败");
+        BTAssert.notNull(anMap.get(AssetConstantCollentions.RECEIVABLE_REQUEST_BY_RECEIVABLEID_KEY), "请选择应收账款!");
+        anMap.put(AssetConstantCollentions.RECEIVABLE_REQUEST_IS_REQUEST_ASSET,false);
+        anMap.put(AssetConstantCollentions.RECEIVABLE_REQUEST_IS_LOCKED_ASSET,false);
+        ScfAsset asset = assetService.saveAddAssetNewTotal(anMap);
+        //将资产信息封装到融资中去
+        ScfReceivableRequest request=convertAssetToReceviableRequest(asset);
+        //request.setReceivableRequestType("1");
+        request.saveAddValue();
+        fillRequestRaxInfo(request,BetterDateUtils.getNumDate());
+        //插入电子合同信息
+        //agreementService.saveAddCoreAgreementByRequest(request,"1");
+        //agreementService.saveAddPlatAgreementByRequest(request);
+        this.insert(request);
+        return request;
+        
+    }
+    
+    /**
+     * 供应商确认提交融资申请
+     * @param anMap
+     * @param anRequestNo
+     * @param anRequestPayDate
+     * @param anDescription
+     * @return
+     */
+    public  ScfReceivableRequest saveSubmitRequestTotal(Map<String,Object> anMap,String anRequestNo,String anRequestPayDate,String anDescription){
+        
+        BTAssert.notNull(anMap, "融资信息为空,操作失败");
+        BTAssert.notNull(anMap.get("requestProductCode"), "请选择保理产品");
+        BTAssert.notNull(anRequestNo, "融资信息为空,操作失败");
+        ScfReceivableRequest request = findOneByRequestNo(anRequestNo);
+        BTAssert.notNull(request, "融资信息为空,操作失败");
+        if(!getCurrentUserCustNos().contains(request.getCustNo())){
+            BTAssert.notNull(null, "你没有当前申请的权限,操作失败");
+        }
+        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_NOEFFECTIVE, false, "当前申请已不能进行再次申请");
+        ScfProductConfig config = productConfigService.findProductConfigById(anMap.get("requestProductCode").toString());
+        BTAssert.notNull(config, "没有查询到产品配置信息");
+        convertProdectConfigToRequest(request,config);
+        request.setCustBankAccount(anMap.get("custBankAccount").toString());
+        request.setCustBankAccountName(anMap.get("custBankAccountName").toString());
+        request.setCustBankName(anMap.get("custBankName").toString());
+        ScfAsset asset = assetService.saveConfirmAsset(request.getAssetId());
+        request.setAsset(asset);
+        request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_SUBMIT_REQUEST);
+        //封装应付款钱信息
+        fillRequestRaxInfo(request,anRequestPayDate);
+        request.setDescription(anDescription);
+        //设置合同
+        //插入电子合同信息
+        agreementService.saveAddCoreAgreementByRequest(request,request.getReceivableRequestType());
+        agreementService.saveAddPlatAgreementByRequest(request);
+        
+        this.updateByPrimaryKeySelective(request);
+        return request;
+        
+    }
+    
+    
+    /**
+     * 融资申请选择可以使用的保理产品列表
+     * @param requestNo
+     * @return
+     */
+    public List<ScfCoreProductCust> queryProductByRequestNo(String requestNo){
+        
+        BTAssert.notNull(requestNo, "融资信息为空,操作失败");
+        ScfReceivableRequest request = findOneByRequestNo(requestNo);
+        BTAssert.notNull(request, "融资信息为空,操作失败");
+        List<ScfCoreProductCust> productDescs=new ArrayList<>();
+        List<ScfCoreProductCust> products = productService.queryCanUseProduct(request.getCustNo(), request.getCoreCustNo());
+        for (ScfCoreProductCust product : products) {
+            if(queryCheckRequestAndCode(request, product.getProductCode())){
+                productDescs.add(product);
+            }
+        }
+        
+        return productDescs;
+    }
+    
+    public boolean queryCheckRequestAndCode(ScfReceivableRequest request,String requestProductCode){
+        
+        if(request.getAsset()==null || request.getAsset().getId()==null){
+            
+            request.setAsset(assetService.findAssetByid(request.getAssetId()));
+            
+        }
+        ScfProductConfig config = productConfigService.findProductConfigById(requestProductCode);
+        BTAssert.notNull(config, "没有查询到产品配置信息");
+        boolean falg=true;
+        for (ScfAssetDict assetDict : config.getAssetDictList()) {
+            if(assetDict.getAssetInfoType().equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE)){
+                if(!request.getAsset().getBasedataMap().containsKey(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY)){
+                    falg=false;
+                    return falg;
+                } else{
+                    
+                    List object = (List) request.getAsset().getBasedataMap().get(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY);
+                    if(Collections3.isEmpty(object)){
+                        return false;
+                    }
+                }
+            }
+            
+            if(assetDict.getAssetInfoType().equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE)){
+                if(!request.getAsset().getBasedataMap().containsKey(AssetConstantCollentions.SCF_INVOICE_LIST_KEY)){
+                    falg=false;
+                    return falg;
+                } else{
+                    
+                    List object = (List) request.getAsset().getBasedataMap().get(AssetConstantCollentions.SCF_INVOICE_LIST_KEY);
+                    if(Collections3.isEmpty(object)){
+                        return false;
+                    }
+                }
+            }
+            
+            if(assetDict.getAssetInfoType().equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT)){
+                if(!request.getAsset().getBasedataMap().containsKey(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY)){
+                    falg=false;
+                    return falg;
+                } else{
+                    List object = (List) request.getAsset().getBasedataMap().get(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY);
+                    if(Collections3.isEmpty(object)){
+                        return false;
+                    }
+                }
+            }
+        }
+        
+        return  falg;
+        
+    }
+    
+    /**
+     * 校验当前申请和保理产品是否成功匹配
+     * @param requestNo  融资申请id
+     * @param requestProductCode   保理产品
+     * @return
+     */
+    public boolean queryCheckRequestAndCode(String requestNo,String requestProductCode){
+        
+        BTAssert.notNull(requestNo, "融资信息为空,操作失败");
+        ScfReceivableRequest request = findOneByRequestNo(requestNo);
+        BTAssert.notNull(request, "融资信息为空,操作失败");
+        return queryCheckRequestAndCode(request, requestProductCode);
+        
+        
+    }
+
+
+    /**
+     *
+     * 将产品配置信息信息封装到融资请求中去
+     * 
+     * 
+     */
+    private void convertProdectConfigToRequest(ScfReceivableRequest anRequest, ScfProductConfig anConfig) {
+        
+        anRequest.setFactoryNo(anConfig.getFactorNo());
+        anRequest.setFactoryName(custAccountService.queryCustName(anConfig.getFactorNo()));
+        anRequest.setRequestProductCode(anConfig.getProductCode());
+        anRequest.setReceivableRequestType(anConfig.getReceivableRequestType());
+        for (ScfAssetDict assetDict : anConfig.getAssetDictList()) {
+            if(assetDict.getAssetInfoType()==AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE){
+                if(!anRequest.getAsset().getBasedataMap().containsKey(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY)){
+                    BTAssert.notNull(null, "当前融资产品需要应收账款");
+                } 
+            }
+            
+            if(assetDict.getAssetInfoType()==AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE){
+                if(!anRequest.getAsset().getBasedataMap().containsKey(AssetConstantCollentions.SCF_INVOICE_LIST_KEY)){
+                    BTAssert.notNull(null, "当前融资产品需要商业发票");
+                } 
+            }
+            
+            if(assetDict.getAssetInfoType()==AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT){
+                if(!anRequest.getAsset().getBasedataMap().containsKey(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY)){
+                    BTAssert.notNull(null, "当前融资产品需要贸易合同");
+                } 
+            }
+        }
+        
         
     }
     

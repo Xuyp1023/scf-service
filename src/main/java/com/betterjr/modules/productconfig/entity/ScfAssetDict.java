@@ -32,6 +32,13 @@ public class ScfAssetDict implements BetterjrEntity{
 	@Column(name = "C_DICT_TYPE",  columnDefinition="VARCHAR" )
     @MetaData( value="资产类型", comments = "资产类型")
     private String dictType;
+	
+	/**
+	 * 关联的基础数据的类型1订单2票据3应收账款4发票5贸易合同6运输单单据类型
+	 */
+	@Column(name = "C_ASSET_INFO_TYPE",  columnDefinition="VARCHAR" )
+	@MetaData( value="资产类型", comments = "资产类型")
+	private String assetInfoType;
 
 	@Column(name = "C_DATA_SOURCE",  columnDefinition="VARCHAR" )
     @MetaData( value="数据来源", comments = "数据来源，1：核心企业资金系统，2：供应商录入")
@@ -63,7 +70,15 @@ public class ScfAssetDict implements BetterjrEntity{
 		this.assetType = assetType;
 	}
 
-	public Long getId() {
+	public String getAssetInfoType() {
+        return this.assetInfoType;
+    }
+
+    public void setAssetInfoType(String anAssetInfoType) {
+        this.assetInfoType = anAssetInfoType;
+    }
+
+    public Long getId() {
 		return id;
 	}
 
