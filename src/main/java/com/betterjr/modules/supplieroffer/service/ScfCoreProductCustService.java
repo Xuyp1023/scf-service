@@ -85,7 +85,8 @@ public class ScfCoreProductCustService extends BaseService<ScfCoreProductCustMap
         Map build = QueryTermBuilder.newInstance()
         .put("id", StringUtils.split(anProductCodes, ","))
         .build();
-        for (ScfCoreProductCust config : this.selectByProperty(build)) {
+        List<ScfCoreProductCust> temList = this.selectByProperty(build);
+        for (ScfCoreProductCust config : temList) {
             config.setBusinStatus(CoreProductCustConstantCollentions.PRODUCT_BUSIN_STATUS_USED);
             this.updateByPrimaryKeySelective(config);
             products.add(config);
