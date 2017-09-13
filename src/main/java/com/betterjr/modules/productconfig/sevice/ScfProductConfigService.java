@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -73,6 +75,21 @@ public class ScfProductConfigService extends BaseService<ScfProductConfigMapper,
 		}
         return Collections3.getFirst(list);
     }
+	
+	/**
+	 * 根据产品的编号查询保理产品信息
+	 * @param anProductCodes
+	 * @return
+	 */
+	public List<ScfProductConfig> queryProductListByCodes(String anProductCodes) {
+	    BTAssert.notNull(anProductCodes, "查询失败anProductCode不能为空");
+	    Map<String, Object> anMap = new HashMap<String, Object>();
+	    String[] split = StringUtils.split(anProductCodes, ",");
+	    anMap.put("productCode", split);
+	    List<ScfProductConfig> list = this.selectByClassProperty(ScfProductConfig.class, anMap );
+	    
+	    return list;
+	}
 	
 	/**
 	 * 分页查询产品
@@ -212,11 +229,52 @@ public class ScfProductConfigService extends BaseService<ScfProductConfigMapper,
         		.put("productCode", codeList.toArray())
         		.put("factorNo", anFactorNo)
         		.put("businStatus", ProductConstants.PRO_STATUS_SHELVES).build();
-
+        
         List<ScfProductConfig> list = this.selectByProperty(anMap);
         for (ScfProductConfig product : list) {
             result.add(new SimpleDataEntity(product.getProductName(), String.valueOf(product.getProductCode())));
         }
         return result;
+    }
+    
+    public List<ScfProductConfig> queryProductKeyAndValue(Long coreCustNo) {
+        List<ScfProductConfig> result = new ArrayList<ScfProductConfig>();
+        if (null == coreCustNo ) {
+            return result;
+        }
+        
+        //查询核心企业关联的产品
+        List<ScfProductCoreRelation> relationList = productCoreRelationService.findRelationByCore(coreCustNo);
+        ArrayList<String> codeList = new ArrayList<String>();
+        for (ScfProductCoreRelation relation : relationList) {
+            codeList.add(relation.getProductCode());
+        }
+        
+        //查询保指定理公司的产品
+        Map<String, Object> anMap = QueryTermBuilder.newInstance()
+                .put("productCode", codeList.toArray())
+                .put("factorNo", custRelationService.queryNoInsideFactoryByCore(coreCustNo))
+                .put("businStatus", ProductConstants.PRO_STATUS_SHELVES).build();
+
+        List<ScfProductConfig> list = this.selectByProperty(anMap);
+        
+        return list;
+    }
+    
+    
+    /**
+     * 根据产品配置查询所有的配置信息
+     * @param productCode
+     * @return
+     */
+    public ScfProductConfig findProductConfigById(String  productCode){
+        
+        ScfProductConfig productConfig = findProductByCode(productCode);
+        
+        List<ScfAssetDict> assetDict = productAssetDictRelationService.queryProductAssetDict(productConfig.getProductCode());
+        productConfig.setAssetDictList(assetDict);
+        
+        return productConfig;
+        
     }
 }

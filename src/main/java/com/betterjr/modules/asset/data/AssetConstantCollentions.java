@@ -71,6 +71,10 @@ public class AssetConstantCollentions {
     
     public static final String ASSET_BUSIN_STATUS_NO = "20";    //资产企业详情不可用
     
-    public static final String RECEIVABLE_REQUEST_BY_RECEIVABLEID_KEY = "receivableId";    //应收账款融资存放map中的key
+    public static final String RECEIVABLE_REQUEST_BY_RECEIVABLEID_KEY = "receivableId"; 
+    //应收账款融资存放map中的key
+    public static final String RECEIVABLE_REQUEST_IS_REQUEST_ASSET = "isRequestAsset";    //是否必须
+    
+    public static final String RECEIVABLE_REQUEST_IS_LOCKED_ASSET = "isLockedAsset";    //是否需要锁定
     
 }
