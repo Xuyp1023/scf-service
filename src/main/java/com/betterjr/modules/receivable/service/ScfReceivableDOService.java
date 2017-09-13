@@ -25,6 +25,7 @@ import com.betterjr.modules.asset.data.AssetConstantCollentions;
 import com.betterjr.modules.customer.ICustMechBaseService;
 import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.joblog.data.LogConstantCollections;
+import com.betterjr.modules.push.service.ScfSupplierPushService;
 import com.betterjr.modules.receivable.dao.ScfReceivableDOMapper;
 import com.betterjr.modules.receivable.entity.ScfReceivableDO;
 import com.betterjr.modules.supplieroffer.BaseResolveInterface;
@@ -46,6 +47,9 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
     
     @Reference(interfaceClass = ICustMechBaseService.class)
     private ICustMechBaseService custMechBaseService;
+    
+    @Autowired
+    private ScfSupplierPushService supplierPushService;
     
     /**
      * 应收账款新增
@@ -196,7 +200,10 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
             
             receivable.setCustCoreRate(new BigDecimal(anAnMap.get("custCoreRate").toString()));
         }
-        this.auditOperator(UserUtils.getOperatorInfo(), receivable);
+        Object obj= this.auditOperator(UserUtils.getOperatorInfo(), receivable);
+        if(obj!=null){ // 推送应收账款微信消息
+            supplierPushService.pushReceivableInfo(receivable);
+        }
         return receivable;
         
     }

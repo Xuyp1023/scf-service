@@ -3,7 +3,6 @@ package com.betterjr.modules.credit.service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +16,6 @@ import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.MathExtend;
-import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.service.CustAccountService;
@@ -26,6 +24,7 @@ import com.betterjr.modules.credit.constant.CreditConstants;
 import com.betterjr.modules.credit.dao.ScfCreditMapper;
 import com.betterjr.modules.credit.entity.ScfCredit;
 import com.betterjr.modules.credit.entity.ScfCreditDetail;
+import com.betterjr.modules.push.service.ScfSupplierPushService;
 
 @Service
 public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
@@ -38,6 +37,9 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
 
     @Autowired
     private CustAndOperatorRelaService custAndOperatorRelaService;
+    
+    @Autowired
+    private ScfSupplierPushService scfSupplierPushService;
 
     /**
      * 授信额度分页查询
@@ -245,6 +247,9 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
 
         // 数据存盘
         this.updateByPrimaryKey(anCredit);
+        
+        // 推送激活授信微信消息
+        scfSupplierPushService.pushCreditInfo(anCredit);
 
         return anCredit;
     }

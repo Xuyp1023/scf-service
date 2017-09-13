@@ -3,6 +3,7 @@ package com.betterjr.modules.push.service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.account.service.CustOperatorService;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
+import com.betterjr.modules.credit.entity.ScfCredit;
 import com.betterjr.modules.customer.ICustRelationService;
 import com.betterjr.modules.customer.data.CustRelationData;
 import com.betterjr.modules.loan.entity.ScfRequest;
@@ -34,6 +36,7 @@ import com.betterjr.modules.notification.NotificationModel.Builder;
 import com.betterjr.modules.param.service.ParamService;
 import com.betterjr.modules.push.data.RequestTradeStatusType;
 import com.betterjr.modules.push.entity.ScfSupplierPushDetail;
+import com.betterjr.modules.receivable.entity.ScfReceivableDO;
 import com.betterjr.modules.wechat.dubboclient.CustWeChatDubboClientService;
 /***
  * 推送条件检查
@@ -60,8 +63,6 @@ public class ScfPushCheckService {
     private ScfAcceptBillService acceptBillService;
     @Autowired
     private CustWeChatDubboClientService wechatClientService;
-    @Autowired
-    private CustAccountService custAccoService;
 
     /***
      * 推送数据
@@ -158,8 +159,8 @@ public class ScfPushCheckService {
             builder.addParam("disDate", supplierPushDetail.getDisDate());
             builder.addReceiver(targetCustNo, null);  // 接收人
             logger.info("builder:"+builder);
-            notificationSendService.sendNotification(builder.build());
-            bool=true;
+            bool=notificationSendService.sendNotification(builder.build());
+            logger.info("billSend 消息发送标识  bool："+bool);
         }
         logger.info("发送成功");
         return bool;
@@ -201,8 +202,8 @@ public class ScfPushCheckService {
                 builder.addParam("endDate", getDisDate(BetterDateUtils.addStrDays(elecAgreement.getRegDate(),3)));
                 
                 builder.addReceiver(targetCustomer.getCustNo(), null);  // 接收人
-                notificationSendService.sendNotification(builder.build());
-                bool=true;
+                bool=notificationSendService.sendNotification(builder.build());
+                logger.info("signSend 消息发送标识  bool："+bool);
             }
         }
         catch (Exception e) {
@@ -232,8 +233,8 @@ public class ScfPushCheckService {
             builder.addParam("balance", getDisMoney(anRequest.getBalance()));
             builder.addParam("tradeStatus", RequestTradeStatusType.checking(anRequest.getTradeStatus()).getTitle());
             builder.addReceiver(targetCustomer.getCustNo(), null);  // 接收人
-            notificationSendService.sendNotification(builder.build());
-            bool=true;
+            bool=notificationSendService.sendNotification(builder.build());
+            logger.info("orderStatusSend 消息发送标识  bool："+bool);
         }
         return bool;
     }
@@ -261,8 +262,8 @@ public class ScfPushCheckService {
             String offerTime=BetterStringUtils.isNotBlank(anMap.get("offerTime"))?getDisDate(anMap.get("offerTime").toString()):"";
             builder.addParam("offerTime",offerTime);
             builder.addReceiver(targetCustomer.getCustNo(), null);  // 接收人
-            notificationSendService.sendNotification(builder.build());
-            bool=true;
+            bool=notificationSendService.sendNotification(builder.build());
+            logger.info("pushEnquirySend 消息发送标识  bool："+bool);
         }
         
         return bool;
@@ -285,5 +286,85 @@ public class ScfPushCheckService {
     }
     public String getDisMoney(final BigDecimal money) {
         return "￥"+CustDecimalJsonSerializer.format(money);
+    }
+    
+    
+    /****
+     * 推送应收账款通知
+     * @param anMap
+     * @return
+     */
+    public boolean pushReceivableSend(ScfReceivableDO anReceivableDo){
+        boolean bool=false;
+        final CustInfo sendCustomer = accountService.findCustInfo(anReceivableDo.getCoreCustNo());
+        final CustOperatorInfo sendOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(anReceivableDo.getCoreCustNo()));
+        final CustInfo targetCustomer = accountService.findCustInfo(anReceivableDo.getCustNo());
+        final CustOperatorInfo targetOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(anReceivableDo.getCustNo()));
+        if(sendOperator!=null && targetOperator!=null){
+            final Builder builder = NotificationModel.newBuilder("应收账款提醒", sendCustomer, sendOperator);
+            builder.addParam("appId", wechatClientService.getAppId());
+            builder.addParam("wechatUrl", wechatClientService.getWechatUrl());
+            builder.addParam("coreCustName", anReceivableDo.getCoreCustName());
+            builder.addParam("receivableNo",anReceivableDo.getReceivableNo());
+            builder.addParam("balance",getDisMoney(anReceivableDo.getBalance()));
+            builder.addParam("endDate", getDisDate(anReceivableDo.getEndDate()));
+            builder.addReceiver(targetCustomer.getCustNo(), null);  // 接收人
+            bool=notificationSendService.sendNotification(builder.build());
+            logger.info("pushReceivableSend 消息发送标识  bool："+bool);
+        }
+        return bool;
+    }
+    
+    
+    /****
+     * 发送验证通知信息
+     * @param anMap
+     * @return
+     */
+    public boolean pushVerifySend(Map<String,Object> anMap){
+        boolean bool=false;
+        final CustInfo sendCustomer = accountService.findCustInfo(Long.parseLong(anMap.get("coreCustNo").toString()));
+        final CustOperatorInfo sendOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(Long.parseLong(anMap.get("coreCustNo").toString())));
+        final CustInfo targetCustomer = accountService.findCustInfo(Long.parseLong(anMap.get("custNo").toString()));
+        final CustOperatorInfo targetOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(Long.parseLong(anMap.get("custNo").toString())));
+        if(sendOperator!=null && targetOperator!=null){
+            final Builder builder = NotificationModel.newBuilder("验证通过提醒", sendCustomer, sendOperator);
+            builder.addParam("appId", wechatClientService.getAppId());
+            builder.addParam("wechatUrl", wechatClientService.getWechatUrl());
+            builder.addParam("coreCustName", anMap.get("coreCustName"));
+            builder.addParam("operName",anMap.get("operName"));
+            builder.addParam("dateTime",BetterDateUtils.formatDate(BetterDateUtils.parseDate(new Date()), "yyyy年MM月dd日 HH:mm"));
+            builder.addReceiver(targetCustomer.getCustNo(), null);  // 接收人
+            bool=notificationSendService.sendNotification(builder.build());
+            logger.info("pushVerifySend 消息发送标识  bool："+bool);
+        }
+        return bool;
+    }
+    
+    
+    /****
+     * 发送验证通知信息
+     * @param anMap
+     * @return
+     */
+    public boolean pushCreditSend(ScfCredit anScfCredit){
+        boolean bool=false;
+        final CustInfo sendCustomer = accountService.findCustInfo(anScfCredit.getCoreCustNo());
+        final CustOperatorInfo sendOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(anScfCredit.getCoreCustNo()));
+        final CustInfo targetCustomer = accountService.findCustInfo(anScfCredit.getFactorNo());
+        final CustOperatorInfo targetOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(anScfCredit.getFactorNo()));
+        if(sendOperator!=null && targetOperator!=null){
+            final Builder builder = NotificationModel.newBuilder("验证通过提醒", sendCustomer, sendOperator);
+            builder.addParam("appId", wechatClientService.getAppId());
+            builder.addParam("wechatUrl", wechatClientService.getWechatUrl());
+            builder.addParam("factorName", anScfCredit.getFactorName());
+            builder.addParam("creditLimit",getDisMoney(anScfCredit.getCreditLimit()));
+            builder.addParam("startDate",getDisDate(anScfCredit.getStartDate()));
+            builder.addParam("endDate",getDisDate(anScfCredit.getEndDate()));
+            builder.addReceiver(targetCustomer.getCustNo(), null);  // 接收人
+            bool=notificationSendService.sendNotification(builder.build());
+            logger.info("pushCreditSend 消息发送标识  bool："+bool);
+        }
+        return bool;
     }
 }
