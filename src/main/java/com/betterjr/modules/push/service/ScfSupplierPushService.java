@@ -14,6 +14,7 @@ import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.agreement.service.ScfElecAgreementService;
+import com.betterjr.modules.credit.entity.ScfCredit;
 import com.betterjr.modules.enquiry.entity.ScfEnquiry;
 import com.betterjr.modules.enquiry.service.ScfEnquiryService;
 import com.betterjr.modules.loan.entity.ScfRequest;
@@ -21,6 +22,7 @@ import com.betterjr.modules.loan.service.ScfRequestService;
 import com.betterjr.modules.push.dao.ScfSupplierPushMapper;
 import com.betterjr.modules.push.entity.ScfSupplierPush;
 import com.betterjr.modules.push.entity.ScfSupplierPushDetail;
+import com.betterjr.modules.receivable.entity.ScfReceivableDO;
 
 @Service
 public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, ScfSupplierPush> {
@@ -151,6 +153,7 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
             }
         }
         catch (Exception e) {
+            logger.error("融资进度推送异常，原因：",e);
             supplierPushDetail.setBusinStatus("0");
             supplierPushDetail.setRemark("融资进度推送异常，原因："+e.getMessage());
         }
@@ -174,8 +177,84 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
             }
         }
         catch (Exception e) {
+            logger.error("询价状态推送异常，原因：",e);
             supplierPushDetail.setBusinStatus("0");
             supplierPushDetail.setRemark("询价状态推送异常，原因："+e);
+        }
+        supplierPushDetailService.addPushDetail(supplierPushDetail);// 添加明细
+    }
+    
+    /***
+     * 推送应收账款信息
+     * @param anReceivableDo
+     */
+    public void pushReceivableInfo(ScfReceivableDO anReceivableDo){
+        logger.info("pushReceivableInfo   anReceivableDo:"+anReceivableDo);
+        ScfSupplierPushDetail supplierPushDetail=new ScfSupplierPushDetail();
+        try {
+            supplierPushDetail.initValue(anReceivableDo.getReceivableNo(), "2");
+            supplierPushDetail.setSendNo(anReceivableDo.getCoreCustNo().toString());
+            supplierPushDetail.setReceiveNo(anReceivableDo.getCustNo().toString());
+            if(pushCheckService.pushReceivableSend(anReceivableDo)){
+                supplierPushDetail.setRemark("应收账款信息推送成功!");
+            }else{
+                supplierPushDetail.setRemark("应收账款信息推送失败!");
+            }
+        }
+        catch (Exception e) {
+            logger.error("应收账款信息推送异常，原因：",e);
+            supplierPushDetail.setBusinStatus("0");
+            supplierPushDetail.setRemark("应收账款信息推送异常，原因："+e);
+        }
+        supplierPushDetailService.addPushDetail(supplierPushDetail);// 添加明细
+    }
+    
+    /***
+     * 推送验证关系通知信息
+     * @param anMap 入参
+     */
+    public void pushVerifyRelation(Map<String,Object> anMap){
+        logger.info("pushVerifyRelation   anMap:"+anMap);
+        ScfSupplierPushDetail supplierPushDetail=new ScfSupplierPushDetail();
+        try {
+            supplierPushDetail.initValue(anMap.get("id").toString(), "5");
+            supplierPushDetail.setSendNo(anMap.get("coreCustNo").toString());
+            supplierPushDetail.setReceiveNo(anMap.get("custNo").toString());
+            if(pushCheckService.pushVerifySend(anMap)){
+                supplierPushDetail.setRemark("验证信息推送成功!");
+            }else{
+                supplierPushDetail.setRemark("验证信息推送失败!");
+            }
+        }
+        catch (Exception e) {
+            logger.error("验证信息推送异常，原因：",e);
+            supplierPushDetail.setBusinStatus("0");
+            supplierPushDetail.setRemark("验证信息推送异常，原因："+e);
+        }
+        supplierPushDetailService.addPushDetail(supplierPushDetail);// 添加明细
+    }
+    
+    /***
+     * 推送授信成功通知信息
+     * @param anScfCredit
+     */
+    public void pushCreditInfo(ScfCredit anScfCredit){
+        logger.info("pushCreditInfo   anScfCredit:"+anScfCredit);
+        ScfSupplierPushDetail supplierPushDetail=new ScfSupplierPushDetail();
+        try {
+            supplierPushDetail.initValue(anScfCredit.getId().toString(), "6");
+            supplierPushDetail.setSendNo(anScfCredit.getCoreCustNo().toString());
+            supplierPushDetail.setReceiveNo(anScfCredit.getFactorNo().toString());
+            if(pushCheckService.pushCreditSend(anScfCredit)){
+                supplierPushDetail.setRemark("授信成功信息推送成功!");
+            }else{
+                supplierPushDetail.setRemark("授信成功信息推送失败!");
+            }
+        }
+        catch (Exception e) {
+            logger.error("授信成功信息推送异常，原因：",e);
+            supplierPushDetail.setBusinStatus("0");
+            supplierPushDetail.setRemark("授信成功信息推送异常，原因："+e);
         }
         supplierPushDetailService.addPushDetail(supplierPushDetail);// 添加明细
     }
