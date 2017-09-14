@@ -198,6 +198,7 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
             if(pushCheckService.pushReceivableSend(anReceivableDo)){
                 supplierPushDetail.setRemark("应收账款信息推送成功!");
             }else{
+                supplierPushDetail.setBusinStatus("0");
                 supplierPushDetail.setRemark("应收账款信息推送失败!");
             }
         }
@@ -223,6 +224,7 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
             if(pushCheckService.pushVerifySend(anMap)){
                 supplierPushDetail.setRemark("验证信息推送成功!");
             }else{
+                supplierPushDetail.setBusinStatus("0");
                 supplierPushDetail.setRemark("验证信息推送失败!");
             }
         }
@@ -248,6 +250,7 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
             if(pushCheckService.pushCreditSend(anScfCredit)){
                 supplierPushDetail.setRemark("授信成功信息推送成功!");
             }else{
+                supplierPushDetail.setBusinStatus("0");
                 supplierPushDetail.setRemark("授信成功信息推送失败!");
             }
         }

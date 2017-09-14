@@ -343,7 +343,7 @@ public class ScfPushCheckService {
     
     
     /****
-     * 发送验证通知信息
+     * 授信成功通知信息
      * @param anMap
      * @return
      */
@@ -354,7 +354,7 @@ public class ScfPushCheckService {
         final CustInfo targetCustomer = accountService.findCustInfo(anScfCredit.getFactorNo());
         final CustOperatorInfo targetOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(anScfCredit.getFactorNo()));
         if(sendOperator!=null && targetOperator!=null){
-            final Builder builder = NotificationModel.newBuilder("验证通过提醒", sendCustomer, sendOperator);
+            final Builder builder = NotificationModel.newBuilder("授信成功通知", sendCustomer, sendOperator);
             builder.addParam("appId", wechatClientService.getAppId());
             builder.addParam("wechatUrl", wechatClientService.getWechatUrl());
             builder.addParam("factorName", anScfCredit.getFactorName());
