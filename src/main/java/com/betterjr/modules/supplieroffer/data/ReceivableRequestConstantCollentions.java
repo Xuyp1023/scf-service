@@ -16,7 +16,7 @@ public class ReceivableRequestConstantCollentions {
     
     public static final String OFFER_BUSIN_STATUS_CORE_PAY_CONFIRM="5"; //5资金方付款
     
-    public static final String OFFER_BUSIN_STATUS_REQUEST_END="6"; //6完结
+   // public static final String OFFER_BUSIN_STATUS_REQUEST_END="6"; //6完结
     
     public static final String OFFER_BUSIN_STATUS_REQUEST_ANNUL="7"; //7废止
     

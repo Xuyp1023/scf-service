@@ -274,7 +274,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         }
         checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_SIGN_AGREEMENT, true, "核心企业已经签署合同，进行付款操作,无法作废");
         checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_PAY_CONFIRM, true, "核心企业已经付款,无法作废");
-        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_REQUEST_END, true, "该融资已经结束，无法废止");
+        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_REQUEST_END, true, "该融资已经结束，无法废止");
         checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_REQUEST_ANNUL, true, "该融资已经废止");
         //更新资产包状态信息
         assetService.saveRejectOrBreakAsset(request.getAssetId());
@@ -321,7 +321,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
             BTAssert.notNull(null, "你没有当前处理的权限,操作失败");
         }
         checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_SIGN_AGREEMENT, false, "请先签署合同，再进行付款");
-        request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_REQUEST_END);
+        request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_REQUEST_END);
         //封装应付款钱信息
         fillRequestRaxInfo(request,anRequestPayDate);
         request.setDescription(anDescription);
@@ -371,7 +371,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
                 ,ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TRANSFER_AGREEMENT_CORE
                 ,ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_SIGN_AGREEMENT
                 ,ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_PAY_CONFIRM
-                ,ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_REQUEST_END});
+                ,ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_FACTORY_SIGN_AGREEMENT});
         anMap.put("receivableRequestType", "1");
         Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
         return page;
@@ -393,7 +393,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         }
         anMap=Collections3.filterMapEmptyObject(anMap);
         anMap=Collections3.filterMap(anMap, new String[]{"custNo","coreCustNo","GTEregDate","LTEregDate","GTEendDate","LTEendDate","receivableRequestType"});
-        anMap.put("businStatus", ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_REQUEST_END);
+        anMap.put("businStatus", ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_REQUEST_END);
         anMap.put("receivableRequestType", "1");
         Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
         return page;
@@ -438,8 +438,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         }
         anMap=Collections3.filterMapEmptyObject(anMap);
         anMap=Collections3.filterMap(anMap, new String[]{"custNo","coreCustNo","GTEregDate","LTEregDate","GTEendDate","LTEendDate","receivableRequestType"});
-        anMap.put("businStatus", ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_REQUEST_END);
-        anMap.put("receivableRequestType", "1");
+        anMap.put("businStatus", ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_REQUEST_END);
+        //anMap.put("receivableRequestType", "1");
         Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
         return page;
     }
@@ -905,9 +905,9 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
                 ,ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TRANSFER_AGREEMENT_CORE
                 ,ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_SIGN_AGREEMENT
                 ,ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_PAY_CONFIRM
-                ,ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_REQUEST_END
+                ,ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_FACTORY_SIGN_AGREEMENT
                 ,ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_FACTORY_PAY_CONFIRM
-                ,ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_REQUEST_END});
+                });
         //anMap.put("receivableRequestType", "2");
         Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
         return page;
@@ -930,7 +930,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         anMap=Collections3.filterMapEmptyObject(anMap);
         anMap=Collections3.filterMap(anMap, new String[]{"custNo","coreCustNo","GTEregDate","LTEregDate","GTEendDate","LTEendDate","receivableRequestType"});
         anMap.put("businStatus", ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_REQUEST_END);
-        anMap.put("receivableRequestType", "2");
+        //anMap.put("receivableRequestType", "2");
         Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
         return page;
     }
