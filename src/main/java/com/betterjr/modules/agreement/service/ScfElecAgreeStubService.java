@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.exception.BytterValidException;
 import com.betterjr.common.service.BaseService;
+import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
@@ -171,5 +172,15 @@ public class ScfElecAgreeStubService extends BaseService<ScfElecAgreeStubMapper,
         }
         ScfElecAgreeStub.updateSignInfo(curStub, anStatus);
         this.updateByPrimaryKeySelective(curStub);
+    }
+    
+    public ScfElecAgreeStub saveAddInitValueStub(String anAppNo,Long anCustNo,String anBusinStatus){
+        ScfElecAgreeStub stu=new ScfElecAgreeStub(anAppNo, anCustNo);
+        stu.setOperStatus(anBusinStatus);
+        stu.setOperCode(UserUtils.getOperatorInfo().getId()+"");
+        stu.setOperName(UserUtils.getOperatorInfo().getName());
+        stu.setOperTime(BetterDateUtils.getNumDateTime());
+        this.insertSelective(stu);
+        return stu;
     }
 }

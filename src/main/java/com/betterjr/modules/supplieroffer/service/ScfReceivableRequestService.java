@@ -30,6 +30,9 @@ import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.account.service.CustAccountService;
+import com.betterjr.modules.account.service.CustOperatorService;
+import com.betterjr.modules.agreement.entity.ScfElecAgreement;
+import com.betterjr.modules.agreement.service.ScfElecAgreementService;
 import com.betterjr.modules.asset.data.AssetConstantCollentions;
 import com.betterjr.modules.asset.entity.ScfAsset;
 import com.betterjr.modules.asset.service.ScfAssetService;
@@ -91,6 +94,11 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
     
     @Autowired
     private ScfCoreProductCustService productService;
+    
+    @Autowired
+    private ScfElecAgreementService elecAgreementService;
+    @Autowired
+    private CustOperatorService operatorService;
     
     /*
      * 模式一应收账款申请
@@ -220,7 +228,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_SUBMIT_REQUEST, false, "请在合同提交之后签署合同信息");
         request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_SUPPLIER_SIGN_AGREEMENT);
         //处理供应商电子合同和平台电子合同
-        agreementService.saveSupplierSignAgreement(request);
+        //agreementService.saveSupplierSignAgreement(request);
+        elecAgreementService.saveUpdateBusinStatus(request.getAgreementAppNo(), request.getCustNo(), "2");
         this.updateByPrimaryKeySelective(request);
         return request;
         
@@ -279,7 +288,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         //更新资产包状态信息
         assetService.saveRejectOrBreakAsset(request.getAssetId());
         //更新合同的状态
-        agreementService.saveAnnulAgreement(request);
+        //agreementService.saveAnnulAgreement(request);
+        elecAgreementService.saveUpdateBusinStatus(request.getAgreementAppNo(), request.getCustNo(), "9");
         request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_REQUEST_ANNUL);
         this.updateByPrimaryKeySelective(request);
         return request;
@@ -298,7 +308,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TRANSFER_AGREEMENT_CORE, false, "电子合同只能签署一次!");
         request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_SIGN_AGREEMENT);
         //处理供应商电子合同和平台电子合同
-        agreementService.saveCoreSignAgreement(request);
+        //agreementService.saveCoreSignAgreement(request);
+        elecAgreementService.saveUpdateBusinStatus(request.getAgreementAppNo(), request.getCoreCustNo(), "1");
         this.updateByPrimaryKeySelective(request);
         return request;
         
@@ -344,8 +355,19 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         ScfReceivableRequest request = this.selectByPrimaryKey(anRequestNo);
         BTAssert.notNull(request, "融资信息为空,操作失败");
         request.setAsset(assetService.findAssetByid(request.getAssetId()));
-        request.setCoreAgreement(agreementService.selectByPrimaryKey(request.getCoreAgreementId()));
-        request.setPlatAgreement(agreementService.selectByPrimaryKey(request.getPlatAgreementId()));
+        if(request.getCoreAgreementId()!=null){
+            
+            request.setCoreAgreement(agreementService.selectByPrimaryKey(request.getCoreAgreementId()));
+        }
+        if(request.getPlatAgreementId()!=null){
+            
+            request.setPlatAgreement(agreementService.selectByPrimaryKey(request.getPlatAgreementId()));
+        }
+        if(StringUtils.isNoneBlank(request.getAgreementAppNo())){
+            
+            request.setElecAgreement(elecAgreementService.selectByPrimaryKey(request.getAgreementAppNo())); 
+            
+        }
         return request;
     }
     
@@ -849,7 +871,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_CORE_CONFIRM, false, "电子合同只能签署一次!");
         request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_FACTORY_SIGN_AGREEMENT);
         //处理供应商电子合同和平台电子合同
-        agreementService.saveFactorySignAgreement(request);
+        //agreementService.saveFactorySignAgreement(request);
+        elecAgreementService.saveUpdateBusinStatus(request.getAgreementAppNo(), request.getFactoryNo(), "1");
         this.updateByPrimaryKeySelective(request);
         return request;
         
@@ -1130,6 +1153,11 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         request.setCustBankAccount(anMap.get("custBankAccount").toString());
         request.setCustBankAccountName(anMap.get("custBankAccountName").toString());
         request.setCustBankName(anMap.get("custBankName").toString());
+        //插入电子合同信息
+        ScfElecAgreement agreement = elecAgreementService.saveAddElecAgreementByReceivableRequest(request);
+        request.setAgreementAppNo(agreement.getAppNo());
+        request.setElecAgreement(agreement);
+        
         ScfAsset asset = assetService.saveConfirmAsset(request.getAssetId());
         request.setAsset(asset);
         request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_SUBMIT_REQUEST);
@@ -1138,8 +1166,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         request.setDescription(anDescription);
         //设置合同
         //插入电子合同信息
-        agreementService.saveAddCoreAgreementByRequest(request,request.getReceivableRequestType());
-        agreementService.saveAddPlatAgreementByRequest(request);
+        //agreementService.saveAddCoreAgreementByRequest(request,request.getReceivableRequestType());
+        //agreementService.saveAddPlatAgreementByRequest(request);
         
         this.updateByPrimaryKeySelective(request);
         return request;
@@ -1271,6 +1299,12 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
             }
         }
         
+        
+    }
+    
+    public CustOperatorInfo findDefaultOperatorInfo(Long custNo){
+        
+        return operatorService.findDefaultOperator(baseService.findBaseInfo(custNo).getOperOrg());
         
     }
     

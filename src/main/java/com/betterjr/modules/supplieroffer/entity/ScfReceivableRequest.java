@@ -14,6 +14,7 @@ import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.asset.entity.ScfAsset;
 import com.betterjr.modules.generator.SequenceFactory;
 import com.betterjr.modules.supplieroffer.data.ReceivableRequestConstantCollentions;
@@ -246,6 +247,16 @@ public class ScfReceivableRequest implements BetterjrEntity{
     @MetaData( value="应收账款融资类型", comments = "应收账款融资类型")
     private String receivableRequestType;
     
+    /**
+     * 电子合同地址
+     */
+    @Column(name = "C_ELECAGREEMENT_APPNO",  columnDefinition="VARCHAR" )
+    @MetaData( value="电子合同地址", comments = "电子合同地址")
+    private String agreementAppNo;
+    
+    @Transient
+    private ScfElecAgreement elecAgreement=new ScfElecAgreement();
+    
     @Transient
     private ScfAsset asset=new ScfAsset();
     
@@ -285,6 +296,22 @@ public class ScfReceivableRequest implements BetterjrEntity{
 
     public void setReceivableRequestType(String anReceivableRequestType) {
         this.receivableRequestType = anReceivableRequestType;
+    }
+
+    public String getAgreementAppNo() {
+        return this.agreementAppNo;
+    }
+
+    public void setAgreementAppNo(String anAgreementAppNo) {
+        this.agreementAppNo = anAgreementAppNo;
+    }
+
+    public ScfElecAgreement getElecAgreement() {
+        return this.elecAgreement;
+    }
+
+    public void setElecAgreement(ScfElecAgreement anElecAgreement) {
+        this.elecAgreement = anElecAgreement;
     }
 
     public Long getFactoryNo() {

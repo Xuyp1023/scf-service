@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,8 @@ import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.exception.BytterWebServiceException;
 import com.betterjr.common.mapper.BeanMapper;
 import com.betterjr.common.service.BaseService;
+import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.DictUtils;
@@ -33,10 +36,14 @@ import com.betterjr.modules.agreement.data.ScfElecAgreementInfo;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.document.entity.CustFileItem;
+import com.betterjr.modules.generator.SequenceFactory;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.service.ScfRequestService;
 import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.product.service.ScfProductService;
+import com.betterjr.modules.supplieroffer.entity.ScfReceivableRequest;
+import com.betterjr.modules.template.entity.ScfContractTemplate;
+import com.betterjr.modules.template.service.ScfContractTemplateService;
 
 /***
  * 电子合同管理
@@ -62,6 +69,9 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
     private ScfRequestService requestService; 
     @Reference(interfaceClass=ICustFileService.class)
     protected ICustFileService fileItemService;
+    
+    @Autowired
+    private ScfContractTemplateService templateService;
     /**
      * 查找供应商的电子合同信息
      * 
@@ -97,7 +107,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
             termMap.put("agreeType", Arrays.asList("1","2"));
             termMap.put("buyerNo", anParam.get("custNo"));
         }else if(UserUtils.supplierUser()){
-            termMap.put("agreeType", Arrays.asList("0"));
+            //termMap.put("agreeType", Arrays.asList("0"));
             termMap.put("supplierNo", anParam.get("custNo"));
         }else if(UserUtils.sellerUser()){
             termMap.put("agreeType", Arrays.asList("2"));
@@ -699,5 +709,80 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
     
     public List findBillListByRequestNo(String anRequestNo){
         return orderService.findInfoListByRequest(anRequestNo, "2");
+    }
+    
+    /**
+     * 通过融资申请生成电子合同
+     * @param anRequest
+     * @return
+     */
+    public ScfElecAgreement saveAddElecAgreementByReceivableRequest(ScfReceivableRequest anRequest){
+        
+        //查询电子合同模版
+        ScfContractTemplate  template=new ScfContractTemplate();
+        String agreeType="6";
+        if("1".equals(anRequest.getReceivableRequestType())){
+            
+            template=findAgreementTemplate(anRequest.getFactoryNo(),"receivableRequestProtocolModel1");
+        }else if("2".equals(anRequest.getReceivableRequestType())){
+            template=findAgreementTemplate(anRequest.getFactoryNo(),"receivableRequestProtocolModel2");
+            agreeType="7";
+        }
+        
+        BTAssert.notNull(template, "请联系平台上传电子合同模版");
+        ScfElecAgreement agreement=ScfElecAgreement.createByReceivable(anRequest.getCustName()+"应收账款提前回款协议书", 
+                SequenceFactory.generate("PLAT_ReceivableRequestAgreementCode", "TZBL-ZR#{Date:yy}#{Seq:8}"),
+                anRequest.getBalance(),agreeType);
+        agreement.setAgreeStartDate(BetterDateUtils.getNumDate());
+        agreement.setBuyerNo(anRequest.getCoreCustNo());
+        agreement.setFactorNo(anRequest.getFactoryNo()+"");
+        agreement.setRequestNo(anRequest.getRequestNo());
+        agreement.setSupplier(anRequest.getCustName());
+        agreement.setSupplierNo(anRequest.getCustNo());
+        this.insertSelective(agreement);
+        
+        return agreement;
+        
+        
+    }
+    
+    /**
+     * 电子合同状态更新
+     * @param appNo
+     * @param anCustNo
+     * @param anBusinStatus
+     * @return
+     */
+    public ScfElecAgreement saveUpdateBusinStatus(String appNo,Long anCustNo,String anBusinStatus){
+        
+        if(StringUtils.isBlank(appNo)){
+            BTAssert.notNull(appNo, "没有生成电子合同信息，不能进行签署"); 
+        }
+        
+        ScfElecAgreement agreement = this.selectByPrimaryKey(appNo);
+        BTAssert.notNull(agreement, "没有生成电子合同信息，不能进行签署"); 
+        agreement.setSignStatus(anBusinStatus);
+        if("1".equals(anBusinStatus)){
+            agreement.setSignDate(BetterDateUtils.getNumDate());
+        }
+        this.updateByPrimaryKeySelective(agreement);
+        scfElecAgreeStubService.saveAddInitValueStub(agreement.getAppNo(), anCustNo,"1");
+        
+        return agreement;
+        
+    }
+
+    /**
+     *查找电子合同模版
+     * @return
+     */
+    private ScfContractTemplate findAgreementTemplate(Long factoryNo,String type) {
+        
+        
+        ScfContractTemplate template = templateService.findTemplateByType(factoryNo, type, "1");
+        if(template!=null && template.getId()!=null){
+            return template;
+        }
+        return null;
     }
 }
