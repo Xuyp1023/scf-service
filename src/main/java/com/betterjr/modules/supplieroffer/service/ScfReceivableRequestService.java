@@ -559,15 +559,37 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
     private ScfReceivableRequest convertAssetToReceviableRequest(ScfAsset anAsset) {
         ScfReceivableRequest request=new ScfReceivableRequest();
         request=convertAssetToReceviableRequest(request, anAsset);
-        ScfSupplierOffer offer = offerService.findOffer(anAsset.getCustNo(), anAsset.getCoreCustNo());
-        BTAssert.notNull(offer, "请通知核心企业设置融资利率,操作失败");
-        request.setCustCoreRate(offer.getCoreCustRate());
+       
+        packageCustOpatRate(request, "1");
         
-        ScfSupplierOffer platOffer = offerService.findOffer(anAsset.getCustNo(), findPlatCustInfo());
-        BTAssert.notNull(platOffer, "请通知平台设置服务费利率,操作失败");
-        request.setCustOpatRate(platOffer.getCoreCustRate());
+        //封装服务费率
+        packageCustOpatRate(request, "2");
+        
         
         return request;
+    }
+    
+    /**
+     * 封装利率
+     * @param request
+     * @param requestType 1 表示封装资金方利率    2  封装平台
+     */
+    private void packageCustOpatRate(ScfReceivableRequest request,String requestType){
+        
+        if("1".equals(requestType) && request.getFactoryNo()!=null){
+            
+            ScfSupplierOffer offer = offerService.findOffer(request.getCustNo(), request.getFactoryNo());
+            BTAssert.notNull(offer, "请通知资金方设置融资利率,操作失败");
+            request.setCustCoreRate(offer.getCoreCustRate());
+        }else if("2".equals(requestType)){
+            
+            ScfSupplierOffer platOffer = offerService.findOffer(request.getCustNo(), findPlatCustInfo());
+            BTAssert.notNull(platOffer, "请通知平台设置服务费利率,操作失败");
+            request.setCustOpatRate(platOffer.getCoreCustRate());
+            
+        }
+        
+        
     }
     
     /**
@@ -1119,7 +1141,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         ScfReceivableRequest request=convertAssetToReceviableRequest(asset);
         //request.setReceivableRequestType("1");
         request.saveAddValue();
-        fillRequestRaxInfo(request,BetterDateUtils.getNumDate());
+        //fillRequestRaxInfo(request,BetterDateUtils.getNumDate());
         //插入电子合同信息
         //agreementService.saveAddCoreAgreementByRequest(request,"1");
         //agreementService.saveAddPlatAgreementByRequest(request);
@@ -1164,10 +1186,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         //封装应付款钱信息
         fillRequestRaxInfo(request,anRequestPayDate);
         request.setDescription(anDescription);
-        //设置合同
-        //插入电子合同信息
-        //agreementService.saveAddCoreAgreementByRequest(request,request.getReceivableRequestType());
-        //agreementService.saveAddPlatAgreementByRequest(request);
+       
         
         this.updateByPrimaryKeySelective(request);
         return request;
@@ -1299,7 +1318,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
             }
         }
         
-        
+        packageCustOpatRate(anRequest, "1"); 
     }
     
     public CustOperatorInfo findDefaultOperatorInfo(Long custNo){
