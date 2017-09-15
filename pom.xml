@@ -1,99 +1,104 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+ <modelVersion>4.0.0</modelVersion>
 
-	<artifactId>scf-service</artifactId>
+ <artifactId>scf-service</artifactId>
 
-	<parent>
-		<groupId>com.betterjr</groupId>
-		<artifactId>pom</artifactId>
-		<version>1.0.0</version>
-	</parent>
-	<dependencies>
-		<dependency>
-			<groupId>com.betterjr</groupId>
-			<artifactId>framework</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.betterjr</groupId>
-			<artifactId>scf-interfaces</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.betterjr</groupId>
-			<artifactId>dubbo-extend</artifactId>
-			<version>1.0.0</version>
-		</dependency>
+ <parent>
+  <groupId>com.betterjr</groupId>
+  <artifactId>pom</artifactId>
+  <version>1.0.0</version>
+ </parent>
+ <dependencies>
+  <dependency>
+   <groupId>com.betterjr</groupId>
+   <artifactId>framework</artifactId>
+   <version>1.0.0</version>
+  </dependency>
+  <dependency>
+   <groupId>com.betterjr</groupId>
+   <artifactId>scf-interfaces</artifactId>
+   <version>1.0.0</version>
+  </dependency>
+  <dependency>
+   <groupId>com.betterjr</groupId>
+   <artifactId>dubbo-extend</artifactId>
+   <version>1.0.0</version>
+  </dependency>
 
-        <dependency>
-         <groupId>com.betterjr</groupId>
-         <artifactId>platform-interfaces</artifactId>
-         <version>1.0.0</version>
-        </dependency>
-        
-        <dependency>
-         <groupId>com.betterjr</groupId>
-         <artifactId>workflow-interfaces</artifactId>
-         <version>1.0.0</version>
-        </dependency>
-        
-        <!-- 定时任务 -->
-        <dependency>
-		    <groupId>com.dangdang</groupId>
-		    <artifactId>elastic-job-core</artifactId>
-		    <version>1.1.1</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.dangdang</groupId>
-			<artifactId>elastic-job-api-core</artifactId>
-			<version>1.1.1</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.dangdang</groupId>
-			<artifactId>elastic-job-spring</artifactId>
-			<version>1.1.1</version>
-		</dependency>
+  <dependency>
+   <groupId>com.betterjr</groupId>
+   <artifactId>platform-interfaces</artifactId>
+   <version>1.0.0</version>
+  </dependency>
 
-		<dependency>
-			<groupId>org.jeecg</groupId>
-			<artifactId>easypoi-base</artifactId>
-			<version>2.1.4-bettery</version>
-			<classifier>bettery</classifier>
-		</dependency>
+  <dependency>
+   <groupId>com.betterjr</groupId>
+   <artifactId>workflow-interfaces</artifactId>
+   <version>1.0.0</version>
+  </dependency>
 
-		<dependency>
-			<groupId>xerces</groupId>
-			<artifactId>xercesImpl</artifactId>
-			<version>2.9.1</version>
-		</dependency>
+  <dependency>
+   <groupId>com.betterjr</groupId>
+   <artifactId>contract-interfaces</artifactId>
+   <version>1.0.0</version>
+  </dependency>
 
-		<dependency>
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-			<version>1.8.3</version>
-		</dependency>
+  <!-- 定时任务 -->
+  <dependency>
+   <groupId>com.dangdang</groupId>
+   <artifactId>elastic-job-core</artifactId>
+   <version>1.1.1</version>
+  </dependency>
 
-  
-         <!-- https://mvnrepository.com/artifact/net.sf.jxls/jxls-core -->
-         <dependency>
-             <groupId>net.sf.jxls</groupId>
-             <artifactId>jxls-core</artifactId>
-             <version>1.0.6</version>
-         </dependency>
-         
-         <!-- https://mvnrepository.com/artifact/net.sf.jxls/jxls-reader -->
-         <dependency>
-             <groupId>net.sf.jxls</groupId>
-             <artifactId>jxls-reader</artifactId>
-             <version>1.0.6</version>
-         </dependency>
-         
-         
-	</dependencies>
+  <dependency>
+   <groupId>com.dangdang</groupId>
+   <artifactId>elastic-job-api-core</artifactId>
+   <version>1.1.1</version>
+  </dependency>
 
-	<packaging>war</packaging>
+  <dependency>
+   <groupId>com.dangdang</groupId>
+   <artifactId>elastic-job-spring</artifactId>
+   <version>1.1.1</version>
+  </dependency>
+
+  <dependency>
+   <groupId>org.jeecg</groupId>
+   <artifactId>easypoi-base</artifactId>
+   <version>2.1.4-bettery</version>
+   <classifier>bettery</classifier>
+  </dependency>
+
+  <dependency>
+   <groupId>xerces</groupId>
+   <artifactId>xercesImpl</artifactId>
+   <version>2.9.1</version>
+  </dependency>
+
+  <dependency>
+   <groupId>org.jsoup</groupId>
+   <artifactId>jsoup</artifactId>
+   <version>1.8.3</version>
+  </dependency>
+
+
+  <!-- https://mvnrepository.com/artifact/net.sf.jxls/jxls-core -->
+  <dependency>
+   <groupId>net.sf.jxls</groupId>
+   <artifactId>jxls-core</artifactId>
+   <version>1.0.6</version>
+  </dependency>
+
+  <!-- https://mvnrepository.com/artifact/net.sf.jxls/jxls-reader -->
+  <dependency>
+   <groupId>net.sf.jxls</groupId>
+   <artifactId>jxls-reader</artifactId>
+   <version>1.0.6</version>
+  </dependency>
+
+
+ </dependencies>
+
+ <packaging>war</packaging>
 
 </project>

@@ -12,22 +12,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.betterjr.common.data.SimpleDataEntity;
 import com.betterjr.common.mapper.CustDecimalJsonSerializer;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.service.FreemarkerService;
 import com.betterjr.common.utils.BetterStringUtils;
-import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.MathExtend;
 import com.betterjr.common.utils.NumberToCN;
-import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
-import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.agreement.dao.ScfRequestNoticeMapper;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.agreement.entity.ScfRequestNotice;
-import com.betterjr.modules.agreement.utils.SupplyChainUtil;
 
 /**
  * 应收账款转让通知书管理
@@ -54,8 +49,8 @@ public class ScfRequestNoticeService extends BaseService<ScfRequestNoticeMapper,
      * @param anRequest
      * @return
      */
-    public String updateTransNotice(ScfRequestNotice anRequest, String anSuppiler,BigDecimal anBalance) {
-        ScfRequestNotice tmpNotice = this.selectByPrimaryKey(anRequest.getRequestNo());
+    public String updateTransNotice(final ScfRequestNotice anRequest, final String anSuppiler, final BigDecimal anBalance) {
+        final ScfRequestNotice tmpNotice = this.selectByPrimaryKey(anRequest.getRequestNo());
         boolean result = true;
 
         if (tmpNotice == null) {
@@ -75,14 +70,14 @@ public class ScfRequestNoticeService extends BaseService<ScfRequestNoticeMapper,
 
         // 表示需要更新电子合同签署信息
         if (result) {
-            ScfElecAgreement elecAgreement = ScfElecAgreement.createByNotice(anRequest.getAgreeName(), anRequest.getNoticeNo(),
-                    anBalance);
+            final ScfElecAgreement elecAgreement = ScfElecAgreement.createByNotice(anRequest.getAgreeName(), anRequest.getNoticeNo(), anBalance);
             elecAgreement.setSupplierNo(anRequest.getSupplierNo());
             elecAgreement.setRequestNo(anRequest.getRequestNo());
             elecAgreement.setBuyerNo(anRequest.getBuyerNo());
             elecAgreement.setFactorNo(anRequest.getFactorNo());
             elecAgreement.setSupplier(anSuppiler);
-            elecAgreeService.addElecAgreementInfo(elecAgreement, Arrays.asList(elecAgreement.getSupplierNo()));
+            elecAgreeService.addElecAgreementInfo(elecAgreement, "billTransNotice",
+                    Arrays.asList(elecAgreement.getSupplierNo(), Long.parseLong(elecAgreement.getFactorNo())));
 
             return elecAgreement.getAgreeNo();
         }
@@ -95,8 +90,8 @@ public class ScfRequestNoticeService extends BaseService<ScfRequestNoticeMapper,
      * @param anRequestNo
      * @return
      */
-    public boolean allowUpdate(String anRequestNo) {
-        ScfRequestNotice requestNotice = this.selectByPrimaryKey(anRequestNo);
+    public boolean allowUpdate(final String anRequestNo) {
+        final ScfRequestNotice requestNotice = this.selectByPrimaryKey(anRequestNo);
         if (requestNotice == null) {
 
             return true;
@@ -104,51 +99,55 @@ public class ScfRequestNoticeService extends BaseService<ScfRequestNoticeMapper,
 
         return "0".equals(requestNotice.getTransStatus());
     }
-    
+
     /***
      * 根据申请单号查询转让通知书
+     * 
      * @param requestNo
      * @return
      */
-    public ScfRequestNotice findTransNotice(String requestNo){
+    public ScfRequestNotice findTransNotice(final String requestNo) {
         return this.selectByPrimaryKey(requestNo);
     }
-    
+
     /***
      * 查询设置保理合同信息
+     * 
      * @param noticeInfo
      * @return
      */
-    public ScfRequestNotice findFactorAgreement(ScfRequestNotice noticeInfo){
-        ScfElecAgreement elecAgreement= elecAgreeService.findFactorAgreementBySupplierNo(noticeInfo.getSupplierNo(), Long.parseLong(noticeInfo.getFactorNo()), "3");
-        if(elecAgreement!=null){
+    public ScfRequestNotice findFactorAgreement(final ScfRequestNotice noticeInfo) {
+        final ScfElecAgreement elecAgreement = elecAgreeService.findFactorAgreementBySupplierNo(noticeInfo.getSupplierNo(),
+                Long.parseLong(noticeInfo.getFactorNo()), "3");
+        if (elecAgreement != null) {
             noticeInfo.setFactorAgreementNo(elecAgreement.getAgreeNo());
             noticeInfo.setFactorAgreementName(elecAgreement.getAgreeName());
         }
         noticeInfo.setSupplierName(custAccountService.queryCustName(noticeInfo.getSupplierNo()));
-        if(BetterStringUtils.isBlank(noticeInfo.getBuyer())){
+        if (BetterStringUtils.isBlank(noticeInfo.getBuyer())) {
             noticeInfo.setBuyer(custAccountService.queryCustName(noticeInfo.getBuyerNo()));
         }
         return noticeInfo;
     }
-    
+
     /***
      * 查询汇票信息
+     * 
      * @param anRequestNo
      * @return
      */
-    public Map<String, Object> findBillListByRequestNo(String anRequestNo){
-        Map<String, Object> map = new HashMap();
-        List<Map<String, Object>> billList=new ArrayList<Map<String,Object>>();
-        List list=elecAgreeService.findBillListByRequestNo(anRequestNo);
-        BigDecimal totalBalance=new BigDecimal(0);// 总金额 
-        for(int i=0;i<list.size();i++){
-            Map<String, Object> billMap=new HashMap<String, Object>();
-            ScfAcceptBill scfAcceptBill=(ScfAcceptBill)list.get(i);
+    public Map<String, Object> findBillListByRequestNo(final String anRequestNo) {
+        final Map<String, Object> map = new HashMap();
+        final List<Map<String, Object>> billList = new ArrayList<Map<String, Object>>();
+        final List list = elecAgreeService.findBillListByRequestNo(anRequestNo);
+        BigDecimal totalBalance = new BigDecimal(0);// 总金额
+        for (int i = 0; i < list.size(); i++) {
+            final Map<String, Object> billMap = new HashMap<String, Object>();
+            final ScfAcceptBill scfAcceptBill = (ScfAcceptBill) list.get(i);
             billMap.put("billNo", scfAcceptBill.getBillNo());
             billMap.put("balance", CustDecimalJsonSerializer.format(scfAcceptBill.getBalance()));
             billMap.put("CapitalBalance", NumberToCN.number2CNMontrayUnit(scfAcceptBill.getBalance()));
-            totalBalance=MathExtend.add(totalBalance,scfAcceptBill.getBalance());
+            totalBalance = MathExtend.add(totalBalance, scfAcceptBill.getBalance());
             billList.add(billMap);
         }
         map.put("billList", billList);
