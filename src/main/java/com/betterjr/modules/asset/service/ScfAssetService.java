@@ -1614,7 +1614,7 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
             
         }else{
             
-           if(StringUtils.isBlank(anReceivable.getAgreeNo())) {
+           if(StringUtils.isNotBlank(anReceivable.getAgreeNo())) {
                ContractLedger agreement = contractLedgerService.selectOneByAgreeNo(anReceivable.getAgreeNo()); 
                if(agreement!=null && agreement.getBusinStatus().equals(VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE)
                        && agreement.getLockedStatus().equals(VersionConstantCollentions.LOCKED_STATUS_INlOCKED)){
