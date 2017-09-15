@@ -3,6 +3,7 @@ package com.betterjr.modules.agreement.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
@@ -59,18 +60,27 @@ public class ScfElecReceivableRequestService  extends ScfElecAgreeLocalService{
        
         //封装原付款年月日
         
-        result.put("sourceDateYear", request.getEndDate().substring(0, 4));
-        result.put("sourceDateMonthy", request.getEndDate().substring(4, 6));
-        result.put("sourceDateDay", request.getEndDate().substring(6, 8));
+        if(StringUtils.isNoneBlank(request.getEndDate())){
+            
+            result.put("sourceDateYear", request.getEndDate().substring(0, 4));
+            result.put("sourceDateMonthy", request.getEndDate().substring(4, 6));
+            result.put("sourceDateDay", request.getEndDate().substring(6, 8));
+        }
         
         //付款日期
-        result.put("payDateYear", request.getRequestPayDate().substring(0, 4));
-        result.put("payDateMonthy", request.getRequestPayDate().substring(4, 6));
-        result.put("payDateDay", request.getRequestPayDate().substring(6, 8));
+        if(StringUtils.isNoneBlank(request.getRequestPayDate())){
+            
+            result.put("payDateYear", request.getRequestPayDate().substring(0, 4));
+            result.put("payDateMonthy", request.getRequestPayDate().substring(4, 6));
+            result.put("payDateDay", request.getRequestPayDate().substring(6, 8));
+        }
         //封装合同签署日期
-        result.put("sourceAgreementDateYear", this.elecAgree.getSignDate().substring(0, 4));
-        result.put("sourceAgreementDateMonthy", this.elecAgree.getSignDate().substring(4, 6));
-        result.put("sourceAgreementDateDay", this.elecAgree.getSignDate().substring(6, 8));
+        if(StringUtils.isNoneBlank(this.elecAgree.getSignDate())){
+            
+            result.put("sourceAgreementDateYear", this.elecAgree.getSignDate().substring(0, 4));
+            result.put("sourceAgreementDateMonthy", this.elecAgree.getSignDate().substring(4, 6));
+            result.put("sourceAgreementDateDay", this.elecAgree.getSignDate().substring(6, 8));
+        }
         
         result.put("factoryStamp", request.getFactoryName());
         result.put("custStamp", request.getCustName());
