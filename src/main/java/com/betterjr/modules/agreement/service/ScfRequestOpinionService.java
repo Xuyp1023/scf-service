@@ -40,14 +40,14 @@ public class ScfRequestOpinionService extends BaseService<ScfRequestOpinionMappe
 
     @Autowired
     private ScfElecAgreementService elecAgreementService;
-    
+
     @Autowired
     private ScfSupplierPushService pushService;
-    
+
     @Autowired
     private CustAccountService custAccountService;
-    
-    @Reference(interfaceClass=IOperatorService.class)
+
+    @Reference(interfaceClass = IOperatorService.class)
     private IOperatorService operatorService;
 
     /**
@@ -57,10 +57,10 @@ public class ScfRequestOpinionService extends BaseService<ScfRequestOpinionMappe
      *            核心企业确认书信息
      * @return
      */
-    public boolean updateOpinionInfo(ScfRequestOpinion anOpinion, String anSupplier,BigDecimal anBalance) {
+    public boolean updateOpinionInfo(final ScfRequestOpinion anOpinion, final String anSupplier, final BigDecimal anBalance) {
         anOpinion.setAgreeName(anSupplier + "应收账款债权转让通知确认");
-        ScfRequestOpinion tmpOpinion = this.selectByPrimaryKey(anOpinion.getRequestNo());
-        ScfRequestNotice notice = scfRequestNoticeService.selectByPrimaryKey(anOpinion.getRequestNo());
+        final ScfRequestOpinion tmpOpinion = this.selectByPrimaryKey(anOpinion.getRequestNo());
+        final ScfRequestNotice notice = scfRequestNoticeService.selectByPrimaryKey(anOpinion.getRequestNo());
         if (notice == null) {
             logger.error("updateOpinionInfo the requestNo : " + anOpinion.getRequestNo() + ", not find NoticeInfo");
         }
@@ -69,16 +69,16 @@ public class ScfRequestOpinionService extends BaseService<ScfRequestOpinionMappe
         }
 
         // 设置企业经办人信息
-        CustInfo custInfo=custAccountService.findCustInfo(anOpinion.getBuyerNo());// 查询企业基本信息  
-        CustOperatorInfo custOperator =operatorService.findCustClerkMan(custInfo.getOperOrg(),"1");
-        if(custOperator==null){
-            custOperator =operatorService.findCustClerkMan(custInfo.getOperOrg(),"0");
+        final CustInfo custInfo = custAccountService.findCustInfo(anOpinion.getBuyerNo());// 查询企业基本信息
+        CustOperatorInfo custOperator = operatorService.findCustClerkMan(custInfo.getOperOrg(), "1");
+        if (custOperator == null) {
+            custOperator = operatorService.findCustClerkMan(custInfo.getOperOrg(), "0");
         }
         anOpinion.setLinkName(custOperator.getName());
         anOpinion.setEmail(custOperator.getEmail());
         anOpinion.setPhone(custOperator.getMobileNo());
         anOpinion.setFactorName(SupplyChainUtil.findFactorNameByNo(anOpinion.getFactorNo()));
-        
+
         boolean result = true;
         if (tmpOpinion == null) {
             this.insert(anOpinion);
@@ -92,20 +92,20 @@ public class ScfRequestOpinionService extends BaseService<ScfRequestOpinionMappe
         }
 
         if (result) {
-            ScfElecAgreement elecAgreement = ScfElecAgreement.createByOpinion(anOpinion.getAgreeName(), anOpinion.getConfirmNo(),
-                    anBalance);
+            final ScfElecAgreement elecAgreement = ScfElecAgreement.createByOpinion(anOpinion.getAgreeName(), anOpinion.getConfirmNo(), anBalance);
             elecAgreement.setSupplierNo(anOpinion.getSupplierNo());
             elecAgreement.setRequestNo(anOpinion.getRequestNo());
             elecAgreement.setBuyerNo(anOpinion.getBuyerNo());
             elecAgreement.setFactorNo(anOpinion.getFactorNo());
             elecAgreement.setSupplier(anSupplier);
-            elecAgreementService.addElecAgreementInfo(elecAgreement, Arrays.asList(anOpinion.getBuyerNo()));
+            elecAgreementService.addElecAgreementInfo(elecAgreement, "buyerConfirm",
+                    Arrays.asList(anOpinion.getBuyerNo(), Long.parseLong(elecAgreement.getFactorNo())));
         }
 
         return result;
     }
-    
-    public String queryCustName(Long anCustNo){
+
+    public String queryCustName(final Long anCustNo) {
         return custAccountService.queryCustName(anCustNo);
     }
 }

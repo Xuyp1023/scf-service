@@ -49,10 +49,10 @@ public class ScfElecAgreeStubService extends BaseService<ScfElecAgreeStubMapper,
     @Autowired
     private CustAndOperatorRelaService custAndOperRelaService;
 
-    private String findCustRemoteAddr(Long anCustNo) {
-        String tmpOperOrg = custAndOperRelaService.findOperOrgByCustNo(anCustNo);
+    private String findCustRemoteAddr(final Long anCustNo) {
+        final String tmpOperOrg = custAndOperRelaService.findOperOrgByCustNo(anCustNo);
         if (BetterStringUtils.isNotBlank(tmpOperOrg)) {
-            CustLoginRecord loginRecord = this.loginService.findLastLoginRecord(tmpOperOrg);
+            final CustLoginRecord loginRecord = this.loginService.findLastLoginRecord(tmpOperOrg);
             if (loginRecord != null) {
                 return loginRecord.getIpaddr();
             }
@@ -69,8 +69,8 @@ public class ScfElecAgreeStubService extends BaseService<ScfElecAgreeStubMapper,
      * @param anCustNoList
      *            签约方客户号列表
      */
-    public void saveScfElecAgreeStub(String anAppNo, List<Long> anCustNoList) {
-        Map termMap = new HashMap();
+    public void saveScfElecAgreeStub(final String anAppNo, final List<Long> anCustNoList) {
+        final Map termMap = new HashMap();
         if (BetterStringUtils.isBlank(anAppNo) || Collections3.isEmpty(anCustNoList)) {
 
             throw new BytterValidException("save ScfElecAgreeStub appNo or CustNo is null");
@@ -80,8 +80,10 @@ public class ScfElecAgreeStubService extends BaseService<ScfElecAgreeStubMapper,
         termMap.put("appNo", anAppNo);
         this.deleteByExample(termMap);
         ScfElecAgreeStub tmpElecAgreeStub = null;
-        for (Long custNo : anCustNoList) {
-            tmpElecAgreeStub = new ScfElecAgreeStub(anAppNo, custNo);
+        int workOrder = 0;
+        for (final Long custNo : anCustNoList) {
+            workOrder = workOrder + 1;
+            tmpElecAgreeStub = new ScfElecAgreeStub(workOrder, anAppNo, custNo);
             tmpElecAgreeStub.setIpaddr(findCustRemoteAddr(custNo));
             this.insert(tmpElecAgreeStub);
         }
@@ -94,14 +96,14 @@ public class ScfElecAgreeStubService extends BaseService<ScfElecAgreeStubMapper,
      *            电子合同订单号
      * @return
      */
-    public List<ScfElecAgreeStubInfo> findSignerList(String anAppNo, CustAccountService custAccountService) {
-        List<ScfElecAgreeStubInfo> result = this.selectByClassProperty(ScfElecAgreeStubInfo.class, "appNo", anAppNo);
+    public List<ScfElecAgreeStubInfo> findSignerList(final String anAppNo, final CustAccountService custAccountService) {
+        final List<ScfElecAgreeStubInfo> result = this.selectByClassProperty(ScfElecAgreeStubInfo.class, "appNo", anAppNo);
         if (custAccountService != null) {
-            for (ScfElecAgreeStubInfo stubInfo : result) {
+            for (final ScfElecAgreeStubInfo stubInfo : result) {
                 stubInfo.setCustName(custAccountService.queryCustName(stubInfo.getCustNo()));
             }
         }
-        
+
         return result;
     }
 
@@ -111,16 +113,27 @@ public class ScfElecAgreeStubService extends BaseService<ScfElecAgreeStubMapper,
      * @param anAppNo
      * @return
      */
-    public Long findContractCustNo(String anAppNo) {
-        Set<Long> custNoSet = new HashSet(UserUtils.findCustNoList());
-        for (ScfElecAgreeStub agreeStub : this.selectByProperty("appNo", anAppNo)) {
+    public Long findContractCustNo(final String anAppNo) {
+
+        final ScfElecAgreeStub agreeStub = findContract(anAppNo);
+        if (agreeStub != null) {
+            return agreeStub.getCustNo();
+        }
+
+        return -1L;
+    }
+
+    public ScfElecAgreeStub findContract(final String anAppNo) {
+
+        final Set<Long> custNoSet = new HashSet(UserUtils.findCustNoList());
+        for (final ScfElecAgreeStub agreeStub : this.selectByProperty("appNo", anAppNo)) {
             if (custNoSet.contains(agreeStub.getCustNo())) {
-                return agreeStub.getCustNo();
+                return agreeStub;
             }
         }
         logger.warn("findContractCustNo not Find match CustNo， the appNo is " + anAppNo);
 
-        return -1L;
+        return null;
     }
 
     /**
@@ -130,10 +143,10 @@ public class ScfElecAgreeStubService extends BaseService<ScfElecAgreeStubMapper,
      *            电子合同订单号
      * @return
      */
-    public List<Map> findSignerForWosign(String anAppNo) {
-        List result = new ArrayList();
+    public List<Map> findSignerForWosign(final String anAppNo) {
+        final List result = new ArrayList();
         Map<String, Object> dataMap;
-        for (ScfElecAgreeStub agreeStub : findSignerList(anAppNo, null)) {
+        for (final ScfElecAgreeStub agreeStub : findSignerList(anAppNo, null)) {
             dataMap = new HashMap();
             dataMap.put("userID", agreeStub.getCustNo());
             dataMap.put("ip", agreeStub.getIpaddr());
@@ -153,26 +166,32 @@ public class ScfElecAgreeStubService extends BaseService<ScfElecAgreeStubMapper,
      * @param anStatus
      *            操作状态
      */
-    public void saveElecAgreeStubStatus(Long anCustNo, String anAppNo, String anStatus) {
+    public void saveElecAgreeStubStatus(final Long anCustNo, final String anAppNo, final String anStatus) {
+        saveElecAgreeStubStatus(anCustNo, anAppNo, anStatus, " ");
+    }
+
+    public void saveElecAgreeStubStatus(final Long anCustNo, final String anAppNo, final String anStatus, final String anServiceId) {
         logger.info("Update agree sign information with custNo:" + anCustNo + " appNo:" + anAppNo + " status:" + anStatus);
-        Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<String, Object>();
         map.put("custNo", anCustNo);
         map.put("appNo", anAppNo);
 
-        List<ScfElecAgreeStub> elecStubList = this.selectByProperty(map);
+        final List<ScfElecAgreeStub> elecStubList = this.selectByProperty(map);
         if (Collections3.isEmpty(elecStubList)) {
             logger.error("Can't find agree sign information with custNo:" + anCustNo + ", appNo:" + anAppNo);
             throw new BytterTradeException(40001, "无法获取电子合同签署记录！");
         }
 
-        ScfElecAgreeStub curStub = Collections3.getFirst(elecStubList);
+        final ScfElecAgreeStub curStub = Collections3.getFirst(elecStubList);
         if ("1".equals(curStub.getOperStatus())) {
             logger.error("Can't modify agree sign information for status not 0.");
             throw new BytterTradeException(40001, "当前电子合同签署已经处理！");
         }
         ScfElecAgreeStub.updateSignInfo(curStub, anStatus);
+        curStub.setSignServiceId(anServiceId);
         this.updateByPrimaryKeySelective(curStub);
     }
+
     
     public ScfElecAgreeStub saveAddInitValueStub(String anAppNo,Long anCustNo,String anBusinStatus){
         ScfElecAgreeStub stu=new ScfElecAgreeStub(anAppNo, anCustNo);
@@ -182,5 +201,19 @@ public class ScfElecAgreeStubService extends BaseService<ScfElecAgreeStubMapper,
         stu.setOperTime(BetterDateUtils.getNumDateTime());
         this.insertSelective(stu);
         return stu;
+    }
+    
+    public String checkSignStatus(final String anAppNo) {
+        final List<ScfElecAgreeStub> tmpList = this.selectByProperty("appNo", anAppNo);
+        String result = "1";
+        for (final ScfElecAgreeStub tmpStub : tmpList) {
+            if ("1".equals(tmpStub.getOperStatus())) {
+                continue;
+            }
+            result = "2";
+            break;
+        }
+
+        return result;
     }
 }

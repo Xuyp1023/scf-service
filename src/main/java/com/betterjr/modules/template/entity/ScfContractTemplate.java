@@ -18,6 +18,9 @@ import com.betterjr.common.utils.BetterDateUtils;
 @Entity
 @Table(name = "t_scf_contract_template")
 public class ScfContractTemplate implements BetterjrEntity {
+
+    private static final long serialVersionUID = 4531652796774556784L;
+
     @Id
     @Column(name = "ID", columnDefinition = "BIGINT")
     @MetaData(value = "", comments = "")
@@ -76,12 +79,12 @@ public class ScfContractTemplate implements BetterjrEntity {
 
     @Transient
     private String factorName;
-    
+
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -89,7 +92,7 @@ public class ScfContractTemplate implements BetterjrEntity {
         return factorNo;
     }
 
-    public void setFactorNo(Long factorNo) {
+    public void setFactorNo(final Long factorNo) {
         this.factorNo = factorNo;
     }
 
@@ -97,7 +100,7 @@ public class ScfContractTemplate implements BetterjrEntity {
         return templateName;
     }
 
-    public void setTemplateName(String templateName) {
+    public void setTemplateName(final String templateName) {
         this.templateName = templateName;
     }
 
@@ -105,7 +108,7 @@ public class ScfContractTemplate implements BetterjrEntity {
         return templateType;
     }
 
-    public void setTemplateType(String templateType) {
+    public void setTemplateType(final String templateType) {
         this.templateType = templateType;
     }
 
@@ -113,7 +116,7 @@ public class ScfContractTemplate implements BetterjrEntity {
         return templateStatus;
     }
 
-    public void setTemplateStatus(String templateStatus) {
+    public void setTemplateStatus(final String templateStatus) {
         this.templateStatus = templateStatus;
     }
 
@@ -121,7 +124,7 @@ public class ScfContractTemplate implements BetterjrEntity {
         return batchNo;
     }
 
-    public void setBatchNo(Long batchNo) {
+    public void setBatchNo(final Long batchNo) {
         this.batchNo = batchNo;
     }
 
@@ -129,7 +132,7 @@ public class ScfContractTemplate implements BetterjrEntity {
         return templatePath;
     }
 
-    public void setTemplatePath(String templatePath) {
+    public void setTemplatePath(final String templatePath) {
         this.templatePath = templatePath;
     }
 
@@ -137,7 +140,7 @@ public class ScfContractTemplate implements BetterjrEntity {
         return regDate;
     }
 
-    public void setRegDate(String regDate) {
+    public void setRegDate(final String regDate) {
         this.regDate = regDate;
     }
 
@@ -145,7 +148,7 @@ public class ScfContractTemplate implements BetterjrEntity {
         return regTime;
     }
 
-    public void setRegTime(String regTime) {
+    public void setRegTime(final String regTime) {
         this.regTime = regTime;
     }
 
@@ -166,59 +169,47 @@ public class ScfContractTemplate implements BetterjrEntity {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ScfContractTemplate other = (ScfContractTemplate) obj;
+    public boolean equals(final Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        final ScfContractTemplate other = (ScfContractTemplate) obj;
         if (batchNo == null) {
-            if (other.batchNo != null)
-                return false;
-        } else if (!batchNo.equals(other.batchNo))
-            return false;
+            if (other.batchNo != null) return false;
+        }
+        else if (!batchNo.equals(other.batchNo)) return false;
         if (factorNo == null) {
-            if (other.factorNo != null)
-                return false;
-        } else if (!factorNo.equals(other.factorNo))
-            return false;
+            if (other.factorNo != null) return false;
+        }
+        else if (!factorNo.equals(other.factorNo)) return false;
         if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
+            if (other.id != null) return false;
+        }
+        else if (!id.equals(other.id)) return false;
         if (regDate == null) {
-            if (other.regDate != null)
-                return false;
-        } else if (!regDate.equals(other.regDate))
-            return false;
+            if (other.regDate != null) return false;
+        }
+        else if (!regDate.equals(other.regDate)) return false;
         if (regTime == null) {
-            if (other.regTime != null)
-                return false;
-        } else if (!regTime.equals(other.regTime))
-            return false;
+            if (other.regTime != null) return false;
+        }
+        else if (!regTime.equals(other.regTime)) return false;
         if (templateName == null) {
-            if (other.templateName != null)
-                return false;
-        } else if (!templateName.equals(other.templateName))
-            return false;
+            if (other.templateName != null) return false;
+        }
+        else if (!templateName.equals(other.templateName)) return false;
         if (templatePath == null) {
-            if (other.templatePath != null)
-                return false;
-        } else if (!templatePath.equals(other.templatePath))
-            return false;
+            if (other.templatePath != null) return false;
+        }
+        else if (!templatePath.equals(other.templatePath)) return false;
         if (templateStatus == null) {
-            if (other.templateStatus != null)
-                return false;
-        } else if (!templateStatus.equals(other.templateStatus))
-            return false;
+            if (other.templateStatus != null) return false;
+        }
+        else if (!templateStatus.equals(other.templateStatus)) return false;
         if (templateType == null) {
-            if (other.templateType != null)
-                return false;
-        } else if (!templateType.equals(other.templateType))
-            return false;
+            if (other.templateType != null) return false;
+        }
+        else if (!templateType.equals(other.templateType)) return false;
         return true;
     }
 
@@ -226,14 +217,14 @@ public class ScfContractTemplate implements BetterjrEntity {
         this.regDate = BetterDateUtils.getNumDate();
         this.regTime = BetterDateUtils.getNumTime();
         this.id = SerialGenerator.getLongValue("ContractTemplate.id");
-	}
+    }
 
-	public String getFactorName() {
-		return factorName;
-	}
+    public String getFactorName() {
+        return factorName;
+    }
 
-	public void setFactorName(String factorName) {
-		this.factorName = factorName;
-	}
+    public void setFactorName(final String factorName) {
+        this.factorName = factorName;
+    }
 
 }

@@ -2,29 +2,21 @@ package com.betterjr.modules.agreement.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.betterjr.common.exception.BytterTradeException;
-import com.betterjr.common.exception.ServiceException;
-import com.betterjr.common.mapper.CustDecimalJsonSerializer;
 import com.betterjr.common.service.FreemarkerService;
 import com.betterjr.common.service.SpringContextHolder;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
-import com.betterjr.common.utils.DictUtils;
 import com.betterjr.common.utils.MathExtend;
 import com.betterjr.mapper.pagehelper.Page;
 import com.betterjr.modules.agreement.data.ScfElecAgreementInfo;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
-import com.betterjr.modules.document.ICustFileService;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.document.service.DataStoreService;
 import com.betterjr.modules.document.utils.CustFileUtils;
@@ -39,24 +31,20 @@ import com.betterjr.modules.template.entity.ScfContractTemplate;
 public abstract class ScfElecAgreeLocalService {
     private static final Logger logger = LoggerFactory.getLogger(ScfElecAgreeLocalService.class);
     protected ScfElecAgreementService elecAgreeService;
-    
 
     protected ScfElecAgreement elecAgree;
     protected FreemarkerService freeMarkerService;
-    protected ScfFactorRemoteHelper remoteHelper;
 
     protected DataStoreService dataStoreService;
 
     private final String WOSIGN_SIGN_FILE = "signFile";
     private final String SIGN_TEMPLATE_FILE = "signTemplateFile";
-    
 
-    protected void init(ScfElecAgreementService anElecAgreeService, ScfElecAgreement anElecAgree) {
+    protected void init(final ScfElecAgreementService anElecAgreeService, final ScfElecAgreement anElecAgree) {
         this.elecAgree = anElecAgree;
         this.elecAgreeService = anElecAgreeService;
-        
+
         this.freeMarkerService = SpringContextHolder.getBean(FreemarkerService.class);
-        this.remoteHelper = SpringContextHolder.getBean(ScfFactorRemoteHelper.class);
         this.dataStoreService = SpringContextHolder.getBean(DataStoreService.class);
         subInit();
     }
@@ -65,7 +53,7 @@ public abstract class ScfElecAgreeLocalService {
         return elecAgree;
     }
 
-    protected void putService(ScfElecAgreementService anElecAgreeService) {
+    protected void putService(final ScfElecAgreementService anElecAgreeService) {
 
         this.elecAgreeService = anElecAgreeService;
     }
@@ -96,15 +84,15 @@ public abstract class ScfElecAgreeLocalService {
      * 
      * @return
      */
-    public CustFileItem checkPdfCreateStatus(boolean anSave) {
+    public CustFileItem checkPdfCreateStatus(final boolean anSave) {
         CustFileItem fileItem = null;
         if (MathExtend.smallValue(this.elecAgree.getBatchNo())) {
-            StringBuffer buffer = createOutHtmlInfo();
-            ByteArrayOutputStream bOut = new ByteArrayOutputStream(1024 * 1024);
+            final StringBuffer buffer = createOutHtmlInfo();
+            final ByteArrayOutputStream bOut = new ByteArrayOutputStream(1024 * 1024);
             CustFileUtils.exportPDF(buffer, bOut);
             fileItem = this.dataStoreService.saveStreamToStoreWithBatchNo(new ByteArrayInputStream(bOut.toByteArray()), WOSIGN_SIGN_FILE,
                     this.elecAgree.getAgreeName().concat(".pdf"));
-            if (fileItem != null && anSave ) {
+            if (fileItem != null && anSave) {
                 elecAgreeService.saveSignFileInfo(this.elecAgree, fileItem);
             }
         }
@@ -113,8 +101,8 @@ public abstract class ScfElecAgreeLocalService {
     }
 
     // 发送短信验证码，如果成功，则保存待签署的文件。
-    public boolean saveAndSendValidSMS(String anAppNo, String anVcode) {
-        CustFileItem fileItem = checkPdfCreateStatus(false);
+    public boolean saveAndSendValidSMS(final String anAppNo, final String anVcode) {
+        final CustFileItem fileItem = checkPdfCreateStatus(false);
         if (fileItem == null) {
 
             throw new BytterTradeException(50000, "创建签名用的PDF失败，请检查！");
@@ -123,13 +111,13 @@ public abstract class ScfElecAgreeLocalService {
         return elecAgreeService.saveAndSendValidSMS(elecAgree, fileItem, anAppNo, anVcode);
     }
 
-    public Page<ScfElecAgreementInfo> findScfElecAgreementList(Map<String, Object> anParam, int anPageNum, int anPageSize) {
-     
+    public Page<ScfElecAgreementInfo> findScfElecAgreementList(final Map<String, Object> anParam, final int anPageNum, final int anPageSize) {
+
         return elecAgreeService.queryScfElecAgreementList(anParam, anPageNum, anPageSize);
     }
-    
-    public boolean saveAndSendSMS(String anAppNo) {
-        boolean isok = elecAgreeService.saveAndSendSMS(anAppNo);
+
+    public boolean saveAndSendSMS(final String anAppNo) {
+        final boolean isok = elecAgreeService.saveAndSendSMS(anAppNo);
 
         return isok;
     }
@@ -140,21 +128,21 @@ public abstract class ScfElecAgreeLocalService {
      * @return
      */
     public StringBuffer createOutHtmlInfo() {
-        Map<String, Object> param = findViewModeData();
-        
-        //使用保理公司自定义模板
-        if(null != param.get("template")){
+        final Map<String, Object> param = findViewModeData();
+
+        // 使用保理公司自定义模板
+        if (null != param.get("template")) {
             logger.info("生成合同---使用保理公司自定义模板");
-            ScfContractTemplate template = (ScfContractTemplate)param.get("template");
-            InputStream  is = dataStoreService.loadFromStoreByBatchNo(template.getBatchNo());
-            return freeMarkerService.processTemplateByFactory(getViewModeFile()+ "_" + template.getFactorNo(), param, "supplychain", is);
+            final ScfContractTemplate template = (ScfContractTemplate) param.get("template");
+            final InputStream is = dataStoreService.loadFromStoreByBatchNo(template.getBatchNo());
+            return freeMarkerService.processTemplateByFactory(getViewModeFile() + "_" + template.getFactorNo(), param, "supplychain", is);
         }
-        
-        //使用系统模板
+
+        // 使用系统模板
         logger.info("生成合同---使用系统默认模板");
         return freeMarkerService.processTemplateByFileNameUnderModule(getViewModeFile(), param, "supplychain");
     }
-    
+
     /**
      * 获得输出的模板文件
      * 
@@ -164,6 +152,7 @@ public abstract class ScfElecAgreeLocalService {
 
     /***
      * 拒绝的原因
+     * 
      * @param anDescribe
      * @return
      */
