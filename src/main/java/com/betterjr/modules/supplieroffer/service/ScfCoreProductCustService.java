@@ -60,7 +60,7 @@ public class ScfCoreProductCustService extends BaseService<ScfCoreProductCustMap
         .build();
         List<ScfCoreProductCust> productList = this.selectByProperty(build);
         synchronizedProductConfigAndProduct(productList,productConfigList,anCustNo,anCoreCustNo);
-        return this.selectByProperty(build);
+        return this.selectByProperty(build,"productCode desc");
     }
     
     /**
