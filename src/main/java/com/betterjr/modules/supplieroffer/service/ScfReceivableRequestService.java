@@ -365,7 +365,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         }
         if(StringUtils.isNoneBlank(request.getAgreementAppNo())){
             
-            request.setElecAgreement(elecAgreementService.selectByPrimaryKey(request.getAgreementAppNo())); 
+            request.setElecAgreement(elecAgreementService.findElecAgreementInfo(request.getAgreementAppNo())); 
             
         }
         return request;
