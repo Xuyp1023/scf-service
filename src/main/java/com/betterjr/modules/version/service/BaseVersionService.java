@@ -812,7 +812,15 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
         }
         catch (Exception e) {
             logger.info("融资 解除使用失败!"+e.getMessage());
-            BTAssert.notNull(null,"融资 解除使用失败!请稍后再试");
+            
+            t.setBusinStatus(VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE);
+            t.setLockedStatus(VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
+            t.setIsLatest(VersionConstantCollentions.IS_LATEST);
+            t.setVersion(stringIncrOne(t.getVersion()));
+            t.setId(SerialGenerator.getLongValue(t.getClass().getSimpleName()+".id"));
+            this.insert(t);
+            return t;
+            //BTAssert.notNull(null,"融资 解除使用失败!请稍后再试");
          }
          
          return null;
