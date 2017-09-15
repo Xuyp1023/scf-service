@@ -192,17 +192,16 @@ public class ScfElecAgreeStubService extends BaseService<ScfElecAgreeStubMapper,
         this.updateByPrimaryKeySelective(curStub);
     }
 
-    
-    public ScfElecAgreeStub saveAddInitValueStub(String anAppNo,Long anCustNo,String anBusinStatus){
-        ScfElecAgreeStub stu=new ScfElecAgreeStub(anAppNo, anCustNo);
+    public ScfElecAgreeStub saveAddInitValueStub(final String anAppNo, final Long anCustNo, final String anBusinStatus) {
+        final ScfElecAgreeStub stu = new ScfElecAgreeStub(1, anAppNo, anCustNo);
         stu.setOperStatus(anBusinStatus);
-        stu.setOperCode(UserUtils.getOperatorInfo().getId()+"");
+        stu.setOperCode(UserUtils.getOperatorInfo().getId() + "");
         stu.setOperName(UserUtils.getOperatorInfo().getName());
         stu.setOperTime(BetterDateUtils.getNumDateTime());
         this.insertSelective(stu);
         return stu;
     }
-    
+
     public String checkSignStatus(final String anAppNo) {
         final List<ScfElecAgreeStub> tmpList = this.selectByProperty("appNo", anAppNo);
         String result = "1";
