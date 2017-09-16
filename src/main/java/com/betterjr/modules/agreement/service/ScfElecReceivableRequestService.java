@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.betterjr.common.service.SpringContextHolder;
+import com.betterjr.common.utils.NumberToCN;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.account.service.CustOperatorService;
 import com.betterjr.modules.customer.ICustMechBaseService;
@@ -82,6 +83,9 @@ public class ScfElecReceivableRequestService  extends ScfElecAgreeLocalService{
             result.put("sourceAgreementDateDay", this.elecAgree.getSignDate().substring(6, 8));
         }
         
+        //封装金额大写
+        result.put("balanceCN", NumberToCN.number2CNMontrayUnit(request.getBalance()));
+        result.put("payBalanceCN", NumberToCN.number2CNMontrayUnit(request.getRequestPayBalance()));
         result.put("factoryStamp", request.getFactoryName());
         result.put("custStamp", request.getCustName());
         
