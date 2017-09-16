@@ -455,7 +455,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         boolean result = true;
         final ScfContractTemplate contractTemp = contractTemplateService.findTemplateByType(Long.parseLong(anElecAgree.getFactorNo()), anTempName,
                 "1");
-        BTAssert.isNull(contractTemp);
+        BTAssert.notNull(contractTemp);
         anElecAgree.setContractTemplateId(contractTemp.getId());
 
         if (Collections3.isEmpty(anCustNoList)) {
