@@ -218,7 +218,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
     private boolean saveSignFileInfo(final ScfElecAgreement tmpElecAgree, final CustFileItem anFileItem, final boolean anSignedFile) {
         if (tmpElecAgree != null) {
             if (anSignedFile) {
-                tmpElecAgree.setSignBatchNo(this.fileItemService.updateCustFileItemInfo(Long.toString(anFileItem.getId()), anFileItem.getBatchNo()));
+                tmpElecAgree.setSignBatchNo(this.fileItemService.updateCustFileItemInfo(Long.toString(anFileItem.getId()), null));
             }
             else {
                 tmpElecAgree.setBatchNo(this.fileItemService.updateCustFileItemInfo(Long.toString(anFileItem.getId()), anFileItem.getBatchNo()));
@@ -267,7 +267,9 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         if (isok) {
             agreeStub.setOperStatus(tmpStub.getBusinStatus());
             agreeStub.setSignServiceId(tmpStub.getSignServiceId());
-            saveSignFileInfo(anElecAgree, fileItem, false);
+            if (MathExtend.smallValue(fileItem.getId()) == false) {
+                saveSignFileInfo(anElecAgree, fileItem, false);
+            }
             this.scfElecAgreeStubService.saveElecAgreeStubStatus(agreeStub.getCustNo(), anAppNo, "1", tmpStub.getSignServiceId());
 
             final CustFileItem tmpFileItem = this.dataStoreService.saveStreamToStoreWithBatchNo(new ByteArrayInputStream(tmpStub.getResult()),
@@ -662,7 +664,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
      */
     public ScfElecAgreement addFactorAgreement(final ScfElecAgreement anElecAgreement, final String anFileList) {
         anElecAgreement.initDefValue(custAccoService.queryCustName(anElecAgreement.getSupplierNo()));
-        anElecAgreement.setAgreeType("3");
+        anElecAgreement.setAgreeType("9");
         anElecAgreement.setBatchNo(custFileService.updateCustFileItemInfo(anFileList, anElecAgreement.getBatchNo()));
         try {
             this.insert(anElecAgreement);

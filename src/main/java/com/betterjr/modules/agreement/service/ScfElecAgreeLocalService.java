@@ -96,6 +96,9 @@ public abstract class ScfElecAgreeLocalService {
                 elecAgreeService.saveSignFileInfo(this.elecAgree, fileItem);
             }
         }
+        else if (MathExtend.smallValue(this.elecAgree.getSignBatchNo()) == false) {
+            fileItem = new CustFileItem();
+        }
 
         return fileItem;
     }
