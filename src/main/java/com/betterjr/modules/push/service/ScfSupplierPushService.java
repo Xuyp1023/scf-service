@@ -245,8 +245,8 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
         ScfSupplierPushDetail supplierPushDetail=new ScfSupplierPushDetail();
         try {
             supplierPushDetail.initValue(anScfCredit.getId().toString(), "6");
-            supplierPushDetail.setSendNo(anScfCredit.getCoreCustNo().toString());
-            supplierPushDetail.setReceiveNo(anScfCredit.getFactorNo().toString());
+            supplierPushDetail.setSendNo(anScfCredit.getFactorNo().toString());
+            supplierPushDetail.setReceiveNo(anScfCredit.getCustNo().toString());
             if(pushCheckService.pushCreditSend(anScfCredit)){
                 supplierPushDetail.setRemark("授信成功信息推送成功!");
             }else{
