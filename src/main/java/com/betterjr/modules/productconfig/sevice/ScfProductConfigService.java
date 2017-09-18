@@ -26,6 +26,7 @@ import com.betterjr.modules.productconfig.dao.ScfProductConfigMapper;
 import com.betterjr.modules.productconfig.entity.ScfAssetDict;
 import com.betterjr.modules.productconfig.entity.ScfProductConfig;
 import com.betterjr.modules.productconfig.entity.ScfProductCoreRelation;
+import com.betterjr.modules.supplieroffer.service.ScfCoreProductCustService;
 
 @Service
 public class ScfProductConfigService extends BaseService<ScfProductConfigMapper, ScfProductConfig> {
@@ -40,6 +41,9 @@ public class ScfProductConfigService extends BaseService<ScfProductConfigMapper,
 	@Reference(interfaceClass = ICustRelationService.class)
     private ICustRelationService custRelationService;
 	
+	@Autowired
+	private ScfCoreProductCustService productCustService;
+	
 	public ScfProductConfig addConfig(ScfProductConfig anConfig) {
         BTAssert.notNull(anConfig, "产品配置失败");
         anConfig.init();
@@ -53,7 +57,13 @@ public class ScfProductConfigService extends BaseService<ScfProductConfigMapper,
         anConfig.setId(anId);
         anConfig.initModify();
         this.updateByPrimaryKeySelective(anConfig);
-        return this.selectByPrimaryKey(anConfig.getId());
+        anConfig = this.selectByPrimaryKey(anConfig.getId());
+        if(StringUtils.isNoneBlank(anConfig.getBusinStatus()) && "2".equals(anConfig.getBusinStatus())){
+            
+            productCustService.saveAnnulProductByCode(anConfig.getProductCode());
+            
+        }
+        return anConfig;
     }
 	
 	public ScfProductConfig findProduct(Map<String, Object> anMap) {
