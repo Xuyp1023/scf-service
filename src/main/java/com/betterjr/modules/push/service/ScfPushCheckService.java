@@ -333,7 +333,7 @@ public class ScfPushCheckService {
             builder.addParam("wechatUrl", wechatClientService.getWechatUrl());
             builder.addParam("coreCustName", anMap.get("coreCustName"));
             builder.addParam("operName",anMap.get("operName"));
-            builder.addParam("dateTime",BetterDateUtils.formatDate(BetterDateUtils.parseDate(new Date()), "yyyy年MM月dd日 HH:mm"));
+            builder.addParam("dateTime",BetterDateUtils.formatDate(new Date(), "yyyy年MM月dd日 HH时mm分"));
             builder.addReceiver(targetCustomer.getCustNo(), null);  // 接收人
             bool=notificationSendService.sendNotification(builder.build());
             logger.info("pushVerifySend 消息发送标识  bool："+bool);
@@ -349,10 +349,10 @@ public class ScfPushCheckService {
      */
     public boolean pushCreditSend(ScfCredit anScfCredit){
         boolean bool=false;
-        final CustInfo sendCustomer = accountService.findCustInfo(anScfCredit.getCoreCustNo());
-        final CustOperatorInfo sendOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(anScfCredit.getCoreCustNo()));
-        final CustInfo targetCustomer = accountService.findCustInfo(anScfCredit.getFactorNo());
-        final CustOperatorInfo targetOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(anScfCredit.getFactorNo()));
+        final CustInfo sendCustomer = accountService.findCustInfo(anScfCredit.getFactorNo());
+        final CustOperatorInfo sendOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(anScfCredit.getFactorNo()));
+        final CustInfo targetCustomer = accountService.findCustInfo(anScfCredit.getCustNo());
+        final CustOperatorInfo targetOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(anScfCredit.getCustNo()));
         if(sendOperator!=null && targetOperator!=null){
             final Builder builder = NotificationModel.newBuilder("授信成功通知", sendCustomer, sendOperator);
             builder.addParam("appId", wechatClientService.getAppId());
