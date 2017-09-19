@@ -1140,6 +1140,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         //将资产信息封装到融资中去
         ScfReceivableRequest request=convertAssetToReceviableRequest(asset);
         //request.setReceivableRequestType("1");
+        
         request.saveAddValue();
         //fillRequestRaxInfo(request,BetterDateUtils.getNumDate());
         //插入电子合同信息

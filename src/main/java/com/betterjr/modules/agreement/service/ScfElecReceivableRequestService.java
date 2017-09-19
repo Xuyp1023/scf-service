@@ -88,6 +88,7 @@ public class ScfElecReceivableRequestService  extends ScfElecAgreeLocalService{
         result.put("payBalanceCN", NumberToCN.number2CNMontrayUnit(request.getRequestPayBalance()));
         result.put("factoryStamp", request.getFactoryName());
         result.put("custStamp", request.getCustName());
+        result.put("elecAgreement", this.elecAgree);
         
         result.put("template", contractTemplateService.findTemplateByType(request.getFactoryNo(), "receivableRequestProtocolModel"+request.getReceivableRequestType(), "1"));
         return result;

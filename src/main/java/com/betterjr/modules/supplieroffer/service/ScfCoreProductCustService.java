@@ -220,4 +220,26 @@ public class ScfCoreProductCustService extends BaseService<ScfCoreProductCustMap
         }
         
     }
+    
+    /**
+     * 作废保理产品
+     * @param productCode
+     * @return
+     */
+    public List<ScfCoreProductCust> saveAnnulProductByCode(String productCode){
+        
+        Map build = QueryTermBuilder.newInstance()
+        .put("productCode", productCode)
+        .put("businStatus", new String[]{CoreProductCustConstantCollentions.PRODUCT_BUSIN_STATUS_EFFECTIVE
+                ,CoreProductCustConstantCollentions.PRODUCT_BUSIN_STATUS_USED})
+        .build();
+        
+        List<ScfCoreProductCust> list = this.selectByProperty(build);
+        for (ScfCoreProductCust product : list) {
+            product.setBusinStatus(CoreProductCustConstantCollentions.PRODUCT_BUSIN_STATUS_NOEFFECTIVE);
+            this.updateByPrimaryKeySelective(product);
+        }
+        
+        return list;
+    }
 }
