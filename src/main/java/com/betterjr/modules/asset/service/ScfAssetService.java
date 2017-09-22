@@ -1680,5 +1680,42 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         }
         
     }
+
+    /**
+     * 更新上传附件信息
+     * @param anAssetId
+     * @param anGoodsBatchNo  文件id,文件id,.....
+     * @param anString 1://贸易合同   2发票
+     */
+    public void saveUpdateAssetBatchNo(Long anAssetId, String anGoodsBatchNo, String anString) {
+        
+        ScfAsset asset = this.selectByPrimaryKey(anAssetId);
+        if("1".equals(anString)){
+            asset.setGoodsBatchNo(custFileDubboService.updateCustFileItemInfo(anGoodsBatchNo, asset.getGoodsBatchNo()));
+            
+        }else if("2".equals(anString)){
+            
+            asset.setStatementBatchNo(custFileDubboService.updateCustFileItemInfo(anGoodsBatchNo, asset.getStatementBatchNo()));
+        }else{
+            
+        }
+        this.updateByPrimaryKeySelective(asset);
+        // 保存附件信息
+    }
+
+    public ScfAsset findAssetByReceivableRefNoWithVersion(String anRefNo, String anVersion) {
+        
+        Map map = QueryTermBuilder.newInstance()
+                .put("refNo", anRefNo)
+                .put("version", anVersion)
+                .put("infoType", AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE)
+                .put("businStatus", AssetConstantCollentions.ASSET_BUSIN_STATUS_OK)
+        .build();
+        List<ScfAssetBasedata> list = assetBasedataService.selectByProperty(map, "id Desc");
+        if(!Collections3.isEmpty(list)){
+           return this.selectByPrimaryKey(Collections3.getFirst(list).getAssetId());
+        }
+        return new ScfAsset();
+    }
     
 }

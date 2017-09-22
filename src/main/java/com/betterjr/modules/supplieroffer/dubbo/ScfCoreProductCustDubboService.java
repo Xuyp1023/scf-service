@@ -26,4 +26,10 @@ public class ScfCoreProductCustDubboService implements IScfCoreProductCustServic
         return AjaxObject.newOk("查询成功", productService.saveAddAndUpdateProduct(anCustNo, anCoreCustNo,anProductCodes)).toJson();
     }
 
+    @Override
+    public String webQueryCanUseProduct(Long anCustNo, Long anCoreCustNo) {
+        
+        return AjaxObject.newOk("查询成功", productService.queryCanUseProduct(anCustNo, anCoreCustNo)).toJson();
+    }
+
 }

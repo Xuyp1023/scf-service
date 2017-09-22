@@ -326,12 +326,17 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
     public ScfReceivableRequest saveCoreFinishPayRequest(String anRequestNo,String anRequestPayDate,String anDescription){
         
         BTAssert.notNull(anRequestNo, "融资信息为空,操作失败");
-        ScfReceivableRequest request = this.selectByPrimaryKey(anRequestNo);
+        ScfReceivableRequest request = this.findOneByRequestNo(anRequestNo);
         BTAssert.notNull(request, "融资信息为空,操作失败");
         if(!getCurrentUserCustNos().contains(request.getCoreCustNo())){
             BTAssert.notNull(null, "你没有当前处理的权限,操作失败");
         }
         checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_SIGN_AGREEMENT, false, "请先签署合同，再进行付款");
+        if(request.getElecAgreement()==null || !"1".equals(request.getElecAgreement().getSignStatus())){
+            //发送微信通知
+            
+            BTAssert.notNull(null, "供应商尚未签署电子合同!");
+        }
         request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_REQUEST_END);
         //封装应付款钱信息
         fillRequestRaxInfo(request,anRequestPayDate);
@@ -912,14 +917,19 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
     public ScfReceivableRequest saveFactoryConfrimPayRequest(String anRequestNo,String anRequestPayDate,String anDescription){
         
         BTAssert.notNull(anRequestNo, "融资信息为空,操作失败");
-        ScfReceivableRequest request = this.selectByPrimaryKey(anRequestNo);
+        ScfReceivableRequest request = this.findOneByRequestNo(anRequestNo);
         BTAssert.notNull(request, "融资信息为空,操作失败");
         if(!getCurrentUserCustNos().contains(request.getFactoryNo())){
             BTAssert.notNull(null, "你没有当前处理的权限,操作失败");
         }
         checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_FACTORY_SIGN_AGREEMENT, false, "请先签署合同，再进行付款");
         request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_REQUEST_END);
-        //封装应付款钱信息
+        
+        if(request.getElecAgreement()==null || !"1".equals(request.getElecAgreement().getSignStatus())){
+            //发送微信通知
+            
+            BTAssert.notNull(null, "供应商尚未签署电子合同!");
+        }
         fillRequestRaxInfo(request,anRequestPayDate);
         request.setDescription(anDescription);
         request.setOwnCompany(request.getFactoryNo());
@@ -1157,6 +1167,9 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
      * @param anRequestNo
      * @param anRequestPayDate
      * @param anDescription
+     * wechaMarker  微信标记 
+     * goodsBatchNo  合同附件
+     * statementBatchNo 发票附件
      * @return
      */
     public  ScfReceivableRequest saveSubmitRequestTotal(Map<String,Object> anMap,String anRequestNo,String anRequestPayDate,String anDescription){
@@ -1172,7 +1185,22 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_NOEFFECTIVE, false, "当前申请已不能进行再次申请");
         ScfProductConfig config = productConfigService.findProductConfigById(anMap.get("requestProductCode").toString());
         BTAssert.notNull(config, "没有查询到产品配置信息");
-        convertProdectConfigToRequest(request,config);
+        //判断是否微信来源，如果微信会上传贸易合同和发票附件信息
+        if(anMap.containsKey("wechaMarker") && "1".equals(anMap.get("wechaMarker").toString())){
+            convertProdectConfigToRequestAndAsset(request,config,anMap);
+            request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TRANSFER_AGREEMENT_CORE);
+            if("2".equals(config.getReceivableRequestType())){
+                
+                request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_CORE_CONFIRM);
+                
+            }
+            
+            
+        }else{
+            
+            convertProdectConfigToRequestAndAsset(request,config,null);
+            request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_SUBMIT_REQUEST);
+        }
         request.setCustBankAccount(anMap.get("custBankAccount").toString());
         request.setCustBankAccountName(anMap.get("custBankAccountName").toString());
         request.setCustBankName(anMap.get("custBankName").toString());
@@ -1183,7 +1211,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         
         ScfAsset asset = assetService.saveConfirmAsset(request.getAssetId());
         request.setAsset(asset);
-        request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_SUBMIT_REQUEST);
+        
         //封装应付款钱信息
         fillRequestRaxInfo(request,anRequestPayDate);
         request.setDescription(anDescription);
@@ -1195,6 +1223,9 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
     }
     
     
+   
+
+
     /**
      * 融资申请选择可以使用的保理产品列表
      * @param requestNo
@@ -1299,32 +1330,142 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         anRequest.setFactoryName(custAccountService.queryCustName(anConfig.getFactorNo()));
         anRequest.setRequestProductCode(anConfig.getProductCode());
         anRequest.setReceivableRequestType(anConfig.getReceivableRequestType());
+        
+        packageCustOpatRate(anRequest, "1"); 
+        
+    }
+    
+    /**
+    *
+    * 将产品配置信息信息封装到融资请求中去
+    * 
+    * 
+    */
+    private void convertProdectConfigToRequestAndAsset(ScfReceivableRequest anRequest, ScfProductConfig anConfig, Map<String, Object> anMap) {
+        
+        convertProdectConfigToRequest(anRequest, anConfig);
+        packageAndCheckAsset(anRequest, anConfig, anMap);
+        
+    }
+    
+    /**
+     * 封装和检查资产信息
+     * @param anRequest
+     * @param anConfig
+     * @param anMap
+     */
+    private void packageAndCheckAsset(ScfReceivableRequest anRequest, ScfProductConfig anConfig, Map<String, Object> anMap){
+        
         for (ScfAssetDict assetDict : anConfig.getAssetDictList()) {
-            if(assetDict.getAssetInfoType()==AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE){
+            if(assetDict.getAssetInfoType().equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE)){
                 if(!anRequest.getAsset().getBasedataMap().containsKey(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY)){
                     BTAssert.notNull(null, "当前融资产品需要应收账款");
-                } 
+                } else{
+                    
+                    if(Collections3.isEmpty((List)anRequest.getAsset().getBasedataMap().get(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY))){
+                        BTAssert.notNull(null, "当前融资产品需要应收账款");
+                    }
+                }
             }
             
-            if(assetDict.getAssetInfoType()==AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE){
-                if(!anRequest.getAsset().getBasedataMap().containsKey(AssetConstantCollentions.SCF_INVOICE_LIST_KEY)){
-                    BTAssert.notNull(null, "当前融资产品需要商业发票");
-                } 
+            if(assetDict.getAssetInfoType().equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE)){
+                
+                if(anMap !=null &&anMap.containsKey("wechaMarker") && "1".equals(anMap.get("wechaMarker").toString())){
+                    
+                    //资产上传发票附件
+                    if(!anMap.containsKey("statementBatchNo") || StringUtils.isBlank(anMap.get("statementBatchNo").toString())){
+                        BTAssert.notNull(null, "当前融资产品需要商业发票");
+                    }
+                    
+                    
+                }else{
+                    
+                    if(!anRequest.getAsset().getBasedataMap().containsKey(AssetConstantCollentions.SCF_INVOICE_LIST_KEY)){
+                        BTAssert.notNull(null, "当前融资产品需要商业发票");
+                    } else{
+                        
+                        if(Collections3.isEmpty((List)anRequest.getAsset().getBasedataMap().get(AssetConstantCollentions.SCF_INVOICE_LIST_KEY))){
+                            BTAssert.notNull(null, "当前融资产品需要商业发票");
+                        }
+                    }
+                }
             }
             
-            if(assetDict.getAssetInfoType()==AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT){
-                if(!anRequest.getAsset().getBasedataMap().containsKey(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY)){
-                    BTAssert.notNull(null, "当前融资产品需要贸易合同");
-                } 
+            if(assetDict.getAssetInfoType().equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT)){
+                
+                    if(anMap !=null &&anMap.containsKey("wechaMarker") && "1".equals(anMap.get("wechaMarker").toString())){
+                    
+                    //资产上传发票附件
+                    if(!anMap.containsKey("goodsBatchNo")|| StringUtils.isBlank(anMap.get("goodsBatchNo").toString())){
+                        BTAssert.notNull(null, "当前融资产品需要贸易合同");
+                    }
+                    
+                    
+                }else{
+                    
+                    if(!anRequest.getAsset().getBasedataMap().containsKey(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY)){
+                        BTAssert.notNull(null, "当前融资产品需要贸易合同");
+                    } else{
+                        
+                        if(Collections3.isEmpty((List)anRequest.getAsset().getBasedataMap().get(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY))){
+                            BTAssert.notNull(null, "当前融资产品需要贸易合同");
+                        }
+                    } 
+                }
+                
             }
         }
         
-        packageCustOpatRate(anRequest, "1"); 
+        //更新附件信息
+        if(anMap !=null &&anMap.containsKey("wechaMarker") && "1".equals(anMap.get("wechaMarker").toString())){
+            
+            String goodsBatchNo="";
+            //贸易合同
+            if(anMap.containsKey("goodsBatchNo") && StringUtils.isNotBlank(anMap.get("goodsBatchNo").toString())){
+                
+                goodsBatchNo=anMap.get("goodsBatchNo").toString();
+                assetService.saveUpdateAssetBatchNo(anRequest.getAssetId(),goodsBatchNo,"1");
+            }
+            String statementBatchNo="";
+            //发票
+            if(anMap.containsKey("statementBatchNo") && StringUtils.isNotBlank(anMap.get("statementBatchNo").toString())){
+                
+                statementBatchNo=anMap.get("statementBatchNo").toString();
+                assetService.saveUpdateAssetBatchNo(anRequest.getAssetId(),statementBatchNo,"2");
+            }
+            
+            
+            
+        }
+        
     }
     
     public CustOperatorInfo findDefaultOperatorInfo(Long custNo){
         
         return operatorService.findDefaultOperator(baseService.findBaseInfo(custNo).getOperOrg());
+        
+    }
+    
+    /**
+     * 通过应付账款的编号和版本查询
+     * @param anRefNo
+     * @param version
+     * @return
+     */
+    public ScfReceivableRequest findRequestByReceivableId(String anRefNo,String version){
+        
+        //查询资产
+        ScfAsset asset=assetService.findAssetByReceivableRefNoWithVersion(anRefNo,version);
+        BTAssert.notNull(asset, "未找到资产信息");
+        //查询融资详情
+        Map anMap = QueryTermBuilder.newInstance()
+        .put("assetId", asset.getId())
+        .build();
+        List<ScfReceivableRequest> list = this.selectByProperty(anMap, "requestNo Desc");
+        if(!Collections3.hasEmptyObject(list)){
+            return findOneByRequestNo(Collections3.getFirst(list).getRequestNo());
+        }
+        return new ScfReceivableRequest();
         
     }
     

@@ -202,4 +202,10 @@ public class ScfReceivableRequestDubboService implements IScfReceivableRequestSe
         return AjaxObject.newOk("查询成功", requestService.queryProductByRequestNo(anRequestNo)).toJson();
     }
 
+    @Override
+    public String webFindRequestByReceivableId(String anAnrefNo, String anVersion) {
+        
+        return AjaxObject.newOk("查询成功", requestService.findRequestByReceivableId(anAnrefNo,anVersion)).toJson();
+    }
+
 }
