@@ -76,9 +76,8 @@ public class ScfRequestNoticeService extends BaseService<ScfRequestNoticeMapper,
             elecAgreement.setBuyerNo(anRequest.getBuyerNo());
             elecAgreement.setFactorNo(anRequest.getFactorNo());
             elecAgreement.setSupplier(anSuppiler);
-            elecAgreeService.addElecAgreementInfo(elecAgreement, "billTransNotice",
-                    Arrays.asList(elecAgreement.getSupplierNo(), Long.parseLong(elecAgreement.getFactorNo())));
-
+            elecAgreeService.addElecAgreementInfo(elecAgreement, "billTransNotice", Arrays.asList(elecAgreement.getSupplierNo()));
+            // , Long.parseLong(elecAgreement.getFactorNo())
             return elecAgreement.getAgreeNo();
         }
         return null;

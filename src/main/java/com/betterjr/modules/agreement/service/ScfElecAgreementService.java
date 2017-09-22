@@ -274,6 +274,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
 
             final CustFileItem tmpFileItem = this.dataStoreService.saveStreamToStoreWithBatchNo(new ByteArrayInputStream(tmpStub.getResult()),
                     "signFile", electAgreement.getAgreeName().concat(".pdf"));
+            // anElecAgree.setHtmlBatchNo(this.dataStoreService.savePdf2ImageStand(new ByteArrayInputStream(tmpStub.getResult())));
             saveSignFileInfo(anElecAgree, tmpFileItem, true);
         }
         else {

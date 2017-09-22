@@ -98,8 +98,8 @@ public class ScfRequestOpinionService extends BaseService<ScfRequestOpinionMappe
             elecAgreement.setBuyerNo(anOpinion.getBuyerNo());
             elecAgreement.setFactorNo(anOpinion.getFactorNo());
             elecAgreement.setSupplier(anSupplier);
-            elecAgreementService.addElecAgreementInfo(elecAgreement, "buyerConfirm",
-                    Arrays.asList(anOpinion.getBuyerNo(), Long.parseLong(elecAgreement.getFactorNo())));
+            elecAgreementService.addElecAgreementInfo(elecAgreement, "buyerConfirm", Arrays.asList(anOpinion.getBuyerNo()));
+            // , Long.parseLong(elecAgreement.getFactorNo())
         }
 
         return result;
