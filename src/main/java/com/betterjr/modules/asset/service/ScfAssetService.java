@@ -1699,6 +1699,7 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         }else{
             
         }
+        this.updateByPrimaryKeySelective(asset);
         // 保存附件信息
     }
 

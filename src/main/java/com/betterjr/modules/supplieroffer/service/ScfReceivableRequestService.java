@@ -1198,7 +1198,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
             
         }else{
             
-            convertProdectConfigToRequest(request,config);
+            convertProdectConfigToRequestAndAsset(request,config,null);
             request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_SUBMIT_REQUEST);
         }
         request.setCustBankAccount(anMap.get("custBankAccount").toString());
@@ -1332,7 +1332,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         anRequest.setReceivableRequestType(anConfig.getReceivableRequestType());
         
         packageCustOpatRate(anRequest, "1"); 
-        packageAndCheckAsset(anRequest, anConfig, null);
+        
     }
     
     /**
@@ -1360,7 +1360,12 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
             if(assetDict.getAssetInfoType().equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE)){
                 if(!anRequest.getAsset().getBasedataMap().containsKey(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY)){
                     BTAssert.notNull(null, "当前融资产品需要应收账款");
-                } 
+                } else{
+                    
+                    if(Collections3.isEmpty((List)anRequest.getAsset().getBasedataMap().get(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY))){
+                        BTAssert.notNull(null, "当前融资产品需要应收账款");
+                    }
+                }
             }
             
             if(assetDict.getAssetInfoType().equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE)){
@@ -1368,7 +1373,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
                 if(anMap !=null &&anMap.containsKey("wechaMarker") && "1".equals(anMap.get("wechaMarker").toString())){
                     
                     //资产上传发票附件
-                    if(!anMap.containsKey("statementBatchNo")){
+                    if(!anMap.containsKey("statementBatchNo") || StringUtils.isBlank(anMap.get("statementBatchNo").toString())){
                         BTAssert.notNull(null, "当前融资产品需要商业发票");
                     }
                     
@@ -1377,7 +1382,12 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
                     
                     if(!anRequest.getAsset().getBasedataMap().containsKey(AssetConstantCollentions.SCF_INVOICE_LIST_KEY)){
                         BTAssert.notNull(null, "当前融资产品需要商业发票");
-                    } 
+                    } else{
+                        
+                        if(Collections3.isEmpty((List)anRequest.getAsset().getBasedataMap().get(AssetConstantCollentions.SCF_INVOICE_LIST_KEY))){
+                            BTAssert.notNull(null, "当前融资产品需要商业发票");
+                        }
+                    }
                 }
             }
             
@@ -1386,7 +1396,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
                     if(anMap !=null &&anMap.containsKey("wechaMarker") && "1".equals(anMap.get("wechaMarker").toString())){
                     
                     //资产上传发票附件
-                    if(!anMap.containsKey("goodsBatchNo")){
+                    if(!anMap.containsKey("goodsBatchNo")|| StringUtils.isBlank(anMap.get("goodsBatchNo").toString())){
                         BTAssert.notNull(null, "当前融资产品需要贸易合同");
                     }
                     
@@ -1395,7 +1405,12 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
                     
                     if(!anRequest.getAsset().getBasedataMap().containsKey(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY)){
                         BTAssert.notNull(null, "当前融资产品需要贸易合同");
-                    }  
+                    } else{
+                        
+                        if(Collections3.isEmpty((List)anRequest.getAsset().getBasedataMap().get(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY))){
+                            BTAssert.notNull(null, "当前融资产品需要贸易合同");
+                        }
+                    } 
                 }
                 
             }
@@ -1406,14 +1421,14 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
             
             String goodsBatchNo="";
             //贸易合同
-            if(anMap.containsKey("goodsBatchNo")){
+            if(anMap.containsKey("goodsBatchNo") && StringUtils.isNotBlank(anMap.get("goodsBatchNo").toString())){
                 
                 goodsBatchNo=anMap.get("goodsBatchNo").toString();
                 assetService.saveUpdateAssetBatchNo(anRequest.getAssetId(),goodsBatchNo,"1");
             }
             String statementBatchNo="";
             //发票
-            if(anMap.containsKey("statementBatchNo")){
+            if(anMap.containsKey("statementBatchNo") && StringUtils.isNotBlank(anMap.get("statementBatchNo").toString())){
                 
                 statementBatchNo=anMap.get("statementBatchNo").toString();
                 assetService.saveUpdateAssetBatchNo(anRequest.getAssetId(),statementBatchNo,"2");
@@ -1448,7 +1463,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         .build();
         List<ScfReceivableRequest> list = this.selectByProperty(anMap, "requestNo Desc");
         if(!Collections3.hasEmptyObject(list)){
-            return Collections3.getFirst(list);
+            return findOneByRequestNo(Collections3.getFirst(list).getRequestNo());
         }
         return new ScfReceivableRequest();
         
