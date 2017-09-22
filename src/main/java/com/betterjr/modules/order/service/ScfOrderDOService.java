@@ -73,7 +73,7 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
          BTAssert.notNull(anOrder,"插入订单为空,操作失败");
          BTAssert.notNull(anOrder.getCustNo(),"请选择供应商,操作失败");
          BTAssert.notNull(anOrder.getCoreCustNo(),"请选择核心企业,操作失败");
-         logger.info("Begin to add order"+UserUtils.getOperatorInfo().getName());
+         logger.info("Begin to add order"+UserUtils.getOperatorInfo().getName()+" anFileList="+anFileList+" anConfirmFlag="+anConfirmFlag);
          anOrder.initAddValue(UserUtils.getOperatorInfo(),anConfirmFlag);
          // 操作机构设置为供应商
          anOrder.setOperOrg(baseService.findBaseInfo(anOrder.getCustNo()).getOperOrg());

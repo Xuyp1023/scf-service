@@ -263,7 +263,9 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
         anMap = Collections3.filterMapEmptyObject(anMap);
         //查询当前登录的用户下所有企业信息
         Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
-        
+        if(anMap.containsKey("businStatus") &&anMap.get("businStatus").toString().contains(",") ){
+            anMap.put("businStatus", anMap.get("businStatus").toString().split(","));
+        }
         if(anIsCust){
             //供应商查询已经生效的数据
             if (! anMap.containsKey("custNo") ||  anMap.get("custNo") ==null || StringUtils.isBlank(anMap.get("custNo").toString())) {

@@ -113,7 +113,6 @@ public class ScfCoreProductCustService extends BaseService<ScfCoreProductCustMap
         
     }
     
-    
     /**
      * 同步保理产品和供应商产品信息
      * @param anProductList
