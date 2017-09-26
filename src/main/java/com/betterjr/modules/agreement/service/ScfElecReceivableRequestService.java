@@ -59,36 +59,9 @@ public class ScfElecReceivableRequestService  extends ScfElecAgreeLocalService{
         }
         result.put("custoperator", custoperator);
        
-        //封装原付款年月日
-        
-        if(StringUtils.isNoneBlank(request.getEndDate())){
-            
-            result.put("sourceDateYear", request.getEndDate().substring(0, 4));
-            result.put("sourceDateMonthy", request.getEndDate().substring(4, 6));
-            result.put("sourceDateDay", request.getEndDate().substring(6, 8));
-        }
-        
-        //付款日期
-        if(StringUtils.isNoneBlank(request.getRequestPayDate())){
-            
-            result.put("payDateYear", request.getRequestPayDate().substring(0, 4));
-            result.put("payDateMonthy", request.getRequestPayDate().substring(4, 6));
-            result.put("payDateDay", request.getRequestPayDate().substring(6, 8));
-        }
-        //封装合同签署日期
-        if(StringUtils.isNoneBlank(this.elecAgree.getSignDate())){
-            
-            result.put("sourceAgreementDateYear", this.elecAgree.getSignDate().substring(0, 4));
-            result.put("sourceAgreementDateMonthy", this.elecAgree.getSignDate().substring(4, 6));
-            result.put("sourceAgreementDateDay", this.elecAgree.getSignDate().substring(6, 8));
-        }
-        
         //封装金额大写
         result.put("balanceCN", NumberToCN.number2CNMontrayUnit(request.getBalance()));
         result.put("payBalanceCN", NumberToCN.number2CNMontrayUnit(request.getRequestPayBalance()));
-        result.put("factoryStamp", request.getFactoryName());
-        result.put("custStamp", request.getCustName());
-        result.put("elecAgreement", this.elecAgree);
         
         result.put("template", contractTemplateService.findTemplateByType(request.getFactoryNo(), "receivableRequestProtocolModel"+request.getReceivableRequestType(), "1"));
         return result;
@@ -104,8 +77,14 @@ public class ScfElecReceivableRequestService  extends ScfElecAgreeLocalService{
 
     @Override
     public boolean cancelElecAgreement(String anDescribe) {
-        // TODO Auto-generated method stub
+
+        logger.info("will cancel appNo is " + this.elecAgree.getAppNo());
+        if (elecAgreeService.checkCancelElecAgreement(this.elecAgree.getAppNo())) {
+            requestService.saveAnnulReceivableRequest(this.elecAgree.getRequestNo());
+            return this.elecAgreeService.saveAndCancelElecAgreement(this.elecAgree.getAppNo(),anDescribe);
+        }
         return false;
     }
+    
 
 }

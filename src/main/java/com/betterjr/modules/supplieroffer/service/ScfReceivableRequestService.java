@@ -36,8 +36,10 @@ import com.betterjr.modules.agreement.service.ScfElecAgreementService;
 import com.betterjr.modules.asset.data.AssetConstantCollentions;
 import com.betterjr.modules.asset.entity.ScfAsset;
 import com.betterjr.modules.asset.service.ScfAssetService;
+import com.betterjr.modules.customer.ICustMechBankAccountService;
 import com.betterjr.modules.customer.ICustMechBaseService;
 import com.betterjr.modules.customer.ICustRelationService;
+import com.betterjr.modules.customer.entity.CustMechBankAccount;
 import com.betterjr.modules.ledger.entity.ContractLedger;
 import com.betterjr.modules.ledger.service.ContractLedgerService;
 import com.betterjr.modules.order.entity.ScfInvoiceDO;
@@ -76,6 +78,9 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
     
     @Reference(interfaceClass = ICustMechBaseService.class)
     private ICustMechBaseService custMechBaseService;
+    
+    @Reference(interfaceClass = ICustMechBankAccountService.class)
+    private ICustMechBankAccountService custMechBankAccountService;
     
     @Autowired
     private CustAccountService custAccountService;
@@ -229,7 +234,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_SUPPLIER_SIGN_AGREEMENT);
         //处理供应商电子合同和平台电子合同
         //agreementService.saveSupplierSignAgreement(request);
-        elecAgreementService.saveUpdateBusinStatus(request.getAgreementAppNo(), request.getCustNo(), "2");
+        request.setElecAgreement(elecAgreementService.saveUpdateBusinStatus(request.getAgreementAppNo(), request.getCustNo(), "2"));
         this.updateByPrimaryKeySelective(request);
         return request;
         
@@ -281,15 +286,16 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         if(!getCurrentUserCustNos().contains(request.getCustNo())){
             BTAssert.notNull(null, "你没有当前处理的权限,操作失败");
         }
-        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_SIGN_AGREEMENT, true, "核心企业已经签署合同，进行付款操作,无法作废");
         checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_PAY_CONFIRM, true, "核心企业已经付款,无法作废");
         checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_REQUEST_END, true, "该融资已经结束，无法废止");
         checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_REQUEST_ANNUL, true, "该融资已经废止");
+        //checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_SIGN_AGREEMENT, true, "核心企业已经签署合同，进行付款操作,无法作废");
+        //agreementService.saveAnnulAgreement(request);
+        //更新合同的状态
+        elecAgreementService.saveUpdateBusinStatus(request.getAgreementAppNo(), request.getCustNo(), "9");
+        
         //更新资产包状态信息
         assetService.saveRejectOrBreakAsset(request.getAssetId());
-        //更新合同的状态
-        //agreementService.saveAnnulAgreement(request);
-        elecAgreementService.saveUpdateBusinStatus(request.getAgreementAppNo(), request.getCustNo(), "9");
         request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_REQUEST_ANNUL);
         this.updateByPrimaryKeySelective(request);
         return request;
@@ -303,13 +309,13 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
     public ScfReceivableRequest saveCoreSignAgreement(String anRequestNo){
         
         BTAssert.notNull(anRequestNo, "融资信息为空,操作失败");
-        ScfReceivableRequest request = this.selectByPrimaryKey(anRequestNo);
+        ScfReceivableRequest request = this.findOneByRequestNo(anRequestNo);
         BTAssert.notNull(request, "融资信息为空,操作失败");
         checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TRANSFER_AGREEMENT_CORE, false, "电子合同只能签署一次!");
         request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_SIGN_AGREEMENT);
         //处理供应商电子合同和平台电子合同
         //agreementService.saveCoreSignAgreement(request);
-        elecAgreementService.saveUpdateBusinStatus(request.getAgreementAppNo(), request.getCoreCustNo(), "1");
+        //elecAgreementService.saveUpdateBusinStatus(request.getAgreementAppNo(), request.getCoreCustNo(), "1");
         this.updateByPrimaryKeySelective(request);
         return request;
         
@@ -893,13 +899,13 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
     public ScfReceivableRequest saveFactorySignAgreement(String anRequestNo){
         
         BTAssert.notNull(anRequestNo, "融资信息为空,操作失败");
-        ScfReceivableRequest request = this.selectByPrimaryKey(anRequestNo);
+        ScfReceivableRequest request = this.findOneByRequestNo(anRequestNo);
         BTAssert.notNull(request, "融资信息为空,操作失败");
         checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_CORE_CONFIRM, false, "电子合同只能签署一次!");
         request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_FACTORY_SIGN_AGREEMENT);
         //处理供应商电子合同和平台电子合同
         //agreementService.saveFactorySignAgreement(request);
-        elecAgreementService.saveUpdateBusinStatus(request.getAgreementAppNo(), request.getFactoryNo(), "1");
+        //elecAgreementService.saveUpdateBusinStatus(request.getAgreementAppNo(), request.getFactoryNo(), "1");
         this.updateByPrimaryKeySelective(request);
         return request;
         
@@ -1201,9 +1207,12 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
             convertProdectConfigToRequestAndAsset(request,config,null);
             request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_SUBMIT_REQUEST);
         }
-        request.setCustBankAccount(anMap.get("custBankAccount").toString());
-        request.setCustBankAccountName(anMap.get("custBankAccountName").toString());
-        request.setCustBankName(anMap.get("custBankName").toString());
+        //设置银行账户信息
+        CustMechBankAccount account = custMechBankAccountService.findCustMechBankAccount(anMap.get("custBankAccount").toString());
+        BTAssert.notNull(account, "没有查到供应商银行帐号");
+        request.setCustBankAccount(account.getBankAcco());
+        request.setCustBankAccountName(account.getBankAccoName());
+        request.setCustBankName(account.getBankName());
         //插入电子合同信息
         ScfElecAgreement agreement = elecAgreementService.saveAddElecAgreementByReceivableRequest(request);
         request.setAgreementAppNo(agreement.getAppNo());
