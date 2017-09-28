@@ -31,6 +31,8 @@ import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.account.service.CustOperatorService;
+import com.betterjr.modules.agreement.data.ScfElecAgreeStubInfo;
+import com.betterjr.modules.agreement.data.ScfElecAgreementInfo;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.agreement.service.ScfElecAgreementService;
 import com.betterjr.modules.asset.data.AssetConstantCollentions;
@@ -47,6 +49,7 @@ import com.betterjr.modules.order.service.ScfInvoiceDOService;
 import com.betterjr.modules.productconfig.entity.ScfAssetDict;
 import com.betterjr.modules.productconfig.entity.ScfProductConfig;
 import com.betterjr.modules.productconfig.sevice.ScfProductConfigService;
+import com.betterjr.modules.push.service.ScfSupplierPushService;
 import com.betterjr.modules.receivable.entity.ScfReceivableDO;
 import com.betterjr.modules.receivable.service.ScfReceivableDOService;
 import com.betterjr.modules.supplieroffer.dao.ScfReceivableRequestMapper;
@@ -104,6 +107,9 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
     private ScfElecAgreementService elecAgreementService;
     @Autowired
     private CustOperatorService operatorService;
+    
+    @Autowired
+    private ScfSupplierPushService supplierPushService;
     
     /*
      * 模式一应收账款申请
@@ -316,8 +322,42 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         //处理供应商电子合同和平台电子合同
         //agreementService.saveCoreSignAgreement(request);
         //elecAgreementService.saveUpdateBusinStatus(request.getAgreementAppNo(), request.getCoreCustNo(), "1");
+        sendReceivableTopic(anRequestNo);
         this.updateByPrimaryKeySelective(request);
         return request;
+        
+        
+    }
+    
+    /**
+     * 发送微信通知给供应商签署合同
+     * @param anRequest
+     */
+    private void sendReceivableTopic(String anRequestNo){
+        
+        if(StringUtils.isNoneBlank(anRequestNo)){
+            
+            ScfReceivableRequest request=findOneByRequestNo(anRequestNo);
+            if(request !=null && request.getElecAgreement()!=null ){
+                
+                ScfElecAgreementInfo agreement=(ScfElecAgreementInfo) request.getElecAgreement();
+                if(!Collections3.isEmpty(agreement.getStubInfos())){
+                    
+                    for(ScfElecAgreeStubInfo info : agreement.getStubInfos()){
+                        
+                        if(info.getCustNo().equals(request.getCustNo()) && "0" .equals(info.getOperStatus())){
+                            supplierPushService.pushSignInfo(agreement); 
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+            }
+            
+            
+        }
         
         
     }
@@ -340,7 +380,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_SIGN_AGREEMENT, false, "请先签署合同，再进行付款");
         if(request.getElecAgreement()==null || !"1".equals(request.getElecAgreement().getSignStatus())){
             //发送微信通知
-            
+            sendReceivableTopic(anRequestNo);
             BTAssert.notNull(null, "供应商尚未签署电子合同!");
         }
         request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_REQUEST_END);
@@ -906,6 +946,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         //处理供应商电子合同和平台电子合同
         //agreementService.saveFactorySignAgreement(request);
         //elecAgreementService.saveUpdateBusinStatus(request.getAgreementAppNo(), request.getFactoryNo(), "1");
+        sendReceivableTopic(anRequestNo);
         this.updateByPrimaryKeySelective(request);
         return request;
         
@@ -933,7 +974,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         
         if(request.getElecAgreement()==null || !"1".equals(request.getElecAgreement().getSignStatus())){
             //发送微信通知
-            
+            sendReceivableTopic(anRequestNo);
             BTAssert.notNull(null, "供应商尚未签署电子合同!");
         }
         fillRequestRaxInfo(request,anRequestPayDate);

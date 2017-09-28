@@ -188,14 +188,14 @@ public class ScfSupplierPushService extends BaseService<ScfSupplierPushMapper, S
      * 推送应收账款信息
      * @param anReceivableDo
      */
-    public void pushReceivableInfo(ScfReceivableDO anReceivableDo){
+    public void pushReceivableInfo(ScfReceivableDO anReceivableDo,String anType){
         logger.info("pushReceivableInfo   anReceivableDo:"+anReceivableDo);
         ScfSupplierPushDetail supplierPushDetail=new ScfSupplierPushDetail();
         try {
             supplierPushDetail.initValue(anReceivableDo.getReceivableNo(), "2");
             supplierPushDetail.setSendNo(anReceivableDo.getCoreCustNo().toString());
             supplierPushDetail.setReceiveNo(anReceivableDo.getCustNo().toString());
-            if(pushCheckService.pushReceivableSend(anReceivableDo)){
+            if(pushCheckService.pushReceivableSend(anReceivableDo,anType)){
                 supplierPushDetail.setRemark("应收账款信息推送成功!");
             }else{
                 supplierPushDetail.setBusinStatus("0");

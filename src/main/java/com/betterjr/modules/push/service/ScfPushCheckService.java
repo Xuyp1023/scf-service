@@ -178,7 +178,7 @@ public class ScfPushCheckService {
             final CustOperatorInfo sendOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(Long.parseLong(elecAgreement.getFactorNo())));
             CustOperatorInfo targetOperator=null;
             CustInfo targetCustomer=null;
-            if(BetterStringUtils.equalsIgnoreCase(elecAgreement.getAgreeType(), "0")){
+            if(BetterStringUtils.equalsIgnoreCase(elecAgreement.getAgreeType(), "0") || BetterStringUtils.equalsIgnoreCase(elecAgreement.getAgreeType(), "6") || BetterStringUtils.equalsIgnoreCase(elecAgreement.getAgreeType(), "7")){
                 targetCustomer = accountService.findCustInfo(elecAgreement.getSupplierNo());
                 targetOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(elecAgreement.getSupplierNo()));
             }else if(BetterStringUtils.equalsIgnoreCase(elecAgreement.getAgreeType(), "1")){
@@ -294,14 +294,14 @@ public class ScfPushCheckService {
      * @param anMap
      * @return
      */
-    public boolean pushReceivableSend(ScfReceivableDO anReceivableDo){
+    public boolean pushReceivableSend(ScfReceivableDO anReceivableDo,String anType){
         boolean bool=false;
         final CustInfo sendCustomer = accountService.findCustInfo(anReceivableDo.getCoreCustNo());
         final CustOperatorInfo sendOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(anReceivableDo.getCoreCustNo()));
         final CustInfo targetCustomer = accountService.findCustInfo(anReceivableDo.getCustNo());
         final CustOperatorInfo targetOperator = Collections3.getFirst(custOperatorService.queryOperatorInfoByCustNo(anReceivableDo.getCustNo()));
         if(sendOperator!=null && targetOperator!=null){
-            final Builder builder = NotificationModel.newBuilder("应收账款提醒", sendCustomer, sendOperator);
+            final Builder builder = NotificationModel.newBuilder(anType, sendCustomer, sendOperator);
             builder.addParam("appId", wechatClientService.getAppId());
             builder.addParam("wechatUrl", wechatClientService.getWechatUrl());
             builder.addParam("coreCustName", anReceivableDo.getCoreCustName());

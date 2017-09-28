@@ -202,7 +202,7 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
         }
         Object obj= this.auditOperator(UserUtils.getOperatorInfo(), receivable);
         if(obj!=null){ // 推送应收账款微信消息
-            supplierPushService.pushReceivableInfo(receivable);
+            supplierPushService.pushReceivableInfo(receivable, "应收账款提醒");
         }
         return receivable;
         
