@@ -149,13 +149,13 @@ public class CommissionRecord implements BetterjrEntity {
 
     @Column(name = "N_VERSION", columnDefinition = "VARCHAR")
     private String version;
-    
-    //拜特确认当前记录是否合规 0 未确认  1 不合规  2 合规
-    @Column(name = "C_CONFIRM_STATUS",  columnDefinition="VARCHAR" )
+
+    // 拜特确认当前记录是否合规 0 未确认 1 不合规 2 合规
+    @Column(name = "C_CONFIRM_STATUS", columnDefinition = "VARCHAR")
     private String confirmStatus;
 
     private static final long serialVersionUID = 1493715864481L;
-    
+
     public String getConfirmStatus() {
         return this.confirmStatus;
     }
@@ -621,9 +621,9 @@ public class CommissionRecord implements BetterjrEntity {
             this.setRegOperId(anOperatorInfo.getId());
             this.setRegOperName(anOperatorInfo.getName());
             this.setVersion("1");
-            this.confirmStatus=CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_UNCONFIRMED;
+            this.confirmStatus = CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_UNCONFIRMED;
             this.refNo = SequenceFactory.generate("PLAT_COMMISSION_RECORD", this.getOperOrg(), "CP#{Date:yyMMdd}#{Seq:8}", "D");
-            this.id=SerialGenerator.getLongValue("CommissionRecord.id");
+            this.id = SerialGenerator.getLongValue("CommissionRecord.id");
         }
         catch (Exception e) {
 

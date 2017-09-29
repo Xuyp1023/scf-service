@@ -11,42 +11,31 @@ import com.betterjr.modules.commission.service.CommissionRecordService;
 import com.betterjr.modules.commissionfile.ICommissionRecordService;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 
-@Service(interfaceClass=ICommissionRecordService.class)
-public class CommissionRecordDubboService implements ICommissionRecordService{
-    
-    
+@Service(interfaceClass = ICommissionRecordService.class)
+public class CommissionRecordDubboService implements ICommissionRecordService {
+
     @Autowired
     private CommissionRecordService recordService;
 
     @Override
     public String webQueryRecordList(Map<String, Object> anAnMap, String anFlag, int anPageNum, int anPageSize) {
-        
+
         Map<String, Object> queryMap = RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject
-                .newOkWithPage("佣金记录查询成功", recordService.queryRecordList(queryMap,anFlag, anPageNum, anPageSize))
-                .toJson();
+        return AjaxObject.newOkWithPage("佣金记录查询成功", recordService.queryRecordList(queryMap, anFlag, anPageNum, anPageSize)).toJson();
     }
-    
+
     @Override
     public String webQueryCanAuditRecordList(Map<String, Object> anAnMap, String anFlag, int anPageNum, int anPageSize) {
-        
+
         Map<String, Object> queryMap = RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject
-                .newOkWithPage("佣金审核全部记录查询成功", recordService.queryCanAuditRecordList(queryMap,anFlag, anPageNum, anPageSize))
-                .toJson();
+        return AjaxObject.newOkWithPage("佣金审核全部记录查询成功", recordService.queryCanAuditRecordList(queryMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     @Override
     public String webSaveAuditRecordList(Long anCustNo, String anImportDate) {
-        
-        Map<String, Object> queryMap =QueryTermBuilder.newInstance()
-                .put("custNo", anCustNo)
-                .put("importDate", anImportDate)
-                .build();
-        return AjaxObject
-                .newOk("佣金记录审核成功", recordService.saveAuditRecordList(queryMap))
-                .toJson();
-    }
 
+        Map<String, Object> queryMap = QueryTermBuilder.newInstance().put("custNo", anCustNo).put("importDate", anImportDate).build();
+        return AjaxObject.newOk("佣金记录审核成功", recordService.saveAuditRecordList(queryMap)).toJson();
+    }
 
 }

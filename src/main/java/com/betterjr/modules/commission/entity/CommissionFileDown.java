@@ -22,101 +22,99 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @Table(name = "T_CPS_FILE_DOWN")
 public class CommissionFileDown implements BetterjrEntity {
 
-    
     /**
      * 
      */
     private static final long serialVersionUID = -4607002834048195924L;
 
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
+    @Column(name = "ID", columnDefinition = "INTEGER")
     private Long id;
-    
-  //下载id
-    @Column(name = "L_FILE_ID",  columnDefinition="INTEGER" )
+
+    // 下载id
+    @Column(name = "L_FILE_ID", columnDefinition = "INTEGER")
     private Long fileId;
-    
-  //下载batchNo
-    @Column(name = "N_BATCHNO",  columnDefinition="DECIMAL" )
+
+    // 下载batchNo
+    @Column(name = "N_BATCHNO", columnDefinition = "DECIMAL")
     private Long batchNo;
-    
-  //文件导入日期
-    @Column(name = "D_IMPORT_DATE",  columnDefinition="VARCHAR" )
+
+    // 文件导入日期
+    @Column(name = "D_IMPORT_DATE", columnDefinition = "VARCHAR")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String importDate;
-    
-  //文件导入时间
-    @Column(name = "T_IMPORT_TIME",  columnDefinition="VARCHAR" )
+
+    // 文件导入时间
+    @Column(name = "T_IMPORT_TIME", columnDefinition = "VARCHAR")
     @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String importTime;
 
-    //企业id
-    @Column(name = "L_CUSTNO",  columnDefinition="INTEGER" )
+    // 企业id
+    @Column(name = "L_CUSTNO", columnDefinition = "INTEGER")
     private Long custNo;
 
-    //当前企业名称
-    @Column(name = "C_CUSTNAME",  columnDefinition="VARCHAR" )
+    // 当前企业名称
+    @Column(name = "C_CUSTNAME", columnDefinition = "VARCHAR")
     private String custName;
 
-    //操作机构
-    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
+    // 操作机构
+    @Column(name = "C_OPERORG", columnDefinition = "VARCHAR")
     private String operOrg;
-    
-    
-    //当前文件总金额
-    @Column(name = "F_BALANCE",  columnDefinition="DECIMAL" )
+
+    // 当前文件总金额
+    @Column(name = "F_BALANCE", columnDefinition = "DECIMAL")
     private BigDecimal blance;
 
-    //当前解析文件总的行数
-    @Column(name = "N_AMOUNT",  columnDefinition="INTEGER" )
+    // 当前解析文件总的行数
+    @Column(name = "N_AMOUNT", columnDefinition = "INTEGER")
     private Integer amount;
-    
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
+
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
     private String regDate;
-    
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
+
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
     private String regTime;
-    
-    //拜特确认当前记录是否合规 未确认  1 确认未通过  2 确认通过
-    @Column(name = "C_CONFIRM_STATUS",  columnDefinition="VARCHAR" )
+
+    // 拜特确认当前记录是否合规 未确认 1 确认未通过 2 确认通过
+    @Column(name = "C_CONFIRM_STATUS", columnDefinition = "VARCHAR")
     private String confirmStatus;
-    
-    //确认日期
-    @Column(name = "D_CONFIRM_DATE",  columnDefinition="VARCHAR" )
+
+    // 确认日期
+    @Column(name = "D_CONFIRM_DATE", columnDefinition = "VARCHAR")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String confirmDate;
-    
-    //确认时间
-    @Column(name = "T_CONFIRM_TIME",  columnDefinition="VARCHAR" )
+
+    // 确认时间
+    @Column(name = "T_CONFIRM_TIME", columnDefinition = "VARCHAR")
     @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String confirmTime;
-    
-    //确认信息
-    @Column(name = "C_CONFRIM_MESSAGE",  columnDefinition="VARCHAR" )
+
+    // 确认信息
+    @Column(name = "C_CONFRIM_MESSAGE", columnDefinition = "VARCHAR")
     private String confirmMessage;
-    
-  //当前文件总金额
-    @Column(name = "F_BALANCE_CONFIRM_FAILURE",  columnDefinition="DECIMAL" )
+
+    // 当前文件总金额
+    @Column(name = "F_BALANCE_CONFIRM_FAILURE", columnDefinition = "DECIMAL")
     private BigDecimal confirmFailureBalance;
 
-    //当前解析文件总的行数
-    @Column(name = "N_AMOUNT_CONFIRM_FAILURE",  columnDefinition="INTEGER" )
+    // 当前解析文件总的行数
+    @Column(name = "N_AMOUNT_CONFIRM_FAILURE", columnDefinition = "INTEGER")
     private Integer confirmFailureAmount;
-    
-  //当前文件总金额
-    @Column(name = "F_BALANCE_CONFIRM_SUCCESS",  columnDefinition="DECIMAL" )
+
+    // 当前文件总金额
+    @Column(name = "F_BALANCE_CONFIRM_SUCCESS", columnDefinition = "DECIMAL")
     private BigDecimal confirmSuccessBalance;
 
-    //当前解析文件总的行数
-    @Column(name = "N_AMOUNT_CONFIRM_SUCCESS",  columnDefinition="INTEGER" )
+    // 当前解析文件总的行数
+    @Column(name = "N_AMOUNT_CONFIRM_SUCCESS", columnDefinition = "INTEGER")
     private Integer confirmSuccessAmount;
 
-    @Column(name = "L_AUDIT_OPERID",  columnDefinition="INTEGER" )
+    @Column(name = "L_AUDIT_OPERID", columnDefinition = "INTEGER")
     private Long auditOperId;
-    
-    @Column(name = "C_AUDIT_OPERNAME",  columnDefinition="VARCHAR" )
+
+    @Column(name = "C_AUDIT_OPERNAME", columnDefinition = "VARCHAR")
     private String auditOperName;
-    
+
     public CommissionFileDown() {
         super();
     }
@@ -145,91 +143,61 @@ public class CommissionFileDown implements BetterjrEntity {
         this.confirmStatus = anConfirmStatus;
     }
 
-
-
     public String getConfirmDate() {
         return this.confirmDate;
     }
-
-
 
     public void setConfirmDate(String anConfirmDate) {
         this.confirmDate = anConfirmDate;
     }
 
-
-
     public String getConfirmTime() {
         return this.confirmTime;
     }
-
-
 
     public void setConfirmTime(String anConfirmTime) {
         this.confirmTime = anConfirmTime;
     }
 
-
-
     public String getConfirmMessage() {
         return this.confirmMessage;
     }
-
-
 
     public void setConfirmMessage(String anConfirmMessage) {
         this.confirmMessage = anConfirmMessage;
     }
 
-
-
     public BigDecimal getConfirmFailureBalance() {
         return this.confirmFailureBalance;
     }
-
-
 
     public void setConfirmFailureBalance(BigDecimal anConfirmFailureBalance) {
         this.confirmFailureBalance = anConfirmFailureBalance;
     }
 
-
-
     public Integer getConfirmFailureAmount() {
         return this.confirmFailureAmount;
     }
-
-
 
     public void setConfirmFailureAmount(Integer anConfirmFailureAmount) {
         this.confirmFailureAmount = anConfirmFailureAmount;
     }
 
-
-
     public BigDecimal getConfirmSuccessBalance() {
         return this.confirmSuccessBalance;
     }
-
-
 
     public void setConfirmSuccessBalance(BigDecimal anConfirmSuccessBalance) {
         this.confirmSuccessBalance = anConfirmSuccessBalance;
     }
 
-
-
     public Integer getConfirmSuccessAmount() {
         return this.confirmSuccessAmount;
     }
 
-
-
     public void setConfirmSuccessAmount(Integer anConfirmSuccessAmount) {
         this.confirmSuccessAmount = anConfirmSuccessAmount;
     }
-
-
 
     public Long getId() {
         return this.id;
@@ -443,7 +411,6 @@ public class CommissionFileDown implements BetterjrEntity {
         return true;
     }
 
-  
     @Override
     public String toString() {
         return "CommissionFileDown [id=" + this.id + ", fileId=" + this.fileId + ", batchNo=" + this.batchNo + ", importDate=" + this.importDate
@@ -456,7 +423,7 @@ public class CommissionFileDown implements BetterjrEntity {
     }
 
     public void saveAddInit(int anRecordAmount, BigDecimal anBlance, CommissionRecord anRecord) {
-        
+
         this.setAmount(anRecordAmount);
         this.setBlance(anBlance);
         this.setCustName(anRecord.getCustName());
@@ -466,23 +433,20 @@ public class CommissionFileDown implements BetterjrEntity {
         this.setImportTime(anRecord.getImportTime());
         this.setRegDate(BetterDateUtils.getNumDate());
         this.setRegTime(BetterDateUtils.getNumTime());
-        this.confirmStatus=CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_UNCONFIRMED;
-        this.id=SerialGenerator.getLongValue("CommissionFileDown.id");
-        
+        this.confirmStatus = CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_UNCONFIRMED;
+        this.id = SerialGenerator.getLongValue("CommissionFileDown.id");
+
     }
 
     public void saveAuditInit(String anConfirmStatus, String anConfirmMessage, CustOperatorInfo anOperatorInfo) {
-        
-        this.auditOperId=anOperatorInfo.getId();
-        this.auditOperName=anOperatorInfo.getName();
-        this.confirmDate=BetterDateUtils.getNumDate();
-        this.confirmMessage=anConfirmMessage;
-        this.confirmStatus=anConfirmStatus;
-        this.confirmTime=BetterDateUtils.getNumTime();
-                
-        
+
+        this.auditOperId = anOperatorInfo.getId();
+        this.auditOperName = anOperatorInfo.getName();
+        this.confirmDate = BetterDateUtils.getNumDate();
+        this.confirmMessage = anConfirmMessage;
+        this.confirmStatus = anConfirmStatus;
+        this.confirmTime = BetterDateUtils.getNumTime();
+
     }
-    
-    
 
 }

@@ -68,7 +68,7 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
      * @param confirmFlag  是否需要确认 true 为新增确认    false 为新增
      * @return
      */
-     public ScfOrderDO addOrder(ScfOrderDO anOrder, String anFileList,boolean anConfirmFlag) {
+     public ScfOrderDO addOrder(ScfOrderDO anOrder, String anFileList, boolean anConfirmFlag) {
          
          BTAssert.notNull(anOrder,"插入订单为空,操作失败");
          BTAssert.notNull(anOrder.getCustNo(),"请选择供应商,操作失败");
@@ -89,7 +89,7 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
      /**
       * 订单信息编辑
       */
-     public ScfOrderDO saveModifyOrder(ScfOrderDO anModiOrder,String anFileList,boolean anConfirmFlag) {
+     public ScfOrderDO saveModifyOrder(ScfOrderDO anModiOrder, String anFileList, boolean anConfirmFlag) {
          
          BTAssert.notNull(anModiOrder,"订单为空,操作失败");
          BTAssert.notNull(anModiOrder.getRefNo(),"凭证编号为空,操作失败");
@@ -143,7 +143,7 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
       * @param version
       * @return
       */
-     public ScfOrderDO saveAnnulOrder(String anRefNo,String anVersion){
+     public ScfOrderDO saveAnnulOrder(String anRefNo, String anVersion){
          
          BTAssert.notNull(anRefNo, "订单凭证单号为空!操作失败");
          BTAssert.notNull(anVersion, "操作异常为空!操作失败");
@@ -160,7 +160,7 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
       * @param version
       * @return
       */
-     public ScfOrderDO findOrder(String anRefNo,String anVersion){
+     public ScfOrderDO findOrder(String anRefNo, String anVersion){
          
          BTAssert.notNull(anRefNo, "订单凭证单号为空!操作失败");
          BTAssert.notNull(anVersion, "操作异常为空!操作失败");
@@ -175,7 +175,7 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
       * @param anVersion
       * @return
       */
-     public ScfOrderDO saveAuditOrder(String anRefNo,String anVersion){
+     public ScfOrderDO saveAuditOrder(String anRefNo, String anVersion){
          
          BTAssert.notNull(anRefNo, "订单凭证单号为空!操作失败");
          BTAssert.notNull(anVersion, "操作异常为空!操作失败");
@@ -248,7 +248,7 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
      * anIsOnlyNormal 1 数据来源与新增
      * @return
      */
-     public Page<ScfOrderDO> queryOrder(Map<String, Object> anMap,String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize) {
+     public Page<ScfOrderDO> queryOrder(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize) {
          
          // 操作员只能查询本机构数据
          // anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
@@ -281,7 +281,7 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
       * anIsAudit true 是查询需要审核的订单     false 查询是否编辑和确认 废止的订单
       * @return
       */
-     public Page<ScfOrderDO> queryIneffectiveOrder(Map<String, Object> anMap,String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize,boolean anIsAudit) {
+     public Page<ScfOrderDO> queryIneffectiveOrder(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize,boolean anIsAudit) {
          
          BTAssert.notNull(anMap, "查询条件为空!操作失败");
          // 操作员只能查询本机构数据
@@ -324,7 +324,7 @@ public class ScfOrderDOService extends BaseVersionService<ScfOrderDOMapper, ScfO
       * 
       * @return
       */
-     public Page<ScfOrderDO> queryEffectiveOrder(Map<String, Object> anMap,String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize,boolean anIsCust) {
+     public Page<ScfOrderDO> queryEffectiveOrder(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize, boolean anIsCust) {
          
          BTAssert.notNull(anMap, "查询条件为空!操作失败");
          // 操作员只能查询本机构数据

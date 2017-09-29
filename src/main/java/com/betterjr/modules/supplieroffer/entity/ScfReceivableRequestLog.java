@@ -10,6 +10,11 @@ import javax.persistence.Table;
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
+import com.betterjr.common.selectkey.SerialGenerator;
+import com.betterjr.common.utils.BTAssert;
+import com.betterjr.common.utils.BetterDateUtils;
+import com.betterjr.modules.account.entity.CustOperatorInfo;
+import com.betterjr.modules.supplieroffer.data.OfferConstantCollentions;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
@@ -230,6 +235,16 @@ public class ScfReceivableRequestLog implements BetterjrEntity{
                 + ", custNo=" + this.custNo + ", custName=" + this.custName + "]";
     }
     
+    public void initAddValue(CustOperatorInfo anOperatorInfo){
+        
+        BTAssert.notNull(anOperatorInfo,"无法获取登录信息,操作失败");
+        this.setId(SerialGenerator.getLongValue("ScfReceivableRequestLog.id"));
+        this.modiDate = BetterDateUtils.getNumDate();
+        this.modiTime=BetterDateUtils.getNumTime();
+        this.modiOperId=anOperatorInfo.getId();
+        this.modiOperName = anOperatorInfo.getName();
+        
+    }
     
     
 }

@@ -17,80 +17,80 @@ import com.betterjr.modules.commission.data.CommissionConstantCollentions;
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "t_cps_invoice_custinfo")
-public class CommissionInvoiceCustInfo implements BetterjrEntity{
+public class CommissionInvoiceCustInfo implements BetterjrEntity {
 
     /**
      * 
      */
     private static final long serialVersionUID = -6224014799685775186L;
-  
-    //`ID` bigint(18) NOT NULL COMMENT '发票主键',
+
+    // `ID` bigint(18) NOT NULL COMMENT '发票主键',
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
+    @Column(name = "ID", columnDefinition = "INTEGER")
     private Long id;
-    
-    //企业id
-    @Column(name = "L_CUSTNO",  columnDefinition="INTEGER" )
+
+    // 企业id
+    @Column(name = "L_CUSTNO", columnDefinition = "INTEGER")
     private Long custNo;
 
-    //当前企业名称
-    @Column(name = "C_CUSTNAME",  columnDefinition="VARCHAR" )
+    // 当前企业名称
+    @Column(name = "C_CUSTNAME", columnDefinition = "VARCHAR")
     private String custName;
-    
-    //核心企业id
-    @Column(name = "L_CORE_CUSTNO",  columnDefinition="INTEGER" )
+
+    // 核心企业id
+    @Column(name = "L_CORE_CUSTNO", columnDefinition = "INTEGER")
     private Long coreCustNo;
-    
-    //核心企业名称
-    @Column(name = "C_CORE_CUSTNAME",  columnDefinition="VARCHAR" )
+
+    // 核心企业名称
+    @Column(name = "C_CORE_CUSTNAME", columnDefinition = "VARCHAR")
     private String coreCustName;
-    
-    //银行s
-    @Column(name = "C_CORE_BANK",  columnDefinition="VARCHAR" )
+
+    // 银行s
+    @Column(name = "C_CORE_BANK", columnDefinition = "VARCHAR")
     private String coreBank;
-    
+
     // 银行帐号',
-    @Column(name = "C_CORE_BANK_ACCOUNT",  columnDefinition="VARCHAR" )
+    @Column(name = "C_CORE_BANK_ACCOUNT", columnDefinition = "VARCHAR")
     private String coreBankAccount;
-    
-    //纳税人识别号
-    @Column(name = "C_CORE_TAXPAYERNO",  columnDefinition="VARCHAR" )
+
+    // 纳税人识别号
+    @Column(name = "C_CORE_TAXPAYERNO", columnDefinition = "VARCHAR")
     private String coreTaxPayerNo;
-    
-    //电话
-    @Column(name = "C_CORE_PHONE",  columnDefinition="VARCHAR" )
+
+    // 电话
+    @Column(name = "C_CORE_PHONE", columnDefinition = "VARCHAR")
     private String corePhone;
-    
-    //地址
-    @Column(name = "C_CORE_ADDRESS",  columnDefinition="VARCHAR" )
+
+    // 地址
+    @Column(name = "C_CORE_ADDRESS", columnDefinition = "VARCHAR")
     private String coreAddress;
-    
-    //状态  0 不可用   1 可用
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
+
+    // 状态 0 不可用 1 可用
+    @Column(name = "C_BUSIN_STATUS", columnDefinition = "VARCHAR")
     private String businStatus;
-    
-    //注册人名字
-    @Column(name = "C_REG_OPERNAME",  columnDefinition="VARCHAR" )
+
+    // 注册人名字
+    @Column(name = "C_REG_OPERNAME", columnDefinition = "VARCHAR")
     private String regOperName;
-    
-    //注册日期
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
+
+    // 注册日期
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
     private String regDate;
-    
-    ////注册时间
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
+
+    //// 注册时间
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
     private String regTime;
-    
-    //是否默认  0 不是默认   1是默认
-    @Column(name = "C_IS_LATEST",  columnDefinition="VARCHAR" )
+
+    // 是否默认 0 不是默认 1是默认
+    @Column(name = "C_IS_LATEST", columnDefinition = "VARCHAR")
     private String isLatest;
-    
-    //发票抬头的类型  发票抬头的类型  1  企业     0个人
-    @Column(name = "C_COREINFO_TYPE",  columnDefinition="VARCHAR" )
+
+    // 发票抬头的类型 发票抬头的类型 1 企业 0个人
+    @Column(name = "C_COREINFO_TYPE", columnDefinition = "VARCHAR")
     private String coreInfoType;
-    
-    //注册人
-    @Column(name = "L_REG_OPERID",  columnDefinition="INTEGER" )
+
+    // 注册人
+    @Column(name = "L_REG_OPERID", columnDefinition = "INTEGER")
     private Long regOperId;
 
     public Long getId() {
@@ -228,7 +228,6 @@ public class CommissionInvoiceCustInfo implements BetterjrEntity{
     public void setRegOperId(Long anRegOperId) {
         this.regOperId = anRegOperId;
     }
-    
 
     @Override
     public int hashCode() {
@@ -337,12 +336,12 @@ public class CommissionInvoiceCustInfo implements BetterjrEntity{
                 + this.coreCustNo + ", coreCustName=" + this.coreCustName + ", coreBank=" + this.coreBank + ", coreBankAccount="
                 + this.coreBankAccount + ", coreTaxPayerNo=" + this.coreTaxPayerNo + ", corePhone=" + this.corePhone + ", coreAddress="
                 + this.coreAddress + ", businStatus=" + this.businStatus + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate
-                + ", regTime=" + this.regTime + ", isLatest=" + this.isLatest + ", coreInfoType=" + this.coreInfoType + ", regOperId=" + this.regOperId + "]";
+                + ", regTime=" + this.regTime + ", isLatest=" + this.isLatest + ", coreInfoType=" + this.coreInfoType + ", regOperId="
+                + this.regOperId + "]";
     }
 
-    
     public void initAddValue(CustOperatorInfo anOperatorInfo) {
-        
+
         BTAssert.notNull(anOperatorInfo, "新增佣金参数失败！请先登录");
         this.setRegDate(BetterDateUtils.getNumDate());
         this.setRegTime(BetterDateUtils.getNumTime());
@@ -350,8 +349,8 @@ public class CommissionInvoiceCustInfo implements BetterjrEntity{
         this.setRegOperName(anOperatorInfo.getName());
         this.setBusinStatus(CommissionConstantCollentions.COMMISSION_INVOICE_PARAM_CUST_BUSINSTATUS_OK);
         this.setId(SerialGenerator.getLongValue("CommissionInvoiceCustInfo.id"));
-        if(CommissionConstantCollentions.COMMISSION_INVOICE_CUSTINFO_CUSTTYPE_PERSION.equals(this.getCoreInfoType())){
-            
+        if (CommissionConstantCollentions.COMMISSION_INVOICE_CUSTINFO_CUSTTYPE_PERSION.equals(this.getCoreInfoType())) {
+
             this.setCoreAddress("");
             this.setCoreBank("");
             this.setCoreTaxPayerNo("");
@@ -359,9 +358,4 @@ public class CommissionInvoiceCustInfo implements BetterjrEntity{
         }
     }
 
-    
-
-   
-    
-    
 }
