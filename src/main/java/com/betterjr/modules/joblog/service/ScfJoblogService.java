@@ -7,14 +7,13 @@ import com.betterjr.modules.joblog.entity.ScfJoblog;
 
 @Service
 public class ScfJoblogService extends BaseService<ScfJoblogMapper, ScfJoblog> {
-    
-    public ScfJoblog saveAddLog(ScfJoblog anLog){
-        
-        
+
+    public ScfJoblog saveAddLog(ScfJoblog anLog) {
+
         anLog.initAddValue();
         this.insert(anLog);
         return anLog;
-        
+
     }
 
 }

@@ -16,9 +16,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "t_scf_joblog")
-public class ScfJoblog implements BetterjrEntity{
-    
-    
+public class ScfJoblog implements BetterjrEntity {
+
     /**
      * 
      */
@@ -27,60 +26,59 @@ public class ScfJoblog implements BetterjrEntity{
     /**
      * 创建日期
      */
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="创建日期", comments = "创建日期")
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "创建日期", comments = "创建日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
-    
+
     /**
      * 创建时间
      */
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="创建时间", comments = "创建时间")
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "创建时间", comments = "创建时间")
     private String regTime;
-    
+
     /**
      * 日志记录信息
      */
-    @Column(name = "C_SHOW_MESSAGE",  columnDefinition="VARCHAR" )
-    @MetaData( value="日志记录信息", comments = "日志记录信息")
+    @Column(name = "C_SHOW_MESSAGE", columnDefinition = "VARCHAR")
+    @MetaData(value = "日志记录信息", comments = "日志记录信息")
     private String showMessage;
-    
+
     /**
-     * 业务状态 0 设置失败       1 设置成功
+     * 业务状态 0 设置失败 1 设置成功
      */
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="业务状态 0 设置失败       1 设置成功", comments = "业务状态 0 设置失败       1 设置成功")
+    @Column(name = "C_BUSIN_STATUS", columnDefinition = "VARCHAR")
+    @MetaData(value = "业务状态 0 设置失败       1 设置成功", comments = "业务状态 0 设置失败       1 设置成功")
     private String businStatus;
-    
+
     /**
      * 多条排序序号
      */
-    @Column(name = "C_ORDER_BY",  columnDefinition="VARCHAR" )
-    @MetaData( value="多条排序序号", comments = "多条排序序号")
+    @Column(name = "C_ORDER_BY", columnDefinition = "VARCHAR")
+    @MetaData(value = "多条排序序号", comments = "多条排序序号")
     private String orderBy;
-    
-    
+
     /**
      * 数据类型：1订单2票据3应收账款4发票5贸易合同
      */
-    @Column(name = "C_DATAINFO_TYPE",  columnDefinition="VARCHAR" )
-    @MetaData( value="数据类型：1订单2票据3应收账款4发票5贸易合同", comments = "数据类型：1订单2票据3应收账款4发票5贸易合同")
+    @Column(name = "C_DATAINFO_TYPE", columnDefinition = "VARCHAR")
+    @MetaData(value = "数据类型：1订单2票据3应收账款4发票5贸易合同", comments = "数据类型：1订单2票据3应收账款4发票5贸易合同")
     private String dataType;
-    
+
     /**
-     *业务模型  1:过期日志
+     * 业务模型 1:过期日志
      */
-    @Column(name = "C_BUSIN_TYPE",  columnDefinition="VARCHAR" )
-    @MetaData( value="业务模型  1:过期日志", comments = "业务模型  1:过期日志")
+    @Column(name = "C_BUSIN_TYPE", columnDefinition = "VARCHAR")
+    @MetaData(value = "业务模型  1:过期日志", comments = "业务模型  1:过期日志")
     private String businType;
-    
+
     /**
      * 流水号
      */
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
-    @MetaData( value="流水号", comments = "流水号")
+    @Column(name = "ID", columnDefinition = "INTEGER")
+    @MetaData(value = "流水号", comments = "流水号")
     private Long id;
 
     public String getRegDate() {
@@ -206,15 +204,11 @@ public class ScfJoblog implements BetterjrEntity{
     }
 
     public void initAddValue() {
-        
+
         this.setId(SerialGenerator.getLongValue("ScfJoblog.id"));
         this.setRegDate(BetterDateUtils.getNumDate());
         this.setRegTime(BetterDateUtils.getNumTime());
-        
-    }
 
-   
-    
-    
+    }
 
 }
