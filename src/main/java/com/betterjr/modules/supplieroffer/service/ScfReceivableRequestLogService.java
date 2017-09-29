@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.UserUtils;
+import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.supplieroffer.dao.ScfReceivableRequestLogMapper;
 import com.betterjr.modules.supplieroffer.entity.ScfReceivableRequest;
 import com.betterjr.modules.supplieroffer.entity.ScfReceivableRequestLog;
@@ -25,30 +26,34 @@ public class ScfReceivableRequestLogService extends BaseService<ScfReceivableReq
 
             log.initAddValue(UserUtils.getOperatorInfo());
 
-            if (UserUtils.factorUser()) {
-                log.setCustName(anRequest.getFactoryName());
-                log.setCustNo(anRequest.getFactoryNo());
-            }
-            else if (UserUtils.coreUser()) {
-                log.setCustName(anRequest.getCoreCustName());
-                log.setCustNo(anRequest.getCoreCustNo());
-            }
-            else if (UserUtils.supplierUser() || UserUtils.sellerUser()) {
-                log.setCustName(anRequest.getCustName());
-                log.setCustNo(anRequest.getCustNo());
-            }
-            else {
-
-            }
-
-            log.setEquityNo(anRequest.getRequestNo());
-
-            log.setModiMessage(anRequest.getBusinStatus());
+            fillDataByReceivableRequest(anRequest, log);
 
             this.insertSelective(log);
         }
 
         return log;
 
+    }
+
+    private void fillDataByReceivableRequest(ScfReceivableRequest anRequest, ScfReceivableRequestLog log) {
+        
+        if (UserUtils.supplierUser() || UserUtils.sellerUser()) {
+            log.setCustName(anRequest.getCustName());
+            log.setCustNo(anRequest.getCustNo());
+        }else if (UserUtils.coreUser()) {
+            log.setCustName(anRequest.getCoreCustName());
+            log.setCustNo(anRequest.getCoreCustNo());
+        }else if (UserUtils.factorUser()) {
+            log.setCustName(anRequest.getFactoryName());
+            log.setCustNo(anRequest.getFactoryNo());
+        }else {
+            CustInfo custInfo = UserUtils.getDefCustInfo();
+            log.setCustName(custInfo.getCustName());
+            log.setCustNo(custInfo.getCustNo());
+        }
+
+        log.setEquityNo(anRequest.getRequestNo());
+
+        log.setModiMessage(anRequest.getBusinStatus());
     }
 }
