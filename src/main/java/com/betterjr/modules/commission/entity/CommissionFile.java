@@ -30,149 +30,148 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @Table(name = "t_cps_file")
 public class CommissionFile implements BetterjrEntity {
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
+    @Column(name = "ID", columnDefinition = "INTEGER")
     private Long id;
 
-    //凭证编号
-    @Column(name = "C_REFNO",  columnDefinition="VARCHAR" )
+    // 凭证编号
+    @Column(name = "C_REFNO", columnDefinition = "VARCHAR")
     private String refNo;
 
-    //文件上传批次号
-    @Column(name = "N_BATCHNO",  columnDefinition="DECIMAL" )
+    // 文件上传批次号
+    @Column(name = "N_BATCHNO", columnDefinition = "DECIMAL")
     private Long batchNo;
 
-    //文件摘要
-    @Column(name = "C_DIGEST",  columnDefinition="VARCHAR" )
+    // 文件摘要
+    @Column(name = "C_DIGEST", columnDefinition = "VARCHAR")
     private String digest;
 
-    //文件签名
-    @Column(name = "C_SIGNATURE",  columnDefinition="VARCHAR" )
+    // 文件签名
+    @Column(name = "C_SIGNATURE", columnDefinition = "VARCHAR")
     private String signature;
 
-    //文件上传id
-    @Column(name = "L_FILE_ID",  columnDefinition="INTEGER" )
+    // 文件上传id
+    @Column(name = "L_FILE_ID", columnDefinition = "INTEGER")
     private Long fileId;
-    
-    //文件下载id
-    @Column(name = "L_DOWNFILE_ID",  columnDefinition="INTEGER" )
+
+    // 文件下载id
+    @Column(name = "L_DOWNFILE_ID", columnDefinition = "INTEGER")
     private Long downFileId;
 
-    //文件上传名称
-    @Column(name = "C_FILE_NAME",  columnDefinition="VARCHAR" )
+    // 文件上传名称
+    @Column(name = "C_FILE_NAME", columnDefinition = "VARCHAR")
     private String fileName;
 
-    //文件导入日期
-    @Column(name = "D_IMPORT_DATE",  columnDefinition="VARCHAR" )
+    // 文件导入日期
+    @Column(name = "D_IMPORT_DATE", columnDefinition = "VARCHAR")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String importDate;
 
-    //文件导入时间
-    @Column(name = "T_IMPORT_TIME",  columnDefinition="VARCHAR" )
+    // 文件导入时间
+    @Column(name = "T_IMPORT_TIME", columnDefinition = "VARCHAR")
     @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String importTime;
 
-    //企业id
-    @Column(name = "L_CUSTNO",  columnDefinition="INTEGER" )
+    // 企业id
+    @Column(name = "L_CUSTNO", columnDefinition = "INTEGER")
     private Long custNo;
 
-    //当前企业名称
-    @Column(name = "C_CUSTNAME",  columnDefinition="VARCHAR" )
+    // 当前企业名称
+    @Column(name = "C_CUSTNAME", columnDefinition = "VARCHAR")
     private String custName;
 
-    //操作机构
-    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
+    // 操作机构
+    @Column(name = "C_OPERORG", columnDefinition = "VARCHAR")
     private String operOrg;
 
-    //付款状态 0 未处理 2 支付成功  1 支付失败
-    @Column(name = "C_PAY_STATUS",  columnDefinition="VARCHAR" )
+    // 付款状态 0 未处理 2 支付成功 1 支付失败
+    @Column(name = "C_PAY_STATUS", columnDefinition = "VARCHAR")
     private String payStatus;
 
-    //业务状态 0 未处理 1 已处理 2已审核 3删除 4:作废状态
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
+    // 业务状态 0 未处理 1 已处理 2已审核 3删除 4:作废状态
+    @Column(name = "C_BUSIN_STATUS", columnDefinition = "VARCHAR")
     private String businStatus;
 
-    //文件处理状态 1：解析成功  0 解析失败
-    @Column(name = "C_RESOLVE_STATUS",  columnDefinition="VARCHAR" )
+    // 文件处理状态 1：解析成功 0 解析失败
+    @Column(name = "C_RESOLVE_STATUS", columnDefinition = "VARCHAR")
     private String resolveStatus;
 
-    //文件解析结果提示信息
-    @Column(name = "C_SHOW_MESSAGE",  columnDefinition="VARCHAR" )
+    // 文件解析结果提示信息
+    @Column(name = "C_SHOW_MESSAGE", columnDefinition = "VARCHAR")
     private String showMessage;
 
-    //当前文件总金额
-    @Column(name = "F_TOTAL_BLANCE",  columnDefinition="DECIMAL" )
+    // 当前文件总金额
+    @Column(name = "F_TOTAL_BLANCE", columnDefinition = "DECIMAL")
     private BigDecimal totalBlance;
 
-    //当前解析文件总的行数
-    @Column(name = "L_TOTAL_AMOUNT",  columnDefinition="INTEGER" )
+    // 当前解析文件总的行数
+    @Column(name = "L_TOTAL_AMOUNT", columnDefinition = "INTEGER")
     private Integer totalAmount;
 
-    //解析的文件类型1订单 2票据  3应收账款 4发票 5 合同 6佣金
-    @Column(name = "C_INFO_TYPE",  columnDefinition="VARCHAR" )
+    // 解析的文件类型1订单 2票据 3应收账款 4发票 5 合同 6佣金
+    @Column(name = "C_INFO_TYPE", columnDefinition = "VARCHAR")
     private String infoType;
-    
-    @Column(name = "L_REG_OPERID",  columnDefinition="INTEGER" )
+
+    @Column(name = "L_REG_OPERID", columnDefinition = "INTEGER")
     private Long regOperId;
-    
-    @Column(name = "C_REG_OPERNAME",  columnDefinition="VARCHAR" )
+
+    @Column(name = "C_REG_OPERNAME", columnDefinition = "VARCHAR")
     private String regOperName;
-    
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
+
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
-    
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
+
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
     @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String regTime;
-    
-    @Column(name = "L_MODI_OPERID",  columnDefinition="INTEGER" )
+
+    @Column(name = "L_MODI_OPERID", columnDefinition = "INTEGER")
     private Long modiOperId;
-    
-    @Column(name = "C_MODI_OPERNAME",  columnDefinition="VARCHAR" )
+
+    @Column(name = "C_MODI_OPERNAME", columnDefinition = "VARCHAR")
     private String modiOperName;
-    
-    @Column(name = "D_MODI_DATE",  columnDefinition="VARCHAR" )
+
+    @Column(name = "D_MODI_DATE", columnDefinition = "VARCHAR")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String modiDate;
-    
-    @Column(name = "T_MODI_TIME",  columnDefinition="VARCHAR" )
+
+    @Column(name = "T_MODI_TIME", columnDefinition = "VARCHAR")
     @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String modiTime;
-    
-    @Column(name = "N_VERSION",  columnDefinition="VARCHAR" )
+
+    @Column(name = "N_VERSION", columnDefinition = "VARCHAR")
     private String version;
-    
-    //拜特确认当前记录是否合规 0 未确认  1 确认未通过 2 确认通过
-    @Column(name = "C_CONFIRM_STATUS",  columnDefinition="VARCHAR" )
+
+    // 拜特确认当前记录是否合规 0 未确认 1 确认未通过 2 确认通过
+    @Column(name = "C_CONFIRM_STATUS", columnDefinition = "VARCHAR")
     private String confirmStatus;
-    
-    //确认日期
-    @Column(name = "D_CONFIRM_DATE",  columnDefinition="VARCHAR" )
+
+    // 确认日期
+    @Column(name = "D_CONFIRM_DATE", columnDefinition = "VARCHAR")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String confirmDate;
-    
-    //确认时间
-    @Column(name = "T_CONFIRM_TIME",  columnDefinition="VARCHAR" )
+
+    // 确认时间
+    @Column(name = "T_CONFIRM_TIME", columnDefinition = "VARCHAR")
     @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String confirmTime;
-    
-    //确认信息
-    @Column(name = "C_CONFRIM_MESSAGE",  columnDefinition="VARCHAR" )
+
+    // 确认信息
+    @Column(name = "C_CONFRIM_MESSAGE", columnDefinition = "VARCHAR")
     private String confirmMessage;
-    
-    //当天审核全部文件的id
-    @Column(name = "L_FILEDOWN_ID",  columnDefinition="INTEGER" )
+
+    // 当天审核全部文件的id
+    @Column(name = "L_FILEDOWN_ID", columnDefinition = "INTEGER")
     private Long fileDownId;
-    
-    @Column(name = "L_AUDIT_OPERID",  columnDefinition="INTEGER" )
+
+    @Column(name = "L_AUDIT_OPERID", columnDefinition = "INTEGER")
     private Long auditOperId;
-    
-    @Column(name = "C_AUDIT_OPERNAME",  columnDefinition="VARCHAR" )
+
+    @Column(name = "C_AUDIT_OPERNAME", columnDefinition = "VARCHAR")
     private String auditOperName;
-    
+
     private static final long serialVersionUID = -7738651669430689381L;
-    
-    
+
     public String getConfirmStatus() {
         return this.confirmStatus;
     }
@@ -220,7 +219,7 @@ public class CommissionFile implements BetterjrEntity {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public Long getAuditOperId() {
         return this.auditOperId;
     }
@@ -662,15 +661,15 @@ public class CommissionFile implements BetterjrEntity {
     }
 
     public CommissionFile saveAddinit(CustOperatorInfo anOperatorInfo, CustFileItem anFileItem) {
-        
+
         BTAssert.notNull(anOperatorInfo, "新增佣金当前未登录");
         BTAssert.notNull(anFileItem, "当前文件未上传成功");
         this.setBusinStatus(CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_NO_HANDLE);
         this.setPayStatus(CommissionConstantCollentions.COMMISSION_PAY_STATUS_NO_HANDLE);
         this.setImportDate(BetterDateUtils.getNumDate());
         this.setImportTime(BetterDateUtils.getNumTime());
-        if(StringUtils.isBlank(this.getInfoType())){
-            
+        if (StringUtils.isBlank(this.getInfoType())) {
+
             this.setInfoType(CommissionConstantCollentions.COMMISSION_FILE_INFO_TYPE);
         }
         this.setOperOrg(anOperatorInfo.getOperOrg());
@@ -682,24 +681,23 @@ public class CommissionFile implements BetterjrEntity {
         this.setBatchNo(anFileItem.getBatchNo());
         checkFileName(anFileItem.getFileName());
         this.setFileName(anFileItem.getFileName());
-        this.refNo= SequenceFactory.generate("PLAT_COMMON", "#{Date:yyyyMMdd}#{Seq:12}","D");
-        this.id=SerialGenerator.getLongValue("CommissionFile.id");
-        this.confirmStatus=CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_UNCONFIRMED;
+        this.refNo = SequenceFactory.generate("PLAT_COMMON", "#{Date:yyyyMMdd}#{Seq:12}", "D");
+        this.id = SerialGenerator.getLongValue("CommissionFile.id");
+        this.confirmStatus = CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_UNCONFIRMED;
         return this;
-        
+
     }
-    
-    private void checkFileName(String anFileName){
-        
-        if(StringUtils.isBlank(anFileName)){
+
+    private void checkFileName(String anFileName) {
+
+        if (StringUtils.isBlank(anFileName)) {
             BTAssert.notNull(null, "上传的文件应该是excel文件");
         }
-        
-        if(!( anFileName.endsWith("xls") || anFileName.endsWith("xlsx"))){
+
+        if (!(anFileName.endsWith("xls") || anFileName.endsWith("xlsx"))) {
             BTAssert.notNull(null, "上传的文件应该是excel文件");
         }
-        
-        
+
     }
 
     public CommissionFile(String anRefNo) {
@@ -710,22 +708,17 @@ public class CommissionFile implements BetterjrEntity {
     public CommissionFile() {
         super();
     }
-    
+
     public CommissionFile(Long anId) {
         super();
         this.id = anId;
     }
 
     public Map<String, Object> resolveToRecordMap(CommissionFile anFile) {
-        
-        Map<String,Object> appendMap=QueryTermBuilder.newInstance()
-                .put("custNo", anFile.getCustNo())
-                .put("custName", anFile.getCustName())
-                .put("operOrg", anFile.getOperOrg())
-                .put("importDate", anFile.getImportDate())
-                .put("importTime", anFile.getImportTime())
-                .put("fileId", anFile.getId())
-                .build();
+
+        Map<String, Object> appendMap = QueryTermBuilder.newInstance().put("custNo", anFile.getCustNo()).put("custName", anFile.getCustName())
+                .put("operOrg", anFile.getOperOrg()).put("importDate", anFile.getImportDate()).put("importTime", anFile.getImportTime())
+                .put("fileId", anFile.getId()).build();
         return appendMap;
     }
 
@@ -737,9 +730,7 @@ public class CommissionFile implements BetterjrEntity {
         this.setModiOperId(anOperatorInfo.getId());
         this.setModiOperName(anOperatorInfo.getName());
         return this;
-        
+
     }
-    
-    
 
 }

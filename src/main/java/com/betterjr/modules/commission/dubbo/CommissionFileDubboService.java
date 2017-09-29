@@ -14,77 +14,62 @@ import com.betterjr.modules.commission.service.CommissionFileService;
 import com.betterjr.modules.commissionfile.ICommissionFileService;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 
-@Service(interfaceClass=ICommissionFileService.class)
+@Service(interfaceClass = ICommissionFileService.class)
 public class CommissionFileDubboService implements ICommissionFileService {
 
-    
     @Autowired
-    private CommissionFileService  commissionFileService;
-    
+    private CommissionFileService commissionFileService;
+
     @Override
     public String webAddCommissionFile(Map anParamMap) {
-        
-        CommissionFile file=new CommissionFile();
+
+        CommissionFile file = new CommissionFile();
         try {
             BeanUtils.populate(file, anParamMap);
         }
         catch (Exception e) {
-            BTAssert.notNull(null, "新增佣金文件参数出错"+e.getMessage());
+            BTAssert.notNull(null, "新增佣金文件参数出错" + e.getMessage());
         }
-        
+
         return AjaxObject.newOk("佣金文件登记成功", commissionFileService.saveAddCommissionFile(file)).toJson();
     }
 
     @Override
     public String webQueryFileList(Map<String, Object> anAnMap, String anFlag, int anPageNum, int anPageSize) {
-       
+
         Map<String, Object> queryMap = RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject
-                .newOkWithPage("佣金文件查询成功", commissionFileService.queryFileList(queryMap,anFlag, anPageNum, anPageSize))
-                .toJson();
+        return AjaxObject.newOkWithPage("佣金文件查询成功", commissionFileService.queryFileList(queryMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     @Override
-    public String webSaveDeleteFile(String anRefNo,Map<String, Object> anMap) {
-        
-        return AjaxObject
-                .newOk("佣金文件删除成功", commissionFileService.saveDeleteFile(anRefNo,anMap))
-                .toJson();
-    }
-    
-    @Override
-    public String webSaveCannulFile(Long  anFileId) {
-        
-        return  AjaxObject
-                .newOk("佣金文件作废成功", commissionFileService.saveCannulFile(anFileId))
-                .toJson();
+    public String webSaveDeleteFile(String anRefNo, Map<String, Object> anMap) {
+
+        return AjaxObject.newOk("佣金文件删除成功", commissionFileService.saveDeleteFile(anRefNo, anMap)).toJson();
     }
 
+    @Override
+    public String webSaveCannulFile(Long anFileId) {
+
+        return AjaxObject.newOk("佣金文件作废成功", commissionFileService.saveCannulFile(anFileId)).toJson();
+    }
 
     @Override
-    public String webSaveResolveFile(String anRefNo,Map<String, Object> anAnMap) {
-        
-        CommissionFile resolveFile = commissionFileService.saveResolveFile(anRefNo,anAnMap);
-        BTAssert.notNull(resolveFile,"文件解析失败,当前文件不存在或已删除");
-        if(resolveFile.getResolveStatus().equals(CommissionConstantCollentions.COMMISSION_RESOLVE_STATUS_FAILURE)){
-            return AjaxObject
-                    .newError("解析的佣金文件失败"+resolveFile.getShowMessage())
-                    .toJson();
+    public String webSaveResolveFile(String anRefNo, Map<String, Object> anAnMap) {
+
+        CommissionFile resolveFile = commissionFileService.saveResolveFile(anRefNo, anAnMap);
+        BTAssert.notNull(resolveFile, "文件解析失败,当前文件不存在或已删除");
+        if (resolveFile.getResolveStatus().equals(CommissionConstantCollentions.COMMISSION_RESOLVE_STATUS_FAILURE)) {
+            return AjaxObject.newError("解析的佣金文件失败" + resolveFile.getShowMessage()).toJson();
         }
-        
-        return AjaxObject
-                .newOk("佣金文件解析成功", resolveFile)
-                .toJson();
-        
+
+        return AjaxObject.newOk("佣金文件解析成功", resolveFile).toJson();
+
     }
 
     @Override
     public String webFindTemplateFile() {
-        
-        return AjaxObject
-                .newOk("佣金文件解析成功", commissionFileService.findCommissionFileExportTemplate())
-                .toJson();
+
+        return AjaxObject.newOk("佣金文件解析成功", commissionFileService.findCommissionFileExportTemplate()).toJson();
     }
 
-   
 }

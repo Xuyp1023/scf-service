@@ -11,54 +11,54 @@ import com.betterjr.common.entity.BetterjrEntity;
 
 @Access(AccessType.FIELD)
 @Entity
-public class BetterjrBaseEntity implements BetterjrEntity{
+public class BetterjrBaseEntity implements BetterjrEntity {
 
     /**
      * 
      */
     private static final long serialVersionUID = 4834094556743191421L;
-    
+
     /**
      * 流水号
      */
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
-    @MetaData( value="流水号", comments = "流水号")
+    @Column(name = "ID", columnDefinition = "INTEGER")
+    @MetaData(value = "流水号", comments = "流水号")
     private Long id;
-    
+
     /**
      * 特性编码
      */
-    @Column(name = "C_Ref_NO",  columnDefinition="VARCHAR" )
-    @MetaData( value="特性编码", comments = "单特性编码")
+    @Column(name = "C_Ref_NO", columnDefinition = "VARCHAR")
+    @MetaData(value = "特性编码", comments = "单特性编码")
     private String refNo;
-    
+
     /**
      * 版本信息
      */
-    @Column(name = "N_VERSION",  columnDefinition="VARCHAR" )
-    @MetaData( value="版本", comments = "版本")
+    @Column(name = "N_VERSION", columnDefinition = "VARCHAR")
+    @MetaData(value = "版本", comments = "版本")
     private String version;
-    
+
     /**
      * 是否是最新编码
      */
-    @Column(name = "C_IS_LATEST",  columnDefinition="VARCHAR" )
-    @MetaData( value="最新", comments = "最新")
+    @Column(name = "C_IS_LATEST", columnDefinition = "VARCHAR")
+    @MetaData(value = "最新", comments = "最新")
     private String isLatest;
-    
+
     /**
-     * 0 未核准 1：核准  2：已使用 3：转让 4废止 5 过期
+     * 0 未核准 1：核准 2：已使用 3：转让 4废止 5 过期
      */
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="0 未核准 1：核准  2：已使用 3：转让 4废止 5 过期", comments = "0 未核准 1：核准  2：已使用 3：转让 4废止 5 过期")
+    @Column(name = "C_BUSIN_STATUS", columnDefinition = "VARCHAR")
+    @MetaData(value = "0 未核准 1：核准  2：已使用 3：转让 4废止 5 过期", comments = "0 未核准 1：核准  2：已使用 3：转让 4废止 5 过期")
     private String businStatus;
-    
+
     /**
      * 0 未锁定状态 1 锁定状态
      */
-    @Column(name = "C_LOCKED_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="0 未锁定状态 1 锁定状态", comments = "0 未锁定状态 1 锁定状态")
+    @Column(name = "C_LOCKED_STATUS", columnDefinition = "VARCHAR")
+    @MetaData(value = "0 未锁定状态 1 锁定状态", comments = "0 未锁定状态 1 锁定状态")
     private String lockedStatus;
 
     public Long getId() {
@@ -160,7 +160,5 @@ public class BetterjrBaseEntity implements BetterjrEntity{
         return "BetterjrBaseEntity [id=" + this.id + ", refNo=" + this.refNo + ", version=" + this.version + ", isLatest=" + this.isLatest
                 + ", businStatus=" + this.businStatus + ", lockedStatus=" + this.lockedStatus + "]";
     }
-    
-    
 
 }

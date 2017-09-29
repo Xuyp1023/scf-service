@@ -1,7 +1,6 @@
 package com.betterjr.modules.commission.entity;
 
 import java.math.BigDecimal;
-
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
@@ -9,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
@@ -18,536 +16,456 @@ import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
-import com.betterjr.modules.commission.data.CommissionConstantCollentions;
 import com.betterjr.modules.generator.SequenceFactory;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "t_cps_invoice")
-public class CommissionInvoice implements BetterjrEntity{
+public class CommissionInvoice implements BetterjrEntity {
 
     /**
      * 
      */
     private static final long serialVersionUID = 9096698491446660763L;
-    
+
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
+    @Column(name = "ID", columnDefinition = "INTEGER")
     private Long id;
-    
-    //申请编号
-    @Column(name = "C_REFNO",  columnDefinition="VARCHAR" )
+
+    // 申请编号
+    @Column(name = "C_REFNO", columnDefinition = "VARCHAR")
     private String refNo;
-    
-    //发票代码
-    @Column(name = "C_INVOICE_CODE",  columnDefinition="VARCHAR" )
+
+    // 发票代码
+    @Column(name = "C_INVOICE_CODE", columnDefinition = "VARCHAR")
     private String invoiceCode;
-    
-    //发票号码
-    @Column(name = "C_INVOICE_NO",  columnDefinition="VARCHAR" )
+
+    // 发票号码
+    @Column(name = "C_INVOICE_NO", columnDefinition = "VARCHAR")
     private String invoiceNo;
-    
-    //客户编号
-    @Column(name = "L_CUSTNO",  columnDefinition="INTEGER" )
+
+    // 客户编号
+    @Column(name = "L_CUSTNO", columnDefinition = "INTEGER")
     private Long custNo;
-    
-    //客户名称
-    @Column(name = "L_CUSTNAME",  columnDefinition="VARCHAR" )
+
+    // 客户名称
+    @Column(name = "L_CUSTNAME", columnDefinition = "VARCHAR")
     private String custName;
-    
-    //核心企业Id
-    @Column(name = "L_CORE_CUSTNO",  columnDefinition="INTEGER" )
+
+    // 核心企业Id
+    @Column(name = "L_CORE_CUSTNO", columnDefinition = "INTEGER")
     private Long coreCustNo;
-    
-    //核心企业名称
-    @Column(name = "L_CORE_CUSTNAME",  columnDefinition="VARCHAR" )
+
+    // 核心企业名称
+    @Column(name = "L_CORE_CUSTNAME", columnDefinition = "VARCHAR")
     private String coreCustName;
-    
-    //操作机构
-    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
+
+    // 操作机构
+    @Column(name = "C_OPERORG", columnDefinition = "VARCHAR")
     private String operOrg;
-    
-    //确认人名字
-    @Column(name = "C_CONFIRM_OPERNAME",  columnDefinition="VARCHAR" )
+
+    // 确认人名字
+    @Column(name = "C_CONFIRM_OPERNAME", columnDefinition = "VARCHAR")
     private String confirmOperName;
-    
-    //确认日期
-    @Column(name = "D_CONFIRM_DATE",  columnDefinition="VARCHAR" )
+
+    // 确认日期
+    @Column(name = "D_CONFIRM_DATE", columnDefinition = "VARCHAR")
     private String confirmDate;
-    
-    ////确认时间
-    @Column(name = "T_CONFIRM_TIME",  columnDefinition="VARCHAR" )
+
+    //// 确认时间
+    @Column(name = "T_CONFIRM_TIME", columnDefinition = "VARCHAR")
     private String confirmTime;
 
-    //确认人Id
-    @Column(name = "L_CONFIRM_OPERID",  columnDefinition="INTEGER" )
+    // 确认人Id
+    @Column(name = "L_CONFIRM_OPERID", columnDefinition = "INTEGER")
     private Long confirmOperId;
-    
-    //开票日期
-    @Column(name = "D_INVOICE_DATE",  columnDefinition="VARCHAR" )
+
+    // 开票日期
+    @Column(name = "D_INVOICE_DATE", columnDefinition = "VARCHAR")
     private String invoiceDate;
-    
+
     /**
      * 发票总金额
      */
-    @Column(name = "F_BALANCE",  columnDefinition="DECIMAL" )
-    @MetaData( value="总金额", comments = "总金额")
+    @Column(name = "F_BALANCE", columnDefinition = "DECIMAL")
+    @MetaData(value = "总金额", comments = "总金额")
     private BigDecimal balance;
-    
-    //开票人
-    @Column(name = "C_DRAWER",  columnDefinition="VARCHAR" )
+
+    // 开票人
+    @Column(name = "C_DRAWER", columnDefinition = "VARCHAR")
     private String drawer;
-    
-    //上传的批次号
-    @Column(name = "N_BATCHNO",  columnDefinition="INTEGER" )
+
+    // 上传的批次号
+    @Column(name = "N_BATCHNO", columnDefinition = "INTEGER")
     private Long batchNo;
 
-    //状态 0 初始化状态 1 待开票  2 开票中  3 已开票   4 作废
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
+    // 状态 0 初始化状态 1 待开票 2 开票中 3 已开票 4 作废
+    @Column(name = "C_BUSIN_STATUS", columnDefinition = "VARCHAR")
     private String businStatus;
-    
-    
-    //备注
-    @Column(name = "C_DESCRIPTION",  columnDefinition="VARCHAR" )
+
+    // 备注
+    @Column(name = "C_DESCRIPTION", columnDefinition = "VARCHAR")
     private String description;
-    
-    //注册人名字
-    @Column(name = "C_REG_OPERNAME",  columnDefinition="VARCHAR" )
+
+    // 注册人名字
+    @Column(name = "C_REG_OPERNAME", columnDefinition = "VARCHAR")
     private String regOperName;
-    
-    //注册日期
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
+
+    // 注册日期
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
-    
-    ////注册时间
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
+
+    //// 注册时间
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
     @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String regTime;
 
-    //注册人Id
-    @Column(name = "L_REG_OPERID",  columnDefinition="INTEGER" )
+    // 注册人Id
+    @Column(name = "L_REG_OPERID", columnDefinition = "INTEGER")
     private Long regOperId;
-    
-    
-    //提交开票人名字
-    @Column(name = "C_AUDIT_OPERNAME",  columnDefinition="VARCHAR" )
+
+    // 提交开票人名字
+    @Column(name = "C_AUDIT_OPERNAME", columnDefinition = "VARCHAR")
     private String auditOperName;
-    
-    //提交开票日期
-    @Column(name = "D_AUDIT_DATE",  columnDefinition="VARCHAR" )
+
+    // 提交开票日期
+    @Column(name = "D_AUDIT_DATE", columnDefinition = "VARCHAR")
     private String auditDate;
-    
-    ////提交开票时间
-    @Column(name = "T_AUDIT_TIME",  columnDefinition="VARCHAR" )
+
+    //// 提交开票时间
+    @Column(name = "T_AUDIT_TIME", columnDefinition = "VARCHAR")
     private String auditTime;
-    
-    //提交开票人Id
-    @Column(name = "L_AUDIT_OPERID",  columnDefinition="INTEGER" )
+
+    // 提交开票人Id
+    @Column(name = "L_AUDIT_OPERID", columnDefinition = "INTEGER")
     private Long auditOperId;
-    
+
     /**
      * 平台发票抬头Id
      */
-    @Column(name = "L_CUSTINVOICE_ID",  columnDefinition="INTEGER" )
-    @MetaData( value="平台发票抬头Id", comments = "平台发票抬头Id")
+    @Column(name = "L_CUSTINVOICE_ID", columnDefinition = "INTEGER")
+    @MetaData(value = "平台发票抬头Id", comments = "平台发票抬头Id")
     private Long custInvoiceId;
-    
+
     @Transient
     private CommissionInvoiceCustInfo custInvoiceInfo;
-    
-    @Column(name = "L_CORECUSTINVOICE_ID",  columnDefinition="INTEGER" )
-    @MetaData( value="核心企业发票抬头id", comments = "核心企业发票抬头id")
+
+    @Column(name = "L_CORECUSTINVOICE_ID", columnDefinition = "INTEGER")
+    @MetaData(value = "核心企业发票抬头id", comments = "核心企业发票抬头id")
     private Long coreCustInvoiceId;
-    
+
     @Transient
     private CommissionInvoiceCustInfo coreCustInvoiceInfo;
-    
-    //发票种类  0 普通发票  1 专用发票
-    @Column(name = "C_INVOICE_TYPE",  columnDefinition="VARCHAR" )
-    private String invoiceType;
-    
-    //发票内容
-    @Column(name = "C_INVOICE_CONTENT",  columnDefinition="VARCHAR" )
-    private String invoiceContent;
-    
-    
-    @Column(name = "F_TAX_BALANCE",  columnDefinition="DECIMAL" )
-    @MetaData( value="税额", comments = "税额")
-    private BigDecimal taxBalance;
-    
-    
-    @Column(name = "F_INTEREST_BALANCE",  columnDefinition="DECIMAL" )
-    @MetaData( value="发票金额", comments = "发票金额")
-    private BigDecimal interestBalance;
-    
-    
-    @Column(name = "F_TAX_RATE",  columnDefinition="DECIMAL" )
-    @MetaData( value="税率", comments = "税率")
-    private BigDecimal taxRate;
 
+    // 发票种类 0 普通发票 1 专用发票
+    @Column(name = "C_INVOICE_TYPE", columnDefinition = "VARCHAR")
+    private String invoiceType;
+
+    // 发票内容
+    @Column(name = "C_INVOICE_CONTENT", columnDefinition = "VARCHAR")
+    private String invoiceContent;
+
+    @Column(name = "F_TAX_BALANCE", columnDefinition = "DECIMAL")
+    @MetaData(value = "税额", comments = "税额")
+    private BigDecimal taxBalance;
+
+    @Column(name = "F_INTEREST_BALANCE", columnDefinition = "DECIMAL")
+    @MetaData(value = "发票金额", comments = "发票金额")
+    private BigDecimal interestBalance;
+
+    @Column(name = "F_TAX_RATE", columnDefinition = "DECIMAL")
+    @MetaData(value = "税率", comments = "税率")
+    private BigDecimal taxRate;
 
     public Long getId() {
         return this.id;
     }
 
-
     public void setId(Long anId) {
         this.id = anId;
     }
-
 
     public String getRefNo() {
         return this.refNo;
     }
 
-
     public void setRefNo(String anRefNo) {
         this.refNo = anRefNo;
     }
-
 
     public String getInvoiceCode() {
         return this.invoiceCode;
     }
 
-
     public void setInvoiceCode(String anInvoiceCode) {
         this.invoiceCode = anInvoiceCode;
     }
-
 
     public String getInvoiceNo() {
         return this.invoiceNo;
     }
 
-
     public void setInvoiceNo(String anInvoiceNo) {
         this.invoiceNo = anInvoiceNo;
     }
-
 
     public Long getCustNo() {
         return this.custNo;
     }
 
-
     public void setCustNo(Long anCustNo) {
         this.custNo = anCustNo;
     }
-
 
     public String getCustName() {
         return this.custName;
     }
 
-
     public void setCustName(String anCustName) {
         this.custName = anCustName;
     }
-
 
     public Long getCoreCustNo() {
         return this.coreCustNo;
     }
 
-
     public void setCoreCustNo(Long anCoreCustNo) {
         this.coreCustNo = anCoreCustNo;
     }
-
 
     public String getCoreCustName() {
         return this.coreCustName;
     }
 
-
     public void setCoreCustName(String anCoreCustName) {
         this.coreCustName = anCoreCustName;
     }
-
 
     public String getOperOrg() {
         return this.operOrg;
     }
 
-
     public void setOperOrg(String anOperOrg) {
         this.operOrg = anOperOrg;
     }
-
 
     public String getConfirmOperName() {
         return this.confirmOperName;
     }
 
-
     public void setConfirmOperName(String anConfirmOperName) {
         this.confirmOperName = anConfirmOperName;
     }
-
 
     public String getConfirmDate() {
         return this.confirmDate;
     }
 
-
     public void setConfirmDate(String anConfirmDate) {
         this.confirmDate = anConfirmDate;
     }
-
 
     public String getConfirmTime() {
         return this.confirmTime;
     }
 
-
     public void setConfirmTime(String anConfirmTime) {
         this.confirmTime = anConfirmTime;
     }
-
 
     public Long getConfirmOperId() {
         return this.confirmOperId;
     }
 
-
     public void setConfirmOperId(Long anConfirmOperId) {
         this.confirmOperId = anConfirmOperId;
     }
-
 
     public String getInvoiceDate() {
         return this.invoiceDate;
     }
 
-
     public void setInvoiceDate(String anInvoiceDate) {
         this.invoiceDate = anInvoiceDate;
     }
-
 
     public BigDecimal getBalance() {
         return this.balance;
     }
 
-
     public void setBalance(BigDecimal anBalance) {
         this.balance = anBalance;
     }
-
 
     public String getDrawer() {
         return this.drawer;
     }
 
-
     public void setDrawer(String anDrawer) {
         this.drawer = anDrawer;
     }
-
 
     public Long getBatchNo() {
         return this.batchNo;
     }
 
-
     public void setBatchNo(Long anBatchNo) {
         this.batchNo = anBatchNo;
     }
-
 
     public String getBusinStatus() {
         return this.businStatus;
     }
 
-
     public void setBusinStatus(String anBusinStatus) {
         this.businStatus = anBusinStatus;
     }
-
 
     public String getDescription() {
         return this.description;
     }
 
-
     public void setDescription(String anDescription) {
         this.description = anDescription;
     }
-
 
     public String getRegOperName() {
         return this.regOperName;
     }
 
-
     public void setRegOperName(String anRegOperName) {
         this.regOperName = anRegOperName;
     }
-
 
     public String getRegDate() {
         return this.regDate;
     }
 
-
     public void setRegDate(String anRegDate) {
         this.regDate = anRegDate;
     }
-
 
     public String getRegTime() {
         return this.regTime;
     }
 
-
     public void setRegTime(String anRegTime) {
         this.regTime = anRegTime;
     }
-
 
     public Long getRegOperId() {
         return this.regOperId;
     }
 
-
     public void setRegOperId(Long anRegOperId) {
         this.regOperId = anRegOperId;
     }
-
 
     public String getAuditOperName() {
         return this.auditOperName;
     }
 
-
     public void setAuditOperName(String anAuditOperName) {
         this.auditOperName = anAuditOperName;
     }
-
 
     public String getAuditDate() {
         return this.auditDate;
     }
 
-
     public void setAuditDate(String anAuditDate) {
         this.auditDate = anAuditDate;
     }
-
 
     public String getAuditTime() {
         return this.auditTime;
     }
 
-
     public void setAuditTime(String anAuditTime) {
         this.auditTime = anAuditTime;
     }
-
 
     public Long getAuditOperId() {
         return this.auditOperId;
     }
 
-
     public void setAuditOperId(Long anAuditOperId) {
         this.auditOperId = anAuditOperId;
     }
-
 
     public Long getCustInvoiceId() {
         return this.custInvoiceId;
     }
 
-
     public void setCustInvoiceId(Long anCustInvoiceId) {
         this.custInvoiceId = anCustInvoiceId;
     }
-
 
     public CommissionInvoiceCustInfo getCustInvoiceInfo() {
         return this.custInvoiceInfo;
     }
 
-
     public void setCustInvoiceInfo(CommissionInvoiceCustInfo anCustInvoiceInfo) {
         this.custInvoiceInfo = anCustInvoiceInfo;
     }
-
 
     public Long getCoreCustInvoiceId() {
         return this.coreCustInvoiceId;
     }
 
-
     public void setCoreCustInvoiceId(Long anCoreCustInvoiceId) {
         this.coreCustInvoiceId = anCoreCustInvoiceId;
     }
-
 
     public CommissionInvoiceCustInfo getCoreCustInvoiceInfo() {
         return this.coreCustInvoiceInfo;
     }
 
-
     public void setCoreCustInvoiceInfo(CommissionInvoiceCustInfo anCoreCustInvoiceInfo) {
         this.coreCustInvoiceInfo = anCoreCustInvoiceInfo;
     }
-
 
     public String getInvoiceType() {
         return this.invoiceType;
     }
 
-
     public void setInvoiceType(String anInvoiceType) {
         this.invoiceType = anInvoiceType;
     }
-
 
     public String getInvoiceContent() {
         return this.invoiceContent;
     }
 
-
     public void setInvoiceContent(String anInvoiceContent) {
         this.invoiceContent = anInvoiceContent;
     }
-
 
     public BigDecimal getTaxBalance() {
         return this.taxBalance;
     }
 
-
     public void setTaxBalance(BigDecimal anTaxBalance) {
         this.taxBalance = anTaxBalance;
     }
-
 
     public BigDecimal getInterestBalance() {
         return this.interestBalance;
     }
 
-
     public void setInterestBalance(BigDecimal anInterestBalance) {
         this.interestBalance = anInterestBalance;
     }
-
 
     public BigDecimal getTaxRate() {
         return this.taxRate;
     }
 
-
     public void setTaxRate(BigDecimal anTaxRate) {
         this.taxRate = anTaxRate;
     }
-
 
     @Override
     public int hashCode() {
@@ -588,7 +506,6 @@ public class CommissionInvoice implements BetterjrEntity{
         result = prime * result + ((this.taxRate == null) ? 0 : this.taxRate.hashCode());
         return result;
     }
-
 
     @Override
     public boolean equals(Object obj) {
@@ -731,7 +648,6 @@ public class CommissionInvoice implements BetterjrEntity{
         return true;
     }
 
-
     @Override
     public String toString() {
         return "CommissionInvoice [id=" + this.id + ", refNo=" + this.refNo + ", invoiceCode=" + this.invoiceCode + ", invoiceNo=" + this.invoiceNo
@@ -747,9 +663,8 @@ public class CommissionInvoice implements BetterjrEntity{
                 + this.interestBalance + ", taxRate=" + this.taxRate + "]";
     }
 
-
     public void initAddValue(CustOperatorInfo anOperatorInfo) {
-       
+
         BTAssert.notNull(anOperatorInfo, "新增佣金参数失败！请先登录");
         this.setRegDate(BetterDateUtils.getNumDate());
         this.setRegTime(BetterDateUtils.getNumTime());
@@ -757,29 +672,27 @@ public class CommissionInvoice implements BetterjrEntity{
         this.setRegOperName(anOperatorInfo.getName());
         this.setId(SerialGenerator.getLongValue("CommissionInvoice.id"));
         this.setBusinStatus("0");
-        this.setRefNo(SequenceFactory.generate("PLAT_COMMON", "#{Date:yyyyMMdd}#{Seq:12}","D"));
+        this.setRefNo(SequenceFactory.generate("PLAT_COMMON", "#{Date:yyyyMMdd}#{Seq:12}", "D"));
     }
 
-
     public void initConfirmValue(CustOperatorInfo anOperatorInfo) {
-        
+
         BTAssert.notNull(anOperatorInfo, "新增佣金参数失败！请先登录");
         this.setConfirmDate(BetterDateUtils.getNumDate());
         this.setConfirmTime(BetterDateUtils.getNumTime());
         this.setConfirmOperId(anOperatorInfo.getId());
         this.setConfirmOperName(anOperatorInfo.getName());
         this.setBusinStatus("2");
-        
+
     }
 
-
     public void initAuditValue(CustOperatorInfo anOperatorInfo, CommissionInvoice anInvoice) {
-        
+
         BTAssert.notNull(anOperatorInfo, "新增佣金参数失败！请先登录");
         this.setAuditDate(BetterDateUtils.getNumDate());
         this.setAuditTime(BetterDateUtils.getNumTime());
         this.setAuditOperId(anOperatorInfo.getId());
-        this.setAuditOperName(anOperatorInfo.getName()); 
+        this.setAuditOperName(anOperatorInfo.getName());
         this.setBusinStatus("3");
         this.setInvoiceCode(anInvoice.getInvoiceCode());
         this.setInvoiceNo(anInvoice.getInvoiceNo());
@@ -787,6 +700,5 @@ public class CommissionInvoice implements BetterjrEntity{
         this.setInvoiceDate(anInvoice.getInvoiceDate());
         this.setDrawer(anInvoice.getDrawer());
     }
-   
 
 }
