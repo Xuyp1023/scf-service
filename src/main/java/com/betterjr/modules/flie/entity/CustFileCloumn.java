@@ -17,7 +17,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @Table(name = "t_cust_file_ordercloumn")
 public class CustFileCloumn implements BetterjrEntity {
 
-    
     /**
      * 
      */
@@ -27,96 +26,96 @@ public class CustFileCloumn implements BetterjrEntity {
      * 流水号
      */
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
-    @MetaData( value="流水号", comments = "流水号")
+    @Column(name = "ID", columnDefinition = "INTEGER")
+    @MetaData(value = "流水号", comments = "流水号")
     private Long id;
-    
+
     /**
-     * 解析的文件类型1订单 2票据  3应收账款 4发票 5 合同
+     * 解析的文件类型1订单 2票据 3应收账款 4发票 5 合同
      */
-    @Column(name = "C_INFO_TYPE",  columnDefinition="VARCHAR" )
-    @MetaData( value="解析的文件类型1订单 2票据  3应收账款 4发票 5 合同", comments = "解析的文件类型1订单 2票据  3应收账款 4发票 5 合同")
+    @Column(name = "C_INFO_TYPE", columnDefinition = "VARCHAR")
+    @MetaData(value = "解析的文件类型1订单 2票据  3应收账款 4发票 5 合同", comments = "解析的文件类型1订单 2票据  3应收账款 4发票 5 合同")
     private String infoType;
-    
+
     /**
-     * 当前列的类型0 字符串   1 数字
+     * 当前列的类型0 字符串 1 数字
      */
-    @Column(name = "C_CLOUMN_TYPE",  columnDefinition="VARCHAR" )
-    @MetaData( value="当前列的类型0 字符串   1 数字", comments = "当前列的类型0 字符串   1 数字")
+    @Column(name = "C_CLOUMN_TYPE", columnDefinition = "VARCHAR")
+    @MetaData(value = "当前列的类型0 字符串   1 数字", comments = "当前列的类型0 字符串   1 数字")
     private String cloumnType;
-    
+
     /**
-     * 标记上传下载   上传1  下载2
+     * 标记上传下载 上传1 下载2
      */
-    @Column(name = "C_UP_FLAG",  columnDefinition="VARCHAR" )
-    @MetaData( value="标记上传下载   上传1  下载2", comments = "标记上传下载   上传1  下载2")
+    @Column(name = "C_UP_FLAG", columnDefinition = "VARCHAR")
+    @MetaData(value = "标记上传下载   上传1  下载2", comments = "标记上传下载   上传1  下载2")
     private String upFlag;
-    
+
     /**
-     * 当前记录是否可用      0 可用  1过期
+     * 当前记录是否可用 0 可用 1过期
      */
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value=" 当前记录是否可用      0 可用  1过期", comments = " 当前记录是否可用      0 可用  1过期")
+    @Column(name = "C_BUSIN_STATUS", columnDefinition = "VARCHAR")
+    @MetaData(value = " 当前记录是否可用      0 可用  1过期", comments = " 当前记录是否可用      0 可用  1过期")
     private String businStatus;
-    
+
     /**
      * 文件列排序序号
      */
     @Column(name = "L_CLOUMN_ORDER", columnDefinition = "INTEGER")
     @MetaData(value = "文件列排序序号", comments = "文件列排序序号")
     private Integer cloumnOrder;
-    
+
     /**
      * 文件列对应的属性
      */
-    @Column(name = "C_CLOUMN_PROPERTIES",  columnDefinition="VARCHAR" )
-    @MetaData( value=" 文件列对应的属性", comments = "文件列对应的属性")
+    @Column(name = "C_CLOUMN_PROPERTIES", columnDefinition = "VARCHAR")
+    @MetaData(value = " 文件列对应的属性", comments = "文件列对应的属性")
     private String cloumnProperties;
-    
+
     /**
      * 文件列对应的属性名称
      */
-    @Column(name = "C_CLOUMN_NAME",  columnDefinition="VARCHAR" )
-    @MetaData( value=" 文件列对应的属性", comments = "文件列对应的属性")
+    @Column(name = "C_CLOUMN_NAME", columnDefinition = "VARCHAR")
+    @MetaData(value = " 文件列对应的属性", comments = "文件列对应的属性")
     private String cloumnName;
-    
+
     /**
      * 创建日期
      */
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="创建日期", comments = "创建日期")
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "创建日期", comments = "创建日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
-    
+
     /**
      * 创建时间
      */
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="创建时间", comments = "创建时间")
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "创建时间", comments = "创建时间")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regTime;
-    
+
     /**
-     * 1 必须  0 不必须
+     * 1 必须 0 不必须
      */
     @Column(name = "L_IS_MUST", columnDefinition = "INTEGER")
     @MetaData(value = "1 必须  0 不必须", comments = "1 必须  0 不必须")
     private Integer isMust;
-    
+
     /**
      * 解析开始行
      */
     @Column(name = "N_BEGIN_ROW", columnDefinition = "INTEGER")
     @MetaData(value = "解析开始行", comments = "解析开始行")
     private Integer beginRow;
-    
+
     /**
      * 末尾有几行数据无法使用
      */
     @Column(name = "N_END_ROW", columnDefinition = "INTEGER")
     @MetaData(value = "末尾有几行数据无法使用", comments = "末尾有几行数据无法使用")
     private Integer endRow;
-    
+
     public Integer getBeginRow() {
         return this.beginRow;
     }
@@ -153,7 +152,6 @@ public class CustFileCloumn implements BetterjrEntity {
         return this.infoType;
     }
 
-    
     public String getCloumnName() {
         return this.cloumnName;
     }
@@ -283,7 +281,6 @@ public class CustFileCloumn implements BetterjrEntity {
         return true;
     }
 
-
     @Override
     public String toString() {
         return "CustFileCloumn [id=" + this.id + ", infoType=" + this.infoType + ", upFlag=" + this.upFlag + ", businStatus=" + this.businStatus
@@ -294,6 +291,5 @@ public class CustFileCloumn implements BetterjrEntity {
     public CustFileCloumn() {
         super();
     }
-    
-    
+
 }

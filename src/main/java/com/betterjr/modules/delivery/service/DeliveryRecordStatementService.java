@@ -23,48 +23,50 @@ public class DeliveryRecordStatementService extends BaseService<DeliveryRecordSt
 
     @Autowired
     private CommissionMonthlyStatementService montylyService;
+
     /**
      * 根据快递账单的凭证编号查询当前下面的月账单
+     * 
      * @param anDeliverRefNo
      * @return
      */
-    public List<DeliveryRecordStatement> queryDeliveryStatementList(String anDeliverRefNo){
-        
-        BTAssert.notNull(anDeliverRefNo,"查询佣金文件条件为空");
-        //查询当前公司的佣金文件
-        Map<String,Object> queryMap = QueryTermBuilder.newInstance()
-        .put("deliverRefNo", anDeliverRefNo)
-        .put("businStatus", DeliveryConstantCollentions.DELIVERY_STATEMENT_BUSIN_STATUS_CANUSERD)
-        .build();
-        
+    public List<DeliveryRecordStatement> queryDeliveryStatementList(String anDeliverRefNo) {
+
+        BTAssert.notNull(anDeliverRefNo, "查询佣金文件条件为空");
+        // 查询当前公司的佣金文件
+        Map<String, Object> queryMap = QueryTermBuilder.newInstance().put("deliverRefNo", anDeliverRefNo)
+                .put("businStatus", DeliveryConstantCollentions.DELIVERY_STATEMENT_BUSIN_STATUS_CANUSERD).build();
+
         return this.selectByProperty(queryMap);
-        
+
     }
 
     /**
      * 插入投递明细帐信息
+     * 
      * @param anRecordStatementList
      * @return
      */
     public List<DeliveryRecordStatement> saveAddStatementByList(List<DeliveryRecordStatement> anRecordStatementList) {
-        
+
         for (DeliveryRecordStatement deliveryRecordStatement : anRecordStatementList) {
-            
+
             deliveryRecordStatement.saveAddInit();
             this.insert(deliveryRecordStatement);
         }
-        
+
         return anRecordStatementList;
     }
-    
+
     /**
      * 更新对账单明细状态
+     * 
      * @param anId
      * @param anExpressStatus
      * @return
      */
-    public DeliveryRecordStatement saveUpdateStatementExpressStatus(Long anId,String anExpressStatus){
-        
+    public DeliveryRecordStatement saveUpdateStatementExpressStatus(Long anId, String anExpressStatus) {
+
         DeliveryRecordStatement statement = this.selectByPrimaryKey(anId);
         statement.setExpressStatus(anExpressStatus);
         this.updateByPrimaryKeySelective(statement);
@@ -73,6 +75,7 @@ public class DeliveryRecordStatementService extends BaseService<DeliveryRecordSt
 
     /**
      * 青海移动查询投递账单明细情况
+     * 
      * @param anQueryMap
      * @param anFlag
      * @param anPageNum
@@ -80,38 +83,36 @@ public class DeliveryRecordStatementService extends BaseService<DeliveryRecordSt
      * @return
      */
     public Page queryDeliveryStatementList(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
-        
-      //去除空白字符串的查询条件
+
+        // 去除空白字符串的查询条件
         anMap = Collections3.filterMapEmptyObject(anMap);
-      //是核心企业查询
-        if(!(anMap.containsKey("expressStatus") && anMap.get("expressStatus") !=null) ){
-            List<String> businStatusList=new ArrayList<>();
+        // 是核心企业查询
+        if (!(anMap.containsKey("expressStatus") && anMap.get("expressStatus") != null)) {
+            List<String> businStatusList = new ArrayList<>();
             businStatusList.add(DeliveryConstantCollentions.DELIVERY_STATEMENT_EXPRESS_STATUS_EXPRESS);
             businStatusList.add(DeliveryConstantCollentions.DELIVERY_STATEMENT_EXPRESS_STATUS_CONFIREM);
             anMap.put("expressStatus", businStatusList);
         }
         anMap.put("ownOperOrg", UserUtils.getOperatorInfo().getOperOrg());
         anMap.put("businStatus", DeliveryConstantCollentions.DELIVERY_STATEMENT_BUSIN_STATUS_CANUSERD);
-        
+
         return this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
     }
 
-  //删除对账单明细和重置月账单为审核状态
+    // 删除对账单明细和重置月账单为审核状态
     public void saveDeleteRecordStatementByRecordId(Long anRecordId) {
-        
-        ////0 可用   1 不可用，已删除状态
-        Map<String,Object> queryMap = QueryTermBuilder.newInstance()
-                .put("deliverId", anRecordId)
-                .put("businStatus", DeliveryConstantCollentions.DELIVERY_STATEMENT_BUSIN_STATUS_CANUSERD)
-                .build();
-        
+
+        //// 0 可用 1 不可用，已删除状态
+        Map<String, Object> queryMap = QueryTermBuilder.newInstance().put("deliverId", anRecordId)
+                .put("businStatus", DeliveryConstantCollentions.DELIVERY_STATEMENT_BUSIN_STATUS_CANUSERD).build();
+
         List<DeliveryRecordStatement> recordStatementList = this.selectByProperty(queryMap);
         for (DeliveryRecordStatement statement : recordStatementList) {
-            Long monthlyId=statement.getMonthlyStatementId();
+            Long monthlyId = statement.getMonthlyStatementId();
             montylyService.saveMonthlyStatement(monthlyId, "2");
             this.delete(statement);
         }
-        
+
     }
-    
+
 }
