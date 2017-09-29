@@ -92,7 +92,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
      * @param anGTEsignDate
      *            起始日期
      * @param anLTEsignDate
-     *            截止日期
+     *            * 截止日期
      * @param anSignStatus
      *            签约状态
      * @param anPageNum
@@ -274,7 +274,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
 
             final CustFileItem tmpFileItem = this.dataStoreService.saveStreamToStoreWithBatchNo(new ByteArrayInputStream(tmpStub.getResult()),
                     "signFile", electAgreement.getAgreeName().concat(".pdf"));
-            // anElecAgree.setHtmlBatchNo(this.dataStoreService.savePdf2ImageStand(new ByteArrayInputStream(tmpStub.getResult())));
+            anElecAgree.setHtmlBatchNo(this.dataStoreService.savePdf2ImageStand(new ByteArrayInputStream(tmpStub.getResult())));
             saveSignFileInfo(anElecAgree, tmpFileItem, true);
         }
         else {
@@ -782,7 +782,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         final Set<Long> custNoSet = new HashSet(custNoList);
         final ScfElecAgreementInfo elecAgree = new ScfElecAgreementInfo();
         BeanMapper.copy(this.selectByPrimaryKey(anAppNo), elecAgree);
-        findAgreemtnBill(elecAgree, custNoSet);
+        // findAgreemtnBill(elecAgree, custNoSet);
         return elecAgree;
     }
 
@@ -888,5 +888,57 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
             return template;
         }
         return null;
+    }
+
+    /**
+     * 查找HTMLNO包括的图片文件信息
+     * 
+     * @param anHtmlNo
+     *            HTMLNO编号
+     * @param anAppNo
+     *            电子合同单号
+     * @return
+     */
+    public List<Map> findBatchHtmlNoIncodeFiles(final String anAppNo, final Long anHtmlNo) {
+        final ScfElecAgreement agreement = this.selectByPrimaryKey(anAppNo);
+        if (MathExtend.smallValue(anHtmlNo) || agreement == null || MathExtend.smallValue(agreement.getHtmlBatchNo())
+                || agreement.getHtmlBatchNo().longValue() != anHtmlNo.longValue()) {
+            return new ArrayList(0);
+        }
+        final List<Map> result = new ArrayList();
+        Map tmpMap;
+        for (final CustFileItem tmpItem : this.fileItemService.findCustFiles(anHtmlNo)) {
+            tmpMap = new HashMap();
+            tmpMap.put("batchNo", anHtmlNo);
+            tmpMap.put("id", tmpItem.getId());
+            result.add(tmpMap);
+        }
+        return result;
+    }
+
+    /**
+     * 查找电子合同对应的签署文件IMAGE图片信息
+     * 
+     * @param anAppNo
+     *            电子合同申请单号
+     * @param anBatchNo
+     *            电子合同IMAGE图片批次号
+     * @param anId
+     *            具体的IMAGE图片
+     * @return
+     */
+    public CustFileItem findSignedImage(final String anAppNo, final Long anBatchNo, final Long anId) {
+        final ScfElecAgreement agreement = this.selectByPrimaryKey(anAppNo);
+        if (MathExtend.smallValue(anBatchNo) || agreement == null || MathExtend.smallValue(agreement.getHtmlBatchNo())
+                || agreement.getHtmlBatchNo().longValue() != anBatchNo.longValue()) {
+
+            return new CustFileItem();
+        }
+        final CustFileItem tmpItem = this.fileItemService.findOne(anId);
+        if (anBatchNo.equals(tmpItem.getBatchNo())) {
+
+            return tmpItem;
+        }
+        return new CustFileItem();
     }
 }

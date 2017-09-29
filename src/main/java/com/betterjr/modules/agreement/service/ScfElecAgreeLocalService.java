@@ -3,6 +3,7 @@ package com.betterjr.modules.agreement.service;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -160,4 +161,25 @@ public abstract class ScfElecAgreeLocalService {
      * @return
      */
     public abstract boolean cancelElecAgreement(String anDescribe);
+
+    /**
+     * 创建输出显示内容，带上类型信息
+     * 
+     * @return
+     */
+    public Map<String, Object> createOutHtmlInfoWithType() {
+        final Map<String, Object> result = new HashMap();
+        Object tmpData = null;
+        Boolean tmpSigned = Boolean.FALSE;
+        if (MathExtend.smallValue(this.elecAgree.getHtmlBatchNo())) {
+            tmpData = createOutHtmlInfo();
+        }
+        else {
+            tmpSigned = Boolean.TRUE;
+            tmpData = this.elecAgreeService.findBatchHtmlNoIncodeFiles(this.elecAgree.getAppNo(), this.elecAgree.getHtmlBatchNo());
+        }
+        result.put("data", tmpData);
+        result.put("signed", tmpSigned);
+        return result;
+    }
 }

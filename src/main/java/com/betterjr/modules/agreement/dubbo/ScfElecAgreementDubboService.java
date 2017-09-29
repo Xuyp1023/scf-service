@@ -49,7 +49,8 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
 
     @Override
     public String webFindElecAgreePage(final String anAppNo) {
-        return AjaxObject.newOk("生成电子合同的静态页面", scfAgreementService.createOutHtmlInfo(anAppNo)).toJson();
+
+        return AjaxObject.newOk("生成电子合同的静态页面", scfAgreementService.createOutHtmlInfoWithType(anAppNo)).toJson();
     }
 
     /****
@@ -309,5 +310,11 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
     @Override
     public String updateFactorAgree(final String anAppNo, final String anStatus) {
         return AjaxObject.newOk(this.scfElecAgreementService.updateFactorAgree(anAppNo, anStatus)).toJson();
+    }
+
+    @Override
+    public CustFileItem webFindSignedImage(final String anAppNo, final Long anBatchNo, final Long anId) {
+
+        return scfElecAgreementService.findSignedImage(anAppNo, anBatchNo, anId);
     }
 }
