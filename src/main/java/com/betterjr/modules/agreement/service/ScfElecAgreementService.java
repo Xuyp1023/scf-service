@@ -633,14 +633,11 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         elecAgree.setFactorName(DictUtils.getDictLabel("ScfAgencyGroup", elecAgree.getFactorNo()));
         elecAgree.setProductName(findProductNameByRequestNo(elecAgree.getRequestNo()));
         // 加入票据属性
-        final ScfAcceptBill bill = findBillInfoByRequestNo(elecAgree.getRequestNo());
-        if (bill != null) {
-            elecAgree.setBillMode(bill.getBillMode());
-            elecAgree.setBillNo(bill.getBillNo());
-            elecAgree.setInvoiceDate(bill.getInvoiceDate());
-            elecAgree.setEndDate(bill.getEndDate());
-        }
-    }
+        /*
+         * final ScfAcceptBill bill = findBillInfoByRequestNo(elecAgree.getRequestNo()); if (bill != null) {
+         * elecAgree.setBillMode(bill.getBillMode()); elecAgree.setBillNo(bill.getBillNo()); elecAgree.setInvoiceDate(bill.getInvoiceDate());
+         * elecAgree.setEndDate(bill.getEndDate()); }
+         */ }
 
     /**
      * 更新已经签署的电子文件信息
@@ -783,7 +780,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
         final Set<Long> custNoSet = new HashSet(custNoList);
         final ScfElecAgreementInfo elecAgree = new ScfElecAgreementInfo();
         BeanMapper.copy(this.selectByPrimaryKey(anAppNo), elecAgree);
-        // findAgreemtnBill(elecAgree, custNoSet);
+        findAgreemtnBill(elecAgree, custNoSet);
         return elecAgree;
     }
 
