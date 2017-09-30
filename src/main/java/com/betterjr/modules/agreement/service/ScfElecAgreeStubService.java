@@ -19,6 +19,7 @@ import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
+import com.betterjr.common.web.Servlets;
 import com.betterjr.modules.account.entity.CustLoginRecord;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.account.service.CustAndOperatorRelaService;
@@ -84,7 +85,7 @@ public class ScfElecAgreeStubService extends BaseService<ScfElecAgreeStubMapper,
         for (final Long custNo : anCustNoList) {
             workOrder = workOrder + 1;
             tmpElecAgreeStub = new ScfElecAgreeStub(workOrder, anAppNo, custNo);
-            tmpElecAgreeStub.setIpaddr(findCustRemoteAddr(custNo));
+            // tmpElecAgreeStub.setIpaddr(findCustRemoteAddr(custNo));
             this.insert(tmpElecAgreeStub);
         }
     }
@@ -188,6 +189,7 @@ public class ScfElecAgreeStubService extends BaseService<ScfElecAgreeStubMapper,
             throw new BytterTradeException(40001, "当前电子合同签署已经处理！");
         }
         ScfElecAgreeStub.updateSignInfo(curStub, anStatus);
+        curStub.setIpaddr(Servlets.getRemoteAddr());
         curStub.setSignServiceId(anServiceId);
         this.updateByPrimaryKeySelective(curStub);
     }

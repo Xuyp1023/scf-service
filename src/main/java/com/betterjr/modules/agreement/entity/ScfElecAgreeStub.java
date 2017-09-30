@@ -9,10 +9,12 @@ import javax.persistence.Table;
 
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
+import com.betterjr.common.mapper.CustDateTimeJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -66,6 +68,7 @@ public class ScfElecAgreeStub implements BetterjrEntity {
      */
     @Column(name = "T_OPERTIME", columnDefinition = "VARCHAR")
     @MetaData(value = "操作时间", comments = "操作时间")
+    @JsonSerialize(using = CustDateTimeJsonSerializer.class)
     private String operTime;
 
     /**
