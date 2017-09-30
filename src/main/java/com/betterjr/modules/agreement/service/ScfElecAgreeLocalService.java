@@ -167,19 +167,33 @@ public abstract class ScfElecAgreeLocalService {
      * 
      * @return
      */
-    public Map<String, Object> createOutHtmlInfoWithType() {
+    public Map<String, Object> createOutHtmlInfoWithType(final boolean anCreateImage) {
         final Map<String, Object> result = new HashMap();
         Object tmpData = null;
-        Boolean tmpSigned = Boolean.FALSE;
-        if (MathExtend.smallValue(this.elecAgree.getHtmlBatchNo())) {
-            tmpData = createOutHtmlInfo();
+        Boolean tmpSigned = Boolean.TRUE;
+        if (MathExtend.smallValue(this.elecAgree.getSignBatchNo())) {
+            final StringBuffer tmpBuffer = createOutHtmlInfo();
+            if (anCreateImage) {
+                if (MathExtend.smallValue(this.elecAgree.getHtmlBatchNo())) {
+                    final ByteArrayOutputStream bOut = new ByteArrayOutputStream(1024 * 1024);
+                    CustFileUtils.exportPDF(tmpBuffer, bOut);
+                    tmpData = this.elecAgreeService.saveEleAgreeImages(new ByteArrayInputStream(bOut.toByteArray()), this.elecAgree.getAppNo());
+                }
+                else {
+                    tmpData = this.elecAgreeService.findBatchHtmlNoIncodeFiles(this.elecAgree.getAppNo(), this.elecAgree.getHtmlBatchNo());
+                }
+            }
+            else {
+                tmpData = tmpBuffer;
+                tmpSigned = Boolean.FALSE;
+            }
         }
         else {
-            tmpSigned = Boolean.TRUE;
             tmpData = this.elecAgreeService.findBatchHtmlNoIncodeFiles(this.elecAgree.getAppNo(), this.elecAgree.getHtmlBatchNo());
         }
         result.put("data", tmpData);
         result.put("signed", tmpSigned);
+
         return result;
     }
 }

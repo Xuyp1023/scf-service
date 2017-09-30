@@ -1,6 +1,7 @@
 package com.betterjr.modules.agreement.service;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -905,6 +906,12 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
                 || agreement.getHtmlBatchNo().longValue() != anHtmlNo.longValue()) {
             return new ArrayList(0);
         }
+
+        return subBatchHtmlNoIncodeFiles(anHtmlNo);
+    }
+
+    private List<Map> subBatchHtmlNoIncodeFiles(final Long anHtmlNo) {
+
         final List<Map> result = new ArrayList();
         Map tmpMap;
         for (final CustFileItem tmpItem : this.fileItemService.findCustFiles(anHtmlNo)) {
@@ -940,5 +947,21 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
             return tmpItem;
         }
         return new CustFileItem();
+    }
+
+    /**
+     * 保存合同图片文件
+     * 
+     * @param anInput
+     * @param anAppNo
+     * @return
+     */
+    public List<Map> saveEleAgreeImages(final InputStream anInput, final String anAppNo) {
+        final ScfElecAgreement agreement = this.selectByPrimaryKey(anAppNo);
+        final Long tmpBatchNo = this.dataStoreService.savePdf2ImageStand(anInput);
+        agreement.setHtmlBatchNo(tmpBatchNo);
+        this.updateByPrimaryKey(agreement);
+
+        return this.subBatchHtmlNoIncodeFiles(tmpBatchNo);
     }
 }
