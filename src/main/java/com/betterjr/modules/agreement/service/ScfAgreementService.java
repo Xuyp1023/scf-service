@@ -224,9 +224,9 @@ public class ScfAgreementService {
      * @param appNo
      * @return
      */
-    public Map<String, Object> createOutHtmlInfoWithType(final String appNo) {
+    public Map<String, Object> createOutHtmlInfoWithType(final String appNo, final boolean anCreate) {
         final ScfElecAgreeLocalService localService = ScfElecAgreementFactory.create(appNo);
-        return localService.createOutHtmlInfoWithType();
+        return localService.createOutHtmlInfoWithType(anCreate);
     }
 
 }
