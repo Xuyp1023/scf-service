@@ -48,6 +48,7 @@ import com.betterjr.modules.loan.service.ScfRequestService;
 import com.betterjr.modules.order.service.ScfOrderService;
 import com.betterjr.modules.product.service.ScfProductService;
 import com.betterjr.modules.supplieroffer.entity.ScfReceivableRequest;
+import com.betterjr.modules.supplieroffer.service.ScfReceivableRequestService;
 import com.betterjr.modules.template.entity.ScfContractTemplate;
 import com.betterjr.modules.template.service.ScfContractTemplateService;
 
@@ -86,6 +87,9 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
 
     @Autowired
     private ScfContractTemplateService contractTemplateService;
+    
+    @Autowired
+    private ScfReceivableRequestService receivableRequestService;
 
     /**
      * 查找供应商的电子合同信息
@@ -139,7 +143,7 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
             logger.info("this is findScfElecAgreementList params " + termMap);
         }
         final Page<ScfElecAgreementInfo> elecAgreeList = this.selectPropertyByPage(ScfElecAgreementInfo.class, termMap, anPageNum, anPageSize,
-                "1".equals(anParam.get("flag")));
+                "1".equals(anParam.get("flag")) ,"agreeNo Desc");
         final Set<Long> custNoSet = new HashSet(custNoList);
         for (final ScfElecAgreementInfo elecAgree : elecAgreeList) {
             findAgreemtnBill(elecAgree, custNoSet);
@@ -249,6 +253,10 @@ public class ScfElecAgreementService extends BaseService<ScfElecAgreementMapper,
             return false;
         }
         final ScfElecAgreement electAgreement = this.selectByPrimaryKey(anAppNo);
+        //回写供应商签署合同的状态
+        if(electAgreement!=null && electAgreement.getSupplierNo() !=null && electAgreement.getSupplierNo().equals(agreeStub.getCustNo())){
+            receivableRequestService.saveUpdateSupplierSignByAppNo(anAppNo);
+        }
         ContractStubData tmpStub = new ContractStubData();
         tmpStub.setCustNo(agreeStub.getCustNo());
         tmpStub.setSequence(agreeStub.getSignOrder());

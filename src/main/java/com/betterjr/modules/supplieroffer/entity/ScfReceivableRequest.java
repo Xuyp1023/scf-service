@@ -254,6 +254,27 @@ public class ScfReceivableRequest implements BetterjrEntity{
     @MetaData( value="电子合同地址", comments = "电子合同地址")
     private String agreementAppNo;
     
+    /**
+     * 供应商签署合同标记 0 未签署  1已签署
+     */
+    @Column(name = "C_SUPPLIER_SIGN_FLAG",  columnDefinition="VARCHAR" )
+    @MetaData( value="供应商签署合同标记 0 未签署  1已签署", comments = "供应商签署合同标记 0 未签署  1已签署")
+    private String supplierSignFlag;
+    
+    /**
+     * 资金方签署合同标记 0 未签署  1已签署
+     */
+    @Column(name = "C_FACTORY_SIGN_FLAG",  columnDefinition="VARCHAR" )
+    @MetaData( value="资金方签署合同标记 0 未签署  1已签署", comments = "资金方签署合同标记 0 未签署  1已签署")
+    private String factorySignFlag;
+    
+    /**
+     * 核心企业签署合同标记 0 未签署  1已签署
+     */
+    @Column(name = "C_CORE_SIGN_FLAG",  columnDefinition="VARCHAR" )
+    @MetaData( value="核心企业签署合同标记 0 未签署  1已签署", comments = "核心企业签署合同标记 0 未签署  1已签署")
+    private String coreSignFlag;
+    
     @Transient
     private ScfElecAgreement elecAgreement=new ScfElecAgreement();
     
@@ -284,6 +305,30 @@ public class ScfReceivableRequest implements BetterjrEntity{
 
     public void setCoreAgreementId(Long anCoreAgreementId) {
         this.coreAgreementId = anCoreAgreementId;
+    }
+
+    public String getSupplierSignFlag() {
+        return this.supplierSignFlag;
+    }
+
+    public void setSupplierSignFlag(String anSupplierSignFlag) {
+        this.supplierSignFlag = anSupplierSignFlag;
+    }
+
+    public String getFactorySignFlag() {
+        return this.factorySignFlag;
+    }
+
+    public void setFactorySignFlag(String anFactorySignFlag) {
+        this.factorySignFlag = anFactorySignFlag;
+    }
+
+    public String getCoreSignFlag() {
+        return this.coreSignFlag;
+    }
+
+    public void setCoreSignFlag(String anCoreSignFlag) {
+        this.coreSignFlag = anCoreSignFlag;
     }
 
     public ScfReceivableRequestAgreement getCoreAgreement() {
@@ -594,12 +639,14 @@ public class ScfReceivableRequest implements BetterjrEntity{
 
     public void saveAddValue() {
         
-        this.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_NOEFFECTIVE);
+        this.setBusinStatus(ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_NOEFFECTIVE);
         this.setEquityNo(SequenceFactory.generate("PLAT_SCFRECEIVABLErEQUESTLOGID", "RZ#{Date:yy}#{Seq:14}"));
         this.setRegDate(BetterDateUtils.getNumDate());
         this.setRegTime(BetterDateUtils.getNumTime());
         this.setRequestNo(SequenceFactory.generate("PLAT_SCFRECEIVABLErEQUESTID", "SQ#{Date:yy}#{Seq:14}"));
-        
+        this.setSupplierSignFlag(ReceivableRequestConstantCollentions.SIGN_AGREEMENT_FLAG_NO);
+        this.setFactorySignFlag(ReceivableRequestConstantCollentions.SIGN_AGREEMENT_FLAG_NO);
+        this.setCoreSignFlag(ReceivableRequestConstantCollentions.SIGN_AGREEMENT_FLAG_NO);
     }
     
     
