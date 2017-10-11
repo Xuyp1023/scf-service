@@ -52,6 +52,7 @@ import com.betterjr.modules.productconfig.sevice.ScfProductConfigService;
 import com.betterjr.modules.push.service.ScfSupplierPushService;
 import com.betterjr.modules.receivable.entity.ScfReceivableDO;
 import com.betterjr.modules.receivable.service.ScfReceivableDOService;
+import com.betterjr.modules.supplieroffer.BaseExpiredInterface;
 import com.betterjr.modules.supplieroffer.dao.ScfReceivableRequestMapper;
 import com.betterjr.modules.supplieroffer.data.OfferConstantCollentions;
 import com.betterjr.modules.supplieroffer.data.ReceivableRequestConstantCollentions;
@@ -61,7 +62,7 @@ import com.betterjr.modules.supplieroffer.entity.ScfSupplierOffer;
 import com.betterjr.modules.version.constant.VersionConstantCollentions;
 
 @Service
-public class ScfReceivableRequestService extends BaseService<ScfReceivableRequestMapper, ScfReceivableRequest> {
+public class ScfReceivableRequestService extends BaseService<ScfReceivableRequestMapper, ScfReceivableRequest> implements BaseExpiredInterface<ScfReceivableRequest> {
 
     @Autowired
     private ScfAssetService assetService;
@@ -112,27 +113,106 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
     
     @Autowired
     private ScfReceivableRequestLogService logService;
-
-    /*
-     * 模式一应收账款申请 融资资产新增
+    
+    /**
+     * 整合模式申请总的入口
      * 
-     * receivableId 存放的是应收账款id
+     * @param anMap
+     * @return
+     * 
+     *         receivableId 应收账款id
+     * 
+     *         isRequestAsset 是否必须 false 不锁定 isLockedAsset 是否锁定 true 锁定
      */
-    public ScfReceivableRequest saveAddRequest(Map<String, Object> anMap) {
+    public ScfReceivableRequest saveAddRequestTotal(Map<String, Object> anMap) {
 
         BTAssert.notNull(anMap, "融资信息为空,操作失败");
         BTAssert.notNull(anMap.get(AssetConstantCollentions.RECEIVABLE_REQUEST_BY_RECEIVABLEID_KEY), "请选择应收账款!");
-
-        ScfAsset asset = assetService.saveAddAssetNew(anMap);
+        anMap.put(AssetConstantCollentions.RECEIVABLE_REQUEST_IS_REQUEST_ASSET, false);
+        anMap.put(AssetConstantCollentions.RECEIVABLE_REQUEST_IS_LOCKED_ASSET, false);
+        ScfAsset asset = assetService.saveAddAssetNewTotal(anMap);
         // 将资产信息封装到融资中去
         ScfReceivableRequest request = convertAssetToReceviableRequest(asset);
-        request.setReceivableRequestType("1");
+        // request.setReceivableRequestType("1");
+
         request.saveAddValue();
-        fillRequestRaxInfo(request, BetterDateUtils.getNumDate());
+        // fillRequestRaxInfo(request,BetterDateUtils.getNumDate());
         // 插入电子合同信息
-        agreementService.saveAddCoreAgreementByRequest(request, "1");
-        agreementService.saveAddPlatAgreementByRequest(request);
+        // agreementService.saveAddCoreAgreementByRequest(request,"1");
+        // agreementService.saveAddPlatAgreementByRequest(request);
+        
+        //插入日志
+        logService.saveAddRequestLog(request);
+        
         this.insert(request);
+        return request;
+
+    }
+
+    /**
+     * 供应商确认提交融资申请
+     * 
+     * @param anMap
+     * @param anRequestNo
+     * @param anRequestPayDate
+     * @param anDescription
+     *            wechaMarker 微信标记 goodsBatchNo 合同附件 statementBatchNo 发票附件
+     * @return
+     */
+    public ScfReceivableRequest saveSubmitRequestTotal(Map<String, Object> anMap, String anRequestNo, String anRequestPayDate, String anDescription) {
+
+        BTAssert.notNull(anMap, "融资信息为空,操作失败");
+        BTAssert.notNull(anMap.get("requestProductCode"), "请选择保理产品");
+        BTAssert.notNull(anRequestNo, "融资信息为空,操作失败");
+        ScfReceivableRequest request = findOneByRequestNo(anRequestNo);
+        BTAssert.notNull(request, "融资信息为空,操作失败");
+        if (!getCurrentUserCustNos().contains(request.getCustNo())) {
+            BTAssert.notNull(null, "你没有当前申请的权限,操作失败");
+        }
+        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_NOEFFECTIVE, false, "当前申请已不能进行再次申请");
+        ScfProductConfig config = productConfigService.findProductConfigById(anMap.get("requestProductCode").toString());
+        BTAssert.notNull(config, "没有查询到产品配置信息");
+        // 判断是否微信来源，如果微信会上传贸易合同和发票附件信息
+        //if (anMap.containsKey("wechaMarker") && "1".equals(anMap.get("wechaMarker").toString())) {
+        convertProdectConfigToRequestAndAsset(request, config, anMap);
+        request.setBusinStatus(ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_SUPPLIER_SUBMIT);
+        /*
+         * 整合模式一和模式2的状态
+         * if ("2".equals(config.getReceivableRequestType())) {
+
+            request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_CORE_CONFIRM);
+
+        }
+         */
+       /* }
+        else {
+
+            convertProdectConfigToRequestAndAsset(request, config, null);
+            request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_SUBMIT_REQUEST);
+        }*/
+        // 设置银行账户信息
+        CustMechBankAccount account = custMechBankAccountService.findCustMechBankAccount(anMap.get("custBankAccount").toString());
+        BTAssert.notNull(account, "没有查到供应商银行帐号");
+        request.setCustBankAccount(account.getBankAcco());
+        request.setCustBankAccountName(account.getBankAccoName());
+        request.setCustBankName(account.getBankName());
+        // 插入电子合同信息
+        ScfElecAgreement agreement = elecAgreementService.saveAddElecAgreementByReceivableRequest(request);
+        request.setAgreementAppNo(agreement.getAppNo());
+        request.setElecAgreement(agreement);
+
+        ScfAsset asset = assetService.saveConfirmAsset(request.getAssetId());
+        request.setAsset(asset);
+
+        // 封装应付款钱信息
+        fillRequestRaxInfo(request, anRequestPayDate);
+        request.setDescription(anDescription);
+
+        //插入日志
+        logService.saveAddRequestLog(request);
+        
+        this.updateByPrimaryKeySelective(request);
+        
         return request;
 
     }
@@ -175,55 +255,6 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
 
     }
 
-    private void checkReceivableContainInvoices(String invoiceIds) {
-
-        List<ScfInvoiceDO> invoiceList = invoiceService.queryReceivableList(invoiceIds);
-        // 当一条记录都没有找到
-        if (Collections3.isEmpty(invoiceList)) {
-            BTAssert.notNull(null, "当前应收账款对应的发票未找到!");
-        }
-
-        // 当未找全所有的发票信息
-        if (invoiceIds.split(",").length != invoiceList.size()) {
-            BTAssert.notNull(null, "当前应收账款对应的发票还有未找到!");
-
-        }
-
-        for (ScfInvoiceDO invoiceDo : invoiceList) {
-            checkStatus(invoiceDo.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false, "对应的发票不是生效状态");
-            checkStatus(invoiceDo.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true, "对应的发票已经用于融资申请");
-
-        }
-
-    }
-
-    /**
-     * 供应商提交申请融资信息 并且生成电子合同
-     * 
-     * @param anRequestNo
-     * @param anRequestPayDate
-     * @return
-     */
-    public ScfReceivableRequest saveSubmitRequest(String anRequestNo, String anRequestPayDate, String anDescription) {
-
-        BTAssert.notNull(anRequestNo, "融资信息为空,操作失败");
-        ScfReceivableRequest request = this.selectByPrimaryKey(anRequestNo);
-        BTAssert.notNull(request, "融资信息为空,操作失败");
-        if (!getCurrentUserCustNos().contains(request.getCustNo())) {
-            BTAssert.notNull(null, "你没有当前申请的权限,操作失败");
-        }
-        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_NOEFFECTIVE, false, "当前申请已不能进行再次申请");
-        ScfAsset asset = assetService.saveConfirmAsset(request.getAssetId());
-        request.setAsset(asset);
-        request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_SUBMIT_REQUEST);
-        // 封装应付款钱信息
-        fillRequestRaxInfo(request, anRequestPayDate);
-        request.setDescription(anDescription);
-
-        this.updateByPrimaryKeySelective(request);
-        return request;
-
-    }
 
     /**
      * 供应商签署合同（供应商和平台的两份合同）
@@ -346,37 +377,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
 
     }
 
-    /**
-     * 发送微信通知给供应商签署合同
-     * 
-     * @param anRequest
-     */
-    private void sendReceivableTopic(String anRequestNo) {
-
-        if (StringUtils.isNoneBlank(anRequestNo)) {
-
-            ScfReceivableRequest request = findOneByRequestNo(anRequestNo);
-            if (request != null && request.getElecAgreement() != null) {
-
-                ScfElecAgreementInfo agreement = (ScfElecAgreementInfo) request.getElecAgreement();
-                if (!Collections3.isEmpty(agreement.getStubInfos())) {
-
-                    for (ScfElecAgreeStubInfo info : agreement.getStubInfos()) {
-
-                        if (info.getCustNo().equals(request.getCustNo()) && "0".equals(info.getOperStatus())) {
-                            supplierPushService.pushSignInfo(agreement);
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-        }
-
-    }
+   
 
     /**
      * 核心企业完成付款操作
@@ -444,63 +445,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         return request;
     }
 
-    /**
-     * 供应商查询还有那些融资申请可以再次提交
-     * 融资申请模式改变
-     * @param anMap
-     * @param anFlag
-     * @param anPageNum
-     * @param anPageSize
-     * @return
-     */
-    @Deprecated
-    public Page<ScfReceivableRequest> queryReceivableRequestWithSupplier(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
-
-        BTAssert.notNull(anMap, "查询条件为空,操作失败");
-        if (!anMap.containsKey("custNo")) {
-            anMap.put("custNo", getCurrentUserCustNos());
-        }
-        anMap = Collections3.filterMapEmptyObject(anMap);
-        anMap = Collections3.filterMap(anMap,
-                new String[] { "custNo", "coreCustNo", "requestNo", "GTEregDate", "LTEregDate", "receivableRequestType" });
-        anMap = Collections3.fuzzyMap(anMap, new String[] { "requestNo" });
-        anMap.put("businStatus",
-                new String[] { ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_SUBMIT_REQUEST,
-                        ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_SUPPLIER_SIGN_AGREEMENT,
-                        ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TRANSFER_AGREEMENT_CORE,
-                        ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_SIGN_AGREEMENT,
-                        ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_PAY_CONFIRM,
-                        ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_FACTORY_SIGN_AGREEMENT });
-        anMap.put("receivableRequestType", "1");
-        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
-        return page;
-    }
-
-    /**
-     * 供应商查询已经完结的融资信息
-     * 模式一和模式二流程合并
-     * @param anMap
-     * @param anFlag
-     * @param anPageNum
-     * @param anPageSize
-     * @return
-     */
-    @Deprecated
-    public Page<ScfReceivableRequest> queryFinishReceivableRequestWithSupplier(Map<String, Object> anMap, String anFlag, int anPageNum,
-            int anPageSize) {
-
-        BTAssert.notNull(anMap, "查询条件为空,操作失败");
-        if (!anMap.containsKey("custNo")) {
-            anMap.put("custNo", getCurrentUserCustNos());
-        }
-        anMap = Collections3.filterMapEmptyObject(anMap);
-        anMap = Collections3.filterMap(anMap,
-                new String[] { "custNo", "coreCustNo", "GTEregDate", "LTEregDate", "GTEendDate", "LTEendDate", "receivableRequestType" });
-        anMap.put("businStatus", ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_REQUEST_END);
-        anMap.put("receivableRequestType", "1");
-        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
-        return page;
-    }
+    
 
     /**
      * 核心企业查询可以提交的融资信息
@@ -1223,147 +1168,56 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         return page;
     }
 
-    /**
-     * 封装最高的利率结算中心
-     * 
-     * @param anRequest
-     * @param anFactoryList
-     */
-    private void covertFacotyHightestRate(ScfReceivableRequest anRequest, List<SimpleDataEntity> anFactoryList) {
+    
+    public CustOperatorInfo findDefaultOperatorInfo(Long custNo) {
 
-        BTAssert.notEmpty(anFactoryList, "核心企业尚未提供结算中心用于申请");
-        List<Long> factoryNo = new ArrayList<>();
-        for (SimpleDataEntity entity : anFactoryList) {
-            factoryNo.add(Long.parseLong(entity.getValue()));
-        }
-        Map build = QueryTermBuilder.newInstance().put("coreCustNo", factoryNo).put("custNo", anRequest.getCustNo())
-                .put("businStatus", OfferConstantCollentions.OFFER_BUSIN_STATUS_EFFECTIVE).build();
-        List<ScfSupplierOffer> offerList = offerService.selectByProperty(build, "coreCustRate Desc");
-        BTAssert.notNull(offerList, "核心企业尚未提供结算中心用于申请");
-        anRequest.setCustCoreRate(Collections3.getFirst(offerList).getCoreCustRate());
-        anRequest.setFactoryNo(Collections3.getFirst(offerList).getCoreCustNo());
-        anRequest.setFactoryName(Collections3.getFirst(offerList).getCoreCustName());
+        return operatorService.findDefaultOperator(baseService.findBaseInfo(custNo).getOperOrg());
 
     }
 
     /**
-     * 设置最低利率
+     * 通过应付账款的编号和版本查询
      * 
-     * @param anRequest
-     */
-    private void covertFacotyLowestRate(ScfReceivableRequest anRequest) {
-
-        List<ScfSupplierOffer> factoryList = offerService.queryAllFactoryByCustNo(anRequest.getCustNo());
-        BTAssert.notNull(factoryList, "没有查到相应的资金方设置融资申请利率！");
-        BTAssert.notEmpty(factoryList, "没有查到相应的资金方设置融资申请利率！");
-        anRequest.setCustCoreRate(Collections3.getFirst(factoryList).getCoreCustRate());
-        anRequest.setFactoryNo(Collections3.getFirst(factoryList).getCoreCustNo());
-        anRequest.setFactoryName(Collections3.getFirst(factoryList).getCoreCustName());
-
-    }
-
-    /**
-     * 整合模式申请总的入口
-     * 
-     * @param anMap
-     * @return
-     * 
-     *         receivableId 应收账款id
-     * 
-     *         isRequestAsset 是否必须 false 不锁定 isLockedAsset 是否锁定 true 锁定
-     */
-    public ScfReceivableRequest saveAddRequestTotal(Map<String, Object> anMap) {
-
-        BTAssert.notNull(anMap, "融资信息为空,操作失败");
-        BTAssert.notNull(anMap.get(AssetConstantCollentions.RECEIVABLE_REQUEST_BY_RECEIVABLEID_KEY), "请选择应收账款!");
-        anMap.put(AssetConstantCollentions.RECEIVABLE_REQUEST_IS_REQUEST_ASSET, false);
-        anMap.put(AssetConstantCollentions.RECEIVABLE_REQUEST_IS_LOCKED_ASSET, false);
-        ScfAsset asset = assetService.saveAddAssetNewTotal(anMap);
-        // 将资产信息封装到融资中去
-        ScfReceivableRequest request = convertAssetToReceviableRequest(asset);
-        // request.setReceivableRequestType("1");
-
-        request.saveAddValue();
-        // fillRequestRaxInfo(request,BetterDateUtils.getNumDate());
-        // 插入电子合同信息
-        // agreementService.saveAddCoreAgreementByRequest(request,"1");
-        // agreementService.saveAddPlatAgreementByRequest(request);
-        
-        //插入日志
-        logService.saveAddRequestLog(request);
-        
-        this.insert(request);
-        return request;
-
-    }
-
-    /**
-     * 供应商确认提交融资申请
-     * 
-     * @param anMap
-     * @param anRequestNo
-     * @param anRequestPayDate
-     * @param anDescription
-     *            wechaMarker 微信标记 goodsBatchNo 合同附件 statementBatchNo 发票附件
+     * @param anRefNo
+     * @param version
      * @return
      */
-    public ScfReceivableRequest saveSubmitRequestTotal(Map<String, Object> anMap, String anRequestNo, String anRequestPayDate, String anDescription) {
+    public ScfReceivableRequest findRequestByReceivableId(String anRefNo, String version) {
 
-        BTAssert.notNull(anMap, "融资信息为空,操作失败");
-        BTAssert.notNull(anMap.get("requestProductCode"), "请选择保理产品");
-        BTAssert.notNull(anRequestNo, "融资信息为空,操作失败");
-        ScfReceivableRequest request = findOneByRequestNo(anRequestNo);
-        BTAssert.notNull(request, "融资信息为空,操作失败");
-        if (!getCurrentUserCustNos().contains(request.getCustNo())) {
-            BTAssert.notNull(null, "你没有当前申请的权限,操作失败");
+        // 查询资产
+        ScfAsset asset = assetService.findAssetByReceivableRefNoWithVersion(anRefNo, version);
+        BTAssert.notNull(asset, "未找到资产信息");
+        // 查询融资详情
+        Map anMap = QueryTermBuilder.newInstance().put("assetId", asset.getId()).build();
+        List<ScfReceivableRequest> list = this.selectByProperty(anMap, "requestNo Desc");
+        if (!Collections3.hasEmptyObject(list)) {
+            return findOneByRequestNo(Collections3.getFirst(list).getRequestNo());
         }
-        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_NOEFFECTIVE, false, "当前申请已不能进行再次申请");
-        ScfProductConfig config = productConfigService.findProductConfigById(anMap.get("requestProductCode").toString());
-        BTAssert.notNull(config, "没有查询到产品配置信息");
-        // 判断是否微信来源，如果微信会上传贸易合同和发票附件信息
-        //if (anMap.containsKey("wechaMarker") && "1".equals(anMap.get("wechaMarker").toString())) {
-        convertProdectConfigToRequestAndAsset(request, config, anMap);
-        request.setBusinStatus(ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_SUPPLIER_SUBMIT);
-        /*
-         * 整合模式一和模式2的状态
-         * if ("2".equals(config.getReceivableRequestType())) {
-
-            request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_CORE_CONFIRM);
-
-        }
-         */
-       /* }
-        else {
-
-            convertProdectConfigToRequestAndAsset(request, config, null);
-            request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_SUBMIT_REQUEST);
-        }*/
-        // 设置银行账户信息
-        CustMechBankAccount account = custMechBankAccountService.findCustMechBankAccount(anMap.get("custBankAccount").toString());
-        BTAssert.notNull(account, "没有查到供应商银行帐号");
-        request.setCustBankAccount(account.getBankAcco());
-        request.setCustBankAccountName(account.getBankAccoName());
-        request.setCustBankName(account.getBankName());
-        // 插入电子合同信息
-        ScfElecAgreement agreement = elecAgreementService.saveAddElecAgreementByReceivableRequest(request);
-        request.setAgreementAppNo(agreement.getAppNo());
-        request.setElecAgreement(agreement);
-
-        ScfAsset asset = assetService.saveConfirmAsset(request.getAssetId());
-        request.setAsset(asset);
-
-        // 封装应付款钱信息
-        fillRequestRaxInfo(request, anRequestPayDate);
-        request.setDescription(anDescription);
-
-        //插入日志
-        logService.saveAddRequestLog(request);
-        
-        this.updateByPrimaryKeySelective(request);
-        
-        return request;
+        return new ScfReceivableRequest();
 
     }
+    
+    /**
+     * 通过电子合同编号更新供应商合同签署状态
+     * @param anAppNo
+     */
+    public void saveUpdateSupplierSignByAppNo(String anAppNo) {
+        
+        Map paramMap = QueryTermBuilder.newInstance()
+                .put("agreementAppNo", anAppNo)
+                .build();
+        
+        List<ScfReceivableRequest> list = this.selectByProperty(paramMap);
+        if(!Collections3.isEmpty(list)){
+            ScfReceivableRequest request = list.get(0);
+            request.setSupplierSignFlag(ReceivableRequestConstantCollentions.SIGN_AGREEMENT_FLAG_YES);
+            this.updateByPrimaryKeySelective(request);
+        }
+        
+        
+    }
+
+    
 
     /**
      * 融资申请选择可以使用的保理产品列表
@@ -1460,6 +1314,31 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         BTAssert.notNull(request, "融资信息为空,操作失败");
         return queryCheckRequestAndCode(request, requestProductCode);
 
+    }
+    
+    /**
+     * 查询当前日期到期的未融资申请完成的所有申请
+     * @return
+     */
+    public List<ScfReceivableRequest> queryEndedDataList(){
+        
+        
+        List<String> businStatusListParam = new ArrayList<>();
+        businStatusListParam.add(ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_NOEFFECTIVE);
+        businStatusListParam.add(ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_SUPPLIER_SUBMIT);
+        businStatusListParam.add(ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FACTORY_SIGN);
+        // 设置过期时间
+        String numDate = BetterDateUtils.getForwardDay();
+        // long parseLong = Long.parseLong(numDate);
+
+        Map<String, Object> paramMap = QueryTermBuilder.newInstance()
+                .put("businStatus", businStatusListParam)
+                .put("LTEendDate", numDate)
+                .build();
+
+        List<ScfReceivableRequest> endedList = this.selectByProperty(paramMap);
+        
+        return endedList;
     }
 
     /**
@@ -1586,49 +1465,228 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         }
 
     }
+    
+    /**
+     * 封装最高的利率结算中心
+     * 
+     * @param anRequest
+     * @param anFactoryList
+     */
+    private void covertFacotyHightestRate(ScfReceivableRequest anRequest, List<SimpleDataEntity> anFactoryList) {
 
-    public CustOperatorInfo findDefaultOperatorInfo(Long custNo) {
+        BTAssert.notEmpty(anFactoryList, "核心企业尚未提供结算中心用于申请");
+        List<Long> factoryNo = new ArrayList<>();
+        for (SimpleDataEntity entity : anFactoryList) {
+            factoryNo.add(Long.parseLong(entity.getValue()));
+        }
+        Map build = QueryTermBuilder.newInstance().put("coreCustNo", factoryNo).put("custNo", anRequest.getCustNo())
+                .put("businStatus", OfferConstantCollentions.OFFER_BUSIN_STATUS_EFFECTIVE).build();
+        List<ScfSupplierOffer> offerList = offerService.selectByProperty(build, "coreCustRate Desc");
+        BTAssert.notNull(offerList, "核心企业尚未提供结算中心用于申请");
+        anRequest.setCustCoreRate(Collections3.getFirst(offerList).getCoreCustRate());
+        anRequest.setFactoryNo(Collections3.getFirst(offerList).getCoreCustNo());
+        anRequest.setFactoryName(Collections3.getFirst(offerList).getCoreCustName());
 
-        return operatorService.findDefaultOperator(baseService.findBaseInfo(custNo).getOperOrg());
+    }
+    
+    /**
+     * 发送微信通知给供应商签署合同
+     * 
+     * @param anRequest
+     */
+    private void sendReceivableTopic(String anRequestNo) {
+
+        if (StringUtils.isNoneBlank(anRequestNo)) {
+
+            ScfReceivableRequest request = findOneByRequestNo(anRequestNo);
+            if (request != null && request.getElecAgreement() != null) {
+
+                ScfElecAgreementInfo agreement = (ScfElecAgreementInfo) request.getElecAgreement();
+                if (!Collections3.isEmpty(agreement.getStubInfos())) {
+
+                    for (ScfElecAgreeStubInfo info : agreement.getStubInfos()) {
+
+                        if (info.getCustNo().equals(request.getCustNo()) && "0".equals(info.getOperStatus())) {
+                            supplierPushService.pushSignInfo(agreement);
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
 
     }
 
     /**
-     * 通过应付账款的编号和版本查询
+     * 设置最低利率
      * 
-     * @param anRefNo
-     * @param version
-     * @return
+     * @param anRequest
      */
-    public ScfReceivableRequest findRequestByReceivableId(String anRefNo, String version) {
+    private void covertFacotyLowestRate(ScfReceivableRequest anRequest) {
 
-        // 查询资产
-        ScfAsset asset = assetService.findAssetByReceivableRefNoWithVersion(anRefNo, version);
-        BTAssert.notNull(asset, "未找到资产信息");
-        // 查询融资详情
-        Map anMap = QueryTermBuilder.newInstance().put("assetId", asset.getId()).build();
-        List<ScfReceivableRequest> list = this.selectByProperty(anMap, "requestNo Desc");
-        if (!Collections3.hasEmptyObject(list)) {
-            return findOneByRequestNo(Collections3.getFirst(list).getRequestNo());
-        }
-        return new ScfReceivableRequest();
+        List<ScfSupplierOffer> factoryList = offerService.queryAllFactoryByCustNo(anRequest.getCustNo());
+        BTAssert.notNull(factoryList, "没有查到相应的资金方设置融资申请利率！");
+        BTAssert.notEmpty(factoryList, "没有查到相应的资金方设置融资申请利率！");
+        anRequest.setCustCoreRate(Collections3.getFirst(factoryList).getCoreCustRate());
+        anRequest.setFactoryNo(Collections3.getFirst(factoryList).getCoreCustNo());
+        anRequest.setFactoryName(Collections3.getFirst(factoryList).getCoreCustName());
 
     }
+    
 
-    public void saveUpdateSupplierSignByAppNo(String anAppNo) {
-        
-        Map paramMap = QueryTermBuilder.newInstance()
-                .put("agreementAppNo", anAppNo)
-                .build();
-        
-        List<ScfReceivableRequest> list = this.selectByProperty(paramMap);
-        if(!Collections3.isEmpty(list)){
-            ScfReceivableRequest request = list.get(0);
-            request.setSupplierSignFlag(ReceivableRequestConstantCollentions.SIGN_AGREEMENT_FLAG_YES);
-            this.updateByPrimaryKeySelective(request);
+    private void checkReceivableContainInvoices(String invoiceIds) {
+
+        List<ScfInvoiceDO> invoiceList = invoiceService.queryReceivableList(invoiceIds);
+        // 当一条记录都没有找到
+        if (Collections3.isEmpty(invoiceList)) {
+            BTAssert.notNull(null, "当前应收账款对应的发票未找到!");
         }
+
+        // 当未找全所有的发票信息
+        if (invoiceIds.split(",").length != invoiceList.size()) {
+            BTAssert.notNull(null, "当前应收账款对应的发票还有未找到!");
+
+        }
+
+        for (ScfInvoiceDO invoiceDo : invoiceList) {
+            checkStatus(invoiceDo.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false, "对应的发票不是生效状态");
+            checkStatus(invoiceDo.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true, "对应的发票已经用于融资申请");
+
+        }
+
+    }
+    
+    
+    /*
+     * 模式一应收账款申请 融资资产新增
+     * 申请流程调整
+     * receivableId 存放的是应收账款id
+     */
+    @Deprecated
+    public ScfReceivableRequest saveAddRequest(Map<String, Object> anMap) {
+
+        BTAssert.notNull(anMap, "融资信息为空,操作失败");
+        BTAssert.notNull(anMap.get(AssetConstantCollentions.RECEIVABLE_REQUEST_BY_RECEIVABLEID_KEY), "请选择应收账款!");
+
+        ScfAsset asset = assetService.saveAddAssetNew(anMap);
+        // 将资产信息封装到融资中去
+        ScfReceivableRequest request = convertAssetToReceviableRequest(asset);
+        request.setReceivableRequestType("1");
+        request.saveAddValue();
+        fillRequestRaxInfo(request, BetterDateUtils.getNumDate());
+        // 插入电子合同信息
+        agreementService.saveAddCoreAgreementByRequest(request, "1");
+        agreementService.saveAddPlatAgreementByRequest(request);
+        this.insert(request);
+        return request;
+
+    }
+    
+    /**
+     * 供应商提交申请融资信息 并且生成电子合同
+     * 申请流程调整
+     * @param anRequestNo
+     * @param anRequestPayDate
+     * @return
+     */
+    @Deprecated
+    public ScfReceivableRequest saveSubmitRequest(String anRequestNo, String anRequestPayDate, String anDescription) {
+
+        BTAssert.notNull(anRequestNo, "融资信息为空,操作失败");
+        ScfReceivableRequest request = this.selectByPrimaryKey(anRequestNo);
+        BTAssert.notNull(request, "融资信息为空,操作失败");
+        if (!getCurrentUserCustNos().contains(request.getCustNo())) {
+            BTAssert.notNull(null, "你没有当前申请的权限,操作失败");
+        }
+        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_NOEFFECTIVE, false, "当前申请已不能进行再次申请");
+        ScfAsset asset = assetService.saveConfirmAsset(request.getAssetId());
+        request.setAsset(asset);
+        request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_SUBMIT_REQUEST);
+        // 封装应付款钱信息
+        fillRequestRaxInfo(request, anRequestPayDate);
+        request.setDescription(anDescription);
+
+        this.updateByPrimaryKeySelective(request);
+        return request;
+
+    }
+    
+    /**
+     * 供应商查询还有那些融资申请可以再次提交
+     * 融资申请模式改变
+     * @param anMap
+     * @param anFlag
+     * @param anPageNum
+     * @param anPageSize
+     * @return
+     */
+    @Deprecated
+    public Page<ScfReceivableRequest> queryReceivableRequestWithSupplier(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+
+        BTAssert.notNull(anMap, "查询条件为空,操作失败");
+        if (!anMap.containsKey("custNo")) {
+            anMap.put("custNo", getCurrentUserCustNos());
+        }
+        anMap = Collections3.filterMapEmptyObject(anMap);
+        anMap = Collections3.filterMap(anMap,
+                new String[] { "custNo", "coreCustNo", "requestNo", "GTEregDate", "LTEregDate", "receivableRequestType" });
+        anMap = Collections3.fuzzyMap(anMap, new String[] { "requestNo" });
+        anMap.put("businStatus",
+                new String[] { ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_SUBMIT_REQUEST,
+                        ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_SUPPLIER_SIGN_AGREEMENT,
+                        ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TRANSFER_AGREEMENT_CORE,
+                        ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_SIGN_AGREEMENT,
+                        ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_PAY_CONFIRM,
+                        ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_FACTORY_SIGN_AGREEMENT });
+        anMap.put("receivableRequestType", "1");
+        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
+        return page;
+    }
+
+    /**
+     * 供应商查询已经完结的融资信息
+     * 模式一和模式二流程合并
+     * @param anMap
+     * @param anFlag
+     * @param anPageNum
+     * @param anPageSize
+     * @return
+     */
+    @Deprecated
+    public Page<ScfReceivableRequest> queryFinishReceivableRequestWithSupplier(Map<String, Object> anMap, String anFlag, int anPageNum,
+            int anPageSize) {
+
+        BTAssert.notNull(anMap, "查询条件为空,操作失败");
+        if (!anMap.containsKey("custNo")) {
+            anMap.put("custNo", getCurrentUserCustNos());
+        }
+        anMap = Collections3.filterMapEmptyObject(anMap);
+        anMap = Collections3.filterMap(anMap,
+                new String[] { "custNo", "coreCustNo", "GTEregDate", "LTEregDate", "GTEendDate", "LTEendDate", "receivableRequestType" });
+        anMap.put("businStatus", ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_REQUEST_END);
+        anMap.put("receivableRequestType", "1");
+        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
+        return page;
+    }
+
+    /**
+     * 设置对象过期
+     */
+    @Override
+    public ScfReceivableRequest saveExpired(ScfReceivableRequest anRequest) {
         
-        
+        BTAssert.notNull(anRequest, "对象为空");
+        checkStatus(anRequest.getBusinStatus(), ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FACTORY_CONFIRM_PAY, true, "当前单据已经确认付款");
+        checkStatus(anRequest.getBusinStatus(), ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FINISHED, true, "当前单据已经完结");
+        checkStatus(anRequest.getBusinStatus(), ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_ANNUL, true, "当前单据已经废止");
+        checkStatus(anRequest.getBusinStatus(), ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_EXPIRED, true, "当前单据已经过期");
+        anRequest.setBusinStatus(ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_EXPIRED);
+        this.updateByPrimaryKeySelective(anRequest);
+        return anRequest;
     }
 
 }

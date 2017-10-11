@@ -60,7 +60,7 @@ public class ScfJoblog implements BetterjrEntity {
     private String orderBy;
 
     /**
-     * 数据类型：1订单2票据3应收账款4发票5贸易合同
+     * 数据类型：1订单2票据3应收账款4发票5贸易合同  6应收账款申请
      */
     @Column(name = "C_DATAINFO_TYPE", columnDefinition = "VARCHAR")
     @MetaData(value = "数据类型：1订单2票据3应收账款4发票5贸易合同", comments = "数据类型：1订单2票据3应收账款4发票5贸易合同")
