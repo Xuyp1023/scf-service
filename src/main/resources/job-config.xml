@@ -28,6 +28,11 @@
 		registry-center-ref="scfCenter" cron="0 30 1 * * ?"
 		sharding-total-count="1" sharding-item-parameters="0=A" overwrite="true" />
   
+	<job:simple id="receivableRequestExpireplanJob"
+		class="com.betterjr.modules.joblog.job.ScfReceivableRequestExpirePlanJob"
+		registry-center-ref="scfCenter" cron="0 0 2 * * ?"
+		sharding-total-count="1" sharding-item-parameters="0=A" overwrite="true" />
+  
   
 	<job:simple id="payplanJob"
 		class="com.betterjr.modules.loan.job.PayPlanJob"
