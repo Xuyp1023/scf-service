@@ -561,6 +561,7 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         BTAssert.notNull(anMap.get("importDate"), "查询未解析的文件条件为空");
         BTAssert.notNull(anMap.get("custNo"), "查询未解析的文件为空");
         anMap.put("businStatus", CommissionConstantCollentions.COMMISSION_BUSIN_STATUS_NO_HANDLE);
+        anMap.put("infoType", "6");
         List<CommissionFile> noResolvelist = this.selectByProperty(anMap);
         if (Collections3.isEmpty(noResolvelist)) {
             noResolvelist = new ArrayList<CommissionFile>();
@@ -576,6 +577,7 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
         noResolvelist.addAll(inEffeciveResolveList);
         anMap.remove("confirmStatus");
         anMap.remove("businStatus");
+        anMap.remove("infoType");
         return noResolvelist;
     }
 
@@ -607,7 +609,11 @@ public class CommissionFileService extends BaseService<CommissionFileMapper, Com
      */
     public boolean checkFilePermitOperatorSecond(Long anCustNo, String anImportDate) {
 
-        Map queryMap = QueryTermBuilder.newInstance().put("custNo", anCustNo).put("importDate", anImportDate).build();
+        Map queryMap = QueryTermBuilder.newInstance()
+                            .put("custNo", anCustNo)
+                            .put("importDate", anImportDate)
+                            .put("infoType", "6")
+                            .build();
         List<CommissionFile> fileList = this.selectByProperty(queryMap);
         for (CommissionFile file : fileList) {
 
