@@ -34,7 +34,10 @@ public class CommissionRecordDubboService implements ICommissionRecordService {
     @Override
     public String webSaveAuditRecordList(Long anCustNo, String anImportDate) {
 
-        Map<String, Object> queryMap = QueryTermBuilder.newInstance().put("custNo", anCustNo).put("importDate", anImportDate).build();
+        Map<String, Object> queryMap = QueryTermBuilder.newInstance()
+                                            .put("custNo", anCustNo)
+                                            .put("importDate", anImportDate)
+                                            .build();
         return AjaxObject.newOk("佣金记录审核成功", recordService.saveAuditRecordList(queryMap)).toJson();
     }
 
