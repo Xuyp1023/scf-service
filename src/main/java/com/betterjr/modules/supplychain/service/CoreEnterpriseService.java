@@ -7,24 +7,15 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.data.KeyAndValueObject;
-import com.betterjr.common.mapper.BeanMapper;
 import com.betterjr.common.service.BaseService;
-import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.DictUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.common.utils.reflection.ReflectionUtils;
-import com.betterjr.mapper.pagehelper.Page;
-import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
-import com.betterjr.modules.account.entity.CustContactInfo;
-import com.betterjr.modules.account.entity.CustInfo;
-import com.betterjr.modules.agreement.utils.SupplyChainUtil;
 import com.betterjr.modules.supplychain.dao.CoreSupplierInfoMapper;
-import com.betterjr.modules.supplychain.data.CoreSupplyInfo;
 import com.betterjr.modules.supplychain.entity.CoreSupplierInfo;
 import com.betterjr.modules.sys.entity.DictItemInfo;
 
@@ -37,7 +28,6 @@ import com.betterjr.modules.sys.entity.DictItemInfo;
 public class CoreEnterpriseService extends BaseService<CoreSupplierInfoMapper, CoreSupplierInfo> {
 
     private static final Logger logger = LoggerFactory.getLogger(CoreEnterpriseService.class);
- 
 
     /**
      * 查询核心企业的客户号和名字，主要的处理规则是根据数据字典中定义的企业组织代码OperOrg，<br>
@@ -61,7 +51,7 @@ public class CoreEnterpriseService extends BaseService<CoreSupplierInfoMapper, C
             return null;
         }
     }
- 
+
     /**
      * 保存核心企业上传的供应商信息
      * 
@@ -78,15 +68,15 @@ public class CoreEnterpriseService extends BaseService<CoreSupplierInfoMapper, C
         Map<String, Object> termMap = new HashMap<String, Object>();
         termMap.put("coreCustNo", anCoreCustNo);
         termMap.put("btNo", distinctBtNo);
-        Map<String, CoreSupplierInfo> mapCoreSupplier = ReflectionUtils.listConvertToMap(this.selectByProperty(termMap), "btNo");
+        Map<String, CoreSupplierInfo> mapCoreSupplier = ReflectionUtils.listConvertToMap(this.selectByProperty(termMap),
+                "btNo");
         CoreSupplierInfo tmpSupplier;
         for (CoreSupplierInfo scfBank : anList) {
             tmpSupplier = mapCoreSupplier.get(scfBank.getBtNo());
             if (tmpSupplier == null) {
                 scfBank.fillDefaultValue();
                 this.insert(scfBank);
-            }
-            else {
+            } else {
                 scfBank.modifyDefaultValue(tmpSupplier);
                 this.updateByPrimaryKey(scfBank);
             }
@@ -121,8 +111,7 @@ public class CoreEnterpriseService extends BaseService<CoreSupplierInfoMapper, C
         if (supplier == null) {
 
             return 0L;
-        }
-        else {
+        } else {
 
             return supplier.getCustNo();
         }

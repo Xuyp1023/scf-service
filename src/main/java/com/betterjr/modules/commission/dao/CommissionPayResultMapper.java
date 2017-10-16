@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.commission.entity.CommissionPayResult;
 
 @BetterjrMapper
-public interface CommissionPayResultMapper extends Mapper<CommissionPayResult> {
-}
+public interface CommissionPayResultMapper extends Mapper<CommissionPayResult> {}

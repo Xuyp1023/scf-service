@@ -224,17 +224,27 @@ public class FacePathInfo implements BetterjrEntity {
         }
         FacePathInfo other = (FacePathInfo) that;
         return (this.getTano() == null ? other.getTano() == null : this.getTano().equals(other.getTano()))
-                && (this.getPathCode() == null ? other.getPathCode() == null : this.getPathCode().equals(other.getPathCode()))
-                && (this.getPayCenterNo() == null ? other.getPayCenterNo() == null : this.getPayCenterNo().equals(other.getPayCenterNo()))
-                && (this.getRecvPath() == null ? other.getRecvPath() == null : this.getRecvPath().equals(other.getRecvPath()))
-                && (this.getSendPath() == null ? other.getSendPath() == null : this.getSendPath().equals(other.getSendPath()))
-                && (this.getRemoteSendPath() == null ? other.getRemoteSendPath() == null : this.getRemoteSendPath().equals(other.getRemoteSendPath()))
-                && (this.getRemoteRecvPath() == null ? other.getRemoteRecvPath() == null : this.getRemoteRecvPath().equals(other.getRemoteRecvPath()))
+                && (this.getPathCode() == null ? other.getPathCode() == null
+                        : this.getPathCode().equals(other.getPathCode()))
+                && (this.getPayCenterNo() == null ? other.getPayCenterNo() == null
+                        : this.getPayCenterNo().equals(other.getPayCenterNo()))
+                && (this.getRecvPath() == null ? other.getRecvPath() == null
+                        : this.getRecvPath().equals(other.getRecvPath()))
+                && (this.getSendPath() == null ? other.getSendPath() == null
+                        : this.getSendPath().equals(other.getSendPath()))
+                && (this.getRemoteSendPath() == null ? other.getRemoteSendPath() == null
+                        : this.getRemoteSendPath().equals(other.getRemoteSendPath()))
+                && (this.getRemoteRecvPath() == null ? other.getRemoteRecvPath() == null
+                        : this.getRemoteRecvPath().equals(other.getRemoteRecvPath()))
                 && (this.getFaceNo() == null ? other.getFaceNo() == null : this.getFaceNo().equals(other.getFaceNo()))
-                && (this.getWorkClass() == null ? other.getWorkClass() == null : this.getWorkClass().equals(other.getWorkClass()))
-                && (this.getWorkCharset() == null ? other.getWorkCharset() == null : this.getWorkCharset().equals(other.getWorkCharset()))
-                && (this.getWorkToken() == null ? other.getWorkToken() == null : this.getWorkToken().equals(other.getWorkToken()))
-                && (this.getPackType() == null ? other.getPackType() == null : this.getPackType().equals(other.getPackType()));
+                && (this.getWorkClass() == null ? other.getWorkClass() == null
+                        : this.getWorkClass().equals(other.getWorkClass()))
+                && (this.getWorkCharset() == null ? other.getWorkCharset() == null
+                        : this.getWorkCharset().equals(other.getWorkCharset()))
+                && (this.getWorkToken() == null ? other.getWorkToken() == null
+                        : this.getWorkToken().equals(other.getWorkToken()))
+                && (this.getPackType() == null ? other.getPackType() == null
+                        : this.getPackType().equals(other.getPackType()));
     }
 
     @Override

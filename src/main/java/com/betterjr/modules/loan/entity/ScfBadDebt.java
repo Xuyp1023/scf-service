@@ -25,122 +25,122 @@ public class ScfBadDebt implements BetterjrEntity {
     /**
      * 申请单号
      */
-    @Column(name = "C_REQUESTNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="申请单号", comments = "申请单号")
+    @Column(name = "C_REQUESTNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "申请单号", comments = "申请单号")
     @OrderBy("desc")
     private String requestNo;
 
     /**
      * 保理公司编号
      */
-    @Column(name = "L_FACTORNO",  columnDefinition="BIGINT" )
-    @MetaData( value="保理公司编号", comments = "保理公司编号")
+    @Column(name = "L_FACTORNO", columnDefinition = "BIGINT")
+    @MetaData(value = "保理公司编号", comments = "保理公司编号")
     private Long factorNo;
 
     /**
      * 客户编号
      */
-    @Column(name = "L_CUSTNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="客户编号", comments = "客户编号")
+    @Column(name = "L_CUSTNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "客户编号", comments = "客户编号")
     private Long custNo;
 
     /**
      * 剩余本金
      */
-    @Column(name = "F_PRINCIPAL_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="剩余本金", comments = "剩余本金")
+    @Column(name = "F_PRINCIPAL_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "剩余本金", comments = "剩余本金")
     private BigDecimal principalBalance;
 
     /**
      * 剩余利息
      */
-    @Column(name = "F_INTEREST_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="剩余利息", comments = "剩余利息")
+    @Column(name = "F_INTEREST_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "剩余利息", comments = "剩余利息")
     private BigDecimal interestBalance;
 
     /**
      * 剩余管理费
      */
-    @Column(name = "F_MANAGEMENT_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="剩余管理费", comments = "剩余管理费")
+    @Column(name = "F_MANAGEMENT_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "剩余管理费", comments = "剩余管理费")
     private BigDecimal managementBalance;
 
     /**
      * 滞纳金
      */
-    @Column(name = "F_LATEFEE_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="滞纳金", comments = "滞纳金")
+    @Column(name = "F_LATEFEE_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "滞纳金", comments = "滞纳金")
     private BigDecimal lateFeeBalance;
 
     /**
      * 手续费
      */
-    @Column(name = "F_SERVICEFEE_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="手续费", comments = "手续费")
+    @Column(name = "F_SERVICEFEE_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "手续费", comments = "手续费")
     private BigDecimal servicefeeBalance;
 
     /**
      * 剩余其它费用
      */
-    @Column(name = "F_OTHER_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="剩余其它费用", comments = "剩余其它费用")
+    @Column(name = "F_OTHER_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "剩余其它费用", comments = "剩余其它费用")
     private BigDecimal otherBalance;
 
     /**
      * 合计
      */
-    @Column(name = "F_TOTAL_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="合计", comments = "合计")
+    @Column(name = "F_TOTAL_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "合计", comments = "合计")
     private BigDecimal totalBalance;
 
     /**
      * 销核日期
      */
-    @Column(name = "D_CONFIRM_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="销核日期", comments = "销核日期")
+    @Column(name = "D_CONFIRM_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "销核日期", comments = "销核日期")
     private String confirmDate;
 
     /**
      * 操作机构
      */
-    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
-    @MetaData( value="操作机构", comments = "操作机构")
+    @Column(name = "C_OPERORG", columnDefinition = "VARCHAR")
+    @MetaData(value = "操作机构", comments = "操作机构")
     private String operOrg;
 
-    @Column(name = "L_REG_OPERID",  columnDefinition="BIGINT" )
-    @MetaData( value="", comments = "")
+    @Column(name = "L_REG_OPERID", columnDefinition = "BIGINT")
+    @MetaData(value = "", comments = "")
     private Long regOperId;
 
-    @Column(name = "C_REG_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "C_REG_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String regOperName;
 
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String regDate;
 
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String regTime;
 
-    @Column(name = "L_MODI_OPERID",  columnDefinition="BIGINT" )
-    @MetaData( value="", comments = "")
+    @Column(name = "L_MODI_OPERID", columnDefinition = "BIGINT")
+    @MetaData(value = "", comments = "")
     private Long modiOperId;
 
-    @Column(name = "C_MODI_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "C_MODI_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String modiOperName;
 
-    @Column(name = "D_MODI_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "D_MODI_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String modiDate;
 
-    @Column(name = "T_MODI_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "T_MODI_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String modiTime;
 
-    @Column(name = "N_VERSION",  columnDefinition="BIGINT" )
-    @MetaData( value="", comments = "")
+    @Column(name = "N_VERSION", columnDefinition = "BIGINT")
+    @MetaData(value = "", comments = "")
     private Long version;
 
     private static final long serialVersionUID = 5434051810014303919L;
@@ -370,27 +370,47 @@ public class ScfBadDebt implements BetterjrEntity {
         }
         ScfBadDebt other = (ScfBadDebt) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getRequestNo() == null ? other.getRequestNo() == null : this.getRequestNo().equals(other.getRequestNo()))
-            && (this.getFactorNo() == null ? other.getFactorNo() == null : this.getFactorNo().equals(other.getFactorNo()))
-            && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-            && (this.getPrincipalBalance() == null ? other.getPrincipalBalance() == null : this.getPrincipalBalance().equals(other.getPrincipalBalance()))
-            && (this.getInterestBalance() == null ? other.getInterestBalance() == null : this.getInterestBalance().equals(other.getInterestBalance()))
-            && (this.getManagementBalance() == null ? other.getManagementBalance() == null : this.getManagementBalance().equals(other.getManagementBalance()))
-            && (this.getLateFeeBalance() == null ? other.getLateFeeBalance() == null : this.getLateFeeBalance().equals(other.getLateFeeBalance()))
-            && (this.getServicefeeBalance() == null ? other.getServicefeeBalance() == null : this.getServicefeeBalance().equals(other.getServicefeeBalance()))
-            && (this.getOtherBalance() == null ? other.getOtherBalance() == null : this.getOtherBalance().equals(other.getOtherBalance()))
-            && (this.getTotalBalance() == null ? other.getTotalBalance() == null : this.getTotalBalance().equals(other.getTotalBalance()))
-            && (this.getConfirmDate() == null ? other.getConfirmDate() == null : this.getConfirmDate().equals(other.getConfirmDate()))
-            && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
-            && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
-            && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-            && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
-            && (this.getModiOperId() == null ? other.getModiOperId() == null : this.getModiOperId().equals(other.getModiOperId()))
-            && (this.getModiOperName() == null ? other.getModiOperName() == null : this.getModiOperName().equals(other.getModiOperName()))
-            && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-            && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()))
-            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
+                && (this.getRequestNo() == null ? other.getRequestNo() == null
+                        : this.getRequestNo().equals(other.getRequestNo()))
+                && (this.getFactorNo() == null ? other.getFactorNo() == null
+                        : this.getFactorNo().equals(other.getFactorNo()))
+                && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
+                && (this.getPrincipalBalance() == null ? other.getPrincipalBalance() == null
+                        : this.getPrincipalBalance().equals(other.getPrincipalBalance()))
+                && (this.getInterestBalance() == null ? other.getInterestBalance() == null
+                        : this.getInterestBalance().equals(other.getInterestBalance()))
+                && (this.getManagementBalance() == null ? other.getManagementBalance() == null
+                        : this.getManagementBalance().equals(other.getManagementBalance()))
+                && (this.getLateFeeBalance() == null ? other.getLateFeeBalance() == null
+                        : this.getLateFeeBalance().equals(other.getLateFeeBalance()))
+                && (this.getServicefeeBalance() == null ? other.getServicefeeBalance() == null
+                        : this.getServicefeeBalance().equals(other.getServicefeeBalance()))
+                && (this.getOtherBalance() == null ? other.getOtherBalance() == null
+                        : this.getOtherBalance().equals(other.getOtherBalance()))
+                && (this.getTotalBalance() == null ? other.getTotalBalance() == null
+                        : this.getTotalBalance().equals(other.getTotalBalance()))
+                && (this.getConfirmDate() == null ? other.getConfirmDate() == null
+                        : this.getConfirmDate().equals(other.getConfirmDate()))
+                && (this.getOperOrg() == null ? other.getOperOrg() == null
+                        : this.getOperOrg().equals(other.getOperOrg()))
+                && (this.getRegOperId() == null ? other.getRegOperId() == null
+                        : this.getRegOperId().equals(other.getRegOperId()))
+                && (this.getRegOperName() == null ? other.getRegOperName() == null
+                        : this.getRegOperName().equals(other.getRegOperName()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getRegTime() == null ? other.getRegTime() == null
+                        : this.getRegTime().equals(other.getRegTime()))
+                && (this.getModiOperId() == null ? other.getModiOperId() == null
+                        : this.getModiOperId().equals(other.getModiOperId()))
+                && (this.getModiOperName() == null ? other.getModiOperName() == null
+                        : this.getModiOperName().equals(other.getModiOperName()))
+                && (this.getModiDate() == null ? other.getModiDate() == null
+                        : this.getModiDate().equals(other.getModiDate()))
+                && (this.getModiTime() == null ? other.getModiTime() == null
+                        : this.getModiTime().equals(other.getModiTime()))
+                && (this.getVersion() == null ? other.getVersion() == null
+                        : this.getVersion().equals(other.getVersion()));
     }
 
     @Override

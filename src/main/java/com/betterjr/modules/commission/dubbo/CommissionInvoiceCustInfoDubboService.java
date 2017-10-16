@@ -26,10 +26,12 @@ public class CommissionInvoiceCustInfoDubboService implements ICommissionInvoice
     }
 
     @Override
-    public String webQueryInvoiceCustInfoList(Map<String, Object> anAnMap, String anFlag, int anPageNum, int anPageSize) {
+    public String webQueryInvoiceCustInfoList(Map<String, Object> anAnMap, String anFlag, int anPageNum,
+            int anPageSize) {
 
         Map<String, Object> queryMap = RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOkWithPage("发票抬头查询成功", custInfoService.queryInvoiceCustInfoList(queryMap, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject.newOkWithPage("发票抬头查询成功",
+                custInfoService.queryInvoiceCustInfoList(queryMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     @Override
@@ -44,7 +46,9 @@ public class CommissionInvoiceCustInfoDubboService implements ICommissionInvoice
     @Override
     public String webFindInvoiceCustInfoEffectiveByCustNo(Long anCustNo, Long anCoreCustNo) {
 
-        return AjaxObject.newOk("发票抬头查询成功", custInfoService.findInvoiceCustInfoEffectiveByCustNo(anCustNo, anCoreCustNo)).toJson();
+        return AjaxObject
+                .newOk("发票抬头查询成功", custInfoService.findInvoiceCustInfoEffectiveByCustNo(anCustNo, anCoreCustNo))
+                .toJson();
     }
 
     @Override

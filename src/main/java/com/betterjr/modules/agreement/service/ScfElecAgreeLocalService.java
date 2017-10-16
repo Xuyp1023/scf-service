@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +75,7 @@ public abstract class ScfElecAgreeLocalService {
     // 获得合同签签署日期，如果已经签署，从合同签署信息中取，如果未签署，则取当前日期
     protected String findSignDate() {
         String tmpDate = elecAgree.getSignDate();
-        if (BetterStringUtils.isBlank(tmpDate)) {
+        if (StringUtils.isBlank(tmpDate)) {
             tmpDate = BetterDateUtils.getNumDate();
         }
         return BetterDateUtils.formatDispay(tmpDate);
@@ -91,13 +92,12 @@ public abstract class ScfElecAgreeLocalService {
             final StringBuffer buffer = createOutHtmlInfo();
             final ByteArrayOutputStream bOut = new ByteArrayOutputStream(1024 * 1024);
             CustFileUtils.exportPDF(buffer, bOut);
-            fileItem = this.dataStoreService.saveStreamToStoreWithBatchNo(new ByteArrayInputStream(bOut.toByteArray()), WOSIGN_SIGN_FILE,
-                    this.elecAgree.getAgreeName().concat(".pdf"));
+            fileItem = this.dataStoreService.saveStreamToStoreWithBatchNo(new ByteArrayInputStream(bOut.toByteArray()),
+                    WOSIGN_SIGN_FILE, this.elecAgree.getAgreeName().concat(".pdf"));
             if (fileItem != null && anSave) {
                 elecAgreeService.saveSignFileInfo(this.elecAgree, fileItem);
             }
-        }
-        else if (MathExtend.smallValue(this.elecAgree.getSignBatchNo()) == false) {
+        } else if (MathExtend.smallValue(this.elecAgree.getSignBatchNo()) == false) {
             fileItem = new CustFileItem();
         }
 
@@ -115,7 +115,8 @@ public abstract class ScfElecAgreeLocalService {
         return elecAgreeService.saveAndSendValidSMS(elecAgree, fileItem, anAppNo, anVcode);
     }
 
-    public Page<ScfElecAgreementInfo> findScfElecAgreementList(final Map<String, Object> anParam, final int anPageNum, final int anPageSize) {
+    public Page<ScfElecAgreementInfo> findScfElecAgreementList(final Map<String, Object> anParam, final int anPageNum,
+            final int anPageSize) {
 
         return elecAgreeService.queryScfElecAgreementList(anParam, anPageNum, anPageSize);
     }
@@ -139,7 +140,8 @@ public abstract class ScfElecAgreeLocalService {
             logger.info("生成合同---使用保理公司自定义模板");
             final ScfContractTemplate template = (ScfContractTemplate) param.get("template");
             final InputStream is = dataStoreService.loadFromStoreByBatchNo(template.getBatchNo());
-            return freeMarkerService.processTemplateByFactory(getViewModeFile() + "_" + template.getFactorNo(), param, "supplychain", is);
+            return freeMarkerService.processTemplateByFactory(getViewModeFile() + "_" + template.getFactorNo(), param,
+                    "supplychain", is);
         }
 
         // 使用系统模板
@@ -177,19 +179,19 @@ public abstract class ScfElecAgreeLocalService {
                 if (MathExtend.smallValue(this.elecAgree.getHtmlBatchNo())) {
                     final ByteArrayOutputStream bOut = new ByteArrayOutputStream(1024 * 1024);
                     CustFileUtils.exportPDF(tmpBuffer, bOut);
-                    tmpData = this.elecAgreeService.saveEleAgreeImages(new ByteArrayInputStream(bOut.toByteArray()), this.elecAgree.getAppNo());
+                    tmpData = this.elecAgreeService.saveEleAgreeImages(new ByteArrayInputStream(bOut.toByteArray()),
+                            this.elecAgree.getAppNo());
+                } else {
+                    tmpData = this.elecAgreeService.findBatchHtmlNoIncodeFiles(this.elecAgree.getAppNo(),
+                            this.elecAgree.getHtmlBatchNo());
                 }
-                else {
-                    tmpData = this.elecAgreeService.findBatchHtmlNoIncodeFiles(this.elecAgree.getAppNo(), this.elecAgree.getHtmlBatchNo());
-                }
-            }
-            else {
+            } else {
                 tmpData = tmpBuffer;
                 tmpSigned = Boolean.FALSE;
             }
-        }
-        else {
-            tmpData = this.elecAgreeService.findBatchHtmlNoIncodeFiles(this.elecAgree.getAppNo(), this.elecAgree.getHtmlBatchNo());
+        } else {
+            tmpData = this.elecAgreeService.findBatchHtmlNoIncodeFiles(this.elecAgree.getAppNo(),
+                    this.elecAgree.getHtmlBatchNo());
         }
         result.put("data", tmpData);
         result.put("signed", tmpSigned);

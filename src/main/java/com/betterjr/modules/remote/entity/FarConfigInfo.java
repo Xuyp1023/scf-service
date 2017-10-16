@@ -104,9 +104,8 @@ public class FarConfigInfo extends ConfigItemOperatorImpl implements BetterjrEnt
             }
             sb.setLength(sb.length() - 1);
             return sb.toString();
-        }
-        else {
-        return ParamValueHelper.getValue(itemValue);
+        } else {
+            return ParamValueHelper.getValue(itemValue);
         }
     }
 
@@ -199,13 +198,18 @@ public class FarConfigInfo extends ConfigItemOperatorImpl implements BetterjrEnt
         }
         FarConfigInfo other = (FarConfigInfo) that;
         return (this.getFaceNo() == null ? other.getFaceNo() == null : this.getFaceNo().equals(other.getFaceNo()))
-                && (this.getItemName() == null ? other.getItemName() == null : this.getItemName().equals(other.getItemName()))
-                && (this.getItemValue() == null ? other.getItemValue() == null : this.getItemValue().equals(other.getItemValue()))
-                && (this.getItemType() == null ? other.getItemType() == null : this.getItemType().equals(other.getItemType()))
+                && (this.getItemName() == null ? other.getItemName() == null
+                        : this.getItemName().equals(other.getItemName()))
+                && (this.getItemValue() == null ? other.getItemValue() == null
+                        : this.getItemValue().equals(other.getItemValue()))
+                && (this.getItemType() == null ? other.getItemType() == null
+                        : this.getItemType().equals(other.getItemType()))
                 && (this.getSplit() == null ? other.getSplit() == null : this.getSplit().equals(other.getSplit()))
                 && (this.getScope() == null ? other.getScope() == null : this.getScope().equals(other.getScope()))
-                && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()))
-                && (this.getConfigOrder() == null ? other.getConfigOrder() == null : this.getConfigOrder().equals(other.getConfigOrder()))
+                && (this.getDescription() == null ? other.getDescription() == null
+                        : this.getDescription().equals(other.getDescription()))
+                && (this.getConfigOrder() == null ? other.getConfigOrder() == null
+                        : this.getConfigOrder().equals(other.getConfigOrder()))
                 && (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()));
     }
 

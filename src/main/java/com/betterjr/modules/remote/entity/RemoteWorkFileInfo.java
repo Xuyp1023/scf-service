@@ -6,6 +6,8 @@ import com.betterjr.modules.remote.data.RemoteFileWorkMode;
 
 import java.util.*;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * 文件上传和下载的参数信息
  * 
@@ -19,6 +21,7 @@ public class RemoteWorkFileInfo implements java.io.Serializable {
     private final RemoteFileWorkMode workMode;
     private Map<String, Object> params = new HashMap();
     private final String fileName;
+
     public RemoteWorkFileInfo(RemoteFileWorkMode anWorkMode) {
 
         this(null, null, anWorkMode);
@@ -28,13 +31,14 @@ public class RemoteWorkFileInfo implements java.io.Serializable {
 
         this(anLocalPath, null, anWorkMode);
     }
-    
-    public RemoteWorkFileInfo(String anLocalPath, String anRemotePath, RemoteFileWorkMode anWorkMode){
-        
-       this(anLocalPath, anRemotePath, anWorkMode, null); 
+
+    public RemoteWorkFileInfo(String anLocalPath, String anRemotePath, RemoteFileWorkMode anWorkMode) {
+
+        this(anLocalPath, anRemotePath, anWorkMode, null);
     }
-    
-    public RemoteWorkFileInfo(String anLocalPath, String anRemotePath, RemoteFileWorkMode anWorkMode, String anFileName) {
+
+    public RemoteWorkFileInfo(String anLocalPath, String anRemotePath, RemoteFileWorkMode anWorkMode,
+            String anFileName) {
         this.remotePath = anRemotePath;
         this.localPath = anLocalPath;
         this.workMode = anWorkMode;
@@ -67,10 +71,9 @@ public class RemoteWorkFileInfo implements java.io.Serializable {
     }
 
     public void addParam(String anKey, Object anValue) {
-        if (BetterStringUtils.isNotEmpty(anKey) && (anValue != null)) {
+        if (StringUtils.isNotEmpty(anKey) && (anValue != null)) {
             this.params.put(anKey, anValue);
-        }
-        else {
+        } else {
             throw new BytterValidException(90003, " the request Key or Value is null");
         }
     }

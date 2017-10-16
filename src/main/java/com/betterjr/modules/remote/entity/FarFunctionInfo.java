@@ -288,22 +288,35 @@ public class FarFunctionInfo implements BetterjrEntity {
         }
         FarFunctionInfo other = (FarFunctionInfo) that;
         return (this.getFaceNo() == null ? other.getFaceNo() == null : this.getFaceNo().equals(other.getFaceNo()))
-                && (this.getFunBeanName() == null ? other.getFunBeanName() == null : this.getFunBeanName().equals(other.getFunBeanName()))
-                && (this.getFunCode() == null ? other.getFunCode() == null : this.getFunCode().equals(other.getFunCode()))
-                && (this.getFunName() == null ? other.getFunName() == null : this.getFunName().equals(other.getFunName()))
-                && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()))
+                && (this.getFunBeanName() == null ? other.getFunBeanName() == null
+                        : this.getFunBeanName().equals(other.getFunBeanName()))
+                && (this.getFunCode() == null ? other.getFunCode() == null
+                        : this.getFunCode().equals(other.getFunCode()))
+                && (this.getFunName() == null ? other.getFunName() == null
+                        : this.getFunName().equals(other.getFunName()))
+                && (this.getDescription() == null ? other.getDescription() == null
+                        : this.getDescription().equals(other.getDescription()))
                 && (this.getUrl() == null ? other.getUrl() == null : this.getUrl().equals(other.getUrl()))
-                && (this.getFaceUrl() == null ? other.getFaceUrl() == null : this.getFaceUrl().equals(other.getFaceUrl()))
-                && (this.getInvokeCLass() == null ? other.getInvokeCLass() == null : this.getInvokeCLass().equals(other.getInvokeCLass()))
-                && (this.getReturnClass() == null ? other.getReturnClass() == null : this.getReturnClass().equals(other.getReturnClass()))
-                && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-                && (this.getInputMode() == null ? other.getInputMode() == null : this.getInputMode().equals(other.getInputMode()))
-                && (this.getOutputMode() == null ? other.getOutputMode() == null : this.getOutputMode().equals(other.getOutputMode()))
-                && (this.getDataSerializer() == null ? other.getDataSerializer() == null : this.getDataSerializer().equals(other.getDataSerializer()))
-                && (this.getDataDeSerializer() == null ? other.getDataDeSerializer() == null : this.getDataDeSerializer().equals(
-                        other.getDataDeSerializer()))
-                && (this.getResultCode() == null ? other.getResultCode() == null : this.getResultCode().equals(other.getResultCode()))
-                && (this.getInvokeMode() == null ? other.getInvokeMode() == null : this.getInvokeMode().equals(other.getInvokeMode()));
+                && (this.getFaceUrl() == null ? other.getFaceUrl() == null
+                        : this.getFaceUrl().equals(other.getFaceUrl()))
+                && (this.getInvokeCLass() == null ? other.getInvokeCLass() == null
+                        : this.getInvokeCLass().equals(other.getInvokeCLass()))
+                && (this.getReturnClass() == null ? other.getReturnClass() == null
+                        : this.getReturnClass().equals(other.getReturnClass()))
+                && (this.getModiDate() == null ? other.getModiDate() == null
+                        : this.getModiDate().equals(other.getModiDate()))
+                && (this.getInputMode() == null ? other.getInputMode() == null
+                        : this.getInputMode().equals(other.getInputMode()))
+                && (this.getOutputMode() == null ? other.getOutputMode() == null
+                        : this.getOutputMode().equals(other.getOutputMode()))
+                && (this.getDataSerializer() == null ? other.getDataSerializer() == null
+                        : this.getDataSerializer().equals(other.getDataSerializer()))
+                && (this.getDataDeSerializer() == null ? other.getDataDeSerializer() == null
+                        : this.getDataDeSerializer().equals(other.getDataDeSerializer()))
+                && (this.getResultCode() == null ? other.getResultCode() == null
+                        : this.getResultCode().equals(other.getResultCode()))
+                && (this.getInvokeMode() == null ? other.getInvokeMode() == null
+                        : this.getInvokeMode().equals(other.getInvokeMode()));
     }
 
     @Override

@@ -225,13 +225,20 @@ public class ScfElecAgreeStub implements BetterjrEntity {
                 && (this.getAppNo() == null ? other.getAppNo() == null : this.getAppNo().equals(other.getAppNo()))
                 && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
                 && (this.getIpaddr() == null ? other.getIpaddr() == null : this.getIpaddr().equals(other.getIpaddr()))
-                && (this.getOperCode() == null ? other.getOperCode() == null : this.getOperCode().equals(other.getOperCode()))
-                && (this.getOperName() == null ? other.getOperName() == null : this.getOperName().equals(other.getOperName()))
-                && (this.getOperTime() == null ? other.getOperTime() == null : this.getOperTime().equals(other.getOperTime()))
-                && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-                && (this.getOperStatus() == null ? other.getOperStatus() == null : this.getOperStatus().equals(other.getOperStatus()))
-                && (this.getSignOrder() == null ? other.getSignOrder() == null : this.getSignOrder().equals(other.getSignOrder()))
-                && (this.getSignServiceId() == null ? other.getSignServiceId() == null : this.getSignServiceId().equals(other.getSignServiceId()));
+                && (this.getOperCode() == null ? other.getOperCode() == null
+                        : this.getOperCode().equals(other.getOperCode()))
+                && (this.getOperName() == null ? other.getOperName() == null
+                        : this.getOperName().equals(other.getOperName()))
+                && (this.getOperTime() == null ? other.getOperTime() == null
+                        : this.getOperTime().equals(other.getOperTime()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getOperStatus() == null ? other.getOperStatus() == null
+                        : this.getOperStatus().equals(other.getOperStatus()))
+                && (this.getSignOrder() == null ? other.getSignOrder() == null
+                        : this.getSignOrder().equals(other.getSignOrder()))
+                && (this.getSignServiceId() == null ? other.getSignServiceId() == null
+                        : this.getSignServiceId().equals(other.getSignServiceId()));
     }
 
     @Override

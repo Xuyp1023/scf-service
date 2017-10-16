@@ -23,101 +23,101 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @Table(name = "t_scf_pay_record_detail")
 public class ScfPayRecordDetail implements BetterjrEntity {
     @Id
-    @Column(name = "ID",  columnDefinition="BIGINT" )
-    @MetaData( value="", comments = "")
+    @Column(name = "ID", columnDefinition = "BIGINT")
+    @MetaData(value = "", comments = "")
     @OrderBy("desc")
     private Long id;
 
     /**
      * 保理公司编号
      */
-    @Column(name = "L_FACTORNO",  columnDefinition="BIGINT" )
-    @MetaData( value="保理公司编号", comments = "保理公司编号")
+    @Column(name = "L_FACTORNO", columnDefinition = "BIGINT")
+    @MetaData(value = "保理公司编号", comments = "保理公司编号")
     private Long factorNo;
 
     /**
      * 客户编号
      */
-    @Column(name = "L_CUSTNO",  columnDefinition="BIGINT" )
-    @MetaData( value="客户编号", comments = "客户编号")
+    @Column(name = "L_CUSTNO", columnDefinition = "BIGINT")
+    @MetaData(value = "客户编号", comments = "客户编号")
     private Long custNo;
 
     /**
      * 核心企业编号
      */
-    @Column(name = "L_CORE_CUSTNO",  columnDefinition="BIGINT" )
-    @MetaData( value="核心企业编号", comments = "核心企业编号")
+    @Column(name = "L_CORE_CUSTNO", columnDefinition = "BIGINT")
+    @MetaData(value = "核心企业编号", comments = "核心企业编号")
     private Long coreCustNo;
 
     /**
      * 还款记录ID
      */
-    @Column(name = "L_PAY_RECORD_ID",  columnDefinition="BIGINT" )
-    @MetaData( value="还款记录ID", comments = "还款记录ID")
+    @Column(name = "L_PAY_RECORD_ID", columnDefinition = "BIGINT")
+    @MetaData(value = "还款记录ID", comments = "还款记录ID")
     private Long payRecordId;
 
     /**
      * 还款类型,1:本金，2：利息，3：管理费，4：罚息，5：滞纳金，6：其它费用，7：提前还款手续费，8：放款手续费
      */
-    @Column(name = "C_PAY_TYPE",  columnDefinition="VARCHAR" )
-    @MetaData( value="还款类型,1:本金", comments = "还款类型,1:本金，2：利息，3：管理费，4：罚息，5：滞纳金，6：其它费用，7：提前还款手续费，8：放款手续费")
+    @Column(name = "C_PAY_TYPE", columnDefinition = "VARCHAR")
+    @MetaData(value = "还款类型,1:本金", comments = "还款类型,1:本金，2：利息，3：管理费，4：罚息，5：滞纳金，6：其它费用，7：提前还款手续费，8：放款手续费")
     private String payType;
 
     /**
      * 还款金额
      */
-    @Column(name = "F_PAY_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="还款金额", comments = "还款金额")
+    @Column(name = "F_PAY_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "还款金额", comments = "还款金额")
     private BigDecimal payBalance;
 
     /**
      * 还款日期
      */
-    @Column(name = "D_PAY_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="还款日期", comments = "还款日期")
+    @Column(name = "D_PAY_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "还款日期", comments = "还款日期")
     private String payDate;
 
     /**
      * 操作机构
      */
-    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
-    @MetaData( value="操作机构", comments = "操作机构")
+    @Column(name = "C_OPERORG", columnDefinition = "VARCHAR")
+    @MetaData(value = "操作机构", comments = "操作机构")
     private String operOrg;
 
-    @Column(name = "L_REG_OPERID",  columnDefinition="BIGINT" )
-    @MetaData( value="", comments = "")
+    @Column(name = "L_REG_OPERID", columnDefinition = "BIGINT")
+    @MetaData(value = "", comments = "")
     private Long regOperId;
 
-    @Column(name = "C_REG_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "C_REG_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String regOperName;
 
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String regDate;
 
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String regTime;
 
-    @Column(name = "L_MODI_OPERID",  columnDefinition="BIGINT" )
-    @MetaData( value="", comments = "")
+    @Column(name = "L_MODI_OPERID", columnDefinition = "BIGINT")
+    @MetaData(value = "", comments = "")
     private Long modiOperId;
 
-    @Column(name = "C_MODI_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "C_MODI_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String modiOperName;
 
-    @Column(name = "D_MODI_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "D_MODI_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String modiDate;
 
-    @Column(name = "T_MODI_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "T_MODI_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String modiTime;
 
-    @Column(name = "N_VERSION",  columnDefinition="BIGINT" )
-    @MetaData( value="", comments = "")
+    @Column(name = "N_VERSION", columnDefinition = "BIGINT")
+    @MetaData(value = "", comments = "")
     private Long version;
 
     private static final long serialVersionUID = 1469504768793L;
@@ -311,23 +311,39 @@ public class ScfPayRecordDetail implements BetterjrEntity {
         }
         ScfPayRecordDetail other = (ScfPayRecordDetail) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getFactorNo() == null ? other.getFactorNo() == null : this.getFactorNo().equals(other.getFactorNo()))
-            && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-            && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
-            && (this.getPayRecordId() == null ? other.getPayRecordId() == null : this.getPayRecordId().equals(other.getPayRecordId()))
-            && (this.getPayType() == null ? other.getPayType() == null : this.getPayType().equals(other.getPayType()))
-            && (this.getPayBalance() == null ? other.getPayBalance() == null : this.getPayBalance().equals(other.getPayBalance()))
-            && (this.getPayDate() == null ? other.getPayDate() == null : this.getPayDate().equals(other.getPayDate()))
-            && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
-            && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
-            && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-            && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
-            && (this.getModiOperId() == null ? other.getModiOperId() == null : this.getModiOperId().equals(other.getModiOperId()))
-            && (this.getModiOperName() == null ? other.getModiOperName() == null : this.getModiOperName().equals(other.getModiOperName()))
-            && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-            && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()))
-            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
+                && (this.getFactorNo() == null ? other.getFactorNo() == null
+                        : this.getFactorNo().equals(other.getFactorNo()))
+                && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
+                && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null
+                        : this.getCoreCustNo().equals(other.getCoreCustNo()))
+                && (this.getPayRecordId() == null ? other.getPayRecordId() == null
+                        : this.getPayRecordId().equals(other.getPayRecordId()))
+                && (this.getPayType() == null ? other.getPayType() == null
+                        : this.getPayType().equals(other.getPayType()))
+                && (this.getPayBalance() == null ? other.getPayBalance() == null
+                        : this.getPayBalance().equals(other.getPayBalance()))
+                && (this.getPayDate() == null ? other.getPayDate() == null
+                        : this.getPayDate().equals(other.getPayDate()))
+                && (this.getOperOrg() == null ? other.getOperOrg() == null
+                        : this.getOperOrg().equals(other.getOperOrg()))
+                && (this.getRegOperId() == null ? other.getRegOperId() == null
+                        : this.getRegOperId().equals(other.getRegOperId()))
+                && (this.getRegOperName() == null ? other.getRegOperName() == null
+                        : this.getRegOperName().equals(other.getRegOperName()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getRegTime() == null ? other.getRegTime() == null
+                        : this.getRegTime().equals(other.getRegTime()))
+                && (this.getModiOperId() == null ? other.getModiOperId() == null
+                        : this.getModiOperId().equals(other.getModiOperId()))
+                && (this.getModiOperName() == null ? other.getModiOperName() == null
+                        : this.getModiOperName().equals(other.getModiOperName()))
+                && (this.getModiDate() == null ? other.getModiDate() == null
+                        : this.getModiDate().equals(other.getModiDate()))
+                && (this.getModiTime() == null ? other.getModiTime() == null
+                        : this.getModiTime().equals(other.getModiTime()))
+                && (this.getVersion() == null ? other.getVersion() == null
+                        : this.getVersion().equals(other.getVersion()));
     }
 
     @Override
@@ -354,7 +370,7 @@ public class ScfPayRecordDetail implements BetterjrEntity {
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
         return result;
     }
-    
+
     public void init() {
         this.id = SerialGenerator.getLongValue("ScfPayRecordDetail.id");
         this.regOperName = UserUtils.getUserName();

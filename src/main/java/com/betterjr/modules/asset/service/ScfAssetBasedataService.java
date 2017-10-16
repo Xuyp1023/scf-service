@@ -1,7 +1,6 @@
 package com.betterjr.modules.asset.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +12,6 @@ import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.QueryTermBuilder;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBillDO;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillDOService;
-import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.asset.dao.ScfAssetBasedataMapper;
 import com.betterjr.modules.asset.data.AssetConstantCollentions;
 import com.betterjr.modules.asset.entity.ScfAsset;
@@ -33,16 +31,16 @@ public class ScfAssetBasedataService extends BaseService<ScfAssetBasedataMapper,
 
     @Autowired
     private ContractLedgerService agreementService;
-    
+
     @Autowired
     private ScfInvoiceDOService invoiceService;
-    
+
     @Autowired
     private ScfAcceptBillDOService acceptBillService;
-    
+
     @Autowired
     private ScfReceivableDOService receivableService;
-    
+
     @Autowired
     private ScfOrderDOService orderService;
 
@@ -149,58 +147,68 @@ public class ScfAssetBasedataService extends BaseService<ScfAssetBasedataMapper,
         BTAssert.notNull(anAsset.getBasedataMap(), "新增资产出错，资产为空");
 
         // 新增订单 类型
-        if (anAsset.getBasedataMap() != null && anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_ORDER_LIST_KEY) != null) {
+        if (anAsset.getBasedataMap() != null
+                && anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_ORDER_LIST_KEY) != null) {
 
             Object object = anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_ORDER_LIST_KEY);
             if (object instanceof List) {
 
                 List<ScfOrderDO> orderList = (List<ScfOrderDO>) object;
-                saveBaseDataByBaseVersionList(orderList, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_ORDER, anAsset.getId());
+                saveBaseDataByBaseVersionList(orderList, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_ORDER,
+                        anAsset.getId());
             }
 
         }
         // 票据类型
-        if (anAsset.getBasedataMap() != null && anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_BILL_LIST_KEY) != null) {
+        if (anAsset.getBasedataMap() != null
+                && anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_BILL_LIST_KEY) != null) {
 
             Object object = anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_BILL_LIST_KEY);
             if (object instanceof List) {
 
                 List<ScfAcceptBillDO> billList = (List<ScfAcceptBillDO>) object;
-                saveBaseDataByBaseVersionList(billList, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL, anAsset.getId());
+                saveBaseDataByBaseVersionList(billList, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL,
+                        anAsset.getId());
             }
 
         }
         // 发票类型
-        if (anAsset.getBasedataMap() != null && anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_INVOICE_LIST_KEY) != null) {
+        if (anAsset.getBasedataMap() != null
+                && anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_INVOICE_LIST_KEY) != null) {
 
             Object object = anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_INVOICE_LIST_KEY);
             if (object instanceof List) {
 
                 List<ScfInvoiceDO> invoiceList = (List<ScfInvoiceDO>) object;
-                saveBaseDataByBaseVersionList(invoiceList, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE, anAsset.getId());
+                saveBaseDataByBaseVersionList(invoiceList, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE,
+                        anAsset.getId());
             }
 
         }
         // 应收账款新增
-        if (anAsset.getBasedataMap() != null && anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY) != null) {
+        if (anAsset.getBasedataMap() != null
+                && anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY) != null) {
 
             Object object = anAsset.getBasedataMap().get(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY);
             if (object instanceof List) {
 
                 List<ScfReceivableDO> invoiceList = (List<ScfReceivableDO>) object;
-                saveBaseDataByBaseVersionList(invoiceList, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE, anAsset.getId());
+                saveBaseDataByBaseVersionList(invoiceList, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE,
+                        anAsset.getId());
             }
 
         }
 
         // 合同新增
-        if (anAsset.getBasedataMap() != null && anAsset.getBasedataMap().get(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY) != null) {
+        if (anAsset.getBasedataMap() != null
+                && anAsset.getBasedataMap().get(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY) != null) {
 
             Object object = anAsset.getBasedataMap().get(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY);
             if (object instanceof List) {
 
                 List<ContractLedger> agreementList = (List<ContractLedger>) object;
-                // saveBaseDataByBaseVersionList(invoiceList, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE, anAsset.getId());
+                // saveBaseDataByBaseVersionList(invoiceList,
+                // AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE, anAsset.getId());
                 for (ContractLedger agreement : agreementList) {
                     ScfAssetBasedata baseData = new ScfAssetBasedata();
                     baseData.setAssetId(anAsset.getId());
@@ -216,7 +224,8 @@ public class ScfAssetBasedataService extends BaseService<ScfAssetBasedataMapper,
 
     }
 
-    private void saveBaseDataByBaseVersionList(List<? extends BaseVersionEntity> anBaseList, String anInfoType, Long anAssetId) {
+    private void saveBaseDataByBaseVersionList(List<? extends BaseVersionEntity> anBaseList, String anInfoType,
+            Long anAssetId) {
 
         for (BaseVersionEntity baseVersion : anBaseList) {
             ScfAssetBasedata baseData = new ScfAssetBasedata();
@@ -241,28 +250,23 @@ public class ScfAssetBasedataService extends BaseService<ScfAssetBasedataMapper,
             if (AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_ORDER.equals(basedata.getInfoType())) {
 
                 orderService.updateVersionByRefNoVersion(basedata.getRefNo(), basedata.getVersion());
-            }
-            else if (AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT.equals(basedata.getInfoType())) {
+            } else if (AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT.equals(basedata.getInfoType())) {
 
                 agreementService.updateVersionByRefNoVersion(basedata.getRefNo(), basedata.getVersion());
 
-            }
-            else if (AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL.equals(basedata.getInfoType())) {
+            } else if (AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL.equals(basedata.getInfoType())) {
 
                 acceptBillService.updateVersionByRefNoVersion(basedata.getRefNo(), basedata.getVersion());
 
-            }
-            else if (AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE.equals(basedata.getInfoType())) {
+            } else if (AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE.equals(basedata.getInfoType())) {
 
                 invoiceService.updateVersionByRefNoVersion(basedata.getRefNo(), basedata.getVersion());
 
-            }
-            else if (AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE.equals(basedata.getInfoType())) {
+            } else if (AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE.equals(basedata.getInfoType())) {
 
                 receivableService.updateVersionByRefNoVersion(basedata.getRefNo(), basedata.getVersion());
 
-            }
-            else {
+            } else {
 
             }
 

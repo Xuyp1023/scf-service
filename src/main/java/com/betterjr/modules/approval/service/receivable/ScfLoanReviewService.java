@@ -13,15 +13,15 @@ import com.betterjr.modules.loan.entity.ScfRequest;
  *
  */
 @Service
-public class ScfLoanReviewService extends ScfBaseApprovalService{
-	
-	public void processPass(Map<String, Object> anContext) {
-		ScfRequest request = this.getReqtuest(anContext.get("requestNo").toString());
-		//this.pushOrderInfo(request);
-	}
+public class ScfLoanReviewService extends ScfBaseApprovalService {
 
-	public void processReject(Map<String, Object> anContext) {
-		ScfRequest request = this.getReqtuest(anContext.get("requestNo").toString());
-	}
+    public void processPass(Map<String, Object> anContext) {
+        ScfRequest request = this.getReqtuest(anContext.get("requestNo").toString());
+        // this.pushOrderInfo(request);
+    }
+
+    public void processReject(Map<String, Object> anContext) {
+        ScfRequest request = this.getReqtuest(anContext.get("requestNo").toString());
+    }
 
 }

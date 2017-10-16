@@ -25,70 +25,71 @@ public class WosJsonRemoteDeSerializer extends RemoteBaseDeSerializer {
      * 
      */
     private static final long serialVersionUID = 1L;
-    
-    private final String statusPara="status";
-    private final String errorcodePara="errorcode";
-    
-    private boolean status=false;
-    
+
+    private final String statusPara = "status";
+    private final String errorcodePara = "errorcode";
+
+    private boolean status = false;
+
     @Override
     public List<Map<String, Object>> readResult() {
-        //parse response string to data&sign 
-        Map<String,String> paras=BetterStringUtils.parseParamsMap(this.data);
+        // parse response string to data&sign
+        Map<String, String> paras = BetterStringUtils.parseParamsMap(this.data);
 
-//        List<NameValuePair> list=URLEncodedUtils.parse(this.data, Charset.forName("UTF8"));
-//        Map<String,String> paras=new HashMap<String,String>();
-//        for(NameValuePair pair:list){
-//            paras.put(pair.getName(), pair.getValue());
-//        }
-        
-        String dataStr=paras.get("data");
-        String signStr=paras.get("sign");
-        logger.debug("data:"+dataStr);
-        logger.debug("sign:"+signStr);
-        String decodedData=this.func.getWorkFace().getCryptService().decrypt(dataStr);
-        logger.info("decoded data:"+decodedData);
-        boolean verified=this.func.getWorkFace().getSignService().verifySign(decodedData, signStr);
-        if(!verified){
+        // List<NameValuePair> list=URLEncodedUtils.parse(this.data, Charset.forName("UTF8"));
+        // Map<String,String> paras=new HashMap<String,String>();
+        // for(NameValuePair pair:list){
+        // paras.put(pair.getName(), pair.getValue());
+        // }
+
+        String dataStr = paras.get("data");
+        String signStr = paras.get("sign");
+        logger.debug("data:" + dataStr);
+        logger.debug("sign:" + signStr);
+        String decodedData = this.func.getWorkFace().getCryptService().decrypt(dataStr);
+        logger.info("decoded data:" + decodedData);
+        boolean verified = this.func.getWorkFace().getSignService().verifySign(decodedData, signStr);
+        if (!verified) {
             logger.error("response verify sign failed!!");
             return Collections.EMPTY_LIST;
         }
-        
-        Map<String,Object> dataMap=JsonMapper.parserJson(decodedData);
-        String statusStr=dataMap.get(statusPara).toString();
-        if(StringUtils.equals("1", statusStr)){
-            this.status=true;
-        }else{
-            this.status=false;
+
+        Map<String, Object> dataMap = JsonMapper.parserJson(decodedData);
+        String statusStr = dataMap.get(statusPara).toString();
+        if (StringUtils.equals("1", statusStr)) {
+            this.status = true;
+        } else {
+            this.status = false;
         }
-        this.state=dataMap.get(errorcodePara).toString();
-        
+        this.state = dataMap.get(errorcodePara).toString();
+
         return Collections.singletonList(dataMap);
-    } 
-    
-    
+    }
+
     @Override
     public boolean getStatus() {
         return this.status;
     }
-    
-    protected Map<String, Object> prepareInputDataMap(String decodedData){
+
+    @Override
+    protected Map<String, Object> prepareInputDataMap(String decodedData) {
 
         Map<String, Object> tmpMap = super.prepareInputDataMap(decodedData);
-        Object opType=tmpMap.get("actiontype");
+        Object opType = tmpMap.get("actiontype");
         tmpMap.remove("actiontype");
-        if(opType==null){
+        if (opType == null) {
             return tmpMap;
         }
-        if(!"PushSignedDoc".equalsIgnoreCase(opType.toString()) && !"PushValidation".equalsIgnoreCase(opType.toString())){
+        if (!"PushSignedDoc".equalsIgnoreCase(opType.toString())
+                && !"PushValidation".equalsIgnoreCase(opType.toString())) {
             return tmpMap;
         }
-        
-        if("PushSignedDoc".equalsIgnoreCase(opType.toString())){
-            Object extendData=tmpMap.get("extendData");
+
+        if ("PushSignedDoc".equalsIgnoreCase(opType.toString())) {
+            Object extendData = tmpMap.get("extendData");
             tmpMap.remove("extendData");
-            if(extendData!=null & extendData instanceof Map){
-                tmpMap.putAll((Map)extendData);
+            if (extendData != null & extendData instanceof Map) {
+                tmpMap.putAll((Map) extendData);
             }
         }
         Map result = new HashMap();

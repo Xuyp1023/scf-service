@@ -30,6 +30,7 @@ public class ScfElecNoticeLocalService extends ScfElecAgreeLocalService {
     private ScfRequestCreditService requestCreditService;
     private ScfContractTemplateService contractTemplateService = null;
 
+    @Override
     protected void subInit() {
         this.requestNoticeService = SpringContextHolder.getBean(ScfRequestNoticeService.class);
         this.requestService = SpringContextHolder.getBean(ScfRequestService.class);
@@ -41,13 +42,13 @@ public class ScfElecNoticeLocalService extends ScfElecAgreeLocalService {
     public Map<String, Object> findViewModeData() {
         Map<String, Object> result = new HashMap();
         String requestNo = this.elecAgree.getRequestNo();
-        logger.info("notice requestNo:"+requestNo);
+        logger.info("notice requestNo:" + requestNo);
         ScfRequestNotice noticeInfo = requestNoticeService.selectByPrimaryKey(requestNo);
         if (null == noticeInfo) {
             logger.error("Can't get notice information with request no:" + requestNo);
             throw new BytterTradeException(40001, "无法获取通知书信息");
         }
-        noticeInfo=requestNoticeService.findFactorAgreement(noticeInfo);
+        noticeInfo = requestNoticeService.findFactorAgreement(noticeInfo);
         result.put("noticeInfo", noticeInfo);
         Map<String, Object> reqCredits = requestCreditService.findByRequestNo(requestNo);
         // 获取应收账款信息
@@ -57,15 +58,15 @@ public class ScfElecNoticeLocalService extends ScfElecAgreeLocalService {
         }
         result.put("creditInfos", reqCredits);
         result.put("signDate", findSignDate());
-        
+
         // 查询发票信息
-        Map<String, Object> billMap=requestNoticeService.findBillListByRequestNo(requestNo);
-        logger.info("notice billMap:"+billMap);
+        Map<String, Object> billMap = requestNoticeService.findBillListByRequestNo(requestNo);
+        logger.info("notice billMap:" + billMap);
         result.put("billMap", billMap);
 
-        //获取保理公司自定义模板
+        // 获取保理公司自定义模板
         result.put("template", requestService.getFactoryContactTemplate(requestNo, getViewModeFile()));
-        
+
         return result;
     }
 
@@ -79,7 +80,7 @@ public class ScfElecNoticeLocalService extends ScfElecAgreeLocalService {
     public boolean cancelElecAgreement(String anDescribe) {
         logger.info("will cancel appNo is " + this.elecAgree.getAppNo());
         if (elecAgreeService.checkCancelElecAgreement(this.elecAgree.getAppNo())) {
-            return this.elecAgreeService.saveAndCancelElecAgreement(this.elecAgree.getAppNo(),anDescribe);
+            return this.elecAgreeService.saveAndCancelElecAgreement(this.elecAgree.getAppNo(), anDescribe);
         }
         return false;
     }

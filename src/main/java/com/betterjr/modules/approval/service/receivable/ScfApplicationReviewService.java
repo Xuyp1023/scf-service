@@ -21,39 +21,39 @@ import com.betterjr.modules.loan.service.ScfRequestTempService;
  */
 @Service
 public class ScfApplicationReviewService extends ScfBaseApprovalService {
-	@Autowired
-	private ScfRequestTempService requestTempService;
-	
-	@Autowired
-	private ScfRequestService requestService;
+    @Autowired
+    private ScfRequestTempService requestTempService;
 
-	public void processPass(Map<String, Object> anContext) {
-		// 获取临时表数据
-		ScfRequestTemp requestTemp = requestTempService.findRequestTemp(anContext.get("requestNo").toString());
+    @Autowired
+    private ScfRequestService requestService;
 
-		// 临时表复制到申请表
-		ScfRequest request = new ScfRequest();
-		request.setRequestNo(requestTemp.getRequestNo());
-		request.setBalance(requestTemp.getBalance());
-		request.setPeriod(requestTemp.getPeriod());
-		request.setPeriodUnit(requestTemp.getPeriodUnit());
-		request.setCustNo(requestTemp.getCustNo());
-		request.setCoreCustNo(requestTemp.getCoreCustNo());
-		request.setFactorNo(requestTemp.getFactorNo());
-		request.setDescription(requestTemp.getDescription());
-		request.setSuppBankAccount(requestTemp.getSuppBankAccount());
-		request.setProductCode(requestTemp.getProductCode());
-		request.setOrders(requestTemp.getOrders());
-		request.setCustType(REQUEST_CUST_TYPE_SUPPLY);
-		requestService.addRequest(request);
-	}
+    public void processPass(Map<String, Object> anContext) {
+        // 获取临时表数据
+        ScfRequestTemp requestTemp = requestTempService.findRequestTemp(anContext.get("requestNo").toString());
 
-	public void processReject(Map<String, Object> anContext) {
-		// 获取临时表数据
-		ScfRequestTemp requestTemp = requestTempService.findRequestTemp(anContext.get("requestNo").toString());
-		
-		//打回修改，将临时表状态改为草稿
-		requestTemp.setBusinStatus("1");
-		requestTempService.saveModifyTemp(requestTemp, anContext.get("requestNo").toString());
-	}
+        // 临时表复制到申请表
+        ScfRequest request = new ScfRequest();
+        request.setRequestNo(requestTemp.getRequestNo());
+        request.setBalance(requestTemp.getBalance());
+        request.setPeriod(requestTemp.getPeriod());
+        request.setPeriodUnit(requestTemp.getPeriodUnit());
+        request.setCustNo(requestTemp.getCustNo());
+        request.setCoreCustNo(requestTemp.getCoreCustNo());
+        request.setFactorNo(requestTemp.getFactorNo());
+        request.setDescription(requestTemp.getDescription());
+        request.setSuppBankAccount(requestTemp.getSuppBankAccount());
+        request.setProductCode(requestTemp.getProductCode());
+        request.setOrders(requestTemp.getOrders());
+        request.setCustType(REQUEST_CUST_TYPE_SUPPLY);
+        requestService.addRequest(request);
+    }
+
+    public void processReject(Map<String, Object> anContext) {
+        // 获取临时表数据
+        ScfRequestTemp requestTemp = requestTempService.findRequestTemp(anContext.get("requestNo").toString());
+
+        // 打回修改，将临时表状态改为草稿
+        requestTemp.setBusinStatus("1");
+        requestTempService.saveModifyTemp(requestTemp, anContext.get("requestNo").toString());
+    }
 }

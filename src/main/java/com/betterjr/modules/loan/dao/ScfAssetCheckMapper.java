@@ -5,6 +5,6 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.loan.entity.ScfAssetCheck;
 
 @BetterjrMapper
-public interface ScfAssetCheckMapper extends Mapper<ScfAssetCheck>{
+public interface ScfAssetCheckMapper extends Mapper<ScfAssetCheck> {
 
 }

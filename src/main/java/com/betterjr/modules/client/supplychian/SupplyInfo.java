@@ -165,7 +165,6 @@ public class SupplyInfo implements Serializable {
     public void setBankAcountName(String anBankAcountName) {
         this.bankAcountName = anBankAcountName;
     }
- 
 
     public String getBtCustId() {
         return this.btCustId;
@@ -264,7 +263,7 @@ public class SupplyInfo implements Serializable {
     public void setCorpName(String anCorpName) {
         this.corpName = anCorpName;
     }
- 
+
     public String getType() {
         return this.type;
     }

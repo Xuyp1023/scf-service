@@ -28,9 +28,9 @@ public class ScfElecAgreementFactory {
         ScfElecAgreement tmpElecAgreement = elecAgreeService.selectByPrimaryKey(anAppNo);
         ScfElecAgreeLocalService localService = null;
         if (tmpElecAgreement == null) {
-            throw new BytterValidException("ScfElecAgreementFactory.create ScfElecAgreeLocalService not find request AppNo :" + anAppNo);
-        }
-        else {
+            throw new BytterValidException(
+                    "ScfElecAgreementFactory.create ScfElecAgreeLocalService not find request AppNo :" + anAppNo);
+        } else {
             DictItemInfo dictItem = DictUtils.getDictItem("ElecSignContractMode", tmpElecAgreement.getAgreeType());
             try {
                 localService = (ScfElecAgreeLocalService) SpringContextHolder.getBean(dictItem.getSubject());
@@ -49,7 +49,7 @@ public class ScfElecAgreementFactory {
     public static ScfElecAgreeLocalService create() {
         ScfElecAgreeLocalService localService = SpringContextHolder.getBean(ScfElecNoticeLocalService.class);
         localService.putService(SpringContextHolder.getBean(ScfElecAgreementService.class));
-        
+
         return localService;
     }
 }

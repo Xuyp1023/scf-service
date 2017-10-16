@@ -609,41 +609,71 @@ public class ScfCredit implements BetterjrEntity {
         }
         ScfCredit other = (ScfCredit) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-                && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
-                && (this.getCoreName() == null ? other.getCoreName() == null : this.getCoreName().equals(other.getCoreName()))
-                && (this.getFactorNo() == null ? other.getFactorNo() == null : this.getFactorNo().equals(other.getFactorNo()))
-                && (this.getFactorName() == null ? other.getFactorName() == null : this.getFactorName().equals(other.getFactorName()))
-                && (this.getCreditType() == null ? other.getCreditType() == null : this.getCreditType().equals(other.getCreditType()))
+                && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null
+                        : this.getCoreCustNo().equals(other.getCoreCustNo()))
+                && (this.getCoreName() == null ? other.getCoreName() == null
+                        : this.getCoreName().equals(other.getCoreName()))
+                && (this.getFactorNo() == null ? other.getFactorNo() == null
+                        : this.getFactorNo().equals(other.getFactorNo()))
+                && (this.getFactorName() == null ? other.getFactorName() == null
+                        : this.getFactorName().equals(other.getFactorName()))
+                && (this.getCreditType() == null ? other.getCreditType() == null
+                        : this.getCreditType().equals(other.getCreditType()))
                 && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-                && (this.getCustName() == null ? other.getCustName() == null : this.getCustName().equals(other.getCustName()))
-                && (this.getCreditLimit() == null ? other.getCreditLimit() == null : this.getCreditLimit().equals(other.getCreditLimit()))
-                && (this.getCreditUsed() == null ? other.getCreditUsed() == null : this.getCreditUsed().equals(other.getCreditUsed()))
-                && (this.getCreditBalance() == null ? other.getCreditBalance() == null : this.getCreditBalance().equals(other.getCreditBalance()))
-                && (this.getStartDate() == null ? other.getStartDate() == null : this.getStartDate().equals(other.getStartDate()))
-                && (this.getEndDate() == null ? other.getEndDate() == null : this.getEndDate().equals(other.getEndDate()))
-                && (this.getCreditMode() == null ? other.getCreditMode() == null : this.getCreditMode().equals(other.getCreditMode()))
-                && (this.getAgreeId() == null ? other.getAgreeId() == null : this.getAgreeId().equals(other.getAgreeId()))
-                && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
-                && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
-                && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-                && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
-                && (this.getModiOperId() == null ? other.getModiOperId() == null : this.getModiOperId().equals(other.getModiOperId()))
-                && (this.getModiOperName() == null ? other.getModiOperName() == null : this.getModiOperName().equals(other.getModiOperName()))
-                && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-                && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()))
-                && (this.getActivateOperId() == null ? other.getActivateOperId() == null : this.getActivateOperId().equals(other.getActivateOperId()))
+                && (this.getCustName() == null ? other.getCustName() == null
+                        : this.getCustName().equals(other.getCustName()))
+                && (this.getCreditLimit() == null ? other.getCreditLimit() == null
+                        : this.getCreditLimit().equals(other.getCreditLimit()))
+                && (this.getCreditUsed() == null ? other.getCreditUsed() == null
+                        : this.getCreditUsed().equals(other.getCreditUsed()))
+                && (this.getCreditBalance() == null ? other.getCreditBalance() == null
+                        : this.getCreditBalance().equals(other.getCreditBalance()))
+                && (this.getStartDate() == null ? other.getStartDate() == null
+                        : this.getStartDate().equals(other.getStartDate()))
+                && (this.getEndDate() == null ? other.getEndDate() == null
+                        : this.getEndDate().equals(other.getEndDate()))
+                && (this.getCreditMode() == null ? other.getCreditMode() == null
+                        : this.getCreditMode().equals(other.getCreditMode()))
+                && (this.getAgreeId() == null ? other.getAgreeId() == null
+                        : this.getAgreeId().equals(other.getAgreeId()))
+                && (this.getRegOperId() == null ? other.getRegOperId() == null
+                        : this.getRegOperId().equals(other.getRegOperId()))
+                && (this.getRegOperName() == null ? other.getRegOperName() == null
+                        : this.getRegOperName().equals(other.getRegOperName()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getRegTime() == null ? other.getRegTime() == null
+                        : this.getRegTime().equals(other.getRegTime()))
+                && (this.getModiOperId() == null ? other.getModiOperId() == null
+                        : this.getModiOperId().equals(other.getModiOperId()))
+                && (this.getModiOperName() == null ? other.getModiOperName() == null
+                        : this.getModiOperName().equals(other.getModiOperName()))
+                && (this.getModiDate() == null ? other.getModiDate() == null
+                        : this.getModiDate().equals(other.getModiDate()))
+                && (this.getModiTime() == null ? other.getModiTime() == null
+                        : this.getModiTime().equals(other.getModiTime()))
+                && (this.getActivateOperId() == null ? other.getActivateOperId() == null
+                        : this.getActivateOperId().equals(other.getActivateOperId()))
                 && (this.getActivateOperName() == null ? other.getActivateOperName() == null
                         : this.getActivateOperName().equals(other.getActivateOperName()))
-                && (this.getActivateDate() == null ? other.getActivateDate() == null : this.getActivateDate().equals(other.getActivateDate()))
-                && (this.getActivateTime() == null ? other.getActivateTime() == null : this.getActivateTime().equals(other.getActivateTime()))
-                && (this.getTerminatOperId() == null ? other.getTerminatOperId() == null : this.getTerminatOperId().equals(other.getTerminatOperId()))
+                && (this.getActivateDate() == null ? other.getActivateDate() == null
+                        : this.getActivateDate().equals(other.getActivateDate()))
+                && (this.getActivateTime() == null ? other.getActivateTime() == null
+                        : this.getActivateTime().equals(other.getActivateTime()))
+                && (this.getTerminatOperId() == null ? other.getTerminatOperId() == null
+                        : this.getTerminatOperId().equals(other.getTerminatOperId()))
                 && (this.getTerminatOperName() == null ? other.getTerminatOperName() == null
                         : this.getTerminatOperName().equals(other.getTerminatOperName()))
-                && (this.getTerminatDate() == null ? other.getTerminatDate() == null : this.getTerminatDate().equals(other.getTerminatDate()))
-                && (this.getTerminatTime() == null ? other.getTerminatTime() == null : this.getTerminatTime().equals(other.getTerminatTime()))
-                && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
-                && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
-                && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()));
+                && (this.getTerminatDate() == null ? other.getTerminatDate() == null
+                        : this.getTerminatDate().equals(other.getTerminatDate()))
+                && (this.getTerminatTime() == null ? other.getTerminatTime() == null
+                        : this.getTerminatTime().equals(other.getTerminatTime()))
+                && (this.getBusinStatus() == null ? other.getBusinStatus() == null
+                        : this.getBusinStatus().equals(other.getBusinStatus()))
+                && (this.getOperOrg() == null ? other.getOperOrg() == null
+                        : this.getOperOrg().equals(other.getOperOrg()))
+                && (this.getDescription() == null ? other.getDescription() == null
+                        : this.getDescription().equals(other.getDescription()));
     }
 
     @Override

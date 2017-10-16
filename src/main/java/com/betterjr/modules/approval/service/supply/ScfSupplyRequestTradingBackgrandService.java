@@ -3,6 +3,7 @@ package com.betterjr.modules.approval.service.supply;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,44 +21,46 @@ import com.betterjr.modules.loan.helper.RequestType;
 import com.betterjr.modules.push.service.ScfSupplierPushService;
 
 @Service
-public class ScfSupplyRequestTradingBackgrandService extends ScfBaseApprovalService{
+public class ScfSupplyRequestTradingBackgrandService extends ScfBaseApprovalService {
     @Autowired
-    private ScfElecAgreementService elecAgreementService;  
+    private ScfElecAgreementService elecAgreementService;
     @Autowired
     private ScfSupplierPushService supplierPushService;
     @Autowired
     private ScfAgreementService agreementService;
-    
-	public void processPass(Map<String, Object> anContext){
-		String requestNo = anContext.get("requestNo").toString();
-		BTAssert.notNull(requestNo, "申请编号不能为空！");
-        ScfRequest request = requestService.findRequestByRequestNo(requestNo);
-        
-        //生成-应收账款转让确认意见确认书
-        agreementService.transOpinion(requestService.getOption(request));
-        
-        this.pushSingInof(request);
-        this.updateRequestStatus(requestNo, RequestTradeStatus.CONFIRM_TRADING.getCode(), RequestLastStatus.APPROVE.getCode());
-        this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
-	}
 
-	public void processReject(Map<String, Object> anContext) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	/**
-	 * 如果是 微信端的申请 并为 票据融资 则需要发送消息
-	 * @param request
-	 * @param scheme
-	 */
-	private void pushSingInof(ScfRequest request) {
-        if (BetterStringUtils.equals("2", request.getRequestFrom()) && BetterStringUtils.equals(RequestType.BILL.getCode(), request.getRequestType())) {
+    public void processPass(Map<String, Object> anContext) {
+        String requestNo = anContext.get("requestNo").toString();
+        BTAssert.notNull(requestNo, "申请编号不能为空！");
+        ScfRequest request = requestService.findRequestByRequestNo(requestNo);
+
+        // 生成-应收账款转让确认意见确认书
+        agreementService.transOpinion(requestService.getOption(request));
+
+        this.pushSingInof(request);
+        this.updateRequestStatus(requestNo, RequestTradeStatus.CONFIRM_TRADING.getCode(),
+                RequestLastStatus.APPROVE.getCode());
+        this.pushOrderInfo(requestService.findRequestByRequestNo(requestNo));
+    }
+
+    public void processReject(Map<String, Object> anContext) {
+        // TODO Auto-generated method stub
+
+    }
+
+    /**
+     * 如果是 微信端的申请 并为 票据融资 则需要发送消息
+     * @param request
+     * @param scheme
+     */
+    private void pushSingInof(ScfRequest request) {
+        if (StringUtils.equals("2", request.getRequestFrom())
+                && StringUtils.equals(RequestType.BILL.getCode(), request.getRequestType())) {
             List<ScfElecAgreementInfo> list = elecAgreementService.findElecAgreeByOrderNo(request.getRequestNo(), "1");
-            if(false == Collections3.isEmpty(list)){
+            if (false == Collections3.isEmpty(list)) {
                 supplierPushService.pushSignInfo(Collections3.getFirst(list));
             }
         }
-	}
+    }
 
 }

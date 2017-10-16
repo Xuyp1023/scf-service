@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.supplychain.entity.CoreSupplierInfo;
 
 @BetterjrMapper
-public interface CoreSupplierInfoMapper extends Mapper<CoreSupplierInfo> {
-}
+public interface CoreSupplierInfoMapper extends Mapper<CoreSupplierInfo> {}

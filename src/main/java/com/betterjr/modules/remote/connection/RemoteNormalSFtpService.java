@@ -11,6 +11,7 @@ import java.util.Properties;
 import java.util.Vector;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.betterjr.common.exception.BytterValidException;
 import com.betterjr.common.utils.BetterStringUtils;
@@ -30,7 +31,8 @@ public class RemoteNormalSFtpService extends LocateConnection {
     private ChannelSftp sftp = null;
 
     @Override
-    public void init(String anUserName, String anPass, boolean anUseSecue, int anTimeOut, WorkFarFunction func, RemoteConnectionFactory anFactory) {
+    public void init(String anUserName, String anPass, boolean anUseSecue, int anTimeOut, WorkFarFunction func,
+            RemoteConnectionFactory anFactory) {
         int timeOut = anTimeOut * 1000;
         try {
             JSch jsch = new JSch();
@@ -71,31 +73,30 @@ public class RemoteNormalSFtpService extends LocateConnection {
             Vector<LsEntry> vv = sftp.ls(anPath);
             for (LsEntry ent : vv) {
                 SftpATTRS sAttrib = ent.getAttrs();
-                logger.warn("checkExists my path attribe is " + anPath +", sAttrib.isDir()=" + sAttrib.isDir() +", " + ", isFifo =" +sAttrib.isFifo());
+                logger.warn("checkExists my path attribe is " + anPath + ", sAttrib.isDir()=" + sAttrib.isDir() + ", "
+                        + ", isFifo =" + sAttrib.isFifo());
                 if (isDir && sAttrib.isDir()) {
                     return true;
-                }
-                else if (sAttrib.isFifo()) {
+                } else if (sAttrib.isFifo()) {
                     return true;
                 }
             }
             return false;
         }
         catch (SftpException ex) {
-            logger.warn("check remote File " + anPath+", hasError" );
+            logger.warn("check remote File " + anPath + ", hasError");
             if (isDir) {
                 try {
                     sftp.mkdir(anPath);
                     return true;
                 }
                 catch (SftpException e) {
-                    logger.warn("check remote mkdir has error " + anPath );
+                    logger.warn("check remote mkdir has error " + anPath);
 
                 }
             }
         }
-        catch (Exception ex) {
-        }
+        catch (Exception ex) {}
         return false;
     }
 
@@ -109,6 +110,7 @@ public class RemoteNormalSFtpService extends LocateConnection {
      * @return 下载是否成功
      * @throws IOException
      */
+    @Override
     public boolean download(String remotePath, String localPath) {
         if (this.sftp == null) {
             return false;
@@ -129,16 +131,15 @@ public class RemoteNormalSFtpService extends LocateConnection {
                 tmpFile.renameTo(file);
                 logger.info("sftp success download file " + remotePath);
                 res = true;
-            }
-            else {
+            } else {
                 logger.error("download path is not exists :" + directory);
             }
         }
         catch (SftpException e) {
             if (e.toString().endsWith("No such file")) {
-                logger.error(">>>>>>>>RemoteNormalSFtpService-->download--sftp error  " + remotePath + "  not exists>>>>>>>>>>>>>");
-            }
-            else {
+                logger.error(">>>>>>>>RemoteNormalSFtpService-->download--sftp error  " + remotePath
+                        + "  not exists>>>>>>>>>>>>>");
+            } else {
                 logger.error("download file has error, ", e);
             }
         }
@@ -161,6 +162,7 @@ public class RemoteNormalSFtpService extends LocateConnection {
         return res;
     }
 
+    @Override
     public boolean upload(String anLocalPath, String anFileName, String anRemotePath) {
         boolean res = false;
         InputStream fileStream = null;
@@ -171,14 +173,13 @@ public class RemoteNormalSFtpService extends LocateConnection {
                 checkExists(anRemotePath, true);
                 fileStream = new FileInputStream(file);
                 sftp.cd(anRemotePath);
-                if (BetterStringUtils.isBlank(anFileName)) {
+                if (StringUtils.isBlank(anFileName)) {
                     anFileName = file.getName();
                 }
                 sftp.put(fileStream, anFileName);
                 logger.warn("this is upload sueccess" + anLocalPath + ", to " + anRemotePath);
                 res = true;
-            }
-            else{
+            } else {
                 logger.warn("local file not exits");
             }
         }
@@ -197,6 +198,7 @@ public class RemoteNormalSFtpService extends LocateConnection {
         return res;
     }
 
+    @Override
     public void close() {
         try {
             if (sftp.getSession().isConnected()) {
@@ -229,18 +231,19 @@ public class RemoteNormalSFtpService extends LocateConnection {
         }
     }
 
+    @Override
     public boolean delete(String remotePath) {
 
         return deleteFile(remotePath) || deleteDir(remotePath);
     }
 
+    @Override
     public boolean deleteDir(String remotePath) {
         try {
             for (LsEntry le : listFiles(remotePath)) {
                 if (le.getAttrs().isDir()) {
                     deleteDir(remotePath + "/" + le.getFilename());
-                }
-                else {
+                } else {
                     deleteFile(remotePath + "/" + le.getFilename());
                 }
             }
@@ -270,6 +273,7 @@ public class RemoteNormalSFtpService extends LocateConnection {
         }
     }
 
+    @Override
     public boolean rename(String remoteOldPath, String remoteNewPath) {
         try {
             sftp.rename(remoteOldPath, remoteNewPath);

@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 
 @BetterjrMapper
-public interface ScfAcceptBillMapper extends Mapper<ScfAcceptBill> {
-}
+public interface ScfAcceptBillMapper extends Mapper<ScfAcceptBill> {}

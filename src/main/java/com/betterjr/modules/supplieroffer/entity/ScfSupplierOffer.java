@@ -17,15 +17,14 @@ import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.supplieroffer.data.OfferConstantCollentions;
-import com.betterjr.modules.version.constant.VersionConstantCollentions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "t_scf_supplier_offer")
-public class ScfSupplierOffer implements BetterjrEntity{
-    
+public class ScfSupplierOffer implements BetterjrEntity {
+
     /**
      * 
      */
@@ -35,94 +34,94 @@ public class ScfSupplierOffer implements BetterjrEntity{
      * 流水号
      */
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
-    @MetaData( value="流水号", comments = "流水号")
+    @Column(name = "ID", columnDefinition = "INTEGER")
+    @MetaData(value = "流水号", comments = "流水号")
     private Long id;
-    
+
     /**
      * 客户号
      */
-    @Column(name = "L_CUSTNO",  columnDefinition="INTEGER" )
-    @MetaData( value="客户号", comments = "客户号")
+    @Column(name = "L_CUSTNO", columnDefinition = "INTEGER")
+    @MetaData(value = "客户号", comments = "客户号")
     private Long custNo;
-    
+
     /**
      * 客户企业名称
      */
-    @Column(name = "C_CUSTNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="客户企业名称", comments = "客户企业名称")
+    @Column(name = "C_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "客户企业名称", comments = "客户企业名称")
     private String custName;
-    
+
     /**
      * 核心企业编号
      */
-    @Column(name = "L_CORE_CUSTNO",  columnDefinition="INTEGER" )
-    @MetaData( value="核心企业编号", comments = "核心企业编号")
+    @Column(name = "L_CORE_CUSTNO", columnDefinition = "INTEGER")
+    @MetaData(value = "核心企业编号", comments = "核心企业编号")
     private Long coreCustNo;
-    
+
     /**
      * 核心企业名称
      */
-    @Column(name = "C_CORE_CUSTNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="核心企业名称", comments = "核心企业名称")
+    @Column(name = "C_CORE_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "核心企业名称", comments = "核心企业名称")
     private String coreCustName;
-    
+
     /**
      * 核心企业给供应商的利率
      */
-    @Column(name = "L_CORECUST_RATE",  columnDefinition="DECIMAL" )
-    @MetaData( value="核心企业给供应商的利率", comments = "核心企业给供应商的利率")
+    @Column(name = "L_CORECUST_RATE", columnDefinition = "DECIMAL")
+    @MetaData(value = "核心企业给供应商的利率", comments = "核心企业给供应商的利率")
     private BigDecimal coreCustRate;
-    
+
     /**
      * 状态  0： 不可用  1 正常使用
      */
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="状态  0： 不可用  1 正常使用", comments = "状态  0： 不可用  1 正常使用")
+    @Column(name = "C_BUSIN_STATUS", columnDefinition = "VARCHAR")
+    @MetaData(value = "状态  0： 不可用  1 正常使用", comments = "状态  0： 不可用  1 正常使用")
     private String businStatus;
-    
+
     /**
      * 创建日期
      */
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="创建日期", comments = "创建日期")
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "创建日期", comments = "创建日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
-    
+
     /**
      * 创建时间
      */
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="创建时间", comments = "创建时间")
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "创建时间", comments = "创建时间")
     private String regTime;
-    
+
     /**
      * 注册人
      */
-    @Column(name = "L_REG_OPERID",  columnDefinition="INTEGER" )
-    @MetaData( value="注册人", comments = "注册人")
-    private Long regOperId ;
+    @Column(name = "L_REG_OPERID", columnDefinition = "INTEGER")
+    @MetaData(value = "注册人", comments = "注册人")
+    private Long regOperId;
 
     /**
      * 注册人名称
      */
-    @Column(name = "C_REG_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="注册人名称", comments = "注册人名称")
+    @Column(name = "C_REG_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "注册人名称", comments = "注册人名称")
     private String regOperName;
-    
+
     /**
      * 操作机构
      */
-    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
-    @MetaData( value="操作机构", comments = "操作机构")
+    @Column(name = "C_OPERORG", columnDefinition = "VARCHAR")
+    @MetaData(value = "操作机构", comments = "操作机构")
     @JsonIgnore
     private String operOrg;
-    
+
     /**
      * 新增利率的角色1 核心企业  2 平台   3 保理公司
      */
-    @Column(name = "C_OPER_ROLE",  columnDefinition="VARCHAR" )
-    @MetaData( value="新增利率的角色1 核心企业  2 平台   3 保理公司", comments = "新增利率的角色1 核心企业  2 平台   3 保理公司")
+    @Column(name = "C_OPER_ROLE", columnDefinition = "VARCHAR")
+    @MetaData(value = "新增利率的角色1 核心企业  2 平台   3 保理公司", comments = "新增利率的角色1 核心企业  2 平台   3 保理公司")
     private String operRole;
 
     public Long getId() {
@@ -256,78 +255,62 @@ public class ScfSupplierOffer implements BetterjrEntity{
         ScfSupplierOffer other = (ScfSupplierOffer) obj;
         if (this.businStatus == null) {
             if (other.businStatus != null) return false;
-        }
-        else if (!this.businStatus.equals(other.businStatus)) return false;
+        } else if (!this.businStatus.equals(other.businStatus)) return false;
         if (this.coreCustName == null) {
             if (other.coreCustName != null) return false;
-        }
-        else if (!this.coreCustName.equals(other.coreCustName)) return false;
+        } else if (!this.coreCustName.equals(other.coreCustName)) return false;
         if (this.coreCustNo == null) {
             if (other.coreCustNo != null) return false;
-        }
-        else if (!this.coreCustNo.equals(other.coreCustNo)) return false;
+        } else if (!this.coreCustNo.equals(other.coreCustNo)) return false;
         if (this.coreCustRate == null) {
             if (other.coreCustRate != null) return false;
-        }
-        else if (!this.coreCustRate.equals(other.coreCustRate)) return false;
+        } else if (!this.coreCustRate.equals(other.coreCustRate)) return false;
         if (this.custName == null) {
             if (other.custName != null) return false;
-        }
-        else if (!this.custName.equals(other.custName)) return false;
+        } else if (!this.custName.equals(other.custName)) return false;
         if (this.custNo == null) {
             if (other.custNo != null) return false;
-        }
-        else if (!this.custNo.equals(other.custNo)) return false;
+        } else if (!this.custNo.equals(other.custNo)) return false;
         if (this.id == null) {
             if (other.id != null) return false;
-        }
-        else if (!this.id.equals(other.id)) return false;
+        } else if (!this.id.equals(other.id)) return false;
         if (this.operOrg == null) {
             if (other.operOrg != null) return false;
-        }
-        else if (!this.operOrg.equals(other.operOrg)) return false;
+        } else if (!this.operOrg.equals(other.operOrg)) return false;
         if (this.regDate == null) {
             if (other.regDate != null) return false;
-        }
-        else if (!this.regDate.equals(other.regDate)) return false;
+        } else if (!this.regDate.equals(other.regDate)) return false;
         if (this.regOperId == null) {
             if (other.regOperId != null) return false;
-        }
-        else if (!this.regOperId.equals(other.regOperId)) return false;
+        } else if (!this.regOperId.equals(other.regOperId)) return false;
         if (this.regOperName == null) {
             if (other.regOperName != null) return false;
-        }
-        else if (!this.regOperName.equals(other.regOperName)) return false;
+        } else if (!this.regOperName.equals(other.regOperName)) return false;
         if (this.regTime == null) {
             if (other.regTime != null) return false;
-        }
-        else if (!this.regTime.equals(other.regTime)) return false;
+        } else if (!this.regTime.equals(other.regTime)) return false;
         return true;
     }
 
-   
-
     @Override
     public String toString() {
-        return "ScfSupplierOffer [id=" + this.id + ", custNo=" + this.custNo + ", custName=" + this.custName + ", coreCustNo=" + this.coreCustNo
-                + ", coreCustName=" + this.coreCustName + ", coreCustRate=" + this.coreCustRate + ", businStatus=" + this.businStatus + ", regDate="
-                + this.regDate + ", regTime=" + this.regTime + ", regOperId=" + this.regOperId + ", regOperName=" + this.regOperName + ", operOrg="
+        return "ScfSupplierOffer [id=" + this.id + ", custNo=" + this.custNo + ", custName=" + this.custName
+                + ", coreCustNo=" + this.coreCustNo + ", coreCustName=" + this.coreCustName + ", coreCustRate="
+                + this.coreCustRate + ", businStatus=" + this.businStatus + ", regDate=" + this.regDate + ", regTime="
+                + this.regTime + ", regOperId=" + this.regOperId + ", regOperName=" + this.regOperName + ", operOrg="
                 + this.operOrg + ", operRole=" + this.operRole + "]";
     }
 
     public void saveAddValue(CustOperatorInfo anOperatorInfo) {
-        
-        BTAssert.notNull(anOperatorInfo,"无法获取登录信息,操作失败");
+
+        BTAssert.notNull(anOperatorInfo, "无法获取登录信息,操作失败");
         this.setId(SerialGenerator.getLongValue("ScfSupplierOffer.id"));
         this.setBusinStatus(OfferConstantCollentions.OFFER_BUSIN_STATUS_EFFECTIVE);
         this.regDate = BetterDateUtils.getNumDate();
-        this.regTime=BetterDateUtils.getNumTime();
-        this.regOperId=anOperatorInfo.getId();
+        this.regTime = BetterDateUtils.getNumTime();
+        this.regOperId = anOperatorInfo.getId();
         this.regOperName = anOperatorInfo.getName();
-        
-    }
 
-    
-    
+    }
 
 }

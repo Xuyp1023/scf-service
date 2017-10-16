@@ -3,6 +3,7 @@ package com.betterjr.modules.credit.service;
 import java.math.BigDecimal;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +41,8 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
      * @param anPageSize
      * @return
      */
-    public Page<ScfCreditDetail> queryCreditDetail(Map<String, Object> anMap, Long anCreditId, String anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfCreditDetail> queryCreditDetail(Map<String, Object> anMap, Long anCreditId, String anFlag,
+            int anPageNum, int anPageSize) {
         // 授信来源ID
         anMap.put("creditId", anCreditId);
 
@@ -62,31 +64,34 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         BigDecimal unfreezeBalance = anCreditInfo.getBalance();
 
         // 获取客户授信记录
-        ScfCredit custCredit = scfCreditService.findCredit(anCreditInfo.getCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),
-                anCreditInfo.getCreditMode());
+        ScfCredit custCredit = scfCreditService.findCredit(anCreditInfo.getCustNo(), anCreditInfo.getCoreCustNo(),
+                anCreditInfo.getFactorNo(), anCreditInfo.getCreditMode());
 
         if (custCredit != null) {
             // 获取客户授信额度冻结记录
             ScfCreditDetail custFreezeCreditDetail = findCreditDetail(anCreditInfo, custCredit);
             if (custFreezeCreditDetail != null) {
                 // 更新客户授信额度累计使用,授信余额
-                custCredit.releaseCreditBalance(custCredit.getCreditUsed(), custCredit.getCreditBalance(), unfreezeBalance);
+                custCredit.releaseCreditBalance(custCredit.getCreditUsed(), custCredit.getCreditBalance(),
+                        unfreezeBalance);
 
                 // 数据存盘-回写客户授信余额
                 scfCreditService.updateByPrimaryKeySelective(custCredit);
 
                 // 数据存盘,客户授信额度变动
-                ScfCreditDetail custCreditDetail = createCreditDetail(anCreditInfo, custCredit.getId(), CreditConstants.CREDIT_DIRECTION_INCOME);
+                ScfCreditDetail custCreditDetail = createCreditDetail(anCreditInfo, custCredit.getId(),
+                        CreditConstants.CREDIT_DIRECTION_INCOME);
                 custCreditDetail.setBalance(unfreezeBalance);
                 custCreditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_DONE);// 状态(0:已完成;1:冻结中;)
-                custCreditDetail.setDescription("交易终止,业务单据号：" + anCreditInfo.getRequestNo() + ",解冻额度:￥" + unfreezeBalance);
+                custCreditDetail
+                        .setDescription("交易终止,业务单据号：" + anCreditInfo.getRequestNo() + ",解冻额度:￥" + unfreezeBalance);
                 this.insert(custCreditDetail);
             }
         }
 
         // 获取核心企业授信记录
-        ScfCredit coreCredit = scfCreditService.findCredit(anCreditInfo.getCoreCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),
-                anCreditInfo.getCreditMode());
+        ScfCredit coreCredit = scfCreditService.findCredit(anCreditInfo.getCoreCustNo(), anCreditInfo.getCoreCustNo(),
+                anCreditInfo.getFactorNo(), anCreditInfo.getCreditMode());
 
         // 获取核心企业授信额度冻结记录
         ScfCreditDetail coreFreezeCreditDetail = findCreditDetail(anCreditInfo, coreCredit);
@@ -98,7 +103,8 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
             scfCreditService.updateByPrimaryKeySelective(coreCredit);
 
             // 数据存盘,核心企业授信额度变动
-            ScfCreditDetail coreCreditDetail = createCreditDetail(anCreditInfo, coreCredit.getId(), CreditConstants.CREDIT_DIRECTION_INCOME);
+            ScfCreditDetail coreCreditDetail = createCreditDetail(anCreditInfo, coreCredit.getId(),
+                    CreditConstants.CREDIT_DIRECTION_INCOME);
             coreCreditDetail.setBalance(unfreezeBalance);
             coreCreditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_DONE);// 状态(0:已完成;1:冻结中;)
             coreCreditDetail.setDescription("交易终止,业务单据号：" + anCreditInfo.getRequestNo() + ",解冻额度:￥" + unfreezeBalance);
@@ -125,8 +131,8 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         String factorName = custAccountService.queryCustName(anCreditInfo.getFactorNo());
 
         // 获取客户授信记录
-        ScfCredit custCredit = scfCreditService.findCredit(anCreditInfo.getCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),
-                anCreditInfo.getCreditMode());
+        ScfCredit custCredit = scfCreditService.findCredit(anCreditInfo.getCustNo(), anCreditInfo.getCoreCustNo(),
+                anCreditInfo.getFactorNo(), anCreditInfo.getCreditMode());
 
         if (custCredit != null) {
             // 检查授信有效期
@@ -140,7 +146,8 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
             custCredit.occupyCreditBalance(custCredit.getCreditUsed(), custCredit.getCreditBalance(), freezeBalance);
 
             // 数据存盘,客户授信额度变动
-            ScfCreditDetail custCreditDetail = createCreditDetail(anCreditInfo, custCredit.getId(), CreditConstants.CREDIT_DIRECTION_EXPEND);
+            ScfCreditDetail custCreditDetail = createCreditDetail(anCreditInfo, custCredit.getId(),
+                    CreditConstants.CREDIT_DIRECTION_EXPEND);
             custCreditDetail.setBalance(freezeBalance);
             custCreditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_FREEZE);// 状态(0:已完成;1:冻结中;)
             custCreditDetail.setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",冻结额度:￥" + freezeBalance);
@@ -151,9 +158,10 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         }
 
         // 获取核心企业授信记录
-        ScfCredit coreCredit = scfCreditService.findCredit(anCreditInfo.getCoreCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),
-                anCreditInfo.getCreditMode());
-        BTAssert.notNull(coreCredit, "当前业务将占用" + coreCustName + "该类型的授信额度，该企业未获得" + factorName + "该类型的授信，请等待授信结束后继续办理业务！");
+        ScfCredit coreCredit = scfCreditService.findCredit(anCreditInfo.getCoreCustNo(), anCreditInfo.getCoreCustNo(),
+                anCreditInfo.getFactorNo(), anCreditInfo.getCreditMode());
+        BTAssert.notNull(coreCredit,
+                "当前业务将占用" + coreCustName + "该类型的授信额度，该企业未获得" + factorName + "该类型的授信，请等待授信结束后继续办理业务！");
 
         // 检查授信有效期
         checkCreditValidDate(coreCredit, coreCustName);
@@ -166,7 +174,8 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         coreCredit.occupyCreditBalance(coreCredit.getCreditUsed(), coreCredit.getCreditBalance(), freezeBalance);
 
         // 数据存盘,核心企业授信额度变动
-        ScfCreditDetail coreCreditDetail = createCreditDetail(anCreditInfo, coreCredit.getId(), CreditConstants.CREDIT_DIRECTION_EXPEND);
+        ScfCreditDetail coreCreditDetail = createCreditDetail(anCreditInfo, coreCredit.getId(),
+                CreditConstants.CREDIT_DIRECTION_EXPEND);
         coreCreditDetail.setBalance(freezeBalance);
         coreCreditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_FREEZE);// 状态(0:已完成;1:冻结中;)
         coreCreditDetail.setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",冻结额度:￥" + freezeBalance);
@@ -194,8 +203,8 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         String factorName = custAccountService.queryCustName(anCreditInfo.getFactorNo());
 
         // 获取客户授信记录
-        ScfCredit custCredit = scfCreditService.findCredit(anCreditInfo.getCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),
-                anCreditInfo.getCreditMode());
+        ScfCredit custCredit = scfCreditService.findCredit(anCreditInfo.getCustNo(), anCreditInfo.getCoreCustNo(),
+                anCreditInfo.getFactorNo(), anCreditInfo.getCreditMode());
 
         if (custCredit != null) {
             // 检查授信有效期
@@ -206,9 +215,10 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         }
 
         // 获取核心企业授信记录
-        ScfCredit coreCredit = scfCreditService.findCredit(anCreditInfo.getCoreCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),
-                anCreditInfo.getCreditMode());
-        BTAssert.notNull(coreCredit, "当前业务将占用" + coreCustName + "该类型的授信额度，该企业未获得" + factorName + "该类型的授信，请等待授信结束后继续办理业务！");
+        ScfCredit coreCredit = scfCreditService.findCredit(anCreditInfo.getCoreCustNo(), anCreditInfo.getCoreCustNo(),
+                anCreditInfo.getFactorNo(), anCreditInfo.getCreditMode());
+        BTAssert.notNull(coreCredit,
+                "当前业务将占用" + coreCustName + "该类型的授信额度，该企业未获得" + factorName + "该类型的授信，请等待授信结束后继续办理业务！");
 
         // 检查授信有效期
         checkCreditValidDate(coreCredit, coreCustName);
@@ -216,18 +226,18 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         // 处理核心企业冻结和占用的授信额度
         saveFreezeAndOccupyData(anCreditInfo, coreCredit, occupyBalance);
     }
-    
+
     /**
      * 融资企业授信额度占用,供融资放款业务调用
      * @param anCreditInfo
      */
-    public void saveOccupyCustCredit (ScfCreditInfo anCreditInfo) {
-    	 // 检查入参
+    public void saveOccupyCustCredit(ScfCreditInfo anCreditInfo) {
+        // 检查入参
         checkValue(anCreditInfo);
 
         // 获取客户授信记录
-        ScfCredit custCredit = scfCreditService.findCredit(anCreditInfo.getCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),
-                anCreditInfo.getCreditMode());
+        ScfCredit custCredit = scfCreditService.findCredit(anCreditInfo.getCustNo(), anCreditInfo.getCoreCustNo(),
+                anCreditInfo.getFactorNo(), anCreditInfo.getCreditMode());
 
         if (custCredit != null) {
             // 检查授信有效期
@@ -237,24 +247,25 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
             saveFreezeAndOccupyData(anCreditInfo, custCredit, anCreditInfo.getBalance());
         }
     }
-    
+
     /**
      * 核心企业授信额度占用,供融资放款业务调用
      * @param anCreditInfo
      */
-    public void saveOccupyCoreCredit (ScfCreditInfo anCreditInfo) {
-    	 // 检查入参
+    public void saveOccupyCoreCredit(ScfCreditInfo anCreditInfo) {
+        // 检查入参
         checkValue(anCreditInfo);
-        
+
         // 占用额度
         BigDecimal occupyBalance = anCreditInfo.getBalance();
         String coreCustName = custAccountService.queryCustName(anCreditInfo.getCoreCustNo());
         String factorName = custAccountService.queryCustName(anCreditInfo.getFactorNo());
 
         // 获取核心企业授信记录
-        ScfCredit coreCredit = scfCreditService.findCredit(anCreditInfo.getCoreCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),
-                anCreditInfo.getCreditMode());
-        BTAssert.notNull(coreCredit, "当前业务将占用" + coreCustName + "该类型的授信额度，该企业未获得" + factorName + "该类型的授信，请等待授信结束后继续办理业务！");
+        ScfCredit coreCredit = scfCreditService.findCredit(anCreditInfo.getCoreCustNo(), anCreditInfo.getCoreCustNo(),
+                anCreditInfo.getFactorNo(), anCreditInfo.getCreditMode());
+        BTAssert.notNull(coreCredit,
+                "当前业务将占用" + coreCustName + "该类型的授信额度，该企业未获得" + factorName + "该类型的授信，请等待授信结束后继续办理业务！");
 
         // 检查授信有效期
         checkCreditValidDate(coreCredit, coreCustName);
@@ -273,7 +284,8 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
 
             // 检查是否超过授信可用余额
             BigDecimal validBalance = MathExtend.add(freezeBalance, anCredit.getCreditBalance());
-            checkCreditBalance(validBalance, anOccupyBalance, "业务发生额: " + anOccupyBalance + " 超过当前客户授信可用余额: " + validBalance);
+            checkCreditBalance(validBalance, anOccupyBalance,
+                    "业务发生额: " + anOccupyBalance + " 超过当前客户授信可用余额: " + validBalance);
 
             // 实际占用额度与冻结额度的差额
             BigDecimal balance = MathExtend.subtract(freezeBalance, anOccupyBalance);
@@ -286,17 +298,20 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
                     scfCreditService.updateByPrimaryKeySelective(anCredit);
 
                     // 生成本次授信额度占用的记录
-                    ScfCreditDetail creditDetail = createCreditDetail(anCreditInfo, anCredit.getId(), CreditConstants.CREDIT_DIRECTION_EXPEND);
+                    ScfCreditDetail creditDetail = createCreditDetail(anCreditInfo, anCredit.getId(),
+                            CreditConstants.CREDIT_DIRECTION_EXPEND);
                     creditDetail.setBalance(freezeBalance);
                     creditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_DONE);
                     creditDetail.setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",占用额度:￥" + freezeBalance);
                     this.insert(creditDetail);
 
                     // 生成本次授信额度额外占用的记录
-                    ScfCreditDetail extraCreditDetail = createCreditDetail(anCreditInfo, anCredit.getId(), CreditConstants.CREDIT_DIRECTION_EXPEND);
+                    ScfCreditDetail extraCreditDetail = createCreditDetail(anCreditInfo, anCredit.getId(),
+                            CreditConstants.CREDIT_DIRECTION_EXPEND);
                     extraCreditDetail.setBalance(balance.abs());
                     extraCreditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_DONE);
-                    extraCreditDetail.setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",追加占用:￥" + balance.abs());
+                    extraCreditDetail
+                            .setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",追加占用:￥" + balance.abs());
                     this.insert(extraCreditDetail);
                 }
                 if (balance.longValue() > 0) {// 冻结额度大于当前占用额度,需要释放多出来的额度
@@ -307,23 +322,26 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
                     scfCreditService.updateByPrimaryKeySelective(anCredit);
 
                     // 生成本次授信额度占用的记录
-                    ScfCreditDetail creditDetail = createCreditDetail(anCreditInfo, anCredit.getId(), CreditConstants.CREDIT_DIRECTION_EXPEND);
+                    ScfCreditDetail creditDetail = createCreditDetail(anCreditInfo, anCredit.getId(),
+                            CreditConstants.CREDIT_DIRECTION_EXPEND);
                     creditDetail.setBalance(anOccupyBalance);
                     creditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_DONE);
                     creditDetail.setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",占用额度:￥" + anOccupyBalance);
                     this.insert(creditDetail);
 
                     // 生成本次授信额度释放的记录
-                    ScfCreditDetail extraCreditDetail = createCreditDetail(anCreditInfo, anCredit.getId(), CreditConstants.CREDIT_DIRECTION_INCOME);
+                    ScfCreditDetail extraCreditDetail = createCreditDetail(anCreditInfo, anCredit.getId(),
+                            CreditConstants.CREDIT_DIRECTION_INCOME);
                     extraCreditDetail.setBalance(balance.abs());
                     extraCreditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_DONE);
-                    extraCreditDetail.setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",释放额度:￥" + balance.abs());
+                    extraCreditDetail
+                            .setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",释放额度:￥" + balance.abs());
                     this.insert(extraCreditDetail);
                 }
-            }
-            else {
+            } else {
                 // 数据存盘,授信额度变动信息
-                ScfCreditDetail creditDetail = createCreditDetail(anCreditInfo, anCredit.getId(), CreditConstants.CREDIT_DIRECTION_EXPEND);
+                ScfCreditDetail creditDetail = createCreditDetail(anCreditInfo, anCredit.getId(),
+                        CreditConstants.CREDIT_DIRECTION_EXPEND);
                 creditDetail.setBalance(anOccupyBalance);
                 creditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_DONE);
                 creditDetail.setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",占用额度:￥" + anOccupyBalance);
@@ -333,8 +351,7 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
             // 删除冻结记录
             this.delete(freezeCreditDetail);
 
-        }
-        else {
+        } else {
             // 更新授信额度累计使用,授信余额
             anCredit.occupyCreditBalance(anCredit.getCreditUsed(), anCredit.getCreditBalance(), anOccupyBalance);
 
@@ -342,7 +359,8 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
             scfCreditService.updateByPrimaryKeySelective(anCredit);
 
             // 数据存盘,授信额度变动信息
-            ScfCreditDetail creditDetail = createCreditDetail(anCreditInfo, anCredit.getId(), CreditConstants.CREDIT_DIRECTION_EXPEND);
+            ScfCreditDetail creditDetail = createCreditDetail(anCreditInfo, anCredit.getId(),
+                    CreditConstants.CREDIT_DIRECTION_EXPEND);
             creditDetail.setBalance(anOccupyBalance);
             creditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_DONE);
             creditDetail.setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",占用额度:￥" + anOccupyBalance);
@@ -364,22 +382,26 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         BigDecimal releaseBalance = anCreditInfo.getBalance();
 
         // 获取客户授信记录
-        ScfCredit custCredit = scfCreditService.findCredit(anCreditInfo.getCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),
-                anCreditInfo.getCreditMode());
+        ScfCredit custCredit = scfCreditService.findCredit(anCreditInfo.getCustNo(), anCreditInfo.getCoreCustNo(),
+                anCreditInfo.getFactorNo(), anCreditInfo.getCreditMode());
 
         if (custCredit != null) {
             // 数据存盘,客户授信额度变动
-            ScfCreditDetail custCreditDetail = createCreditDetail(anCreditInfo, custCredit.getId(), CreditConstants.CREDIT_DIRECTION_INCOME);
+            ScfCreditDetail custCreditDetail = createCreditDetail(anCreditInfo, custCredit.getId(),
+                    CreditConstants.CREDIT_DIRECTION_INCOME);
             custCreditDetail.setBalance(releaseBalance);
             custCreditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_DONE);
             custCreditDetail.setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",释放额度:￥" + releaseBalance);
             this.insert(custCreditDetail);
 
             // 一次性授信不回写余额,授信方式(1:信用授信(循环);2:信用授信(一次性);3:担保信用(循环);4:担保授信(一次性);)
-            if (BetterStringUtils.equals(anCreditInfo.getCreditMode(), CreditConstants.CREDIT_MODE_CYCLE_GENERAL) == true
-                    || BetterStringUtils.equals(anCreditInfo.getCreditMode(), CreditConstants.CREDIT_MODE_CYCLE_GUARANTEE) == true) {
+            if (StringUtils.equals(anCreditInfo.getCreditMode(),
+                    CreditConstants.CREDIT_MODE_CYCLE_GENERAL) == true
+                    || StringUtils.equals(anCreditInfo.getCreditMode(),
+                            CreditConstants.CREDIT_MODE_CYCLE_GUARANTEE) == true) {
                 // 更新客户授信额度累计使用,授信余额
-                custCredit.releaseCreditBalance(custCredit.getCreditUsed(), custCredit.getCreditBalance(), releaseBalance);
+                custCredit.releaseCreditBalance(custCredit.getCreditUsed(), custCredit.getCreditBalance(),
+                        releaseBalance);
 
                 // 数据存盘,回写客户授信余额
                 scfCreditService.updateByPrimaryKeySelective(custCredit);
@@ -387,19 +409,21 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
         }
 
         // 获取核心企业授信记录
-        ScfCredit coreCredit = scfCreditService.findCredit(anCreditInfo.getCoreCustNo(), anCreditInfo.getCoreCustNo(), anCreditInfo.getFactorNo(),
-                anCreditInfo.getCreditMode());
+        ScfCredit coreCredit = scfCreditService.findCredit(anCreditInfo.getCoreCustNo(), anCreditInfo.getCoreCustNo(),
+                anCreditInfo.getFactorNo(), anCreditInfo.getCreditMode());
 
         // 数据存盘,核心企业授信额度变动
-        ScfCreditDetail coreCreditDetail = createCreditDetail(anCreditInfo, coreCredit.getId(), CreditConstants.CREDIT_DIRECTION_INCOME);
+        ScfCreditDetail coreCreditDetail = createCreditDetail(anCreditInfo, coreCredit.getId(),
+                CreditConstants.CREDIT_DIRECTION_INCOME);
         coreCreditDetail.setBalance(releaseBalance);
         coreCreditDetail.setBusinStatus(CreditConstants.CREDIT_CHANGE_STATUS_DONE);
         coreCreditDetail.setDescription("业务单据号：" + anCreditInfo.getRequestNo() + ",释放额度:￥" + releaseBalance);
         this.insert(coreCreditDetail);
 
         // 一次性授信不回写余额,授信方式(1:信用授信(循环);2:信用授信(一次性);3:担保信用(循环);4:担保授信(一次性);)
-        if (BetterStringUtils.equals(anCreditInfo.getCreditMode(), CreditConstants.CREDIT_MODE_CYCLE_GENERAL) == true
-                || BetterStringUtils.equals(anCreditInfo.getCreditMode(), CreditConstants.CREDIT_MODE_CYCLE_GUARANTEE) == true) {
+        if (StringUtils.equals(anCreditInfo.getCreditMode(), CreditConstants.CREDIT_MODE_CYCLE_GENERAL) == true
+                || StringUtils.equals(anCreditInfo.getCreditMode(),
+                        CreditConstants.CREDIT_MODE_CYCLE_GUARANTEE) == true) {
             // 更新核心企业授信额度累计使用,授信余额
             coreCredit.releaseCreditBalance(coreCredit.getCreditUsed(), coreCredit.getCreditBalance(), releaseBalance);
 
@@ -423,8 +447,9 @@ public class ScfCreditDetailService extends BaseService<ScfCreditDetailMapper, S
     }
 
     private ScfCreditDetail findCreditDetail(ScfCreditInfo anCreditInfo, ScfCredit anCredit) {
-        Map<String, Object> anMap = QueryTermBuilder.newInstance().put("creditId", anCredit.getId()).put("custNo", anCreditInfo.getCustNo())
-                .put("requestNo", anCreditInfo.getRequestNo()).put("businFlag", anCreditInfo.getBusinFlag())
+        Map<String, Object> anMap = QueryTermBuilder.newInstance().put("creditId", anCredit.getId())
+                .put("custNo", anCreditInfo.getCustNo()).put("requestNo", anCreditInfo.getRequestNo())
+                .put("businFlag", anCreditInfo.getBusinFlag())
                 .put("businStatus", CreditConstants.CREDIT_CHANGE_STATUS_FREEZE).build();
 
         return Collections3.getFirst(this.selectByProperty(anMap));

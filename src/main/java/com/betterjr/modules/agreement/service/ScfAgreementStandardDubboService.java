@@ -11,26 +11,32 @@ import com.betterjr.modules.agreement.entity.ScfAgreementStandard;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 
 @Service(interfaceClass = IScfAgreementStandardService.class)
-public class ScfAgreementStandardDubboService implements IScfAgreementStandardService{
+public class ScfAgreementStandardDubboService implements IScfAgreementStandardService {
 
     @Autowired
     private ScfAgreementStandardService agreementStandardService;
-    
+
     @Override
     public String webAddAgreementStandard(Map<String, Object> anMap) {
         ScfAgreementStandard anAgreementStandard = RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk("标准合同登记成功！", agreementStandardService.addAgreementStandard(anAgreementStandard)).toJson();
+        return AjaxObject.newOk("标准合同登记成功！", agreementStandardService.addAgreementStandard(anAgreementStandard))
+                .toJson();
     }
 
     @Override
     public String webQueryRegisteredAgreementStandard(int anPageNum, int anPageSize, String anFlag) {
-        return AjaxObject.newOkWithPage("登记标准合同查询成功！", agreementStandardService.queryRegisteredAgreementStandard(anPageNum, anPageSize, anFlag)).toJson();
+        return AjaxObject
+                .newOkWithPage("登记标准合同查询成功！",
+                        agreementStandardService.queryRegisteredAgreementStandard(anPageNum, anPageSize, anFlag))
+                .toJson();
     }
 
     @Override
     public String webSaveModifyAgreementStandard(Map<String, Object> anMap, Long anId) {
         ScfAgreementStandard anAgreementStandard = RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk("标准合同编辑成功！", agreementStandardService.saveModifyAgreementStandard(anAgreementStandard, anId)).toJson();
+        return AjaxObject
+                .newOk("标准合同编辑成功！", agreementStandardService.saveModifyAgreementStandard(anAgreementStandard, anId))
+                .toJson();
     }
 
     @Override
@@ -39,8 +45,11 @@ public class ScfAgreementStandardDubboService implements IScfAgreementStandardSe
     }
 
     @Override
-    public String webQueryAgreementStandardByStatus(String anBusinStatus, int anPageNum, int anPageSize, String anFlag) {
-        return AjaxObject.newOkWithPage("审核标准合同查询成功！", agreementStandardService.queryAgreementStandardByStatus(anBusinStatus,anPageNum, anPageSize, anFlag)).toJson();
+    public String webQueryAgreementStandardByStatus(String anBusinStatus, int anPageNum, int anPageSize,
+            String anFlag) {
+        return AjaxObject.newOkWithPage("审核标准合同查询成功！",
+                agreementStandardService.queryAgreementStandardByStatus(anBusinStatus, anPageNum, anPageSize, anFlag))
+                .toJson();
     }
 
     @Override
@@ -56,7 +65,10 @@ public class ScfAgreementStandardDubboService implements IScfAgreementStandardSe
     @Override
     public String webQueryAgreementStandard(Map<String, Object> anMap, int anPageNum, int anPageSize, String anFlag) {
         Map<String, Object> queryMap = RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOkWithPage("标准合同查询成功！", agreementStandardService.queryAgreementStandard(queryMap, anPageNum, anPageSize, anFlag)).toJson();
+        return AjaxObject
+                .newOkWithPage("标准合同查询成功！",
+                        agreementStandardService.queryAgreementStandard(queryMap, anPageNum, anPageSize, anFlag))
+                .toJson();
     }
 
 }

@@ -20,8 +20,7 @@ public class FaceDealStatusService extends BaseService<FaceDealStatusMapper, Fac
         List list = this.selectByProperty(map);
         if (Collections3.isEmpty(list)) {
             this.insert(anStatus);
-        }
-        else {
+        } else {
             this.updateByPrimaryKey(anStatus);
         }
     }

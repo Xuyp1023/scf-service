@@ -130,35 +130,30 @@ public class BetterjrBaseEntity implements BetterjrEntity {
         BetterjrBaseEntity other = (BetterjrBaseEntity) obj;
         if (this.businStatus == null) {
             if (other.businStatus != null) return false;
-        }
-        else if (!this.businStatus.equals(other.businStatus)) return false;
+        } else if (!this.businStatus.equals(other.businStatus)) return false;
         if (this.id == null) {
             if (other.id != null) return false;
-        }
-        else if (!this.id.equals(other.id)) return false;
+        } else if (!this.id.equals(other.id)) return false;
         if (this.isLatest == null) {
             if (other.isLatest != null) return false;
-        }
-        else if (!this.isLatest.equals(other.isLatest)) return false;
+        } else if (!this.isLatest.equals(other.isLatest)) return false;
         if (this.lockedStatus == null) {
             if (other.lockedStatus != null) return false;
-        }
-        else if (!this.lockedStatus.equals(other.lockedStatus)) return false;
+        } else if (!this.lockedStatus.equals(other.lockedStatus)) return false;
         if (this.refNo == null) {
             if (other.refNo != null) return false;
-        }
-        else if (!this.refNo.equals(other.refNo)) return false;
+        } else if (!this.refNo.equals(other.refNo)) return false;
         if (this.version == null) {
             if (other.version != null) return false;
-        }
-        else if (!this.version.equals(other.version)) return false;
+        } else if (!this.version.equals(other.version)) return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "BetterjrBaseEntity [id=" + this.id + ", refNo=" + this.refNo + ", version=" + this.version + ", isLatest=" + this.isLatest
-                + ", businStatus=" + this.businStatus + ", lockedStatus=" + this.lockedStatus + "]";
+        return "BetterjrBaseEntity [id=" + this.id + ", refNo=" + this.refNo + ", version=" + this.version
+                + ", isLatest=" + this.isLatest + ", businStatus=" + this.businStatus + ", lockedStatus="
+                + this.lockedStatus + "]";
     }
 
 }

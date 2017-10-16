@@ -20,22 +20,22 @@ import com.betterjr.modules.supplychain.entity.ScfBankPaymentFlow;
  */
 @Service
 public class ScfBankPaymentFlowService extends BaseService<ScfBankPaymentFlowMapper, ScfBankPaymentFlow> {
-    
+
     /**
      * 获取供应商的银行账户流资金流水信息
      * @param anSupplierNo 供应商客户编号
      * @param anBankAccount 银行账户
      * @return
      */
-    public List<ScfBankPaymentFlow> findCapitalFlowBySupplier(Long anSupplierNo,  String anBankAccount){
+    public List<ScfBankPaymentFlow> findCapitalFlowBySupplier(Long anSupplierNo, String anBankAccount) {
         Map map = new HashMap();
         map.put("supplierNo", anSupplierNo);
         map.put("suppBankAccount", anBankAccount);
         List<ScfBankPaymentFlow> result = this.selectByProperty(map);
-        
+
         return result;
-     }
-    
+    }
+
     /**
      * 保存核心企业上传的供应商银行流水信息。
      * @param anList
@@ -54,12 +54,12 @@ public class ScfBankPaymentFlowService extends BaseService<ScfBankPaymentFlowMap
             this.deleteByExample(termMap);
             termMap.clear();
         }
-        
+
         for (ScfBankPaymentFlow scfBank : anList) {
             scfBank.fillDefaultValue();
             this.insert(scfBank);
         }
-        
+
         return true;
     }
 }

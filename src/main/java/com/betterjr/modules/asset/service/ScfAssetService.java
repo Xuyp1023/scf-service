@@ -99,8 +99,9 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
 
         BTAssert.notNull(anAssetMap, "新增资产企业 失败-资产 is null");
         anAssetMap = Collections3.filterMap(anAssetMap,
-                new String[] { "businTypeId", "productCode", "sourceUseType", "custNo", "coreCustNo", "factorNo", "orderList", "invoiceList",
-                        "agreementList", "receivableList", "acceptBillList", "statementFileList", "goodsFileList", "othersFileList", "id" });
+                new String[] { "businTypeId", "productCode", "sourceUseType", "custNo", "coreCustNo", "factorNo",
+                        "orderList", "invoiceList", "agreementList", "receivableList", "acceptBillList",
+                        "statementFileList", "goodsFileList", "othersFileList", "id" });
         // 将map转成资产对象
         ScfAsset asset = convertBeanFromMap(anAssetMap);
         asset.initAdd();
@@ -132,8 +133,10 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
     public ScfAsset saveAddAssetFour(Map<String, Object> anMap) {
 
         BTAssert.notNull(anMap, "新增资产企业 失败-资产 is null");
-        anMap = Collections3.filterMap(anMap, new String[] { "description", "custBankName", "custBankAccount", "custBankAccountName", "custNo",
-                "coreCustNo", "factoryNo", "orderList", "invoiceList", "agreementList", "receivableList", "acceptBillList" });
+        anMap = Collections3.filterMap(anMap,
+                new String[] { "description", "custBankName", "custBankAccount", "custBankAccountName", "custNo",
+                        "coreCustNo", "factoryNo", "orderList", "invoiceList", "agreementList", "receivableList",
+                        "acceptBillList" });
         ScfAsset asset = new ScfAsset();
         try {
             BeanUtils.populate(asset, anMap);
@@ -181,17 +184,16 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         ScfAssetCompany company = new ScfAssetCompany();
         company.setAssetId(anAsset.getId());
         company.setAssetRole(companyType);
-        if (company.equals(AssetConstantCollentions.SCF_ASSET_ROLE_SUPPLY) || company.equals(AssetConstantCollentions.SCF_ASSET_ROLE_DEALER)) {
+        if (company.equals(AssetConstantCollentions.SCF_ASSET_ROLE_SUPPLY)
+                || company.equals(AssetConstantCollentions.SCF_ASSET_ROLE_DEALER)) {
             company.setBankAccount(anAsset.getCustBankAccount());
             company.setBankAccountName(anAsset.getCustBankAccountName());
             company.setBankName(anAsset.getCustBankName());
-        }
-        else if (company.equals(AssetConstantCollentions.SCF_ASSET_ROLE_CORE)) {
+        } else if (company.equals(AssetConstantCollentions.SCF_ASSET_ROLE_CORE)) {
             company.setBankAccount(anAsset.getCoreCustBankAccount());
             company.setBankAccountName(anAsset.getCoreCustBankAccountName());
             company.setBankName(anAsset.getCoreCustBankName());
-        }
-        else {
+        } else {
 
         }
         company.setCustName(custInfo.getCustName());
@@ -213,25 +215,29 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         // 查询所有的发票信息
         List<ScfInvoiceDO> invoiceList = invoiceService
                 .queryBaseVersionObjectByids(anMap.get(AssetConstantCollentions.SCF_INVOICE_LIST_KEY).toString());
-        packageBaseVersionEntityListToAsset(anAsset, invoiceList, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE, flag);
+        packageBaseVersionEntityListToAsset(anAsset, invoiceList,
+                AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE, flag);
         // 查询所有的应付账款信息
         List<ScfReceivableDO> receivableList = receivableService
                 .queryBaseVersionObjectByids(anMap.get(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY).toString());
-        packageBaseVersionEntityListToAsset(anAsset, receivableList, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE, flag);
+        packageBaseVersionEntityListToAsset(anAsset, receivableList,
+                AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE, flag);
         for (ScfReceivableDO receivable : receivableList) {
             anAsset.setBalance(MathExtend.add(anAsset.getBalance(), receivable.getSurplusBalance()));
         }
         // 查询所有的贸易合同信息 并且插入贸易合同信息
         List<ContractLedger> agreementList = contractLedgerService
                 .queryBaseVersionObjectByids(anMap.get(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY).toString());
-        packageBaseVersionEntityListToAsset(anAsset, agreementList, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT, flag);
+        packageBaseVersionEntityListToAsset(anAsset, agreementList,
+                AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT, flag);
     }
 
-    private void packageBaseVersionEntityListToAsset(ScfAsset anAsset, List<? extends BetterjrBaseEntity> baseVersionList, String baseInfoType,
-            boolean flag) {
+    private void packageBaseVersionEntityListToAsset(ScfAsset anAsset,
+            List<? extends BetterjrBaseEntity> baseVersionList, String baseInfoType, boolean flag) {
 
         for (BetterjrBaseEntity baseVersion : baseVersionList) {
-            checkStatus(baseVersion.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false, "单据不符合要求,请选择生效的单据");
+            checkStatus(baseVersion.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false,
+                    "单据不符合要求,请选择生效的单据");
             packageBaseVersionEntityToAsset(anAsset, baseVersion, baseInfoType, flag);
         }
 
@@ -345,13 +351,16 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         ContractLedger agreement = contractLedgerService.selectOneByAgreeNo(agreeNo);
         BTAssert.notNull(agreement, "应收账款的贸易合同未找到!操作失败");
         checkStatus(agreement.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false, "请核准贸易合同");
-        checkStatus(anReceivable.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false, "应付账款不是生效状态，无法进行申请");
+        checkStatus(anReceivable.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false,
+                "应付账款不是生效状态，无法进行申请");
         checkStatus(anReceivable.getCustNo() + "", agreement.getCustNo() + "", false, "应收账款和贸易合同对应的企业不一致");
-        CustContractLedger custAgreement = custLedgerService.findCustContractByCustNoAndContractId(anReceivable.getCustNo(), agreement.getId());
-        CustContractLedger coreCustAgreement = custLedgerService.findCustContractByCustNoAndContractId(anReceivable.getCoreCustNo(),
-                agreement.getId());
+        CustContractLedger custAgreement = custLedgerService
+                .findCustContractByCustNoAndContractId(anReceivable.getCustNo(), agreement.getId());
+        CustContractLedger coreCustAgreement = custLedgerService
+                .findCustContractByCustNoAndContractId(anReceivable.getCoreCustNo(), agreement.getId());
         // 将合同插入到资产数据表中
-        packageBaseVersionEntityToAsset(anAsset, agreement, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT, false);
+        packageBaseVersionEntityToAsset(anAsset, agreement, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT,
+                false);
         // 封装银行信息到资产中 1表示是供应商 2 表示是核心企业
         packageCustContractToAsset(anAsset, custAgreement, "1");
         packageCustContractToAsset(anAsset, coreCustAgreement, "2");
@@ -375,8 +384,7 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
                 if (!anAsset.getCustBankName().equals(anCustAgreement.getBankName())) {
                     BTAssert.notNull(null, "应收账款的贸易合同号对应的银行信息不对等!操作失败");
                 }
-            }
-            else {
+            } else {
                 anAsset.setCustBankName(anCustAgreement.getBankName());
             }
 
@@ -385,8 +393,7 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
                 if (!anAsset.getCustBankAccountName().equals(anCustAgreement.getBankAccountName())) {
                     BTAssert.notNull(null, "应收账款的贸易合同号对应的银行信息不对等!操作失败");
                 }
-            }
-            else {
+            } else {
                 anAsset.setCustBankAccountName(anCustAgreement.getBankAccountName());
             }
 
@@ -395,12 +402,10 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
                 if (!anAsset.getCustBankAccount().equals(anCustAgreement.getBankAccount())) {
                     BTAssert.notNull(null, "应收账款的贸易合同号对应的银行信息不对等!操作失败");
                 }
-            }
-            else {
+            } else {
                 anAsset.setCustBankAccount(anCustAgreement.getBankAccount());
             }
-        }
-        else {
+        } else {
 
             // 核心企业封装
             // 封装银行名称
@@ -408,8 +413,7 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
                 if (!anAsset.getCoreCustBankName().equals(anCustAgreement.getBankName())) {
                     BTAssert.notNull(null, "应收账款的贸易合同号对应的银行信息不对等!操作失败");
                 }
-            }
-            else {
+            } else {
                 anAsset.setCoreCustBankName(anCustAgreement.getBankName());
             }
 
@@ -418,8 +422,7 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
                 if (!anAsset.getCoreCustBankAccountName().equals(anCustAgreement.getBankAccountName())) {
                     BTAssert.notNull(null, "应收账款的贸易合同号对应的银行信息不对等!操作失败");
                 }
-            }
-            else {
+            } else {
                 anAsset.setCoreCustBankAccountName(anCustAgreement.getBankAccountName());
             }
 
@@ -428,8 +431,7 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
                 if (!anAsset.getCoreCustBankAccount().equals(anCustAgreement.getBankAccount())) {
                     BTAssert.notNull(null, "应收账款的贸易合同号对应的银行信息不对等!操作失败");
                 }
-            }
-            else {
+            } else {
                 anAsset.setCoreCustBankAccount(anCustAgreement.getBankAccount());
             }
         }
@@ -465,7 +467,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
 
                 }
                 // 将发票信息存入到asset中
-                packageBaseVersionEntityToAsset(anAsset, invoiceDo, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE, false);
+                packageBaseVersionEntityToAsset(anAsset, invoiceDo,
+                        AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE, false);
             }
 
         }
@@ -480,7 +483,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
      * @param baseInfoType
      *            基础数据类型
      */
-    private void packageBaseVersionEntityToAsset(ScfAsset anAsset, BetterjrBaseEntity baseVersion, String baseInfoType, boolean flag) {
+    private void packageBaseVersionEntityToAsset(ScfAsset anAsset, BetterjrBaseEntity baseVersion, String baseInfoType,
+            boolean flag) {
 
         ScfAssetBasedata baseData = new ScfAssetBasedata();
         baseData.setAssetId(anAsset.getId());
@@ -508,20 +512,15 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
             if (baseInfoType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_ORDER)) {
                 orderService.updateByPrimaryKeySelective((ScfOrderDO) anBaseVersion);
 
-            }
-            else if (baseInfoType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL)) {
+            } else if (baseInfoType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL)) {
                 billService.updateByPrimaryKeySelective((ScfAcceptBillDO) anBaseVersion);
-            }
-            else if (baseInfoType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE)) {
+            } else if (baseInfoType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE)) {
                 invoiceService.updateByPrimaryKeySelective((ScfInvoiceDO) anBaseVersion);
-            }
-            else if (baseInfoType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT)) {
+            } else if (baseInfoType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT)) {
                 contractLedgerService.updateByPrimaryKeySelective((ContractLedger) anBaseVersion);
-            }
-            else if (baseInfoType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE)) {
+            } else if (baseInfoType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE)) {
                 receivableService.updateByPrimaryKeySelective((ScfReceivableDO) anBaseVersion);
-            }
-            else {
+            } else {
 
             }
         }
@@ -540,9 +539,11 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         Object receivableId = anAssetMap.get(AssetConstantCollentions.RECEIVABLE_REQUEST_BY_RECEIVABLEID_KEY);
         ScfReceivableDO receivableDO = receivableService.selectByPrimaryKey(Long.parseLong(receivableId.toString()));
         BTAssert.notNull(receivableDO, "当前应收账款对应的发票未找到!");
-        checkStatus(receivableDO.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false, "当前应收账款状态不是审核生效!");
+        checkStatus(receivableDO.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false,
+                "当前应收账款状态不是审核生效!");
         checkStatus(receivableDO.getIsLatest(), VersionConstantCollentions.IS_LATEST, false, "当前应收账款已不是最新版本!");
-        checkStatus(receivableDO.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true, "当前应收账款已经在进行融资!");
+        checkStatus(receivableDO.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true,
+                "当前应收账款已经在进行融资!");
         receivableList.add(receivableDO);
         return receivableList;
     }
@@ -585,24 +586,24 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         // 对账单附件列表
         if (anAssetMap.containsKey("statementFileList") && anAssetMap.get("statementFileList") != null) {
 
-            anAsset.setStatementBatchNo(
-                    custFileDubboService.updateAndDelCustFileItemInfo(anAssetMap.get("statementFileList").toString(), anAsset.getStatementBatchNo()));
+            anAsset.setStatementBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(
+                    anAssetMap.get("statementFileList").toString(), anAsset.getStatementBatchNo()));
 
         }
 
         // 商品出库单附件列表
         if (anAssetMap.containsKey("goodsFileList") && anAssetMap.get("goodsFileList") != null) {
 
-            anAsset.setGoodsBatchNo(
-                    custFileDubboService.updateAndDelCustFileItemInfo(anAssetMap.get("goodsFileList").toString(), anAsset.getGoodsBatchNo()));
+            anAsset.setGoodsBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(
+                    anAssetMap.get("goodsFileList").toString(), anAsset.getGoodsBatchNo()));
 
         }
 
         // 其他附件列表
         if (anAssetMap.containsKey("othersFileList") && anAssetMap.get("othersFileList") != null) {
 
-            anAsset.setOthersBatchNo(
-                    custFileDubboService.updateAndDelCustFileItemInfo(anAssetMap.get("othersFileList").toString(), anAsset.getOthersBatchNo()));
+            anAsset.setOthersBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(
+                    anAssetMap.get("othersFileList").toString(), anAsset.getOthersBatchNo()));
 
         }
 
@@ -685,18 +686,18 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         BTAssert.notNull(anAsset, "资产初始化 失败-资产 is null");
 
         if (anAssetMap.containsKey(AssetConstantCollentions.SCF_ORDER_LIST_KEY)) {
-            List<ScfOrderDO> orderList = orderService
-                    .queryBaseVersionObjectByids(anAssetMap.get(AssetConstantCollentions.SCF_ORDER_LIST_KEY).toString());
+            List<ScfOrderDO> orderList = orderService.queryBaseVersionObjectByids(
+                    anAssetMap.get(AssetConstantCollentions.SCF_ORDER_LIST_KEY).toString());
             anAsset.getBasedataMap().put(AssetConstantCollentions.SCF_ORDER_LIST_KEY, orderList);
         }
         if (anAssetMap.containsKey(AssetConstantCollentions.SCF_INVOICE_LIST_KEY)) {
-            List<ScfInvoiceDO> invoiceList = invoiceService
-                    .queryBaseVersionObjectByids(anAssetMap.get(AssetConstantCollentions.SCF_INVOICE_LIST_KEY).toString());
+            List<ScfInvoiceDO> invoiceList = invoiceService.queryBaseVersionObjectByids(
+                    anAssetMap.get(AssetConstantCollentions.SCF_INVOICE_LIST_KEY).toString());
             anAsset.getBasedataMap().put(AssetConstantCollentions.SCF_INVOICE_LIST_KEY, invoiceList);
         }
         if (anAssetMap.containsKey(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY)) {
-            List<ScfReceivableDO> receivableList = receivableService
-                    .queryBaseVersionObjectByids(anAssetMap.get(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY).toString());
+            List<ScfReceivableDO> receivableList = receivableService.queryBaseVersionObjectByids(
+                    anAssetMap.get(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY).toString());
             anAsset.getBasedataMap().put(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY, receivableList);
         }
         if (anAssetMap.containsKey(AssetConstantCollentions.SCF_BILL_LIST_KEY)) {
@@ -705,8 +706,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
             anAsset.getBasedataMap().put(AssetConstantCollentions.SCF_BILL_LIST_KEY, billList);
         }
         if (anAssetMap.containsKey(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY)) {
-            List<ContractLedger> agreementList = contractLedgerService
-                    .queryBaseVersionObjectByids(anAssetMap.get(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY).toString());
+            List<ContractLedger> agreementList = contractLedgerService.queryBaseVersionObjectByids(
+                    anAssetMap.get(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY).toString());
             anAsset.getBasedataMap().put(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY, agreementList);
         }
 
@@ -721,27 +722,23 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
      */
     private String findProductMainAssetType(Map<String, Object> anAssetMap) {
         BTAssert.notNull(anAssetMap.get("productCode"), "资产初始化 失败-请选择保理产品");
-        List<ScfAssetDict> productAssetDictList = productAssetService.queryProductAssetDict(anAssetMap.get("productCode").toString());
+        List<ScfAssetDict> productAssetDictList = productAssetService
+                .queryProductAssetDict(anAssetMap.get("productCode").toString());
         BTAssert.notNull(productAssetDictList, "资产初始化 失败-请先配置当前保理产品");
         for (ScfAssetDict scfAssetDict : productAssetDictList) {
             if (scfAssetDict.getAssetType().equals("1")) {
                 logger.info("融资核心资产类型为:" + scfAssetDict);
                 if ("1".equals(scfAssetDict.getDictType())) {
                     return AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL;
-                }
-                else if ("2".equals(scfAssetDict.getDictType())) {
+                } else if ("2".equals(scfAssetDict.getDictType())) {
                     return AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE;
-                }
-                else if ("3".equals(scfAssetDict.getDictType())) {
+                } else if ("3".equals(scfAssetDict.getDictType())) {
                     return AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT;
-                }
-                else if ("4".equals(scfAssetDict.getDictType())) {
+                } else if ("4".equals(scfAssetDict.getDictType())) {
                     return AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE;
-                }
-                else if ("5".equals(scfAssetDict.getDictType())) {
+                } else if ("5".equals(scfAssetDict.getDictType())) {
                     return AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_ORDER;
-                }
-                else {
+                } else {
                     BTAssert.notNull(null, "资产初始化 失败-当前保理产品主体资产不符合要求(只能是订单,应收应付账款,合同，发票，汇票)");
                     return "";
                 }
@@ -770,8 +767,7 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         if (anAsset.getCustType().equals(AssetConstantCollentions.SCF_ASSET_ROLE_SUPPLY)) {
 
             packageAssetCompanyFromCustInfo(anAsset, custInfo, AssetConstantCollentions.SCF_ASSET_ROLE_SUPPLY);
-        }
-        else {
+        } else {
             packageAssetCompanyFromCustInfo(anAsset, custInfo, AssetConstantCollentions.SCF_ASSET_ROLE_DEALER);
 
         }
@@ -786,7 +782,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
 
     }
 
-    private ScfAsset packageAssetCompanyFromCustInfo(ScfAsset anAsset, CustInfo anCustInfo, String anScfAssetRoleSupply) {
+    private ScfAsset packageAssetCompanyFromCustInfo(ScfAsset anAsset, CustInfo anCustInfo,
+            String anScfAssetRoleSupply) {
 
         ScfAssetCompany company = new ScfAssetCompany();
         company.setAssetId(anAsset.getId());
@@ -800,18 +797,15 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
 
             anAsset.setCustName(anCustInfo.getCustName());
             anAsset.getCustMap().put(AssetConstantCollentions.CUST_INFO_KEY, company);
-        }
-        else if (AssetConstantCollentions.SCF_ASSET_ROLE_CORE.equals(anScfAssetRoleSupply)) {
+        } else if (AssetConstantCollentions.SCF_ASSET_ROLE_CORE.equals(anScfAssetRoleSupply)) {
             // company.setCustName(anCustInfo.getCustName());
             anAsset.setCoreCustName(anCustInfo.getCustName());
             anAsset.getCustMap().put(AssetConstantCollentions.CORE_CUST_INFO_KEY, company);
-        }
-        else if (AssetConstantCollentions.SCF_ASSET_ROLE_FACTORY.equals(anScfAssetRoleSupply)) {
+        } else if (AssetConstantCollentions.SCF_ASSET_ROLE_FACTORY.equals(anScfAssetRoleSupply)) {
             // company.setCustName(anCustInfo.getCustName());
             // anAsset.setCoreCustName(anCustInfo.getCustName());
             anAsset.getCustMap().put(AssetConstantCollentions.FACTORY_CUST_INFO_KEY, company);
-        }
-        else {
+        } else {
 
         }
 
@@ -845,8 +839,7 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
             verificationAssetProperties(asset);
             if (UserUtils.supplierUser()) {
                 asset.setCustType(AssetConstantCollentions.SCF_ASSET_ROLE_SUPPLY);
-            }
-            else {
+            } else {
                 asset.setCustType(AssetConstantCollentions.SCF_ASSET_ROLE_DEALER);
             }
             // 区分是新增还是修改资产
@@ -967,8 +960,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         CustInfo coreCust = getCustInfo(anAsset.getCustMap(), AssetConstantCollentions.CORE_CUST_INFO_KEY).get(0);
         BTAssert.notNull(coreCust, "新增资产企业 失败-addAssetCompany 核心企业 is null");
         Integer coreOperatorStatu = getOperator(anAsset.getCustMap(), AssetConstantCollentions.CORE_CUST_INFO_STATUS);
-        ScfAssetCompany coreAssetCompany = getAssetCompany(coreCust, AssetConstantCollentions.SCF_ASSET_ROLE_CORE, coreOperatorStatu,
-                anAsset.getId());
+        ScfAssetCompany coreAssetCompany = getAssetCompany(coreCust, AssetConstantCollentions.SCF_ASSET_ROLE_CORE,
+                coreOperatorStatu, anAsset.getId());
         assetCompanyService.addAssetCompany(coreAssetCompany);
         anAsset.setCoreCustNo(coreCust.getCustNo());
         anAsset.setCoreCustName(coreCust.getCustName());
@@ -976,10 +969,11 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         // 插入资产企业中的保理公司
         List<CustInfo> factoryCust = getCustInfo(anAsset.getCustMap(), AssetConstantCollentions.FACTORY_CUST_INFO_KEY);
         BTAssert.notNull(factoryCust, "新增资产企业 失败-addAssetCompany 保理公司 is null");
-        Integer factoryOperatorStatu = getOperator(anAsset.getCustMap(), AssetConstantCollentions.FACTORY_CUST_INFO_STATUS);
+        Integer factoryOperatorStatu = getOperator(anAsset.getCustMap(),
+                AssetConstantCollentions.FACTORY_CUST_INFO_STATUS);
         for (CustInfo custInfo : factoryCust) {
-            ScfAssetCompany factoryAssetCompany = getAssetCompany(custInfo, AssetConstantCollentions.SCF_ASSET_ROLE_FACTORY, factoryOperatorStatu,
-                    anAsset.getId());
+            ScfAssetCompany factoryAssetCompany = getAssetCompany(custInfo,
+                    AssetConstantCollentions.SCF_ASSET_ROLE_FACTORY, factoryOperatorStatu, anAsset.getId());
             assetCompanyService.addAssetCompany(factoryAssetCompany);
         }
         logger.info("success to add addAssetCompany");
@@ -1040,12 +1034,12 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         Object object = custMap.get(key);
         BTAssert.notNull(object, "新增资产企业 失败-企业列表当前key is null" + key);
         List<CustInfo> list = new ArrayList<>();
-        if (key.equals(AssetConstantCollentions.CUST_INFO_KEY) || key.equals(AssetConstantCollentions.CORE_CUST_INFO_KEY)) {
+        if (key.equals(AssetConstantCollentions.CUST_INFO_KEY)
+                || key.equals(AssetConstantCollentions.CORE_CUST_INFO_KEY)) {
             // 如果是供应商和核心企业
             CustInfo custinfo = (CustInfo) object;
             list.add(custinfo);
-        }
-        else {
+        } else {
             list = (List<CustInfo>) object;
         }
         return list;
@@ -1064,8 +1058,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
      * @param anPageSize
      * @return
      */
-    public Page queryFinanceBaseDataList(Long anCustNo, Long anCoreCustNo, String anDataType, String anIds, String anFlag, int anPageNum,
-            int anPageSize) {
+    public Page queryFinanceBaseDataList(Long anCustNo, Long anCoreCustNo, String anDataType, String anIds,
+            String anFlag, int anPageNum, int anPageSize) {
 
         BTAssert.notNull(anCustNo, "查询可用资产失败!供应商id不存在");
         BTAssert.notNull(anCoreCustNo, "查询可用资产失败!核心企业id不存在");
@@ -1074,34 +1068,34 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
             BTAssert.notNull(null, "查询可用资产失败!你没有当前企业资产的操作权限");
         }
 
-        Map<String, Object> paramMap = QueryTermBuilder.newInstance().put("custNo", anCustNo).put("coreCustNo", anCoreCustNo).build();
-        if (StringUtils.isNoneBlank(anIds) && !"null".equals(anIds) && !"undefined".equals(anIds) && !"undefined,".equals(anIds)) {
+        Map<String, Object> paramMap = QueryTermBuilder.newInstance().put("custNo", anCustNo)
+                .put("coreCustNo", anCoreCustNo).build();
+        if (StringUtils.isNoneBlank(anIds) && !"null".equals(anIds) && !"undefined".equals(anIds)
+                && !"undefined,".equals(anIds)) {
 
             List<Long> idList = convertStringToList(anIds);
             paramMap.put("NEid", idList);
 
         }
         if (anDataType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_ORDER)) {
-            Page<ScfOrderDO> orderPage = orderService.selectCanUsePageWithVersion(paramMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
-            return orderPage;
-        }
-        else if (anDataType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL)) {
-            Page<ScfAcceptBillDO> billPage = billService.selectCanUsePageWithVersion(paramMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
-            return billPage;
-        }
-        else if (anDataType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE)) {
-            Page<ScfInvoiceDO> invoicePage = invoiceService.selectCanUsePageWithVersion(paramMap, anPageNum, anPageSize, "1".equals(anFlag),
-                    "id desc");
-            return invoicePage;
-        }
-        else if (anDataType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE)) {
-            Page<ScfReceivableDO> receivablePage = receivableService.selectCanUsePageWithVersion(paramMap, anPageNum, anPageSize, "1".equals(anFlag),
-                    "id desc");
-            return receivablePage;
-        }
-        else {
-            Page<ContractLedger> agreementPage = contractLedgerService.selectCanUsePageWithVersion(paramMap, anPageNum, anPageSize,
+            Page<ScfOrderDO> orderPage = orderService.selectCanUsePageWithVersion(paramMap, anPageNum, anPageSize,
                     "1".equals(anFlag), "id desc");
+            return orderPage;
+        } else if (anDataType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL)) {
+            Page<ScfAcceptBillDO> billPage = billService.selectCanUsePageWithVersion(paramMap, anPageNum, anPageSize,
+                    "1".equals(anFlag), "id desc");
+            return billPage;
+        } else if (anDataType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE)) {
+            Page<ScfInvoiceDO> invoicePage = invoiceService.selectCanUsePageWithVersion(paramMap, anPageNum, anPageSize,
+                    "1".equals(anFlag), "id desc");
+            return invoicePage;
+        } else if (anDataType.equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE)) {
+            Page<ScfReceivableDO> receivablePage = receivableService.selectCanUsePageWithVersion(paramMap, anPageNum,
+                    anPageSize, "1".equals(anFlag), "id desc");
+            return receivablePage;
+        } else {
+            Page<ContractLedger> agreementPage = contractLedgerService.selectCanUsePageWithVersion(paramMap, anPageNum,
+                    anPageSize, "1".equals(anFlag), "id desc");
             return agreementPage;
         }
 
@@ -1128,8 +1122,7 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
                     }
                 }
 
-            }
-            else {
+            } else {
                 idList.add(Long.parseLong(anIds));
             }
 
@@ -1166,7 +1159,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         if (anAsset != null && anAsset.getId() != null) {
             ScfAsset asset = this.selectByPrimaryKey(anAsset.getId());
             BTAssert.notNull(asset, "修改资产 失败-未找到资产信息");
-            logger.info("Begin to saveModifyAsset anAsset=" + asset + "  当前操作用户为:" + UserUtils.getOperatorInfo().getName());
+            logger.info(
+                    "Begin to saveModifyAsset anAsset=" + asset + "  当前操作用户为:" + UserUtils.getOperatorInfo().getName());
             if (!getCurrentUserCustNos().contains(asset.getCustNo())) {
                 BTAssert.notNull(null, "修改资产 失败-原资产公司成员!没有权限");
             }
@@ -1175,7 +1169,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
             this.updateByPrimaryKeySelective(asset);
             anAsset.setPrefixId(asset.getId());
             anAsset.setId(null);
-            logger.info("end to saveModifyAsset anAsset=" + asset + "  当前操作用户为:" + UserUtils.getOperatorInfo().getName());
+            logger.info(
+                    "end to saveModifyAsset anAsset=" + asset + "  当前操作用户为:" + UserUtils.getOperatorInfo().getName());
         }
         return anAsset;
     }
@@ -1192,7 +1187,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         // 查找资产信息
         ScfAsset asset = findAssetByid(anAssetId);
         BTAssert.notNull(asset, "资产确认失败,请选择要确认的资产");
-        logger.info("saveConfirmAsset begin:..资产确认提交，走融资流程 Asset=" + asset + "  当前操作用户为:" + UserUtils.getOperatorInfo().getName());
+        logger.info("saveConfirmAsset begin:..资产确认提交，走融资流程 Asset=" + asset + "  当前操作用户为:"
+                + UserUtils.getOperatorInfo().getName());
         // 校验资产状态
         checkConfirmStatus(asset);
         // 校验当前公司是否有权限
@@ -1203,7 +1199,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         asset.setBusinStatus(AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_EFFECTIVE);
         this.updateByPrimaryKeySelective(asset);
 
-        logger.info("saveConfirmAsset end:..资产确认提交，走融资流程 Asset=" + asset + "  当前操作用户为:" + UserUtils.getOperatorInfo().getName());
+        logger.info("saveConfirmAsset end:..资产确认提交，走融资流程 Asset=" + asset + "  当前操作用户为:"
+                + UserUtils.getOperatorInfo().getName());
         return asset;
     }
 
@@ -1219,7 +1216,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         // 查找资产信息
         ScfAsset asset = findAssetByid(anAssetId);
         BTAssert.notNull(asset, "资产作废失败,请选择要作废的资产");
-        logger.info("saveAnnulAsset begin:..资产作废资产信息 Asset=" + asset + "  当前操作用户为:" + UserUtils.getOperatorInfo().getName());
+        logger.info("saveAnnulAsset begin:..资产作废资产信息 Asset=" + asset + "  当前操作用户为:"
+                + UserUtils.getOperatorInfo().getName());
         // 校验资产状态
         checkAnnulStatus(asset);
         // 校验当前公司是否有权限
@@ -1228,7 +1226,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         asset.initAnnulAsset(UserUtils.getOperatorInfo());
         this.updateByPrimaryKeySelective(asset);
 
-        logger.info("saveAnnulAsset end:..资产作废资产信息 Asset=" + asset + "  当前操作用户为:" + UserUtils.getOperatorInfo().getName());
+        logger.info(
+                "saveAnnulAsset end:..资产作废资产信息 Asset=" + asset + "  当前操作用户为:" + UserUtils.getOperatorInfo().getName());
         return asset;
     }
 
@@ -1244,7 +1243,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         // 查找资产信息
         ScfAsset asset = findAssetByid(anAssetId);
         BTAssert.notNull(asset, "资产驳回失败,请选择要驳回的资产");
-        logger.info("saveRejectOrBreakAsset begin:..资产融资过程中驳回中止资产信息 Asset=" + asset + "  当前操作用户为:" + UserUtils.getOperatorInfo().getName());
+        logger.info("saveRejectOrBreakAsset begin:..资产融资过程中驳回中止资产信息 Asset=" + asset + "  当前操作用户为:"
+                + UserUtils.getOperatorInfo().getName());
         // 校验资产状态
         checkAnnulStatus(asset);
         // 校验当前公司是否有权限
@@ -1254,16 +1254,21 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
 
         asset.initRejectOrBreakAsset(UserUtils.getOperatorInfo());
         this.updateByPrimaryKeySelective(asset);
-        logger.info("saveRejectOrBreakAsset end:..资产融资过程中驳回中止资产信息 Asset=" + asset + "  当前操作用户为:" + UserUtils.getOperatorInfo().getName());
+        logger.info("saveRejectOrBreakAsset end:..资产融资过程中驳回中止资产信息 Asset=" + asset + "  当前操作用户为:"
+                + UserUtils.getOperatorInfo().getName());
         return asset;
     }
 
     private void checkAnnulStatus(ScfAsset anAsset) {
 
-        // checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ANNUL, true, "当前资产已经废止,不能进行废止");
-        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ASSIGNMENT, true, "当前资产已经转让,不能进行废止");
-        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_EFFECTIVE, false, "当前资产尚未在融资过程中,不能进行驳回");
-        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_NOCAN_USE, true, "当前资产已经过期,不能进行废止");
+        // checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ANNUL, true,
+        // "当前资产已经废止,不能进行废止");
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ASSIGNMENT, true,
+                "当前资产已经转让,不能进行废止");
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_EFFECTIVE, false,
+                "当前资产尚未在融资过程中,不能进行驳回");
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_NOCAN_USE, true,
+                "当前资产已经过期,不能进行废止");
 
     }
 
@@ -1288,8 +1293,9 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
             for (ScfOrderDO order : orderList) {
                 // 校验单据的状态
                 order.checkFinanceStatus();
-                orderService.updateBaseAssetStatus(order.getRefNo(), order.getVersion(), VersionConstantCollentions.BUSIN_STATUS_USED,
-                        VersionConstantCollentions.LOCKED_STATUS_LOCKED, order.getDocStatus());
+                orderService.updateBaseAssetStatus(order.getRefNo(), order.getVersion(),
+                        VersionConstantCollentions.BUSIN_STATUS_USED, VersionConstantCollentions.LOCKED_STATUS_LOCKED,
+                        order.getDocStatus());
             }
 
         }
@@ -1301,8 +1307,9 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
             for (ScfAcceptBillDO bill : billList) {
                 // 校验单据的状态
                 bill.checkFinanceStatus();
-                billService.updateBaseAssetStatus(bill.getRefNo(), bill.getVersion(), VersionConstantCollentions.BUSIN_STATUS_USED,
-                        VersionConstantCollentions.LOCKED_STATUS_LOCKED, bill.getDocStatus());
+                billService.updateBaseAssetStatus(bill.getRefNo(), bill.getVersion(),
+                        VersionConstantCollentions.BUSIN_STATUS_USED, VersionConstantCollentions.LOCKED_STATUS_LOCKED,
+                        bill.getDocStatus());
             }
 
         }
@@ -1313,8 +1320,9 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
             for (ScfInvoiceDO invoice : invoiceList) {
                 // 校验单据的状态
                 invoice.checkFinanceStatus();
-                invoiceService.updateBaseAssetStatus(invoice.getRefNo(), invoice.getVersion(), VersionConstantCollentions.BUSIN_STATUS_USED,
-                        VersionConstantCollentions.LOCKED_STATUS_LOCKED, invoice.getDocStatus());
+                invoiceService.updateBaseAssetStatus(invoice.getRefNo(), invoice.getVersion(),
+                        VersionConstantCollentions.BUSIN_STATUS_USED, VersionConstantCollentions.LOCKED_STATUS_LOCKED,
+                        invoice.getDocStatus());
             }
 
         }
@@ -1325,8 +1333,9 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
             for (ScfReceivableDO receivable : receivableList) {
                 // 校验单据的状态
                 receivable.checkFinanceStatus();
-                receivableService.updateBaseAssetStatus(receivable.getId(), VersionConstantCollentions.BUSIN_STATUS_USED,
-                        VersionConstantCollentions.LOCKED_STATUS_LOCKED, receivable.getDocStatus());
+                receivableService.updateBaseAssetStatus(receivable.getId(),
+                        VersionConstantCollentions.BUSIN_STATUS_USED, VersionConstantCollentions.LOCKED_STATUS_LOCKED,
+                        receivable.getDocStatus());
             }
 
         }
@@ -1394,10 +1403,14 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
 
     private void checkConfirmStatus(ScfAsset anAsset) {
 
-        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ANNUL, true, "当前资产已经废止,不能进行融资");
-        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ASSIGNMENT, true, "当前资产已经转让,不能进行融资");
-        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_EFFECTIVE, true, "当前资产已经在融资流程中,不能进行融资");
-        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_NOCAN_USE, true, "当前资产已经废止,不能进行融资");
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ANNUL, true,
+                "当前资产已经废止,不能进行融资");
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ASSIGNMENT, true,
+                "当前资产已经转让,不能进行融资");
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_EFFECTIVE, true,
+                "当前资产已经在融资流程中,不能进行融资");
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_NOCAN_USE, true,
+                "当前资产已经废止,不能进行融资");
 
     }
 
@@ -1408,10 +1421,14 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
      */
     private void checkModifyStatus(ScfAsset anAsset) {
 
-        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ANNUL, true, "当前资产已经废止,不能修改");
-        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ASSIGNMENT, true, "当前资产已经转让,不能修改");
-        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_EFFECTIVE, true, "当前资产已经在融资流程中,不能修改");
-        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_NOCAN_USE, true, "当前资产已经废止,不能修改");
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ANNUL, true,
+                "当前资产已经废止,不能修改");
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_ASSIGNMENT, true,
+                "当前资产已经转让,不能修改");
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_EFFECTIVE, true,
+                "当前资产已经在融资流程中,不能修改");
+        checkStatus(anAsset.getBusinStatus(), AssetConstantCollentions.ASSET_INFO_BUSIN_STATUS_NOCAN_USE, true,
+                "当前资产已经废止,不能修改");
 
     }
 
@@ -1419,7 +1436,7 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
      * 检查状态信息
      */
     public void checkStatus(String anBusinStatus, String anTargetStatus, boolean anFlag, String anMessage) {
-        if (BetterStringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
+        if (StringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
             logger.warn(anMessage);
             throw new BytterTradeException(40001, anMessage);
         }
@@ -1447,7 +1464,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         // 查找当前资产信息
         ScfAsset oldAsset = this.findAssetByid(anAssetId);
         BTAssert.notNull(oldAsset, "资产转移出错，没有找到相关资产信息");
-        logger.info("saveAssignmentAssetToFactory begin:..资产转让：资产详细信息 oldAsset=" + oldAsset + "  当前操作用户为:" + UserUtils.getOperatorInfo().getName());
+        logger.info("saveAssignmentAssetToFactory begin:..资产转让：资产详细信息 oldAsset=" + oldAsset + "  当前操作用户为:"
+                + UserUtils.getOperatorInfo().getName());
 
         // 校验当前公司是否有权限
         checkCurrentCompanyPermission(oldAsset);
@@ -1462,7 +1480,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         }
         catch (Exception e) {
             BTAssert.notNull(null, "资产转移出错，请查询当前资产详细信息");
-            logger.info("资产转移出错，请查询当前资产详细信息 anAsset=" + oldAsset + "  当前操作用户为:" + UserUtils.getOperatorInfo().getName() + " 错误信息为:" + e.getMessage());
+            logger.info("资产转移出错，请查询当前资产详细信息 anAsset=" + oldAsset + "  当前操作用户为:" + UserUtils.getOperatorInfo().getName()
+                    + " 错误信息为:" + e.getMessage());
         }
         BTAssert.notNull(newAsset, "资产转移出错，请查询当前资产详细信息");
         newAsset.initAdd();
@@ -1484,7 +1503,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         // 回写数据
         this.insertSelective(newAsset);
         this.updateByPrimaryKeySelective(oldAsset);
-        logger.info("saveAssignmentAssetToFactory begin:..资产转让：资产详细信息 newAsset=" + newAsset + "  当前操作用户为:" + UserUtils.getOperatorInfo().getName());
+        logger.info("saveAssignmentAssetToFactory begin:..资产转让：资产详细信息 newAsset=" + newAsset + "  当前操作用户为:"
+                + UserUtils.getOperatorInfo().getName());
         // 返回最新的资产信息
         return newAsset;
 
@@ -1604,13 +1624,13 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         }
         boolean isRequestAsset = true;
         boolean isLockedAsset = true;
-        if (anAssetMap.containsKey(AssetConstantCollentions.RECEIVABLE_REQUEST_IS_REQUEST_ASSET)
-                && "false".equals(anAssetMap.get(AssetConstantCollentions.RECEIVABLE_REQUEST_IS_REQUEST_ASSET).toString())) {
+        if (anAssetMap.containsKey(AssetConstantCollentions.RECEIVABLE_REQUEST_IS_REQUEST_ASSET) && "false"
+                .equals(anAssetMap.get(AssetConstantCollentions.RECEIVABLE_REQUEST_IS_REQUEST_ASSET).toString())) {
             isRequestAsset = false;
         }
 
-        if (anAssetMap.containsKey(AssetConstantCollentions.RECEIVABLE_REQUEST_IS_LOCKED_ASSET)
-                && "false".equals(anAssetMap.get(AssetConstantCollentions.RECEIVABLE_REQUEST_IS_LOCKED_ASSET).toString())) {
+        if (anAssetMap.containsKey(AssetConstantCollentions.RECEIVABLE_REQUEST_IS_LOCKED_ASSET) && "false"
+                .equals(anAssetMap.get(AssetConstantCollentions.RECEIVABLE_REQUEST_IS_LOCKED_ASSET).toString())) {
             isLockedAsset = false;
         }
 
@@ -1638,7 +1658,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
      *            是否锁定资产
      * @return
      */
-    private ScfAsset createAndBuilderAssetTotal(ScfAsset anAsset, ScfReceivableDO anReceivable, boolean isRequestAsset, boolean isLockedAsset) {
+    private ScfAsset createAndBuilderAssetTotal(ScfAsset anAsset, ScfReceivableDO anReceivable, boolean isRequestAsset,
+            boolean isLockedAsset) {
 
         // 处理发票信息
         packageInvoiceToAssetRequsetLocket(anAsset, anReceivable, isRequestAsset, isLockedAsset);
@@ -1659,8 +1680,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
      * @param isLockedAsset
      *            是否锁定资产
      */
-    private void packageAgreementToAssetRequsetLocket(ScfAsset anAsset, ScfReceivableDO anReceivable, boolean anIsRequestAsset,
-            boolean anIsLockedAsset) {
+    private void packageAgreementToAssetRequsetLocket(ScfAsset anAsset, ScfReceivableDO anReceivable,
+            boolean anIsRequestAsset, boolean anIsLockedAsset) {
 
         if (anIsRequestAsset) {
 
@@ -1671,21 +1692,25 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
             // 根据贸易合同编号查询贸易合同
             ContractLedger agreement = contractLedgerService.selectOneByAgreeNo(agreeNo);
             BTAssert.notNull(agreement, "应收账款的贸易合同未找到!操作失败");
-            checkStatus(agreement.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false, "请核准贸易合同");
-            checkStatus(anReceivable.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false, "应付账款不是生效状态，无法进行申请");
+            checkStatus(agreement.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false,
+                    "请核准贸易合同");
+            checkStatus(anReceivable.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false,
+                    "应付账款不是生效状态，无法进行申请");
             checkStatus(anReceivable.getCustNo() + "", agreement.getCustNo() + "", false, "应收账款和贸易合同对应的企业不一致");
             // 将合同插入到资产数据表中
-            packageBaseVersionEntityToAsset(anAsset, agreement, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT, anIsLockedAsset);
+            packageBaseVersionEntityToAsset(anAsset, agreement,
+                    AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT, anIsLockedAsset);
 
-        }
-        else {
+        } else {
 
             if (StringUtils.isNotBlank(anReceivable.getAgreeNo())) {
                 ContractLedger agreement = contractLedgerService.selectOneByAgreeNo(anReceivable.getAgreeNo());
-                if (agreement != null && agreement.getBusinStatus().equals(VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE)
+                if (agreement != null
+                        && agreement.getBusinStatus().equals(VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE)
                         && agreement.getLockedStatus().equals(VersionConstantCollentions.LOCKED_STATUS_INlOCKED)) {
                     // 将合同插入到资产数据表中
-                    packageBaseVersionEntityToAsset(anAsset, agreement, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT, anIsLockedAsset);
+                    packageBaseVersionEntityToAsset(anAsset, agreement,
+                            AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT, anIsLockedAsset);
 
                 }
 
@@ -1703,7 +1728,8 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
      * @param isRequestAsset
      * @param isLockedAsset
      */
-    private void packageInvoiceToAssetRequsetLocket(ScfAsset anAsset, ScfReceivableDO anReceivable, boolean isRequestAsset, boolean isLockedAsset) {
+    private void packageInvoiceToAssetRequsetLocket(ScfAsset anAsset, ScfReceivableDO anReceivable,
+            boolean isRequestAsset, boolean isLockedAsset) {
 
         // 查询发票列表
         if (StringUtils.isNoneBlank(anReceivable.getInvoiceNos())) {
@@ -1735,11 +1761,11 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
                 }
 
                 // 将发票信息存入到asset中
-                packageBaseVersionEntityToAsset(anAsset, invoiceDo, AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE, isLockedAsset);
+                packageBaseVersionEntityToAsset(anAsset, invoiceDo,
+                        AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE, isLockedAsset);
             }
 
-        }
-        else {
+        } else {
             if (isRequestAsset) {
                 BTAssert.notNull(null, "请应收账款关联发票信息");
             }
@@ -1762,12 +1788,11 @@ public class ScfAssetService extends BaseService<ScfAssetMapper, ScfAsset> {
         if ("1".equals(anString)) {
             asset.setGoodsBatchNo(custFileDubboService.updateCustFileItemInfo(anGoodsBatchNo, asset.getGoodsBatchNo()));
 
-        }
-        else if ("2".equals(anString)) {
+        } else if ("2".equals(anString)) {
 
-            asset.setStatementBatchNo(custFileDubboService.updateCustFileItemInfo(anGoodsBatchNo, asset.getStatementBatchNo()));
-        }
-        else {
+            asset.setStatementBatchNo(
+                    custFileDubboService.updateCustFileItemInfo(anGoodsBatchNo, asset.getStatementBatchNo()));
+        } else {
 
         }
         this.updateByPrimaryKeySelective(asset);

@@ -20,66 +20,66 @@ import com.betterjr.modules.commission.data.CommissionConstantCollentions;
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "t_cps_commission_param")
-public class CommissionParam implements BetterjrEntity{
+public class CommissionParam implements BetterjrEntity {
 
     /**
      * 
      */
     private static final long serialVersionUID = -4805417451205960858L;
-    
-    //`ID` bigint(18) NOT NULL COMMENT '发票主键',
+
+    // `ID` bigint(18) NOT NULL COMMENT '发票主键',
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
+    @Column(name = "ID", columnDefinition = "INTEGER")
     private Long id;
-    
-   //平台id
-    @Column(name = "L_CUSTNO",  columnDefinition="INTEGER" )
+
+    // 平台id
+    @Column(name = "L_CUSTNO", columnDefinition = "INTEGER")
     private Long custNo;
 
-    //平台名称
-    @Column(name = "C_CUSTNAME",  columnDefinition="VARCHAR" )
+    // 平台名称
+    @Column(name = "C_CUSTNAME", columnDefinition = "VARCHAR")
     private String custName;
-    
-    //核心企业对账企业Id
-    @Column(name = "L_CORE_CUSTNO",  columnDefinition="INTEGER" )
+
+    // 核心企业对账企业Id
+    @Column(name = "L_CORE_CUSTNO", columnDefinition = "INTEGER")
     private Long coreCustNo;
-    
-    //对账企业名称
-    @Column(name = "C_CORE_CUSTNAME",  columnDefinition="VARCHAR" )
+
+    // 对账企业名称
+    @Column(name = "C_CORE_CUSTNAME", columnDefinition = "VARCHAR")
     private String coreCustName;
-    
+
     /**
      * 佣金年利率
      */
-    @Column(name = "F_INTEREST_RATE",  columnDefinition="DECIMAL" )
-    @MetaData( value="佣金年利率", comments = "佣金年利率")
+    @Column(name = "F_INTEREST_RATE", columnDefinition = "DECIMAL")
+    @MetaData(value = "佣金年利率", comments = "佣金年利率")
     private BigDecimal interestRate;
-    
+
     /**
      * 商业发票税率
      */
-    @Column(name = "F_TAX_RATE",  columnDefinition="DECIMAL" )
-    @MetaData( value="商业发票税率", comments = "商业发票税率")
+    @Column(name = "F_TAX_RATE", columnDefinition = "DECIMAL")
+    @MetaData(value = "商业发票税率", comments = "商业发票税率")
     private BigDecimal taxRate;
-    
-    //状态: 0 不可用   1 可用
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
+
+    // 状态: 0 不可用 1 可用
+    @Column(name = "C_BUSIN_STATUS", columnDefinition = "VARCHAR")
     private String businStatus;
-    
-    //注册人名字
-    @Column(name = "C_REG_OPERNAME",  columnDefinition="VARCHAR" )
+
+    // 注册人名字
+    @Column(name = "C_REG_OPERNAME", columnDefinition = "VARCHAR")
     private String regOperName;
-    
-    //注册日期
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
+
+    // 注册日期
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
     private String regDate;
-    
-    ////注册时间
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
+
+    //// 注册时间
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
     private String regTime;
 
-    //注册人Id
-    @Column(name = "L_REG_OPERID",  columnDefinition="INTEGER" )
+    // 注册人Id
+    @Column(name = "L_REG_OPERID", columnDefinition = "INTEGER")
     private Long regOperId;
 
     public Long getId() {
@@ -205,83 +205,68 @@ public class CommissionParam implements BetterjrEntity{
         CommissionParam other = (CommissionParam) obj;
         if (this.businStatus == null) {
             if (other.businStatus != null) return false;
-        }
-        else if (!this.businStatus.equals(other.businStatus)) return false;
+        } else if (!this.businStatus.equals(other.businStatus)) return false;
         if (this.coreCustName == null) {
             if (other.coreCustName != null) return false;
-        }
-        else if (!this.coreCustName.equals(other.coreCustName)) return false;
+        } else if (!this.coreCustName.equals(other.coreCustName)) return false;
         if (this.coreCustNo == null) {
             if (other.coreCustNo != null) return false;
-        }
-        else if (!this.coreCustNo.equals(other.coreCustNo)) return false;
+        } else if (!this.coreCustNo.equals(other.coreCustNo)) return false;
         if (this.custName == null) {
             if (other.custName != null) return false;
-        }
-        else if (!this.custName.equals(other.custName)) return false;
+        } else if (!this.custName.equals(other.custName)) return false;
         if (this.custNo == null) {
             if (other.custNo != null) return false;
-        }
-        else if (!this.custNo.equals(other.custNo)) return false;
+        } else if (!this.custNo.equals(other.custNo)) return false;
         if (this.id == null) {
             if (other.id != null) return false;
-        }
-        else if (!this.id.equals(other.id)) return false;
+        } else if (!this.id.equals(other.id)) return false;
         if (this.interestRate == null) {
             if (other.interestRate != null) return false;
-        }
-        else if (!this.interestRate.equals(other.interestRate)) return false;
+        } else if (!this.interestRate.equals(other.interestRate)) return false;
         if (this.regDate == null) {
             if (other.regDate != null) return false;
-        }
-        else if (!this.regDate.equals(other.regDate)) return false;
+        } else if (!this.regDate.equals(other.regDate)) return false;
         if (this.regOperId == null) {
             if (other.regOperId != null) return false;
-        }
-        else if (!this.regOperId.equals(other.regOperId)) return false;
+        } else if (!this.regOperId.equals(other.regOperId)) return false;
         if (this.regOperName == null) {
             if (other.regOperName != null) return false;
-        }
-        else if (!this.regOperName.equals(other.regOperName)) return false;
+        } else if (!this.regOperName.equals(other.regOperName)) return false;
         if (this.regTime == null) {
             if (other.regTime != null) return false;
-        }
-        else if (!this.regTime.equals(other.regTime)) return false;
+        } else if (!this.regTime.equals(other.regTime)) return false;
         if (this.taxRate == null) {
             if (other.taxRate != null) return false;
-        }
-        else if (!this.taxRate.equals(other.taxRate)) return false;
+        } else if (!this.taxRate.equals(other.taxRate)) return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "CommissionParam [id=" + this.id + ", custNo=" + this.custNo + ", custName=" + this.custName + ", coreCustNo=" + this.coreCustNo
-                + ", coreCustName=" + this.coreCustName + ", interestRate=" + this.interestRate + ", taxRate=" + this.taxRate + ", businStatus="
-                + this.businStatus + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", regOperId="
-                + this.regOperId + "]";
+        return "CommissionParam [id=" + this.id + ", custNo=" + this.custNo + ", custName=" + this.custName
+                + ", coreCustNo=" + this.coreCustNo + ", coreCustName=" + this.coreCustName + ", interestRate="
+                + this.interestRate + ", taxRate=" + this.taxRate + ", businStatus=" + this.businStatus
+                + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate + ", regTime=" + this.regTime
+                + ", regOperId=" + this.regOperId + "]";
     }
 
-    
     public void initAddValue(CustOperatorInfo anOperatorInfo) {
-        
+
         saveUpdateValue(anOperatorInfo);
         this.setId(SerialGenerator.getLongValue("CommissionParam.id"));
-        
+
     }
 
     public void saveUpdateValue(CustOperatorInfo anOperatorInfo) {
-        
+
         BTAssert.notNull(anOperatorInfo, "新增佣金参数失败！请先登录");
         this.setRegDate(BetterDateUtils.getNumDate());
         this.setRegTime(BetterDateUtils.getNumTime());
         this.setRegOperId(anOperatorInfo.getId());
         this.setRegOperName(anOperatorInfo.getName());
         this.setBusinStatus(CommissionConstantCollentions.COMMISSION_INVOICE_PARAM_CUST_BUSINSTATUS_OK);
-        
+
     }
-    
-    
-    
 
 }

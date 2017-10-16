@@ -47,7 +47,7 @@ public interface CommissionPayResultRecordMapper extends Mapper<CommissionPayRes
             + "(SELECT SUM(F_PAY_BALANCE) AS balance, COUNT(ID) AS amount FROM t_cps_pay_result_record WHERE L_PAY_RESULT_ID=#{payResultId} AND C_PAY_RESULT='1') AS t2, "
             + "(SELECT SUM(F_PAY_BALANCE) AS balance, COUNT(ID) AS amount FROM t_cps_pay_result_record WHERE L_PAY_RESULT_ID=#{payResultId} AND C_PAY_RESULT='2') AS t3, "
             + "(SELECT SUM(F_PAY_BALANCE) AS balance, COUNT(ID) AS amount FROM t_cps_pay_result_record WHERE L_PAY_RESULT_ID=#{payResultId} AND C_PAY_RESULT='0') AS t4 ")
-    @Result(javaType=CalcPayResult.class)
+    @Result(javaType = CalcPayResult.class)
     public CalcPayResult calcPayResultRecord(@Param("payResultId") Long anPayResultId);
 
     @Select("SELECT t1.balance AS totalBalance, t1.amount AS totalAmount, t2.balance AS paySuccessBalance, t2.amount AS paySuccessAmount, "
@@ -56,8 +56,9 @@ public interface CommissionPayResultRecordMapper extends Mapper<CommissionPayRes
             + "(SELECT SUM(F_PAY_BALANCE) AS balance, COUNT(ID) AS amount FROM t_cps_pay_result_record WHERE D_PAY_DATE=#{payDate} AND C_PAY_RESULT='1' AND L_CUSTNO=#{custNo} AND C_BUSIN_STATUS IN ('0','1','2')) AS t2, "
             + "(SELECT SUM(F_PAY_BALANCE) AS balance, COUNT(ID) AS amount FROM t_cps_pay_result_record WHERE D_PAY_DATE=#{payDate} AND C_PAY_RESULT='2' AND L_CUSTNO=#{custNo} AND C_BUSIN_STATUS IN ('0','1','2')) AS t3, "
             + "(SELECT SUM(F_PAY_BALANCE) AS balance, COUNT(ID) AS amount FROM t_cps_pay_result_record WHERE D_PAY_DATE=#{payDate} AND C_PAY_RESULT='0' AND L_CUSTNO=#{custNo} AND C_BUSIN_STATUS IN ('0','1','2')) AS t4 ")
-    @Result(javaType=CalcPayResult.class)
-    public CalcPayResult calcPayResultRecordByPayDate(@Param("custNo") Long anCustNo, @Param("payDate") String anPayDate);
+    @Result(javaType = CalcPayResult.class)
+    public CalcPayResult calcPayResultRecordByPayDate(@Param("custNo") Long anCustNo,
+            @Param("payDate") String anPayDate);
 
     @Update("UPDATE t_cps_record cr INNER JOIN t_cps_pay_result_record cprr ON cr.ID = cprr.L_RECORD_ID "
             + "SET cr.C_PAY_STATUS = cprr.C_PAY_RESULT, cr.C_BUSIN_STATUS = '2' "
@@ -69,15 +70,14 @@ public interface CommissionPayResultRecordMapper extends Mapper<CommissionPayRes
     @ResultType(Long.class)
     public Long saveRecordStatus(Map<String, Object> param);
 
-    @Update("UPDATE t_cps_pay_result_record cprr "
-            + "SET cprr.C_BUSIN_STATUS = '2' "
+    @Update("UPDATE t_cps_pay_result_record cprr " + "SET cprr.C_BUSIN_STATUS = '2' "
             + "WHERE cprr.L_PAY_RESULT_ID = #{payResultId}")
     @ResultType(Long.class)
     public void writebackPayResultRecordStatus(Long anPayResultId);
 
     @Select("SELECT IF(t.total = t1.total,'true','false') as result FROM "
             + "(SELECT count(id) as total FROM t_cps_pay_result_record WHERE c_busin_status='2' and L_CUSTNO =#{custNo} and D_PAY_DATE=#{payDate}) as t,"
-            +" (SELECT count(id) as total FROM t_cps_pay_result_record WHERE L_CUSTNO = #{custNo} and D_PAY_DATE = #{payDate} ) as t1")
+            + " (SELECT count(id) as total FROM t_cps_pay_result_record WHERE L_CUSTNO = #{custNo} and D_PAY_DATE = #{payDate} ) as t1")
     @ResultType(String.class)
     public String findAllAuditResult(@Param("custNo") Long anCustNo, @Param("payDate") String anPayDate);
 }

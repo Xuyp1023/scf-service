@@ -3,34 +3,34 @@ package com.betterjr.modules.param.entity;
 import java.math.BigDecimal;
 
 public class FactorParam {
-    
-    //保理公司编号
+
+    // 保理公司编号
     private Long custNo;
-    
-    //宽限期
+
+    // 宽限期
     private int graceDays;
-    
-    //计算天数
+
+    // 计算天数
     private int countDays;
-    
-    //罚息利率
+
+    // 罚息利率
     private BigDecimal penaltyRatio;
-    
-    //滞纳金利率
+
+    // 滞纳金利率
     private BigDecimal latefeeRatio;
-    
-    //提前还款手续费利率
+
+    // 提前还款手续费利率
     private BigDecimal advanceRepaymentRatio;
-    
-    //是否自动发布询价 1:是， 2:否
+
+    // 是否自动发布询价 1:是， 2:否
     private int autoEnquiry;
-    
-    //平台：0模式，1：接口模式
+
+    // 平台：0模式，1：接口模式
     private int remoting;
-    
-    //授信方式：0无需授信，1：需要授信
+
+    // 授信方式：0无需授信，1：需要授信
     private int credit;
-    
+
     public int getRemoting() {
         return remoting;
     }

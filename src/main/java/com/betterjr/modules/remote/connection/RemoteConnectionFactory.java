@@ -119,10 +119,9 @@ public class RemoteConnectionFactory extends ConfigBaseService {
         if (this.useCookies) {
             httpClient = HttpClients.custom().setConnectionManager(poolConnManager).setDefaultCookieStore(cookieStore)
                     .setDefaultRequestConfig(requestConfig).setRetryHandler(new BetterJrRetryHandler()).build();
-        }
-        else {
-            httpClient = HttpClients.custom().setConnectionManager(poolConnManager).setDefaultRequestConfig(requestConfig)
-                    .setRetryHandler(new BetterJrRetryHandler()).build();
+        } else {
+            httpClient = HttpClients.custom().setConnectionManager(poolConnManager)
+                    .setDefaultRequestConfig(requestConfig).setRetryHandler(new BetterJrRetryHandler()).build();
 
         }
 
@@ -134,18 +133,19 @@ public class RemoteConnectionFactory extends ConfigBaseService {
     }
 
     private static class TrustAnyHostnameVerifier implements HostnameVerifier {
+        @Override
         public boolean verify(String hostname, SSLSession session) {
             return true;
         }
     }
 
-    public void init(Map anConfigInfo, String anEnCoding, String ackEncoding, DataFormatInfo anDataFormat, KeyStore trustStore, KeyAndValueObject anPrivKeyStore) {
+    public void init(Map anConfigInfo, String anEnCoding, String ackEncoding, DataFormatInfo anDataFormat,
+            KeyStore trustStore, KeyAndValueObject anPrivKeyStore) {
         try {
             enConding = Charset.forName(anEnCoding);
             if (StringUtils.isNotBlank(ackEncoding)) {
                 this.ackEncoding = Charset.forName(ackEncoding);
-            }
-            else {
+            } else {
                 this.ackEncoding = enConding;
             }
             // 需要通过以下代码声明对https连接支持
@@ -159,23 +159,26 @@ public class RemoteConnectionFactory extends ConfigBaseService {
             // 连接超时时间，默认30秒
             int timeOut = getInt("conn_connectTimeout".toLowerCase(), 30);
             timeOut = timeOut * 1000;
-            requestConfig = RequestConfig.custom().setSocketTimeout(timeOut).setConnectTimeout(timeOut).setConnectionRequestTimeout(timeOut).build();
+            requestConfig = RequestConfig.custom().setSocketTimeout(timeOut).setConnectTimeout(timeOut)
+                    .setConnectionRequestTimeout(timeOut).build();
             if (trustStore == null) {
                 trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
             }
 
             // 开阶段，信任所有的服务器，实施后，需要修改服务证书
             SSLContext sslcontext = null;
-            if (this.getBoolean("conn_bothAuth", false)){
-                try{
-                    sslcontext = SSLContexts.custom().loadTrustMaterial(trustStore, new AnyTrustStrategy()).loadKeyMaterial((KeyStore)anPrivKeyStore.getValue(), anPrivKeyStore.getStrKey().toCharArray()).build();
+            if (this.getBoolean("conn_bothAuth", false)) {
+                try {
+                    sslcontext = SSLContexts.custom().loadTrustMaterial(trustStore, new AnyTrustStrategy())
+                            .loadKeyMaterial((KeyStore) anPrivKeyStore.getValue(),
+                                    anPrivKeyStore.getStrKey().toCharArray())
+                            .build();
                 }
-                catch(Exception ex){
+                catch (Exception ex) {
                     logger.error("Create sslcontext has error", ex);
-                    sslcontext = SSLContexts.custom().loadTrustMaterial(trustStore, new AnyTrustStrategy()).build(); 
+                    sslcontext = SSLContexts.custom().loadTrustMaterial(trustStore, new AnyTrustStrategy()).build();
                 }
-            }
-            else{
+            } else {
                 sslcontext = SSLContexts.custom().loadTrustMaterial(trustStore, new AnyTrustStrategy()).build();
             }
             HostnameVerifier hostnameVerifier = new TrustAnyHostnameVerifier();
@@ -210,7 +213,7 @@ public class RemoteConnectionFactory extends ConfigBaseService {
 
             // 如果存在FTP处理的配置，则初始化
             tmpClassName = this.getString("conn_FtpConnection");
-            if (BetterStringUtils.isNotBlank(tmpClassName)) {
+            if (StringUtils.isNotBlank(tmpClassName)) {
                 tmpClassName = this.getClass().getPackage().getName().concat(".").concat(tmpClassName);
                 this.ftpClass = Class.forName(tmpClassName);
             }
@@ -228,7 +231,7 @@ public class RemoteConnectionFactory extends ConfigBaseService {
         }
         catch (ClassNotFoundException e) {
             throw new BetterjrClientProtocolException(25201, "Create Connection Class NotFund", e);
-        } 
+        }
     }
 
     public boolean isNoneName() {
@@ -314,13 +317,15 @@ public class RemoteConnectionFactory extends ConfigBaseService {
         return readStream(this.doGet(url));
     }
 
-    public InputStream doGetForStream(String url, Map<String, Object> queryParams) throws URISyntaxException, ClientProtocolException, IOException {
+    public InputStream doGetForStream(String url, Map<String, Object> queryParams)
+            throws URISyntaxException, ClientProtocolException, IOException {
         HttpResponse response = this.doGet(url, queryParams);
 
         return response != null ? response.getEntity().getContent() : null;
     }
 
-    public StringBuilder doGetForString(String url, Map<String, Object> queryParams) throws URISyntaxException, ClientProtocolException, IOException {
+    public StringBuilder doGetForString(String url, Map<String, Object> queryParams)
+            throws URISyntaxException, ClientProtocolException, IOException {
 
         return readStream(this.doGetForStream(url, queryParams));
     }
@@ -337,7 +342,8 @@ public class RemoteConnectionFactory extends ConfigBaseService {
      * @throws IOException
      * @throws ClientProtocolException
      */
-    public HttpResponse doGet(String url, Map<String, Object> queryParams) throws URISyntaxException, ClientProtocolException, IOException {
+    public HttpResponse doGet(String url, Map<String, Object> queryParams)
+            throws URISyntaxException, ClientProtocolException, IOException {
         HttpGet gm = new HttpGet();
         URIBuilder builder = new URIBuilder(url);
         // 填入查询参数
@@ -363,8 +369,8 @@ public class RemoteConnectionFactory extends ConfigBaseService {
      * @throws IOException
      * @throws ClientProtocolException
      */
-    public HttpResponse doPost(String url, Map<String, Object> queryParams, Map<String, Object> formParams) throws URISyntaxException,
-            ClientProtocolException, IOException {
+    public HttpResponse doPost(String url, Map<String, Object> queryParams, Map<String, Object> formParams)
+            throws URISyntaxException, ClientProtocolException, IOException {
         HttpPost pm = new HttpPost();
         URIBuilder builder = new URIBuilder(url);
         // 填入查询参数
@@ -397,8 +403,8 @@ public class RemoteConnectionFactory extends ConfigBaseService {
      * @throws HttpException
      * @throws IOException
      */
-    public HttpResponse multipartPost(String url, Map<String, Object> queryParams, List<FormBodyPart> formParts) throws URISyntaxException,
-            ClientProtocolException, IOException {
+    public HttpResponse multipartPost(String url, Map<String, Object> queryParams, List<FormBodyPart> formParts)
+            throws URISyntaxException, ClientProtocolException, IOException {
 
         HttpPost pm = new HttpPost();
         URIBuilder builder = new URIBuilder(url);
@@ -409,7 +415,8 @@ public class RemoteConnectionFactory extends ConfigBaseService {
         pm.setURI(builder.build());
         // 填入表单参数
         if (Collections3.isEmpty(formParts) == false) {
-            MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create().setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+            MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create()
+                    .setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
             for (FormBodyPart formPart : formParts) {
                 entityBuilder = entityBuilder.addPart(formPart.getName(), formPart.getBody());
             }

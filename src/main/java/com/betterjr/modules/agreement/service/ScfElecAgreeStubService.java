@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,7 @@ public class ScfElecAgreeStubService extends BaseService<ScfElecAgreeStubMapper,
 
     private String findCustRemoteAddr(final Long anCustNo) {
         final String tmpOperOrg = custAndOperRelaService.findOperOrgByCustNo(anCustNo);
-        if (BetterStringUtils.isNotBlank(tmpOperOrg)) {
+        if (StringUtils.isNotBlank(tmpOperOrg)) {
             final CustLoginRecord loginRecord = this.loginService.findLastLoginRecord(tmpOperOrg);
             if (loginRecord != null) {
                 return loginRecord.getIpaddr();
@@ -72,7 +73,7 @@ public class ScfElecAgreeStubService extends BaseService<ScfElecAgreeStubMapper,
      */
     public void saveScfElecAgreeStub(final String anAppNo, final List<Long> anCustNoList) {
         final Map termMap = new HashMap();
-        if (BetterStringUtils.isBlank(anAppNo) || Collections3.isEmpty(anCustNoList)) {
+        if (StringUtils.isBlank(anAppNo) || Collections3.isEmpty(anCustNoList)) {
 
             throw new BytterValidException("save ScfElecAgreeStub appNo or CustNo is null");
         }
@@ -97,8 +98,10 @@ public class ScfElecAgreeStubService extends BaseService<ScfElecAgreeStubMapper,
      *            电子合同订单号
      * @return
      */
-    public List<ScfElecAgreeStubInfo> findSignerList(final String anAppNo, final CustAccountService custAccountService) {
-        final List<ScfElecAgreeStubInfo> result = this.selectByClassProperty(ScfElecAgreeStubInfo.class, "appNo", anAppNo);
+    public List<ScfElecAgreeStubInfo> findSignerList(final String anAppNo,
+            final CustAccountService custAccountService) {
+        final List<ScfElecAgreeStubInfo> result = this.selectByClassProperty(ScfElecAgreeStubInfo.class, "appNo",
+                anAppNo);
         if (custAccountService != null) {
             for (final ScfElecAgreeStubInfo stubInfo : result) {
                 stubInfo.setCustName(custAccountService.queryCustName(stubInfo.getCustNo()));
@@ -171,8 +174,10 @@ public class ScfElecAgreeStubService extends BaseService<ScfElecAgreeStubMapper,
         saveElecAgreeStubStatus(anCustNo, anAppNo, anStatus, " ");
     }
 
-    public void saveElecAgreeStubStatus(final Long anCustNo, final String anAppNo, final String anStatus, final String anServiceId) {
-        logger.info("Update agree sign information with custNo:" + anCustNo + " appNo:" + anAppNo + " status:" + anStatus);
+    public void saveElecAgreeStubStatus(final Long anCustNo, final String anAppNo, final String anStatus,
+            final String anServiceId) {
+        logger.info(
+                "Update agree sign information with custNo:" + anCustNo + " appNo:" + anAppNo + " status:" + anStatus);
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put("custNo", anCustNo);
         map.put("appNo", anAppNo);
@@ -194,7 +199,8 @@ public class ScfElecAgreeStubService extends BaseService<ScfElecAgreeStubMapper,
         this.updateByPrimaryKeySelective(curStub);
     }
 
-    public ScfElecAgreeStub saveAddInitValueStub(final String anAppNo, final Long anCustNo, final String anBusinStatus) {
+    public ScfElecAgreeStub saveAddInitValueStub(final String anAppNo, final Long anCustNo,
+            final String anBusinStatus) {
         final ScfElecAgreeStub stu = new ScfElecAgreeStub(1, anAppNo, anCustNo);
         stu.setOperStatus(anBusinStatus);
         stu.setOperCode(UserUtils.getOperatorInfo().getId() + "");

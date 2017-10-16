@@ -52,8 +52,9 @@ public class ScfCoreProductCustService extends BaseService<ScfCoreProductCustMap
         // 查询当前核心企业所有的保理产品
         List<ScfProductConfig> productConfigList = productConfigService.queryProductKeyAndValue(anCoreCustNo);
         // 查询当前核心企业给供应商分配的保理产品（已经生效的）
-        Map build = QueryTermBuilder.newInstance().put("coreCustNo", anCoreCustNo).put("custNo", anCustNo).put("businStatus", new String[] {
-                CoreProductCustConstantCollentions.PRODUCT_BUSIN_STATUS_EFFECTIVE, CoreProductCustConstantCollentions.PRODUCT_BUSIN_STATUS_USED })
+        Map build = QueryTermBuilder.newInstance().put("coreCustNo", anCoreCustNo).put("custNo", anCustNo)
+                .put("businStatus", new String[] { CoreProductCustConstantCollentions.PRODUCT_BUSIN_STATUS_EFFECTIVE,
+                        CoreProductCustConstantCollentions.PRODUCT_BUSIN_STATUS_USED })
                 .build();
         List<ScfCoreProductCust> productList = this.selectByProperty(build);
         synchronizedProductConfigAndProduct(productList, productConfigList, anCustNo, anCoreCustNo);
@@ -113,8 +114,8 @@ public class ScfCoreProductCustService extends BaseService<ScfCoreProductCustMap
      * @param anProductList
      * @param anProductConfigList
      */
-    private void synchronizedProductConfigAndProduct(List<ScfCoreProductCust> anProductList, List<ScfProductConfig> anProductConfigList,
-            Long anCustNo, Long anCoreCustNo) {
+    private void synchronizedProductConfigAndProduct(List<ScfCoreProductCust> anProductList,
+            List<ScfProductConfig> anProductConfigList, Long anCustNo, Long anCoreCustNo) {
 
         // 返回保理产品id
         List<Long> ids = getProductIds(anProductList);
@@ -222,8 +223,9 @@ public class ScfCoreProductCustService extends BaseService<ScfCoreProductCustMap
      */
     public List<ScfCoreProductCust> saveAnnulProductByCode(String productCode) {
 
-        Map build = QueryTermBuilder.newInstance().put("productCode", productCode).put("businStatus", new String[] {
-                CoreProductCustConstantCollentions.PRODUCT_BUSIN_STATUS_EFFECTIVE, CoreProductCustConstantCollentions.PRODUCT_BUSIN_STATUS_USED })
+        Map build = QueryTermBuilder.newInstance().put("productCode", productCode)
+                .put("businStatus", new String[] { CoreProductCustConstantCollentions.PRODUCT_BUSIN_STATUS_EFFECTIVE,
+                        CoreProductCustConstantCollentions.PRODUCT_BUSIN_STATUS_USED })
                 .build();
 
         List<ScfCoreProductCust> list = this.selectByProperty(build);

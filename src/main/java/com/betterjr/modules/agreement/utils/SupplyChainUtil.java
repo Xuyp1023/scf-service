@@ -12,9 +12,10 @@ public class SupplyChainUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(SupplyChainUtil.class);
 
-    private static String[] queryCondition = new String[] { "GTEagreeStartDate", "LTEagreeStartDate", "GTErequestDate", "LTErequestDate",
-            "GTEinvoiceDate", "LTEinvoiceDate", "buyer", "supplier", "buyerNo", "billNo", "factorRequestNo", "productId", "GTErepayDate",
-            "LTErepayDate", "cashRequestNo","agreeNo","status","supplierNo" };
+    private static String[] queryCondition = new String[] { "GTEagreeStartDate", "LTEagreeStartDate", "GTErequestDate",
+            "LTErequestDate", "GTEinvoiceDate", "LTEinvoiceDate", "buyer", "supplier", "buyerNo", "billNo",
+            "factorRequestNo", "productId", "GTErepayDate", "LTErepayDate", "cashRequestNo", "agreeNo", "status",
+            "supplierNo" };
 
     private static String[] fuzzyQueryCondition = new String[] { "buyer", "supplier" };
 
@@ -40,8 +41,7 @@ public class SupplyChainUtil {
             }
             if (isFuzzy) {
                 anCondition.put("LIKE" + tmpKey, "%" + tmpValue + "%");
-            }
-            else {
+            } else {
                 anCondition.put(tmpKey, tmpValue);
             }
         }

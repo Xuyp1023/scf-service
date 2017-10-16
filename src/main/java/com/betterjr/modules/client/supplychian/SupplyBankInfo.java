@@ -51,7 +51,7 @@ public class SupplyBankInfo implements Serializable {
 
     // 签约账号
     private String isSignAcc;
- 
+
     public String getBtCustId() {
         return this.btCustId;
     }
@@ -67,8 +67,7 @@ public class SupplyBankInfo implements Serializable {
     public void setCustName(String anCustName) {
         this.custName = anCustName;
     }
- 
- 
+
     public String getBankAcco() {
         return this.bankAcco;
     }
@@ -81,7 +80,7 @@ public class SupplyBankInfo implements Serializable {
         return this.bankAccountName;
     }
 
-	    public void setBankAccountName(String anBankAccountName) {
+    public void setBankAccountName(String anBankAccountName) {
         this.bankAccountName = anBankAccountName;
     }
 
@@ -92,7 +91,7 @@ public class SupplyBankInfo implements Serializable {
     public void setBankName(String anBankName) {
         this.bankName = anBankName;
     }
- 
+
     public String getBankSourcecode() {
         return this.bankSourcecode;
     }
@@ -108,7 +107,6 @@ public class SupplyBankInfo implements Serializable {
     public void setBankTypeCode(String anBankTypeCode) {
         this.bankTypeCode = anBankTypeCode;
     }
- 
 
     public String getAccProvince() {
         return this.accProvince;
@@ -140,5 +138,5 @@ public class SupplyBankInfo implements Serializable {
 
     public void setIsSignAcc(String anIsSignAcc) {
         this.isSignAcc = anIsSignAcc;
-    } 
+    }
 }

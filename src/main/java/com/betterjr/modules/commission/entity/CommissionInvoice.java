@@ -515,152 +515,122 @@ public class CommissionInvoice implements BetterjrEntity {
         CommissionInvoice other = (CommissionInvoice) obj;
         if (this.auditDate == null) {
             if (other.auditDate != null) return false;
-        }
-        else if (!this.auditDate.equals(other.auditDate)) return false;
+        } else if (!this.auditDate.equals(other.auditDate)) return false;
         if (this.auditOperId == null) {
             if (other.auditOperId != null) return false;
-        }
-        else if (!this.auditOperId.equals(other.auditOperId)) return false;
+        } else if (!this.auditOperId.equals(other.auditOperId)) return false;
         if (this.auditOperName == null) {
             if (other.auditOperName != null) return false;
-        }
-        else if (!this.auditOperName.equals(other.auditOperName)) return false;
+        } else if (!this.auditOperName.equals(other.auditOperName)) return false;
         if (this.auditTime == null) {
             if (other.auditTime != null) return false;
-        }
-        else if (!this.auditTime.equals(other.auditTime)) return false;
+        } else if (!this.auditTime.equals(other.auditTime)) return false;
         if (this.balance == null) {
             if (other.balance != null) return false;
-        }
-        else if (!this.balance.equals(other.balance)) return false;
+        } else if (!this.balance.equals(other.balance)) return false;
         if (this.batchNo == null) {
             if (other.batchNo != null) return false;
-        }
-        else if (!this.batchNo.equals(other.batchNo)) return false;
+        } else if (!this.batchNo.equals(other.batchNo)) return false;
         if (this.businStatus == null) {
             if (other.businStatus != null) return false;
-        }
-        else if (!this.businStatus.equals(other.businStatus)) return false;
+        } else if (!this.businStatus.equals(other.businStatus)) return false;
         if (this.confirmDate == null) {
             if (other.confirmDate != null) return false;
-        }
-        else if (!this.confirmDate.equals(other.confirmDate)) return false;
+        } else if (!this.confirmDate.equals(other.confirmDate)) return false;
         if (this.confirmOperId == null) {
             if (other.confirmOperId != null) return false;
-        }
-        else if (!this.confirmOperId.equals(other.confirmOperId)) return false;
+        } else if (!this.confirmOperId.equals(other.confirmOperId)) return false;
         if (this.confirmOperName == null) {
             if (other.confirmOperName != null) return false;
-        }
-        else if (!this.confirmOperName.equals(other.confirmOperName)) return false;
+        } else if (!this.confirmOperName.equals(other.confirmOperName)) return false;
         if (this.confirmTime == null) {
             if (other.confirmTime != null) return false;
-        }
-        else if (!this.confirmTime.equals(other.confirmTime)) return false;
+        } else if (!this.confirmTime.equals(other.confirmTime)) return false;
         if (this.coreCustInvoiceId == null) {
             if (other.coreCustInvoiceId != null) return false;
-        }
-        else if (!this.coreCustInvoiceId.equals(other.coreCustInvoiceId)) return false;
+        } else if (!this.coreCustInvoiceId.equals(other.coreCustInvoiceId)) return false;
         if (this.coreCustName == null) {
             if (other.coreCustName != null) return false;
-        }
-        else if (!this.coreCustName.equals(other.coreCustName)) return false;
+        } else if (!this.coreCustName.equals(other.coreCustName)) return false;
         if (this.coreCustNo == null) {
             if (other.coreCustNo != null) return false;
-        }
-        else if (!this.coreCustNo.equals(other.coreCustNo)) return false;
+        } else if (!this.coreCustNo.equals(other.coreCustNo)) return false;
         if (this.custInvoiceId == null) {
             if (other.custInvoiceId != null) return false;
-        }
-        else if (!this.custInvoiceId.equals(other.custInvoiceId)) return false;
+        } else if (!this.custInvoiceId.equals(other.custInvoiceId)) return false;
         if (this.custName == null) {
             if (other.custName != null) return false;
-        }
-        else if (!this.custName.equals(other.custName)) return false;
+        } else if (!this.custName.equals(other.custName)) return false;
         if (this.custNo == null) {
             if (other.custNo != null) return false;
-        }
-        else if (!this.custNo.equals(other.custNo)) return false;
+        } else if (!this.custNo.equals(other.custNo)) return false;
         if (this.description == null) {
             if (other.description != null) return false;
-        }
-        else if (!this.description.equals(other.description)) return false;
+        } else if (!this.description.equals(other.description)) return false;
         if (this.drawer == null) {
             if (other.drawer != null) return false;
-        }
-        else if (!this.drawer.equals(other.drawer)) return false;
+        } else if (!this.drawer.equals(other.drawer)) return false;
         if (this.id == null) {
             if (other.id != null) return false;
-        }
-        else if (!this.id.equals(other.id)) return false;
+        } else if (!this.id.equals(other.id)) return false;
         if (this.interestBalance == null) {
             if (other.interestBalance != null) return false;
-        }
-        else if (!this.interestBalance.equals(other.interestBalance)) return false;
+        } else if (!this.interestBalance.equals(other.interestBalance)) return false;
         if (this.invoiceCode == null) {
             if (other.invoiceCode != null) return false;
-        }
-        else if (!this.invoiceCode.equals(other.invoiceCode)) return false;
+        } else if (!this.invoiceCode.equals(other.invoiceCode)) return false;
         if (this.invoiceContent == null) {
             if (other.invoiceContent != null) return false;
-        }
-        else if (!this.invoiceContent.equals(other.invoiceContent)) return false;
+        } else if (!this.invoiceContent.equals(other.invoiceContent)) return false;
         if (this.invoiceDate == null) {
             if (other.invoiceDate != null) return false;
-        }
-        else if (!this.invoiceDate.equals(other.invoiceDate)) return false;
+        } else if (!this.invoiceDate.equals(other.invoiceDate)) return false;
         if (this.invoiceNo == null) {
             if (other.invoiceNo != null) return false;
-        }
-        else if (!this.invoiceNo.equals(other.invoiceNo)) return false;
+        } else if (!this.invoiceNo.equals(other.invoiceNo)) return false;
         if (this.invoiceType == null) {
             if (other.invoiceType != null) return false;
-        }
-        else if (!this.invoiceType.equals(other.invoiceType)) return false;
+        } else if (!this.invoiceType.equals(other.invoiceType)) return false;
         if (this.operOrg == null) {
             if (other.operOrg != null) return false;
-        }
-        else if (!this.operOrg.equals(other.operOrg)) return false;
+        } else if (!this.operOrg.equals(other.operOrg)) return false;
         if (this.regDate == null) {
             if (other.regDate != null) return false;
-        }
-        else if (!this.regDate.equals(other.regDate)) return false;
+        } else if (!this.regDate.equals(other.regDate)) return false;
         if (this.regOperId == null) {
             if (other.regOperId != null) return false;
-        }
-        else if (!this.regOperId.equals(other.regOperId)) return false;
+        } else if (!this.regOperId.equals(other.regOperId)) return false;
         if (this.regOperName == null) {
             if (other.regOperName != null) return false;
-        }
-        else if (!this.regOperName.equals(other.regOperName)) return false;
+        } else if (!this.regOperName.equals(other.regOperName)) return false;
         if (this.regTime == null) {
             if (other.regTime != null) return false;
-        }
-        else if (!this.regTime.equals(other.regTime)) return false;
+        } else if (!this.regTime.equals(other.regTime)) return false;
         if (this.taxBalance == null) {
             if (other.taxBalance != null) return false;
-        }
-        else if (!this.taxBalance.equals(other.taxBalance)) return false;
+        } else if (!this.taxBalance.equals(other.taxBalance)) return false;
         if (this.taxRate == null) {
             if (other.taxRate != null) return false;
-        }
-        else if (!this.taxRate.equals(other.taxRate)) return false;
+        } else if (!this.taxRate.equals(other.taxRate)) return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "CommissionInvoice [id=" + this.id + ", refNo=" + this.refNo + ", invoiceCode=" + this.invoiceCode + ", invoiceNo=" + this.invoiceNo
-                + ", custNo=" + this.custNo + ", custName=" + this.custName + ", coreCustNo=" + this.coreCustNo + ", coreCustName="
-                + this.coreCustName + ", operOrg=" + this.operOrg + ", confirmOperName=" + this.confirmOperName + ", confirmDate=" + this.confirmDate
-                + ", confirmTime=" + this.confirmTime + ", confirmOperId=" + this.confirmOperId + ", invoiceDate=" + this.invoiceDate + ", balance="
-                + this.balance + ", drawer=" + this.drawer + ", batchNo=" + this.batchNo + ", businStatus=" + this.businStatus + ", description="
-                + this.description + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", regOperId="
-                + this.regOperId + ", auditOperName=" + this.auditOperName + ", auditDate=" + this.auditDate + ", auditTime=" + this.auditTime
-                + ", auditOperId=" + this.auditOperId + ", custInvoiceId=" + this.custInvoiceId + ", custInvoiceInfo=" + this.custInvoiceInfo
-                + ", coreCustInvoiceId=" + this.coreCustInvoiceId + ", coreCustInvoiceInfo=" + this.coreCustInvoiceInfo + ", invoiceType="
-                + this.invoiceType + ", invoiceContent=" + this.invoiceContent + ", taxBalance=" + this.taxBalance + ", interestBalance="
-                + this.interestBalance + ", taxRate=" + this.taxRate + "]";
+        return "CommissionInvoice [id=" + this.id + ", refNo=" + this.refNo + ", invoiceCode=" + this.invoiceCode
+                + ", invoiceNo=" + this.invoiceNo + ", custNo=" + this.custNo + ", custName=" + this.custName
+                + ", coreCustNo=" + this.coreCustNo + ", coreCustName=" + this.coreCustName + ", operOrg="
+                + this.operOrg + ", confirmOperName=" + this.confirmOperName + ", confirmDate=" + this.confirmDate
+                + ", confirmTime=" + this.confirmTime + ", confirmOperId=" + this.confirmOperId + ", invoiceDate="
+                + this.invoiceDate + ", balance=" + this.balance + ", drawer=" + this.drawer + ", batchNo="
+                + this.batchNo + ", businStatus=" + this.businStatus + ", description=" + this.description
+                + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate + ", regTime=" + this.regTime
+                + ", regOperId=" + this.regOperId + ", auditOperName=" + this.auditOperName + ", auditDate="
+                + this.auditDate + ", auditTime=" + this.auditTime + ", auditOperId=" + this.auditOperId
+                + ", custInvoiceId=" + this.custInvoiceId + ", custInvoiceInfo=" + this.custInvoiceInfo
+                + ", coreCustInvoiceId=" + this.coreCustInvoiceId + ", coreCustInvoiceInfo=" + this.coreCustInvoiceInfo
+                + ", invoiceType=" + this.invoiceType + ", invoiceContent=" + this.invoiceContent + ", taxBalance="
+                + this.taxBalance + ", interestBalance=" + this.interestBalance + ", taxRate=" + this.taxRate + "]";
     }
 
     public void initAddValue(CustOperatorInfo anOperatorInfo) {

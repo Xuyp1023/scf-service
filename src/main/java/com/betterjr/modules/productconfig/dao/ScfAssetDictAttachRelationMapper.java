@@ -5,6 +5,6 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.productconfig.entity.ScfAssetDictAttachRelation;
 
 @BetterjrMapper
-public interface ScfAssetDictAttachRelationMapper extends Mapper<ScfAssetDictAttachRelation>  {
- 
+public interface ScfAssetDictAttachRelationMapper extends Mapper<ScfAssetDictAttachRelation> {
+
 }

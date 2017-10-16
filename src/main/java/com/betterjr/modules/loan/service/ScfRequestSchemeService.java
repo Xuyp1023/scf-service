@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -130,37 +131,39 @@ public class ScfRequestSchemeService extends BaseService<ScfRequestApprovedMappe
      * @param anPageSize
      * @return
      */
-    public Page<ScfRequestScheme> querySchemeList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
-        String[] queryTerm = new String[] {"custNo", "requestType", "factorNo", "coreCustNo"};
+    public Page<ScfRequestScheme> querySchemeList(Map<String, Object> anMap, int anFlag, int anPageNum,
+            int anPageSize) {
+        String[] queryTerm = new String[] { "custNo", "requestType", "factorNo", "coreCustNo" };
         anMap = Collections3.filterMap(anMap, queryTerm);
         Map<String, Object> qyReqyestMap = QueryTermBuilder.newInstance().addAll(anMap).build();
         Map<String, Object> qySchemeMap = QueryTermBuilder.newInstance().addAll(anMap).build();
-        //查询待批 并且 指定类型（经销商/其它），(属于该核心企业要审批，申请单状态状态为：背景确认)
-        if(BetterStringUtils.equals(RequestType.SELLER.getCode(), anMap.get("requestType").toString())){
+        // 查询待批 并且 指定类型（经销商/其它），(属于该核心企业要审批，申请单状态状态为：背景确认)
+        if (StringUtils.equals(RequestType.SELLER.getCode(), anMap.get("requestType").toString())) {
             qyReqyestMap.put("requestType", RequestType.SELLER.getCode());
-        }else{
-            String[] requestType = new String[]{RequestType.ORDER.getCode(),RequestType.BILL.getCode(), RequestType.RECEIVABLE.getCode()};
+        } else {
+            String[] requestType = new String[] { RequestType.ORDER.getCode(), RequestType.BILL.getCode(),
+                    RequestType.RECEIVABLE.getCode() };
             qyReqyestMap.put("requestType", requestType);
         }
-        
+
         // 核心企业查询时
         if (UserUtils.coreUser()) {
             qyReqyestMap.put("GTEtradeStatus", RequestTradeStatus.CONFIRM_TRADING.getCode());
-           
+
             // 去除未到审批时的数据
-            qySchemeMap.put("coreCustAduit", new String[]{"0", "1"} );
+            qySchemeMap.put("coreCustAduit", new String[] { "0", "1" });
         }
-        
-        List<ScfRequest> requestList =  requestService.selectByClassProperty(ScfRequest.class, qyReqyestMap);
-        if(Collections3.isEmpty(requestList)){
+
+        List<ScfRequest> requestList = requestService.selectByClassProperty(ScfRequest.class, qyReqyestMap);
+        if (Collections3.isEmpty(requestList)) {
             return new Page(anPageNum, anPageSize, 1 == anFlag);
         }
-        
+
         List<String> requestsNo = new ArrayList<String>();
         for (ScfRequest scfRequest : requestList) {
             requestsNo.add(scfRequest.getRequestNo());
         }
-        
+
         qySchemeMap.put("requestNo", requestsNo.toArray());
         qySchemeMap.remove("requestType");
         Page<ScfRequestScheme> page = this.selectPropertyByPage(qySchemeMap, anPageNum, anPageSize, 1 == anFlag);

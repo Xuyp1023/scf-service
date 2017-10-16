@@ -121,9 +121,12 @@ public class FaceReturnCode implements BetterjrEntity {
         FaceReturnCode other = (FaceReturnCode) that;
         return (this.getModeNo() == null ? other.getModeNo() == null : this.getModeNo().equals(other.getModeNo()))
                 && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
-                && (this.getReturnCode() == null ? other.getReturnCode() == null : this.getReturnCode().equals(other.getReturnCode()))
-                && (this.getReturnName() == null ? other.getReturnName() == null : this.getReturnName().equals(other.getReturnName()))
-                && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()));
+                && (this.getReturnCode() == null ? other.getReturnCode() == null
+                        : this.getReturnCode().equals(other.getReturnCode()))
+                && (this.getReturnName() == null ? other.getReturnName() == null
+                        : this.getReturnName().equals(other.getReturnName()))
+                && (this.getDescription() == null ? other.getDescription() == null
+                        : this.getDescription().equals(other.getDescription()));
     }
 
     @Override

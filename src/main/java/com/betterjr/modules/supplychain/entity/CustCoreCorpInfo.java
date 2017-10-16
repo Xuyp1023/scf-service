@@ -21,143 +21,143 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
      * ID
      */
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
-    @MetaData( value="ID", comments = "ID")
+    @Column(name = "ID", columnDefinition = "INTEGER")
+    @MetaData(value = "ID", comments = "ID")
     private Long id;
 
     /**
      * 核心企业客户号
      */
-    @Column(name = "L_CORE_CUSTNO",  columnDefinition="INTEGER" )
-    @MetaData( value="核心企业客户号", comments = "核心企业客户号")
+    @Column(name = "L_CORE_CUSTNO", columnDefinition = "INTEGER")
+    @MetaData(value = "核心企业客户号", comments = "核心企业客户号")
     private Long coreCustNo;
 
     /**
      * 下属分公司在平台的客户号
      */
-    @Column(name = "L_CUSTNO",  columnDefinition="INTEGER" )
-    @MetaData( value="下属分公司在平台的客户号", comments = "下属分公司在平台的客户号")
+    @Column(name = "L_CUSTNO", columnDefinition = "INTEGER")
+    @MetaData(value = "下属分公司在平台的客户号", comments = "下属分公司在平台的客户号")
     private Long custNo;
 
     /**
      * 下属企业在平台的名称
      */
-    @Column(name = "C_CUSTNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="下属企业在平台的名称", comments = "下属企业在平台的名称")
+    @Column(name = "C_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "下属企业在平台的名称", comments = "下属企业在平台的名称")
     private String custName;
 
     /**
      * 下属企业在资金管理系统中的ID
      */
-    @Column(name = "C_CORPID",  columnDefinition="VARCHAR" )
-    @MetaData( value="下属企业在资金管理系统中的ID", comments = "下属企业在资金管理系统中的ID")
+    @Column(name = "C_CORPID", columnDefinition = "VARCHAR")
+    @MetaData(value = "下属企业在资金管理系统中的ID", comments = "下属企业在资金管理系统中的ID")
     private String corpNo;
 
     /**
      * 下属企业在资金管理系统中编号
      */
-    @Column(name = "C_CORPNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="下属企业在资金管理系统中编号", comments = "下属企业在资金管理系统中编号")
+    @Column(name = "C_CORPNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "下属企业在资金管理系统中编号", comments = "下属企业在资金管理系统中编号")
     private String corpCode;
 
     /**
      * 下属企业在资金管理系统中的名称
      */
-    @Column(name = "C_CORPNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="下属企业在资金管理系统中的名称", comments = "下属企业在资金管理系统中的名称")
+    @Column(name = "C_CORPNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "下属企业在资金管理系统中的名称", comments = "下属企业在资金管理系统中的名称")
     private String corpName;
 
     /**
      * 下属企业在资金管理系统中的组织机构代码
      */
-    @Column(name = "C_CORP_BUSI_LICENCE",  columnDefinition="VARCHAR" )
-    @MetaData( value="下属企业在资金管理系统中的组织机构代码", comments = "下属企业在资金管理系统中的组织机构代码")
+    @Column(name = "C_CORP_BUSI_LICENCE", columnDefinition = "VARCHAR")
+    @MetaData(value = "下属企业在资金管理系统中的组织机构代码", comments = "下属企业在资金管理系统中的组织机构代码")
     private String busiLicence;
 
     /**
      * 上级机构ID
      */
-    @Column(name = "C_PARENT_CORPID",  columnDefinition="VARCHAR" )
-    @MetaData( value="上级机构ID", comments = "上级机构ID")
+    @Column(name = "C_PARENT_CORPID", columnDefinition = "VARCHAR")
+    @MetaData(value = "上级机构ID", comments = "上级机构ID")
     private String parentCorpNo;
 
     /**
      * 登记的操作员ID
      */
-    @Column(name = "L_REG_OPERID",  columnDefinition="INTEGER" )
-    @MetaData( value="登记的操作员ID", comments = "登记的操作员ID")
+    @Column(name = "L_REG_OPERID", columnDefinition = "INTEGER")
+    @MetaData(value = "登记的操作员ID", comments = "登记的操作员ID")
     private Long regOperId;
 
     /**
      * 状态，0删除，1正常
      */
-    @Column(name = "C_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="状态", comments = "状态，0删除，1正常")
+    @Column(name = "C_STATUS", columnDefinition = "VARCHAR")
+    @MetaData(value = "状态", comments = "状态，0删除，1正常")
     private String businStatus;
 
     /**
      * 登记的操作员名称
      */
-    @Column(name = "C_REG_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="登记的操作员名称", comments = "登记的操作员名称")
+    @Column(name = "C_REG_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "登记的操作员名称", comments = "登记的操作员名称")
     private String regOperName;
 
     /**
      * 登记日期
      */
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="登记日期", comments = "登记日期")
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "登记日期", comments = "登记日期")
     private String regDate;
 
     /**
      * 登记时间
      */
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="登记时间", comments = "登记时间")
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "登记时间", comments = "登记时间")
     private String regTime;
 
     /**
      * 编辑操作员编码
      */
-    @Column(name = "L_MODI_OPERID",  columnDefinition="INTEGER" )
-    @MetaData( value="编辑操作员编码", comments = "编辑操作员编码")
+    @Column(name = "L_MODI_OPERID", columnDefinition = "INTEGER")
+    @MetaData(value = "编辑操作员编码", comments = "编辑操作员编码")
     private Long modiOperId;
 
     /**
      * 编辑操作员名字
      */
-    @Column(name = "C_MODI_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="编辑操作员名字", comments = "编辑操作员名字")
+    @Column(name = "C_MODI_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "编辑操作员名字", comments = "编辑操作员名字")
     private String modiOperName;
 
     /**
      * 修改日期
      */
-    @Column(name = "D_MODI_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="修改日期", comments = "修改日期")
+    @Column(name = "D_MODI_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "修改日期", comments = "修改日期")
     private String modiDate;
 
     /**
      * 修改时间
      */
-    @Column(name = "T_MODI_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="修改时间", comments = "修改时间")
+    @Column(name = "T_MODI_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "修改时间", comments = "修改时间")
     private String modiTime;
 
     /**
      * 操作机构
      */
     @JsonIgnore
-    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
-    @MetaData( value="操作机构", comments = "操作机构")
+    @Column(name = "C_OPERORG", columnDefinition = "VARCHAR")
+    @MetaData(value = "操作机构", comments = "操作机构")
     private String operOrg;
 
     /**
      * 资金系统内部id
      */
     @JsonIgnore
-    @Column(name = "C_CORPID",  columnDefinition="VARCHAR" )
-    @MetaData( value="资金系统内部id", comments = "资金系统内部id")
+    @Column(name = "C_CORPID", columnDefinition = "VARCHAR")
+    @MetaData(value = "资金系统内部id", comments = "资金系统内部id")
     private String corpId;
 
     private static final long serialVersionUID = 8300178519489076446L;
@@ -325,6 +325,7 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
     public void setOperOrg(final String operOrg) {
         this.operOrg = operOrg == null ? null : operOrg.trim();
     }
+
     public String getCorpId() {
         return corpId;
     }
@@ -333,14 +334,13 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
         this.corpId = corpId == null ? null : corpId.trim();
     }
 
-    public void initDefValue(final String anOperOrg){
+    public void initDefValue(final String anOperOrg) {
         this.id = SerialGenerator.getLongValue("CustCoreCorpInfo.id");
-        this.businStatus="1";
+        this.businStatus = "1";
         this.operOrg = anOperOrg;
     }
 
-
-    public void modifyDefValue(final CustCoreCorpInfo anCoreCorp){
+    public void modifyDefValue(final CustCoreCorpInfo anCoreCorp) {
         this.id = anCoreCorp.getId();
         this.custNo = anCoreCorp.getCustNo();
         this.custName = anCoreCorp.getCustName();
@@ -391,25 +391,41 @@ public class CustCoreCorpInfo extends BetterBaseEntity implements BetterjrEntity
         }
         final CustCoreCorpInfo other = (CustCoreCorpInfo) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-                && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
+                && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null
+                        : this.getCoreCustNo().equals(other.getCoreCustNo()))
                 && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-                && (this.getCustName() == null ? other.getCustName() == null : this.getCustName().equals(other.getCustName()))
+                && (this.getCustName() == null ? other.getCustName() == null
+                        : this.getCustName().equals(other.getCustName()))
                 && (this.getCorpNo() == null ? other.getCorpNo() == null : this.getCorpNo().equals(other.getCorpNo()))
-                && (this.getCorpCode() == null ? other.getCorpCode() == null : this.getCorpCode().equals(other.getCorpCode()))
-                && (this.getCorpName() == null ? other.getCorpName() == null : this.getCorpName().equals(other.getCorpName()))
-                && (this.getBusiLicence() == null ? other.getBusiLicence() == null : this.getBusiLicence().equals(other.getBusiLicence()))
-                && (this.getParentCorpNo() == null ? other.getParentCorpNo() == null : this.getParentCorpNo().equals(other.getParentCorpNo()))
-                && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
-                && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
-                && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
-                && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-                && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
-                && (this.getModiOperId() == null ? other.getModiOperId() == null : this.getModiOperId().equals(other.getModiOperId()))
-                && (this.getModiOperName() == null ? other.getModiOperName() == null : this.getModiOperName().equals(other.getModiOperName()))
-                && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-                && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
+                && (this.getCorpCode() == null ? other.getCorpCode() == null
+                        : this.getCorpCode().equals(other.getCorpCode()))
+                && (this.getCorpName() == null ? other.getCorpName() == null
+                        : this.getCorpName().equals(other.getCorpName()))
+                && (this.getBusiLicence() == null ? other.getBusiLicence() == null
+                        : this.getBusiLicence().equals(other.getBusiLicence()))
+                && (this.getParentCorpNo() == null ? other.getParentCorpNo() == null
+                        : this.getParentCorpNo().equals(other.getParentCorpNo()))
+                && (this.getRegOperId() == null ? other.getRegOperId() == null
+                        : this.getRegOperId().equals(other.getRegOperId()))
+                && (this.getBusinStatus() == null ? other.getBusinStatus() == null
+                        : this.getBusinStatus().equals(other.getBusinStatus()))
+                && (this.getRegOperName() == null ? other.getRegOperName() == null
+                        : this.getRegOperName().equals(other.getRegOperName()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getRegTime() == null ? other.getRegTime() == null
+                        : this.getRegTime().equals(other.getRegTime()))
+                && (this.getModiOperId() == null ? other.getModiOperId() == null
+                        : this.getModiOperId().equals(other.getModiOperId()))
+                && (this.getModiOperName() == null ? other.getModiOperName() == null
+                        : this.getModiOperName().equals(other.getModiOperName()))
+                && (this.getModiDate() == null ? other.getModiDate() == null
+                        : this.getModiDate().equals(other.getModiDate()))
+                && (this.getOperOrg() == null ? other.getOperOrg() == null
+                        : this.getOperOrg().equals(other.getOperOrg()))
                 && (this.getCorpId() == null ? other.getCorpId() == null : this.getCorpId().equals(other.getCorpId()))
-                && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()));
+                && (this.getModiTime() == null ? other.getModiTime() == null
+                        : this.getModiTime().equals(other.getModiTime()));
     }
 
     @Override

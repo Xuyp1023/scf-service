@@ -178,7 +178,6 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
     @MetaData(value = "操作员所在机构", comments = "操作员所在机构，证书登录，则是证书的企业名称字段")
     private String operOrg;
 
-
     /**
      * 客户在资金管理系统中的客户号
      */
@@ -480,34 +479,57 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         }
         final CustTempEnrollInfo other = (CustTempEnrollInfo) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-                && (this.getCustType() == null ? other.getCustType() == null : this.getCustType().equals(other.getCustType()))
-                && (this.getCustName() == null ? other.getCustName() == null : this.getCustName().equals(other.getCustName()))
-                && (this.getIdentType() == null ? other.getIdentType() == null : this.getIdentType().equals(other.getIdentType()))
-                && (this.getIdentNo() == null ? other.getIdentNo() == null : this.getIdentNo().equals(other.getIdentNo()))
-                && (this.getShortName() == null ? other.getShortName() == null : this.getShortName().equals(other.getShortName()))
-                && (this.getNickName() == null ? other.getNickName() == null : this.getNickName().equals(other.getNickName()))
-                && (this.getBankName() == null ? other.getBankName() == null : this.getBankName().equals(other.getBankName()))
-                && (this.getBankAccount() == null ? other.getBankAccount() == null : this.getBankAccount().equals(other.getBankAccount()))
-                && (this.getBankAcountName() == null ? other.getBankAcountName() == null : this.getBankAcountName().equals(other.getBankAcountName()))
+                && (this.getCustType() == null ? other.getCustType() == null
+                        : this.getCustType().equals(other.getCustType()))
+                && (this.getCustName() == null ? other.getCustName() == null
+                        : this.getCustName().equals(other.getCustName()))
+                && (this.getIdentType() == null ? other.getIdentType() == null
+                        : this.getIdentType().equals(other.getIdentType()))
+                && (this.getIdentNo() == null ? other.getIdentNo() == null
+                        : this.getIdentNo().equals(other.getIdentNo()))
+                && (this.getShortName() == null ? other.getShortName() == null
+                        : this.getShortName().equals(other.getShortName()))
+                && (this.getNickName() == null ? other.getNickName() == null
+                        : this.getNickName().equals(other.getNickName()))
+                && (this.getBankName() == null ? other.getBankName() == null
+                        : this.getBankName().equals(other.getBankName()))
+                && (this.getBankAccount() == null ? other.getBankAccount() == null
+                        : this.getBankAccount().equals(other.getBankAccount()))
+                && (this.getBankAcountName() == null ? other.getBankAcountName() == null
+                        : this.getBankAcountName().equals(other.getBankAcountName()))
                 && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-                && (this.getContName() == null ? other.getContName() == null : this.getContName().equals(other.getContName()))
-                && (this.getContIdentType() == null ? other.getContIdentType() == null : this.getContIdentType().equals(other.getContIdentType()))
-                && (this.getContIdentNo() == null ? other.getContIdentNo() == null : this.getContIdentNo().equals(other.getContIdentNo()))
-                && (this.getContPhone() == null ? other.getContPhone() == null : this.getContPhone().equals(other.getContPhone()))
-                && (this.getContMobileNo() == null ? other.getContMobileNo() == null : this.getContMobileNo().equals(other.getContMobileNo()))
-                && (this.getContEmail() == null ? other.getContEmail() == null : this.getContEmail().equals(other.getContEmail()))
+                && (this.getContName() == null ? other.getContName() == null
+                        : this.getContName().equals(other.getContName()))
+                && (this.getContIdentType() == null ? other.getContIdentType() == null
+                        : this.getContIdentType().equals(other.getContIdentType()))
+                && (this.getContIdentNo() == null ? other.getContIdentNo() == null
+                        : this.getContIdentNo().equals(other.getContIdentNo()))
+                && (this.getContPhone() == null ? other.getContPhone() == null
+                        : this.getContPhone().equals(other.getContPhone()))
+                && (this.getContMobileNo() == null ? other.getContMobileNo() == null
+                        : this.getContMobileNo().equals(other.getContMobileNo()))
+                && (this.getContEmail() == null ? other.getContEmail() == null
+                        : this.getContEmail().equals(other.getContEmail()))
                 && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
-                && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()))
-                && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-                && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-                && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
+                && (this.getDescription() == null ? other.getDescription() == null
+                        : this.getDescription().equals(other.getDescription()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getModiDate() == null ? other.getModiDate() == null
+                        : this.getModiDate().equals(other.getModiDate()))
+                && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null
+                        : this.getCoreCustNo().equals(other.getCoreCustNo()))
                 && (this.getBtNo() == null ? other.getBtNo() == null : this.getBtNo().equals(other.getBtNo()))
-                && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
-                && (this.getCoreOperOrg() == null ? other.getCoreOperOrg() == null : this.getCoreOperOrg().equals(other.getCoreOperOrg()))
-                && (this.getBatchNo() == null ? other.getBatchNo() == null : this.getBatchNo().equals(other.getBatchNo()))
-                && (this.getCoreCustName() == null ? other.getCoreCustName() == null : this.getCoreCustName().equals(other.getCoreCustName()))
+                && (this.getOperOrg() == null ? other.getOperOrg() == null
+                        : this.getOperOrg().equals(other.getOperOrg()))
+                && (this.getCoreOperOrg() == null ? other.getCoreOperOrg() == null
+                        : this.getCoreOperOrg().equals(other.getCoreOperOrg()))
+                && (this.getBatchNo() == null ? other.getBatchNo() == null
+                        : this.getBatchNo().equals(other.getBatchNo()))
+                && (this.getCoreCustName() == null ? other.getCoreCustName() == null
+                        : this.getCoreCustName().equals(other.getCoreCustName()))
                 && (this.getPremisesAddress() == null ? other.getPremisesAddress() == null
-                : this.getPremisesAddress().equals(other.getPremisesAddress()));
+                        : this.getPremisesAddress().equals(other.getPremisesAddress()));
     }
 
     @Override
@@ -599,7 +621,8 @@ public class CustTempEnrollInfo implements ScfClientDataParentFace {
         return this.btNo;
     }
 
-    public void modifyStatus(final String anOperOrg, final Long anCoreCustNo, final String anBtNo, final Long anCustNo) {
+    public void modifyStatus(final String anOperOrg, final Long anCoreCustNo, final String anBtNo,
+            final Long anCustNo) {
         this.operOrg = anOperOrg;
         this.coreCustNo = anCoreCustNo;
         this.btNo = anBtNo;

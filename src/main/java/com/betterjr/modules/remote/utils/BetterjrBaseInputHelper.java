@@ -24,7 +24,6 @@ import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.modules.remote.entity.WorkFaceFieldInfo;
 import com.betterjr.modules.remote.helper.DataConverterService;
 
-
 /**
  * 将远程返回的结构化数据序列化为一个对象
  * 
@@ -48,26 +47,24 @@ public class BetterjrBaseInputHelper {
             if (anClass == null) {
                 logger.warn("field " + fieldInfo + ", don't find declare class");
                 return null;
-            }
-            else{
+            } else {
                 logger.warn("this null field type is " + anClass);
             }
         }
         // String valueMode = fieldInfo.getValueMode();
         // char valueChar = '0';
-        Object obj = BetterjrBaseOutputHelper.defConvertValue(fieldInfo.getValueMode(), this.map, fieldInfo.getFaceField(), this.map,
-                fieldInfo.getWorkExpress());
-        if (DataTypeInfo.simpleObject(obj) == false){
-        
-            return (T)obj;
+        Object obj = BetterjrBaseOutputHelper.defConvertValue(fieldInfo.getValueMode(), this.map,
+                fieldInfo.getFaceField(), this.map, fieldInfo.getWorkExpress());
+        if (DataTypeInfo.simpleObject(obj) == false) {
+
+            return (T) obj;
         }
-        
+
         String tmpStr;
         if (obj == null || "Void".equalsIgnoreCase(fieldInfo.getBeanField())) {
 
             tmpStr = "";
-        }
-        else {
+        } else {
 
             tmpStr = obj.toString();
         }
@@ -77,8 +74,7 @@ public class BetterjrBaseInputHelper {
             if (Date.class.isAssignableFrom(anClass)) {
 
                 return readDate(fieldInfo, anKey, anClass);
-            }
-            else if (String.class.isAssignableFrom(anClass)) {
+            } else if (String.class.isAssignableFrom(anClass)) {
 
                 return (T) tmpStr;
             }
@@ -87,34 +83,32 @@ public class BetterjrBaseInputHelper {
             try {
                 if (anClass == Integer.class) {
                     mName = "parseInt";
-                }
-                else if (anClass == BigDecimal.class) {
+                } else if (anClass == BigDecimal.class) {
 
                     return (T) new BigDecimal(tmpStr);
                 }
                 method = anClass.getMethod(mName, String.class);
                 return (T) method.invoke(null, tmpStr);
             }
-            catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException e) {
                 e.printStackTrace();
                 return null;
             }
-        }
-        else {
+        } else {
             return null;
         }
     }
 
     private String readValue1(WorkFaceFieldInfo fieldInfo, String anKey) {
         // Object obj = this.map.get(anKey);
-        Object obj = BetterjrBaseOutputHelper.defConvertValue(fieldInfo.getValueMode(), this.map, fieldInfo.getFaceField(), this.map,
-                fieldInfo.getWorkExpress());
+        Object obj = BetterjrBaseOutputHelper.defConvertValue(fieldInfo.getValueMode(), this.map,
+                fieldInfo.getFaceField(), this.map, fieldInfo.getWorkExpress());
         String tmpStr;
         if (obj == null) {
 
             tmpStr = "";
-        }
-        else {
+        } else {
 
             tmpStr = obj.toString();
         }
@@ -131,8 +125,7 @@ public class BetterjrBaseInputHelper {
             if (obj != null) {
                 if (Map.class.isAssignableFrom(anClass)) {
                     map.put(fieldInfo.getBeanField(), obj);
-                }
-                else {
+                } else {
                     dataList.add(obj);
                 }
             }
@@ -169,7 +162,7 @@ public class BetterjrBaseInputHelper {
         String obj;
         for (WorkFaceFieldInfo fieldInfo : anPropMap.values()) {
             obj = readValue1(fieldInfo, fieldInfo.getFaceField());
-            if (BetterStringUtils.isNotBlank(obj)) {
+            if (StringUtils.isNotBlank(obj)) {
 
                 map.put(fieldInfo.getBeanField(), obj);
             }
@@ -181,8 +174,7 @@ public class BetterjrBaseInputHelper {
         if (Map.class.isAssignableFrom(anClass) || Collection.class.isAssignableFrom(anClass)) {
 
             return (T) readData(anClass, anPropMap);
-        }
-        else if (BaseRemoteEntity.class.isAssignableFrom(anClass)) {
+        } else if (BaseRemoteEntity.class.isAssignableFrom(anClass)) {
 
             return BeanMapper.map(readData(anClass, anPropMap), anClass);
         }
@@ -236,8 +228,8 @@ public class BetterjrBaseInputHelper {
             Constructor<T> cc = anClass.getConstructor(long.class);
             return cc.newInstance(dd.getTime());
         }
-        catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException e) {
+        catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+                | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
             return null;
         }
@@ -255,8 +247,7 @@ public class BetterjrBaseInputHelper {
         tmpStr = convertService.convert(null, anKey, tmpStr);
         if (StringUtils.isNotBlank(tmpStr)) {
             return tmpStr.charAt(0);
-        }
-        else {
+        } else {
             return null;
         }
     }

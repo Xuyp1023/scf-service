@@ -110,6 +110,7 @@ public class FaceHeaderInfo implements BetterjrEntity, RemoteFieldInfo, Cloneabl
 
     private FaceDataStyle dataStyle;
 
+    @Override
     public FaceDataStyle getDataStyle() {
         return dataStyle;
     }
@@ -161,14 +162,13 @@ public class FaceHeaderInfo implements BetterjrEntity, RemoteFieldInfo, Cloneabl
             StringBuilder sb = new StringBuilder();
             sb.append(arrStr[0]);
             String tmpStr;
-            for(int i = 1, k = arrStr.length; i < k; i++){
-               tmpStr = arrStr[i];
-               sb.append(ParamValueHelper.getValue(tmpStr)).append(";"); 
+            for (int i = 1, k = arrStr.length; i < k; i++) {
+                tmpStr = arrStr[i];
+                sb.append(ParamValueHelper.getValue(tmpStr)).append(";");
             }
-            sb.setLength(sb.length()-1);
+            sb.setLength(sb.length() - 1);
             return sb.toString();
-        }
-        else {
+        } else {
             return ParamValueHelper.getValue(columnName);
         }
     }
@@ -215,7 +215,7 @@ public class FaceHeaderInfo implements BetterjrEntity, RemoteFieldInfo, Cloneabl
 
     public void setDataFlag(String dataFlag) {
         this.dataFlag = dataFlag == null ? null : dataFlag.trim();
-    } 
+    }
 
     public Boolean getConvertFlag() {
         return this.convertFlag;
@@ -294,18 +294,30 @@ public class FaceHeaderInfo implements BetterjrEntity, RemoteFieldInfo, Cloneabl
         }
         FaceHeaderInfo other = (FaceHeaderInfo) that;
         return (this.getFaceNo() == null ? other.getFaceNo() == null : this.getFaceNo().equals(other.getFaceNo()))
-                && (this.getDirection() == null ? other.getDirection() == null : this.getDirection().equals(other.getDirection()))
-                && (this.getFieldOrder() == null ? other.getFieldOrder() == null : this.getFieldOrder().equals(other.getFieldOrder()))
-                && (this.getColumnName() == null ? other.getColumnName() == null : this.getColumnName().equals(other.getColumnName()))
-                && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()))
-                && (this.getDataType() == null ? other.getDataType() == null : this.getDataType().equals(other.getDataType()))
-                && (this.getDataLen() == null ? other.getDataLen() == null : this.getDataLen().equals(other.getDataLen()))
-                && (this.getDataScale() == null ? other.getDataScale() == null : this.getDataScale().equals(other.getDataScale()))
-                && (this.getDataFlag() == null ? other.getDataFlag() == null : this.getDataFlag().equals(other.getDataFlag()))
-                && (this.getConvertFlag() == null ? other.getConvertFlag() == null : this.getConvertFlag().equals(other.getConvertFlag()))
-                && (this.getSplitAscii() == null ? other.getSplitAscii() == null : this.getSplitAscii().equals(other.getSplitAscii()))
-                && (this.getDefValue() == null ? other.getDefValue() == null : this.getDefValue().equals(other.getDefValue()))
-                && (this.getWorkLevel() == null ? other.getWorkLevel() == null : this.getWorkLevel().equals(other.getWorkLevel()));
+                && (this.getDirection() == null ? other.getDirection() == null
+                        : this.getDirection().equals(other.getDirection()))
+                && (this.getFieldOrder() == null ? other.getFieldOrder() == null
+                        : this.getFieldOrder().equals(other.getFieldOrder()))
+                && (this.getColumnName() == null ? other.getColumnName() == null
+                        : this.getColumnName().equals(other.getColumnName()))
+                && (this.getDescription() == null ? other.getDescription() == null
+                        : this.getDescription().equals(other.getDescription()))
+                && (this.getDataType() == null ? other.getDataType() == null
+                        : this.getDataType().equals(other.getDataType()))
+                && (this.getDataLen() == null ? other.getDataLen() == null
+                        : this.getDataLen().equals(other.getDataLen()))
+                && (this.getDataScale() == null ? other.getDataScale() == null
+                        : this.getDataScale().equals(other.getDataScale()))
+                && (this.getDataFlag() == null ? other.getDataFlag() == null
+                        : this.getDataFlag().equals(other.getDataFlag()))
+                && (this.getConvertFlag() == null ? other.getConvertFlag() == null
+                        : this.getConvertFlag().equals(other.getConvertFlag()))
+                && (this.getSplitAscii() == null ? other.getSplitAscii() == null
+                        : this.getSplitAscii().equals(other.getSplitAscii()))
+                && (this.getDefValue() == null ? other.getDefValue() == null
+                        : this.getDefValue().equals(other.getDefValue()))
+                && (this.getWorkLevel() == null ? other.getWorkLevel() == null
+                        : this.getWorkLevel().equals(other.getWorkLevel()));
     }
 
     @Override

@@ -14,24 +14,23 @@ public class NafundsRemoteSerializer extends RemoteBaseSerializer {
         // TODO Auto-generated method stub
         return null;
     }
-    
+
+    @Override
     public Map<String, Object> readResult() {
         Map<String, Object> map = mergeHeadInfo();
         String signSourceString = Collections3.buildSignSourceString(map);
         logger.debug(signSourceString);
         String signStr = SignHelper.signData(signSourceString, this.keyManager.getPrivKey());
         logger.debug("mysignData =" + signStr);
-        
+
         if (this.getBoolean("encrypt_use", true)) {
             signSourceString = this.func.getWorkFace().getCryptService().encrypt(signSourceString);
         }
 
         map.clear();
         map.put("sign", signSourceString);
-        
+
         return map;
     }
-
-
 
 }

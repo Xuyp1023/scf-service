@@ -3,7 +3,6 @@ package com.betterjr.modules.remote.entity;
 import java.io.File;
 import java.security.cert.Certificate;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -23,7 +22,6 @@ import com.betterjr.common.exception.BytterValidException;
 import com.betterjr.common.mapper.BeanMapper;
 import com.betterjr.common.security.CustKeyManager;
 import com.betterjr.common.security.KeyReader;
-import com.betterjr.common.utils.BetterClassUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.ClassLoaderUtil;
 import com.betterjr.common.utils.Collections3;
@@ -38,13 +36,11 @@ import com.betterjr.modules.remote.serializer.RemoteBaseSerializer;
 import com.betterjr.modules.remote.serializer.RemoteDeSerializer;
 import com.betterjr.modules.remote.serializer.XmlRemoteDeSerializer;
 import com.betterjr.modules.remote.serializer.XmlRemoteSerializer;
-import com.betterjr.modules.remote.service.*;
-import com.betterjr.modules.remote.utils.XmlUtils;
 
 public class WorkFarFaceInfo extends FarInfterfaceInfo {
     private static final long serialVersionUID = -7318664081247509692L;
     private static Logger logger = LoggerFactory.getLogger(WorkFarFaceInfo.class);
-    private static String DEF_CHARSET="UTF-8";
+    private static String DEF_CHARSET = "UTF-8";
     private final Map<String, WorkFarFunction> workFunMap;
     private final Map<String, FarConfigInfo> config;
     private final Map<String, FaceConvertInfo> outConverMap;
@@ -66,33 +62,31 @@ public class WorkFarFaceInfo extends FarInfterfaceInfo {
     private FaceDataStyle defStyle;
     private Class deSerializerClass = XmlRemoteDeSerializer.class;
     private Class serializerClass = XmlRemoteSerializer.class;
-    
+
     private KeyAndValueObject privKeyStore = null;
 
     private RemoteCryptService cryptService = null;
 
     private RemoteSignService signService = null;
- 
+
     public WorkFarFunction findFunction(String anFunName) {
 
         return this.workFunMap.get(anFunName);
     }
+
     public WorkFarFunction findFistFunction() {
         return Collections3.getFirst(this.workFunMap.values());
     }
+
     public WorkFarFunction findFuncWithFace(String anFunName) {
-        for(WorkFarFunction func : this.workFunMap.values()){
-           if (func.getFunCode().equalsIgnoreCase(anFunName)){
-               return func;
-           } 
+        for (WorkFarFunction func : this.workFunMap.values()) {
+            if (func.getFunCode().equalsIgnoreCase(anFunName)) {
+                return func;
+            }
         }
-        
+
         throw new BytterValidException("not declare function " + anFunName);
     }
-
-
-
-
 
     public RemoteBaseSerializer getRemoteSerializer() {
         try {
@@ -131,8 +125,7 @@ public class WorkFarFaceInfo extends FarInfterfaceInfo {
             if (anClone) {
                 headInfo.setColumnName(headInfo.getColumnName());
                 tmpHead.put(headInfo.getColumnName(), headInfo);
-            }
-            else {
+            } else {
                 tmpHead.put(ent.getKey(), headInfo);
             }
         }
@@ -140,8 +133,9 @@ public class WorkFarFaceInfo extends FarInfterfaceInfo {
         return tmpHead;
     }
 
-    public WorkFarFaceInfo(FarInfterfaceInfo anFaceInfo, Map<String, WorkFarFunction> anFunMap, Map<String, FarConfigInfo> anConfig,
-            Map<String, FaceConvertInfo> anOutConver, Map<String, FaceConvertInfo> anInConver, Map<String, FaceHeaderInfo> anHeader) {
+    public WorkFarFaceInfo(FarInfterfaceInfo anFaceInfo, Map<String, WorkFarFunction> anFunMap,
+            Map<String, FarConfigInfo> anConfig, Map<String, FaceConvertInfo> anOutConver,
+            Map<String, FaceConvertInfo> anInConver, Map<String, FaceHeaderInfo> anHeader) {
         BeanMapper.copy(anFaceInfo, this);
         this.workFunMap = anFunMap;
         this.config = anConfig;
@@ -154,21 +148,20 @@ public class WorkFarFaceInfo extends FarInfterfaceInfo {
 
         return this.faceReturnMap.get(anReturnCode);
     }
- 
-    public String findFileName(String anFileInfoType){
+
+    public String findFileName(String anFileInfoType) {
         ConfigBaseService bs = new ConfigBaseService(this.config);
         Map<String, String> map = bs.getMapValue("convertFileNames");
         String tmpValue = map.get(anFileInfoType);
-        
-        return BetterStringUtils.defaultString(tmpValue, anFileInfoType);
+
+        return StringUtils.defaultString(tmpValue, anFileInfoType);
     }
-    
-    
+
     public KeyAndValueObject getPrivKeyStore() {
-        
+
         return this.privKeyStore;
     }
-    
+
     /**
      * 
      * 初始化化接口信息，并检查接口相关参数
@@ -192,14 +185,13 @@ public class WorkFarFaceInfo extends FarInfterfaceInfo {
         if (matchKeyPath.exists()) {
             if (privKeyPath.exists()) {
                 this.keyManager = new CustKeyManager(getPrivateKeyPath(), keyPassMap.get("priv"), getMatchKeyPath());
-                this.privKeyStore =  new KeyAndValueObject(keyPassMap.get("priv"), KeyReader.readKeyStoreFromPKCS12ClassPath(getPrivateKeyPath(), keyPassMap.get("priv")));
-            }
-            else if (matchKeyPath.exists()) {
+                this.privKeyStore = new KeyAndValueObject(keyPassMap.get("priv"),
+                        KeyReader.readKeyStoreFromPKCS12ClassPath(getPrivateKeyPath(), keyPassMap.get("priv")));
+            } else if (matchKeyPath.exists()) {
                 Certificate matchKey = KeyReader.fromCerStoredClassPath(getMatchKeyPath());
                 this.keyManager = new CustKeyManager(anFactory.getKeyManager(), matchKey);
             }
-        }
-        else {
+        } else {
             logger.warn("sale Face matchKeyPath not exists please checking");
         }
 
@@ -211,8 +203,8 @@ public class WorkFarFaceInfo extends FarInfterfaceInfo {
                 logger.warn("sale Face use Simple Key for remote");
                 this.keyManager = new CustKeyManager(getSimplePrivateKey(), getSimpleMatchKey());
             }
-            if (this.keyManager != null){
-           this.keyManager.setWorkCharSet(bs.getString("encrypt_charset".toLowerCase(), DEF_CHARSET));
+            if (this.keyManager != null) {
+                this.keyManager.setWorkCharSet(bs.getString("encrypt_charset".toLowerCase(), DEF_CHARSET));
             }
         }
 
@@ -227,20 +219,17 @@ public class WorkFarFaceInfo extends FarInfterfaceInfo {
 
         if (arrStr.length > 1) {
             this.respCharset = arrStr[1];
-        }
-        else {
+        } else {
             this.respCharset = DEF_CHARSET;
         }
         if (arrStr.length > 2) {
             this.faceReqCharset = arrStr[1];
-        }
-        else {
+        } else {
             this.faceReqCharset = DEF_CHARSET;
         }
         if (arrStr.length > 3) {
             this.faceRespCharset = arrStr[1];
-        }
-        else {
+        } else {
             this.faceRespCharset = DEF_CHARSET;
         }
 
@@ -268,11 +257,12 @@ public class WorkFarFaceInfo extends FarInfterfaceInfo {
             tmpClassName = bs.getString("signService", "RemoteSignService");
             this.signService = (RemoteSignService) RemoteModule.findClassInModule(tmpClassName).newInstance();
             this.signService.initParameter(this.config, this.keyManager);
-            
-            try{
+
+            try {
                 this.deSerializerClass = findDeclareClass(bs.getString("deSerializerClass"), this.deSerializerClass);
                 this.serializerClass = findDeclareClass(bs.getString("dataSerializerClass"), this.serializerClass);
-            }catch(Exception ex){
+            }
+            catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
@@ -280,10 +270,12 @@ public class WorkFarFaceInfo extends FarInfterfaceInfo {
             throw new BetterjrClientProtocolException(25201, "Create " + tmpClassName + " Service Class NotFund", e);
         }
         catch (InstantiationException e) {
-            throw new BetterjrClientProtocolException(25201, "Create  " + tmpClassName + " Service InstantiationException", e);
+            throw new BetterjrClientProtocolException(25201,
+                    "Create  " + tmpClassName + " Service InstantiationException", e);
         }
         catch (IllegalAccessException e) {
-            throw new BetterjrClientProtocolException(25201, "Create  " + tmpClassName + " Service IllegalAccessException", e);
+            throw new BetterjrClientProtocolException(25201,
+                    "Create  " + tmpClassName + " Service IllegalAccessException", e);
         }
 
     }
@@ -293,7 +285,7 @@ public class WorkFarFaceInfo extends FarInfterfaceInfo {
     }
 
     public static Class findDeclareClass(String tmpClassName, Class anDefValue) throws ClassNotFoundException {
-        if (BetterStringUtils.isNotBlank(tmpClassName)) {
+        if (StringUtils.isNotBlank(tmpClassName)) {
             return RemoteModule.findClassInModule(tmpClassName);
         }
         return anDefValue;
@@ -366,8 +358,7 @@ public class WorkFarFaceInfo extends FarInfterfaceInfo {
             String[] subArr = tmpStr.split(":");
             if (subArr.length == 2) {
                 map.put(subArr[0], subArr[1]);
-            }
-            else {
+            } else {
                 map.put("priv", subArr[0]);
             }
         }
@@ -403,27 +394,28 @@ public class WorkFarFaceInfo extends FarInfterfaceInfo {
         return tmpStr.concat(File.separator).concat(getSftpKeyPath());
     }
 
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(super.toString()).append("\r\n");
         sb.append("this is WorkFarFunction \r\n");
 
-        for (WorkFarFunction obj : (Collection<WorkFarFunction>) (workFunMap.values())) {
+        for (WorkFarFunction obj : (workFunMap.values())) {
             sb.append(obj).append("\r\n");
         }
 
         sb.append("this is FarConfigInfo \r\n");
-        for (ConfigItemFace obj : (Collection<FarConfigInfo>) (config.values())) {
+        for (ConfigItemFace obj : (config.values())) {
             sb.append(obj).append("\r\n");
         }
 
         sb.append("this is OutFaceConvertInfo \r\n");
-        for (FaceConvertInfo obj : (Collection<FaceConvertInfo>) (outConverMap.values())) {
+        for (FaceConvertInfo obj : (outConverMap.values())) {
             sb.append(obj).append("\r\n");
         }
 
         sb.append("this is InFaceConvertInfo \r\n");
-        for (FaceConvertInfo obj : (Collection<FaceConvertInfo>) (inConvertMap.values())) {
+        for (FaceConvertInfo obj : (inConvertMap.values())) {
             sb.append(obj).append("\r\n");
         }
 

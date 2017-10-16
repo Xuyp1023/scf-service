@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.delivery.entity.DeliveryRecord;
 
 @BetterjrMapper
-public interface DeliveryRecordMapper extends Mapper<DeliveryRecord> {
-}
+public interface DeliveryRecordMapper extends Mapper<DeliveryRecord> {}

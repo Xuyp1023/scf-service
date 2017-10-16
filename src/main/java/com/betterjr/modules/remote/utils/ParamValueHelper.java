@@ -71,43 +71,36 @@ public class ParamValueHelper {
                         return workObj.toString();
                     }
                 }
-                catch (Exception e) {
-                }
-            }
-            else if (arrStr.length == 3) {
+                catch (Exception e) {}
+            } else if (arrStr.length == 3) {
                 if (obj instanceof Map) {
                     Map tmpMap = (Map) obj;
                     obj = tmpMap.get(arrStr[2]);
                 }
-            }
-            else if (workSource == ParamDataSource.SELECTKEY) {
+            } else if (workSource == ParamDataSource.SELECTKEY) {
                 arrStr = arrStr[0].split(":");
                 if (arrStr.length == 1) {
-                obj = SelectKeyGenService.getValue(arrStr[0], arrStr[0]);
-                }
-                else {
+                    obj = SelectKeyGenService.getValue(arrStr[0], arrStr[0]);
+                } else {
                     obj = SelectKeyGenService.getValue(arrStr[0], arrStr[1]);
                 }
                 if (obj != null) {
                     return obj.toString();
                 }
                 return anKey;
-            }
-            else if (obj instanceof Map) {
+            } else if (obj instanceof Map) {
                 Map tmpMap = (Map) obj;
                 obj = tmpMap.get(arrStr[0]);
                 if (obj != null) {
                     return obj.toString();
                 }
-            }
-            else if (workSource == ParamDataSource.DICT) {
+            } else if (workSource == ParamDataSource.DICT) {
 
                 obj = DictUtils.getDictLabel(arrStr[1], arrStr[0]);
                 if (obj != null) {
                     return obj.toString();
                 }
-            }
-            else {
+            } else {
                 String mName = "get" + arrStr[0].substring(0, 1).toUpperCase() + arrStr[0].substring(1);
                 Method mm;
                 try {
@@ -120,7 +113,8 @@ public class ParamValueHelper {
                     }
 
                 }
-                catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+                        | InvocationTargetException e) {
                     e.printStackTrace();
                 }
             }

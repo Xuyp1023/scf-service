@@ -11,9 +11,9 @@ import com.betterjr.modules.push.entity.ScfSupplierPushDetail;
 public class ScfSupplierPushDetailService extends BaseService<ScfSupplierPushDetailMapper, ScfSupplierPushDetail> {
 
     private static final Logger logger = LoggerFactory.getLogger(ScfSupplierPushDetailService.class);
-    
-    public boolean addPushDetail(ScfSupplierPushDetail scfPushDetail){
-      return this.insert(scfPushDetail)>0;  
+
+    public boolean addPushDetail(ScfSupplierPushDetail scfPushDetail) {
+        return this.insert(scfPushDetail) > 0;
     }
-    
+
 }

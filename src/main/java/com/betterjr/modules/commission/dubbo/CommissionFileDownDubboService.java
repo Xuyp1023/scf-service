@@ -20,20 +20,24 @@ public class CommissionFileDownDubboService implements ICommissionFileDownServic
     public String webQueryFileDownList(Map<String, Object> anAnMap, String anFlag, int anPageNum, int anPageSize) {
 
         Map<String, Object> queryMap = RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOkWithPage("佣金下载文件查询成功", fileDownService.queryFileDownList(queryMap, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject
+                .newOkWithPage("佣金下载文件查询成功", fileDownService.queryFileDownList(queryMap, anFlag, anPageNum, anPageSize))
+                .toJson();
     }
 
     @Override
     public String webQueryCanAuditFileList(Map<String, Object> anAnMap, String anFlag, int anPageNum, int anPageSize) {
 
         Map<String, Object> queryMap = RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOkWithPage("佣金下载文件查询成功", fileDownService.queryCanAuditFileList(queryMap, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject.newOkWithPage("佣金下载文件查询成功",
+                fileDownService.queryCanAuditFileList(queryMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     @Override
     public String webQueryFileRecordByFileId(Long anFileId, String anFlag, int anPageNum, int anPageSize) {
 
-        return AjaxObject.newOkWithPage("佣金下载文件查询成功", fileDownService.queryFileRecordByFileId(anFileId, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject.newOkWithPage("佣金下载文件查询成功",
+                fileDownService.queryFileRecordByFileId(anFileId, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     @Override

@@ -5,6 +5,6 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.flie.entity.CustFileCloumn;
 
 @BetterjrMapper
-public interface CustFileCloumnMapper extends Mapper<CustFileCloumn>{
+public interface CustFileCloumnMapper extends Mapper<CustFileCloumn> {
 
 }

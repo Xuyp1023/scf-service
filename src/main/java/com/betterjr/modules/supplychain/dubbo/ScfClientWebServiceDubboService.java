@@ -7,7 +7,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
-import com.betterjr.modules.agreement.IScfElecAgreementWebService;
 import com.betterjr.modules.supplychain.IScfClientWebService;
 import com.betterjr.modules.supplychain.data.ScfClientDataDetail;
 import com.betterjr.modules.supplychain.data.ScfClientDataProcess;

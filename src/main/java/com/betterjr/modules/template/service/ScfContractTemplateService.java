@@ -148,7 +148,8 @@ public class ScfContractTemplateService extends BaseService<ScfContractTemplateM
         String[] dt = new String[] { "factorNo", "templateType", "templateStatue" };
         anMap = Collections3.filterMap(anMap, dt);
         anMap = Collections3.filterMapEmptyObject(anMap);
-        Page<ScfContractTemplate> tempPage = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
+        Page<ScfContractTemplate> tempPage = this.selectPropertyByPage(anMap, anPageNum, anPageSize,
+                "1".equals(anFlag));
         for (ScfContractTemplate template : tempPage) {
             String factorName = custAccountService.queryCustName(template.getFactorNo());
             if (null != custAccountService.queryCustName(template.getFactorNo())) {

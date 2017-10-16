@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.remote.entity.FaceInfo;
 
 @BetterjrMapper
-public interface FaceInfoMapper extends Mapper<FaceInfo> {
-}
+public interface FaceInfoMapper extends Mapper<FaceInfo> {}

@@ -12,10 +12,10 @@ import com.dangdang.ddframe.job.plugin.job.type.simple.AbstractSimpleElasticJob;
 @Service
 public class PayPlanJob extends AbstractSimpleElasticJob {
     private final static Logger logger = LoggerFactory.getLogger(PayPlanJob.class);
-    
+
     @Autowired
     private ScfPayPlanService payPlanService;
-    
+
     @Override
     public void process(JobExecutionMultipleShardingContext anParamJobExecutionMultipleShardingContext) {
         logger.info("*********定时任务：开始计算利息!");

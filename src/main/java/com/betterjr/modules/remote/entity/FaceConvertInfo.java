@@ -33,8 +33,8 @@ public class FaceConvertInfo implements BetterjrEntity {
     /**
      * 数据项读写方向，0相互映射，1转出，即数据往外写，2转入，即数据从外面进入系统；9表示在系统中使用CLASS来转换
      */
-    @Column(name = "C_IO",  columnDefinition="VARCHAR" )
-    @MetaData( value="数据项读写方向", comments = "数据项读写方向，0相互映射，1转出，即数据往外写，2转入，即数据从外面进入系统；9表示在系统中使用CLASS来转换")
+    @Column(name = "C_IO", columnDefinition = "VARCHAR")
+    @MetaData(value = "数据项读写方向", comments = "数据项读写方向，0相互映射，1转出，即数据往外写，2转入，即数据从外面进入系统；9表示在系统中使用CLASS来转换")
     private String direction;
 
     /**
@@ -82,12 +82,10 @@ public class FaceConvertInfo implements BetterjrEntity {
             String tmpStr = map.get(anValue);
             if (StringUtils.isNotBlank(tmpStr)) {
                 return tmpStr;
-            }
-            else {
+            } else {
                 return anValue;
             }
-        }
-        else {
+        } else {
             return converter.convert(fieldInfo, anFaceFieldName, anValue);
         }
     }
@@ -239,13 +237,18 @@ public class FaceConvertInfo implements BetterjrEntity {
         }
         FaceConvertInfo other = (FaceConvertInfo) that;
         return (this.getFaceNo() == null ? other.getFaceNo() == null : this.getFaceNo().equals(other.getFaceNo()))
-                && (this.getFieldName() == null ? other.getFieldName() == null : this.getFieldName().equals(other.getFieldName()))
-                && (this.getDirection() == null ? other.getDirection() == null : this.getDirection().equals(other.getDirection()))
+                && (this.getFieldName() == null ? other.getFieldName() == null
+                        : this.getFieldName().equals(other.getFieldName()))
+                && (this.getDirection() == null ? other.getDirection() == null
+                        : this.getDirection().equals(other.getDirection()))
                 && (this.getSource() == null ? other.getSource() == null : this.getSource().equals(other.getSource()))
                 && (this.getTarget() == null ? other.getTarget() == null : this.getTarget().equals(other.getTarget()))
-                && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()))
-                && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-                && (this.getWorkClass() == null ? other.getWorkClass() == null : this.getWorkClass().equals(other.getWorkClass()));
+                && (this.getDescription() == null ? other.getDescription() == null
+                        : this.getDescription().equals(other.getDescription()))
+                && (this.getModiDate() == null ? other.getModiDate() == null
+                        : this.getModiDate().equals(other.getModiDate()))
+                && (this.getWorkClass() == null ? other.getWorkClass() == null
+                        : this.getWorkClass().equals(other.getWorkClass()));
     }
 
     @Override

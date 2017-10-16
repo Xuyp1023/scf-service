@@ -11,131 +11,130 @@ public class FarInfterfaceInfo implements BetterjrEntity {
     /**
      * 接口简称
      */
-    @Column(name = "C_FACE",  columnDefinition="VARCHAR" )
-    @MetaData( value="接口简称", comments = "接口简称")
+    @Column(name = "C_FACE", columnDefinition = "VARCHAR")
+    @MetaData(value = "接口简称", comments = "接口简称")
     private String faceNo;
 
     /**
      * 接口名称
      */
-    @Column(name = "C_NAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="接口名称", comments = "接口名称")
+    @Column(name = "C_NAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "接口名称", comments = "接口名称")
     private String faceName;
 
     /**
      * 内容签名方式；
      */
-    @Column(name = "C_SIGN",  columnDefinition="VARCHAR" )
-    @MetaData( value="内容签名方式", comments = "内容签名方式；")
+    @Column(name = "C_SIGN", columnDefinition = "VARCHAR")
+    @MetaData(value = "内容签名方式", comments = "内容签名方式；")
     private String signMode;
 
     /**
      * 内容格式，XML，JSON，TXT
      */
-    @Column(name = "C_FORMAT",  columnDefinition="VARCHAR" )
-    @MetaData( value="内容格式", comments = "内容格式，XML，JSON，TXT")
+    @Column(name = "C_FORMAT", columnDefinition = "VARCHAR")
+    @MetaData(value = "内容格式", comments = "内容格式，XML，JSON，TXT")
     private String dataFormat;
 
     /**
      * 内容加密，0不加密，1申请加密内容，2返回加密所有，3申请加密所有，4返回加密所有。
      */
-    @Column(name = "C_ENCRYPT",  columnDefinition="VARCHAR" )
-    @MetaData( value="内容加密", comments = "内容加密，0不加密，1申请加密内容，2返回加密所有，3申请加密所有，4返回加密所有。")
+    @Column(name = "C_ENCRYPT", columnDefinition = "VARCHAR")
+    @MetaData(value = "内容加密", comments = "内容加密，0不加密，1申请加密内容，2返回加密所有，3申请加密所有，4返回加密所有。")
     private String encrypt;
 
     /**
      * 头部签名模式；有值使用头部签名模式
      */
-    @Column(name = "C_HEADSIGN",  columnDefinition="VARCHAR" )
-    @MetaData( value="头部签名模式", comments = "头部签名模式；有值使用头部签名模式")
+    @Column(name = "C_HEADSIGN", columnDefinition = "VARCHAR")
+    @MetaData(value = "头部签名模式", comments = "头部签名模式；有值使用头部签名模式")
     private String headSign;
 
     /**
      * 使用申请字段排序，0不排序，1按字段名字排序
      */
-    @Column(name = "C_FIELDORDER",  columnDefinition="VARCHAR" )
-    @MetaData( value="使用申请字段排序", comments = "使用申请字段排序，0不排序，1按字段名字排序")
+    @Column(name = "C_FIELDORDER", columnDefinition = "VARCHAR")
+    @MetaData(value = "使用申请字段排序", comments = "使用申请字段排序，0不排序，1按字段名字排序")
     private String fieldOrder;
 
     /**
      * FTP地址信息，包括端口号，默认是22号端口，例如：sftp.alipay.net:25
      */
-    @Column(name = "C_FTP",  columnDefinition="VARCHAR" )
-    @MetaData( value="FTP地址信息", comments = "FTP地址信息，包括端口号，默认是22号端口，例如：sftp.alipay.net:25")
+    @Column(name = "C_FTP", columnDefinition = "VARCHAR")
+    @MetaData(value = "FTP地址信息", comments = "FTP地址信息，包括端口号，默认是22号端口，例如：sftp.alipay.net:25")
     private String ftpUrl;
 
     /**
      * 远程调用的基础路径，单路径的接口不用定义每个功能的URL地址
      */
-    @Column(name = "C_URL",  columnDefinition="VARCHAR" )
-    @MetaData( value="远程调用的基础路径", comments = "远程调用的基础路径，单路径的接口不用定义每个功能的URL地址")
+    @Column(name = "C_URL", columnDefinition = "VARCHAR")
+    @MetaData(value = "远程调用的基础路径", comments = "远程调用的基础路径，单路径的接口不用定义每个功能的URL地址")
     private String url;
 
     /**
      * 字符集，如果多字符集，使用逗号区分，第一个是申请的字符集，第二个是返回的字符集，第三个是页面调用申请字符集，第四个是页面调用返回的字符集
      */
-    @Column(name = "C_CHARSET",  columnDefinition="VARCHAR" )
-    @MetaData( value="字符集", comments = "字符集，如果多字符集，使用逗号区分，第一个是申请的字符集，第二个是返回的字符集，第三个是页面调用申请字符集，第四个是页面调用返回的字符集")
+    @Column(name = "C_CHARSET", columnDefinition = "VARCHAR")
+    @MetaData(value = "字符集", comments = "字符集，如果多字符集，使用逗号区分，第一个是申请的字符集，第二个是返回的字符集，第三个是页面调用申请字符集，第四个是页面调用返回的字符集")
     private String charset;
 
     /**
      * 秘钥的保存路径，私钥文件使用private.pfx，公钥使用public.cer；FTP服务器增加相应的ftp前缀；使用server.jks保存所有的服务器证书
      */
-    @Column(name = "C_KEYPATH",  columnDefinition="VARCHAR" )
-    @MetaData( value="秘钥的保存路径", comments = "秘钥的保存路径，私钥文件使用private.pfx，公钥使用public.cer；FTP服务器增加相应的ftp前缀；使用server.jks保存所有的服务器证书")
+    @Column(name = "C_KEYPATH", columnDefinition = "VARCHAR")
+    @MetaData(value = "秘钥的保存路径", comments = "秘钥的保存路径，私钥文件使用private.pfx，公钥使用public.cer；FTP服务器增加相应的ftp前缀；使用server.jks保存所有的服务器证书")
     private String keyPath;
 
     /**
      * 设置各证书的密码；使用冒号加分号分隔；priv：aaaa；ftppriv:aa
      */
-    @Column(name = "C_KEYPASS",  columnDefinition="VARCHAR" )
-    @MetaData( value="设置各证书的密码", comments = "设置各证书的密码；使用冒号加分号分隔；priv：aaaa；ftppriv:aa")
+    @Column(name = "C_KEYPASS", columnDefinition = "VARCHAR")
+    @MetaData(value = "设置各证书的密码", comments = "设置各证书的密码；使用冒号加分号分隔；priv：aaaa；ftppriv:aa")
     private String keyPass;
 
     /**
      * 作者
      */
-    @Column(name = "C_OWNER",  columnDefinition="VARCHAR" )
-    @MetaData( value="作者", comments = "作者")
+    @Column(name = "C_OWNER", columnDefinition = "VARCHAR")
+    @MetaData(value = "作者", comments = "作者")
     private String owner;
 
     /**
      * 接口分类，FUND：基金调用接口，BANK银行调用接口
      */
-    @Column(name = "C_GROUP",  columnDefinition="VARCHAR" )
-    @MetaData( value="接口分类", comments = "接口分类，FUND：基金调用接口，BANK银行调用接口")
+    @Column(name = "C_GROUP", columnDefinition = "VARCHAR")
+    @MetaData(value = "接口分类", comments = "接口分类，FUND：基金调用接口，BANK银行调用接口")
     private String faceGroup;
 
     /**
      * 接口实现JAVA类
      */
-    @Column(name = "C_PROVIDER",  columnDefinition="VARCHAR" )
-    @MetaData( value="接口实现JAVA类", comments = "接口实现JAVA类")
+    @Column(name = "C_PROVIDER", columnDefinition = "VARCHAR")
+    @MetaData(value = "接口实现JAVA类", comments = "接口实现JAVA类")
     private String provider;
 
     /**
      * 修改日期
      */
-    @Column(name = "D_MODIDATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="修改日期", comments = "修改日期")
+    @Column(name = "D_MODIDATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "修改日期", comments = "修改日期")
     private String modiDate;
 
     /**
      * 空内容必须填写字段；例如XML的空内容，必须填写XML标签
      */
-    @Column(name = "C_MUSTITEM",  columnDefinition="VARCHAR" )
-    @MetaData( value="空内容必须填写字段", comments = "空内容必须填写字段；例如XML的空内容，必须填写XML标签")
+    @Column(name = "C_MUSTITEM", columnDefinition = "VARCHAR")
+    @MetaData(value = "空内容必须填写字段", comments = "空内容必须填写字段；例如XML的空内容，必须填写XML标签")
     private Boolean mustItem;
-
 
     /**
      * 异常状态模板
      */
-    @Column(name = "C_ERR_MODE",  columnDefinition="VARCHAR" )
-    @MetaData( value="异常状态模板", comments = "异常状态模板")
+    @Column(name = "C_ERR_MODE", columnDefinition = "VARCHAR")
+    @MetaData(value = "异常状态模板", comments = "异常状态模板")
     private String errCodeMode;
-    
-   public String getErrCodeMode() {
+
+    public String getErrCodeMode() {
         return errCodeMode;
     }
 
@@ -143,7 +142,7 @@ public class FarInfterfaceInfo implements BetterjrEntity {
         this.errCodeMode = errCodeMode;
     }
 
-private static final long serialVersionUID = 1440666748882L;
+    private static final long serialVersionUID = 1440666748882L;
 
     public String getFaceNo() {
         return faceNo;
@@ -322,23 +321,37 @@ private static final long serialVersionUID = 1440666748882L;
         }
         FarInfterfaceInfo other = (FarInfterfaceInfo) that;
         return (this.getFaceNo() == null ? other.getFaceNo() == null : this.getFaceNo().equals(other.getFaceNo()))
-            && (this.getFaceName() == null ? other.getFaceName() == null : this.getFaceName().equals(other.getFaceName()))
-            && (this.getSignMode() == null ? other.getSignMode() == null : this.getSignMode().equals(other.getSignMode()))
-            && (this.getDataFormat() == null ? other.getDataFormat() == null : this.getDataFormat().equals(other.getDataFormat()))
-            && (this.getEncrypt() == null ? other.getEncrypt() == null : this.getEncrypt().equals(other.getEncrypt()))
-            && (this.getHeadSign() == null ? other.getHeadSign() == null : this.getHeadSign().equals(other.getHeadSign()))
-            && (this.getFieldOrder() == null ? other.getFieldOrder() == null : this.getFieldOrder().equals(other.getFieldOrder()))
-            && (this.getFtpUrl() == null ? other.getFtpUrl() == null : this.getFtpUrl().equals(other.getFtpUrl()))
-            && (this.getUrl() == null ? other.getUrl() == null : this.getUrl().equals(other.getUrl()))
-            && (this.getCharset() == null ? other.getCharset() == null : this.getCharset().equals(other.getCharset()))
-            && (this.getKeyPath() == null ? other.getKeyPath() == null : this.getKeyPath().equals(other.getKeyPath()))
-            && (this.getKeyPass() == null ? other.getKeyPass() == null : this.getKeyPass().equals(other.getKeyPass()))
-            && (this.getOwner() == null ? other.getOwner() == null : this.getOwner().equals(other.getOwner()))
-            && (this.getFaceGroup() == null ? other.getFaceGroup() == null : this.getFaceGroup().equals(other.getFaceGroup()))
-            && (this.getProvider() == null ? other.getProvider() == null : this.getProvider().equals(other.getProvider()))
-            && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-            && (this.getMustItem() == null ? other.getMustItem() == null : this.getMustItem().equals(other.getMustItem()))
-            && (this.getErrCodeMode() == null ? other.getErrCodeMode() == null : this.getErrCodeMode().equals(other.getErrCodeMode()));
+                && (this.getFaceName() == null ? other.getFaceName() == null
+                        : this.getFaceName().equals(other.getFaceName()))
+                && (this.getSignMode() == null ? other.getSignMode() == null
+                        : this.getSignMode().equals(other.getSignMode()))
+                && (this.getDataFormat() == null ? other.getDataFormat() == null
+                        : this.getDataFormat().equals(other.getDataFormat()))
+                && (this.getEncrypt() == null ? other.getEncrypt() == null
+                        : this.getEncrypt().equals(other.getEncrypt()))
+                && (this.getHeadSign() == null ? other.getHeadSign() == null
+                        : this.getHeadSign().equals(other.getHeadSign()))
+                && (this.getFieldOrder() == null ? other.getFieldOrder() == null
+                        : this.getFieldOrder().equals(other.getFieldOrder()))
+                && (this.getFtpUrl() == null ? other.getFtpUrl() == null : this.getFtpUrl().equals(other.getFtpUrl()))
+                && (this.getUrl() == null ? other.getUrl() == null : this.getUrl().equals(other.getUrl()))
+                && (this.getCharset() == null ? other.getCharset() == null
+                        : this.getCharset().equals(other.getCharset()))
+                && (this.getKeyPath() == null ? other.getKeyPath() == null
+                        : this.getKeyPath().equals(other.getKeyPath()))
+                && (this.getKeyPass() == null ? other.getKeyPass() == null
+                        : this.getKeyPass().equals(other.getKeyPass()))
+                && (this.getOwner() == null ? other.getOwner() == null : this.getOwner().equals(other.getOwner()))
+                && (this.getFaceGroup() == null ? other.getFaceGroup() == null
+                        : this.getFaceGroup().equals(other.getFaceGroup()))
+                && (this.getProvider() == null ? other.getProvider() == null
+                        : this.getProvider().equals(other.getProvider()))
+                && (this.getModiDate() == null ? other.getModiDate() == null
+                        : this.getModiDate().equals(other.getModiDate()))
+                && (this.getMustItem() == null ? other.getMustItem() == null
+                        : this.getMustItem().equals(other.getMustItem()))
+                && (this.getErrCodeMode() == null ? other.getErrCodeMode() == null
+                        : this.getErrCodeMode().equals(other.getErrCodeMode()));
     }
 
     @Override

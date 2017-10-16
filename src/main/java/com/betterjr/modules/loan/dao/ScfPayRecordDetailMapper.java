@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.loan.entity.ScfPayRecordDetail;
 
 @BetterjrMapper
-public interface ScfPayRecordDetailMapper extends Mapper<ScfPayRecordDetail> {
-}
+public interface ScfPayRecordDetailMapper extends Mapper<ScfPayRecordDetail> {}

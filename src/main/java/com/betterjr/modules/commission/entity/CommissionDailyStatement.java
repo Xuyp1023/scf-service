@@ -28,233 +28,230 @@ public class CommissionDailyStatement implements BetterjrEntity {
      * 编号
      */
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
-    @MetaData( value="编号", comments = "编号")
+    @Column(name = "ID", columnDefinition = "INTEGER")
+    @MetaData(value = "编号", comments = "编号")
     private Long id;
 
     /**
      * 凭证编号
      */
-    @Column(name = "C_REFNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="凭证编号", comments = "凭证编号")
+    @Column(name = "C_REFNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "凭证编号", comments = "凭证编号")
     private String refNo;
 
     /**
      * 金额单位（默认元）
      */
-    @Column(name = "C_UNIT",  columnDefinition="VARCHAR" )
-    @MetaData( value="金额单位（默认元）", comments = "金额单位（默认元）")
+    @Column(name = "C_UNIT", columnDefinition = "VARCHAR")
+    @MetaData(value = "金额单位（默认元）", comments = "金额单位（默认元）")
     private String unit;
 
     /**
      * 币种
      */
-    @Column(name = "C_CURRENY",  columnDefinition="VARCHAR" )
-    @MetaData( value="币种", comments = "币种")
+    @Column(name = "C_CURRENY", columnDefinition = "VARCHAR")
+    @MetaData(value = "币种", comments = "币种")
     private String curreny;
 
     /**
      * 支付日期
      */
     @JsonSerialize(using = CustDateJsonSerializer.class)
-    @Column(name = "D_PAY_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="支付日期", comments = "支付日期")
+    @Column(name = "D_PAY_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "支付日期", comments = "支付日期")
     private String payDate;
 
     /**
      * 支付时间
      */
     @JsonSerialize(using = CustTimeJsonSerializer.class)
-    @Column(name = "T_PAY_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="支付时间", comments = "支付时间")
+    @Column(name = "T_PAY_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "支付时间", comments = "支付时间")
     private String payTime;
 
     /**
      * 总金额
      */
-    @Column(name = "F_TOTAL_BALANCE",  columnDefinition="DECIMAL" )
-    @MetaData( value="总金额", comments = "总金额")
+    @Column(name = "F_TOTAL_BALANCE", columnDefinition = "DECIMAL")
+    @MetaData(value = "总金额", comments = "总金额")
     private BigDecimal totalBalance;
 
     /**
      * 总笔数
      */
-    @Column(name = "N_TOTAL_AMOUNT",  columnDefinition="DECIMAL" )
-    @MetaData( value="总笔数", comments = "总笔数")
+    @Column(name = "N_TOTAL_AMOUNT", columnDefinition = "DECIMAL")
+    @MetaData(value = "总笔数", comments = "总笔数")
     private BigDecimal totalAmount;
 
     /**
      * 支付总金额
      */
-    @Column(name = "F_PAY_TOTAL_BALANCE",  columnDefinition="DECIMAL" )
-    @MetaData( value="支付总金额", comments = "支付总金额")
+    @Column(name = "F_PAY_TOTAL_BALANCE", columnDefinition = "DECIMAL")
+    @MetaData(value = "支付总金额", comments = "支付总金额")
     private BigDecimal payTotalBalance;
 
     /**
      * 支付总笔数
      */
-    @Column(name = "N_PAY_TOTAL_AMOUNT",  columnDefinition="DECIMAL" )
-    @MetaData( value="支付总笔数", comments = "支付总笔数")
+    @Column(name = "N_PAY_TOTAL_AMOUNT", columnDefinition = "DECIMAL")
+    @MetaData(value = "支付总笔数", comments = "支付总笔数")
     private BigDecimal payTotalAmount;
 
     /**
      * 支付成功金额
      */
-    @Column(name = "F_PAY_SUCCESS_BALANCE",  columnDefinition="DECIMAL" )
-    @MetaData( value="支付成功金额", comments = "支付成功金额")
+    @Column(name = "F_PAY_SUCCESS_BALANCE", columnDefinition = "DECIMAL")
+    @MetaData(value = "支付成功金额", comments = "支付成功金额")
     private BigDecimal paySuccessBalance;
 
     /**
      * 支付成功笔数
      */
-    @Column(name = "N_PAY_SUCCESS_AMOUNT",  columnDefinition="DECIMAL" )
-    @MetaData( value="支付成功笔数", comments = "支付成功笔数")
+    @Column(name = "N_PAY_SUCCESS_AMOUNT", columnDefinition = "DECIMAL")
+    @MetaData(value = "支付成功笔数", comments = "支付成功笔数")
     private BigDecimal paySuccessAmount;
 
     /**
      * 支付失败金额
      */
-    @Column(name = "F_PAY_FAILURE_BALANCE",  columnDefinition="DECIMAL" )
-    @MetaData( value="支付失败金额", comments = "支付失败金额")
+    @Column(name = "F_PAY_FAILURE_BALANCE", columnDefinition = "DECIMAL")
+    @MetaData(value = "支付失败金额", comments = "支付失败金额")
     private BigDecimal payFailureBalance;
 
     /**
      * 支付失败笔数
      */
-    @Column(name = "N_PAY_FAILURE_AMOUNT",  columnDefinition="DECIMAL" )
-    @MetaData( value="支付失败笔数", comments = "支付失败笔数")
+    @Column(name = "N_PAY_FAILURE_AMOUNT", columnDefinition = "DECIMAL")
+    @MetaData(value = "支付失败笔数", comments = "支付失败笔数")
     private BigDecimal payFailureAmount;
 
     /**
      * 企业客户号
      */
-    @Column(name = "L_OWN_CUSTNO",  columnDefinition="INTEGER" )
-    @MetaData( value="企业客户号", comments = "企业客户号")
+    @Column(name = "L_OWN_CUSTNO", columnDefinition = "INTEGER")
+    @MetaData(value = "企业客户号", comments = "企业客户号")
     private Long ownCustNo;
 
     /**
      * 企业名称
      */
-    @Column(name = "C_OWN_CUSTNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="企业名称", comments = "企业名称")
+    @Column(name = "C_OWN_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "企业名称", comments = "企业名称")
     private String ownCustName;
 
     /**
      * 机构
      */
-    @Column(name = "C_OWN_OPERORG",  columnDefinition="VARCHAR" )
-    @MetaData( value="机构", comments = "机构")
+    @Column(name = "C_OWN_OPERORG", columnDefinition = "VARCHAR")
+    @MetaData(value = "机构", comments = "机构")
     private String ownOperOrg;
 
     /**
      * 制表公司名称
      */
-    @Column(name = "C_MAKE_CUSTNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="制表公司名称", comments = "制表公司名称")
+    @Column(name = "C_MAKE_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "制表公司名称", comments = "制表公司名称")
     private String makeCustName;
 
     /**
      * 制表人
      */
-    @Column(name = "C_MAKE_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="制表人", comments = "制表人")
+    @Column(name = "C_MAKE_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "制表人", comments = "制表人")
     private String operName;
 
     /**
      * 制表日期
      */
     @JsonSerialize(using = CustDateJsonSerializer.class)
-    @Column(name = "D_MAKE_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="制表日期", comments = "制表日期")
+    @Column(name = "D_MAKE_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "制表日期", comments = "制表日期")
     private String makeDate;
 
     /**
      * 制表时间
      */
     @JsonSerialize(using = CustTimeJsonSerializer.class)
-    @Column(name = "T_MAKE_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="制表时间", comments = "制表时间")
+    @Column(name = "T_MAKE_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "制表时间", comments = "制表时间")
     private String makeTime;
 
     /**
      * 业务状态，0未处理，1已确认，2已审核，3已生成过月账单
      */
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="业务状态", comments = "业务状态，0未处理，1已确认，2已审核，3已生成过月账单")
+    @Column(name = "C_BUSIN_STATUS", columnDefinition = "VARCHAR")
+    @MetaData(value = "业务状态", comments = "业务状态，0未处理，1已确认，2已审核，3已生成过月账单")
     private String businStatus;
 
-    @Column(name = "C_LAST_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "C_LAST_STATUS", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String lastStatus;
 
-    @Column(name = "N_BATCHNO",  columnDefinition="INTEGER" )
-    @MetaData( value="", comments = "")
+    @Column(name = "N_BATCHNO", columnDefinition = "INTEGER")
+    @MetaData(value = "", comments = "")
     private Long batchNo;
 
-    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "C_OPERORG", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String operOrg;
 
-    @Column(name = "L_REG_OPERID",  columnDefinition="INTEGER" )
-    @MetaData( value="", comments = "")
+    @Column(name = "L_REG_OPERID", columnDefinition = "INTEGER")
+    @MetaData(value = "", comments = "")
     private Long regOperId;
 
-    @Column(name = "C_REG_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "C_REG_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String regOperName;
 
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String regDate;
 
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String regTime;
 
-    @Column(name = "L_MODI_OPERID",  columnDefinition="INTEGER" )
-    @MetaData( value="", comments = "")
+    @Column(name = "L_MODI_OPERID", columnDefinition = "INTEGER")
+    @MetaData(value = "", comments = "")
     private Long modiOperId;
 
-    @Column(name = "C_MODI_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "C_MODI_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String modiOperName;
 
-    @Column(name = "D_MODI_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "D_MODI_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String modiDate;
 
-    @Column(name = "T_MODI_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "T_MODI_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String modiTime;
 
-    @Column(name = "N_VERSION",  columnDefinition="INTEGER" )
-    @MetaData( value="", comments = "")
+    @Column(name = "N_VERSION", columnDefinition = "INTEGER")
+    @MetaData(value = "", comments = "")
     private Long version;
-    
 
     @JsonSerialize(using = CustDateJsonSerializer.class)
-    @Column(name = "D_END_INTEREST_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="结息日期", comments = "结息日期")
+    @Column(name = "D_END_INTEREST_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "结息日期", comments = "结息日期")
     private String endInterestDate;
-    
-    @Column(name = "F_INTEREST",  columnDefinition="DECIMAL" )
-    @MetaData( value="利息", comments = "利息")
+
+    @Column(name = "F_INTEREST", columnDefinition = "DECIMAL")
+    @MetaData(value = "利息", comments = "利息")
     private BigDecimal interest;
-    
-    @Column(name = "F_INTEREST_RATE",  columnDefinition="DECIMAL" )
-    @MetaData( value="利率", comments = "利率")
+
+    @Column(name = "F_INTEREST_RATE", columnDefinition = "DECIMAL")
+    @MetaData(value = "利率", comments = "利率")
     private BigDecimal interestRate;
-    
 
-    @Column(name = "L_FILE_ID",  columnDefinition="INTEGER" )
-    @MetaData( value="文件ID", comments = "文件ID")
+    @Column(name = "L_FILE_ID", columnDefinition = "INTEGER")
+    @MetaData(value = "文件ID", comments = "文件ID")
     private Long fileId;
-    
 
-    @Column(name = "F_DAYS",  columnDefinition="INTEGER" )
-    @MetaData( value="结算利息的天数", comments = "结算利息的天数")
+    @Column(name = "F_DAYS", columnDefinition = "INTEGER")
+    @MetaData(value = "结算利息的天数", comments = "结算利息的天数")
     private Long days;
-    
+
     @Transient
     private String makeDateTime;
 
@@ -642,39 +639,70 @@ public class CommissionDailyStatement implements BetterjrEntity {
         }
         CommissionDailyStatement other = (CommissionDailyStatement) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getRefNo() == null ? other.getRefNo() == null : this.getRefNo().equals(other.getRefNo()))
-            && (this.getUnit() == null ? other.getUnit() == null : this.getUnit().equals(other.getUnit()))
-            && (this.getCurreny() == null ? other.getCurreny() == null : this.getCurreny().equals(other.getCurreny()))
-            && (this.getPayDate() == null ? other.getPayDate() == null : this.getPayDate().equals(other.getPayDate()))
-            && (this.getPayTime() == null ? other.getPayTime() == null : this.getPayTime().equals(other.getPayTime()))
-            && (this.getTotalBalance() == null ? other.getTotalBalance() == null : this.getTotalBalance().equals(other.getTotalBalance()))
-            && (this.getTotalAmount() == null ? other.getTotalAmount() == null : this.getTotalAmount().equals(other.getTotalAmount()))
-            && (this.getPayTotalBalance() == null ? other.getPayTotalBalance() == null : this.getPayTotalBalance().equals(other.getPayTotalBalance()))
-            && (this.getPayTotalAmount() == null ? other.getPayTotalAmount() == null : this.getPayTotalAmount().equals(other.getPayTotalAmount()))
-            && (this.getPaySuccessBalance() == null ? other.getPaySuccessBalance() == null : this.getPaySuccessBalance().equals(other.getPaySuccessBalance()))
-            && (this.getPaySuccessAmount() == null ? other.getPaySuccessAmount() == null : this.getPaySuccessAmount().equals(other.getPaySuccessAmount()))
-            && (this.getPayFailureBalance() == null ? other.getPayFailureBalance() == null : this.getPayFailureBalance().equals(other.getPayFailureBalance()))
-            && (this.getPayFailureAmount() == null ? other.getPayFailureAmount() == null : this.getPayFailureAmount().equals(other.getPayFailureAmount()))
-            && (this.getOwnCustNo() == null ? other.getOwnCustNo() == null : this.getOwnCustNo().equals(other.getOwnCustNo()))
-            && (this.getOwnCustName() == null ? other.getOwnCustName() == null : this.getOwnCustName().equals(other.getOwnCustName()))
-            && (this.getOwnOperOrg() == null ? other.getOwnOperOrg() == null : this.getOwnOperOrg().equals(other.getOwnOperOrg()))
-            && (this.getMakeCustName() == null ? other.getMakeCustName() == null : this.getMakeCustName().equals(other.getMakeCustName()))
-            && (this.getOperName() == null ? other.getOperName() == null : this.getOperName().equals(other.getOperName()))
-            && (this.getMakeDate() == null ? other.getMakeDate() == null : this.getMakeDate().equals(other.getMakeDate()))
-            && (this.getMakeTime() == null ? other.getMakeTime() == null : this.getMakeTime().equals(other.getMakeTime()))
-            && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
-            && (this.getLastStatus() == null ? other.getLastStatus() == null : this.getLastStatus().equals(other.getLastStatus()))
-            && (this.getBatchNo() == null ? other.getBatchNo() == null : this.getBatchNo().equals(other.getBatchNo()))
-            && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
-            && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
-            && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-            && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
-            && (this.getModiOperId() == null ? other.getModiOperId() == null : this.getModiOperId().equals(other.getModiOperId()))
-            && (this.getModiOperName() == null ? other.getModiOperName() == null : this.getModiOperName().equals(other.getModiOperName()))
-            && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-            && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()))
-            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
+                && (this.getRefNo() == null ? other.getRefNo() == null : this.getRefNo().equals(other.getRefNo()))
+                && (this.getUnit() == null ? other.getUnit() == null : this.getUnit().equals(other.getUnit()))
+                && (this.getCurreny() == null ? other.getCurreny() == null
+                        : this.getCurreny().equals(other.getCurreny()))
+                && (this.getPayDate() == null ? other.getPayDate() == null
+                        : this.getPayDate().equals(other.getPayDate()))
+                && (this.getPayTime() == null ? other.getPayTime() == null
+                        : this.getPayTime().equals(other.getPayTime()))
+                && (this.getTotalBalance() == null ? other.getTotalBalance() == null
+                        : this.getTotalBalance().equals(other.getTotalBalance()))
+                && (this.getTotalAmount() == null ? other.getTotalAmount() == null
+                        : this.getTotalAmount().equals(other.getTotalAmount()))
+                && (this.getPayTotalBalance() == null ? other.getPayTotalBalance() == null
+                        : this.getPayTotalBalance().equals(other.getPayTotalBalance()))
+                && (this.getPayTotalAmount() == null ? other.getPayTotalAmount() == null
+                        : this.getPayTotalAmount().equals(other.getPayTotalAmount()))
+                && (this.getPaySuccessBalance() == null ? other.getPaySuccessBalance() == null
+                        : this.getPaySuccessBalance().equals(other.getPaySuccessBalance()))
+                && (this.getPaySuccessAmount() == null ? other.getPaySuccessAmount() == null
+                        : this.getPaySuccessAmount().equals(other.getPaySuccessAmount()))
+                && (this.getPayFailureBalance() == null ? other.getPayFailureBalance() == null
+                        : this.getPayFailureBalance().equals(other.getPayFailureBalance()))
+                && (this.getPayFailureAmount() == null ? other.getPayFailureAmount() == null
+                        : this.getPayFailureAmount().equals(other.getPayFailureAmount()))
+                && (this.getOwnCustNo() == null ? other.getOwnCustNo() == null
+                        : this.getOwnCustNo().equals(other.getOwnCustNo()))
+                && (this.getOwnCustName() == null ? other.getOwnCustName() == null
+                        : this.getOwnCustName().equals(other.getOwnCustName()))
+                && (this.getOwnOperOrg() == null ? other.getOwnOperOrg() == null
+                        : this.getOwnOperOrg().equals(other.getOwnOperOrg()))
+                && (this.getMakeCustName() == null ? other.getMakeCustName() == null
+                        : this.getMakeCustName().equals(other.getMakeCustName()))
+                && (this.getOperName() == null ? other.getOperName() == null
+                        : this.getOperName().equals(other.getOperName()))
+                && (this.getMakeDate() == null ? other.getMakeDate() == null
+                        : this.getMakeDate().equals(other.getMakeDate()))
+                && (this.getMakeTime() == null ? other.getMakeTime() == null
+                        : this.getMakeTime().equals(other.getMakeTime()))
+                && (this.getBusinStatus() == null ? other.getBusinStatus() == null
+                        : this.getBusinStatus().equals(other.getBusinStatus()))
+                && (this.getLastStatus() == null ? other.getLastStatus() == null
+                        : this.getLastStatus().equals(other.getLastStatus()))
+                && (this.getBatchNo() == null ? other.getBatchNo() == null
+                        : this.getBatchNo().equals(other.getBatchNo()))
+                && (this.getOperOrg() == null ? other.getOperOrg() == null
+                        : this.getOperOrg().equals(other.getOperOrg()))
+                && (this.getRegOperId() == null ? other.getRegOperId() == null
+                        : this.getRegOperId().equals(other.getRegOperId()))
+                && (this.getRegOperName() == null ? other.getRegOperName() == null
+                        : this.getRegOperName().equals(other.getRegOperName()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getRegTime() == null ? other.getRegTime() == null
+                        : this.getRegTime().equals(other.getRegTime()))
+                && (this.getModiOperId() == null ? other.getModiOperId() == null
+                        : this.getModiOperId().equals(other.getModiOperId()))
+                && (this.getModiOperName() == null ? other.getModiOperName() == null
+                        : this.getModiOperName().equals(other.getModiOperName()))
+                && (this.getModiDate() == null ? other.getModiDate() == null
+                        : this.getModiDate().equals(other.getModiDate()))
+                && (this.getModiTime() == null ? other.getModiTime() == null
+                        : this.getModiTime().equals(other.getModiTime()))
+                && (this.getVersion() == null ? other.getVersion() == null
+                        : this.getVersion().equals(other.getVersion()));
     }
 
     @Override
@@ -717,23 +745,23 @@ public class CommissionDailyStatement implements BetterjrEntity {
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
         return result;
     }
-    
-    public void initValue(){
-        this.id = SerialGenerator.getLongValue("CommissionDailyStatement.id"); 
+
+    public void initValue() {
+        this.id = SerialGenerator.getLongValue("CommissionDailyStatement.id");
         this.makeDate = BetterDateUtils.getNumDate();
-        this.makeTime= BetterDateUtils.getNumTime();
+        this.makeTime = BetterDateUtils.getNumTime();
         this.regDate = BetterDateUtils.getNumDate();
         this.regTime = BetterDateUtils.getNumTime();
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
-        this.businStatus="1";
+        this.businStatus = "1";
         final CustOperatorInfo custOperator = (CustOperatorInfo) UserUtils.getPrincipal().getUser();
-        if(custOperator!=null){
-            this.operOrg=custOperator.getOperOrg();
-            this.regOperId=custOperator.getId();
-            this.regOperName=custOperator.getName();
-            this.modiOperId=custOperator.getId();
-            this.modiOperName=custOperator.getName();
+        if (custOperator != null) {
+            this.operOrg = custOperator.getOperOrg();
+            this.regOperId = custOperator.getId();
+            this.regOperName = custOperator.getName();
+            this.modiOperId = custOperator.getId();
+            this.modiOperName = custOperator.getName();
         }
     }
 }

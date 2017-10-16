@@ -27,13 +27,16 @@ public class ScfSupplierOfferDubboService implements IScfSupplierOfferService {
     @Override
     public String webSaveUpdateOffer(Long anCustNo, Long anCoreCustNo, double anCoreCustRate) {
 
-        return AjaxObject.newOk("供应商利率修改成功", offerService.saveUpdateSupplierOffer(anCustNo, anCoreCustNo, anCoreCustRate)).toJson();
+        return AjaxObject
+                .newOk("供应商利率修改成功", offerService.saveUpdateSupplierOffer(anCustNo, anCoreCustNo, anCoreCustRate))
+                .toJson();
     }
 
     @Override
     public String webQueryOfferPage(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
 
-        return AjaxObject.newOkWithPage("供应商利率查询成功", offerService.queryScfSupplierOfferPage(anMap, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject.newOkWithPage("供应商利率查询成功",
+                offerService.queryScfSupplierOfferPage(anMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     @Override

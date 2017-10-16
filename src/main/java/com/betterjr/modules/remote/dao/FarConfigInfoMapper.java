@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.remote.entity.FarConfigInfo;
 
 @BetterjrMapper
-public interface FarConfigInfoMapper extends Mapper<FarConfigInfo> {
-}
+public interface FarConfigInfoMapper extends Mapper<FarConfigInfo> {}

@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.supplychain.entity.ScfBankPaymentFlow;
 
 @BetterjrMapper
-public interface ScfBankPaymentFlowMapper extends Mapper<ScfBankPaymentFlow> {
-}
+public interface ScfBankPaymentFlowMapper extends Mapper<ScfBankPaymentFlow> {}

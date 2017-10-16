@@ -19,7 +19,8 @@ import com.betterjr.modules.delivery.data.DeliveryConstantCollentions;
 import com.betterjr.modules.delivery.entity.DeliveryRecordStatement;
 
 @Service
-public class DeliveryRecordStatementService extends BaseService<DeliveryRecordStatementMapper, DeliveryRecordStatement> {
+public class DeliveryRecordStatementService
+        extends BaseService<DeliveryRecordStatementMapper, DeliveryRecordStatement> {
 
     @Autowired
     private CommissionMonthlyStatementService montylyService;

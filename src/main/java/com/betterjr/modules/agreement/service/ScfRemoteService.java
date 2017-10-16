@@ -12,7 +12,7 @@ import com.betterjr.modules.customer.entity.CustRelation;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.product.entity.ScfProduct;
 import com.betterjr.modules.remote.entity.RemoteResultInfo;
-  
+
 /***
  * 电子合同发送短信
  * @author hubl
@@ -30,7 +30,7 @@ public interface ScfRemoteService {
      */
     @AnnonRemoteMethod(businFlag = "007", businClass = BusinClassType.SCF_APP, custType = "X")
     public RemoteResultInfo<ScfRequest> appFinancing(ScfRequest anRequest);
-    
+
     /**
      * 
      * 发送订单状态信息
@@ -54,7 +54,7 @@ public interface ScfRemoteService {
      */
     @AnnonRemoteMethod(businFlag = "008", businClass = BusinClassType.SCF_STATE, custType = "X")
     public RemoteResultInfo<FaceTradeResult> sendSMS(String requestNo, Long custNo);
-    
+
     /**
      * 
      *   验证短信-电子合同签署
@@ -66,7 +66,7 @@ public interface ScfRemoteService {
      */
     @AnnonRemoteMethod(businFlag = "008", businClass = BusinClassType.SCF_STATE, custType = "X")
     public RemoteResultInfo<FaceTradeResult> validateSMS(String requestNo, Long custNo, String vcode);
-    
+
     /**
      * 
      *    创建 签署-电子合同签署
@@ -90,7 +90,7 @@ public interface ScfRemoteService {
      *             抛出访问异常信息
      */
     public RemoteResultInfo<List<ScfProduct>> queryFactorProduct(Map anMap);
-    
+
     /**
      * 
      * 查询机构客户资料
@@ -114,7 +114,7 @@ public interface ScfRemoteService {
      */
     @AnnonRemoteMethod(businFlag = "01", businClass = BusinClassType.SALE_ACCOUNT, custType = "0")
     public RemoteResultInfo<FaceTradeResult> mechOpenAcco(SaleAccoRequestInfo anAccoRequest);
- 
+
     /**
      * 
      * 修改机构客户资料

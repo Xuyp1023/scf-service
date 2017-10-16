@@ -26,7 +26,7 @@ public class CoreDataProcessService extends BaseService<CoreDataProcessInfoMappe
         workCondition.put("workStatus", new String[] { "0", "2" });
         workCondition.put("LTEworkDate", BetterDateUtils.getNumDate());
         workCondition.put("operOrg", anOperOrg);
-        
+
         return this.selectByProperty(workCondition);
     }
 
@@ -45,21 +45,21 @@ public class CoreDataProcessService extends BaseService<CoreDataProcessInfoMappe
         return anProcess;
     }
 
-    public void processWorkStatus(String anOpenOrg, String anProcessType, String anStatus){
+    public void processWorkStatus(String anOpenOrg, String anProcessType, String anStatus) {
         Map<String, Object> termMap = new HashMap();
         termMap.put("processType", anProcessType);
         termMap.put("operOrg", anOpenOrg);
         CoreDataProcessInfo processInfo = Collections3.getFirst(this.selectByProperty(termMap));
         processInfo.setWorkStatus(anStatus);
-        this.saveProcessStatus(processInfo);        
+        this.saveProcessStatus(processInfo);
     }
-    
+
     /**
      * 改变数据处理状态
      */
     public void changeWorkStatus(String anWorkParam) {
         SimpleDataEntity data = new SimpleDataEntity(anWorkParam);
         System.out.println("this is anWorkParam :" + data);
-        this.processWorkStatus( data.getValue(), data.getName(), "0" );
+        this.processWorkStatus(data.getValue(), data.getName(), "0");
     }
 }

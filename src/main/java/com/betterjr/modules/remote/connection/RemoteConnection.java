@@ -80,39 +80,39 @@ public class RemoteConnection implements Serializable {
                 Map map;
                 if (anArgs[0] instanceof Map) {
                     map = (Map) anArgs[0];
-                }
-                else {
+                } else {
                     map = new HashMap();
                     map.put("obj", anArgs[0]);
                 }
-                try{
+                try {
                     return (String) QlExpressUtil.simpleInvoke(anFunc.getWorkUrl(), map);
-                }catch(Exception ex){
+                }
+                catch (Exception ex) {
                     logger.error(ex.getMessage(), ex);
                 }
             }
-        }else{
-            tmpUrl=tmpUrl.replaceAll("\"", "");
+        } else {
+            tmpUrl = tmpUrl.replaceAll("\"", "");
         }
-        
+
         return tmpUrl;
     }
-    
-    protected void initPath(WorkFarFunction anFunc,Object[] anArgs){
+
+    protected void initPath(WorkFarFunction anFunc, Object[] anArgs) {
         if ("URL_EXP".equalsIgnoreCase(anFunc.getResultCode())) {
             try {
                 Map<String, Object> map = (Map<String, Object>) anArgs[0];
-                RemoteWorkFileInfo workFileInfo=null;
+                RemoteWorkFileInfo workFileInfo = null;
                 for (String tmpKey : map.keySet()) {
-                    workFileInfo = (RemoteWorkFileInfo)map.get(tmpKey);
+                    workFileInfo = (RemoteWorkFileInfo) map.get(tmpKey);
                 }
-                logger.info("workFileInfo:"+workFileInfo);
-                this.localPath=workFileInfo.getLocalPath();
-                this.remotePath=workFileInfo.getRemotePath();
+                logger.info("workFileInfo:" + workFileInfo);
+                this.localPath = workFileInfo.getLocalPath();
+                this.remotePath = workFileInfo.getRemotePath();
             }
             catch (Exception e) {
-                this.localPath="";
-                this.remotePath="";
+                this.localPath = "";
+                this.remotePath = "";
             }
         }
     }
@@ -122,7 +122,7 @@ public class RemoteConnection implements Serializable {
         this.workUrl = prepareWorkUrl(anFunc, anArgs);
         ackEncoding = anFactory.getAckEncoding();
         this.contentType = anFactory.getContentType();
-        initPath(anFunc,anArgs);
+        initPath(anFunc, anArgs);
     }
 
     public RemoteConnection createMethod(WorkMethodInfo anMethod) {
@@ -176,12 +176,11 @@ public class RemoteConnection implements Serializable {
                 }
                 workData = response.getEntity().getContent();
                 afterPepair();
-            }
-            else {
+            } else {
                 HttpEntity entity = response.getEntity();
                 this.method.abort();
-                logger.error(BetterDateUtils.getDateTime() + " 接收响应：url" + this.method.getURI() + " status=" + this.statusMessage + " resopnse="
-                        + EntityUtils.toString(entity, "utf-8"));
+                logger.error(BetterDateUtils.getDateTime() + " 接收响应：url" + this.method.getURI() + " status="
+                        + this.statusMessage + " resopnse=" + EntityUtils.toString(entity, "utf-8"));
                 ee = new BetterjrClientProtocolException("Unexpected response status: " + statusCode);
             }
         }
@@ -293,9 +292,9 @@ public class RemoteConnection implements Serializable {
                         se.setContentType(contentType);
                     }
                     // se.setContentType("application/x-www-form-urlencoded");
-                }
-                else {
-                    UrlEncodedFormEntity entity = new UrlEncodedFormEntity(factory.paramsConverter(formParams), factory.getEnConding());
+                } else {
+                    UrlEncodedFormEntity entity = new UrlEncodedFormEntity(factory.paramsConverter(formParams),
+                            factory.getEnConding());
                     workM.setEntity(entity);
                 }
             }

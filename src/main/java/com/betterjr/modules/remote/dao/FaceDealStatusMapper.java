@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.remote.entity.FaceDealStatus;
 
 @BetterjrMapper
-public interface FaceDealStatusMapper extends Mapper<FaceDealStatus> {
-}
+public interface FaceDealStatusMapper extends Mapper<FaceDealStatus> {}

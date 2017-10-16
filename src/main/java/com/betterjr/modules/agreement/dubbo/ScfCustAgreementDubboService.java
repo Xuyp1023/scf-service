@@ -11,21 +11,23 @@ import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.agreement.service.ScfCustAgreementService;
 import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 
-@Service(interfaceClass=IScfCustAgreementService.class)
-public class ScfCustAgreementDubboService implements IScfCustAgreementService{
+@Service(interfaceClass = IScfCustAgreementService.class)
+public class ScfCustAgreementDubboService implements IScfCustAgreementService {
 
     @Autowired
     private ScfCustAgreementService scfCustAgreementService;
-    
+
     @Override
     public String webQueryCustAgreementsByPage(Map<String, Object> anParam, int anPageNum, int anPageSize) {
-        return  AjaxObject.newOkWithPage("查询用户合同分页信息成功",scfCustAgreementService.queryCustAgreementsByPage(anParam, anPageNum, anPageSize)).toJson();
+        return AjaxObject.newOkWithPage("查询用户合同分页信息成功",
+                scfCustAgreementService.queryCustAgreementsByPage(anParam, anPageNum, anPageSize)).toJson();
     }
 
     @Override
     public String webAddCustAgreement(Map<String, Object> anMap, String anFileList) {
-        CustAgreement custAgreement=(CustAgreement)RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk("新增合同成功，请复核", scfCustAgreementService.addCustAgreement(custAgreement, anFileList)).toJson();
+        CustAgreement custAgreement = (CustAgreement) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOk("新增合同成功，请复核", scfCustAgreementService.addCustAgreement(custAgreement, anFileList))
+                .toJson();
     }
 
     @Override
@@ -35,8 +37,10 @@ public class ScfCustAgreementDubboService implements IScfCustAgreementService{
 
     @Override
     public String webModifyCustAgreement(Map<String, String> anParam, Long anId, String anFileList) {
-        CustAgreement custAgreement=(CustAgreement)RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk("更新合同成功，请复核", scfCustAgreementService.modifyCustAgreement(custAgreement, anId, anFileList)).toJson();
+        CustAgreement custAgreement = (CustAgreement) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject
+                .newOk("更新合同成功，请复核", scfCustAgreementService.modifyCustAgreement(custAgreement, anId, anFileList))
+                .toJson();
     }
 
     @Override
@@ -54,11 +58,12 @@ public class ScfCustAgreementDubboService implements IScfCustAgreementService{
     public void webSaveCustAgreementStatus(Long anAgreeId, int anType) {
         scfCustAgreementService.saveCustAgreementStatus(anAgreeId, anType);
     }
-    
-    public String webDeleteContractAgree(Long anAgreeId){
-        if(scfCustAgreementService.deleteContractAgree(anAgreeId)){
+
+    @Override
+    public String webDeleteContractAgree(Long anAgreeId) {
+        if (scfCustAgreementService.deleteContractAgree(anAgreeId)) {
             return AjaxObject.newOk("删除合同成功").toJson();
-        }else{
+        } else {
             return AjaxObject.newError("删除合同失败").toJson();
         }
     }

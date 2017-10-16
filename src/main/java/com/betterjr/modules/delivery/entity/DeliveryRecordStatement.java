@@ -23,121 +23,119 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @Entity
 @Table(name = "t_cps_delivery_record")
 public class DeliveryRecordStatement implements BetterjrEntity {
-    
-    //编号
+
+    // 编号
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
+    @Column(name = "ID", columnDefinition = "INTEGER")
     private Long id;
 
-    //投递记录主表编号
-    @Column(name = "L_DELIVERY_ID",  columnDefinition="INTEGER" )
+    // 投递记录主表编号
+    @Column(name = "L_DELIVERY_ID", columnDefinition = "INTEGER")
     private Long deliverId;
 
-    //投递记录主表凭证号
-    @Column(name = "C_DELIVERY_REFNO",  columnDefinition="VARCHAR" )
+    // 投递记录主表凭证号
+    @Column(name = "C_DELIVERY_REFNO", columnDefinition = "VARCHAR")
     private String deliverRefNo;
 
-    //月账单编号
-    @Column(name = "L_MONTHLY_STATEMENT_ID",  columnDefinition="INTEGER" )
+    // 月账单编号
+    @Column(name = "L_MONTHLY_STATEMENT_ID", columnDefinition = "INTEGER")
     private Long monthlyStatementId;
 
-    //月账单凭证号
-    @Column(name = "C_MONTHLY_STATEMENT_REFNO",  columnDefinition="VARCHAR" )
+    // 月账单凭证号
+    @Column(name = "C_MONTHLY_STATEMENT_REFNO", columnDefinition = "VARCHAR")
     private String monthlyStatementRefNo;
 
-    //开始时间
-    @Column(name = "D_PAY_BEGIN_DATE",  columnDefinition="VARCHAR" )
+    // 开始时间
+    @Column(name = "D_PAY_BEGIN_DATE", columnDefinition = "VARCHAR")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String payBeginDate;
 
-    //结束时间
-    @Column(name = "D_PAY_END_DATE",  columnDefinition="VARCHAR" )
+    // 结束时间
+    @Column(name = "D_PAY_END_DATE", columnDefinition = "VARCHAR")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String payEndDate;
 
-    //总金额
-    @Column(name = "F_TOTAL_BLANCE",  columnDefinition="DECIMAL" )
+    // 总金额
+    @Column(name = "F_TOTAL_BLANCE", columnDefinition = "DECIMAL")
     private BigDecimal totalBlance;
-    
-    //付款成功+税额+佣金
-    @Column(name = "F_INTEREST_BALANCE",  columnDefinition="DECIMAL" )
+
+    // 付款成功+税额+佣金
+    @Column(name = "F_INTEREST_BALANCE", columnDefinition = "DECIMAL")
     private BigDecimal interestBalance;
 
-    //总的佣金笔数
-    @Column(name = "N_TOTAL_AMOUNT",  columnDefinition="INTEGER" )
+    // 总的佣金笔数
+    @Column(name = "N_TOTAL_AMOUNT", columnDefinition = "INTEGER")
     private BigDecimal totalAmount;
 
-    //总的付成功的金额
-    @Column(name = "F_PAY_TOTAL_SUCCESS_BALANCE",  columnDefinition="DECIMAL" )
+    // 总的付成功的金额
+    @Column(name = "F_PAY_TOTAL_SUCCESS_BALANCE", columnDefinition = "DECIMAL")
     private BigDecimal payTotalSuccessBlance;
 
-    //总的付成功的项
-    @Column(name = "N_PAY_TOTAL_SUCCESS_AMOUNT",  columnDefinition="INTEGER" )
+    // 总的付成功的项
+    @Column(name = "N_PAY_TOTAL_SUCCESS_AMOUNT", columnDefinition = "INTEGER")
     private BigDecimal payTotalSuccessitems;
 
-    //总的付失败的金额
-    @Column(name = "F_PAY_TOTAL_FAILURE_BALANCE",  columnDefinition="DECIMAL" )
+    // 总的付失败的金额
+    @Column(name = "F_PAY_TOTAL_FAILURE_BALANCE", columnDefinition = "DECIMAL")
     private BigDecimal payTotalFailureBlance;
 
-    //总的付失败的项数
-    @Column(name = "N_PAY_TOTAL_FAILURE_AMOUNT",  columnDefinition="INTEGER" )
+    // 总的付失败的项数
+    @Column(name = "N_PAY_TOTAL_FAILURE_AMOUNT", columnDefinition = "INTEGER")
     private BigDecimal payTotalFailureitems;
 
-    //拥有公司ID
-    @Column(name = "L_OWN_CUSTNO",  columnDefinition="INTEGER" )
+    // 拥有公司ID
+    @Column(name = "L_OWN_CUSTNO", columnDefinition = "INTEGER")
     private Long ownCustNo;
 
-    //拥有公司名称
-    @Column(name = "C_OWN_CUSTNAME",  columnDefinition="VARCHAR" )
+    // 拥有公司名称
+    @Column(name = "C_OWN_CUSTNAME", columnDefinition = "VARCHAR")
     private String ownCustName;
 
-    //拥有公司操作结构
-    @Column(name = "C_OWN_OPERORG",  columnDefinition="VARCHAR" )
+    // 拥有公司操作结构
+    @Column(name = "C_OWN_OPERORG", columnDefinition = "VARCHAR")
     private String ownOperOrg;
-    
-    //0 可用   1 不可用，已删除状态
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
-    private String businStatus;
-    
-    //传递状态  0 未投递  1 已投递   2已确认
-    @Column(name = "C_EXPRESS_STATUS",  columnDefinition="VARCHAR" )
-    private String expressStatus;
-    
-    //对账月份yyyyMM
-    @Column(name = "D_BILL_MONTH",  columnDefinition="VARCHAR" )
-    private String billMonth;
-    
 
-    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
+    // 0 可用 1 不可用，已删除状态
+    @Column(name = "C_BUSIN_STATUS", columnDefinition = "VARCHAR")
+    private String businStatus;
+
+    // 传递状态 0 未投递 1 已投递 2已确认
+    @Column(name = "C_EXPRESS_STATUS", columnDefinition = "VARCHAR")
+    private String expressStatus;
+
+    // 对账月份yyyyMM
+    @Column(name = "D_BILL_MONTH", columnDefinition = "VARCHAR")
+    private String billMonth;
+
+    @Column(name = "C_OPERORG", columnDefinition = "VARCHAR")
     private String operOrg;
-    
-    @Column(name = "L_REG_OPERID",  columnDefinition="INTEGER" )
+
+    @Column(name = "L_REG_OPERID", columnDefinition = "INTEGER")
     private Long regOperId;
-    
-    @Column(name = "C_REG_OPERNAME",  columnDefinition="VARCHAR" )
+
+    @Column(name = "C_REG_OPERNAME", columnDefinition = "VARCHAR")
     private String regOperName;
-    
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
+
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
-    
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
+
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
     @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String regTime;
-    
-    @Column(name = "N_VERSION",  columnDefinition="VARCHAR" )
+
+    @Column(name = "N_VERSION", columnDefinition = "VARCHAR")
     private String version;
 
     /**
      * 月报表文件id
      */
-    @Column(name = "L_FILE_ID",  columnDefinition="Long" )
-    @MetaData( value="月报表文件", comments = "月报表文件")
+    @Column(name = "L_FILE_ID", columnDefinition = "Long")
+    @MetaData(value = "月报表文件", comments = "月报表文件")
     private Long fileId;
 
     private static final long serialVersionUID = 1493717117087L;
-    
-    
+
     public String getBillMonth() {
         return this.billMonth;
     }
@@ -177,7 +175,7 @@ public class DeliveryRecordStatement implements BetterjrEntity {
     public void setId(Long id) {
         this.id = id;
     }
-   
+
     public Long getFileId() {
         return this.fileId;
     }
@@ -225,8 +223,6 @@ public class DeliveryRecordStatement implements BetterjrEntity {
     public void setTotalBlance(BigDecimal totalBlance) {
         this.totalBlance = totalBlance;
     }
-
-    
 
     public BigDecimal getPayTotalSuccessBlance() {
         return payTotalSuccessBlance;
@@ -393,111 +389,91 @@ public class DeliveryRecordStatement implements BetterjrEntity {
         DeliveryRecordStatement other = (DeliveryRecordStatement) obj;
         if (this.deliverId == null) {
             if (other.deliverId != null) return false;
-        }
-        else if (!this.deliverId.equals(other.deliverId)) return false;
+        } else if (!this.deliverId.equals(other.deliverId)) return false;
         if (this.deliverRefNo == null) {
             if (other.deliverRefNo != null) return false;
-        }
-        else if (!this.deliverRefNo.equals(other.deliverRefNo)) return false;
+        } else if (!this.deliverRefNo.equals(other.deliverRefNo)) return false;
         if (this.id == null) {
             if (other.id != null) return false;
-        }
-        else if (!this.id.equals(other.id)) return false;
+        } else if (!this.id.equals(other.id)) return false;
         if (this.monthlyStatementId == null) {
             if (other.monthlyStatementId != null) return false;
-        }
-        else if (!this.monthlyStatementId.equals(other.monthlyStatementId)) return false;
+        } else if (!this.monthlyStatementId.equals(other.monthlyStatementId)) return false;
         if (this.monthlyStatementRefNo == null) {
             if (other.monthlyStatementRefNo != null) return false;
-        }
-        else if (!this.monthlyStatementRefNo.equals(other.monthlyStatementRefNo)) return false;
+        } else if (!this.monthlyStatementRefNo.equals(other.monthlyStatementRefNo)) return false;
         if (this.operOrg == null) {
             if (other.operOrg != null) return false;
-        }
-        else if (!this.operOrg.equals(other.operOrg)) return false;
+        } else if (!this.operOrg.equals(other.operOrg)) return false;
         if (this.ownCustName == null) {
             if (other.ownCustName != null) return false;
-        }
-        else if (!this.ownCustName.equals(other.ownCustName)) return false;
+        } else if (!this.ownCustName.equals(other.ownCustName)) return false;
         if (this.ownCustNo == null) {
             if (other.ownCustNo != null) return false;
-        }
-        else if (!this.ownCustNo.equals(other.ownCustNo)) return false;
+        } else if (!this.ownCustNo.equals(other.ownCustNo)) return false;
         if (this.ownOperOrg == null) {
             if (other.ownOperOrg != null) return false;
-        }
-        else if (!this.ownOperOrg.equals(other.ownOperOrg)) return false;
+        } else if (!this.ownOperOrg.equals(other.ownOperOrg)) return false;
         if (this.payBeginDate == null) {
             if (other.payBeginDate != null) return false;
-        }
-        else if (!this.payBeginDate.equals(other.payBeginDate)) return false;
+        } else if (!this.payBeginDate.equals(other.payBeginDate)) return false;
         if (this.payEndDate == null) {
             if (other.payEndDate != null) return false;
-        }
-        else if (!this.payEndDate.equals(other.payEndDate)) return false;
+        } else if (!this.payEndDate.equals(other.payEndDate)) return false;
         if (this.payTotalFailureBlance == null) {
             if (other.payTotalFailureBlance != null) return false;
-        }
-        else if (!this.payTotalFailureBlance.equals(other.payTotalFailureBlance)) return false;
+        } else if (!this.payTotalFailureBlance.equals(other.payTotalFailureBlance)) return false;
         if (this.payTotalFailureitems == null) {
             if (other.payTotalFailureitems != null) return false;
-        }
-        else if (!this.payTotalFailureitems.equals(other.payTotalFailureitems)) return false;
+        } else if (!this.payTotalFailureitems.equals(other.payTotalFailureitems)) return false;
         if (this.payTotalSuccessBlance == null) {
             if (other.payTotalSuccessBlance != null) return false;
-        }
-        else if (!this.payTotalSuccessBlance.equals(other.payTotalSuccessBlance)) return false;
+        } else if (!this.payTotalSuccessBlance.equals(other.payTotalSuccessBlance)) return false;
         if (this.payTotalSuccessitems == null) {
             if (other.payTotalSuccessitems != null) return false;
-        }
-        else if (!this.payTotalSuccessitems.equals(other.payTotalSuccessitems)) return false;
+        } else if (!this.payTotalSuccessitems.equals(other.payTotalSuccessitems)) return false;
         if (this.regDate == null) {
             if (other.regDate != null) return false;
-        }
-        else if (!this.regDate.equals(other.regDate)) return false;
+        } else if (!this.regDate.equals(other.regDate)) return false;
         if (this.regOperId == null) {
             if (other.regOperId != null) return false;
-        }
-        else if (!this.regOperId.equals(other.regOperId)) return false;
+        } else if (!this.regOperId.equals(other.regOperId)) return false;
         if (this.regOperName == null) {
             if (other.regOperName != null) return false;
-        }
-        else if (!this.regOperName.equals(other.regOperName)) return false;
+        } else if (!this.regOperName.equals(other.regOperName)) return false;
         if (this.regTime == null) {
             if (other.regTime != null) return false;
-        }
-        else if (!this.regTime.equals(other.regTime)) return false;
+        } else if (!this.regTime.equals(other.regTime)) return false;
         if (this.totalAmount == null) {
             if (other.totalAmount != null) return false;
-        }
-        else if (!this.totalAmount.equals(other.totalAmount)) return false;
+        } else if (!this.totalAmount.equals(other.totalAmount)) return false;
         if (this.totalBlance == null) {
             if (other.totalBlance != null) return false;
-        }
-        else if (!this.totalBlance.equals(other.totalBlance)) return false;
+        } else if (!this.totalBlance.equals(other.totalBlance)) return false;
         if (this.version == null) {
             if (other.version != null) return false;
-        }
-        else if (!this.version.equals(other.version)) return false;
+        } else if (!this.version.equals(other.version)) return false;
         return true;
     }
 
-
     @Override
     public String toString() {
-        return "DeliveryRecordStatement [id=" + this.id + ", deliverId=" + this.deliverId + ", deliverRefNo=" + this.deliverRefNo
-                + ", monthlyStatementId=" + this.monthlyStatementId + ", monthlyStatementRefNo=" + this.monthlyStatementRefNo + ", payBeginDate="
-                + this.payBeginDate + ", payEndDate=" + this.payEndDate + ", totalBlance=" + this.totalBlance + ", interestBalance="
-                + this.interestBalance + ", totalAmount=" + this.totalAmount + ", payTotalSuccessBlance=" + this.payTotalSuccessBlance
-                + ", payTotalSuccessitems=" + this.payTotalSuccessitems + ", payTotalFailureBlance=" + this.payTotalFailureBlance
-                + ", payTotalFailureitems=" + this.payTotalFailureitems + ", ownCustNo=" + this.ownCustNo + ", ownCustName=" + this.ownCustName
-                + ", ownOperOrg=" + this.ownOperOrg + ", businStatus=" + this.businStatus + ", expressStatus=" + this.expressStatus + ", billMonth="
-                + this.billMonth + ", operOrg=" + this.operOrg + ", regOperId=" + this.regOperId + ", regOperName=" + this.regOperName + ", regDate="
-                + this.regDate + ", regTime=" + this.regTime + ", version=" + this.version + ", fileId=" + this.fileId + "]";
+        return "DeliveryRecordStatement [id=" + this.id + ", deliverId=" + this.deliverId + ", deliverRefNo="
+                + this.deliverRefNo + ", monthlyStatementId=" + this.monthlyStatementId + ", monthlyStatementRefNo="
+                + this.monthlyStatementRefNo + ", payBeginDate=" + this.payBeginDate + ", payEndDate=" + this.payEndDate
+                + ", totalBlance=" + this.totalBlance + ", interestBalance=" + this.interestBalance + ", totalAmount="
+                + this.totalAmount + ", payTotalSuccessBlance=" + this.payTotalSuccessBlance + ", payTotalSuccessitems="
+                + this.payTotalSuccessitems + ", payTotalFailureBlance=" + this.payTotalFailureBlance
+                + ", payTotalFailureitems=" + this.payTotalFailureitems + ", ownCustNo=" + this.ownCustNo
+                + ", ownCustName=" + this.ownCustName + ", ownOperOrg=" + this.ownOperOrg + ", businStatus="
+                + this.businStatus + ", expressStatus=" + this.expressStatus + ", billMonth=" + this.billMonth
+                + ", operOrg=" + this.operOrg + ", regOperId=" + this.regOperId + ", regOperName=" + this.regOperName
+                + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", version=" + this.version + ", fileId="
+                + this.fileId + "]";
     }
 
     public void saveAddInit() {
-       
+
         this.setId(SerialGenerator.getLongValue("CommissionMonthlyStatement.id"));
         this.setRegDate(BetterDateUtils.getNumDate());
         this.setRegOperId(UserUtils.getOperatorInfo().getId());
@@ -505,8 +481,8 @@ public class DeliveryRecordStatement implements BetterjrEntity {
         this.setOperOrg(UserUtils.getOperatorInfo().getOperOrg());
         this.setRegTime(BetterDateUtils.getNumTime());
         this.setVersion("1");
-        this.businStatus=DeliveryConstantCollentions.DELIVERY_STATEMENT_BUSIN_STATUS_CANUSERD;
-        this.expressStatus=DeliveryConstantCollentions.DELIVERY_STATEMENT_EXPRESS_STATUS_NOEXPRESS;
+        this.businStatus = DeliveryConstantCollentions.DELIVERY_STATEMENT_BUSIN_STATUS_CANUSERD;
+        this.expressStatus = DeliveryConstantCollentions.DELIVERY_STATEMENT_EXPRESS_STATUS_NOEXPRESS;
     }
 
     public DeliveryRecordStatement(Long anId) {
@@ -517,7 +493,5 @@ public class DeliveryRecordStatement implements BetterjrEntity {
     public DeliveryRecordStatement() {
         super();
     }
-    
-    
 
 }

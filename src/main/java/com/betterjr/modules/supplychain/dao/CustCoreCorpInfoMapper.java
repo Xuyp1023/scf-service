@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.supplychain.entity.CustCoreCorpInfo;
 
 @BetterjrMapper
-public interface CustCoreCorpInfoMapper extends Mapper<CustCoreCorpInfo> {
-}
+public interface CustCoreCorpInfoMapper extends Mapper<CustCoreCorpInfo> {}

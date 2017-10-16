@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.remote.entity.CustFileUpload;
 
 @BetterjrMapper
-public interface CustFileUploadMapper extends Mapper<CustFileUpload> {
-}
+public interface CustFileUploadMapper extends Mapper<CustFileUpload> {}

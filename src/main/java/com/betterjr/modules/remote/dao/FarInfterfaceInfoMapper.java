@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Select;
 import com.betterjr.common.annotation.BetterjrMapper;
 import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.remote.entity.*;
- 
+
 @BetterjrMapper
 public interface FarInfterfaceInfoMapper extends Mapper<FarInfterfaceInfo> {
 
@@ -19,7 +19,8 @@ public interface FarInfterfaceInfoMapper extends Mapper<FarInfterfaceInfo> {
 
     @Select("select * from T_FAR_FIELDMAP a where a.c_face = #{faceNo} and a.c_funcode=#{funCode} order by a.n_order ")
     @ResultType(FarFieldMapInfo.class)
-    public List<FarFieldMapInfo> findFieldMapByFaceNo(@Param("faceNo") String anFaceNo, @Param("funCode") String anFunNo);
+    public List<FarFieldMapInfo> findFieldMapByFaceNo(@Param("faceNo") String anFaceNo,
+            @Param("funCode") String anFunNo);
 
     @Select("select * from t_far_config a where a.c_face = #{faceNo}")
     @ResultType(FarConfigInfo.class)
@@ -27,7 +28,8 @@ public interface FarInfterfaceInfoMapper extends Mapper<FarInfterfaceInfo> {
 
     @Select("select * from T_FACE_CONVERT a where a.c_face = #{faceNo} and a.C_IO=#{inutDirect}")
     @ResultType(FaceConvertInfo.class)
-    public List<FaceConvertInfo> findFaceConvertByFaceNo(@Param("faceNo")String anFaceNo, @Param("inutDirect") String anInutDirect);
+    public List<FaceConvertInfo> findFaceConvertByFaceNo(@Param("faceNo") String anFaceNo,
+            @Param("inutDirect") String anInutDirect);
 
     @Select("select * from T_FACE_HEADER a where a.c_face = #{faceNo}")
     @ResultType(FaceHeaderInfo.class)

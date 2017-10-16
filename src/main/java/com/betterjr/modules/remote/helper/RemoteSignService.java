@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.betterjr.common.security.CustKeyManager;
 import com.betterjr.common.security.SignHelper;
- 
+
 /**
  * 数据签名实现类，不同的签名继承不同的对象
  * 
@@ -34,9 +34,9 @@ public class RemoteSignService extends RemoteAlgorithmService implements java.io
 
     public boolean verifySign(String anContent, String anSignData) {
         if (this.keyManager.getMatchKey() != null) {
-            return SignHelper.verifySign(anContent, anSignData, keyManager.getMatchKey(), algorithm, this.keyManager.getWorkCharSet());
-        }
-        else {
+            return SignHelper.verifySign(anContent, anSignData, keyManager.getMatchKey(), algorithm,
+                    this.keyManager.getWorkCharSet());
+        } else {
             return false;
         }
     }

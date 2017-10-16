@@ -6,7 +6,7 @@ import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.order.entity.ScfInvoice;
 
 @ReferClass(ScfInvoice.class)
-public class ScfInvoiceAndAccess extends ScfInvoice implements  BaseRemoteEntity {
+public class ScfInvoiceAndAccess extends ScfInvoice implements BaseRemoteEntity {
     private static final long serialVersionUID = 2216709871930966583L;
 
     private Long itemId;
@@ -19,7 +19,7 @@ public class ScfInvoiceAndAccess extends ScfInvoice implements  BaseRemoteEntity
      * 合同编号
      */
     private String agreeNo;
-    
+
     private Long custNo;
 
     public String getAgreeNo() {
@@ -54,10 +54,12 @@ public class ScfInvoiceAndAccess extends ScfInvoice implements  BaseRemoteEntity
         this.fileType = anFileType;
     }
 
+    @Override
     public Long getCustNo() {
         return this.custNo;
     }
 
+    @Override
     public void setCustNo(Long anCustNo) {
         this.custNo = anCustNo;
     }
@@ -74,12 +76,12 @@ public class ScfInvoiceAndAccess extends ScfInvoice implements  BaseRemoteEntity
         sb.append("]");
         return sb.toString();
     }
-    
-    public void initFileItemValue(CustFileItem anItem){
-       if (anItem != null){
-         this.itemName = anItem.getFileName();
-         this.itemId = anItem.getId();
-         this.fileType = anItem.getFileType();         
-       }
+
+    public void initFileItemValue(CustFileItem anItem) {
+        if (anItem != null) {
+            this.itemName = anItem.getFileName();
+            this.itemId = anItem.getId();
+            this.fileType = anItem.getFileType();
+        }
     }
 }

@@ -15,52 +15,51 @@ import com.betterjr.common.mapper.JsonMapper;
  * @param <T>
  *
  */
-public class WSInfo<T>  implements Serializable {
+public class WSInfo<T> implements Serializable {
     /**
      *
      */
     private static final long serialVersionUID = -406893397117100240L;
-    public static final String SingleNoBeanParameterKey="singleNoBeanParameter";
-    public static final String SingleNoBeanReturnKey="singleNoBeanReturn";
+    public static final String SingleNoBeanParameterKey = "singleNoBeanParameter";
+    public static final String SingleNoBeanReturnKey = "singleNoBeanReturn";
 
     /**
      * request fields
      */
-    public static final String RequestFieldTokenString="partnerToken";
-    public static final String RequestFieldSignString="sign";
-    public static final String RequestFieldDataString="data";
-    public static final String RequestFieldPartnerCodeString="partnerCode";
-    public static final String RequestFieldCertString="cert";
+    public static final String RequestFieldTokenString = "partnerToken";
+    public static final String RequestFieldSignString = "sign";
+    public static final String RequestFieldDataString = "data";
+    public static final String RequestFieldPartnerCodeString = "partnerCode";
+    public static final String RequestFieldCertString = "cert";
 
     /**
      *request data fields
      */
-    public static final String RequestDataOptypeString="opType";
-    public static final String RequestDataTokenString="token";
-    public static final String RequestDataDataString="data";
+    public static final String RequestDataOptypeString = "opType";
+    public static final String RequestDataTokenString = "token";
+    public static final String RequestDataDataString = "data";
 
     /**
      * response fields
      */
-    public static final String ResponseFieldTokenString="partnerToken";
-    public static final String ResponseFieldSignString="sign";
-    public static final String ResponseFieldDataString="data";
-    public static final String ResponseFieldPartnerCodeString="partnerCode";
+    public static final String ResponseFieldTokenString = "partnerToken";
+    public static final String ResponseFieldSignString = "sign";
+    public static final String ResponseFieldDataString = "data";
+    public static final String ResponseFieldPartnerCodeString = "partnerCode";
 
     /**
      *response data fields
      */
-    public static final String ResponseDataOptypeString="opType";
-    public static final String ResponseDataTokenString="token";
-    public static final String ResponseDataDataString="data";
-    public static final String ResponseDataStatusString="status";
-    public static final String ResponseDataMessageString="msg";
-
+    public static final String ResponseDataOptypeString = "opType";
+    public static final String ResponseDataTokenString = "token";
+    public static final String ResponseDataDataString = "data";
+    public static final String ResponseDataStatusString = "status";
+    public static final String ResponseDataMessageString = "msg";
 
     /**
      * 返回状态，成功，失败
      */
-    private boolean sucess=true;
+    private boolean sucess = true;
     /**
      * 返回状态码
      */
@@ -117,8 +116,6 @@ public class WSInfo<T>  implements Serializable {
         this.orignInput = anOrignInput;
     }
 
-
-
     public String getMessage() {
         return this.message;
     }
@@ -130,8 +127,6 @@ public class WSInfo<T>  implements Serializable {
     public List<Map<String, Object>> getOrignData() {
         return this.orignData;
     }
-
-
 
     public void setMessage(final String anMessage) {
         this.message = anMessage;
@@ -186,12 +181,13 @@ public class WSInfo<T>  implements Serializable {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return JsonMapper.toJsonString(this);
     }
 
-    public static WSInfo buildInput(final String globalToken, final String partnerCode, final Map<String, Object> objMap, final String opType, final String token, final Object inputObj) {
-        final WSInfo info=new WSInfo();
+    public static WSInfo buildInput(final String globalToken, final String partnerCode,
+            final Map<String, Object> objMap, final String opType, final String token, final Object inputObj) {
+        final WSInfo info = new WSInfo();
         info.setGlobalToken(globalToken);
         info.setToken(token);
         info.setOpType(opType);
@@ -201,12 +197,12 @@ public class WSInfo<T>  implements Serializable {
         return info;
     }
 
-    public static WSInfo buildErrOutput(final WebServiceErrorCode anCode, final WorkFarFaceInfo face){
+    public static WSInfo buildErrOutput(final WebServiceErrorCode anCode, final WorkFarFaceInfo face) {
         /*        String codeString=anCode.getStrCode();
         String defaultCodeMessage=anCode.getMsg();
         FaceReturnCode faceCode=face.findReturnCode(codeString);
          */
-        final WSInfo info=new WSInfo();
+        final WSInfo info = new WSInfo();
         info.setReturnCode(anCode.getStrCode());
         info.setSucess(false);
         info.errorCode = anCode;

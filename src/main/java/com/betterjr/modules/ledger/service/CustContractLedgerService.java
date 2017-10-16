@@ -23,12 +23,11 @@ import com.betterjr.modules.ledger.entity.CustContractLedger;
  *
  */
 @Service
-public class CustContractLedgerService extends BaseService<CustContractLedgerMapper,CustContractLedger>{
-    
-    private static final Logger logger=LoggerFactory.getLogger(CustContractLedgerService.class);
-    
+public class CustContractLedgerService extends BaseService<CustContractLedgerMapper, CustContractLedger> {
 
-    @Reference(interfaceClass=ICustRelationConfigService.class)
+    private static final Logger logger = LoggerFactory.getLogger(CustContractLedgerService.class);
+
+    @Reference(interfaceClass = ICustRelationConfigService.class)
     private ICustRelationConfigService custRelationConfigService;
 
     /***
@@ -36,14 +35,14 @@ public class CustContractLedgerService extends BaseService<CustContractLedgerMap
      * @param anCustNo
      * @return
      */
-    public CustContractLedger initCustContractLedger(Long anCustNo){
-        List<CustContractLedger> custContractractList=this.selectByProperty("custNo", anCustNo,"regDate DESC");
-        if(custContractractList!=null && custContractractList.size()>0){
+    public CustContractLedger initCustContractLedger(Long anCustNo) {
+        List<CustContractLedger> custContractractList = this.selectByProperty("custNo", anCustNo, "regDate DESC");
+        if (custContractractList != null && custContractractList.size() > 0) {
             return Collections3.getFirst(custContractractList);
-        }else{
-            FactorBusinessRequestData businessData=custRelationConfigService.findBusinessCustInfo(anCustNo);
-            logger.info("businessData:"+businessData);
-            CustContractLedger custContractLedger=new CustContractLedger();
+        } else {
+            FactorBusinessRequestData businessData = custRelationConfigService.findBusinessCustInfo(anCustNo);
+            logger.info("businessData:" + businessData);
+            CustContractLedger custContractLedger = new CustContractLedger();
             BeanMapper.copy(businessData, custContractLedger);
             custContractLedger.initValue();
             custContractLedger.setRepresentative(businessData.getOperName());
@@ -52,37 +51,38 @@ public class CustContractLedgerService extends BaseService<CustContractLedgerMap
             return custContractLedger;
         }
     }
-    
-    public void addCustContractLedger(CustContractLedger custContractLedger){
+
+    public void addCustContractLedger(CustContractLedger custContractLedger) {
         this.insert(custContractLedger);
     }
-    
+
     // 只有添加的时候才能更新合同编号信息
-    public boolean svaeCustContractLedger(CustContractLedger anCustContractLedger){
+    public boolean svaeCustContractLedger(CustContractLedger anCustContractLedger) {
         // 首先通过客户号与合同编号查询信息是否存在，如果不存在，则做添加操作，否则做修改操作
-        CustContractLedger custContractLedger=findCustContractByCustNoAndContractId(anCustContractLedger.getCustNo(),anCustContractLedger.getContractId());
-        if(custContractLedger==null){
+        CustContractLedger custContractLedger = findCustContractByCustNoAndContractId(anCustContractLedger.getCustNo(),
+                anCustContractLedger.getContractId());
+        if (custContractLedger == null) {
             addCustContractLedger(anCustContractLedger);
             return true;
-        }else{
-            Map<String,Object> anMap=new HashMap<String,Object>();
+        } else {
+            Map<String, Object> anMap = new HashMap<String, Object>();
             anMap.put("custNo", anCustContractLedger.getCustNo());
             anMap.put("contractId", anCustContractLedger.getContractId());
-            return this.updateByExampleSelective(anCustContractLedger, anMap)>0;
+            return this.updateByExampleSelective(anCustContractLedger, anMap) > 0;
         }
     }
-    
+
     /***
      * 根据客户号，合同号查询合同台账信息
      * @param anCustNo
      * @param anContractId
      * @return
      */
-    public CustContractLedger findCustContractByCustNoAndContractId(Long anCustNo,Long anContractId){
-        Map<String,Object> anMap=new HashMap<String, Object>();
+    public CustContractLedger findCustContractByCustNoAndContractId(Long anCustNo, Long anContractId) {
+        Map<String, Object> anMap = new HashMap<String, Object>();
         anMap.put("custNo", anCustNo);
         anMap.put("contractId", anContractId);
         return Collections3.getFirst(this.selectByProperty(anMap));
     }
-    
+
 }

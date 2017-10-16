@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.alibaba.dubbo.config.annotation.Reference;
@@ -49,7 +51,8 @@ public class ScfSupplierOfferService extends BaseService<ScfSupplierOfferMapper,
         BTAssert.notNull(anOffer.getCoreCustNo(), "请选择核心企业,操作失败");
         BTAssert.notNull(anOffer.getCoreCustRate(), "请填写利率,操作失败");
         BTAssert.notNull(UserUtils.getOperatorInfo(), "请先登录,操作失败");
-        logger.info("Begin to add saveAddSupplierOffer" + UserUtils.getOperatorInfo().getName() + " anOffer=" + anOffer);
+        logger.info(
+                "Begin to add saveAddSupplierOffer" + UserUtils.getOperatorInfo().getName() + " anOffer=" + anOffer);
         ScfSupplierOffer supplierOffer = checkIsOrNotExit(anOffer.getCustNo(), anOffer.getCoreCustNo(),
                 OfferConstantCollentions.OFFER_BUSIN_STATUS_EFFECTIVE);
         BTAssert.isNull(supplierOffer, "当前企业已经设置了利率，请修改!");
@@ -79,7 +82,8 @@ public class ScfSupplierOfferService extends BaseService<ScfSupplierOfferMapper,
         BTAssert.notNull(anCoreCustRate, "请填写利率,操作失败");
         BTAssert.notNull(UserUtils.getOperatorInfo(), "请先登录,操作失败");
         logger.info("Begin to  saveUpdateSupplierOffer" + UserUtils.getOperatorInfo().getName());
-        ScfSupplierOffer supplierOffer = checkIsOrNotExit(anCustNo, anCoreCustNo, OfferConstantCollentions.OFFER_BUSIN_STATUS_EFFECTIVE);
+        ScfSupplierOffer supplierOffer = checkIsOrNotExit(anCustNo, anCoreCustNo,
+                OfferConstantCollentions.OFFER_BUSIN_STATUS_EFFECTIVE);
         BTAssert.notNull(supplierOffer, "还没有新增当前供应商的利率,操作失败");
         checkStatus(supplierOffer.getOperOrg(), UserUtils.getOperatorInfo().getOperOrg(), false, "你没有当前企业的操作权限！操作失败");
         supplierOffer.setBusinStatus(OfferConstantCollentions.OFFER_BUSIN_STATUS_NOEFFECTIVE);
@@ -104,7 +108,8 @@ public class ScfSupplierOfferService extends BaseService<ScfSupplierOfferMapper,
         BTAssert.notNull(anCoreCustNo, "请选择核心企业,查询失败");
         BTAssert.notNull(UserUtils.getOperatorInfo(), "请先登录,查询失败");
         logger.info("Begin to  findOffer" + UserUtils.getOperatorInfo().getName());
-        ScfSupplierOffer supplierOffer = checkIsOrNotExit(anCustNo, anCoreCustNo, OfferConstantCollentions.OFFER_BUSIN_STATUS_EFFECTIVE);
+        ScfSupplierOffer supplierOffer = checkIsOrNotExit(anCustNo, anCoreCustNo,
+                OfferConstantCollentions.OFFER_BUSIN_STATUS_EFFECTIVE);
         BTAssert.notNull(supplierOffer, "还没有新增当前供应商的利率,查询失败");
         /* checkStatus(supplierOffer.getOperOrg(), UserUtils.getOperatorInfo().getOperOrg(), false, "你没有当前企业的操作权限！操作失败"); */
         logger.info("end to  findOffer" + UserUtils.getOperatorInfo().getName());
@@ -153,7 +158,8 @@ public class ScfSupplierOfferService extends BaseService<ScfSupplierOfferMapper,
      * @param anPageSize
      * @return
      */
-    public Page<ScfSupplierOffer> queryScfSupplierOfferPage(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfSupplierOffer> queryScfSupplierOfferPage(Map<String, Object> anMap, String anFlag, int anPageNum,
+            int anPageSize) {
 
         BTAssert.notNull(anMap, "查询条件为空,操作失败");
         BTAssert.notNull(anMap.get("coreCustNo"), "查询条件为空,操作失败");
@@ -162,7 +168,8 @@ public class ScfSupplierOfferService extends BaseService<ScfSupplierOfferMapper,
         anMap = Collections3.filterMap(anMap, new String[] { "custNo", "coreCustNo" });
         anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
         anMap.put("businStatus", OfferConstantCollentions.OFFER_BUSIN_STATUS_EFFECTIVE);
-        Page<ScfSupplierOffer> offerList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
+        Page<ScfSupplierOffer> offerList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag),
+                "id desc");
         logger.info("end to  queryScfSupplierOfferPage" + UserUtils.getOperatorInfo().getName());
         return offerList;
 
@@ -172,7 +179,7 @@ public class ScfSupplierOfferService extends BaseService<ScfSupplierOfferMapper,
      * 检查状态信息
      */
     public void checkStatus(String anBusinStatus, String anTargetStatus, boolean anFlag, String anMessage) {
-        if (BetterStringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
+        if (StringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
             logger.warn(anMessage);
             throw new BytterTradeException(40001, anMessage);
         }
@@ -188,15 +195,15 @@ public class ScfSupplierOfferService extends BaseService<ScfSupplierOfferMapper,
      */
     public ScfSupplierOffer checkIsOrNotExit(Long anCustNo, Long anCoreCustNo, String anStatus) {
 
-        Map<String, Object> paramMap = QueryTermBuilder.newInstance().put("custNo", anCustNo).put("coreCustNo", anCoreCustNo)
-                .put("businStatus", anStatus).put("operOrg", baseService.findBaseInfo(anCoreCustNo).getOperOrg()).build();
+        Map<String, Object> paramMap = QueryTermBuilder.newInstance().put("custNo", anCustNo)
+                .put("coreCustNo", anCoreCustNo).put("businStatus", anStatus)
+                .put("operOrg", baseService.findBaseInfo(anCoreCustNo).getOperOrg()).build();
 
         List<ScfSupplierOffer> selectByProperty = this.selectByProperty(paramMap);
         if (!Collections3.isEmpty(selectByProperty)) {
 
             return Collections3.getFirst(selectByProperty);
-        }
-        else {
+        } else {
 
             return null;
         }

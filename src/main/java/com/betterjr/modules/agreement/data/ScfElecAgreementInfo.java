@@ -3,6 +3,9 @@ package com.betterjr.modules.agreement.data;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.mapper.entity.ReferClass;
 import com.betterjr.modules.agreement.entity.ScfElecAgreeStub;
@@ -21,7 +24,7 @@ public class ScfElecAgreementInfo extends ScfElecAgreement {
     // 保理公司名称
     private String factorName;
 
-    //本方的签署状态。和合同的签署状态不同
+    // 本方的签署状态。和合同的签署状态不同
     private String subscribed;
 
     private String billNo;
@@ -33,10 +36,10 @@ public class ScfElecAgreementInfo extends ScfElecAgreement {
     private String endDate;
 
     public String getSubscribed() {
-        
+
         return this.subscribed;
     }
- 
+
     public String getBuyer() {
         return this.buyer;
     }
@@ -47,17 +50,19 @@ public class ScfElecAgreementInfo extends ScfElecAgreement {
 
     public String getFactorName() {
 
-        return BetterStringUtils.isBlank(this.factorName) ? this.getFactorNo() : this.factorName;
+        return StringUtils.isBlank(this.factorName) ? this.getFactorNo() : this.factorName;
     }
 
     public void setFactorName(String anFactorName) {
         this.factorName = anFactorName;
     }
 
+    @Override
     public String getSupplier() {
         return this.supplier;
     }
 
+    @Override
     public void setSupplier(String anSupplier) {
         this.supplier = anSupplier;
     }
@@ -128,11 +133,12 @@ public class ScfElecAgreementInfo extends ScfElecAgreement {
         this.endDate = anEndDate;
     }
 
-    //    public void addAttachValue(ScfRequest anRequest) {
-//        if (anRequest != null) {
-//            BeanMapperHelper.invoke(anRequest, this, "billNo:billNo;description:description;confirmBalance:confirmBalance;balance:balance");
-//        }
-//    }  
+    // public void addAttachValue(ScfRequest anRequest) {
+    // if (anRequest != null) {
+    // BeanMapperHelper.invoke(anRequest, this,
+    // "billNo:billNo;description:description;confirmBalance:confirmBalance;balance:balance");
+    // }
+    // }
     /**
      * 设置合同签署状态，并赋予本方的签署状态
      * @param anStubInfoList 签署方信息列表
@@ -140,17 +146,16 @@ public class ScfElecAgreementInfo extends ScfElecAgreement {
      */
     public void putStubInfos(List<ScfElecAgreeStubInfo> anStubInfoList, Set<Long> anCustNoList) {
         this.stubInfos = anStubInfoList;
-        
-        //如果客户号和本方的客户号一致，则为本方的操作状态
-        for(ScfElecAgreeStub elecAgreeStub : anStubInfoList){
-            if (anCustNoList.contains(elecAgreeStub.getCustNo())){
-               this.subscribed = elecAgreeStub.getOperStatus();
-               break;
+
+        // 如果客户号和本方的客户号一致，则为本方的操作状态
+        for (ScfElecAgreeStub elecAgreeStub : anStubInfoList) {
+            if (anCustNoList.contains(elecAgreeStub.getCustNo())) {
+                this.subscribed = elecAgreeStub.getOperStatus();
+                break;
             }
         }
     }
- 
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

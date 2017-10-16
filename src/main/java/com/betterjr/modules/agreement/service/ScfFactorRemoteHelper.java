@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +12,10 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.dubbo.config.annotation.Reference;
-import com.betterjr.common.exception.BytterTradeException;
-import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.DictUtils;
 import com.betterjr.common.utils.MathExtend;
-import com.betterjr.modules.account.data.SaleRequestFace;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.account.entity.SaleAccoRequestInfo;
 import com.betterjr.modules.agreement.entity.FaceTradeResult;
@@ -78,7 +76,7 @@ public class ScfFactorRemoteHelper extends Thread {
      * @return
      */
     public boolean sendValidSMS(String anRequestNo, Long anCustNo, String anVcode) {
-        if (BetterStringUtils.isBlank(anVcode)) {
+        if (StringUtils.isBlank(anVcode)) {
             return false;
         }
 
@@ -110,8 +108,7 @@ public class ScfFactorRemoteHelper extends Thread {
                 anElecAgreement.setSignId(result.getMessageID());
                 anElecAgreement.setSignStatus("2");
                 anElecAgreement.setDealFlag("1");
-            }
-            else {
+            } else {
                 anElecAgreement.setSignStatus("3");
                 anElecAgreement.setDealFlag("2");
             }
@@ -128,10 +125,9 @@ public class ScfFactorRemoteHelper extends Thread {
         RemoteResultInfo remoteResult;
         FaceTradeResult result;
         try {
-            if (BetterStringUtils.isBlank(vcode)) {
+            if (StringUtils.isBlank(vcode)) {
                 remoteResult = remoteService.sendSMS(requestNo, custNo);
-            }
-            else {
+            } else {
                 remoteResult = remoteService.validateSMS(requestNo, custNo, vcode);
             }
 
@@ -170,7 +166,8 @@ public class ScfFactorRemoteHelper extends Thread {
         dealRelationStatus(true);
     }
 
-    public Map<String, Object> dealAccoRequest(SaleAccoRequestInfo request, CustRelation custRelation, CustOperatorInfo anOperator) {
+    public Map<String, Object> dealAccoRequest(SaleAccoRequestInfo request, CustRelation custRelation,
+            CustOperatorInfo anOperator) {
         RemoteResultInfo<FaceTradeResult> remoteResult;
         FaceTradeResult result;
         String agencyNo = request.getAgencyNo();
@@ -178,8 +175,7 @@ public class ScfFactorRemoteHelper extends Thread {
         Map<String, Object> resultData = new HashMap();
         if ("08".equals(request.getBusinFlag())) {
             remoteResult = scfService.mechOpenAcco(request);
-        }
-        else {
+        } else {
             remoteResult = scfService.mechModifyAcco(request);
         }
         if (remoteResult.isSucess()) {
@@ -197,11 +193,11 @@ public class ScfFactorRemoteHelper extends Thread {
                     } // 已经开户
                     else if ("3".equals(result.getStatus())) {
                         custRelation.setBusinStatus("3");
-                    }
-                    else {
+                    } else {
                         logger.warn("request CustRelation is null");
                     }
-                    this.relationService.saveFactorRelationInfo(custRelation.getId(), result.getSaleCustNo(), custRelation.getBusinStatus());
+                    this.relationService.saveFactorRelationInfo(custRelation.getId(), result.getSaleCustNo(),
+                            custRelation.getBusinStatus());
                 }
             }
             logger.info(result.toString());
@@ -218,30 +214,31 @@ public class ScfFactorRemoteHelper extends Thread {
             List<CustRelation> dataList = null;
             if (anCoreCustNo) {
                 dataList = this.relationService.findFactorRelaByCoreCustNo(agencyNo);
-            }
-            else {
+            } else {
                 dataList = this.relationService.findFactorRelaByRough(agencyNo);
             }
             if (Collections3.isEmpty(dataList) == false) {
                 ScfRemoteService remoteService = RemoteProxyFactory.createService(agencyNo, ScfRemoteService.class);
                 for (CustRelation scfFactorRel : dataList) {
-                    FactorParam param = DictUtils.loadObject("FactorParam", String.valueOf(scfFactorRel.getRelateCustno()), FactorParam.class);
-                    if(param == null || (param.getRemoting() == 0)){
-                        
-                       continue;
+                    FactorParam param = DictUtils.loadObject("FactorParam",
+                            String.valueOf(scfFactorRel.getRelateCustno()), FactorParam.class);
+                    if (param == null || (param.getRemoting() == 0)) {
+
+                        continue;
                     }
-                    
+
                     logger.info("Query Relation Info :" + scfFactorRel);
                     remoteResult = remoteService.queryMechAcco(scfFactorRel);
-                    if (remoteResult.isSucess()){
+                    if (remoteResult.isSucess()) {
                         result = (FaceTradeResult) remoteResult.getResult();
-                        if ("0".equals(result.getStatus()) == false){
-                            this.relationService.saveFactorRelationInfo(scfFactorRel.getId(),scfFactorRel.getPartnerCustNo(), "3");
+                        if ("0".equals(result.getStatus()) == false) {
+                            this.relationService.saveFactorRelationInfo(scfFactorRel.getId(),
+                                    scfFactorRel.getPartnerCustNo(), "3");
                         }
-                        
-                        //表示有授信信息
-                        if (MathExtend.smallValue(result.getShares())== false){
-                            //TODO 暂时不处理授权信息
+
+                        // 表示有授信信息
+                        if (MathExtend.smallValue(result.getShares()) == false) {
+                            // TODO 暂时不处理授权信息
                         }
                     }
                 }
@@ -261,7 +258,7 @@ public class ScfFactorRemoteHelper extends Thread {
             ScfRemoteService remoteService = RemoteProxyFactory.createService(agencyNo, ScfRemoteService.class);
             remoteResult = remoteService.queryFactorProduct(new HashMap());
             if (remoteResult.isSucess()) {
-                result = (List<ScfProduct>) remoteResult.getData();
+                result = remoteResult.getData();
                 for (ScfProduct product : result) {
                     product.setFactorCorp(agencyNo);
                     this.scfProductService.saveOrUpdateProduct(product);
@@ -294,8 +291,9 @@ public class ScfFactorRemoteHelper extends Thread {
 
     protected ScfRequest dealFactorAppRequest(ScfRequest anRequest, boolean anWorkApp) {
         logger.info("dealFactorAppRequest :" + anRequest);
-        ScfRemoteService remoteService = RemoteProxyFactory
-                .createService(DictUtils.getDictCode("ScfFactorGroup", String.valueOf(anRequest.getFactorNo())), ScfRemoteService.class);
+        ScfRemoteService remoteService = RemoteProxyFactory.createService(
+                DictUtils.getDictCode("ScfFactorGroup", String.valueOf(anRequest.getFactorNo())),
+                ScfRemoteService.class);
         RemoteResultInfo remoteResult;
         ScfRequest result;
         try {
@@ -309,24 +307,20 @@ public class ScfFactorRemoteHelper extends Thread {
                     anRequest.setCreditMoney(MathExtend.defaultZero(result.getCreditMoney()));
                     anRequest.setRemainMoney(MathExtend.defaultZero(result.getRemainMoney()));
                     logger.info("return dealFactorAppRequest anRequest :" + anRequest);
-                }
-                else {
+                } else {
                     logger.warn("return dealFactorAppRequest data false " + remoteResult);
                     anRequest.setOutStatus("X");
                 }
-            }
-            else {
+            } else {
                 remoteResult = remoteService.sendAppFinancingState(anRequest);
                 if (remoteResult.isSucess()) {
                     FaceTradeResult tradeResult = (FaceTradeResult) remoteResult.getResult();
                     if ("1".equals(tradeResult.getStatus())) {
                         anRequest.setTradeStatus(tradeResult.getApplayStatus());
-                    }
-                    else {
+                    } else {
                         logger.error("send request status has error \n" + anRequest);
                     }
-                }
-                else {
+                } else {
                     logger.error("send request status has error \n" + anRequest);
 
                     anRequest.setOutStatus("X");

@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.remote.entity.FarFieldMapInfo;
 
 @BetterjrMapper
-public interface FarFieldMapInfoMapper extends Mapper<FarFieldMapInfo> {
-}
+public interface FarFieldMapInfoMapper extends Mapper<FarFieldMapInfo> {}

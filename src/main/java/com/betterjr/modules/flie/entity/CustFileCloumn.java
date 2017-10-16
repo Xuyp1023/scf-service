@@ -244,48 +244,40 @@ public class CustFileCloumn implements BetterjrEntity {
         CustFileCloumn other = (CustFileCloumn) obj;
         if (this.businStatus == null) {
             if (other.businStatus != null) return false;
-        }
-        else if (!this.businStatus.equals(other.businStatus)) return false;
+        } else if (!this.businStatus.equals(other.businStatus)) return false;
         if (this.cloumnOrder == null) {
             if (other.cloumnOrder != null) return false;
-        }
-        else if (!this.cloumnOrder.equals(other.cloumnOrder)) return false;
+        } else if (!this.cloumnOrder.equals(other.cloumnOrder)) return false;
         if (this.cloumnProperties == null) {
             if (other.cloumnProperties != null) return false;
-        }
-        else if (!this.cloumnProperties.equals(other.cloumnProperties)) return false;
+        } else if (!this.cloumnProperties.equals(other.cloumnProperties)) return false;
         if (this.id == null) {
             if (other.id != null) return false;
-        }
-        else if (!this.id.equals(other.id)) return false;
+        } else if (!this.id.equals(other.id)) return false;
         if (this.infoType == null) {
             if (other.infoType != null) return false;
-        }
-        else if (!this.infoType.equals(other.infoType)) return false;
+        } else if (!this.infoType.equals(other.infoType)) return false;
         if (this.isMust == null) {
             if (other.isMust != null) return false;
-        }
-        else if (!this.isMust.equals(other.isMust)) return false;
+        } else if (!this.isMust.equals(other.isMust)) return false;
         if (this.regDate == null) {
             if (other.regDate != null) return false;
-        }
-        else if (!this.regDate.equals(other.regDate)) return false;
+        } else if (!this.regDate.equals(other.regDate)) return false;
         if (this.regTime == null) {
             if (other.regTime != null) return false;
-        }
-        else if (!this.regTime.equals(other.regTime)) return false;
+        } else if (!this.regTime.equals(other.regTime)) return false;
         if (this.upFlag == null) {
             if (other.upFlag != null) return false;
-        }
-        else if (!this.upFlag.equals(other.upFlag)) return false;
+        } else if (!this.upFlag.equals(other.upFlag)) return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "CustFileCloumn [id=" + this.id + ", infoType=" + this.infoType + ", upFlag=" + this.upFlag + ", businStatus=" + this.businStatus
-                + ", cloumnOrder=" + this.cloumnOrder + ", cloumnProperties=" + this.cloumnProperties + ", cloumnName=" + this.cloumnName
-                + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", isMust=" + this.isMust + "]";
+        return "CustFileCloumn [id=" + this.id + ", infoType=" + this.infoType + ", upFlag=" + this.upFlag
+                + ", businStatus=" + this.businStatus + ", cloumnOrder=" + this.cloumnOrder + ", cloumnProperties="
+                + this.cloumnProperties + ", cloumnName=" + this.cloumnName + ", regDate=" + this.regDate + ", regTime="
+                + this.regTime + ", isMust=" + this.isMust + "]";
     }
 
     public CustFileCloumn() {

@@ -3,6 +3,7 @@ package com.betterjr.modules.loan.service;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,46 +19,46 @@ import com.betterjr.modules.loan.entity.ScfRequest;
 
 @Service
 public class ScfAssetCheckService extends BaseService<ScfAssetCheckMapper, ScfAssetCheck> {
-	
-	@Autowired
-	private ScfRequestService requestService;
+
+    @Autowired
+    private ScfRequestService requestService;
     @Autowired
     private CustAccountService custAccountService;
 
     public ScfAssetCheck addAssetCheck(ScfAssetCheck anCheck) {
         BTAssert.notNull(anCheck, "保存记录失败-anCheck不能为空");
-        
-        if(BetterStringUtils.isNotEmpty(anCheck.getRequestNo())){
-        	//删除原有的登记
-        	ScfAssetCheck oldCheck = findAssestCheckByRequestNo(anCheck.getRequestNo());
-        	if(oldCheck != null){
-        		this.delete(oldCheck);
-        	}
+
+        if (StringUtils.isNotEmpty(anCheck.getRequestNo())) {
+            // 删除原有的登记
+            ScfAssetCheck oldCheck = findAssestCheckByRequestNo(anCheck.getRequestNo());
+            if (oldCheck != null) {
+                this.delete(oldCheck);
+            }
         }
-        
+
         anCheck.init();
         this.insert(anCheck);
         return anCheck;
     }
-    
-    public ScfAssetCheck findAssestCheck(Long anId){
-		BTAssert.notNull(anId, "查询失败anId不能为空");
-		ScfAssetCheck check = this.selectByPrimaryKey(anId);
-		ScfRequest request = requestService.findRequestByRequestNo(check.getRequestNo());
-		check.setCustName(custAccountService.queryCustName(request.getCustNo()));
-		return check;
-	}
-    
-    public ScfAssetCheck findAssestCheckByRequestNo(String anRequestNo){
-    	BTAssert.notNull(anRequestNo, "查询失败anId不能为空");
-    	Map<String, Object> map = QueryTermBuilder.newInstance().put("requestNo", anRequestNo).build();
-    	List<ScfAssetCheck> list = this.selectByClassProperty(ScfAssetCheck.class, map,"id desc");
-    	ScfAssetCheck check = null;
-    	if(!Collections3.isEmpty(list)){
-    		check = list.get(0);
-    		ScfRequest request = requestService.findRequestByRequestNo(check.getRequestNo());
-    		check.setCustName(custAccountService.queryCustName(request.getCustNo()));
-    	}
-		return check;
+
+    public ScfAssetCheck findAssestCheck(Long anId) {
+        BTAssert.notNull(anId, "查询失败anId不能为空");
+        ScfAssetCheck check = this.selectByPrimaryKey(anId);
+        ScfRequest request = requestService.findRequestByRequestNo(check.getRequestNo());
+        check.setCustName(custAccountService.queryCustName(request.getCustNo()));
+        return check;
+    }
+
+    public ScfAssetCheck findAssestCheckByRequestNo(String anRequestNo) {
+        BTAssert.notNull(anRequestNo, "查询失败anId不能为空");
+        Map<String, Object> map = QueryTermBuilder.newInstance().put("requestNo", anRequestNo).build();
+        List<ScfAssetCheck> list = this.selectByClassProperty(ScfAssetCheck.class, map, "id desc");
+        ScfAssetCheck check = null;
+        if (!Collections3.isEmpty(list)) {
+            check = list.get(0);
+            ScfRequest request = requestService.findRequestByRequestNo(check.getRequestNo());
+            check.setCustName(custAccountService.queryCustName(request.getCustNo()));
+        }
+        return check;
     }
 }

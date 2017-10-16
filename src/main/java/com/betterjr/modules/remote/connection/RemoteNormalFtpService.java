@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.PrintCommandListener;
 import org.apache.commons.net.ftp.*;
 
@@ -22,7 +23,8 @@ public class RemoteNormalFtpService extends LocateConnection {
     private FTPClient ftpsClient;
 
     @Override
-    public void init(String anUserName, String anPass, boolean anUseSecue, int anTimeOut, WorkFarFunction func, RemoteConnectionFactory anFactory) {
+    public void init(String anUserName, String anPass, boolean anUseSecue, int anTimeOut, WorkFarFunction func,
+            RemoteConnectionFactory anFactory) {
         FTPClientConfig conf = new FTPClientConfig(FTPClientConfig.SYST_UNIX);
         conf.setServerLanguageCode("EN");
         conf.setDefaultDateFormatStr("yyyy-MM-dd");
@@ -34,8 +36,7 @@ public class RemoteNormalFtpService extends LocateConnection {
             tmpFtps = new FTPSClient(true);
             ftpsClient = tmpFtps;
             logger.info("use secure ftps" + this.uri);
-        }
-        else {
+        } else {
             ftpsClient = new FTPClient();
         }
         try {
@@ -44,7 +45,8 @@ public class RemoteNormalFtpService extends LocateConnection {
             ftpsClient.setControlEncoding(userCharSet);
             ftpsClient.setBufferSize(1024 * 1024);
             if (anUseSecue) {
-                tmpFtps.setKeyManager(KeyReader.getKeyManager(func.getWorkFace().getSftpKeyPath(), func.getWorkFace().getSftpPass()));
+                tmpFtps.setKeyManager(
+                        KeyReader.getKeyManager(func.getWorkFace().getSftpKeyPath(), func.getWorkFace().getSftpPass()));
                 tmpFtps.execPBSZ(0);
                 tmpFtps.execPROT("P");
                 tmpFtps.setUseClientMode(true);
@@ -68,8 +70,7 @@ public class RemoteNormalFtpService extends LocateConnection {
     public boolean checkExists(String anPath, boolean isDir) {
         if (isDir) {
             return checkDirExists(anPath);
-        }
-        else {
+        } else {
             return checkFileExists(anPath);
         }
     }
@@ -80,8 +81,7 @@ public class RemoteNormalFtpService extends LocateConnection {
                 return true;
             }
         }
-        catch (IOException e) {
-        }
+        catch (IOException e) {}
         return false;
     }
 
@@ -113,6 +113,7 @@ public class RemoteNormalFtpService extends LocateConnection {
      *            本地路径
      * @return 下载是否成功
      */
+    @Override
     public boolean download(String remotePath, String localPath) {
         if (ftpsClient == null) {
             return false;
@@ -133,8 +134,7 @@ public class RemoteNormalFtpService extends LocateConnection {
                 tmpFile.renameTo(file);
                 logger.info("ftp success download file " + remotePath);
                 res = true;
-            }
-            else {
+            } else {
                 logger.error("ftp download path is not exists :" + directory);
             }
         }
@@ -178,6 +178,7 @@ public class RemoteNormalFtpService extends LocateConnection {
      *            ftp路径
      * @return 上传是否成功
      */
+    @Override
     public boolean upload(String anLocalPath, String anFileName, String anRemotePath) {
         if (ftpsClient == null) {
             return false;
@@ -189,7 +190,7 @@ public class RemoteNormalFtpService extends LocateConnection {
             File file = new File(anLocalPath);
 
             // 检查ftp服务器上的目录是否存在，如果不存在则层级的创建目录.
-            if (checkDirExists(anRemotePath ) == false) {
+            if (checkDirExists(anRemotePath) == false) {
                 makeDirectory(anRemotePath);
             }
 
@@ -197,8 +198,8 @@ public class RemoteNormalFtpService extends LocateConnection {
                 fileStream = new FileInputStream(file);
                 ftpsClient.setFileType(FTP.BINARY_FILE_TYPE);
                 ftpsClient.changeWorkingDirectory(anRemotePath);
-                if (BetterStringUtils.isBlank(anFileName)){
-                    anFileName= file.getName();
+                if (StringUtils.isBlank(anFileName)) {
+                    anFileName = file.getName();
                 }
                 res = ftpsClient.storeFile(file.getName(), fileStream);
             }
@@ -218,6 +219,7 @@ public class RemoteNormalFtpService extends LocateConnection {
      * 
      * @throws IOException
      */
+    @Override
     public void close() {
         if (ftpsClient != null) {
             try {
@@ -245,6 +247,7 @@ public class RemoteNormalFtpService extends LocateConnection {
      * @return
      * @throws IOException
      */
+    @Override
     public boolean delete(String remotePath) {
         try {
             return ftpsClient.deleteFile(remotePath) || deleteDir(remotePath);
@@ -263,13 +266,13 @@ public class RemoteNormalFtpService extends LocateConnection {
      * @return
      * @throws IOException
      */
+    @Override
     public boolean deleteDir(String remotePath) {
         try {
             for (FTPFile ftpFile : listFiles(remotePath)) {
                 if (ftpFile.isDirectory()) {
                     deleteDir(remotePath + "/" + ftpFile.getName());
-                }
-                else {
+                } else {
                     ftpsClient.deleteFile(remotePath + "/" + ftpFile.getName());
                 }
             }
@@ -290,6 +293,7 @@ public class RemoteNormalFtpService extends LocateConnection {
      * @return
      * @throws IOException
      */
+    @Override
     public boolean rename(String remoteOldPath, String remoteNewPath) {
         try {
 

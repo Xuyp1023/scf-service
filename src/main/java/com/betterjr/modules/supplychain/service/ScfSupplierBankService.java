@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -68,13 +69,13 @@ public class ScfSupplierBankService extends BaseService<ScfSupplierBankMapper, S
         termMap.put("coreOperOrg", anCoreOperOrg);
         termMap.put("btNo", anBtCustNo);
         final ScfSupplierBank supplier = Collections3.getFirst(this.selectByProperty(termMap));
-        logger.info("findCustNoByBtCustNo anCoreOperOrg=" + anCoreOperOrg + ", anBtCustNo = " + anBtCustNo + ", " + supplier);
+        logger.info("findCustNoByBtCustNo anCoreOperOrg=" + anCoreOperOrg + ", anBtCustNo = " + anBtCustNo + ", "
+                + supplier);
         if (supplier == null) {
 
             // 表示不存在关联关系
             return null;
-        }
-        else {
+        } else {
 
             return supplier;
         }
@@ -87,7 +88,7 @@ public class ScfSupplierBankService extends BaseService<ScfSupplierBankMapper, S
      * @return
      */
     public List<ScfSupplierBank> findCustByBankAccount(final String anOrg, final String anBankAccount) {
-        if (BetterStringUtils.isBlank(anOrg) || BetterStringUtils.isBlank(anBankAccount)) {
+        if (StringUtils.isBlank(anOrg) || StringUtils.isBlank(anBankAccount)) {
 
             throw new BytterValidException("findCustNoByBankAccount the openorg or bankAccount is null");
         }
@@ -98,8 +99,7 @@ public class ScfSupplierBankService extends BaseService<ScfSupplierBankMapper, S
         if (Collections3.isEmpty(bankList)) {
 
             return new ArrayList(0);
-        }
-        else {
+        } else {
 
             return bankList;
         }
@@ -115,20 +115,23 @@ public class ScfSupplierBankService extends BaseService<ScfSupplierBankMapper, S
      *            操作员所在机构
      * @return 成功更新，则返回更新的银行账户信息 ;
      */
-    public Set<ScfSupplierBank> saveCustOperOrg(final Long anCoreCustNo, final String anBankAccount, final String anOperOrg) {
+    public Set<ScfSupplierBank> saveCustOperOrg(final Long anCoreCustNo, final String anBankAccount,
+            final String anOperOrg) {
         final Map<String, Object> termMap = new HashMap();
         termMap.put("coreCustNo", anCoreCustNo);
         termMap.put("bankAccount", anBankAccount);
         final List<ScfSupplierBank> workData = this.selectByProperty(termMap);
         if (Collections3.isEmpty(workData)) {
 
-            throw new BytterTradeException("使用  核心企业客户号 " + anCoreCustNo +", 以及供应商的银行账户 " + anBankAccount +", 不能获得供应商信息");
+            throw new BytterTradeException(
+                    "使用  核心企业客户号 " + anCoreCustNo + ", 以及供应商的银行账户 " + anBankAccount + ", 不能获得供应商信息");
         }
 
         return saveCustOperOrgAndCustNo(workData, anOperOrg, false);
     }
 
-    private Set<ScfSupplierBank> saveCustOperOrgAndCustNo(final List<ScfSupplierBank> anTermList, final Object anValue, final boolean anCustNo) {
+    private Set<ScfSupplierBank> saveCustOperOrgAndCustNo(final List<ScfSupplierBank> anTermList, final Object anValue,
+            final boolean anCustNo) {
         if (Collections3.isEmpty(anTermList)) {
 
             return new HashSet(0);
@@ -146,8 +149,7 @@ public class ScfSupplierBankService extends BaseService<ScfSupplierBankMapper, S
             for (final ScfSupplierBank spBank : this.selectByProperty(termMap)) {
                 if (anCustNo) {
                     spBank.setCustNo((Long) anValue);
-                }
-                else {
+                } else {
                     spBank.setOperOrg((String) anValue);
                 }
                 this.updateByPrimaryKey(spBank);
@@ -166,7 +168,8 @@ public class ScfSupplierBankService extends BaseService<ScfSupplierBankMapper, S
      * @param anCustNo
      * @return
      */
-    public Set<ScfSupplierBank> saveCustNoByBankAccount(final String anBankAccount, final String anOperOrg, final Long anCustNo) {
+    public Set<ScfSupplierBank> saveCustNoByBankAccount(final String anBankAccount, final String anOperOrg,
+            final Long anCustNo) {
 
         return saveCustOperOrgAndCustNo(findCustByBankAccount(anBankAccount, anOperOrg), anCustNo, true);
     }
@@ -178,7 +181,7 @@ public class ScfSupplierBankService extends BaseService<ScfSupplierBankMapper, S
      * @return
      */
     public ScfSupplierBank findScfBankByBankAccount(final String anCoreOperOrg, final String anBankAccount) {
-        if (anCoreOperOrg != null && BetterStringUtils.isNotBlank(anBankAccount)) {
+        if (anCoreOperOrg != null && StringUtils.isNotBlank(anBankAccount)) {
             final Map<String, Object> termMap = new HashMap();
             termMap.put("bankAccount", anBankAccount);
             termMap.put("coreOperOrg", anCoreOperOrg);
@@ -189,7 +192,7 @@ public class ScfSupplierBankService extends BaseService<ScfSupplierBankMapper, S
         return null;
     }
 
-    public List<ScfSupplierBank> findScfBankByCoreOperOrg(final Long anCoreOperOrg){
+    public List<ScfSupplierBank> findScfBankByCoreOperOrg(final Long anCoreOperOrg) {
 
         return this.selectByProperty("coreOperOrg", anCoreOperOrg);
     }

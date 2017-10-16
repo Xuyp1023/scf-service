@@ -24,6 +24,7 @@ public class ScfPressMoneyService extends BaseService<ScfPressMoneyMapper, ScfPr
     private CustAccountService custAccountService;
     @Autowired
     private ScfRequestService requestService;
+
     /**
      * 新增催收记录
      * @param anPress
@@ -31,16 +32,16 @@ public class ScfPressMoneyService extends BaseService<ScfPressMoneyMapper, ScfPr
      */
     public ScfPressMoney addPressMoney(ScfPressMoney anPress) {
         BTAssert.notNull(anPress, "新增催收记录失败-anPressMoney不能为空");
-        
+
         ScfRequest request = requestService.findRequestDetail(anPress.getRequestNo());
         BTAssert.notNull(request, "新增催收记录失败-request不存在");
-        
+
         anPress.setFactorNo(request.getFactorNo());
         anPress.init();
         this.insert(anPress);
         return findPressMoneyDetail(anPress.getId());
     }
-    
+
     /**
      * 修改催收记录
      * 
@@ -53,7 +54,7 @@ public class ScfPressMoneyService extends BaseService<ScfPressMoneyMapper, ScfPr
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("factorNo", anPress.getFactorNo());
         map.put("id", anId);
-        if(Collections3.isEmpty(selectByClassProperty(ScfPressMoney.class, map))){
+        if (Collections3.isEmpty(selectByClassProperty(ScfPressMoney.class, map))) {
             throw new BytterTradeException(40001, "修改催收记录失败-找不到原数据");
         }
 
@@ -72,7 +73,8 @@ public class ScfPressMoneyService extends BaseService<ScfPressMoneyMapper, ScfPr
      * @param anPageSize
      * @return
      */
-    public Page<ScfPressMoney> queryPressMoneyList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfPressMoney> queryPressMoneyList(Map<String, Object> anMap, int anFlag, int anPageNum,
+            int anPageSize) {
         Page<ScfPressMoney> pressPage = this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
         for (ScfPressMoney press : pressPage) {
             press.setCustName(custAccountService.queryCustName(press.getCustNo()));
@@ -81,7 +83,6 @@ public class ScfPressMoneyService extends BaseService<ScfPressMoneyMapper, ScfPr
         return pressPage;
     }
 
-    
     /**
      * 查询催收列表
      * 
@@ -99,7 +100,7 @@ public class ScfPressMoneyService extends BaseService<ScfPressMoneyMapper, ScfPr
         }
         return list;
     }
-    
+
     /**
      * 查询催收记录详情
      * 
@@ -108,12 +109,11 @@ public class ScfPressMoneyService extends BaseService<ScfPressMoneyMapper, ScfPr
      */
     public ScfPressMoney findPressMoneyDetail(Long anId) {
         BTAssert.notNull(anId, "查询催收记录详情失败-anId不能为空");
-        ScfPressMoney press =  this.selectByPrimaryKey(anId);
-        if(null == press){
+        ScfPressMoney press = this.selectByPrimaryKey(anId);
+        if (null == press) {
             return new ScfPressMoney();
         }
         return press;
     }
-    
 
 }

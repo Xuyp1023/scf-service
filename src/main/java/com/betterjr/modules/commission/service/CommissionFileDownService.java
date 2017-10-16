@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.service.BaseService;
 import com.betterjr.common.utils.BTAssert;
-import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.Collections3;
 import com.betterjr.common.utils.UserUtils;
@@ -39,7 +39,8 @@ public class CommissionFileDownService extends BaseService<CommissionFileDownMap
      * @param anPageSize
      * @return
      */
-    public Page<CommissionFileDown> queryFileDownList(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public Page<CommissionFileDown> queryFileDownList(Map<String, Object> anMap, String anFlag, int anPageNum,
+            int anPageSize) {
 
         BTAssert.notNull(anMap, "查询佣金文件条件为空");
         // 去除空白字符串的查询条件
@@ -47,7 +48,8 @@ public class CommissionFileDownService extends BaseService<CommissionFileDownMap
         // 查询当前公司的佣金文件
         // anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
         anMap.put("confirmStatus", CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_EFFECTIVE);
-        Page<CommissionFileDown> fileList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
+        Page<CommissionFileDown> fileList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag),
+                "id desc");
 
         return fileList;
     }
@@ -61,7 +63,8 @@ public class CommissionFileDownService extends BaseService<CommissionFileDownMap
      * @param anPageSize
      * @return
      */
-    public Page<CommissionFileDown> queryCanAuditFileList(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public Page<CommissionFileDown> queryCanAuditFileList(Map<String, Object> anMap, String anFlag, int anPageNum,
+            int anPageSize) {
 
         BTAssert.notNull(anMap, "查询佣金文件条件为空");
         BTAssert.notNull(anMap.get("GTEimportDate"), "查询佣金文件条件为空");
@@ -69,7 +72,8 @@ public class CommissionFileDownService extends BaseService<CommissionFileDownMap
         // 去除空白字符串的查询条件
         anMap = Collections3.filterMapEmptyObject(anMap);
         // 查询当前公司的佣金文件
-        Page<CommissionFileDown> fileList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
+        Page<CommissionFileDown> fileList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag),
+                "id desc");
 
         return fileList;
 
@@ -122,7 +126,8 @@ public class CommissionFileDownService extends BaseService<CommissionFileDownMap
         BTAssert.notNull(fileDown, "审核佣金文件不存在");
         checkFileDownStatus(fileDown);
         // 设置下载文件的状态
-        fileDown.saveAuditInit(anMap.get("confirmStatus").toString(), anMap.get("confirmMessage").toString(), UserUtils.getOperatorInfo());
+        fileDown.saveAuditInit(anMap.get("confirmStatus").toString(), anMap.get("confirmMessage").toString(),
+                UserUtils.getOperatorInfo());
         this.updateByPrimaryKeySelective(fileDown);
         // 设置佣金文件的状态和 设置佣金记录的状态
         fileService.saveUpdateByFileDown(fileDown);
@@ -132,10 +137,10 @@ public class CommissionFileDownService extends BaseService<CommissionFileDownMap
 
     private void checkFileDownStatus(CommissionFileDown anFileDown) {
 
-        checkStatus(anFileDown.getConfirmStatus(), CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_EFFECTIVE, true,
-                "当前文件记录已经已经审核通过，不能重复审核");
-        checkStatus(anFileDown.getConfirmStatus(), CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_INEFFECTIVE, true,
-                "当前文件记录已经审核未通过，不能重复审核");
+        checkStatus(anFileDown.getConfirmStatus(),
+                CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_EFFECTIVE, true, "当前文件记录已经已经审核通过，不能重复审核");
+        checkStatus(anFileDown.getConfirmStatus(),
+                CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_INEFFECTIVE, true, "当前文件记录已经审核未通过，不能重复审核");
 
     }
 
@@ -143,7 +148,7 @@ public class CommissionFileDownService extends BaseService<CommissionFileDownMap
      * 检查状态信息
      */
     public void checkStatus(String anBusinStatus, String anTargetStatus, boolean anFlag, String anMessage) {
-        if (BetterStringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
+        if (StringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
             logger.warn(anMessage);
             throw new BytterTradeException(40001, anMessage);
         }

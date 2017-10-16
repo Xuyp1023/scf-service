@@ -20,8 +20,7 @@ public class RemoteInvokeInfo {
             this.businFlag = anMM.getName();
             this.custType = "X";
             this.businClass = BusinClassType.SALE_QUERY;
-        }
-        else {
+        } else {
             this.businFlag = anM.businFlag();
             this.custType = anM.custType();
             this.businClass = anM.businClass();
@@ -61,6 +60,7 @@ public class RemoteInvokeInfo {
         this.workMethod = anWorkMethod;
     }
 
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());

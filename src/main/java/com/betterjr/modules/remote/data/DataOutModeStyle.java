@@ -6,7 +6,7 @@ import java.util.*;
 public enum DataOutModeStyle {
     JSON, XML, XML_JSONLIST, XML_JSONMAP;
     private static Map<DataOutModeStyle, String> map = new HashMap();
-    
+
     public static DataOutModeStyle checking(String anWorkType) {
         try {
             if (StringUtils.isNotBlank(anWorkType)) {

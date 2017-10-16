@@ -3,6 +3,7 @@ package com.betterjr.modules.agreement.service;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,8 +105,7 @@ public class ScfAgreementService {
         final boolean isSuccess = localService.saveAndSendValidSMS(appNo, vCode);
         if (isSuccess) {
             return AjaxObject.newOk("发送并验证签署合同的验证码成功", isSuccess).toJson();
-        }
-        else {
+        } else {
             return AjaxObject.newError("发送并验证签署合同的验证码失败，请稍后重试！").toJson();
         }
     }
@@ -132,7 +132,7 @@ public class ScfAgreementService {
     public String transNotice(final ScfRequestNotice anNoticeRequest) {
 
         logger.info("转让通知书：" + anNoticeRequest);
-        if (BetterStringUtils.isBlank(anNoticeRequest.getFactorPost())) {
+        if (StringUtils.isBlank(anNoticeRequest.getFactorPost())) {
             anNoticeRequest.setFactorPost("000000");
         }
         BTAssert.notNull(anNoticeRequest.getBankAccount(), "银行账户不能为空");
@@ -140,7 +140,8 @@ public class ScfAgreementService {
         anNoticeRequest.fillInfo(request);
         String agreeNo = "";
         try {
-            agreeNo = requestNoticeService.updateTransNotice(anNoticeRequest, request.getCustName(), request.getApprovedBalance());
+            agreeNo = requestNoticeService.updateTransNotice(anNoticeRequest, request.getCustName(),
+                    request.getApprovedBalance());
         }
         catch (final Exception e) {
             logger.error("转让通知书生成失败，原因：" + e.getMessage());
@@ -161,7 +162,8 @@ public class ScfAgreementService {
         anOpinion.fillInfo(request);
         boolean bool = false;
         try {
-            bool = requestOpinionService.updateOpinionInfo(anOpinion, request.getCustName(), request.getApprovedBalance());
+            bool = requestOpinionService.updateOpinionInfo(anOpinion, request.getCustName(),
+                    request.getApprovedBalance());
         }
         catch (final Exception e) {
             logger.error("意见确认书生成失败，原因：" + e.getMessage());
@@ -182,7 +184,8 @@ public class ScfAgreementService {
         // 根据申请单号查询对应的转让书编号
         final ScfRequestNotice notice = requestNoticeService.findTransNotice(requestNo);
         BTAssert.notNull(notice, "申请单：" + requestNo + "的转让通知书不存在");
-        if (requestNoticeService.allowUpdate(requestNo) && requestCreditService.updateCreditList(request, notice.getNoticeNo(), list, anAgreeNo)) {
+        if (requestNoticeService.allowUpdate(requestNo)
+                && requestCreditService.updateCreditList(request, notice.getNoticeNo(), list, anAgreeNo)) {
             return true;
         }
         return false;

@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.remote.entity.FaceFieldDictInfo;
 
 @BetterjrMapper
-public interface FaceFieldDictInfoMapper extends Mapper<FaceFieldDictInfo> {
-}
+public interface FaceFieldDictInfoMapper extends Mapper<FaceFieldDictInfo> {}

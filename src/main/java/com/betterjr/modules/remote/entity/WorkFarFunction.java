@@ -46,8 +46,7 @@ public class WorkFarFunction extends FarFunctionInfo {
         if (this.serializerClass == null) {
 
             return this.workFace.getRemoteSerializer();
-        }
-        else {
+        } else {
             try {
                 return (RemoteBaseSerializer) this.serializerClass.newInstance();
             }
@@ -58,49 +57,45 @@ public class WorkFarFunction extends FarFunctionInfo {
         }
     }
 
-
-    public String buildExeExp(){
+    public String buildExeExp() {
         StringBuilder sb = new StringBuilder();
-        sb.append( this.getFunBeanName());
-        //表示基本类型参数（>=1个参数，只支持基本类型），需从FieldMap中获得需要的字段信息
-        if ("3".equals(this.getInputMode())){
+        sb.append(this.getFunBeanName());
+        // 表示基本类型参数（>=1个参数，只支持基本类型），需从FieldMap中获得需要的字段信息
+        if ("3".equals(this.getInputMode())) {
             sb.append("(").append(this.findOrderParamStr()).append(")");
-        }//表示没有参数
-        else if ("2".equals(this.getInputMode())){
+        } // 表示没有参数
+        else if ("2".equals(this.getInputMode())) {
             sb.append("()");
+        } else {// 单个参数(bean 或者 map，或者List<Bean>,List<Map>)
+            sb.append("(inputParam)");
         }
-        else{//单个参数(bean 或者 map，或者List<Bean>,List<Map>)
-           sb.append("(inputParam)"); 
-        }
-        
+
         return sb.toString();
     }
-    
-    
-    private String findOrderParamStr(){
-       StringBuilder sb = new StringBuilder();
-       for (String tmpKey : this.propMap.keySet()){
-          sb.append(tmpKey).append(", "); 
-       }
-       sb.setLength(sb.length() -2);
-       
-       return sb.toString();
+
+    private String findOrderParamStr() {
+        StringBuilder sb = new StringBuilder();
+        for (String tmpKey : this.propMap.keySet()) {
+            sb.append(tmpKey).append(", ");
+        }
+        sb.setLength(sb.length() - 2);
+
+        return sb.toString();
     }
-    
-    public String findSingleFieldFaceId(){
-        Iterator<String> it=this.fieldMap.keySet().iterator();
-        if(it.hasNext()){
+
+    public String findSingleFieldFaceId() {
+        Iterator<String> it = this.fieldMap.keySet().iterator();
+        if (it.hasNext()) {
             return it.next();
-        }else{
+        } else {
             return null;
         }
     }
-    
+
     public RemoteDeSerializer getDeSerializer() {
         if (this.deSerializerClass == null) {
             return this.workFace.getDeSerializer();
-        }
-        else {
+        } else {
             try {
                 return (RemoteDeSerializer) this.deSerializerClass.newInstance();
             }
@@ -120,8 +115,7 @@ public class WorkFarFunction extends FarFunctionInfo {
         FaceReturnCode returnCode = this.workFace.findReturnCode(anReturnCode);
         if (returnCode == null) {
             return "";
-        }
-        else {
+        } else {
             return returnCode.getReturnName();
         }
     }
@@ -130,8 +124,7 @@ public class WorkFarFunction extends FarFunctionInfo {
         FaceReturnCode returnCode = this.workFace.findReturnCode(anReturnCode);
         if (returnCode == null) {
             return false;
-        }
-        else {
+        } else {
             return returnCode.getStatus();
         }
     }
@@ -163,11 +156,9 @@ public class WorkFarFunction extends FarFunctionInfo {
             if ("0".equalsIgnoreCase(fieldInfo.getDirection())) {
                 this.propMap.put(fieldInfo.getBeanField(), fieldInfo);
                 this.fieldMap.put(fieldInfo.getFaceField(), new WorkFaceFieldInfo(fieldInfo));
-            }
-            else if ("1".equalsIgnoreCase(fieldInfo.getDirection())) {
+            } else if ("1".equalsIgnoreCase(fieldInfo.getDirection())) {
                 this.fieldMap.put(fieldInfo.getFaceField(), fieldInfo);
-            }
-            else if ("2".equalsIgnoreCase(fieldInfo.getDirection())) {
+            } else if ("2".equalsIgnoreCase(fieldInfo.getDirection())) {
                 this.propMap.put(fieldInfo.getBeanField(), fieldInfo);
             }
         }
@@ -185,8 +176,7 @@ public class WorkFarFunction extends FarFunctionInfo {
         if (this.workReturnClass == null) {
             if (Map.class.isAssignableFrom(anClass) || Collection.class.isAssignableFrom(anClass)) {
 
-            }
-            else {
+            } else {
                 List<Field> fields = EntityHelper.getAllField(anClass);
                 WorkFaceFieldInfo fieldInfo;
                 for (Field ff : fields) {
@@ -197,7 +187,6 @@ public class WorkFarFunction extends FarFunctionInfo {
                 }
             }
             this.workReturnClass = anClass;
-    
 
         }
     }
@@ -221,8 +210,7 @@ public class WorkFarFunction extends FarFunctionInfo {
         tmpUrl = this.getUrl();
         if (StringUtils.isNotBlank(tmpUrl)) {
             this.workUrl = anFaceInfo.getUrl().concat(tmpUrl);
-        }
-        else {
+        } else {
             this.workUrl = anFaceInfo.getUrl();
         }
 
@@ -230,10 +218,12 @@ public class WorkFarFunction extends FarFunctionInfo {
         for (Map.Entry<String, WorkFaceFieldInfo> ent : fieldMap.entrySet()) {
             ent.getValue().init(this);
         }
-        
-        try{
-            initReturnClass(BetterClassUtils.findClassByName(this.getReturnClass(), SysConfigService.getList("ClassRecursivePathList")));
-        }catch(Exception ex){
+
+        try {
+            initReturnClass(BetterClassUtils.findClassByName(this.getReturnClass(),
+                    SysConfigService.getList("ClassRecursivePathList")));
+        }
+        catch (Exception ex) {
             ex.printStackTrace();
         }
         try {
@@ -253,12 +243,13 @@ public class WorkFarFunction extends FarFunctionInfo {
          */
     }
 
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(super.toString()).append("\r\n");
 
         sb.append("this is WorkFaceFieldInfo \r\n");
-        for (WorkFaceFieldInfo obj : (Collection<WorkFaceFieldInfo>) (fieldMap.values())) {
+        for (WorkFaceFieldInfo obj : (fieldMap.values())) {
             sb.append(obj).append("\r\n");
         }
 

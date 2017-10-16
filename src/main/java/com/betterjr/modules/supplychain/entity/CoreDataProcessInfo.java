@@ -8,6 +8,8 @@ import com.betterjr.common.utils.BetterStringUtils;
 
 import javax.persistence.*;
 
+import org.apache.commons.lang3.StringUtils;
+
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "T_SCF_PROCESS_LOG")
@@ -54,7 +56,7 @@ public class CoreDataProcessInfo implements BetterjrEntity {
     @Column(name = "C_BANKACCO", columnDefinition = "VARCHAR")
     @MetaData(value = "银行账户", comments = "银行账户")
     private String bankAccount;
- 
+
     /**
      * 开始日期
      */
@@ -118,7 +120,6 @@ public class CoreDataProcessInfo implements BetterjrEntity {
     public void setBankAccount(String bankAccount) {
         this.bankAccount = bankAccount == null ? null : bankAccount.trim();
     }
- 
 
     @Override
     public String toString() {
@@ -166,12 +167,18 @@ public class CoreDataProcessInfo implements BetterjrEntity {
         }
         CoreDataProcessInfo other = (CoreDataProcessInfo) that;
         return (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
-                && (this.getProcessType() == null ? other.getProcessType() == null : this.getProcessType().equals(other.getProcessType()))
-                && (this.getWorkDate() == null ? other.getWorkDate() == null : this.getWorkDate().equals(other.getWorkDate()))
-                && (this.getWorkStatus() == null ? other.getWorkStatus() == null : this.getWorkStatus().equals(other.getWorkStatus()))
-                && (this.getBankAccount() == null ? other.getBankAccount() == null : this.getBankAccount().equals(other.getBankAccount()))
-                && (this.getStartDate() == null ? other.getStartDate() == null : this.getStartDate().equals(other.getStartDate()))
-                && (this.getEndDate() == null ? other.getEndDate() == null : this.getEndDate().equals(other.getEndDate()))
+                && (this.getProcessType() == null ? other.getProcessType() == null
+                        : this.getProcessType().equals(other.getProcessType()))
+                && (this.getWorkDate() == null ? other.getWorkDate() == null
+                        : this.getWorkDate().equals(other.getWorkDate()))
+                && (this.getWorkStatus() == null ? other.getWorkStatus() == null
+                        : this.getWorkStatus().equals(other.getWorkStatus()))
+                && (this.getBankAccount() == null ? other.getBankAccount() == null
+                        : this.getBankAccount().equals(other.getBankAccount()))
+                && (this.getStartDate() == null ? other.getStartDate() == null
+                        : this.getStartDate().equals(other.getStartDate()))
+                && (this.getEndDate() == null ? other.getEndDate() == null
+                        : this.getEndDate().equals(other.getEndDate()))
                 && (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()));
     }
 
@@ -192,14 +199,14 @@ public class CoreDataProcessInfo implements BetterjrEntity {
 
     public static CoreDataProcessInfo switchNext(CoreDataProcessInfo anProcess) {
         CoreDataProcessInfo process = BeanMapper.map(anProcess, CoreDataProcessInfo.class);
-        if (BetterStringUtils.isBlank(anProcess.endDate)){
+        if (StringUtils.isBlank(anProcess.endDate)) {
             anProcess.endDate = BetterDateUtils.getNumDate();
         }
         process.startDate = anProcess.endDate;
         process.workDate = BetterDateUtils.addStrDays(process.startDate, 1);
         process.endDate = null;
         process.setWorkStatus("1");
-        //process.id = SerialGenerator.getLongValue("CoreDataProcessInfo.id");
+        // process.id = SerialGenerator.getLongValue("CoreDataProcessInfo.id");
         return process;
     }
 }

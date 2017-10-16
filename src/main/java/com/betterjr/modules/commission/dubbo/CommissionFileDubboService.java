@@ -38,7 +38,9 @@ public class CommissionFileDubboService implements ICommissionFileService {
     public String webQueryFileList(Map<String, Object> anAnMap, String anFlag, int anPageNum, int anPageSize) {
 
         Map<String, Object> queryMap = RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOkWithPage("佣金文件查询成功", commissionFileService.queryFileList(queryMap, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject
+                .newOkWithPage("佣金文件查询成功", commissionFileService.queryFileList(queryMap, anFlag, anPageNum, anPageSize))
+                .toJson();
     }
 
     @Override

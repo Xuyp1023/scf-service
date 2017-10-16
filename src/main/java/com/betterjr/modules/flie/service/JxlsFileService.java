@@ -27,6 +27,7 @@ import com.betterjr.modules.flie.data.Page;
 
 import net.sf.jxls.exception.ParsePropertyException;
 import net.sf.jxls.transformer.XLSTransformer;
+
 /***
  * jxls 服务处理类
  * @author hubl
@@ -35,50 +36,52 @@ import net.sf.jxls.transformer.XLSTransformer;
 @Service
 public class JxlsFileService {
 
-protected final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
-    
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+
     @Reference(interfaceClass = ICustFileService.class)
-    private ICustFileService custFileService;   //查询文件详情
-    
+    private ICustFileService custFileService; // 查询文件详情
+
     @Autowired
-    private DataStoreService dataStoreService; //将文件转成输入流
-    
-    public CustFileItem transformXLSFile(List resultList,Map<String,Object> anMap,Long anTempFileId,Integer fristPageSize, Integer pageSize,String fileName) throws IOException, ParsePropertyException, InvalidFormatException{
-        logger.info("文件导出服务： 操作人："+UserUtils.getOperatorInfo().getName());
-        BTAssert.notNull(resultList,"导出的数据文件为空");
-        CustFileItem fileItem = custFileService.findOne(anTempFileId);//文件上次详情
-        BTAssert.notNull(fileItem,"导出模版为空");
-        String fileType=fileItem.getFileType();
-        InputStream is = dataStoreService.loadFromStore(fileItem);//得到文件输入流
-        
-        List<Page> objects =transPageList(resultList,pageSize,fristPageSize);
-        List<String> sheetNames = objects.stream().map(page->page.getSheetName()).collect(Collectors.toList());
-        
+    private DataStoreService dataStoreService; // 将文件转成输入流
+
+    public CustFileItem transformXLSFile(List resultList, Map<String, Object> anMap, Long anTempFileId,
+            Integer fristPageSize, Integer pageSize, String fileName)
+            throws IOException, ParsePropertyException, InvalidFormatException {
+        logger.info("文件导出服务： 操作人：" + UserUtils.getOperatorInfo().getName());
+        BTAssert.notNull(resultList, "导出的数据文件为空");
+        CustFileItem fileItem = custFileService.findOne(anTempFileId);// 文件上次详情
+        BTAssert.notNull(fileItem, "导出模版为空");
+        String fileType = fileItem.getFileType();
+        InputStream is = dataStoreService.loadFromStore(fileItem);// 得到文件输入流
+
+        List<Page> objects = transPageList(resultList, pageSize, fristPageSize);
+        List<String> sheetNames = objects.stream().map(page -> page.getSheetName()).collect(Collectors.toList());
+
         XLSTransformer transformer = new XLSTransformer();
-        Workbook workBook = transformer.transformMultipleSheetsList(is , objects, sheetNames, "page", anMap, 0);
-        
+        Workbook workBook = transformer.transformMultipleSheetsList(is, objects, sheetNames, "page", anMap, 0);
+
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
             workBook.write(os);
         }
         catch (IOException e) {
-            logger.info("封装模版产生异常,请稍后重试!"+e.getMessage());
-            BTAssert.notNull(workBook,"封装模版产生异常,请稍后重试!");
+            logger.info("封装模版产生异常,请稍后重试!" + e.getMessage());
+            BTAssert.notNull(workBook, "封装模版产生异常,请稍后重试!");
         }
         byte[] b = os.toByteArray();
         ByteArrayInputStream in = new ByteArrayInputStream(b);
-        if(!fileName.contains(".") || !(fileName.endsWith("xls") || fileName.endsWith("xlsx")) ){
-            fileName=fileName+"."+fileType;
+        if (!fileName.contains(".") || !(fileName.endsWith("xls") || fileName.endsWith("xlsx"))) {
+            fileName = fileName + "." + fileType;
         }
-        CustFileItem item = dataStoreService.saveStreamToStore(in, fileItem.getFileType(),fileName);
-        logger.info("导出文件生成成功："+UserUtils.getOperatorInfo().getName());
+        CustFileItem item = dataStoreService.saveStreamToStore(in, fileItem.getFileType(), fileName);
+        logger.info("导出文件生成成功：" + UserUtils.getOperatorInfo().getName());
         is.close();
         os.flush();
         os.close();
-        
+
         return item;
     }
-    
+
     /***
      * 将列表转化成page
      * @param resultList
@@ -86,8 +89,8 @@ protected final Logger logger = LoggerFactory.getLogger(this.getClass().getName(
      * @param fristPageSize
      * @return
      */
-    public List<Page> transPageList(List resultList,int pageSize,int fristPageSize){
-        int total=resultList.size();
+    public List<Page> transPageList(List resultList, int pageSize, int fristPageSize) {
+        int total = resultList.size();
         boolean flag = false;
         int totalPage = 0;
         if (flag) {
@@ -104,27 +107,27 @@ protected final Logger logger = LoggerFactory.getLogger(this.getClass().getName(
         List<Page> objects = new ArrayList<Page>();
         for (int pageIndex = 0; pageIndex < totalPage; pageIndex++) {
             Page page = new Page();
-            int sheetNum=pageIndex+1;
-            page.setSheetName("第" + sheetNum +"页");
+            int sheetNum = pageIndex + 1;
+            page.setSheetName("第" + sheetNum + "页");
             page.setTotalPage(totalPage);
             page.setCurrentPage(sheetNum);
-            
+
             if (!flag && pageIndex == 0) {
-                if(total>fristPageSize){
+                if (total > fristPageSize) {
                     page.setList(resultList.subList(0, fristPageSize));
                     page.setPageSize(fristPageSize);
-                }else{
+                } else {
                     page.setList(resultList);
                     page.setPageSize(resultList.size());
-                    for(int s=0;s<fristPageSize-total;s++){
+                    for (int s = 0; s < fristPageSize - total; s++) {
                         page.getList().add(new HashMap());
                     }
                 }
-            }  else if (pageIndex == totalPage - 1) {
+            } else if (pageIndex == totalPage - 1) {
                 List list = new ArrayList();
-                List subList=resultList.subList(pageIndex * pageSize - diff, total);
+                List subList = resultList.subList(pageIndex * pageSize - diff, total);
                 list.addAll(subList);
-                for(int m=0;m<pageSize-subList.size();m++){
+                for (int m = 0; m < pageSize - subList.size(); m++) {
                     list.add(new HashMap());
                 }
                 page.setPageSize(subList.size());
@@ -137,5 +140,5 @@ protected final Logger logger = LoggerFactory.getLogger(this.getClass().getName(
         }
         return objects;
     }
-    
+
 }

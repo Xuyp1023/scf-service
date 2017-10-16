@@ -4,7 +4,7 @@ public class CoreCustInfo implements java.io.Serializable {
     private static final long serialVersionUID = 7914384563295474255L;
     private String custName;
     private Long custNo;
-    private String operOrg;    
+    private String operOrg;
     private String partnerCode;
 
     public String getCustName() {

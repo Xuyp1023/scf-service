@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,7 @@ import com.betterjr.modules.product.service.ScfProductService;
 
 @Service
 public class WechatRequestService extends BaseService<ScfRequestMapper, ScfRequest> {
-    
+
     @Autowired
     private ScfRequestService requestService;
     @Autowired
@@ -50,8 +51,8 @@ public class WechatRequestService extends BaseService<ScfRequestMapper, ScfReque
     @Autowired
     private ScfEnquiryObjectService enquiryObjectService;
     @Autowired
-    private ScfCreditDetailService  creditDetailService;
-    
+    private ScfCreditDetailService creditDetailService;
+
     /**
      * 新增融资申请
      * 
@@ -60,42 +61,42 @@ public class WechatRequestService extends BaseService<ScfRequestMapper, ScfReque
      */
     public ScfRequest saveRequest(ScfRequest anRequest) {
         BTAssert.notNull(anRequest, "新增融资申请失败-anRequest不能为空");
-        //anRequest.setRequestType(RequestType.BILL.getCode());
+        // anRequest.setRequestType(RequestType.BILL.getCode());
         anRequest.setRequestFrom("2");
         anRequest.setTradeStatus(RequestTradeStatus.REQUEST.getCode());
         anRequest.setCreditMode("1");
         anRequest.setPeriodUnit(1);
         anRequest.setRequestDate(BetterDateUtils.getNumDate());
         anRequest.setTradeStatus(RequestTradeStatus.REQUEST.getCode());
-        
-        //保存申请
+
+        // 保存申请
         requestService.addRequest(anRequest);
-        //检查合同（微信端申请时可能没有合同，检查一下，如果没有的话默认生成一个）
+        // 检查合同（微信端申请时可能没有合同，检查一下，如果没有的话默认生成一个）
         orderService.checkAndGenerateTradeAgreement(Long.parseLong(anRequest.getOrders()), anRequest.getFactorNo());
         // 关联订单
         orderService.saveInfoRequestNo(anRequest.getRequestType(), anRequest.getRequestNo(), anRequest.getOrders());
         // 冻结订单
         orderService.forzenInfos(anRequest.getRequestNo(), null);
-        
-        if(null != anRequest.getOfferId()){
-            //从报价过来的要改变报价状态
+
+        if (null != anRequest.getOfferId()) {
+            // 从报价过来的要改变报价状态
             offerService.saveUpdateTradeStatus(anRequest.getOfferId(), "3");
-            
+
             ScfOffer offer = offerService.selectByPrimaryKey(anRequest.getOfferId());
-            //从报价过来的要改变报价状态
+            // 从报价过来的要改变报价状态
             Map<String, Object> anMap = new HashMap<String, Object>();
             anMap.put("enquiryNo", offer.getEnquiryNo());
             anMap.put("offerId", offer.getId());
             ScfEnquiryObject enquiryObj = enquiryObjectService.find(anMap);
-            if(null != enquiryObj){
+            if (null != enquiryObj) {
                 enquiryObj.setBusinStatus("-2");
                 enquiryObjectService.saveModify(enquiryObj);
             }
-           
+
             enquiryService.saveUpdateBusinStatus(offer.getEnquiryNo(), "-2");
         }
-        
-        // 当融资流程启动时,冻结授信额度 
+
+        // 当融资流程启动时,冻结授信额度
         ScfCreditInfo anCreditInfo = new ScfCreditInfo();
         anCreditInfo.setBusinFlag(anRequest.getRequestType());
         anCreditInfo.setBalance(anRequest.getBalance());
@@ -110,7 +111,7 @@ public class WechatRequestService extends BaseService<ScfRequestMapper, ScfReque
 
         return anRequest;
     }
-    
+
     /**
      * 查询融资申请列表
      * 
@@ -122,14 +123,14 @@ public class WechatRequestService extends BaseService<ScfRequestMapper, ScfReque
      */
     public Page<BillRequest> queryRequestList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
         Page<ScfRequest> page = requestService.queryRequestList(anMap, anFlag, anPageNum, anPageSize);
-        
-        //将融资列表的分页信息拷贝到新的列表中
+
+        // 将融资列表的分页信息拷贝到新的列表中
         Page<BillRequest> billPage = new Page<>(page.getPageNum(), page.getPageSize(), page.isCount());
         billPage.setTotal(page.getTotal());
         billPage.setPageSizeZero(page.getPageSizeZero());
         billPage.setReasonable(page.getReasonable());
-        
-        //组装
+
+        // 组装
         for (ScfRequest scfRequest : page) {
             BillRequest transRequest = fillInfo(scfRequest);
             transRequest.setRequest(scfRequest);
@@ -140,23 +141,23 @@ public class WechatRequestService extends BaseService<ScfRequestMapper, ScfReque
 
     private BillRequest fillInfo(ScfRequest anRequest) {
         BillRequest transRequest = new BillRequest();
-        if(!BetterStringUtils.isBlank(anRequest.getOrders())){
+        if (!StringUtils.isBlank(anRequest.getOrders())) {
             transRequest.setBill(billService.selectByPrimaryKey(Long.parseLong(anRequest.getOrders())));
         }
-        
+
         ScfPayPlan plan = payPlanService.findPayPlanByRequest(anRequest.getRequestNo());
-        if(null != plan){
+        if (null != plan) {
             transRequest.setPlan(plan);
         }
-        
+
         ScfProduct product = productService.findProductById(anRequest.getProductId());
-        if(null != product){
+        if (null != product) {
             anRequest.setProductName(product.getProductName());
         }
         transRequest.setRequest(anRequest);
         return transRequest;
     }
-    
+
     /**
      * 根据申请编号查询融资申请
      * 
@@ -170,7 +171,7 @@ public class WechatRequestService extends BaseService<ScfRequestMapper, ScfReque
         ScfRequest request = requestService.findRequestDetail(anRequestNo);
         return fillInfo(request);
     }
-    
+
     /**
      * 根据票据id查询融资申请
      * 

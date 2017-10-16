@@ -5,6 +5,6 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.supplieroffer.entity.ScfCoreProductCust;
 
 @BetterjrMapper
-public interface ScfCoreProductCustMapper extends Mapper<ScfCoreProductCust>{
+public interface ScfCoreProductCustMapper extends Mapper<ScfCoreProductCust> {
 
 }

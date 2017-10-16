@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "t_scf_receivable_request")
-public class ScfReceivableRequest implements BetterjrEntity{
+public class ScfReceivableRequest implements BetterjrEntity {
 
     /**
      * 
@@ -34,278 +34,275 @@ public class ScfReceivableRequest implements BetterjrEntity{
      * 申请编号
      */
     @Id
-    @Column(name = "C_REQUESTNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="申请编号", comments = "申请编号")
+    @Column(name = "C_REQUESTNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "申请编号", comments = "申请编号")
     private String requestNo;
-    
+
     /**
      * 融资编号
      */
-    @Column(name = "C_EQUITYNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="融资编号", comments = "融资编号")
+    @Column(name = "C_EQUITYNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "融资编号", comments = "融资编号")
     private String equityNo;
-    
+
     /**
      * 供应商编号
      */
-    @Column(name = "L_CUSTNO",  columnDefinition="INTEGER" )
-    @MetaData( value="供应商编号", comments = "供应商编号")
+    @Column(name = "L_CUSTNO", columnDefinition = "INTEGER")
+    @MetaData(value = "供应商编号", comments = "供应商编号")
     private Long custNo;
-    
+
     /**
      * 供应商名称
      */
-    @Column(name = "C_CUSTNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="供应商名称", comments = "供应商名称")
+    @Column(name = "C_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "供应商名称", comments = "供应商名称")
     private String custName;
-    
+
     /**
      * 收款银行
      */
     @Column(name = "c_cust_bankName", columnDefinition = "VARCHAR")
     @MetaData(value = "收款银行", comments = "收款银行")
     private String custBankName;
-    
+
     /**
      * 收款帐号
      */
     @Column(name = "c_cust_bankAccount", columnDefinition = "VARCHAR")
     @MetaData(value = "收款帐号", comments = "收款帐号")
     private String custBankAccount;
-    
+
     /**
      * 收款开户名称
      */
     @Column(name = "c_cust_bankAccountName", columnDefinition = "VARCHAR")
     @MetaData(value = "收款开户名称", comments = "收款开户名称")
     private String custBankAccountName;
-    
+
     /**
      * 核心企业编号
      */
-    @Column(name = "L_CORE_CUSTNO",  columnDefinition="INTEGER" )
-    @MetaData( value="核心企业编号", comments = "核心企业编号")
+    @Column(name = "L_CORE_CUSTNO", columnDefinition = "INTEGER")
+    @MetaData(value = "核心企业编号", comments = "核心企业编号")
     private Long coreCustNo;
-    
+
     /**
      * 核心企业名称
      */
-    @Column(name = "C_CORE_CUSTNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="核心企业名称", comments = "核心企业名称")
+    @Column(name = "C_CORE_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "核心企业名称", comments = "核心企业名称")
     private String coreCustName;
-    
-    
+
     /**
      * 业务类型编号
      */
-    @Column(name = "N_BUSINTYPE_NO",  columnDefinition="INTEGER" )
-    @MetaData( value="业务类型编号", comments = "业务类型编号")
+    @Column(name = "N_BUSINTYPE_NO", columnDefinition = "INTEGER")
+    @MetaData(value = "业务类型编号", comments = "业务类型编号")
     private int businTypeNo;
-    
-    
+
     /**
      * 保理产品编号
      */
-    @Column(name = "N_REQUEST_PRODUCT_CODE",  columnDefinition="VARCHAR" )
-    @MetaData( value="保理产品Id", comments = "保理产品Id")
+    @Column(name = "N_REQUEST_PRODUCT_CODE", columnDefinition = "VARCHAR")
+    @MetaData(value = "保理产品Id", comments = "保理产品Id")
     private String requestProductCode;
-    
+
     /**
      * 资产Id
      */
-    @Column(name = "L_ASSET_ID",  columnDefinition="INTEGER" )
-    @MetaData( value="资产Id", comments = "资产Id")
+    @Column(name = "L_ASSET_ID", columnDefinition = "INTEGER")
+    @MetaData(value = "资产Id", comments = "资产Id")
     private Long assetId;
-    
+
     /**
      * 保理公司编号
      */
-    @Column(name = "L_FACTORY_CUSTNO",  columnDefinition="INTEGER" )
-    @MetaData( value="保理公司编号", comments = "保理公司编号")
+    @Column(name = "L_FACTORY_CUSTNO", columnDefinition = "INTEGER")
+    @MetaData(value = "保理公司编号", comments = "保理公司编号")
     private Long factoryNo;
-    
+
     /**
      * 保理公司名称
      */
-    @Column(name = "C_FACTORY_CUSTNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="保理公司名称", comments = "保理公司名称")
+    @Column(name = "C_FACTORY_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "保理公司名称", comments = "保理公司名称")
     private String factoryName;
-    
+
     /**
      * 申请总金额
      */
-    @Column(name = "F_BALANCE",  columnDefinition="DECIMAL" )
-    @MetaData( value="申请总金额", comments = "申请总金额")
+    @Column(name = "F_BALANCE", columnDefinition = "DECIMAL")
+    @MetaData(value = "申请总金额", comments = "申请总金额")
     private BigDecimal balance;
-    
+
     /**
      * 申请金额
      */
-    @Column(name = "N_REQUEST_BALANCE",  columnDefinition="DECIMAL" )
-    @MetaData( value="申请金额", comments = "申请金额")
+    @Column(name = "N_REQUEST_BALANCE", columnDefinition = "DECIMAL")
+    @MetaData(value = "申请金额", comments = "申请金额")
     private BigDecimal requestBalance;
-    
+
     /**
      * 核心企业提供的折扣率
      */
-    @Column(name = "F_CUST_CORE_RATE",  columnDefinition="DECIMAL" )
-    @MetaData( value="核心企业提供的折扣率", comments = "核心企业提供的折扣率")
+    @Column(name = "F_CUST_CORE_RATE", columnDefinition = "DECIMAL")
+    @MetaData(value = "核心企业提供的折扣率", comments = "核心企业提供的折扣率")
     private BigDecimal custCoreRate;
-    
+
     /**
      * 供应商折扣率
      */
-    @Column(name = "F_DEPOSIT_RATE",  columnDefinition="DECIMAL" )
-    @MetaData( value="供应商折扣率", comments = "供应商折扣率")
+    @Column(name = "F_DEPOSIT_RATE", columnDefinition = "DECIMAL")
+    @MetaData(value = "供应商折扣率", comments = "供应商折扣率")
     private BigDecimal depositRate;
-    
+
     /**
      * 申请提前付款金额
      */
-    @Column(name = "F_REQUEST_PAY_BALANCE",  columnDefinition="DECIMAL" )
-    @MetaData( value="申请提前付款金额", comments = "申请提前付款金额")
+    @Column(name = "F_REQUEST_PAY_BALANCE", columnDefinition = "DECIMAL")
+    @MetaData(value = "申请提前付款金额", comments = "申请提前付款金额")
     private BigDecimal requestPayBalance;
-    
+
     /**
      * 付款给平台的钱
      */
-    @Column(name = "F_REQUEST_PAY_PLAT_BALANCE",  columnDefinition="DECIMAL" )
-    @MetaData( value="付款给平台的钱", comments = "付款给平台的钱")
+    @Column(name = "F_REQUEST_PAY_PLAT_BALANCE", columnDefinition = "DECIMAL")
+    @MetaData(value = "付款给平台的钱", comments = "付款给平台的钱")
     private BigDecimal requestPayPlatBalance;
-    
+
     /**
      * 平台提供利率
      */
-    @Column(name = "F_CUST_OPAT_RATE",  columnDefinition="DECIMAL" )
-    @MetaData( value="平台提供利率", comments = "平台提供利率")
+    @Column(name = "F_CUST_OPAT_RATE", columnDefinition = "DECIMAL")
+    @MetaData(value = "平台提供利率", comments = "平台提供利率")
     private BigDecimal custOpatRate;
-    
+
     /**
      * 提前付款日期
      */
-    @Column(name = "C_REQUEST_PAY_DATE",  columnDefinition="varchar" )
-    @MetaData( value="提前付款日期", comments = "提前付款日期")
+    @Column(name = "C_REQUEST_PAY_DATE", columnDefinition = "varchar")
+    @MetaData(value = "提前付款日期", comments = "提前付款日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String requestPayDate;
-    
+
     /**
      * 备注
      */
-    @Column(name = "C_DESCRIPTION",  columnDefinition="VARCHAR" )
-    @MetaData( value="备注", comments = "备注")
+    @Column(name = "C_DESCRIPTION", columnDefinition = "VARCHAR")
+    @MetaData(value = "备注", comments = "备注")
     private String description;
-    
+
     /**
      * 付款状态  0 初始状态    3付款失败 4 付款成功
      */
-    @Column(name = "C_PAY_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="付款状态  0 初始状态    3付款失败 4 付款成功", comments = "付款状态  0 初始状态    3付款失败 4 付款成功")
+    @Column(name = "C_PAY_STATUS", columnDefinition = "VARCHAR")
+    @MetaData(value = "付款状态  0 初始状态    3付款失败 4 付款成功", comments = "付款状态  0 初始状态    3付款失败 4 付款成功")
     private String payStatus;
-    
+
     /**
      * 状态 0 未生效 1供应商提交申请 2供应商签署合同 3 供应商转让合同给核心企业签署 4核心企业确认并签署合同 5资金方付款 6完结
      */
-    @Column(name = "C_BUSINSTATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="状态 0 未生效 1供应商提交申请 2供应商签署合同 3 供应商转让合同给核心企业签署 4核心企业确认并签署合同 5资金方付款 6完结", comments = "状态 0 未生效 1供应商提交申请 2供应商签署合同 3 供应商转让合同给核心企业签署 4核心企业确认并签署合同 5资金方付款 6完结")
+    @Column(name = "C_BUSINSTATUS", columnDefinition = "VARCHAR")
+    @MetaData(value = "状态 0 未生效 1供应商提交申请 2供应商签署合同 3 供应商转让合同给核心企业签署 4核心企业确认并签署合同 5资金方付款 6完结", comments = "状态 0 未生效 1供应商提交申请 2供应商签署合同 3 供应商转让合同给核心企业签署 4核心企业确认并签署合同 5资金方付款 6完结")
     private String businStatus;
-    
+
     /**
      * 所属机构
      */
-    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
-    @MetaData( value="所属机构", comments = "所属机构")
+    @Column(name = "C_OPERORG", columnDefinition = "VARCHAR")
+    @MetaData(value = "所属机构", comments = "所属机构")
     private String operOrg;
-    
-    
+
     /**
      * 当前流程所属公司
      */
-    @Column(name = "L_OWN_COMPANY",  columnDefinition="INTEGER" )
-    @MetaData( value="当前流程所属公司", comments = "当前流程所属公司")
+    @Column(name = "L_OWN_COMPANY", columnDefinition = "INTEGER")
+    @MetaData(value = "当前流程所属公司", comments = "当前流程所属公司")
     private Long ownCompany;
-    
+
     /**
      * 申请日期
      */
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="申请日期", comments = "申请日期")
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "申请日期", comments = "申请日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
-    
+
     /**
      * 申请时间
      */
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="申请时间", comments = "申请时间")
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "申请时间", comments = "申请时间")
     private String regTime;
-    
+
     /**
      * 到期时间
      */
-    @Column(name = "D_END_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="到期时间", comments = "到期时间")
+    @Column(name = "D_END_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "到期时间", comments = "到期时间")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String endDate;
-    
+
     /**
      * 应收账款融资类型
      */
-    @Column(name = "C_RECEIVABLE_REQUEST_TYPE",  columnDefinition="VARCHAR" )
-    @MetaData( value="应收账款融资类型", comments = "应收账款融资类型")
+    @Column(name = "C_RECEIVABLE_REQUEST_TYPE", columnDefinition = "VARCHAR")
+    @MetaData(value = "应收账款融资类型", comments = "应收账款融资类型")
     private String receivableRequestType;
-    
+
     /**
      * 电子合同地址
      */
-    @Column(name = "C_ELECAGREEMENT_APPNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="电子合同地址", comments = "电子合同地址")
+    @Column(name = "C_ELECAGREEMENT_APPNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "电子合同地址", comments = "电子合同地址")
     private String agreementAppNo;
-    
+
     /**
      * 供应商签署合同标记 0 未签署  1已签署
      */
-    @Column(name = "C_SUPPLIER_SIGN_FLAG",  columnDefinition="VARCHAR" )
-    @MetaData( value="供应商签署合同标记 0 未签署  1已签署", comments = "供应商签署合同标记 0 未签署  1已签署")
+    @Column(name = "C_SUPPLIER_SIGN_FLAG", columnDefinition = "VARCHAR")
+    @MetaData(value = "供应商签署合同标记 0 未签署  1已签署", comments = "供应商签署合同标记 0 未签署  1已签署")
     private String supplierSignFlag;
-    
+
     /**
      * 资金方签署合同标记 0 未签署  1已签署
      */
-    @Column(name = "C_FACTORY_SIGN_FLAG",  columnDefinition="VARCHAR" )
-    @MetaData( value="资金方签署合同标记 0 未签署  1已签署", comments = "资金方签署合同标记 0 未签署  1已签署")
+    @Column(name = "C_FACTORY_SIGN_FLAG", columnDefinition = "VARCHAR")
+    @MetaData(value = "资金方签署合同标记 0 未签署  1已签署", comments = "资金方签署合同标记 0 未签署  1已签署")
     private String factorySignFlag;
-    
+
     /**
      * 核心企业签署合同标记 0 未签署  1已签署
      */
-    @Column(name = "C_CORE_SIGN_FLAG",  columnDefinition="VARCHAR" )
-    @MetaData( value="核心企业签署合同标记 0 未签署  1已签署", comments = "核心企业签署合同标记 0 未签署  1已签署")
+    @Column(name = "C_CORE_SIGN_FLAG", columnDefinition = "VARCHAR")
+    @MetaData(value = "核心企业签署合同标记 0 未签署  1已签署", comments = "核心企业签署合同标记 0 未签署  1已签署")
     private String coreSignFlag;
-    
+
     @Transient
-    private ScfElecAgreement elecAgreement=new ScfElecAgreement();
-    
+    private ScfElecAgreement elecAgreement = new ScfElecAgreement();
+
     @Transient
-    private ScfAsset asset=new ScfAsset();
-    
+    private ScfAsset asset = new ScfAsset();
+
     /**
      * 核心企业与供应商签订的合同id
      */
-    @Column(name = "N_CORE_AGREEMENT_ID",  columnDefinition="INTEGER" )
-    @MetaData( value="核心企业与供应商签订的合同id", comments = "核心企业与供应商签订的合同id")
+    @Column(name = "N_CORE_AGREEMENT_ID", columnDefinition = "INTEGER")
+    @MetaData(value = "核心企业与供应商签订的合同id", comments = "核心企业与供应商签订的合同id")
     private Long coreAgreementId;
     @Transient
-    private ScfReceivableRequestAgreement coreAgreement=new ScfReceivableRequestAgreement();
-    
+    private ScfReceivableRequestAgreement coreAgreement = new ScfReceivableRequestAgreement();
+
     /**
      * 平台和供应商签订的合同id
      */
-    @Column(name = "N_PLAT_AGREEMENT_ID",  columnDefinition="INTEGER" )
-    @MetaData( value="平台和供应商签订的合同id", comments = "平台和供应商签订的合同id")
+    @Column(name = "N_PLAT_AGREEMENT_ID", columnDefinition = "INTEGER")
+    @MetaData(value = "平台和供应商签订的合同id", comments = "平台和供应商签订的合同id")
     private Long platAgreementId;
     @Transient
-    private ScfReceivableRequestAgreement platAgreement=new ScfReceivableRequestAgreement();
-    
+    private ScfReceivableRequestAgreement platAgreement = new ScfReceivableRequestAgreement();
+
     public Long getCoreAgreementId() {
         return this.coreAgreementId;
     }
@@ -618,8 +615,6 @@ public class ScfReceivableRequest implements BetterjrEntity{
         this.regTime = anRegTime;
     }
 
-   
-
     public BigDecimal getRequestPayPlatBalance() {
         return this.requestPayPlatBalance;
     }
@@ -627,7 +622,6 @@ public class ScfReceivableRequest implements BetterjrEntity{
     public void setRequestPayPlatBalance(BigDecimal anRequestPayPlatBalance) {
         this.requestPayPlatBalance = anRequestPayPlatBalance;
     }
-
 
     public String getPayStatus() {
         return this.payStatus;
@@ -639,21 +633,24 @@ public class ScfReceivableRequest implements BetterjrEntity{
 
     @Override
     public String toString() {
-        return "ScfReceivableRequest [requestNo=" + this.requestNo + ", equityNo=" + this.equityNo + ", custNo=" + this.custNo + ", custName="
-                + this.custName + ", custBankName=" + this.custBankName + ", custBankAccount=" + this.custBankAccount + ", custBankAccountName="
-                + this.custBankAccountName + ", coreCustNo=" + this.coreCustNo + ", coreCustName=" + this.coreCustName + ", businTypeNo="
-                + this.businTypeNo + ", assetId=" + this.assetId + ", factoryNo=" + this.factoryNo + ", factoryName=" + this.factoryName
-                + ", balance=" + this.balance + ", requestBalance=" + this.requestBalance + ", custCoreRate=" + this.custCoreRate + ", depositRate="
-                + this.depositRate + ", requestPayBalance=" + this.requestPayBalance + ", requestPayPlatBalance=" + this.requestPayPlatBalance
-                + ", custOpatRate=" + this.custOpatRate + ", requestPayDate=" + this.requestPayDate + ", description=" + this.description
-                + ", businStatus=" + this.businStatus + ", operOrg=" + this.operOrg + ", ownCompany=" + this.ownCompany + ", regDate=" + this.regDate
-                + ", regTime=" + this.regTime + ", endDate=" + this.endDate + ", receivableRequestType=" + this.receivableRequestType + ", asset="
-                + this.asset + ", coreAgreementId=" + this.coreAgreementId + ", coreAgreement=" + this.coreAgreement + ", platAgreementId="
-                + this.platAgreementId + ", platAgreement=" + this.platAgreement + "]";
+        return "ScfReceivableRequest [requestNo=" + this.requestNo + ", equityNo=" + this.equityNo + ", custNo="
+                + this.custNo + ", custName=" + this.custName + ", custBankName=" + this.custBankName
+                + ", custBankAccount=" + this.custBankAccount + ", custBankAccountName=" + this.custBankAccountName
+                + ", coreCustNo=" + this.coreCustNo + ", coreCustName=" + this.coreCustName + ", businTypeNo="
+                + this.businTypeNo + ", assetId=" + this.assetId + ", factoryNo=" + this.factoryNo + ", factoryName="
+                + this.factoryName + ", balance=" + this.balance + ", requestBalance=" + this.requestBalance
+                + ", custCoreRate=" + this.custCoreRate + ", depositRate=" + this.depositRate + ", requestPayBalance="
+                + this.requestPayBalance + ", requestPayPlatBalance=" + this.requestPayPlatBalance + ", custOpatRate="
+                + this.custOpatRate + ", requestPayDate=" + this.requestPayDate + ", description=" + this.description
+                + ", businStatus=" + this.businStatus + ", operOrg=" + this.operOrg + ", ownCompany=" + this.ownCompany
+                + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", endDate=" + this.endDate
+                + ", receivableRequestType=" + this.receivableRequestType + ", asset=" + this.asset
+                + ", coreAgreementId=" + this.coreAgreementId + ", coreAgreement=" + this.coreAgreement
+                + ", platAgreementId=" + this.platAgreementId + ", platAgreement=" + this.platAgreement + "]";
     }
 
     public void saveAddValue() {
-        
+
         this.setBusinStatus(ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_NOEFFECTIVE);
         this.setEquityNo(SequenceFactory.generate("PLAT_SCFRECEIVABLErEQUESTLOGID", "RZ#{Date:yy}#{Seq:14}"));
         this.setRegDate(BetterDateUtils.getNumDate());
@@ -664,7 +661,5 @@ public class ScfReceivableRequest implements BetterjrEntity{
         this.setCoreSignFlag(ReceivableRequestConstantCollentions.SIGN_AGREEMENT_FLAG_NO);
         this.setPayStatus(ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_PAY_STATUS_INIT);
     }
-    
-    
-    
+
 }

@@ -43,7 +43,8 @@ public class JedisUtils {
                 }
                 int sleepTime = new Random().nextInt(10) + 1;
                 i++;
-                Thread.currentThread().sleep(sleepTime * 1000);
+                Thread.currentThread();
+                Thread.sleep(sleepTime * 1000);
 
             }
 

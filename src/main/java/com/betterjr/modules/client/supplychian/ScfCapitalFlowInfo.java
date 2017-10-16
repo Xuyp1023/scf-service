@@ -11,42 +11,41 @@ public class ScfCapitalFlowInfo implements Serializable {
      * 拜特客户编号
      */
     private String btCustno;
-    
-    //付款类型，01银行， 02票据
+
+    // 付款类型，01银行， 02票据
     private String payType;
-    
-    //收款人名称
+
+    // 收款人名称
     private String supplier;
-    
-    //收款方银行账户
+
+    // 收款方银行账户
     private String supplierBankAcco;
-    
-    //收款方银行全称
+
+    // 收款方银行全称
     private String supplierBankName;
-    
-    //付款人名称
+
+    // 付款人名称
     private String buyer;
-    
-    //付款方银行账户
+
+    // 付款方银行账户
     private String buyerBankAcco;
-    
-    //付款方银行全称
+
+    // 付款方银行全称
     private String buyerBankName;
-    
-    //拜特内部编号
+
+    // 拜特内部编号
     private String btId;
-    
-    //银行流水号 
+
+    // 银行流水号
     private String applicationNo;
-         
-    //付款金额
+
+    // 付款金额
     private BigDecimal balance;
-    
-    //支付时间
+
+    // 支付时间
     private String payDate;
-      
-    
-    //摘要
+
+    // 摘要
     private String description;
 
     public String getBtCustno() {
@@ -111,8 +110,8 @@ public class ScfCapitalFlowInfo implements Serializable {
 
     public void setBuyerBankName(String anBuyerBankName) {
         this.buyerBankName = anBuyerBankName;
-    } 
-    
+    }
+
     public String getBtId() {
         return this.btId;
     }
@@ -120,7 +119,7 @@ public class ScfCapitalFlowInfo implements Serializable {
     public void setBtId(String anBtId) {
         this.btId = anBtId;
     }
- 
+
     public String getApplicationNo() {
         return this.applicationNo;
     }
@@ -136,7 +135,7 @@ public class ScfCapitalFlowInfo implements Serializable {
     public void setBalance(BigDecimal anBalance) {
         this.balance = anBalance;
     }
- 
+
     public String getPayDate() {
         return this.payDate;
     }
@@ -152,6 +151,5 @@ public class ScfCapitalFlowInfo implements Serializable {
     public void setDescription(String anDescription) {
         this.description = anDescription;
     }
-    
-    
+
 }

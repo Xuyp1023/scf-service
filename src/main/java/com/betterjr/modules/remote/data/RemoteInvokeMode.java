@@ -1,5 +1,7 @@
 package com.betterjr.modules.remote.data;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.modules.remote.connection.LocateConnection;
 import com.betterjr.modules.remote.connection.RemoteMultiPartConnection;
@@ -21,15 +23,13 @@ public enum RemoteInvokeMode {
         Class tmpClass;
         if (this == RemoteInvokeMode.HTTP) {
             tmpClass = anConn;
-        }
-        else if (this == RemoteInvokeMode.HTTP_MUILT) {
+        } else if (this == RemoteInvokeMode.HTTP_MUILT) {
             tmpClass = RemoteMultiPartConnection.class;
         }
 
         else if (this == RemoteInvokeMode.LOCALE) {
             tmpClass = LocateConnection.class;
-        }
-        else {
+        } else {
             tmpClass = anFtp;
         }
 
@@ -38,7 +38,7 @@ public enum RemoteInvokeMode {
 
     public static RemoteInvokeMode checking(String anWorkType) {
         try {
-            if (BetterStringUtils.isNotBlank(anWorkType)) {
+            if (StringUtils.isNotBlank(anWorkType)) {
                 for (RemoteInvokeMode statusType : RemoteInvokeMode.values()) {
                     if (statusType.value.equals(anWorkType)) {
 

@@ -22,11 +22,7 @@ public class XmlRemoteDeSerializer extends RemoteBaseDeSerializer implements Rem
 
     private static final long serialVersionUID = 2825783050403173818L;
 
-
     public XmlRemoteDeSerializer() {
-
-
-
 
     }
 
@@ -41,29 +37,25 @@ public class XmlRemoteDeSerializer extends RemoteBaseDeSerializer implements Rem
         Object obj;
         if (StringUtils.isNotBlank(dataNode)) {
             SimpleDataEntity sde = new SimpleDataEntity(dataNode, true);
-            
-            //查询到的数据是包括了最后节点的那个MAP，获取数据，需要根据最后节点来取值
+
+            // 查询到的数据是包括了最后节点的那个MAP，获取数据，需要根据最后节点来取值
             Map tmpMap = XmlUtils.findMap(anData, sde.getValue());
             if (tmpMap == null) {
                 obj = anData;
-            }
-            else {
+            } else {
                 obj = tmpMap.get(sde.splitLastValue());
             }
-        }
-        else {
+        } else {
             if (anData.containsKey(JsonMapper.WORK_DATANODE)) {
                 obj = anData.get(JsonMapper.WORK_DATANODE);
-            }
-            else {
+            } else {
                 obj = anData;
             }
         }
 
         if (obj instanceof List) {
             return (List) obj;
-        }
-        else {
+        } else {
             return (List) Arrays.asList(obj);
         }
     }
@@ -73,8 +65,7 @@ public class XmlRemoteDeSerializer extends RemoteBaseDeSerializer implements Rem
         String tmpData = null;
         if (this.getBoolean("encrypt_Use", true)) {
             tmpData = this.func.getWorkFace().getCryptService().decrypt(data);
-        }
-        else{
+        } else {
             tmpData = this.data;
         }
         if (this.getBoolean("sign_Data", true)) {
@@ -86,7 +77,6 @@ public class XmlRemoteDeSerializer extends RemoteBaseDeSerializer implements Rem
 
         return prepareData(orignMap);
     }
- 
 
     /**
      * 解析XML数据，如果混合了JSON数据，也一起处理
@@ -116,17 +106,16 @@ public class XmlRemoteDeSerializer extends RemoteBaseDeSerializer implements Rem
                 // 如果函数的返回是单行模式，则将数据做合并处理。及将子MAP合并到根上来.
                 if ("0".equals(this.func.getOutputMode())) {
                     mergeMap(tmpMap, map);
-                }
-                else {
+                } else {
                     map = tmpMap;
                 }
-            }
-            else {
+            } else {
                 map = XmlUtils.dom2Map(baseNode);
             }
         }
         catch (DocumentException e) {
-            throw new BytterException(205068, "XmlRemoteDeSerializer.parseData Parse Document Error, DocumentException Please Check", e);
+            throw new BytterException(205068,
+                    "XmlRemoteDeSerializer.parseData Parse Document Error, DocumentException Please Check", e);
 
         } /*
            * catch (JsonParseException e) {

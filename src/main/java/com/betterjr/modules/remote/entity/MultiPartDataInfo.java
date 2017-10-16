@@ -3,6 +3,7 @@ package com.betterjr.modules.remote.entity;
 import java.util.*;
 import java.io.*;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -25,10 +26,9 @@ public class MultiPartDataInfo {
     private Map<String, File> fileMap = new HashMap();
 
     public void addNamedItem(String anKey, String anValue) {
-        if (BetterStringUtils.isNotEmpty(anKey) && BetterStringUtils.isNotEmpty(anValue)) {
+        if (StringUtils.isNotEmpty(anKey) && StringUtils.isNotEmpty(anValue)) {
             this.itemMap.put(anKey, anValue);
-        }
-        else {
+        } else {
             throw new BytterValidException(90003, " the request Key or Value is null");
         }
 
@@ -38,18 +38,17 @@ public class MultiPartDataInfo {
 
         return this.itemMap.remove(anKey);
     }
-    
+
     public void addFileItem(String anKey, String anFile) {
-        
+
         addFileItem(anKey, new File(anFile));
     }
-    
+
     public void addFileItem(String anKey, File anFile) {
-        if (BetterStringUtils.isNotBlank(anKey) && (anFile != null) && anFile.exists() && anFile.isFile()) {
+        if (StringUtils.isNotBlank(anKey) && (anFile != null) && anFile.exists() && anFile.isFile()) {
 
             this.fileMap.put(anKey, anFile);
-        }
-        else {
+        } else {
             throw new BytterValidException(90003, " the request anKey is null or File Not Exists");
         }
     }
@@ -60,7 +59,8 @@ public class MultiPartDataInfo {
     }
 
     public static HttpEntity buildMuiltData(MultiPartDataInfo anPartData) {
-        if (anPartData == null || (Collections3.isEmpty(anPartData.itemMap) && Collections3.isEmpty(anPartData.fileMap))) {
+        if (anPartData == null
+                || (Collections3.isEmpty(anPartData.itemMap) && Collections3.isEmpty(anPartData.fileMap))) {
             throw new BytterValidException(90001, " the request MultiPartDataInfo is null or empty");
         }
         return anPartData.build();
@@ -74,11 +74,11 @@ public class MultiPartDataInfo {
         }
         for (Map.Entry<String, File> ent : this.fileMap.entrySet()) {
             try {
-                entityBuilder.addBinaryBody(ent.getKey(), FileUtils.openInputStream(ent.getValue()));
+                entityBuilder.addBinaryBody(ent.getKey(), org.apache.commons.io.FileUtils.openInputStream(ent.getValue()));
             }
             catch (IOException e) {
-                throw new BytterValidException(90002, " the request MultiPartDataInfo request File " + ent.getValue().getAbsolutePath()
-                        + ", not find");
+                throw new BytterValidException(90002, " the request MultiPartDataInfo request File "
+                        + ent.getValue().getAbsolutePath() + ", not find");
             }
         }
 

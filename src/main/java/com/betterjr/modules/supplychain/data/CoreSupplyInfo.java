@@ -343,7 +343,8 @@ public class CoreSupplyInfo implements BaseRemoteEntity {
 
     }
 
-    public CoreSupplyInfo(CustInfo anCustInfo,  CustContactInfo anContactInfo, Long anCoreCustNo, String anCoreCustName) {
+    public CoreSupplyInfo(CustInfo anCustInfo, CustContactInfo anContactInfo, Long anCoreCustNo,
+            String anCoreCustName) {
         initCustInfo(anCustInfo);
         initContactInfo(anContactInfo);
         this.buyerNo = anCoreCustNo;
@@ -360,7 +361,6 @@ public class CoreSupplyInfo implements BaseRemoteEntity {
             this.validDate = anCustInfo.getValidDate();
         }
     }
- 
 
     private void initContactInfo(CustContactInfo anContactInfo) {
         if (anContactInfo != null) {

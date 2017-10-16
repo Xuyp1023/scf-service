@@ -5,6 +5,6 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.supplieroffer.entity.ScfAgreementTemplate;
 
 @BetterjrMapper
-public interface ScfAgreementTemplateMapper extends Mapper<ScfAgreementTemplate>{
+public interface ScfAgreementTemplateMapper extends Mapper<ScfAgreementTemplate> {
 
 }

@@ -11,34 +11,34 @@ import javax.persistence.*;
 @Table(name = "T_SCF_SUPPLIER_PUSH")
 public class ScfSupplierPush implements BetterjrEntity {
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
+    @Column(name = "ID", columnDefinition = "INTEGER")
     private Long id;
 
-    @Column(name = "C_CUSTCORENO",  columnDefinition="INTEGER" )
+    @Column(name = "C_CUSTCORENO", columnDefinition = "INTEGER")
     private Long custCoreNo;
 
-    @Column(name = "C_SUPPLIERNO",  columnDefinition="INTEGER" )
+    @Column(name = "C_SUPPLIERNO", columnDefinition = "INTEGER")
     private Long supplierNo;
 
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
+    @Column(name = "C_BUSIN_STATUS", columnDefinition = "VARCHAR")
     private String businStatus;
 
-    @Column(name = "C_REMARK",  columnDefinition="VARCHAR" )
+    @Column(name = "C_REMARK", columnDefinition = "VARCHAR")
     private String remark;
 
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
     private String regDate;
 
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
     private String regTime;
 
-    @Column(name = "D_MODIFY_DATE",  columnDefinition="VARCHAR" )
+    @Column(name = "D_MODIFY_DATE", columnDefinition = "VARCHAR")
     private String modifyDate;
 
-    @Column(name = "T_MODIFY_TIME",  columnDefinition="VARCHAR" )
+    @Column(name = "T_MODIFY_TIME", columnDefinition = "VARCHAR")
     private String modifyTime;
-    
-    @Column(name = "C_REMARKID",  columnDefinition="VARCHAR" )
+
+    @Column(name = "C_REMARKID", columnDefinition = "VARCHAR")
     private String remarkId;
 
     private static final long serialVersionUID = 8094687535079426738L;
@@ -157,14 +157,21 @@ public class ScfSupplierPush implements BetterjrEntity {
         }
         ScfSupplierPush other = (ScfSupplierPush) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getCustCoreNo() == null ? other.getCustCoreNo() == null : this.getCustCoreNo().equals(other.getCustCoreNo()))
-            && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
-            && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
-            && (this.getRemark() == null ? other.getRemark() == null : this.getRemark().equals(other.getRemark()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-            && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
-            && (this.getModifyDate() == null ? other.getModifyDate() == null : this.getModifyDate().equals(other.getModifyDate()))
-            && (this.getModifyTime() == null ? other.getModifyTime() == null : this.getModifyTime().equals(other.getModifyTime()));
+                && (this.getCustCoreNo() == null ? other.getCustCoreNo() == null
+                        : this.getCustCoreNo().equals(other.getCustCoreNo()))
+                && (this.getSupplierNo() == null ? other.getSupplierNo() == null
+                        : this.getSupplierNo().equals(other.getSupplierNo()))
+                && (this.getBusinStatus() == null ? other.getBusinStatus() == null
+                        : this.getBusinStatus().equals(other.getBusinStatus()))
+                && (this.getRemark() == null ? other.getRemark() == null : this.getRemark().equals(other.getRemark()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getRegTime() == null ? other.getRegTime() == null
+                        : this.getRegTime().equals(other.getRegTime()))
+                && (this.getModifyDate() == null ? other.getModifyDate() == null
+                        : this.getModifyDate().equals(other.getModifyDate()))
+                && (this.getModifyTime() == null ? other.getModifyTime() == null
+                        : this.getModifyTime().equals(other.getModifyTime()));
     }
 
     @Override
@@ -182,15 +189,15 @@ public class ScfSupplierPush implements BetterjrEntity {
         result = prime * result + ((getModifyTime() == null) ? 0 : getModifyTime().hashCode());
         return result;
     }
-    
-    public void initDefValue(Long custCoreNo,Long supplierNo){
-        this.id=SerialGenerator.getLongValue("push.id");
-        this.custCoreNo=custCoreNo;
-        this.supplierNo=supplierNo;
-        this.businStatus="1";
-        this.regDate=BetterDateUtils.getNumDate();
-        this.regTime=BetterDateUtils.getNumTime();
-        this.modifyDate=BetterDateUtils.getNumDate();
-        this.modifyTime=BetterDateUtils.getNumTime();
+
+    public void initDefValue(Long custCoreNo, Long supplierNo) {
+        this.id = SerialGenerator.getLongValue("push.id");
+        this.custCoreNo = custCoreNo;
+        this.supplierNo = supplierNo;
+        this.businStatus = "1";
+        this.regDate = BetterDateUtils.getNumDate();
+        this.regTime = BetterDateUtils.getNumTime();
+        this.modifyDate = BetterDateUtils.getNumDate();
+        this.modifyTime = BetterDateUtils.getNumTime();
     }
 }

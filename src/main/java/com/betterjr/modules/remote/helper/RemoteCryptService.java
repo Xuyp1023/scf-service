@@ -48,6 +48,7 @@ public class RemoteCryptService extends RemoteAlgorithmService implements java.i
     // 密钥必须是16位的；Initialization vector (IV) 必须是16位
     protected String algorithmCBCIV;
 
+    @Override
     public void initParameter(Map anConfigInfo, CustKeyManager anKeyManager) {
         super.initParameter(anConfigInfo, anKeyManager);
         this.algorithm = this.getString("encrypt_algorithm".toLowerCase(), algorithm);
@@ -114,8 +115,7 @@ public class RemoteCryptService extends RemoteAlgorithmService implements java.i
             while (inputLen - offSet > 0) {
                 if (inputLen - offSet > MAX_DECRYPT_BLOCK) {
                     cache = cipher.doFinal(data, offSet, MAX_DECRYPT_BLOCK);
-                }
-                else {
+                } else {
                     cache = cipher.doFinal(data, offSet, inputLen - offSet);
                 }
                 out.write(cache, 0, cache.length);
@@ -126,8 +126,8 @@ public class RemoteCryptService extends RemoteAlgorithmService implements java.i
 
             return new String(decryptedData, "UTF-8");
         }
-        catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException
-                | UnsupportedEncodingException e) {
+        catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException
+                | BadPaddingException | UnsupportedEncodingException e) {
 
             e.printStackTrace();
             return null;
@@ -148,8 +148,7 @@ public class RemoteCryptService extends RemoteAlgorithmService implements java.i
             for (int i = 0; inputLen - offSet > 0; offSet = ++i * keyDiv) {
                 if (inputLen - offSet > keyDiv) {
                     cache = cipher.doFinal(anBytes, offSet, keyDiv);
-                }
-                else {
+                } else {
                     cache = cipher.doFinal(anBytes, offSet, inputLen - offSet);
                 }
                 out.write(cache, 0, cache.length);
@@ -171,8 +170,7 @@ public class RemoteCryptService extends RemoteAlgorithmService implements java.i
         final int keyDiv;
         if (anMode == Cipher.DECRYPT_MODE) {
             keyDiv = (SignHelper.findKeySize(this.keyManager.getPrivKey()) >> 3);
-        }
-        else {
+        } else {
             keyDiv = ((SignHelper.findKeySize(this.keyManager.getMatchKey()) >> 3) - 11);
         }
         return keyDiv;
@@ -199,8 +197,7 @@ public class RemoteCryptService extends RemoteAlgorithmService implements java.i
                     if (useBase64) {
                         in = new Base64InputStream(in);
                     }
-                }
-                else {
+                } else {
                     if (useBase64) {
                         out = new Base64OutputStream(out);
                     }
@@ -216,33 +213,29 @@ public class RemoteCryptService extends RemoteAlgorithmService implements java.i
                 IOUtils.closeQuietly(out);
                 IOUtils.closeQuietly(in);
             }
-        }
-        else {
+        } else {
             logger.warn("encryptFile file :" + anInFile.getAbsolutePath() + ", not exists");
             return false;
         }
     }
 
-    protected Cipher createCipher(int anMode) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
-            InvalidAlgorithmParameterException {
+    protected Cipher createCipher(int anMode) throws NoSuchAlgorithmException, NoSuchPaddingException,
+            InvalidKeyException, InvalidAlgorithmParameterException {
         Cipher cipher;
         if ("RSA".equalsIgnoreCase(this.algorithm)) {
             cipher = Cipher.getInstance(this.algorithm);
             if (anMode == Cipher.ENCRYPT_MODE) {
                 cipher.init(anMode, this.keyManager.getMatchKey());
-            }
-            else {
+            } else {
                 cipher.init(anMode, this.keyManager.getPrivKey());
             }
-        }
-        else {
+        } else {
             SecretKey secretKey = new SecretKeySpec(this.workKey, this.algorithm);
             if (StringUtils.isNotBlank(this.algorithmCBC) && StringUtils.isNotBlank(this.algorithmCBCIV)) {
                 cipher = Cipher.getInstance(this.algorithmCBC);
                 IvParameterSpec ivSpec = new IvParameterSpec(this.dataEncodeing.decodeData(this.algorithmCBCIV));
                 cipher.init(anMode, secretKey, ivSpec);
-            }
-            else {
+            } else {
                 cipher = Cipher.getInstance(this.algorithm);
                 cipher.init(anMode, secretKey);
             }

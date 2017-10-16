@@ -25,7 +25,8 @@ public class ScfOrderDubboService implements IScfOrderService {
     @Override
     public String webSaveModifyOrder(Map<String, Object> anMap, Long anId, String anFileList, String anOtherFileList) {
         ScfOrder anOrder = (ScfOrder) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk("订单信息编辑成功", scfOrderService.saveModifyOrder(anOrder, anId, anFileList, anOtherFileList)).toJson();
+        return AjaxObject.newOk("订单信息编辑成功", scfOrderService.saveModifyOrder(anOrder, anId, anFileList, anOtherFileList))
+                .toJson();
     }
 
     @Override
@@ -35,34 +36,40 @@ public class ScfOrderDubboService implements IScfOrderService {
     }
 
     @Override
-    public String webQueryOrder(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize) {
+    public String webQueryOrder(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum,
+            int anPageSize) {
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOkWithPage("订单信息查询成功", scfOrderService.queryOrder(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize))
+        return AjaxObject
+                .newOkWithPage("订单信息查询成功",
+                        scfOrderService.queryOrder(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize))
                 .toJson();
     }
 
     @Override
-    public String webQueryOrderDO(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize) {
+    public String webQueryOrderDO(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum,
+            int anPageSize) {
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOkWithPage("订单信息查询成功", orderService.queryOrder(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize))
+        return AjaxObject
+                .newOkWithPage("订单信息查询成功",
+                        orderService.queryOrder(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize))
                 .toJson();
     }
 
     @Override
-    public String webQueryIneffectiveOrderDO(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize,
-            boolean anIsAudit) {
+    public String webQueryIneffectiveOrderDO(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag,
+            int anPageNum, int anPageSize, boolean anIsAudit) {
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOkWithPage("订单信息查询成功",
-                orderService.queryIneffectiveOrder(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize, anIsAudit)).toJson();
+        return AjaxObject.newOkWithPage("订单信息查询成功", orderService.queryIneffectiveOrder(anQueryConditionMap,
+                anIsOnlyNormal, anFlag, anPageNum, anPageSize, anIsAudit)).toJson();
 
     }
 
     @Override
-    public String webQueryEffectiveOrderDO(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize,
-            boolean anIsCust) {
+    public String webQueryEffectiveOrderDO(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag,
+            int anPageNum, int anPageSize, boolean anIsCust) {
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOkWithPage("订单信息查询成功",
-                orderService.queryEffectiveOrder(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize, anIsCust)).toJson();
+        return AjaxObject.newOkWithPage("订单信息查询成功", orderService.queryEffectiveOrder(anQueryConditionMap,
+                anIsOnlyNormal, anFlag, anPageNum, anPageSize, anIsCust)).toJson();
     }
 
     @Override
@@ -105,7 +112,8 @@ public class ScfOrderDubboService implements IScfOrderService {
 
     @Override
     public String webCheckInfoCompleted(String anIdList, String anRequestType) {
-        return AjaxObject.newOk("资料检查成功", scfOrderService.checkInfoCompleted(anIdList, anRequestType) ? "0" : "1").toJson();
+        return AjaxObject.newOk("资料检查成功", scfOrderService.checkInfoCompleted(anIdList, anRequestType) ? "0" : "1")
+                .toJson();
     }
 
     @Override
@@ -125,15 +133,17 @@ public class ScfOrderDubboService implements IScfOrderService {
 
     @Override
     public String webFindRequestByInfoId(Long anInfoId, String anInfoType) {
-        return AjaxObject.newOk("根据资料id和资料类型查询融资实体", scfOrderService.findRequestByInfoId(anInfoId, anInfoType)).toJson();
+        return AjaxObject.newOk("根据资料id和资料类型查询融资实体", scfOrderService.findRequestByInfoId(anInfoId, anInfoType))
+                .toJson();
     }
 
     @Override
-    public String webQueryCanAnnulOrder(Map<String, Object> anAnMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize) {
+    public String webQueryCanAnnulOrder(Map<String, Object> anAnMap, String anIsOnlyNormal, String anFlag,
+            int anPageNum, int anPageSize) {
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
 
-        return AjaxObject
-                .newOkWithPage("订单信息查询成功", orderService.queryCanAnnulBill(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize))
+        return AjaxObject.newOkWithPage("订单信息查询成功",
+                orderService.queryCanAnnulBill(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize))
                 .toJson();
     }
 
@@ -150,19 +160,19 @@ public class ScfOrderDubboService implements IScfOrderService {
     }
 
     @Override
-    public String webQueryIneffectiveOrder(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize,
-            boolean anIsAudit) {
+    public String webQueryIneffectiveOrder(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag,
+            int anPageNum, int anPageSize, boolean anIsAudit) {
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOkWithPage("订单查询成功",
-                orderService.queryIneffectiveOrder(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize, anIsAudit)).toJson();
+        return AjaxObject.newOkWithPage("订单查询成功", orderService.queryIneffectiveOrder(anQueryConditionMap,
+                anIsOnlyNormal, anFlag, anPageNum, anPageSize, anIsAudit)).toJson();
     }
 
     @Override
-    public String webQueryEffectiveOrder(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize,
-            boolean anIsCust) {
+    public String webQueryEffectiveOrder(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum,
+            int anPageSize, boolean anIsCust) {
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOkWithPage("订单查询成功",
-                orderService.queryEffectiveOrder(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize, anIsCust)).toJson();
+        return AjaxObject.newOkWithPage("订单查询成功", orderService.queryEffectiveOrder(anQueryConditionMap, anIsOnlyNormal,
+                anFlag, anPageNum, anPageSize, anIsCust)).toJson();
     }
 
     @Override
@@ -174,7 +184,10 @@ public class ScfOrderDubboService implements IScfOrderService {
     @Override
     public String webQueryExportOrderRecordList(Long anResolveFileid, String anFlag, int anPageNum, int anPageSize) {
 
-        return AjaxObject.newOkWithPage("订单信息查询成功", orderService.queryExportOrderRecordList(anResolveFileid, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject
+                .newOkWithPage("订单信息查询成功",
+                        orderService.queryExportOrderRecordList(anResolveFileid, anFlag, anPageNum, anPageSize))
+                .toJson();
 
     }
 

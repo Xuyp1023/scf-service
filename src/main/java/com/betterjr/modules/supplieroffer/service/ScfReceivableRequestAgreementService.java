@@ -2,7 +2,6 @@ package com.betterjr.modules.supplieroffer.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,16 +21,14 @@ import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.customer.ICustMechBaseService;
-import com.betterjr.modules.customer.constants.CustomerConstants;
-import com.betterjr.modules.customer.entity.CustRelation;
 import com.betterjr.modules.supplieroffer.dao.ScfReceivableRequestAgreementMapper;
 import com.betterjr.modules.supplieroffer.data.AgreementConstantCollentions;
-import com.betterjr.modules.supplieroffer.data.ReceivableRequestConstantCollentions;
 import com.betterjr.modules.supplieroffer.entity.ScfReceivableRequest;
 import com.betterjr.modules.supplieroffer.entity.ScfReceivableRequestAgreement;
 
 @Service
-public class ScfReceivableRequestAgreementService extends BaseService<ScfReceivableRequestAgreementMapper, ScfReceivableRequestAgreement> {
+public class ScfReceivableRequestAgreementService
+        extends BaseService<ScfReceivableRequestAgreementMapper, ScfReceivableRequestAgreement> {
 
     @Reference(interfaceClass = ICustMechBaseService.class)
     private ICustMechBaseService custMechBaseService;
@@ -49,7 +46,8 @@ public class ScfReceivableRequestAgreementService extends BaseService<ScfReceiva
      * @param anPageSize
      * @return
      */
-    public Page<ScfReceivableRequestAgreement> queryAgreementWithCore(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfReceivableRequestAgreement> queryAgreementWithCore(Map<String, Object> anMap, String anFlag,
+            int anPageNum, int anPageSize) {
 
         BTAssert.notNull(anMap, "查询条件为空,操作失败");
         if (!anMap.containsKey("coreCustNo")) {
@@ -62,7 +60,8 @@ public class ScfReceivableRequestAgreementService extends BaseService<ScfReceiva
         list.add("0");
         list.add("3");
         anMap.put("NEbusinStatus", list);
-        Page<ScfReceivableRequestAgreement> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
+        Page<ScfReceivableRequestAgreement> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize,
+                "1".equals(anFlag), "id desc");
         return page;
     }
 
@@ -75,7 +74,8 @@ public class ScfReceivableRequestAgreementService extends BaseService<ScfReceiva
      * @param anPageSize
      * @return
      */
-    public Page<ScfReceivableRequestAgreement> queryAgreementWithSupplier(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfReceivableRequestAgreement> queryAgreementWithSupplier(Map<String, Object> anMap, String anFlag,
+            int anPageNum, int anPageSize) {
 
         BTAssert.notNull(anMap, "查询条件为空,操作失败");
         if (!anMap.containsKey("custNo")) {
@@ -87,7 +87,8 @@ public class ScfReceivableRequestAgreementService extends BaseService<ScfReceiva
         list.add("0");
         list.add("3");
         anMap.put("NEbusinStatus", list);
-        Page<ScfReceivableRequestAgreement> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
+        Page<ScfReceivableRequestAgreement> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize,
+                "1".equals(anFlag), "id desc");
         return page;
     }
 
@@ -115,7 +116,8 @@ public class ScfReceivableRequestAgreementService extends BaseService<ScfReceiva
      * @param anRequest
      * @return 1: 模式1 2 表示模式2签署的合同
      */
-    public ScfReceivableRequestAgreement saveAddCoreAgreementByRequest(ScfReceivableRequest anRequest, String agreementType) {
+    public ScfReceivableRequestAgreement saveAddCoreAgreementByRequest(ScfReceivableRequest anRequest,
+            String agreementType) {
 
         ScfReceivableRequestAgreement agreement = new ScfReceivableRequestAgreement();
         agreement.saveAddValue(UserUtils.getOperatorInfo());
@@ -252,7 +254,8 @@ public class ScfReceivableRequestAgreementService extends BaseService<ScfReceiva
         final List<SimpleDataEntity> result = new ArrayList<SimpleDataEntity>();
 
         for (ScfReceivableRequestAgreement agreement : this.mapper.queryDictFactory()) {
-            if (agreement != null && agreement.getFactoryNo() != null && StringUtils.isNoneBlank(agreement.getFactoryName())) {
+            if (agreement != null && agreement.getFactoryNo() != null
+                    && StringUtils.isNoneBlank(agreement.getFactoryName())) {
                 result.add(new SimpleDataEntity(agreement.getFactoryName(), String.valueOf(agreement.getFactoryNo())));
             }
         }

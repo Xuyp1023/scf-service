@@ -32,50 +32,50 @@ public class ScfExemptService extends BaseService<ScfExemptMapper, ScfExempt> {
      */
     public ScfExempt addExempt(ScfExempt anExempt) {
         BTAssert.notNull(anExempt, "新增豁免记录失败-anExempt不能为空");
-        
-        //修改还款计划中的还款豁免信息
+
+        // 修改还款计划中的还款豁免信息
         ScfPayPlan plan = payPlanService.findPayPlanByRequest(anExempt.getRequestNo());
-        if(null != anExempt.getInterestBalance()){
+        if (null != anExempt.getInterestBalance()) {
             plan.setExemptInterestBalance(plan.getExemptInterestBalance().add(anExempt.getInterestBalance()));
         }
-        
-        if(null != anExempt.getManagementBalance()){
-            
+
+        if (null != anExempt.getManagementBalance()) {
+
             plan.setExemptManagementBalance(plan.getExemptManagementBalance().add(anExempt.getManagementBalance()));
         }
-        
-        if(null != anExempt.getLatefeeBalance()){
+
+        if (null != anExempt.getLatefeeBalance()) {
             plan.setExemptLatefeeBalance(plan.getExemptLatefeeBalance().add(anExempt.getLatefeeBalance()));
         }
-        
-        if(null != anExempt.getPenaltyBalance()){
+
+        if (null != anExempt.getPenaltyBalance()) {
             plan.setExemptPenaltyBalance(plan.getExemptPenaltyBalance().add(anExempt.getPenaltyBalance()));
         }
-        
-        if(null != anExempt.getServicefeeBalance()){
+
+        if (null != anExempt.getServicefeeBalance()) {
             plan.setExemptServicefeeBalance(plan.getExemptServicefeeBalance().add(anExempt.getServicefeeBalance()));
         }
-        
-        if(null != anExempt.getPrincipalBalance()){
+
+        if (null != anExempt.getPrincipalBalance()) {
             plan.setExemptPrincipalBalance(plan.getExemptPrincipalBalance().add(anExempt.getPrincipalBalance()));
         }
-        
-        if(null != anExempt.getTotalBalance()){
+
+        if (null != anExempt.getTotalBalance()) {
             plan.setExemptTotalBalance(plan.getExemptTotalBalance().add(anExempt.getTotalBalance()));
         }
-        
+
         payPlanService.saveModifyPayPlan(plan, plan.getId());
-        
-        //保存豁免
+
+        // 保存豁免
         anExempt.setCustNo(plan.getCustNo());
         anExempt.setPayPlanId(plan.getId());
         anExempt.init(anExempt);
         this.insert(anExempt);
-        
+
         this.fillCustName(anExempt);
         return anExempt;
     }
-    
+
     /**
      * 修改豁免记录
      * 
@@ -88,7 +88,7 @@ public class ScfExemptService extends BaseService<ScfExemptMapper, ScfExempt> {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("factorNo", anExempt.getFactorNo());
         map.put("id", anId);
-        if(Collections3.isEmpty(selectByClassProperty(ScfExempt.class, map))){
+        if (Collections3.isEmpty(selectByClassProperty(ScfExempt.class, map))) {
             throw new BytterTradeException(40001, "修改豁免记录失败-找不到原数据");
         }
 
@@ -127,7 +127,7 @@ public class ScfExemptService extends BaseService<ScfExemptMapper, ScfExempt> {
         }
         return list;
     }
-    
+
     /**
      * 查询豁免记录详情
      * 
@@ -136,18 +136,18 @@ public class ScfExemptService extends BaseService<ScfExemptMapper, ScfExempt> {
      */
     public ScfExempt findExemptDetail(Long anId) {
         BTAssert.notNull(anId, "查询豁免记录详情失败-anId不能为空");
-        ScfExempt exempt =  this.selectByPrimaryKey(anId);
-        if(null == exempt){
+        ScfExempt exempt = this.selectByPrimaryKey(anId);
+        if (null == exempt) {
             return new ScfExempt();
         }
-        
+
         this.fillCustName(exempt);
         return exempt;
     }
-    
-    private void fillCustName(ScfExempt anExempt){
+
+    private void fillCustName(ScfExempt anExempt) {
         anExempt.setCustName(custAccountService.queryCustName(anExempt.getCustNo()));
         anExempt.setFactorName(custAccountService.queryCustName(anExempt.getFactorNo()));
     }
-    
+
 }

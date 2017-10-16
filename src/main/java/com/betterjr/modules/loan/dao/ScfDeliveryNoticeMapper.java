@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.loan.entity.ScfDeliveryNotice;
 
 @BetterjrMapper
-public interface ScfDeliveryNoticeMapper extends Mapper<ScfDeliveryNotice> {
-}
+public interface ScfDeliveryNoticeMapper extends Mapper<ScfDeliveryNotice> {}

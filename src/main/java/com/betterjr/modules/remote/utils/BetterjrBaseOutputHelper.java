@@ -29,82 +29,80 @@ public class BetterjrBaseOutputHelper {
         this.convertService = anConvert;
     }
 
-    public static Object defConvertValue(String valueMode, Map dataMap, String anField, Object anDataObj, String anWorkExp){
+    public static Object defConvertValue(String valueMode, Map dataMap, String anField, Object anDataObj,
+            String anWorkExp) {
         char valueChar = '0';
         Object obj = null;
-        
-        if (BetterStringUtils.isNotBlank(anWorkExp)){
+
+        if (StringUtils.isNotBlank(anWorkExp)) {
             anField = anWorkExp;
         }
-        if (BetterStringUtils.isNotBlank(valueMode)) {
+        if (StringUtils.isNotBlank(valueMode)) {
             valueChar = valueMode.trim().charAt(0);
         }
         if ('0' == valueChar) {
             obj = dataMap.get(anField);
-        }
-        else if ('1' == valueChar) {
+        } else if ('1' == valueChar) {
             obj = anField;
-        }
-        else if ('2' == valueChar) {
+        } else if ('2' == valueChar) {
             obj = ParamValueHelper.getValue(anField);
-        }
-        else if ('3' == valueChar) {
+        } else if ('3' == valueChar) {
             RuleContext ruleC = RuleContext.create("obj", anDataObj);
             try {
-               obj = QlExpressUtil.simpleInvoke(anField, ruleC);
+                obj = QlExpressUtil.simpleInvoke(anField, ruleC);
             }
-            catch (Exception e) { 
-               throw new BytterValidException(58971, "BetterjrBaseOutputHelper use QlExpressUtil.getRunner has error", e);
+            catch (Exception e) {
+                throw new BytterValidException(58971, "BetterjrBaseOutputHelper use QlExpressUtil.getRunner has error",
+                        e);
             }
         }
         return obj;
     }
-    
+
     public Map<String, RemoteFieldInfo> outPutData(WorkFarFunction anFunction, boolean anMust) {
         Map<String, RemoteFieldInfo> map = new LinkedHashMap();
         Map<String, Object> dataMap = null;
         if (objBig instanceof Map) {
 
             dataMap = (Map) objBig;
-        }
-        else if (objBig instanceof BetterjrEntity || objBig instanceof BaseRemoteEntity) {
+        } else if (objBig instanceof BetterjrEntity || objBig instanceof BaseRemoteEntity) {
 
             dataMap = BeanMapper.map(objBig, Map.class);
-        }
-        else {
+        } else {
 
-            throw new BytterException(205068, "BetterjrBaseOutputHelper only support javaBean and Map Class, Please Check");
+            throw new BytterException(205068,
+                    "BetterjrBaseOutputHelper only support javaBean and Map Class, Please Check");
         }
         if (objBig instanceof AttachDataFace) {
             Map tmpAttach = ((AttachDataFace) objBig).getAttach();
             if (tmpAttach != null) {
-                
+
                 dataMap.putAll(tmpAttach);
             }
         }
-        
+
         String tmpStr = null;
         for (Map.Entry<String, WorkFaceFieldInfo> ent : anFunction.getFieldMap().entrySet()) {
             WorkFaceFieldInfo fieldInfo = ent.getValue();
-            Object obj = defConvertValue(fieldInfo.getValueMode(), dataMap, fieldInfo.getBeanField(), this.objBig, fieldInfo.getWorkExpress());
+            Object obj = defConvertValue(fieldInfo.getValueMode(), dataMap, fieldInfo.getBeanField(), this.objBig,
+                    fieldInfo.getWorkExpress());
             if (fieldInfo.verify(obj, anFunction)) {
                 if (DataTypeInfo.simpleObject(obj)) {
-                tmpStr = fieldInfo.getValue(obj);
-                tmpStr = this.convertService.convert(fieldInfo, fieldInfo.getFaceField(), tmpStr);
-                if (StringUtils.isBlank(tmpStr)) {
-                    if (anMust) {
-                        if ((fieldInfo.getFieldType() != null) && Number.class.isAssignableFrom(fieldInfo.getFieldType())){
-                           tmpStr = "0"; 
-                        }
-                        else{
-                            tmpStr = " ";
+                    tmpStr = fieldInfo.getValue(obj);
+                    tmpStr = this.convertService.convert(fieldInfo, fieldInfo.getFaceField(), tmpStr);
+                    if (StringUtils.isBlank(tmpStr)) {
+                        if (anMust) {
+                            if ((fieldInfo.getFieldType() != null)
+                                    && Number.class.isAssignableFrom(fieldInfo.getFieldType())) {
+                                tmpStr = "0";
+                            } else {
+                                tmpStr = " ";
+                            }
+                        } else {
+                            continue;
                         }
                     }
-                    else {
-                        continue;
-                    }
-                }
-                   obj = tmpStr; 
+                    obj = tmpStr;
                 }
                 map.put(fieldInfo.getFaceField(), fieldInfo.createDataField(obj));
             }

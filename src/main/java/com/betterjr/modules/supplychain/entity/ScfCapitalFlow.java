@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BetterDateUtils;
@@ -408,29 +410,46 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
         }
         final ScfCapitalFlow other = (ScfCapitalFlow) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-                && (this.getSupplier() == null ? other.getSupplier() == null : this.getSupplier().equals(other.getSupplier()))
-                && (this.getBuyerNo() == null ? other.getBuyerNo() == null : this.getBuyerNo().equals(other.getBuyerNo()))
-                && (this.getSuppBankAccount() == null ? other.getSuppBankAccount() == null : this.getSuppBankAccount().equals(
-                        other.getSuppBankAccount()))
-                && (this.getSuppBankName() == null ? other.getSuppBankName() == null : this.getSuppBankName().equals(other.getSuppBankName()))
+                && (this.getSupplier() == null ? other.getSupplier() == null
+                        : this.getSupplier().equals(other.getSupplier()))
+                && (this.getBuyerNo() == null ? other.getBuyerNo() == null
+                        : this.getBuyerNo().equals(other.getBuyerNo()))
+                && (this.getSuppBankAccount() == null ? other.getSuppBankAccount() == null
+                        : this.getSuppBankAccount().equals(other.getSuppBankAccount()))
+                && (this.getSuppBankName() == null ? other.getSuppBankName() == null
+                        : this.getSuppBankName().equals(other.getSuppBankName()))
                 && (this.getBuyer() == null ? other.getBuyer() == null : this.getBuyer().equals(other.getBuyer()))
-                && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
-                && (this.getBuyerBankAccount() == null ? other.getBuyerBankAccount() == null : this.getBuyerBankAccount().equals(
-                        other.getBuyerBankAccount()))
-                && (this.getBuyerBankName() == null ? other.getBuyerBankName() == null : this.getBuyerBankName().equals(other.getBuyerBankName()))
-                && (this.getBtInnerId() == null ? other.getBtInnerId() == null : this.getBtInnerId().equals(other.getBtInnerId()))
-                && (this.getBalance() == null ? other.getBalance() == null : this.getBalance().equals(other.getBalance()))
-                && (this.getRequestDate() == null ? other.getRequestDate() == null : this.getRequestDate().equals(other.getRequestDate()))
-                && (this.getRequestTime() == null ? other.getRequestTime() == null : this.getRequestTime().equals(other.getRequestTime()))
-                && (this.getPurpose() == null ? other.getPurpose() == null : this.getPurpose().equals(other.getPurpose()))
-                && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()))
+                && (this.getSupplierNo() == null ? other.getSupplierNo() == null
+                        : this.getSupplierNo().equals(other.getSupplierNo()))
+                && (this.getBuyerBankAccount() == null ? other.getBuyerBankAccount() == null
+                        : this.getBuyerBankAccount().equals(other.getBuyerBankAccount()))
+                && (this.getBuyerBankName() == null ? other.getBuyerBankName() == null
+                        : this.getBuyerBankName().equals(other.getBuyerBankName()))
+                && (this.getBtInnerId() == null ? other.getBtInnerId() == null
+                        : this.getBtInnerId().equals(other.getBtInnerId()))
+                && (this.getBalance() == null ? other.getBalance() == null
+                        : this.getBalance().equals(other.getBalance()))
+                && (this.getRequestDate() == null ? other.getRequestDate() == null
+                        : this.getRequestDate().equals(other.getRequestDate()))
+                && (this.getRequestTime() == null ? other.getRequestTime() == null
+                        : this.getRequestTime().equals(other.getRequestTime()))
+                && (this.getPurpose() == null ? other.getPurpose() == null
+                        : this.getPurpose().equals(other.getPurpose()))
+                && (this.getDescription() == null ? other.getDescription() == null
+                        : this.getDescription().equals(other.getDescription()))
                 && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
-                && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-                && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-                && (this.getPayMode() == null ? other.getPayMode() == null : this.getPayMode().equals(other.getPayMode()))
-                && (this.getRequestNo() == null ? other.getRequestNo() == null : this.getRequestNo().equals(other.getRequestNo()))
-                && (this.getCoreOperOrg() == null ? other.getCoreOperOrg() == null : this.getCoreOperOrg().equals(other.getCoreOperOrg()))
-                && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()));
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getModiDate() == null ? other.getModiDate() == null
+                        : this.getModiDate().equals(other.getModiDate()))
+                && (this.getPayMode() == null ? other.getPayMode() == null
+                        : this.getPayMode().equals(other.getPayMode()))
+                && (this.getRequestNo() == null ? other.getRequestNo() == null
+                        : this.getRequestNo().equals(other.getRequestNo()))
+                && (this.getCoreOperOrg() == null ? other.getCoreOperOrg() == null
+                        : this.getCoreOperOrg().equals(other.getCoreOperOrg()))
+                && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null
+                        : this.getCoreCustNo().equals(other.getCoreCustNo()));
     }
 
     @Override
@@ -489,15 +508,14 @@ public class ScfCapitalFlow implements ScfClientDataParentFace {
             this.requestDate = this.requestDate.substring(0, 8);
         }
         this.modiDate = BetterDateUtils.getNumDate();
-        this.status="1";
-        if ("01".equals(this.payMode)){
+        this.status = "1";
+        if ("01".equals(this.payMode)) {
             this.payMode = "0";
-        }
-        else{
-            this.payMode ="1";
+        } else {
+            this.payMode = "1";
         }
         this.supplierNo = MathExtend.defaultLongZero(this.supplierNo);
-        this.requestNo = BetterStringUtils.defaultString(this.requestNo, " ");
+        this.requestNo = StringUtils.defaultString(this.requestNo, " ");
     }
 
     @Override

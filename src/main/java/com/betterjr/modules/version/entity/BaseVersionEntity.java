@@ -5,6 +5,9 @@ import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OrderBy;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.exception.BytterTradeException;
 import com.betterjr.common.utils.BetterStringUtils;
@@ -127,14 +130,22 @@ public class BaseVersionEntity extends BetterjrBaseEntity {
 
     public void checkFinanceStatus() {
 
-        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_ANNUL, true, "当前单据已经废止,无法进行融资,凭证编号为：" + this.getRefNo());
-        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EXPIRE, true, "当前单据已经过期,无法进行融资,凭证编号为：" + this.getRefNo());
-        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE, true, "当前单据还未生效,无法进行融资,凭证编号为：" + this.getRefNo());
-        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true, "当前单据已经转让,无法进行融资,凭证编号为：" + this.getRefNo());
-        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_USED, true, "当前单据已经进行融资,无法进行融资,凭证编号为：" + this.getRefNo());
-        checkStatus(this.getDocStatus(), VersionConstantCollentions.DOC_STATUS_ANNUL, true, "当前单据已经废止,无法进行融资,凭证编号为：" + this.getRefNo());
-        checkStatus(this.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true, "当前单据已经进行融资,无法进行融资,凭证编号为：" + this.getRefNo());
-        checkStatus(this.getIsLatest(), VersionConstantCollentions.IS_NOT_LATEST, true, "当前单据已经进行修改,无法对旧版本资产进行融资,凭证编号为：" + this.getRefNo());
+        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_ANNUL, true,
+                "当前单据已经废止,无法进行融资,凭证编号为：" + this.getRefNo());
+        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EXPIRE, true,
+                "当前单据已经过期,无法进行融资,凭证编号为：" + this.getRefNo());
+        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE, true,
+                "当前单据还未生效,无法进行融资,凭证编号为：" + this.getRefNo());
+        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true,
+                "当前单据已经转让,无法进行融资,凭证编号为：" + this.getRefNo());
+        checkStatus(this.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_USED, true,
+                "当前单据已经进行融资,无法进行融资,凭证编号为：" + this.getRefNo());
+        checkStatus(this.getDocStatus(), VersionConstantCollentions.DOC_STATUS_ANNUL, true,
+                "当前单据已经废止,无法进行融资,凭证编号为：" + this.getRefNo());
+        checkStatus(this.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true,
+                "当前单据已经进行融资,无法进行融资,凭证编号为：" + this.getRefNo());
+        checkStatus(this.getIsLatest(), VersionConstantCollentions.IS_NOT_LATEST, true,
+                "当前单据已经进行修改,无法对旧版本资产进行融资,凭证编号为：" + this.getRefNo());
 
     }
 
@@ -142,7 +153,7 @@ public class BaseVersionEntity extends BetterjrBaseEntity {
      * 检查状态信息
      */
     public void checkStatus(String anBusinStatus, String anTargetStatus, boolean anFlag, String anMessage) {
-        if (BetterStringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
+        if (StringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
 
             throw new BytterTradeException(40001, anMessage);
         }

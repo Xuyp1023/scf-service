@@ -37,7 +37,8 @@ public abstract class RemoteBaseSerializer extends RemoteAlgorithmService implem
     protected Map<String, RemoteFieldInfo> sendParams;
     // added for process http header
     protected RemoteConnection conn;
-    public static String[] CONFIG_NODE_NAME = new String[] { XmlUtils.DATA_NODE, XmlUtils.HEAD_NODE, XmlUtils.ROOT_NODE };
+    public static String[] CONFIG_NODE_NAME = new String[] { XmlUtils.DATA_NODE, XmlUtils.HEAD_NODE,
+            XmlUtils.ROOT_NODE };
     protected static Logger logger = LoggerFactory.getLogger(RemoteBaseSerializer.class);
     private static ThreadLocal<Object> tokenContext = new ThreadLocal();
 
@@ -57,8 +58,10 @@ public abstract class RemoteBaseSerializer extends RemoteAlgorithmService implem
 
     }
 
-    public void init(WorkFarFunction anFunc, Map<String, RemoteFieldInfo> anHeaderInfo, Map<String, RemoteFieldInfo> anSendParams,
-            Map<String, FarConfigInfo> anConfigInfo, CustKeyManager anKeyManager, RemoteConnection conn) {
+    @Override
+    public void init(WorkFarFunction anFunc, Map<String, RemoteFieldInfo> anHeaderInfo,
+            Map<String, RemoteFieldInfo> anSendParams, Map<String, FarConfigInfo> anConfigInfo,
+            CustKeyManager anKeyManager, RemoteConnection conn) {
         super.initParameter(anConfigInfo, anKeyManager);
         this.func = anFunc;
         this.headerInfo = anHeaderInfo;
@@ -67,6 +70,7 @@ public abstract class RemoteBaseSerializer extends RemoteAlgorithmService implem
         this.conn = conn;
     }
 
+    @Override
     public Map<String, Object> readResult() {
         Map<String, Object> map = mergeHeadInfo();
         String tmpData = buildReqParams(map).toString();
@@ -93,8 +97,7 @@ public abstract class RemoteBaseSerializer extends RemoteAlgorithmService implem
         Map map;
         if (splitData.size() == 1) {
             map = XmlUtils.findMap(anDataMap, splitData.get(0));
-        }
-        else {
+        } else {
             map = XmlUtils.findMap(anDataMap, splitData);
         }
 
@@ -103,15 +106,13 @@ public abstract class RemoteBaseSerializer extends RemoteAlgorithmService implem
             DataAttribNode attribNode;
             if (obj instanceof DataAttribNode) {
                 attribNode = (DataAttribNode) obj;
-            }
-            else {
+            } else {
                 attribNode = new DataAttribNode(obj);
                 map.put(dataEntity.splitLastValue(), attribNode);
             }
 
             attribNode.addAttribData(dataEntity.getName(), anHeadInfo);
-        }
-        else {
+        } else {
             logger.warn("workForAttrib declare attrib must in workData Map");
             // throw new BytterDeclareException(39002, "workForAttrib declare attrib must in workData Map");
         }
@@ -157,29 +158,24 @@ public abstract class RemoteBaseSerializer extends RemoteAlgorithmService implem
         Object obj = dataMap.get(key);
         if (obj == null) {
             dataMap.put(key, anHeadInfo);
-        }
-        else if (obj instanceof Map) {
+        } else if (obj instanceof Map) {
             Map tmpMap = (Map) obj;
             if (tmpMap.size() == 0) {
                 dataMap.put(key, anHeadInfo);
-            }
-            else {
+            } else {
                 List tmpList = new LinkedList<>();
                 tmpList.add(obj);
                 tmpList.add(anHeadInfo);
                 dataMap.put(key, tmpList);
             }
-        }
-        else if (obj instanceof Collection) {
+        } else if (obj instanceof Collection) {
             Collection tmpList = (Collection) obj;
             if (tmpList.size() == 0) {
                 dataMap.put(key, anHeadInfo);
-            }
-            else {
+            } else {
                 tmpList.add(anHeadInfo);
             }
-        }
-        else {
+        } else {
             List tmpList = new LinkedList<>();
             tmpList.add(obj);
             tmpList.add(anHeadInfo);
@@ -233,11 +229,9 @@ public abstract class RemoteBaseSerializer extends RemoteAlgorithmService implem
         for (RemoteFieldInfo head : anHeadMap.values()) {
             if (head.getDataStyle() == FaceDataStyle.ATTRIB) {
                 anAttrib.put(head.getName(), head);
-            }
-            else if (head.getDataStyle() == FaceDataStyle.NONE) {
+            } else if (head.getDataStyle() == FaceDataStyle.NONE) {
                 continue;
-            }
-            else {
+            } else {
                 head.getDataStyle().dataStyle(anMap, head);
             }
         }
@@ -256,8 +250,7 @@ public abstract class RemoteBaseSerializer extends RemoteAlgorithmService implem
         if (rootMap.isEmpty()) {
             simpleMerge(rootMap, headerInfo);
             simpleMerge(rootMap, sendParams);
-        }
-        else {
+        } else {
             // 处理数据节点的样式
             map = dataNodeStyle(map, this.headerInfo, attribMap);
             map = dataNodeStyle(map, this.sendParams, attribMap);
@@ -288,10 +281,10 @@ public abstract class RemoteBaseSerializer extends RemoteAlgorithmService implem
      * @param anMap
      * @return
      */
-    protected String prepareOutData(Map<String, Object> anMap){
+    protected String prepareOutData(Map<String, Object> anMap) {
         return JsonMapper.toJsonString(anMap);
-    } 
-    
+    }
+
     @Override
     public void writeOutput(WorkFarFunction anFun, WSInfo info, Object outObj, WebServiceErrorCode code) {
         // prepare result json
@@ -305,18 +298,17 @@ public abstract class RemoteBaseSerializer extends RemoteAlgorithmService implem
         objMap.clear();
 
         String encryptedStr;
-        if (BetterStringUtils.isBlank(respData)){
-            respData =" ";
+        if (StringUtils.isBlank(respData)) {
+            respData = " ";
         }
         if (this.getBoolean("encrypt_use", true) && (this.keyManager != null)) {
             encryptedStr = this.keyManager.encrypt(respData);
-        }
-        else {
+        } else {
             encryptedStr = respData;
         }
 
         String signedStr = "";
-        if (this.getBoolean("sign_Data", true) && (this.keyManager != null) ) {
+        if (this.getBoolean("sign_Data", true) && (this.keyManager != null)) {
             signedStr = this.keyManager.signData(respData);
         }
         // eqrbank
@@ -332,18 +324,18 @@ public abstract class RemoteBaseSerializer extends RemoteAlgorithmService implem
         info.setData(tmpData);
     }
 
-    protected String prepareOutProtocol(Map anMap){
-        
+    protected String prepareOutProtocol(Map anMap) {
+
         return JsonMapper.toJsonString(anMap);
     }
-    
-    protected Map prepareOutDataMap(WorkFarFunction anFun, WSInfo info, Object outObj, WebServiceErrorCode code, FaceReturnCode anReturnCode) {
+
+    protected Map prepareOutDataMap(WorkFarFunction anFun, WSInfo info, Object outObj, WebServiceErrorCode code,
+            FaceReturnCode anReturnCode) {
         Map objMap = new LinkedHashMap<String, Object>();
         objMap.put(WSInfo.ResponseDataStatusString, code.getStrCode());
         if (anReturnCode != null) {
             objMap.put(WSInfo.ResponseDataMessageString, anReturnCode.getReturnName());
-        }
-        else {
+        } else {
             objMap.put(WSInfo.ResponseDataMessageString, code.getMsg());
         }
 
@@ -364,8 +356,7 @@ public abstract class RemoteBaseSerializer extends RemoteAlgorithmService implem
                                 outList.add(this.processSingleOutPut(anFun, obj));
                             }
                             objMap.put(WSInfo.ResponseDataDataString, outList);
-                        }
-                        else {
+                        } else {
                             objMap.put(WSInfo.ResponseDataDataString, this.processSingleOutPut(anFun, outObj));
                         }
                     }
@@ -378,8 +369,7 @@ public abstract class RemoteBaseSerializer extends RemoteAlgorithmService implem
                         code = WebServiceErrorCode.E9999;
                     }
                 }
-            }
-            else {
+            } else {
                 objMap.put(WSInfo.ResponseDataDataString, outObj);
             }
 
@@ -393,7 +383,8 @@ public abstract class RemoteBaseSerializer extends RemoteAlgorithmService implem
         Map<String, Object> map = new LinkedHashMap();
         DataConverterService converter = new DataConverterService(anFunc.getWorkFace().getOutConverMap());
 
-        // if (!(outObj instanceof Map) && !(outObj instanceof BetterjrEntity) && !(outObj instanceof BaseRemoteEntity)) {
+        // if (!(outObj instanceof Map) && !(outObj instanceof BetterjrEntity) && !(outObj instanceof BaseRemoteEntity))
+        // {
 
         if (DataTypeInfo.simpleObject(outObj)) {
             // 如果配置了返回值，则构建一个map，否则返回空map
@@ -401,14 +392,14 @@ public abstract class RemoteBaseSerializer extends RemoteAlgorithmService implem
             if (returnKey == null) {
 
                 return map;
-            }
-            else {
+            } else {
                 outObj = Collections.singletonMap(returnKey, outObj);
             }
         }
         BetterjrBaseOutputHelper outputHelper = new BetterjrBaseOutputHelper(outObj, converter);
 
-        Map<String, RemoteFieldInfo> dataMap = outputHelper.outPutData(anFunc, anFunc.getWorkFace().getMustItem() == Boolean.TRUE);
+        Map<String, RemoteFieldInfo> dataMap = outputHelper.outPutData(anFunc,
+                anFunc.getWorkFace().getMustItem() == Boolean.TRUE);
         for (Map.Entry<String, RemoteFieldInfo> ent : dataMap.entrySet()) {
 
             map.put(ent.getKey(), ent.getValue().getValue());

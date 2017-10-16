@@ -9,6 +9,6 @@ import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 
 @BetterjrMapper
 public interface ScfElecAgreementMapper extends Mapper<ScfElecAgreement> {
-    
-    public List<ScfElecAgreement> findElecAgreeByStub(Map<String,Object> anMap);
+
+    public List<ScfElecAgreement> findElecAgreeByStub(Map<String, Object> anMap);
 }

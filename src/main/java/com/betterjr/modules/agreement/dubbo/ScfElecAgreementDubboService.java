@@ -33,16 +33,17 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
     private ScfOtherFileService scfOtherFileService;
 
     @Override
-    public String webQueryElecAgreementByPage(final Map<String, Object> anParam, final int anPageNum, final int anPageSize) {
-        return AjaxObject.newOkWithPage("查询用户电子合同分页信息成功", scfElecAgreementService.queryScfElecAgreementList(anParam, anPageNum, anPageSize)).toJson();
+    public String webQueryElecAgreementByPage(final Map<String, Object> anParam, final int anPageNum,
+            final int anPageSize) {
+        return AjaxObject.newOkWithPage("查询用户电子合同分页信息成功",
+                scfElecAgreementService.queryScfElecAgreementList(anParam, anPageNum, anPageSize)).toJson();
     }
 
     @Override
     public String webCancelElecAgreement(final String anAppNo, final String anDescribe) {
         if (scfAgreementService.cancelElecAgreement(anAppNo, anDescribe)) {
             return AjaxObject.newOk("取消电子合同的流水号成功").toJson();
-        }
-        else {
+        } else {
             return AjaxObject.newError("取消电子合同失败").toJson();
         }
     }
@@ -60,22 +61,24 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
      */
     @Override
     public String webFindElecAgreePageByRequestNo(final String anRequestNo, final String anAgreeType) {
-        return AjaxObject.newOk("生成电子合同的静态页面", scfAgreementService.createOutHtmlInfoByRequestNo(anRequestNo, anAgreeType)).toJson();
+        return AjaxObject
+                .newOk("生成电子合同的静态页面", scfAgreementService.createOutHtmlInfoByRequestNo(anRequestNo, anAgreeType))
+                .toJson();
     }
 
     @Override
     public String webFindValidCode(final String anAppNo, final String anCustType) {
         if (scfElecAgreementService.saveAndSendSMS(anAppNo)) {
             return AjaxObject.newOk("获取签署合同的验证码成功").toJson();
-        }
-        else {
+        } else {
             return AjaxObject.newError("获取签署合同的验证码失败，请稍后重试！").toJson();
         }
     }
 
     @Override
     public String webSendValidCode(final String anAppNo, final String anCustType, final String anVcode) {
-        return AjaxObject.newOk("发送验证签署验证码", scfAgreementService.sendValidCode(anAppNo, anCustType, anVcode)).toString();
+        return AjaxObject.newOk("发送验证签署验证码", scfAgreementService.sendValidCode(anAppNo, anCustType, anVcode))
+                .toString();
     }
 
     /***
@@ -101,7 +104,8 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
      */
     @Override
     public String webFindElecAgreeByOrderNo(final String anRequestNo, final String anSignType) {
-        return AjaxObject.newOk("查询合同信息", scfElecAgreementService.findElecAgreeByOrderNo(anRequestNo, anSignType)).toJson();
+        return AjaxObject.newOk("查询合同信息", scfElecAgreementService.findElecAgreeByOrderNo(anRequestNo, anSignType))
+                .toJson();
     }
 
     /***
@@ -136,8 +140,7 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
     public String webAddOtherFile(final Map<String, Object> anMap) {
         if (scfOtherFileService.addOtherFile(anMap)) {
             return AjaxObject.newOk("资料添加成功").toJson();
-        }
-        else {
+        } else {
             return AjaxObject.newError("资料添加失败").toJson();
         }
     }
@@ -163,8 +166,7 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
     public String webDelOtherFile(final Long anOtherFileId) {
         if (scfOtherFileService.delOtherFile(anOtherFileId)) {
             return AjaxObject.newOk("资料删除成功").toJson();
-        }
-        else {
+        } else {
             return AjaxObject.newError("资料删除失败").toJson();
         }
     }
@@ -178,10 +180,10 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
      */
     @Override
     public String webFindValidCodeByRequestNo(final String anRequestNo, final String anAgreeType) {
-        if (scfElecAgreementService.saveAndSendSMS(scfElecAgreementService.findElecAgreeByRequestNo(anRequestNo, anAgreeType))) {
+        if (scfElecAgreementService
+                .saveAndSendSMS(scfElecAgreementService.findElecAgreeByRequestNo(anRequestNo, anAgreeType))) {
             return AjaxObject.newOk("获取签署合同的验证码成功").toJson();
-        }
-        else {
+        } else {
             return AjaxObject.newError("获取签署合同的验证码失败，请稍后重试！").toJson();
         }
     }
@@ -195,7 +197,8 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
      * @return
      */
     @Override
-    public String webSendValidCodeByRequestNo(final String anRequestNo, final String anAgreeType, final String anVcode) {
+    public String webSendValidCodeByRequestNo(final String anRequestNo, final String anAgreeType,
+            final String anVcode) {
         final String appno = scfElecAgreementService.findElecAgreeByRequestNo(anRequestNo, anAgreeType);
         return AjaxObject.newOk("发送验证签署验证码", scfAgreementService.sendValidCode(appno, anAgreeType, anVcode)).toString();
     }
@@ -251,7 +254,8 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
     @Override
     public String webAddFactorAgreement(final Map anMap, final String anFileList) {
         final ScfElecAgreement anElecAgreement = (ScfElecAgreement) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk("添加保理合同", this.scfElecAgreementService.addFactorAgreement(anElecAgreement, anFileList)).toJson();
+        return AjaxObject.newOk("添加保理合同", this.scfElecAgreementService.addFactorAgreement(anElecAgreement, anFileList))
+                .toJson();
     }
 
     /***
@@ -267,7 +271,10 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
     @Override
     public String webUpdateFactorAgreement(final Map anMap, final String anAppNo, final String anFileList) {
         final ScfElecAgreement anElecAgreement = (ScfElecAgreement) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk("修改保理合同", this.scfElecAgreementService.updateFactorAgreement(anElecAgreement, anAppNo, anFileList)).toJson();
+        return AjaxObject
+                .newOk("修改保理合同",
+                        this.scfElecAgreementService.updateFactorAgreement(anElecAgreement, anAppNo, anFileList))
+                .toJson();
     }
 
     /***
@@ -279,8 +286,10 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
      * @return
      */
     @Override
-    public String webQueryFactorAgreement(final Map<String, Object> anParam, final int anPageNum, final int anPageSize) {
-        return AjaxObject.newOkWithPage("分页查询保理合同", this.scfElecAgreementService.queryFactorAgreementList(anParam, anPageNum, anPageSize)).toJson();
+    public String webQueryFactorAgreement(final Map<String, Object> anParam, final int anPageNum,
+            final int anPageSize) {
+        return AjaxObject.newOkWithPage("分页查询保理合同",
+                this.scfElecAgreementService.queryFactorAgreementList(anParam, anPageNum, anPageSize)).toJson();
     }
 
     /***
@@ -298,7 +307,9 @@ public class ScfElecAgreementDubboService implements IScfElecAgreementService {
      */
     @Override
     public String webFindFactorAgreement(final Long anCustNo, final Long anFactorNo, final String anAgreeType) {
-        return AjaxObject.newOk("查询保理合同列表", this.scfElecAgreementService.findFactorAgreement(anCustNo, anFactorNo, anAgreeType)).toJson();
+        return AjaxObject
+                .newOk("查询保理合同列表", this.scfElecAgreementService.findFactorAgreement(anCustNo, anFactorNo, anAgreeType))
+                .toJson();
     }
 
     /***

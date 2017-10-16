@@ -261,83 +261,67 @@ public class CommissionInvoiceCustInfo implements BetterjrEntity {
         CommissionInvoiceCustInfo other = (CommissionInvoiceCustInfo) obj;
         if (this.businStatus == null) {
             if (other.businStatus != null) return false;
-        }
-        else if (!this.businStatus.equals(other.businStatus)) return false;
+        } else if (!this.businStatus.equals(other.businStatus)) return false;
         if (this.coreAddress == null) {
             if (other.coreAddress != null) return false;
-        }
-        else if (!this.coreAddress.equals(other.coreAddress)) return false;
+        } else if (!this.coreAddress.equals(other.coreAddress)) return false;
         if (this.coreBank == null) {
             if (other.coreBank != null) return false;
-        }
-        else if (!this.coreBank.equals(other.coreBank)) return false;
+        } else if (!this.coreBank.equals(other.coreBank)) return false;
         if (this.coreBankAccount == null) {
             if (other.coreBankAccount != null) return false;
-        }
-        else if (!this.coreBankAccount.equals(other.coreBankAccount)) return false;
+        } else if (!this.coreBankAccount.equals(other.coreBankAccount)) return false;
         if (this.coreCustName == null) {
             if (other.coreCustName != null) return false;
-        }
-        else if (!this.coreCustName.equals(other.coreCustName)) return false;
+        } else if (!this.coreCustName.equals(other.coreCustName)) return false;
         if (this.coreCustNo == null) {
             if (other.coreCustNo != null) return false;
-        }
-        else if (!this.coreCustNo.equals(other.coreCustNo)) return false;
+        } else if (!this.coreCustNo.equals(other.coreCustNo)) return false;
         if (this.coreInfoType == null) {
             if (other.coreInfoType != null) return false;
-        }
-        else if (!this.coreInfoType.equals(other.coreInfoType)) return false;
+        } else if (!this.coreInfoType.equals(other.coreInfoType)) return false;
         if (this.corePhone == null) {
             if (other.corePhone != null) return false;
-        }
-        else if (!this.corePhone.equals(other.corePhone)) return false;
+        } else if (!this.corePhone.equals(other.corePhone)) return false;
         if (this.coreTaxPayerNo == null) {
             if (other.coreTaxPayerNo != null) return false;
-        }
-        else if (!this.coreTaxPayerNo.equals(other.coreTaxPayerNo)) return false;
+        } else if (!this.coreTaxPayerNo.equals(other.coreTaxPayerNo)) return false;
         if (this.custName == null) {
             if (other.custName != null) return false;
-        }
-        else if (!this.custName.equals(other.custName)) return false;
+        } else if (!this.custName.equals(other.custName)) return false;
         if (this.custNo == null) {
             if (other.custNo != null) return false;
-        }
-        else if (!this.custNo.equals(other.custNo)) return false;
+        } else if (!this.custNo.equals(other.custNo)) return false;
         if (this.id == null) {
             if (other.id != null) return false;
-        }
-        else if (!this.id.equals(other.id)) return false;
+        } else if (!this.id.equals(other.id)) return false;
         if (this.isLatest == null) {
             if (other.isLatest != null) return false;
-        }
-        else if (!this.isLatest.equals(other.isLatest)) return false;
+        } else if (!this.isLatest.equals(other.isLatest)) return false;
         if (this.regDate == null) {
             if (other.regDate != null) return false;
-        }
-        else if (!this.regDate.equals(other.regDate)) return false;
+        } else if (!this.regDate.equals(other.regDate)) return false;
         if (this.regOperId == null) {
             if (other.regOperId != null) return false;
-        }
-        else if (!this.regOperId.equals(other.regOperId)) return false;
+        } else if (!this.regOperId.equals(other.regOperId)) return false;
         if (this.regOperName == null) {
             if (other.regOperName != null) return false;
-        }
-        else if (!this.regOperName.equals(other.regOperName)) return false;
+        } else if (!this.regOperName.equals(other.regOperName)) return false;
         if (this.regTime == null) {
             if (other.regTime != null) return false;
-        }
-        else if (!this.regTime.equals(other.regTime)) return false;
+        } else if (!this.regTime.equals(other.regTime)) return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "CommissionInvoiceCustInfo [id=" + this.id + ", custNo=" + this.custNo + ", custName=" + this.custName + ", coreCustNo="
-                + this.coreCustNo + ", coreCustName=" + this.coreCustName + ", coreBank=" + this.coreBank + ", coreBankAccount="
-                + this.coreBankAccount + ", coreTaxPayerNo=" + this.coreTaxPayerNo + ", corePhone=" + this.corePhone + ", coreAddress="
-                + this.coreAddress + ", businStatus=" + this.businStatus + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate
-                + ", regTime=" + this.regTime + ", isLatest=" + this.isLatest + ", coreInfoType=" + this.coreInfoType + ", regOperId="
-                + this.regOperId + "]";
+        return "CommissionInvoiceCustInfo [id=" + this.id + ", custNo=" + this.custNo + ", custName=" + this.custName
+                + ", coreCustNo=" + this.coreCustNo + ", coreCustName=" + this.coreCustName + ", coreBank="
+                + this.coreBank + ", coreBankAccount=" + this.coreBankAccount + ", coreTaxPayerNo="
+                + this.coreTaxPayerNo + ", corePhone=" + this.corePhone + ", coreAddress=" + this.coreAddress
+                + ", businStatus=" + this.businStatus + ", regOperName=" + this.regOperName + ", regDate="
+                + this.regDate + ", regTime=" + this.regTime + ", isLatest=" + this.isLatest + ", coreInfoType="
+                + this.coreInfoType + ", regOperId=" + this.regOperId + "]";
     }
 
     public void initAddValue(CustOperatorInfo anOperatorInfo) {

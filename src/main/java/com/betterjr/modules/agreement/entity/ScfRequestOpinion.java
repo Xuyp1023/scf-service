@@ -12,113 +12,112 @@ import javax.persistence.*;
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "T_SCF_REQUEST_OPINION")
-public class ScfRequestOpinion implements BetterjrEntity, BaseRemoteEntity  {
+public class ScfRequestOpinion implements BetterjrEntity, BaseRemoteEntity {
     /**
      * 申请单号
      */
     @Id
-    @Column(name = "C_REQUESTNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="申请单号", comments = "申请单号")
+    @Column(name = "C_REQUESTNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "申请单号", comments = "申请单号")
     private String requestNo;
 
     /**
      * 保理产品编号
      */
-    @Column(name = "C_PRODUCT_CODE",  columnDefinition="VARCHAR" )
-    @MetaData( value="保理产品编号", comments = "保理产品编号")
+    @Column(name = "C_PRODUCT_CODE", columnDefinition = "VARCHAR")
+    @MetaData(value = "保理产品编号", comments = "保理产品编号")
     private String productCode;
 
     /**
      * 买方客户号
      */
-    @Column(name = "L_BUYER_NO",  columnDefinition="INTEGER" )
-    @MetaData( value="买方客户号", comments = "买方客户号")
+    @Column(name = "L_BUYER_NO", columnDefinition = "INTEGER")
+    @MetaData(value = "买方客户号", comments = "买方客户号")
     private Long buyerNo;
 
     /**
      * 卖方客户号
      */
-    @Column(name = "L_SUPPLIER_NO",  columnDefinition="INTEGER" )
-    @MetaData( value="卖方客户号", comments = "卖方客户号")
+    @Column(name = "L_SUPPLIER_NO", columnDefinition = "INTEGER")
+    @MetaData(value = "卖方客户号", comments = "卖方客户号")
     private Long supplierNo;
 
     /**
      * 确认书编号
      */
-    @Column(name = "C_CONFIRMNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="确认书编号", comments = "确认书编号")
+    @Column(name = "C_CONFIRMNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "确认书编号", comments = "确认书编号")
     private String confirmNo;
 
     /**
      * 买方（甲方）
      */
-    @Column(name = "C_SUPPLIER",  columnDefinition="VARCHAR" )
-    @MetaData( value="买方（甲方）", comments = "买方（甲方）")
+    @Column(name = "C_SUPPLIER", columnDefinition = "VARCHAR")
+    @MetaData(value = "买方（甲方）", comments = "买方（甲方）")
     private String supplier;
 
     /**
      * 合同名称
      */
-    @Column(name = "C_AGREENAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="合同名称", comments = "合同名称")
+    @Column(name = "C_AGREENAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "合同名称", comments = "合同名称")
     private String agreeName;
 
     /**
      * 保理公司名称
      */
-    @Column(name = "C_FACTORNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="保理公司名称", comments = "保理公司名称")
+    @Column(name = "C_FACTORNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "保理公司名称", comments = "保理公司名称")
     private String factorName;
 
     /**
      * 保理公司编码
      */
-    @Column(name = "C_FACTORNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="保理公司编码", comments = "保理公司编码")
+    @Column(name = "C_FACTORNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "保理公司编码", comments = "保理公司编码")
     private String factorNo;
 
     /**
      * 实际申请日期
      */
-    @Column(name = "D_MODIDATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="实际申请日期", comments = "实际申请日期")
+    @Column(name = "D_MODIDATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "实际申请日期", comments = "实际申请日期")
     private String modiDate;
 
     /**
      * 确认书状态；0未处理，1已经签署，2拒绝
      */
-    @Column(name = "C_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="确认书状态", comments = "确认书状态；0未处理，1已经签署，2拒绝")
+    @Column(name = "C_STATUS", columnDefinition = "VARCHAR")
+    @MetaData(value = "确认书状态", comments = "确认书状态；0未处理，1已经签署，2拒绝")
     private String opinionStatus;
 
     /**
      * 申请时间
      */
-    @Column(name = "T_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="申请时间", comments = "申请时间")
+    @Column(name = "T_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "申请时间", comments = "申请时间")
     private String opinionTime;
 
     /**
      * 保理公司业务单号
      */
-    @Column(name = "C_FACTOR_REQUESTNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="保理公司业务单号", comments = "保理公司业务单号")
+    @Column(name = "C_FACTOR_REQUESTNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "保理公司业务单号", comments = "保理公司业务单号")
     private String factorRequestNo;
 
     /**
      * 登记日期
      */
-    @Column(name = "D_REGDATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="登记日期", comments = "登记日期")
+    @Column(name = "D_REGDATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "登记日期", comments = "登记日期")
     private String regDate;
 
     /**
      * 转让通知书编号
      */
-    @Column(name = "C_NOTICENO",  columnDefinition="VARCHAR" )
-    @MetaData( value="转让通知书编号", comments = "转让通知书编号")
+    @Column(name = "C_NOTICENO", columnDefinition = "VARCHAR")
+    @MetaData(value = "转让通知书编号", comments = "转让通知书编号")
     private String noticeNo;
-    
 
     /**
      * 联系人
@@ -126,21 +125,21 @@ public class ScfRequestOpinion implements BetterjrEntity, BaseRemoteEntity  {
     @Column(name = "C_LINKNAME", columnDefinition = "VARCHAR")
     @MetaData(value = "联系人", comments = "联系人")
     private String linkName;
-    
+
     /**
      * 电子邮箱
      */
     @Column(name = "C_EMAIL", columnDefinition = "VARCHAR")
     @MetaData(value = "电子邮箱", comments = "电子邮箱")
     private String email;
-    
+
     /**
      * 联系电话
      */
     @Column(name = "C_PHONE", columnDefinition = "VARCHAR")
     @MetaData(value = "联系电话", comments = "联系电话")
     private String phone;
-    
+
     /***
      * 买方名称
      */
@@ -341,21 +340,36 @@ public class ScfRequestOpinion implements BetterjrEntity, BaseRemoteEntity  {
             return false;
         }
         ScfRequestOpinion other = (ScfRequestOpinion) that;
-        return (this.getRequestNo() == null ? other.getRequestNo() == null : this.getRequestNo().equals(other.getRequestNo()))
-            && (this.getProductCode() == null ? other.getProductCode() == null : this.getProductCode().equals(other.getProductCode()))
-            && (this.getBuyerNo() == null ? other.getBuyerNo() == null : this.getBuyerNo().equals(other.getBuyerNo()))
-            && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
-            && (this.getConfirmNo() == null ? other.getConfirmNo() == null : this.getConfirmNo().equals(other.getConfirmNo()))
-            && (this.getSupplier() == null ? other.getSupplier() == null : this.getSupplier().equals(other.getSupplier()))
-            && (this.getAgreeName() == null ? other.getAgreeName() == null : this.getAgreeName().equals(other.getAgreeName()))
-            && (this.getFactorName() == null ? other.getFactorName() == null : this.getFactorName().equals(other.getFactorName()))
-            && (this.getFactorNo() == null ? other.getFactorNo() == null : this.getFactorNo().equals(other.getFactorNo()))
-            && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-            && (this.getOpinionStatus() == null ? other.getOpinionStatus() == null : this.getOpinionStatus().equals(other.getOpinionStatus()))
-            && (this.getOpinionTime() == null ? other.getOpinionTime() == null : this.getOpinionTime().equals(other.getOpinionTime()))
-            && (this.getFactorRequestNo() == null ? other.getFactorRequestNo() == null : this.getFactorRequestNo().equals(other.getFactorRequestNo()))
-            && (this.getNoticeNo() == null ? other.getNoticeNo() == null : this.getNoticeNo().equals(other.getNoticeNo()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()));
+        return (this.getRequestNo() == null ? other.getRequestNo() == null
+                : this.getRequestNo().equals(other.getRequestNo()))
+                && (this.getProductCode() == null ? other.getProductCode() == null
+                        : this.getProductCode().equals(other.getProductCode()))
+                && (this.getBuyerNo() == null ? other.getBuyerNo() == null
+                        : this.getBuyerNo().equals(other.getBuyerNo()))
+                && (this.getSupplierNo() == null ? other.getSupplierNo() == null
+                        : this.getSupplierNo().equals(other.getSupplierNo()))
+                && (this.getConfirmNo() == null ? other.getConfirmNo() == null
+                        : this.getConfirmNo().equals(other.getConfirmNo()))
+                && (this.getSupplier() == null ? other.getSupplier() == null
+                        : this.getSupplier().equals(other.getSupplier()))
+                && (this.getAgreeName() == null ? other.getAgreeName() == null
+                        : this.getAgreeName().equals(other.getAgreeName()))
+                && (this.getFactorName() == null ? other.getFactorName() == null
+                        : this.getFactorName().equals(other.getFactorName()))
+                && (this.getFactorNo() == null ? other.getFactorNo() == null
+                        : this.getFactorNo().equals(other.getFactorNo()))
+                && (this.getModiDate() == null ? other.getModiDate() == null
+                        : this.getModiDate().equals(other.getModiDate()))
+                && (this.getOpinionStatus() == null ? other.getOpinionStatus() == null
+                        : this.getOpinionStatus().equals(other.getOpinionStatus()))
+                && (this.getOpinionTime() == null ? other.getOpinionTime() == null
+                        : this.getOpinionTime().equals(other.getOpinionTime()))
+                && (this.getFactorRequestNo() == null ? other.getFactorRequestNo() == null
+                        : this.getFactorRequestNo().equals(other.getFactorRequestNo()))
+                && (this.getNoticeNo() == null ? other.getNoticeNo() == null
+                        : this.getNoticeNo().equals(other.getNoticeNo()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()));
     }
 
     @Override
@@ -379,17 +393,16 @@ public class ScfRequestOpinion implements BetterjrEntity, BaseRemoteEntity  {
         result = prime * result + ((getNoticeNo() == null) ? 0 : getNoticeNo().hashCode());
         return result;
     }
-    
-    
-    public void fillInfo(ScfRequest anRequest){
-        this.confirmNo = String.valueOf(SerialGenerator.findAppNoWithDayAndType(anRequest.getFactorNo(),"QEQHTZQR"));
+
+    public void fillInfo(ScfRequest anRequest) {
+        this.confirmNo = String.valueOf(SerialGenerator.findAppNoWithDayAndType(anRequest.getFactorNo(), "QEQHTZQR"));
         this.productCode = anRequest.getProductCode();
-        this.buyerNo = anRequest.getCoreCustNo()==null?0:anRequest.getCoreCustNo();
+        this.buyerNo = anRequest.getCoreCustNo() == null ? 0 : anRequest.getCoreCustNo();
         this.supplierNo = anRequest.getCustNo();
-        this.factorNo = anRequest.getFactorNo()==null?null:anRequest.getFactorNo().toString();
-        this.opinionStatus ="0";
+        this.factorNo = anRequest.getFactorNo() == null ? null : anRequest.getFactorNo().toString();
+        this.opinionStatus = "0";
         this.regDate = BetterDateUtils.getNumDate();
-        this.modiDate =BetterDateUtils.getNumDate();
-        this.requestNo=anRequest.getRequestNo();
+        this.modiDate = BetterDateUtils.getNumDate();
+        this.requestNo = anRequest.getRequestNo();
     }
 }

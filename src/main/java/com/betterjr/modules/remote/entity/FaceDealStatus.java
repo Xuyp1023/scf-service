@@ -2,8 +2,6 @@ package com.betterjr.modules.remote.entity;
 
 import com.betterjr.common.annotation.*;
 import com.betterjr.common.entity.BetterjrEntity;
-import com.betterjr.common.mapper.BeanMapper;
-
 import javax.persistence.*;
 
 @Access(AccessType.FIELD)
@@ -197,16 +195,23 @@ public class FaceDealStatus implements BetterjrEntity {
             return false;
         }
         FaceDealStatus other = (FaceDealStatus) that;
-        return (this.getPathCode() == null ? other.getPathCode() == null : this.getPathCode().equals(other.getPathCode()))
-                && (this.getPayCenterNo() == null ? other.getPayCenterNo() == null : this.getPayCenterNo().equals(other.getPayCenterNo()))
+        return (this.getPathCode() == null ? other.getPathCode() == null
+                : this.getPathCode().equals(other.getPathCode()))
+                && (this.getPayCenterNo() == null ? other.getPayCenterNo() == null
+                        : this.getPayCenterNo().equals(other.getPayCenterNo()))
                 && (this.getFaceNo() == null ? other.getFaceNo() == null : this.getFaceNo().equals(other.getFaceNo()))
-                && (this.getGroupNo() == null ? other.getGroupNo() == null : this.getGroupNo().equals(other.getGroupNo()))
-                && (this.getFmtType() == null ? other.getFmtType() == null : this.getFmtType().equals(other.getFmtType()))
-                && (this.getFileType() == null ? other.getFileType() == null : this.getFileType().equals(other.getFileType()))
+                && (this.getGroupNo() == null ? other.getGroupNo() == null
+                        : this.getGroupNo().equals(other.getGroupNo()))
+                && (this.getFmtType() == null ? other.getFmtType() == null
+                        : this.getFmtType().equals(other.getFmtType()))
+                && (this.getFileType() == null ? other.getFileType() == null
+                        : this.getFileType().equals(other.getFileType()))
                 && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
-                && (this.getFileName() == null ? other.getFileName() == null : this.getFileName().equals(other.getFileName()))
+                && (this.getFileName() == null ? other.getFileName() == null
+                        : this.getFileName().equals(other.getFileName()))
                 && (this.getCount() == null ? other.getCount() == null : this.getCount().equals(other.getCount()))
-                && (this.getHandleCount() == null ? other.getHandleCount() == null : this.getHandleCount().equals(other.getHandleCount()));
+                && (this.getHandleCount() == null ? other.getHandleCount() == null
+                        : this.getHandleCount().equals(other.getHandleCount()));
     }
 
     @Override

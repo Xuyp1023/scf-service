@@ -34,7 +34,8 @@ import com.betterjr.modules.version.constant.VersionConstantCollentions;
 import com.betterjr.modules.version.service.BaseVersionService;
 
 @Service
-public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMapper, ScfReceivableDO> implements BaseResolveInterface {
+public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMapper, ScfReceivableDO>
+        implements BaseResolveInterface {
 
     @Autowired
     private CustAccountService custAccountService;
@@ -88,13 +89,15 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
      *            true 保存编辑并确认 false 只保存编辑
      * @return
      */
-    public ScfReceivableDO saveModifyReceivable(ScfReceivableDO anModiReceivable, String anFileList, boolean anConfirmFlag) {
+    public ScfReceivableDO saveModifyReceivable(ScfReceivableDO anModiReceivable, String anFileList,
+            boolean anConfirmFlag) {
 
         BTAssert.notNull(anModiReceivable, "编辑保存应收账款为空,操作失败");
         BTAssert.notNull(anModiReceivable.getRefNo(), "凭证编号为空,操作失败");
         BTAssert.notNull(anModiReceivable.getVersion(), "应收账款信息不全,操作失败");
         logger.info("Begin to modify saveModifyOrder");
-        ScfReceivableDO receivable = this.selectOneWithVersion(anModiReceivable.getRefNo(), anModiReceivable.getVersion());
+        ScfReceivableDO receivable = this.selectOneWithVersion(anModiReceivable.getRefNo(),
+                anModiReceivable.getVersion());
         BTAssert.notNull(receivable, "无法获取应收账款信息");
         // 校验当前操作员是否是创建此订单的人 并且校验当前订单是否允许修改
         checkOperatorModifyStatus(UserUtils.getOperatorInfo(), receivable);
@@ -107,10 +110,11 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
         anModiReceivable.setOperOrg(baseService.findBaseInfo(anModiReceivable.getCustNo()).getOperOrg());
         // 保存附件信息
         if (StringUtils.isNotBlank(anFileList)) {
-            anModiReceivable.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anFileList, anModiReceivable.getBatchNo()));
-        }
-        else {
-            anModiReceivable.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo("", anModiReceivable.getBatchNo()));
+            anModiReceivable.setBatchNo(
+                    custFileDubboService.updateAndDelCustFileItemInfo(anFileList, anModiReceivable.getBatchNo()));
+        } else {
+            anModiReceivable
+                    .setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo("", anModiReceivable.getBatchNo()));
         }
         // 初始版本更改 直接返回
         if (receivable.getBusinStatus().equals(VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE)
@@ -244,8 +248,8 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
      *            true 核准界面的数据 false 登入界面的数据
      * @return
      */
-    public Page<ScfReceivableDO> queryIneffectiveReceivable(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize,
-            boolean anIsAudit) {
+    public Page<ScfReceivableDO> queryIneffectiveReceivable(Map<String, Object> anMap, String anFlag, int anPageNum,
+            int anPageSize, boolean anIsAudit) {
 
         BTAssert.notNull(anMap, "查询条件为空!操作失败");
         // 操作员只能查询本机构数据
@@ -253,25 +257,27 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
         anMap = Collections3.filterMapEmptyObject(anMap);
 
         if (anIsAudit) {
-            if (!anMap.containsKey("coreCustNo") || anMap.get("coreCustNo") == null || StringUtils.isBlank(anMap.get("coreCustNo").toString())) {
+            if (!anMap.containsKey("coreCustNo") || anMap.get("coreCustNo") == null
+                    || StringUtils.isBlank(anMap.get("coreCustNo").toString())) {
 
-                Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
+                Collection<CustInfo> custInfos = custMechBaseService
+                        .queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
                 anMap.put("coreCustNo", getCustNoList(custInfos));
             }
             anMap.put("docStatus", VersionConstantCollentions.DOC_STATUS_CONFIRM);
 
-        }
-        else {
+        } else {
             anMap.put("modiOperId", UserUtils.getOperatorInfo().getId());
         }
 
-        Page<ScfReceivableDO> receivableList = this.selectPropertyIneffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag),
-                "id desc");
+        Page<ScfReceivableDO> receivableList = this.selectPropertyIneffectiveByPageWithVersion(anMap, anPageNum,
+                anPageSize, "1".equals(anFlag), "id desc");
 
         return receivableList;
     }
 
-    public Page<ScfReceivableDO> queryEffectiveReceivable(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize, boolean anIsCust) {
+    public Page<ScfReceivableDO> queryEffectiveReceivable(Map<String, Object> anMap, String anFlag, int anPageNum,
+            int anPageSize, boolean anIsCust) {
 
         BTAssert.notNull(anMap, "查询条件为空!操作失败");
 
@@ -284,7 +290,8 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
         }
         if (anIsCust) {
             // 供应商查询已经生效的数据
-            if (!anMap.containsKey("custNo") || anMap.get("custNo") == null || StringUtils.isBlank(anMap.get("custNo").toString())) {
+            if (!anMap.containsKey("custNo") || anMap.get("custNo") == null
+                    || StringUtils.isBlank(anMap.get("custNo").toString())) {
                 anMap.put("custNo", getCustNoList(custInfos));
             }
             // anMap.put("custNo", getCustNoList(custInfos));
@@ -294,17 +301,17 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
             // 票据/应收账款，在未生效时 已过期，供应商应无法查看到。
             anMap.put("NEexpireFlagStatus", VersionConstantCollentions.EXPIRE_FLAG_STATUS_INEFFECTIVE);
 
-        }
-        else {
+        } else {
             // 核心企业查询已经生效的数据
-            if (!anMap.containsKey("coreCustNo") || anMap.get("coreCustNo") == null || StringUtils.isBlank(anMap.get("coreCustNo").toString())) {
+            if (!anMap.containsKey("coreCustNo") || anMap.get("coreCustNo") == null
+                    || StringUtils.isBlank(anMap.get("coreCustNo").toString())) {
                 anMap.put("coreCustNo", getCustNoList(custInfos));
             }
             return this.selectPropertyByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
         }
 
-        Page<ScfReceivableDO> receivableList = this.selectPropertyEffectiveByPageWithVersion(anMap, anPageNum, anPageSize, "1".equals(anFlag),
-                "id desc");
+        Page<ScfReceivableDO> receivableList = this.selectPropertyEffectiveByPageWithVersion(anMap, anPageNum,
+                anPageSize, "1".equals(anFlag), "id desc");
 
         return receivableList;
     }
@@ -323,18 +330,19 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
         if (!Collections3.isEmpty(endDataList)) {
 
             int size = endDataList.size();
-            int numEach = size % LogConstantCollections.LOG_RECORD_SIZE == 0 ? size / LogConstantCollections.LOG_RECORD_SIZE
-                    : size / LogConstantCollections.LOG_RECORD_SIZE + 1;
+            int numEach = size % LogConstantCollections.LOG_RECORD_SIZE == 0
+                    ? size / LogConstantCollections.LOG_RECORD_SIZE : size / LogConstantCollections.LOG_RECORD_SIZE + 1;
             for (int i = 0; i < numEach; i++) {
 
                 if (i + 1 == numEach) {
                     saveExpireList(endDataList.subList(LogConstantCollections.LOG_RECORD_SIZE * i, size),
                             AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL, (i + 1) + "");
 
-                }
-                else {
+                } else {
 
-                    saveExpireList(endDataList.subList(LogConstantCollections.LOG_RECORD_SIZE * i, LogConstantCollections.LOG_RECORD_SIZE * (i + 1)),
+                    saveExpireList(
+                            endDataList.subList(LogConstantCollections.LOG_RECORD_SIZE * i,
+                                    LogConstantCollections.LOG_RECORD_SIZE * (i + 1)),
                             AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_BILL, (i + 1) + "");
 
                 }
@@ -405,9 +413,12 @@ public class ScfReceivableDOService extends BaseVersionService<ScfReceivableDOMa
                 .put("isLatest", VersionConstantCollentions.IS_LATEST).build();
         List<ScfReceivableDO> receivableList = this.selectByProperty(paramMap);
         for (ScfReceivableDO receivable : receivableList) {
-            checkStatus(receivable.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_USED, true, "已经有应付账款用于融资申请,无法删除");
-            checkStatus(receivable.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, true, "已经有应付账款审核生效,无法删除");
-            checkStatus(receivable.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true, "已经有应付账款发生融资完成,无法删除");
+            checkStatus(receivable.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_USED, true,
+                    "已经有应付账款用于融资申请,无法删除");
+            checkStatus(receivable.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, true,
+                    "已经有应付账款审核生效,无法删除");
+            checkStatus(receivable.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true,
+                    "已经有应付账款发生融资完成,无法删除");
             receivable.setBusinStatus(VersionConstantCollentions.BUSIN_STATUS_ANNUL);
             recordAmount++;
             blance = MathExtend.add(blance, receivable.getBalance());

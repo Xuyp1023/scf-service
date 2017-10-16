@@ -22,7 +22,8 @@ public class ScfCoreProductCustDubboService implements IScfCoreProductCustServic
     @Override
     public String webSaveAddAndUpdateProduct(Long anCustNo, Long anCoreCustNo, String anProductCodes) {
 
-        return AjaxObject.newOk("查询成功", productService.saveAddAndUpdateProduct(anCustNo, anCoreCustNo, anProductCodes)).toJson();
+        return AjaxObject.newOk("查询成功", productService.saveAddAndUpdateProduct(anCustNo, anCoreCustNo, anProductCodes))
+                .toJson();
     }
 
     @Override

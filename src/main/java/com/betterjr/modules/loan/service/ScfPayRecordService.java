@@ -25,7 +25,7 @@ public class ScfPayRecordService extends BaseService<ScfPayRecordMapper, ScfPayR
         anRecord.init(anRecord);
         return this.insert(anRecord);
     }
-    
+
     /**
      * 修改还款记录
      * 
@@ -57,7 +57,7 @@ public class ScfPayRecordService extends BaseService<ScfPayRecordMapper, ScfPayR
     public Page<ScfPayRecord> queryPayRecordList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
         return this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
     }
-    
+
     /**
      * 查询还款计划列表
      * 

@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.betterjr.common.web.AjaxObject;
-import com.betterjr.modules.account.entity.CustInfo;
 import com.betterjr.modules.productconfig.IScfProductConfigService;
 import com.betterjr.modules.productconfig.entity.ScfAssetDict;
 import com.betterjr.modules.productconfig.entity.ScfAssetDictAttachRelation;
@@ -25,114 +24,122 @@ import com.betterjr.modules.rule.service.RuleServiceDubboFilterInvoker;
 
 @Service(interfaceClass = IScfProductConfigService.class)
 public class ProductConfigDubboService implements IScfProductConfigService {
-	protected final Logger logger = LoggerFactory.getLogger(ProductConfigDubboService.class);
+    protected final Logger logger = LoggerFactory.getLogger(ProductConfigDubboService.class);
 
-	@Autowired
-	private ScfProductConfigService productConfigService;
-	@Autowired
-	private ScfProductAssetDictRelationService productAssetDictRelationService;
-	@Autowired
-	private ScfAssetDictAttachRelationService assetDictAttachRelationService;
-	@Autowired
-	private ScfProductCoreRelationService productCoreRelationService;
-	@Autowired
-	private ScfAssetDictService assetDictService;
+    @Autowired
+    private ScfProductConfigService productConfigService;
+    @Autowired
+    private ScfProductAssetDictRelationService productAssetDictRelationService;
+    @Autowired
+    private ScfAssetDictAttachRelationService assetDictAttachRelationService;
+    @Autowired
+    private ScfProductCoreRelationService productCoreRelationService;
+    @Autowired
+    private ScfAssetDictService assetDictService;
 
-	@Override
-	public String webAddProductConfig(Map<String, Object> anMap) {
-		logger.debug("保存产品入参：" + anMap);
-		ScfProductConfig productConfig = (ScfProductConfig) RuleServiceDubboFilterInvoker.getInputObj();
-		return AjaxObject.newOk("操作成功", productConfigService.addConfig(productConfig)).toJson();
-	}
-	
-	@Override
-	public String webSaveModifyProductConfig(Map<String, Object> anMap, Long anId) {
-		logger.debug("修改产品入参：" + anMap);
-		ScfProductConfig productConfig = (ScfProductConfig) RuleServiceDubboFilterInvoker.getInputObj();
-		return AjaxObject.newOk("操作成功", productConfigService.saveModifyConfig(productConfig, anId)).toJson();
-	}
+    @Override
+    public String webAddProductConfig(Map<String, Object> anMap) {
+        logger.debug("保存产品入参：" + anMap);
+        ScfProductConfig productConfig = (ScfProductConfig) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOk("操作成功", productConfigService.addConfig(productConfig)).toJson();
+    }
 
-	@Override
-	public String webQueryProductConfig(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
-		logger.debug("分页查询产品列表，入参：" + anMap);
-		anMap = (Map) RuleServiceDubboFilterInvoker.getInputObj();
-		return AjaxObject.newOkWithPage("分页查询产品列表", productConfigService.queryProduct(anMap, anFlag, anPageNum, anPageSize)).toJson();
-	}
+    @Override
+    public String webSaveModifyProductConfig(Map<String, Object> anMap, Long anId) {
+        logger.debug("修改产品入参：" + anMap);
+        ScfProductConfig productConfig = (ScfProductConfig) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOk("操作成功", productConfigService.saveModifyConfig(productConfig, anId)).toJson();
+    }
 
-	@Override
-	public String webFindProductConfig(String productCode) {
-		logger.debug("查询产品配置：" + productCode);
-		Map<String, Object> anMap = new HashMap<String, Object>();
-		anMap.put("productCode", productCode);
-		return AjaxObject.newOk("操作成功", productConfigService.findProduct(anMap)).toJson();
-	}
+    @Override
+    public String webQueryProductConfig(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
+        logger.debug("分页查询产品列表，入参：" + anMap);
+        anMap = (Map) RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject
+                .newOkWithPage("分页查询产品列表", productConfigService.queryProduct(anMap, anFlag, anPageNum, anPageSize))
+                .toJson();
+    }
 
-	@Override
-	public String webAddProductAssetDictRelation(String anProductCode, String listIdType) {
-		logger.debug("保存产品与资产类型关系：" + anProductCode);
-		//ScfProductAssetDictRelation anRelation = (ScfProductAssetDictRelation) RuleServiceDubboFilterInvoker.getInputObj();
-		return AjaxObject.newOk("操作成功", productAssetDictRelationService.batchSaveRelation(anProductCode, listIdType)).toJson();
-	}
+    @Override
+    public String webFindProductConfig(String productCode) {
+        logger.debug("查询产品配置：" + productCode);
+        Map<String, Object> anMap = new HashMap<String, Object>();
+        anMap.put("productCode", productCode);
+        return AjaxObject.newOk("操作成功", productConfigService.findProduct(anMap)).toJson();
+    }
 
-	@Override
-	public String webAddAssetDictAttachRelation(Map<String, Object> anMap) {
-		logger.debug("保存资产类型与附件类型关系：" + anMap);
-		ScfAssetDictAttachRelation anRelation = (ScfAssetDictAttachRelation) RuleServiceDubboFilterInvoker.getInputObj();
-		return AjaxObject.newOk("操作成功", assetDictAttachRelationService.addDict(anRelation)).toJson();
-	}
+    @Override
+    public String webAddProductAssetDictRelation(String anProductCode, String listIdType) {
+        logger.debug("保存产品与资产类型关系：" + anProductCode);
+        // ScfProductAssetDictRelation anRelation = (ScfProductAssetDictRelation)
+        // RuleServiceDubboFilterInvoker.getInputObj();
+        return AjaxObject.newOk("操作成功", productAssetDictRelationService.batchSaveRelation(anProductCode, listIdType))
+                .toJson();
+    }
 
-	@Override
-	public String webFindAssetDictAttachRelationList(Map<String, Object> anMap) {
-		logger.debug("查询资产类型与附件类型关系列表：" + anMap);
-		List list = productAssetDictRelationService.selectByClassProperty(ScfProductAssetDictRelation.class, anMap);
-		return AjaxObject.newOk("操作成功", list).toJson();
-	}
+    @Override
+    public String webAddAssetDictAttachRelation(Map<String, Object> anMap) {
+        logger.debug("保存资产类型与附件类型关系：" + anMap);
+        ScfAssetDictAttachRelation anRelation = (ScfAssetDictAttachRelation) RuleServiceDubboFilterInvoker
+                .getInputObj();
+        return AjaxObject.newOk("操作成功", assetDictAttachRelationService.addDict(anRelation)).toJson();
+    }
 
-	@Override
-	public String webAddProductCoreRelation(String anProductCode, String anCustNo) {
-		logger.debug("保存产品与核心企业关系");
-		return AjaxObject.newOk("操作成功", productCoreRelationService.batchSaveRelation(anProductCode, anCustNo)).toJson();
-	}
+    @Override
+    public String webFindAssetDictAttachRelationList(Map<String, Object> anMap) {
+        logger.debug("查询资产类型与附件类型关系列表：" + anMap);
+        List list = productAssetDictRelationService.selectByClassProperty(ScfProductAssetDictRelation.class, anMap);
+        return AjaxObject.newOk("操作成功", list).toJson();
+    }
 
-	@Override
-	public String webFindAssetDict(Long factorNo) {
-		logger.debug("查询资产类型列表" + factorNo);
-		Map<String, Object> anMap = new HashMap<String, Object>();
-		anMap.put("businStatus", 1);
-		return AjaxObject.newOk("操作成功", assetDictService.selectByClassProperty(ScfAssetDict.class, anMap)).toJson();
-	}
-	
-	@Override
-	public String webQueryAssetDict(Long factorNo, int anFlag, int anPageNum, int anPageSize) {
-		logger.debug("查询资产类型列表" + factorNo);
-		Map<String, Object> anMap = new HashMap<String, Object>();
-		anMap.put("businStatus", 1);
-		return AjaxObject.newOkWithPage("操作成功", assetDictService.selectPropertyByPage(ScfAssetDict.class, anMap, anPageNum, anPageSize, 1==anFlag)).toJson();
-	}
+    @Override
+    public String webAddProductCoreRelation(String anProductCode, String anCustNo) {
+        logger.debug("保存产品与核心企业关系");
+        return AjaxObject.newOk("操作成功", productCoreRelationService.batchSaveRelation(anProductCode, anCustNo)).toJson();
+    }
 
-	@Override
-	public String webFindAssetDictByProduct(String anProductCode) {
-		return AjaxObject.newOk("操作成功", productConfigService.findAssetDictByProduct(anProductCode)).toJson();
-	}
-	
-	@Override
-	public String webQueryCoreByProduct(String anProductCode, int anFlag, int anPageNum, int anPageSize) {
-		return AjaxObject.newOkWithPage("操作成功", productConfigService.queryCoreByProduct(anProductCode, anFlag, anPageNum, anPageSize)).toJson();
-	}
-	
-	@Override
-	public String webFindCoreByProductList(String anProductCode) {
-		return AjaxObject.newOk("操作成功", productConfigService.findCoreByProductList(anProductCode)).toJson();
-	}
-	
-	@Override
-	public String webDelProductConfig(Long anId) {
-		return AjaxObject.newOk("操作成功", productConfigService.delProductConfig(anId)).toJson();
-	}
-	
-	@Override
-	public String webQueryProductKeyAndValue(Long coreCustNo, Long anFactorNo) {
-		return AjaxObject.newOk("操作成功", productConfigService.queryProductKeyAndValue(coreCustNo, anFactorNo)).toJson();
-	}
+    @Override
+    public String webFindAssetDict(Long factorNo) {
+        logger.debug("查询资产类型列表" + factorNo);
+        Map<String, Object> anMap = new HashMap<String, Object>();
+        anMap.put("businStatus", 1);
+        return AjaxObject.newOk("操作成功", assetDictService.selectByClassProperty(ScfAssetDict.class, anMap)).toJson();
+    }
+
+    @Override
+    public String webQueryAssetDict(Long factorNo, int anFlag, int anPageNum, int anPageSize) {
+        logger.debug("查询资产类型列表" + factorNo);
+        Map<String, Object> anMap = new HashMap<String, Object>();
+        anMap.put("businStatus", 1);
+        return AjaxObject.newOkWithPage("操作成功",
+                assetDictService.selectPropertyByPage(ScfAssetDict.class, anMap, anPageNum, anPageSize, 1 == anFlag))
+                .toJson();
+    }
+
+    @Override
+    public String webFindAssetDictByProduct(String anProductCode) {
+        return AjaxObject.newOk("操作成功", productConfigService.findAssetDictByProduct(anProductCode)).toJson();
+    }
+
+    @Override
+    public String webQueryCoreByProduct(String anProductCode, int anFlag, int anPageNum, int anPageSize) {
+        return AjaxObject.newOkWithPage("操作成功",
+                productConfigService.queryCoreByProduct(anProductCode, anFlag, anPageNum, anPageSize)).toJson();
+    }
+
+    @Override
+    public String webFindCoreByProductList(String anProductCode) {
+        return AjaxObject.newOk("操作成功", productConfigService.findCoreByProductList(anProductCode)).toJson();
+    }
+
+    @Override
+    public String webDelProductConfig(Long anId) {
+        return AjaxObject.newOk("操作成功", productConfigService.delProductConfig(anId)).toJson();
+    }
+
+    @Override
+    public String webQueryProductKeyAndValue(Long coreCustNo, Long anFactorNo) {
+        return AjaxObject.newOk("操作成功", productConfigService.queryProductKeyAndValue(coreCustNo, anFactorNo)).toJson();
+    }
 
 }

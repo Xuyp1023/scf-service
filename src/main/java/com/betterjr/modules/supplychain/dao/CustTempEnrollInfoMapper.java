@@ -5,5 +5,4 @@ import com.betterjr.modules.supplychain.entity.*;
 import com.betterjr.mapper.common.Mapper;
 
 @BetterjrMapper
-public interface CustTempEnrollInfoMapper extends Mapper<CustTempEnrollInfo> {
-}
+public interface CustTempEnrollInfoMapper extends Mapper<CustTempEnrollInfo> {}

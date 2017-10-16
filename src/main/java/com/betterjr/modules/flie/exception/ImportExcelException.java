@@ -11,7 +11,8 @@ public class ImportExcelException extends Exception {
         super();
     }
 
-    public ImportExcelException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public ImportExcelException(String message, Throwable cause, boolean enableSuppression,
+            boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 

@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.commission.entity.CommissionMonthlyStatementRecord;
 
 @BetterjrMapper
-public interface CommissionMonthlyStatementRecordMapper extends Mapper<CommissionMonthlyStatementRecord> {
-}
+public interface CommissionMonthlyStatementRecordMapper extends Mapper<CommissionMonthlyStatementRecord> {}

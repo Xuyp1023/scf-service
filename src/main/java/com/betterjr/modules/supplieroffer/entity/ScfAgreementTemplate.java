@@ -16,167 +16,163 @@ import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.supplieroffer.data.AgreementConstantCollentions;
-import com.betterjr.modules.supplieroffer.data.OfferConstantCollentions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "t_scf_agreement_templent")
-public class ScfAgreementTemplate  implements BetterjrEntity{
+public class ScfAgreementTemplate implements BetterjrEntity {
 
     /**
      * 
      */
     private static final long serialVersionUID = -8205890796419713924L;
 
-    
     /**
      * 流水号
      */
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
-    @MetaData( value="流水号", comments = "流水号")
+    @Column(name = "ID", columnDefinition = "INTEGER")
+    @MetaData(value = "流水号", comments = "流水号")
     private Long id;
-    
+
     /**
      * 客户号
      */
-    @Column(name = "L_CORE_CUSTNO",  columnDefinition="INTEGER" )
-    @MetaData( value="客户号", comments = "客户号")
+    @Column(name = "L_CORE_CUSTNO", columnDefinition = "INTEGER")
+    @MetaData(value = "客户号", comments = "客户号")
     private Long coreCustNo;
-    
+
     /**
      * 客户企业名称
      */
-    @Column(name = "C_CORE_CUSTNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="客户企业名称", comments = "客户企业名称")
+    @Column(name = "C_CORE_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "客户企业名称", comments = "客户企业名称")
     private String coreCustName;
-    
+
     /**
      * 合同模版存储文件Id（fileitem表）
      */
-    @Column(name = "L_TEMPLE_FILE_ID",  columnDefinition="INTEGER" )
-    @MetaData( value="合同模版存储文件Id（fileitem表）号", comments = "合同模版存储文件Id（fileitem表）")
+    @Column(name = "L_TEMPLE_FILE_ID", columnDefinition = "INTEGER")
+    @MetaData(value = "合同模版存储文件Id（fileitem表）号", comments = "合同模版存储文件Id（fileitem表）")
     private Long templateFileId;
-    
+
     /**
      * 合同模版名称
      */
-    @Column(name = "C_TEMPLE_FILE_NAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="合同模版名称", comments = "合同模版名称")
+    @Column(name = "C_TEMPLE_FILE_NAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "合同模版名称", comments = "合同模版名称")
     private String templateFileName;
-    
-    
+
     /**
      * 合同模版上传批次号
      */
     @Column(name = "N_TEMPLE_BATCHNO", columnDefinition = "INTEGER")
     @MetaData(value = "合同模版上传批次号", comments = "合同模版上传批次号")
     private Long templateBatchNo;
-    
+
     /**
      * 创建日期
      */
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="创建日期", comments = "创建日期")
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "创建日期", comments = "创建日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
-    
+
     /**
      * 创建时间
      */
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="创建时间", comments = "创建时间")
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "创建时间", comments = "创建时间")
     @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String regTime;
-    
+
     /**
      * 注册人
      */
-    @Column(name = "L_REG_OPERID",  columnDefinition="INTEGER" )
-    @MetaData( value="注册人", comments = "注册人")
-    private Long regOperId ;
+    @Column(name = "L_REG_OPERID", columnDefinition = "INTEGER")
+    @MetaData(value = "注册人", comments = "注册人")
+    private Long regOperId;
 
     /**
      * 注册人名称
      */
-    @Column(name = "C_REG_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="注册人名称", comments = "注册人名称")
+    @Column(name = "C_REG_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "注册人名称", comments = "注册人名称")
     private String regOperName;
-    
+
     /**
      * 操作机构
      */
-    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
-    @MetaData( value="操作机构", comments = "操作机构")
+    @Column(name = "C_OPERORG", columnDefinition = "VARCHAR")
+    @MetaData(value = "操作机构", comments = "操作机构")
     @JsonIgnore
     private String operOrg;
-    
+
     /**
      * 平台制作ftl模版存储id
      */
-    @Column(name = "L_FTL_FILE_ID",  columnDefinition="INTEGER" )
-    @MetaData( value="平台制作ftl模版存储id", comments = "平台制作ftl模版存储id")
+    @Column(name = "L_FTL_FILE_ID", columnDefinition = "INTEGER")
+    @MetaData(value = "平台制作ftl模版存储id", comments = "平台制作ftl模版存储id")
     private Long ftlFileId;
-    
-    
+
     /**
      * 平台制作ftl模版存储的批次号
      */
     @Column(name = "N_FTL_BATCHNO", columnDefinition = "INTEGER")
     @MetaData(value = "平台制作ftl模版存储的批次号", comments = "平台制作ftl模版存储的批次号")
     private Long ftlBatchNo;
-    
+
     /**
      * 模版的状态 0 已删除 1 刚上传模版  2 平台已经制作ftl  3已经激活
      */
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="模版的状态 0 已删除 1 刚上传模版  2 平台已经制作ftl", comments = "模版的状态 0 已删除 1 刚上传模版  2 平台已经制作ftl")
+    @Column(name = "C_BUSIN_STATUS", columnDefinition = "VARCHAR")
+    @MetaData(value = "模版的状态 0 已删除 1 刚上传模版  2 平台已经制作ftl", comments = "模版的状态 0 已删除 1 刚上传模版  2 平台已经制作ftl")
     private String businStatus;
-    
+
     /**
      * 创建日期
      */
-    @Column(name = "D_DEL_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="创建日期", comments = "创建日期")
+    @Column(name = "D_DEL_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "创建日期", comments = "创建日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String delDate;
-    
+
     /**
      * 创建时间
      */
-    @Column(name = "T_DEL_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="创建时间", comments = "创建时间")
+    @Column(name = "T_DEL_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "创建时间", comments = "创建时间")
     private String delTime;
-    
+
     /**
      * 注册人
      */
-    @Column(name = "L_DEL_OPERID",  columnDefinition="INTEGER" )
-    @MetaData( value="注册人", comments = "注册人")
-    private Long delOperId ;
+    @Column(name = "L_DEL_OPERID", columnDefinition = "INTEGER")
+    @MetaData(value = "注册人", comments = "注册人")
+    private Long delOperId;
 
     /**
      * 注册人名称
      */
-    @Column(name = "C_DEL_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="注册人名称", comments = "注册人名称")
+    @Column(name = "C_DEL_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "注册人名称", comments = "注册人名称")
     private String delOperName;
-    
+
     /**
      * 制作日期
      */
-    @Column(name = "D_MAKE_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="制作日期", comments = "制作日期")
+    @Column(name = "D_MAKE_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "制作日期", comments = "制作日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String makeDate;
-    
+
     /**
      * 制作时间
      */
-    @Column(name = "D_MAK_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="制作时间", comments = "制作时间")
+    @Column(name = "D_MAK_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "制作时间", comments = "制作时间")
     @JsonSerialize(using = CustTimeJsonSerializer.class)
     private String makeTime;
 
@@ -291,7 +287,7 @@ public class ScfAgreementTemplate  implements BetterjrEntity{
     public void setBusinStatus(String anBusinStatus) {
         this.businStatus = anBusinStatus;
     }
-    
+
     public String getDelDate() {
         return this.delDate;
     }
@@ -323,7 +319,6 @@ public class ScfAgreementTemplate  implements BetterjrEntity{
     public void setDelOperName(String anDelOperName) {
         this.delOperName = anDelOperName;
     }
-    
 
     public String getMakeDate() {
         return this.makeDate;
@@ -370,103 +365,90 @@ public class ScfAgreementTemplate  implements BetterjrEntity{
         ScfAgreementTemplate other = (ScfAgreementTemplate) obj;
         if (this.businStatus == null) {
             if (other.businStatus != null) return false;
-        }
-        else if (!this.businStatus.equals(other.businStatus)) return false;
+        } else if (!this.businStatus.equals(other.businStatus)) return false;
         if (this.coreCustName == null) {
             if (other.coreCustName != null) return false;
-        }
-        else if (!this.coreCustName.equals(other.coreCustName)) return false;
+        } else if (!this.coreCustName.equals(other.coreCustName)) return false;
         if (this.coreCustNo == null) {
             if (other.coreCustNo != null) return false;
-        }
-        else if (!this.coreCustNo.equals(other.coreCustNo)) return false;
+        } else if (!this.coreCustNo.equals(other.coreCustNo)) return false;
         if (this.ftlBatchNo == null) {
             if (other.ftlBatchNo != null) return false;
-        }
-        else if (!this.ftlBatchNo.equals(other.ftlBatchNo)) return false;
+        } else if (!this.ftlBatchNo.equals(other.ftlBatchNo)) return false;
         if (this.ftlFileId == null) {
             if (other.ftlFileId != null) return false;
-        }
-        else if (!this.ftlFileId.equals(other.ftlFileId)) return false;
+        } else if (!this.ftlFileId.equals(other.ftlFileId)) return false;
         if (this.id == null) {
             if (other.id != null) return false;
-        }
-        else if (!this.id.equals(other.id)) return false;
+        } else if (!this.id.equals(other.id)) return false;
         if (this.operOrg == null) {
             if (other.operOrg != null) return false;
-        }
-        else if (!this.operOrg.equals(other.operOrg)) return false;
+        } else if (!this.operOrg.equals(other.operOrg)) return false;
         if (this.regDate == null) {
             if (other.regDate != null) return false;
-        }
-        else if (!this.regDate.equals(other.regDate)) return false;
+        } else if (!this.regDate.equals(other.regDate)) return false;
         if (this.regOperId == null) {
             if (other.regOperId != null) return false;
-        }
-        else if (!this.regOperId.equals(other.regOperId)) return false;
+        } else if (!this.regOperId.equals(other.regOperId)) return false;
         if (this.regOperName == null) {
             if (other.regOperName != null) return false;
-        }
-        else if (!this.regOperName.equals(other.regOperName)) return false;
+        } else if (!this.regOperName.equals(other.regOperName)) return false;
         if (this.regTime == null) {
             if (other.regTime != null) return false;
-        }
-        else if (!this.regTime.equals(other.regTime)) return false;
+        } else if (!this.regTime.equals(other.regTime)) return false;
         if (this.templateBatchNo == null) {
             if (other.templateBatchNo != null) return false;
-        }
-        else if (!this.templateBatchNo.equals(other.templateBatchNo)) return false;
+        } else if (!this.templateBatchNo.equals(other.templateBatchNo)) return false;
         if (this.templateFileId == null) {
             if (other.templateFileId != null) return false;
-        }
-        else if (!this.templateFileId.equals(other.templateFileId)) return false;
+        } else if (!this.templateFileId.equals(other.templateFileId)) return false;
         if (this.templateFileName == null) {
             if (other.templateFileName != null) return false;
-        }
-        else if (!this.templateFileName.equals(other.templateFileName)) return false;
+        } else if (!this.templateFileName.equals(other.templateFileName)) return false;
         return true;
     }
 
-
     @Override
     public String toString() {
-        return "ScfAgreementTemplate [id=" + this.id + ", coreCustNo=" + this.coreCustNo + ", coreCustName=" + this.coreCustName + ", templateFileId="
-                + this.templateFileId + ", templateFileName=" + this.templateFileName + ", templateBatchNo=" + this.templateBatchNo + ", regDate="
-                + this.regDate + ", regTime=" + this.regTime + ", regOperId=" + this.regOperId + ", regOperName=" + this.regOperName + ", operOrg="
-                + this.operOrg + ", ftlFileId=" + this.ftlFileId + ", ftlBatchNo=" + this.ftlBatchNo + ", businStatus=" + this.businStatus
-                + ", delDate=" + this.delDate + ", delTime=" + this.delTime + ", delOperId=" + this.delOperId + ", delOperName=" + this.delOperName
-                + ", makeDate=" + this.makeDate + ", makeTime=" + this.makeTime + "]";
+        return "ScfAgreementTemplate [id=" + this.id + ", coreCustNo=" + this.coreCustNo + ", coreCustName="
+                + this.coreCustName + ", templateFileId=" + this.templateFileId + ", templateFileName="
+                + this.templateFileName + ", templateBatchNo=" + this.templateBatchNo + ", regDate=" + this.regDate
+                + ", regTime=" + this.regTime + ", regOperId=" + this.regOperId + ", regOperName=" + this.regOperName
+                + ", operOrg=" + this.operOrg + ", ftlFileId=" + this.ftlFileId + ", ftlBatchNo=" + this.ftlBatchNo
+                + ", businStatus=" + this.businStatus + ", delDate=" + this.delDate + ", delTime=" + this.delTime
+                + ", delOperId=" + this.delOperId + ", delOperName=" + this.delOperName + ", makeDate=" + this.makeDate
+                + ", makeTime=" + this.makeTime + "]";
     }
 
     public void saveAddValue(CustOperatorInfo anOperatorInfo) {
-        
-        BTAssert.notNull(anOperatorInfo,"无法获取登录信息,操作失败");
+
+        BTAssert.notNull(anOperatorInfo, "无法获取登录信息,操作失败");
         this.setId(SerialGenerator.getLongValue("ScfAgreementTemplate.id"));
         this.setBusinStatus(AgreementConstantCollentions.AGREMENT_TEMPLATE_BUSIN_STATUS_NOEFFECTIVE);
         this.regDate = BetterDateUtils.getNumDate();
-        this.regTime=BetterDateUtils.getNumTime();
-        this.regOperId=anOperatorInfo.getId();
+        this.regTime = BetterDateUtils.getNumTime();
+        this.regOperId = anOperatorInfo.getId();
         this.regOperName = anOperatorInfo.getName();
-        
+
     }
 
     public void saveDeleteValue(CustOperatorInfo anOperatorInfo) {
-        
-        BTAssert.notNull(anOperatorInfo,"无法获取登录信息,操作失败");
+
+        BTAssert.notNull(anOperatorInfo, "无法获取登录信息,操作失败");
         this.setBusinStatus(AgreementConstantCollentions.AGREMENT_TEMPLATE_BUSIN_STATUS_DELETE);
         this.delDate = BetterDateUtils.getNumDate();
-        this.delTime=BetterDateUtils.getNumTime();
-        this.delOperId=anOperatorInfo.getId();
+        this.delTime = BetterDateUtils.getNumTime();
+        this.delOperId = anOperatorInfo.getId();
         this.delOperName = anOperatorInfo.getName();
     }
 
     public void saveAllOperatorValue(CustOperatorInfo anOperatorInfo) {
-        
-        this.ftlBatchNo=this.templateBatchNo;
-        this.ftlFileId=this.templateFileId;
-        this.businStatus=AgreementConstantCollentions.AGREMENT_TEMPLATE_BUSIN_STATUS_ACTIVATE;
-        this.makeDate=this.regDate;
-        this.makeTime=this.regTime;
+
+        this.ftlBatchNo = this.templateBatchNo;
+        this.ftlFileId = this.templateFileId;
+        this.businStatus = AgreementConstantCollentions.AGREMENT_TEMPLATE_BUSIN_STATUS_ACTIVATE;
+        this.makeDate = this.regDate;
+        this.makeTime = this.regTime;
     }
 
     /**
@@ -474,11 +456,11 @@ public class ScfAgreementTemplate  implements BetterjrEntity{
      * @param anOperatorInfo
      */
     public void saveFtlUpdateValue(CustOperatorInfo anOperatorInfo) {
-        
-        this.businStatus=AgreementConstantCollentions.AGREMENT_TEMPLATE_BUSIN_STATUS_EFFECTIVE;
-        this.makeDate=this.regDate;
-        this.makeTime=this.regTime;
-        
+
+        this.businStatus = AgreementConstantCollentions.AGREMENT_TEMPLATE_BUSIN_STATUS_EFFECTIVE;
+        this.makeDate = this.regDate;
+        this.makeTime = this.regTime;
+
     }
 
     /**
@@ -486,19 +468,13 @@ public class ScfAgreementTemplate  implements BetterjrEntity{
      * @param anOperatorInfo
      */
     public void saveDeleteFtlValue(CustOperatorInfo anOperatorInfo) {
-        
-        this.businStatus=AgreementConstantCollentions.AGREMENT_TEMPLATE_BUSIN_STATUS_NOEFFECTIVE;
-        this.makeDate="";
-        this.makeTime="";
-        this.ftlFileId=null;
-        this.ftlBatchNo=null;
-        
+
+        this.businStatus = AgreementConstantCollentions.AGREMENT_TEMPLATE_BUSIN_STATUS_NOEFFECTIVE;
+        this.makeDate = "";
+        this.makeTime = "";
+        this.ftlFileId = null;
+        this.ftlBatchNo = null;
+
     }
 
-    
-
-    
-    
-    
-    
 }

@@ -28,7 +28,7 @@ public class ScfServiceFeeService extends BaseService<ScfServiceFeeMapper, ScfSe
         this.insert(anServiceFee);
         return findServiceFeeDetail(anServiceFee.getId());
     }
-    
+
     /**
      * 修改手续费记录
      * 
@@ -41,7 +41,7 @@ public class ScfServiceFeeService extends BaseService<ScfServiceFeeMapper, ScfSe
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("factorNo", anServiceFee.getFactorNo());
         map.put("id", anId);
-        if(Collections3.isEmpty(selectByClassProperty(ScfServiceFee.class, map))){
+        if (Collections3.isEmpty(selectByClassProperty(ScfServiceFee.class, map))) {
             throw new BytterTradeException(40001, "修改手续费记录失败-找不到原数据");
         }
 
@@ -60,7 +60,8 @@ public class ScfServiceFeeService extends BaseService<ScfServiceFeeMapper, ScfSe
      * @param anPageSize
      * @return
      */
-    public Page<ScfServiceFee> queryServiceFeeList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfServiceFee> queryServiceFeeList(Map<String, Object> anMap, int anFlag, int anPageNum,
+            int anPageSize) {
         return this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
     }
 
@@ -72,13 +73,13 @@ public class ScfServiceFeeService extends BaseService<ScfServiceFeeMapper, ScfSe
      */
     public ScfServiceFee findServiceFeeDetail(Long anId) {
         BTAssert.notNull(anId, "查询手续费记录详情失败-anId不能为空");
-        ScfServiceFee fee =  this.selectByPrimaryKey(anId);
-        if(null == fee){
+        ScfServiceFee fee = this.selectByPrimaryKey(anId);
+        if (null == fee) {
             return new ScfServiceFee();
         }
         return fee;
     }
-    
+
     /**
      * 查询手续费记录详情
      * 
@@ -90,11 +91,10 @@ public class ScfServiceFeeService extends BaseService<ScfServiceFeeMapper, ScfSe
         qyMap.put("requestNo", anRequestNo);
         qyMap.put("feeType", feeType);
         List<ScfServiceFee> list = this.selectByClassProperty(ScfServiceFee.class, qyMap);
-        if(Collections3.isEmpty(list)){
+        if (Collections3.isEmpty(list)) {
             return null;
         }
         return Collections3.getFirst(list);
     }
-    
 
 }

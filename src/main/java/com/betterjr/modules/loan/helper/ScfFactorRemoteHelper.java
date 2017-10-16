@@ -19,7 +19,6 @@ import com.betterjr.modules.remote.utils.RemoteInvokeUtils;
 public class ScfFactorRemoteHelper {
     private static final Logger logger = LoggerFactory.getLogger(ScfFactorRemoteHelper.class);
 
-
     /**
      * 发送融资申请信息给保理
      * 
@@ -44,7 +43,7 @@ public class ScfFactorRemoteHelper {
 
     protected ScfRequest dealFactorAppRequest(ScfRequest anRequest, boolean anWorkApp) {
         logger.info("dealFactorAppRequest :" + anRequest);
-        String faceNo=anRequest.getFactorNo().toString();
+        String faceNo = anRequest.getFactorNo().toString();
         ScfRemoteService remoteService = RemoteInvokeUtils.createService(faceNo, ScfRemoteService.class);
         @SuppressWarnings("rawtypes")
         RemoteResultInfo remoteResult;
@@ -60,24 +59,20 @@ public class ScfFactorRemoteHelper {
                     anRequest.setCreditMoney(MathExtend.defaultZero(result.getCreditMoney()));
                     anRequest.setRemainMoney(MathExtend.defaultZero(result.getRemainMoney()));
                     logger.info("return dealFactorAppRequest anRequest :" + anRequest);
-                }
-                else {
+                } else {
                     logger.warn("return dealFactorAppRequest data false " + remoteResult);
                     anRequest.setOutStatus("X");
                 }
-            }
-            else {
+            } else {
                 remoteResult = remoteService.sendAppFinancingState(anRequest);
                 if (remoteResult.isSucess()) {
                     FaceTradeResult tradeResult = (FaceTradeResult) remoteResult.getResult();
                     if ("1".equals(tradeResult.getStatus())) {
                         anRequest.setTradeStatus(tradeResult.getApplayStatus());
-                    }
-                    else {
+                    } else {
                         logger.error("send request status has error \n" + anRequest);
                     }
-                }
-                else {
+                } else {
                     logger.error("send request status has error \n" + anRequest);
 
                     anRequest.setOutStatus("X");
