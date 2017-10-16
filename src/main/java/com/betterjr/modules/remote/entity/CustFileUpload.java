@@ -4,12 +4,13 @@ import java.io.File;
 
 import com.betterjr.common.annotation.*;
 import com.betterjr.common.entity.BetterjrEntity;
-import com.betterjr.common.mapper.BeanMapper;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.modules.remote.helper.RemoteProxyFactory;
 
 import javax.persistence.*;
+
+import org.apache.commons.lang3.StringUtils;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -344,24 +345,40 @@ public class CustFileUpload implements BetterjrEntity {
         }
         CustFileUpload other = (CustFileUpload) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-                && (this.getBatchNo() == null ? other.getBatchNo() == null : this.getBatchNo().equals(other.getBatchNo()))
+                && (this.getBatchNo() == null ? other.getBatchNo() == null
+                        : this.getBatchNo().equals(other.getBatchNo()))
                 && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-                && (this.getTradeAccount() == null ? other.getTradeAccount() == null : this.getTradeAccount().equals(other.getTradeAccount()))
-                && (this.getAgencyNo() == null ? other.getAgencyNo() == null : this.getAgencyNo().equals(other.getAgencyNo()))
-                && (this.getRequestNo() == null ? other.getRequestNo() == null : this.getRequestNo().equals(other.getRequestNo()))
-                && (this.getSaleRequestNo() == null ? other.getSaleRequestNo() == null : this.getSaleRequestNo().equals(other.getSaleRequestNo()))
-                && (this.getBusinFlag() == null ? other.getBusinFlag() == null : this.getBusinFlag().equals(other.getBusinFlag()))
-                && (this.getFileName() == null ? other.getFileName() == null : this.getFileName().equals(other.getFileName()))
-                && (this.getFileType() == null ? other.getFileType() == null : this.getFileType().equals(other.getFileType()))
-                && (this.getFilePath() == null ? other.getFilePath() == null : this.getFilePath().equals(other.getFilePath()))
-                && (this.getFileLength() == null ? other.getFileLength() == null : this.getFileLength().equals(other.getFileLength()))
+                && (this.getTradeAccount() == null ? other.getTradeAccount() == null
+                        : this.getTradeAccount().equals(other.getTradeAccount()))
+                && (this.getAgencyNo() == null ? other.getAgencyNo() == null
+                        : this.getAgencyNo().equals(other.getAgencyNo()))
+                && (this.getRequestNo() == null ? other.getRequestNo() == null
+                        : this.getRequestNo().equals(other.getRequestNo()))
+                && (this.getSaleRequestNo() == null ? other.getSaleRequestNo() == null
+                        : this.getSaleRequestNo().equals(other.getSaleRequestNo()))
+                && (this.getBusinFlag() == null ? other.getBusinFlag() == null
+                        : this.getBusinFlag().equals(other.getBusinFlag()))
+                && (this.getFileName() == null ? other.getFileName() == null
+                        : this.getFileName().equals(other.getFileName()))
+                && (this.getFileType() == null ? other.getFileType() == null
+                        : this.getFileType().equals(other.getFileType()))
+                && (this.getFilePath() == null ? other.getFilePath() == null
+                        : this.getFilePath().equals(other.getFilePath()))
+                && (this.getFileLength() == null ? other.getFileLength() == null
+                        : this.getFileLength().equals(other.getFileLength()))
                 && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
-                && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-                && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
-                && (this.getFailTimes() == null ? other.getFailTimes() == null : this.getFailTimes().equals(other.getFailTimes()))
-                && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-                && (this.getFileInfoType() == null ? other.getFileInfoType() == null : this.getFileInfoType().equals(other.getFileInfoType()))
-                && (this.getRemoteSendPath() == null ? other.getRemoteSendPath() == null : this.getRemoteSendPath().equals(other.getRemoteSendPath()));
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getRegTime() == null ? other.getRegTime() == null
+                        : this.getRegTime().equals(other.getRegTime()))
+                && (this.getFailTimes() == null ? other.getFailTimes() == null
+                        : this.getFailTimes().equals(other.getFailTimes()))
+                && (this.getModiDate() == null ? other.getModiDate() == null
+                        : this.getModiDate().equals(other.getModiDate()))
+                && (this.getFileInfoType() == null ? other.getFileInfoType() == null
+                        : this.getFileInfoType().equals(other.getFileInfoType()))
+                && (this.getRemoteSendPath() == null ? other.getRemoteSendPath() == null
+                        : this.getRemoteSendPath().equals(other.getRemoteSendPath()));
     }
 
     @Override
@@ -399,11 +416,10 @@ public class CustFileUpload implements BetterjrEntity {
     }
 
     public String findFileName() {
-        if (BetterStringUtils.isNotBlank(fileInfoType)) {
+        if (StringUtils.isNotBlank(fileInfoType)) {
             String tmpName = RemoteProxyFactory.findFileName(this.agencyNo, this.fileInfoType);
             return tmpName.concat(".").concat(this.fileType);
-        }
-        else {
+        } else {
             File tmpFile = new File(this.filePath);
             return tmpFile.getName().concat(".").concat(this.fileType);
         }

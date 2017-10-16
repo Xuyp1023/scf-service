@@ -330,96 +330,78 @@ public class CommissionFileDown implements BetterjrEntity {
         CommissionFileDown other = (CommissionFileDown) obj;
         if (this.amount == null) {
             if (other.amount != null) return false;
-        }
-        else if (!this.amount.equals(other.amount)) return false;
+        } else if (!this.amount.equals(other.amount)) return false;
         if (this.batchNo == null) {
             if (other.batchNo != null) return false;
-        }
-        else if (!this.batchNo.equals(other.batchNo)) return false;
+        } else if (!this.batchNo.equals(other.batchNo)) return false;
         if (this.blance == null) {
             if (other.blance != null) return false;
-        }
-        else if (!this.blance.equals(other.blance)) return false;
+        } else if (!this.blance.equals(other.blance)) return false;
         if (this.confirmDate == null) {
             if (other.confirmDate != null) return false;
-        }
-        else if (!this.confirmDate.equals(other.confirmDate)) return false;
+        } else if (!this.confirmDate.equals(other.confirmDate)) return false;
         if (this.confirmFailureAmount == null) {
             if (other.confirmFailureAmount != null) return false;
-        }
-        else if (!this.confirmFailureAmount.equals(other.confirmFailureAmount)) return false;
+        } else if (!this.confirmFailureAmount.equals(other.confirmFailureAmount)) return false;
         if (this.confirmFailureBalance == null) {
             if (other.confirmFailureBalance != null) return false;
-        }
-        else if (!this.confirmFailureBalance.equals(other.confirmFailureBalance)) return false;
+        } else if (!this.confirmFailureBalance.equals(other.confirmFailureBalance)) return false;
         if (this.confirmMessage == null) {
             if (other.confirmMessage != null) return false;
-        }
-        else if (!this.confirmMessage.equals(other.confirmMessage)) return false;
+        } else if (!this.confirmMessage.equals(other.confirmMessage)) return false;
         if (this.confirmStatus == null) {
             if (other.confirmStatus != null) return false;
-        }
-        else if (!this.confirmStatus.equals(other.confirmStatus)) return false;
+        } else if (!this.confirmStatus.equals(other.confirmStatus)) return false;
         if (this.confirmSuccessAmount == null) {
             if (other.confirmSuccessAmount != null) return false;
-        }
-        else if (!this.confirmSuccessAmount.equals(other.confirmSuccessAmount)) return false;
+        } else if (!this.confirmSuccessAmount.equals(other.confirmSuccessAmount)) return false;
         if (this.confirmSuccessBalance == null) {
             if (other.confirmSuccessBalance != null) return false;
-        }
-        else if (!this.confirmSuccessBalance.equals(other.confirmSuccessBalance)) return false;
+        } else if (!this.confirmSuccessBalance.equals(other.confirmSuccessBalance)) return false;
         if (this.confirmTime == null) {
             if (other.confirmTime != null) return false;
-        }
-        else if (!this.confirmTime.equals(other.confirmTime)) return false;
+        } else if (!this.confirmTime.equals(other.confirmTime)) return false;
         if (this.custName == null) {
             if (other.custName != null) return false;
-        }
-        else if (!this.custName.equals(other.custName)) return false;
+        } else if (!this.custName.equals(other.custName)) return false;
         if (this.custNo == null) {
             if (other.custNo != null) return false;
-        }
-        else if (!this.custNo.equals(other.custNo)) return false;
+        } else if (!this.custNo.equals(other.custNo)) return false;
         if (this.fileId == null) {
             if (other.fileId != null) return false;
-        }
-        else if (!this.fileId.equals(other.fileId)) return false;
+        } else if (!this.fileId.equals(other.fileId)) return false;
         if (this.id == null) {
             if (other.id != null) return false;
-        }
-        else if (!this.id.equals(other.id)) return false;
+        } else if (!this.id.equals(other.id)) return false;
         if (this.importDate == null) {
             if (other.importDate != null) return false;
-        }
-        else if (!this.importDate.equals(other.importDate)) return false;
+        } else if (!this.importDate.equals(other.importDate)) return false;
         if (this.importTime == null) {
             if (other.importTime != null) return false;
-        }
-        else if (!this.importTime.equals(other.importTime)) return false;
+        } else if (!this.importTime.equals(other.importTime)) return false;
         if (this.operOrg == null) {
             if (other.operOrg != null) return false;
-        }
-        else if (!this.operOrg.equals(other.operOrg)) return false;
+        } else if (!this.operOrg.equals(other.operOrg)) return false;
         if (this.regDate == null) {
             if (other.regDate != null) return false;
-        }
-        else if (!this.regDate.equals(other.regDate)) return false;
+        } else if (!this.regDate.equals(other.regDate)) return false;
         if (this.regTime == null) {
             if (other.regTime != null) return false;
-        }
-        else if (!this.regTime.equals(other.regTime)) return false;
+        } else if (!this.regTime.equals(other.regTime)) return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "CommissionFileDown [id=" + this.id + ", fileId=" + this.fileId + ", batchNo=" + this.batchNo + ", importDate=" + this.importDate
-                + ", importTime=" + this.importTime + ", custNo=" + this.custNo + ", custName=" + this.custName + ", operOrg=" + this.operOrg
-                + ", blance=" + this.blance + ", amount=" + this.amount + ", regDate=" + this.regDate + ", regTime=" + this.regTime
-                + ", confirmStatus=" + this.confirmStatus + ", confirmDate=" + this.confirmDate + ", confirmTime=" + this.confirmTime
-                + ", confirmMessage=" + this.confirmMessage + ", confirmFailureBalance=" + this.confirmFailureBalance + ", confirmFailureAmount="
-                + this.confirmFailureAmount + ", confirmSuccessBalance=" + this.confirmSuccessBalance + ", confirmSuccessAmount="
-                + this.confirmSuccessAmount + ", auditOperId=" + this.auditOperId + ", auditOperName=" + this.auditOperName + "]";
+        return "CommissionFileDown [id=" + this.id + ", fileId=" + this.fileId + ", batchNo=" + this.batchNo
+                + ", importDate=" + this.importDate + ", importTime=" + this.importTime + ", custNo=" + this.custNo
+                + ", custName=" + this.custName + ", operOrg=" + this.operOrg + ", blance=" + this.blance + ", amount="
+                + this.amount + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", confirmStatus="
+                + this.confirmStatus + ", confirmDate=" + this.confirmDate + ", confirmTime=" + this.confirmTime
+                + ", confirmMessage=" + this.confirmMessage + ", confirmFailureBalance=" + this.confirmFailureBalance
+                + ", confirmFailureAmount=" + this.confirmFailureAmount + ", confirmSuccessBalance="
+                + this.confirmSuccessBalance + ", confirmSuccessAmount=" + this.confirmSuccessAmount + ", auditOperId="
+                + this.auditOperId + ", auditOperName=" + this.auditOperName + "]";
     }
 
     public void saveAddInit(int anRecordAmount, BigDecimal anBlance, CommissionRecord anRecord) {

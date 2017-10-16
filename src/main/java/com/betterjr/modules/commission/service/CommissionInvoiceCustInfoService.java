@@ -21,15 +21,15 @@ import com.betterjr.modules.account.service.CustAccountService;
 import com.betterjr.modules.commission.dao.CommissionInvoiceCustInfoMapper;
 import com.betterjr.modules.commission.data.CommissionConstantCollentions;
 import com.betterjr.modules.commission.entity.CommissionInvoiceCustInfo;
-import com.betterjr.modules.commission.entity.CommissionParam;
 import com.betterjr.modules.customer.ICustMechBaseService;
 
 @Service
-public class CommissionInvoiceCustInfoService extends BaseService<CommissionInvoiceCustInfoMapper, CommissionInvoiceCustInfo> {
+public class CommissionInvoiceCustInfoService
+        extends BaseService<CommissionInvoiceCustInfoMapper, CommissionInvoiceCustInfo> {
 
     @Reference(interfaceClass = ICustMechBaseService.class)
     private ICustMechBaseService custMechBaseService;
-    
+
     @Autowired
     private CustAccountService custAccountService;
 
@@ -48,7 +48,8 @@ public class CommissionInvoiceCustInfoService extends BaseService<CommissionInvo
 
             anCustInfo.setCoreCustName(custAccountService.queryCustName(anCustInfo.getCoreCustNo()));
         }
-        logger.info("Begin to add saveAddInvoiceCustInfo 数据为：" + anCustInfo + " 操作用户为：" + UserUtils.getOperatorInfo().getName());
+        logger.info("Begin to add saveAddInvoiceCustInfo 数据为：" + anCustInfo + " 操作用户为："
+                + UserUtils.getOperatorInfo().getName());
         this.insertSelective(anCustInfo);
         return anCustInfo;
     }
@@ -85,7 +86,8 @@ public class CommissionInvoiceCustInfoService extends BaseService<CommissionInvo
      * @param anPageSize
      * @return
      */
-    public Page<CommissionInvoiceCustInfo> queryInvoiceCustInfoList(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public Page<CommissionInvoiceCustInfo> queryInvoiceCustInfoList(Map<String, Object> anMap, String anFlag,
+            int anPageNum, int anPageSize) {
 
         BTAssert.notNull(anMap, "查询发票抬头失败！条件为空");
         BTAssert.notNull(anMap.get("custNo"), "查询发票抬头失败！条件为空");
@@ -93,7 +95,8 @@ public class CommissionInvoiceCustInfoService extends BaseService<CommissionInvo
         anMap = Collections3.filterMapEmptyObject(anMap);
         anMap.put("NEcoreCustNo", anMap.get("custNo"));
         anMap.put("businStatus", CommissionConstantCollentions.COMMISSION_INVOICE_PARAM_CUST_BUSINSTATUS_OK);
-        Page<CommissionInvoiceCustInfo> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
+        Page<CommissionInvoiceCustInfo> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize,
+                "1".equals(anFlag), "id desc");
 
         return page;
 
@@ -109,11 +112,13 @@ public class CommissionInvoiceCustInfoService extends BaseService<CommissionInvo
 
         BTAssert.notNull(anInvoiceInfo, "修改发票抬头失败！条件为空");
         BTAssert.notNull(anInvoiceInfo.getId(), "修改发票抬头失败！条件为空");
-        logger.info("Begin to saveUpdateInvoiceCustInfo 数据为：" + anInvoiceInfo + " 操作用户为：" + UserUtils.getOperatorInfo().getName());
+        logger.info("Begin to saveUpdateInvoiceCustInfo 数据为：" + anInvoiceInfo + " 操作用户为："
+                + UserUtils.getOperatorInfo().getName());
         vailedAddCustInfo(anInvoiceInfo);
         CommissionInvoiceCustInfo custInfo = this.selectByPrimaryKey(anInvoiceInfo.getId());
         BTAssert.notNull(custInfo, "修改发票抬头失败！没有查询到修改的记录");
-        if (custInfo.getBusinStatus().equals(CommissionConstantCollentions.COMMISSION_INVOICE_PARAM_CUST_BUSINSTATUS_FAILER)) {
+        if (custInfo.getBusinStatus()
+                .equals(CommissionConstantCollentions.COMMISSION_INVOICE_PARAM_CUST_BUSINSTATUS_FAILER)) {
             BTAssert.notNull(null, "修改发票抬头失败！当前抬头已经失效");
         }
         if (!getCurrentUserCustNos().contains(custInfo.getCustNo())) {
@@ -132,7 +137,8 @@ public class CommissionInvoiceCustInfoService extends BaseService<CommissionInvo
         }
         this.insert(anInvoiceInfo);
 
-        logger.info("end to saveUpdateInvoiceCustInfo 数据为：" + anInvoiceInfo + " 操作用户为：" + UserUtils.getOperatorInfo().getName());
+        logger.info("end to saveUpdateInvoiceCustInfo 数据为：" + anInvoiceInfo + " 操作用户为："
+                + UserUtils.getOperatorInfo().getName());
         return anInvoiceInfo;
 
     }
@@ -172,7 +178,8 @@ public class CommissionInvoiceCustInfoService extends BaseService<CommissionInvo
         if (StringUtils.isBlank(anCustInfo.getCoreInfoType())) {
             BTAssert.notNull(null, "新增发票抬头失败！请选择发票抬头类型");
         }
-        if (CommissionConstantCollentions.COMMISSION_INVOICE_CUSTINFO_CUSTTYPE_ENTERPRISE.equals(anCustInfo.getCoreInfoType())) {
+        if (CommissionConstantCollentions.COMMISSION_INVOICE_CUSTINFO_CUSTTYPE_ENTERPRISE
+                .equals(anCustInfo.getCoreInfoType())) {
 
             BTAssert.notNull(anCustInfo.getCoreAddress(), "新增发票抬头失败！请输入发票抬头地址");
             BTAssert.notNull(anCustInfo.getCoreBank(), "新增发票抬头失败！请输入发票抬头开户银行");
@@ -186,10 +193,11 @@ public class CommissionInvoiceCustInfoService extends BaseService<CommissionInvo
         }
         if (CommissionConstantCollentions.COMMISSION_INVOICE_CUSTINFO_IS_LAEST_OK.equals(anCustInfo.getIsLatest())) {
 
-            Map map = QueryTermBuilder.newInstance().put("custNo", anCustInfo.getCustNo()).put("coreCustNo", anCustInfo.getCoreCustNo())
+            Map map = QueryTermBuilder.newInstance().put("custNo", anCustInfo.getCustNo())
+                    .put("coreCustNo", anCustInfo.getCoreCustNo())
                     .put("isLatest", CommissionConstantCollentions.COMMISSION_INVOICE_CUSTINFO_IS_LAEST_OK)
-                    .put("businStatus", CommissionConstantCollentions.COMMISSION_INVOICE_PARAM_CUST_BUSINSTATUS_OK).put("NEid", anCustInfo.getId())
-                    .build();
+                    .put("businStatus", CommissionConstantCollentions.COMMISSION_INVOICE_PARAM_CUST_BUSINSTATUS_OK)
+                    .put("NEid", anCustInfo.getId()).build();
 
             List<CommissionInvoiceCustInfo> list = this.selectByProperty(map);
             if (!Collections3.isEmpty(list)) {
@@ -205,7 +213,8 @@ public class CommissionInvoiceCustInfoService extends BaseService<CommissionInvo
 
         CommissionInvoiceCustInfo custInfo = this.selectByPrimaryKey(anCustInfoId);
         BTAssert.notNull(custInfo, "删除佣金发票抬头失败！未查询到参数配置信息");
-        logger.info("Begin to add saveDeleteCustInfo 数据为：" + custInfo + " 操作用户为：" + UserUtils.getOperatorInfo().getName());
+        logger.info(
+                "Begin to add saveDeleteCustInfo 数据为：" + custInfo + " 操作用户为：" + UserUtils.getOperatorInfo().getName());
 
         if (!getCurrentUserCustNos().contains(custInfo.getCustNo())) {
 
@@ -214,7 +223,8 @@ public class CommissionInvoiceCustInfoService extends BaseService<CommissionInvo
         custInfo.setBusinStatus(CommissionConstantCollentions.COMMISSION_INVOICE_PARAM_CUST_BUSINSTATUS_FAILER);
         this.updateByPrimaryKeySelective(custInfo);
 
-        logger.info("end to add saveDeleteCustInfo 数据为：" + custInfo + " 操作用户为：" + UserUtils.getOperatorInfo().getName());
+        logger.info(
+                "end to add saveDeleteCustInfo 数据为：" + custInfo + " 操作用户为：" + UserUtils.getOperatorInfo().getName());
         return custInfo;
 
     }

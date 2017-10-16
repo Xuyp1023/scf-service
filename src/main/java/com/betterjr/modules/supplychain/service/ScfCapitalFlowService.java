@@ -16,11 +16,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class ScfCapitalFlowService extends BaseService<ScfCapitalFlowMapper, ScfCapitalFlow> {
 
-    public List<ScfCapitalFlow> findCapitalFlowBySupplier(Long anSupplierNo,  String anBankAccount){
-       Map map = new HashMap();
-       map.put("supplierNo", anSupplierNo);
-       map.put("suppBankAccount", anBankAccount);
-       
-       return this.selectByProperty(map);
+    public List<ScfCapitalFlow> findCapitalFlowBySupplier(Long anSupplierNo, String anBankAccount) {
+        Map map = new HashMap();
+        map.put("supplierNo", anSupplierNo);
+        map.put("suppBankAccount", anBankAccount);
+
+        return this.selectByProperty(map);
     }
 }

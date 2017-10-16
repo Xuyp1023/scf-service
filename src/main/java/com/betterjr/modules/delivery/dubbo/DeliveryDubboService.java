@@ -23,9 +23,12 @@ public class DeliveryDubboService implements IDeliveryService {
     private CommissionMonthlyStatementService monthlyStatementService;
 
     @Override
-    public String webQueryFileList(Map<String, Object> anAnMap, String anFlag, int anPageNum, int anPageSize, boolean anIsPostCust) {
+    public String webQueryFileList(Map<String, Object> anAnMap, String anFlag, int anPageNum, int anPageSize,
+            boolean anIsPostCust) {
         Map<String, Object> queryMap = RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOkWithPage("投递账单查询成功", recordService.queryDeliveryRecordList(queryMap, anFlag, anPageNum, anPageSize, anIsPostCust))
+        return AjaxObject
+                .newOkWithPage("投递账单查询成功",
+                        recordService.queryDeliveryRecordList(queryMap, anFlag, anPageNum, anPageSize, anIsPostCust))
                 .toJson();
     }
 
@@ -73,7 +76,8 @@ public class DeliveryDubboService implements IDeliveryService {
             Map<String, Object> queryMap = RuleServiceDubboFilterInvoker.getInputObj();
             queryMap.put("businStatus", "2");
             queryMap.put("custNo", queryMap.get("ownCustNo"));
-            return AjaxObject.newOkWithPage("查询月账单列表", monthlyStatementService.queryMonthlyStatement(queryMap, anPageNum, anPageSize)).toJson();
+            return AjaxObject.newOkWithPage("查询月账单列表",
+                    monthlyStatementService.queryMonthlyStatement(queryMap, anPageNum, anPageSize)).toJson();
         }
         catch (ParseException e) {
             BTAssert.notNull(null, "查询月账单出错：" + e.getMessage());

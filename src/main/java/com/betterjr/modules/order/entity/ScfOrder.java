@@ -21,7 +21,6 @@ import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.agreement.entity.CustAgreement;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
-import com.betterjr.modules.version.entity.BaseVersionEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -33,71 +32,71 @@ public class ScfOrder implements BetterjrEntity {
      * 流水号
      */
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
-    @MetaData( value="流水号", comments = "流水号")
+    @Column(name = "ID", columnDefinition = "INTEGER")
+    @MetaData(value = "流水号", comments = "流水号")
     private Long id;
 
     /**
      * 订单编号
      */
-    @Column(name = "C_ORDERNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="订单编号", comments = "订单编号")
+    @Column(name = "C_ORDERNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "订单编号", comments = "订单编号")
     @OrderBy("ASC")
     private String orderNo;
 
     /**
      * 资金系统中订单编号
      */
-    @Column(name = "C_BT_ORDERNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="资金系统中订单编号", comments = "资金系统中订单编号")
+    @Column(name = "C_BT_ORDERNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "资金系统中订单编号", comments = "资金系统中订单编号")
     @JsonIgnore
     private String btOrderNo;
 
     /**
      * 客户资金系统编号
      */
-    @Column(name = "C_BTNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="客户资金系统编号", comments = "客户资金系统编号")
+    @Column(name = "C_BTNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "客户资金系统编号", comments = "客户资金系统编号")
     @JsonIgnore
     private String btNo;
 
     /**
      * 客户号
      */
-    @Column(name = "L_CUSTNO",  columnDefinition="INTEGER" )
-    @MetaData( value="客户号", comments = "客户号")
+    @Column(name = "L_CUSTNO", columnDefinition = "INTEGER")
+    @MetaData(value = "客户号", comments = "客户号")
     private Long custNo;
-    
+
     @Transient
     private String custName;
 
     /**
      * 订单类型  0:供应商订单 1:经销商订单
      */
-    @Column(name = "C_ORDER_TYPE",  columnDefinition="VARCHAR" )
-    @MetaData( value="订单类型  0:供应商订单 1:经销商订单", comments = "订单类型  0:供应商订单 1:经销商订单")
+    @Column(name = "C_ORDER_TYPE", columnDefinition = "VARCHAR")
+    @MetaData(value = "订单类型  0:供应商订单 1:经销商订单", comments = "订单类型  0:供应商订单 1:经销商订单")
     private String orderType;
 
     /**
      * 创建日期
      */
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="创建日期", comments = "创建日期")
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "创建日期", comments = "创建日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
 
     /**
      * 商品名称
      */
-    @Column(name = "C_GOODSNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="商品名称", comments = "商品名称")
+    @Column(name = "C_GOODSNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "商品名称", comments = "商品名称")
     private String goodsName;
 
     /**
      * 订单日期
      */
-    @Column(name = "D_ORDER_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="订单日期", comments = "订单日期")
+    @Column(name = "D_ORDER_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "订单日期", comments = "订单日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     @OrderBy("ASC")
     private String orderDate;
@@ -105,135 +104,135 @@ public class ScfOrder implements BetterjrEntity {
     /**
      * 到期日期
      */
-    @Column(name = "D_END_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="到期日期", comments = "到期日期")
+    @Column(name = "D_END_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "到期日期", comments = "到期日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String endDate;
 
     /**
      * 商品价格
      */
-    @Column(name = "F_UNIT",  columnDefinition="DOUBLE" )
-    @MetaData( value="商品价格", comments = "商品价格")
+    @Column(name = "F_UNIT", columnDefinition = "DOUBLE")
+    @MetaData(value = "商品价格", comments = "商品价格")
     private BigDecimal unit;
 
     /**
      * 采购数量
      */
-    @Column(name = "N_AMOUNT",  columnDefinition="DOUBLE" )
-    @MetaData( value="采购数量", comments = "采购数量")
+    @Column(name = "N_AMOUNT", columnDefinition = "DOUBLE")
+    @MetaData(value = "采购数量", comments = "采购数量")
     private Integer amount;
 
     /**
      * 订单总额
      */
-    @Column(name = "F_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="订单总额", comments = "订单总额")
+    @Column(name = "F_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "订单总额", comments = "订单总额")
     private BigDecimal balance;
 
     /**
      * 核心企业编号
      */
-    @Column(name = "L_CORE_CUSTNO",  columnDefinition="INTEGER" )
-    @MetaData( value="核心企业编号", comments = "核心企业编号")
+    @Column(name = "L_CORE_CUSTNO", columnDefinition = "INTEGER")
+    @MetaData(value = "核心企业编号", comments = "核心企业编号")
     private Long coreCustNo;
-    
+
     @Transient
     private String coreCustName;
 
     /**
      * 编辑操作员编码
      */
-    @Column(name = "L_MODI_OPERID",  columnDefinition="INTEGER" )
-    @MetaData( value="编辑操作员编码", comments = "编辑操作员编码")
+    @Column(name = "L_MODI_OPERID", columnDefinition = "INTEGER")
+    @MetaData(value = "编辑操作员编码", comments = "编辑操作员编码")
     @JsonIgnore
-    private Long modiOperId ;
+    private Long modiOperId;
 
     /**
      * 编辑操作员名字
      */
-    @Column(name = "C_MODI_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="编辑操作员名字", comments = "编辑操作员名字")
+    @Column(name = "C_MODI_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "编辑操作员名字", comments = "编辑操作员名字")
     @JsonIgnore
     private String modiOperName;
 
     /**
      * 操作机构
      */
-    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
-    @MetaData( value="操作机构", comments = "操作机构")
+    @Column(name = "C_OPERORG", columnDefinition = "VARCHAR")
+    @MetaData(value = "操作机构", comments = "操作机构")
     @JsonIgnore
     private String operOrg;
 
     /**
      * 编辑日期
      */
-    @Column(name = "D_MODI_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="编辑日期", comments = "编辑日期")
+    @Column(name = "D_MODI_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "编辑日期", comments = "编辑日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String modiDate;
 
     /**
      * 编辑时间
      */
-    @Column(name = "T_MODI_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="编辑时间", comments = "编辑时间")
+    @Column(name = "T_MODI_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "编辑时间", comments = "编辑时间")
     private String modiTime;
 
     /**
      * 结算方式 0:商业汇票 1:赊销
      */
-    @Column(name = "C_SETTLEMENT",  columnDefinition="VARCHAR" )
-    @MetaData( value="结算方式 0:商业汇票 1:赊销", comments = "结算方式 0:商业汇票 1:赊销")
+    @Column(name = "C_SETTLEMENT", columnDefinition = "VARCHAR")
+    @MetaData(value = "结算方式 0:商业汇票 1:赊销", comments = "结算方式 0:商业汇票 1:赊销")
     private String settlement;
 
     /**
      * 当前状态 0:可用 1:过期 2:冻结
      */
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="当前状态 0:可用 1:过期 2:冻结", comments = "当前状态 0:可用 1:过期 2:冻结")
+    @Column(name = "C_BUSIN_STATUS", columnDefinition = "VARCHAR")
+    @MetaData(value = "当前状态 0:可用 1:过期 2:冻结", comments = "当前状态 0:可用 1:过期 2:冻结")
     private String businStatus;
 
     /**
      * 融资编号
      */
-    @Column(name = "C_REQUESTNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="融资编号", comments = "融资编号")
+    @Column(name = "C_REQUESTNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "融资编号", comments = "融资编号")
     private String requestNo;
 
     /**
      * 订单附件，对应fileinfo中的ID
      */
-    @Column(name = "N_BATCHNO",  columnDefinition="INTEGER" )
-    @MetaData( value="订单附件", comments = "订单附件，对应fileinfo中的ID")
+    @Column(name = "N_BATCHNO", columnDefinition = "INTEGER")
+    @MetaData(value = "订单附件", comments = "订单附件，对应fileinfo中的ID")
     private Long batchNo;
 
     /**
      * 其他资料，对应fileinfo中的ID
      */
-    @Column(name = "N_OTHERBATCHNO",  columnDefinition="INTEGER" )
-    @MetaData( value="其他资料", comments = "其他资料，对应fileinfo中的ID")
+    @Column(name = "N_OTHERBATCHNO", columnDefinition = "INTEGER")
+    @MetaData(value = "其他资料", comments = "其他资料，对应fileinfo中的ID")
     private Long otherBatchNo;
 
     /**
      * 融资占用金额
      */
-    @Column(name = "F_BALANCE_USED",  columnDefinition="DOUBLE" )
-    @MetaData( value="融资占用金额", comments = "融资占用金额")
+    @Column(name = "F_BALANCE_USED", columnDefinition = "DOUBLE")
+    @MetaData(value = "融资占用金额", comments = "融资占用金额")
     private BigDecimal balanceUsed;
 
     /**
      * 剩余金额
      */
-    @Column(name = "F_BALANCE_REST",  columnDefinition="DOUBLE" )
-    @MetaData( value="剩余金额", comments = "剩余金额")
+    @Column(name = "F_BALANCE_REST", columnDefinition = "DOUBLE")
+    @MetaData(value = "剩余金额", comments = "剩余金额")
     private BigDecimal balanceRest;
-    
+
     /**
      * 数据来源, 0:关联单据默认生成, 1:用户录入
      */
-    @Column(name = "C_DATASOURCE",  columnDefinition="VARCHAR" )
-    @MetaData( value="数据来源, 0:关联单据默认生成, 1:用户录入", comments = "数据来源, 0:关联单据默认生成, 1:用户录入")
+    @Column(name = "C_DATASOURCE", columnDefinition = "VARCHAR")
+    @MetaData(value = "数据来源, 0:关联单据默认生成, 1:用户录入", comments = "数据来源, 0:关联单据默认生成, 1:用户录入")
     private String dataSource;
 
     /**
@@ -241,7 +240,7 @@ public class ScfOrder implements BetterjrEntity {
      */
     @Transient
     private List<CustAgreement> agreementList;
-    
+
     /**
      * 发票列表
      */
@@ -252,22 +251,21 @@ public class ScfOrder implements BetterjrEntity {
      */
     @Transient
     private List<ScfReceivable> receivableList;
-    
+
     /**
      * 运输单据列表
      */
     @Transient
     private List<ScfTransport> transportList;
-    
+
     /**
      * 汇票信息列表
      */
     @Transient
     private List<ScfAcceptBill> acceptBillList;
-    
-    
+
     private static final long serialVersionUID = 1469676107640L;
-    
+
     public ScfOrder() {
         super();
     }
@@ -279,16 +277,17 @@ public class ScfOrder implements BetterjrEntity {
         super();
         this.initAddValue(UserUtils.getOperatorInfo());
         this.custNo = anAcceptBill.getHolderNo();
-        //暂用开票日期作为订单日期
+        // 暂用开票日期作为订单日期
         this.orderDate = anAcceptBill.getInvoiceDate();
         this.orderNo = "此订单由票据编号" + anAcceptBill.getBillNo() + "的汇票默认生成";
         this.goodsName = "此订单由票据编号" + anAcceptBill.getBillNo() + "的汇票默认生成";
         this.balance = anAcceptBill.getBalance();
         this.coreCustNo = anAcceptBill.getCoreCustNo();
-        this.settlement = "0";//结算方式 0-商业汇票
+        this.settlement = "0";// 结算方式 0-商业汇票
         this.businStatus = "0";
         this.dataSource = "0";
     }
+
     /**
      * 根据应收账款生成订单
      */
@@ -297,13 +296,13 @@ public class ScfOrder implements BetterjrEntity {
         this.initAddValue(UserUtils.getOperatorInfo());
         this.coreCustNo = anReceivable.getCustNo();
         this.custNo = anReceivable.getCustNo();
-        //暂用数据生成日期作为订单日期
+        // 暂用数据生成日期作为订单日期
         this.orderDate = anReceivable.getRegDate();
         this.orderNo = "此订单由应收账款编号" + anReceivable.getReceivableNo() + "的应收账款默认生成";
         this.goodsName = anReceivable.getGoodsName();
         this.balance = anReceivable.getBalance();
         this.coreCustNo = anReceivable.getCoreCustNo();
-        this.settlement = "1";//结算方式 1-赊销
+        this.settlement = "1";// 结算方式 1-赊销
         this.businStatus = "0";
         this.dataSource = "0";
     }
@@ -420,12 +419,12 @@ public class ScfOrder implements BetterjrEntity {
         this.coreCustNo = coreCustNo;
     }
 
-    public Long getModiOperId () {
-        return modiOperId ;
+    public Long getModiOperId() {
+        return modiOperId;
     }
 
-    public void setModiOperId (Long modiOperId ) {
-        this.modiOperId  = modiOperId ;
+    public void setModiOperId(Long modiOperId) {
+        this.modiOperId = modiOperId;
     }
 
     public String getModiOperName() {
@@ -600,7 +599,7 @@ public class ScfOrder implements BetterjrEntity {
         sb.append(", amount=").append(amount);
         sb.append(", balance=").append(balance);
         sb.append(", coreCustNo=").append(coreCustNo);
-        sb.append(", modiOperId =").append(modiOperId );
+        sb.append(", modiOperId =").append(modiOperId);
         sb.append(", modiOperName=").append(modiOperName);
         sb.append(", operOrg=").append(operOrg);
         sb.append(", modiDate=").append(modiDate);
@@ -631,32 +630,54 @@ public class ScfOrder implements BetterjrEntity {
         }
         ScfOrder other = (ScfOrder) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getOrderNo() == null ? other.getOrderNo() == null : this.getOrderNo().equals(other.getOrderNo()))
-            && (this.getBtOrderNo() == null ? other.getBtOrderNo() == null : this.getBtOrderNo().equals(other.getBtOrderNo()))
-            && (this.getBtNo() == null ? other.getBtNo() == null : this.getBtNo().equals(other.getBtNo()))
-            && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-            && (this.getOrderType() == null ? other.getOrderType() == null : this.getOrderType().equals(other.getOrderType()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-            && (this.getGoodsName() == null ? other.getGoodsName() == null : this.getGoodsName().equals(other.getGoodsName()))
-            && (this.getOrderDate() == null ? other.getOrderDate() == null : this.getOrderDate().equals(other.getOrderDate()))
-            && (this.getEndDate() == null ? other.getEndDate() == null : this.getEndDate().equals(other.getEndDate()))
-            && (this.getUnit() == null ? other.getUnit() == null : this.getUnit().equals(other.getUnit()))
-            && (this.getAmount() == null ? other.getAmount() == null : this.getAmount().equals(other.getAmount()))
-            && (this.getBalance() == null ? other.getBalance() == null : this.getBalance().equals(other.getBalance()))
-            && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
-            && (this.getModiOperId () == null ? other.getModiOperId () == null : this.getModiOperId ().equals(other.getModiOperId ()))
-            && (this.getModiOperName() == null ? other.getModiOperName() == null : this.getModiOperName().equals(other.getModiOperName()))
-            && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
-            && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-            && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()))
-            && (this.getSettlement() == null ? other.getSettlement() == null : this.getSettlement().equals(other.getSettlement()))
-            && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
-            && (this.getRequestNo() == null ? other.getRequestNo() == null : this.getRequestNo().equals(other.getRequestNo()))
-            && (this.getBatchNo() == null ? other.getBatchNo() == null : this.getBatchNo().equals(other.getBatchNo()))
-            && (this.getOtherBatchNo() == null ? other.getOtherBatchNo() == null : this.getOtherBatchNo().equals(other.getOtherBatchNo()))
-            && (this.getBalanceUsed() == null ? other.getBalanceUsed() == null : this.getBalanceUsed().equals(other.getBalanceUsed()))
-            && (this.getDataSource() == null ? other.getDataSource() == null : this.getDataSource().equals(other.getDataSource()))
-            && (this.getBalanceRest() == null ? other.getBalanceRest() == null : this.getBalanceRest().equals(other.getBalanceRest()));
+                && (this.getOrderNo() == null ? other.getOrderNo() == null
+                        : this.getOrderNo().equals(other.getOrderNo()))
+                && (this.getBtOrderNo() == null ? other.getBtOrderNo() == null
+                        : this.getBtOrderNo().equals(other.getBtOrderNo()))
+                && (this.getBtNo() == null ? other.getBtNo() == null : this.getBtNo().equals(other.getBtNo()))
+                && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
+                && (this.getOrderType() == null ? other.getOrderType() == null
+                        : this.getOrderType().equals(other.getOrderType()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getGoodsName() == null ? other.getGoodsName() == null
+                        : this.getGoodsName().equals(other.getGoodsName()))
+                && (this.getOrderDate() == null ? other.getOrderDate() == null
+                        : this.getOrderDate().equals(other.getOrderDate()))
+                && (this.getEndDate() == null ? other.getEndDate() == null
+                        : this.getEndDate().equals(other.getEndDate()))
+                && (this.getUnit() == null ? other.getUnit() == null : this.getUnit().equals(other.getUnit()))
+                && (this.getAmount() == null ? other.getAmount() == null : this.getAmount().equals(other.getAmount()))
+                && (this.getBalance() == null ? other.getBalance() == null
+                        : this.getBalance().equals(other.getBalance()))
+                && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null
+                        : this.getCoreCustNo().equals(other.getCoreCustNo()))
+                && (this.getModiOperId() == null ? other.getModiOperId() == null
+                        : this.getModiOperId().equals(other.getModiOperId()))
+                && (this.getModiOperName() == null ? other.getModiOperName() == null
+                        : this.getModiOperName().equals(other.getModiOperName()))
+                && (this.getOperOrg() == null ? other.getOperOrg() == null
+                        : this.getOperOrg().equals(other.getOperOrg()))
+                && (this.getModiDate() == null ? other.getModiDate() == null
+                        : this.getModiDate().equals(other.getModiDate()))
+                && (this.getModiTime() == null ? other.getModiTime() == null
+                        : this.getModiTime().equals(other.getModiTime()))
+                && (this.getSettlement() == null ? other.getSettlement() == null
+                        : this.getSettlement().equals(other.getSettlement()))
+                && (this.getBusinStatus() == null ? other.getBusinStatus() == null
+                        : this.getBusinStatus().equals(other.getBusinStatus()))
+                && (this.getRequestNo() == null ? other.getRequestNo() == null
+                        : this.getRequestNo().equals(other.getRequestNo()))
+                && (this.getBatchNo() == null ? other.getBatchNo() == null
+                        : this.getBatchNo().equals(other.getBatchNo()))
+                && (this.getOtherBatchNo() == null ? other.getOtherBatchNo() == null
+                        : this.getOtherBatchNo().equals(other.getOtherBatchNo()))
+                && (this.getBalanceUsed() == null ? other.getBalanceUsed() == null
+                        : this.getBalanceUsed().equals(other.getBalanceUsed()))
+                && (this.getDataSource() == null ? other.getDataSource() == null
+                        : this.getDataSource().equals(other.getDataSource()))
+                && (this.getBalanceRest() == null ? other.getBalanceRest() == null
+                        : this.getBalanceRest().equals(other.getBalanceRest()));
     }
 
     @Override
@@ -677,7 +698,7 @@ public class ScfOrder implements BetterjrEntity {
         result = prime * result + ((getAmount() == null) ? 0 : getAmount().hashCode());
         result = prime * result + ((getBalance() == null) ? 0 : getBalance().hashCode());
         result = prime * result + ((getCoreCustNo() == null) ? 0 : getCoreCustNo().hashCode());
-        result = prime * result + ((getModiOperId () == null) ? 0 : getModiOperId ().hashCode());
+        result = prime * result + ((getModiOperId() == null) ? 0 : getModiOperId().hashCode());
         result = prime * result + ((getModiOperName() == null) ? 0 : getModiOperName().hashCode());
         result = prime * result + ((getOperOrg() == null) ? 0 : getOperOrg().hashCode());
         result = prime * result + ((getModiDate() == null) ? 0 : getModiDate().hashCode());
@@ -692,7 +713,7 @@ public class ScfOrder implements BetterjrEntity {
         result = prime * result + ((getBalanceRest() == null) ? 0 : getBalanceRest().hashCode());
         return result;
     }
-    
+
     /**
      * 订单信息编辑数据保存
      */
@@ -704,11 +725,11 @@ public class ScfOrder implements BetterjrEntity {
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
     }
-    
+
     /**
      * 清空订单关联信息
      */
-    public void clearRelationInfo(){
+    public void clearRelationInfo() {
         this.agreementList.clear();
         this.transportList.clear();
         this.invoiceList.clear();

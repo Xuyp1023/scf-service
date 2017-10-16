@@ -8,17 +8,17 @@ import com.dangdang.ddframe.job.api.JobExecutionMultipleShardingContext;
 import com.dangdang.ddframe.job.plugin.job.type.simple.AbstractSimpleElasticJob;
 
 @Service
-public class ScfReceivableExpirePlanJob extends AbstractSimpleElasticJob{
-    
+public class ScfReceivableExpirePlanJob extends AbstractSimpleElasticJob {
+
     @Autowired
     private ScfReceivableDOService receivableService;
 
     @Override
     public void process(JobExecutionMultipleShardingContext anShardingContext) {
-        
-        //System.out.println("ScfReceivableExpirePlanJob..........");
+
+        // System.out.println("ScfReceivableExpirePlanJob..........");
         receivableService.saveExpireEndDataList();
-        
+
     }
 
 }

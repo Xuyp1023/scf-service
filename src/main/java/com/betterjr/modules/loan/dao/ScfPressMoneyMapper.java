@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.loan.entity.ScfPressMoney;
 
 @BetterjrMapper
-public interface ScfPressMoneyMapper extends Mapper<ScfPressMoney> {
-}
+public interface ScfPressMoneyMapper extends Mapper<ScfPressMoney> {}

@@ -176,40 +176,31 @@ public class ScfContractTemplate implements BetterjrEntity {
         final ScfContractTemplate other = (ScfContractTemplate) obj;
         if (batchNo == null) {
             if (other.batchNo != null) return false;
-        }
-        else if (!batchNo.equals(other.batchNo)) return false;
+        } else if (!batchNo.equals(other.batchNo)) return false;
         if (factorNo == null) {
             if (other.factorNo != null) return false;
-        }
-        else if (!factorNo.equals(other.factorNo)) return false;
+        } else if (!factorNo.equals(other.factorNo)) return false;
         if (id == null) {
             if (other.id != null) return false;
-        }
-        else if (!id.equals(other.id)) return false;
+        } else if (!id.equals(other.id)) return false;
         if (regDate == null) {
             if (other.regDate != null) return false;
-        }
-        else if (!regDate.equals(other.regDate)) return false;
+        } else if (!regDate.equals(other.regDate)) return false;
         if (regTime == null) {
             if (other.regTime != null) return false;
-        }
-        else if (!regTime.equals(other.regTime)) return false;
+        } else if (!regTime.equals(other.regTime)) return false;
         if (templateName == null) {
             if (other.templateName != null) return false;
-        }
-        else if (!templateName.equals(other.templateName)) return false;
+        } else if (!templateName.equals(other.templateName)) return false;
         if (templatePath == null) {
             if (other.templatePath != null) return false;
-        }
-        else if (!templatePath.equals(other.templatePath)) return false;
+        } else if (!templatePath.equals(other.templatePath)) return false;
         if (templateStatus == null) {
             if (other.templateStatus != null) return false;
-        }
-        else if (!templateStatus.equals(other.templateStatus)) return false;
+        } else if (!templateStatus.equals(other.templateStatus)) return false;
         if (templateType == null) {
             if (other.templateType != null) return false;
-        }
-        else if (!templateType.equals(other.templateType)) return false;
+        } else if (!templateType.equals(other.templateType)) return false;
         return true;
     }
 

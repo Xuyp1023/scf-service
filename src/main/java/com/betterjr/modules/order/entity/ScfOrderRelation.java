@@ -15,43 +15,43 @@ public class ScfOrderRelation implements BetterjrEntity {
      * 流水号
      */
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
-    @MetaData( value="流水号", comments = "流水号")
+    @Column(name = "ID", columnDefinition = "INTEGER")
+    @MetaData(value = "流水号", comments = "流水号")
     private Long id;
 
     /**
      * 订单流水号
      */
-    @Column(name = "L_ORDER_ID",  columnDefinition="INTEGER" )
-    @MetaData( value="订单流水号", comments = "订单流水号")
+    @Column(name = "L_ORDER_ID", columnDefinition = "INTEGER")
+    @MetaData(value = "订单流水号", comments = "订单流水号")
     private Long orderId;
 
     /**
      * 其他信息流水号
      */
-    @Column(name = "L_INFO_ID",  columnDefinition="INTEGER" )
-    @MetaData( value="其他信息流水号", comments = "其他信息流水号")
+    @Column(name = "L_INFO_ID", columnDefinition = "INTEGER")
+    @MetaData(value = "其他信息流水号", comments = "其他信息流水号")
     private Long infoId;
 
     /**
      * 信息类型 0:合同 1:发票 2:运输单据 3:汇票 4:应收账款
      */
-    @Column(name = "C_INFO_TYPE",  columnDefinition="VARCHAR" )
-    @MetaData( value="信息类型 0:合同 1:发票 2:运输单据 3:汇票 4:应收账款", comments = "信息类型 0:合同 1:发票 2:运输单据 3:汇票 4:应收账款")
+    @Column(name = "C_INFO_TYPE", columnDefinition = "VARCHAR")
+    @MetaData(value = "信息类型 0:合同 1:发票 2:运输单据 3:汇票 4:应收账款", comments = "信息类型 0:合同 1:发票 2:运输单据 3:汇票 4:应收账款")
     private String infoType;
 
     /**
      * 创建日期
      */
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="创建日期", comments = "创建日期")
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "创建日期", comments = "创建日期")
     private String regDate;
 
     /**
      * 编辑日期
      */
-    @Column(name = "D_MODI_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="编辑日期", comments = "编辑日期")
+    @Column(name = "D_MODI_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "编辑日期", comments = "编辑日期")
     private String modiDate;
 
     private static final long serialVersionUID = 1469676107644L;
@@ -134,11 +134,15 @@ public class ScfOrderRelation implements BetterjrEntity {
         }
         ScfOrderRelation other = (ScfOrderRelation) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getOrderId() == null ? other.getOrderId() == null : this.getOrderId().equals(other.getOrderId()))
-            && (this.getInfoId() == null ? other.getInfoId() == null : this.getInfoId().equals(other.getInfoId()))
-            && (this.getInfoType() == null ? other.getInfoType() == null : this.getInfoType().equals(other.getInfoType()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-            && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()));
+                && (this.getOrderId() == null ? other.getOrderId() == null
+                        : this.getOrderId().equals(other.getOrderId()))
+                && (this.getInfoId() == null ? other.getInfoId() == null : this.getInfoId().equals(other.getInfoId()))
+                && (this.getInfoType() == null ? other.getInfoType() == null
+                        : this.getInfoType().equals(other.getInfoType()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getModiDate() == null ? other.getModiDate() == null
+                        : this.getModiDate().equals(other.getModiDate()));
     }
 
     @Override
@@ -153,7 +157,7 @@ public class ScfOrderRelation implements BetterjrEntity {
         result = prime * result + ((getModiDate() == null) ? 0 : getModiDate().hashCode());
         return result;
     }
-    
+
     public void initAddValue() {
         this.id = SerialGenerator.getLongValue("ScfOrderRelation.id");
         this.regDate = BetterDateUtils.getNumDate();

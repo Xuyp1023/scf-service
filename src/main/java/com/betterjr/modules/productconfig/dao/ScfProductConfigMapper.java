@@ -5,6 +5,6 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.productconfig.entity.ScfProductConfig;
 
 @BetterjrMapper
-public interface ScfProductConfigMapper  extends Mapper<ScfProductConfig>{
+public interface ScfProductConfigMapper extends Mapper<ScfProductConfig> {
 
 }

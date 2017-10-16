@@ -62,7 +62,8 @@ import com.betterjr.modules.supplieroffer.entity.ScfSupplierOffer;
 import com.betterjr.modules.version.constant.VersionConstantCollentions;
 
 @Service
-public class ScfReceivableRequestService extends BaseService<ScfReceivableRequestMapper, ScfReceivableRequest> implements BaseExpiredInterface<ScfReceivableRequest> {
+public class ScfReceivableRequestService extends BaseService<ScfReceivableRequestMapper, ScfReceivableRequest>
+        implements BaseExpiredInterface<ScfReceivableRequest> {
 
     @Autowired
     private ScfAssetService assetService;
@@ -110,10 +111,10 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
 
     @Autowired
     private ScfSupplierPushService supplierPushService;
-    
+
     @Autowired
     private ScfReceivableRequestLogService logService;
-    
+
     /**
      * 整合模式申请总的入口
      * 
@@ -140,10 +141,10 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         // 插入电子合同信息
         // agreementService.saveAddCoreAgreementByRequest(request,"1");
         // agreementService.saveAddPlatAgreementByRequest(request);
-        
-        //插入日志
+
+        // 插入日志
         logService.saveAddRequestLog(request);
-        
+
         this.insert(request);
         return request;
 
@@ -159,7 +160,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
      *            wechaMarker 微信标记 goodsBatchNo 合同附件 statementBatchNo 发票附件
      * @return
      */
-    public ScfReceivableRequest saveSubmitRequestTotal(Map<String, Object> anMap, String anRequestNo, String anRequestPayDate, String anDescription) {
+    public ScfReceivableRequest saveSubmitRequestTotal(Map<String, Object> anMap, String anRequestNo,
+            String anRequestPayDate, String anDescription) {
 
         BTAssert.notNull(anMap, "融资信息为空,操作失败");
         BTAssert.notNull(anMap.get("requestProductCode"), "请选择保理产品");
@@ -169,29 +171,33 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         if (!getCurrentUserCustNos().contains(request.getCustNo())) {
             BTAssert.notNull(null, "你没有当前申请的权限,操作失败");
         }
-        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_NOEFFECTIVE, false, "当前申请已不能进行再次申请");
-        ScfProductConfig config = productConfigService.findProductConfigById(anMap.get("requestProductCode").toString());
+        checkStatus(request.getBusinStatus(),
+                ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_NOEFFECTIVE, false,
+                "当前申请已不能进行再次申请");
+        ScfProductConfig config = productConfigService
+                .findProductConfigById(anMap.get("requestProductCode").toString());
         BTAssert.notNull(config, "没有查询到产品配置信息");
         // 判断是否微信来源，如果微信会上传贸易合同和发票附件信息
-        //if (anMap.containsKey("wechaMarker") && "1".equals(anMap.get("wechaMarker").toString())) {
+        // if (anMap.containsKey("wechaMarker") && "1".equals(anMap.get("wechaMarker").toString())) {
         convertProdectConfigToRequestAndAsset(request, config, anMap);
         request.setBusinStatus(ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_SUPPLIER_SUBMIT);
         /*
          * 整合模式一和模式2的状态
          * if ("2".equals(config.getReceivableRequestType())) {
-
+        
             request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_CORE_CONFIRM);
-
+        
         }
          */
-       /* }
+        /* }
         else {
-
+        
             convertProdectConfigToRequestAndAsset(request, config, null);
             request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_SUBMIT_REQUEST);
         }*/
         // 设置银行账户信息
-        CustMechBankAccount account = custMechBankAccountService.findCustMechBankAccount(anMap.get("custBankAccount").toString());
+        CustMechBankAccount account = custMechBankAccountService
+                .findCustMechBankAccount(anMap.get("custBankAccount").toString());
         BTAssert.notNull(account, "没有查到供应商银行帐号");
         request.setCustBankAccount(account.getBankAcco());
         request.setCustBankAccountName(account.getBankAccoName());
@@ -208,11 +214,11 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         fillRequestRaxInfo(request, anRequestPayDate);
         request.setDescription(anDescription);
 
-        //插入日志
+        // 插入日志
         logService.saveAddRequestLog(request);
-        
+
         this.updateByPrimaryKeySelective(request);
-        
+
         return request;
 
     }
@@ -228,8 +234,10 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         BTAssert.notNull(receivableId, "请选择应付账款,操作失败");
         ScfReceivableDO receivable = receivableService.selectByPrimaryKey(receivableId);
         BTAssert.notNull(receivable, "请选择应付账款,操作失败");
-        checkStatus(receivable.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false, "请选择审核生效的应付账款进行申请");
-        checkStatus(receivable.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true, "当前应付账款已经进行申请");
+        checkStatus(receivable.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false,
+                "请选择审核生效的应付账款进行申请");
+        checkStatus(receivable.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true,
+                "当前应付账款已经进行申请");
         String agreeNo = receivable.getAgreeNo();
         String invoiceNos = receivable.getInvoiceNos();
         if (StringUtils.isBlank(agreeNo)) {
@@ -255,7 +263,6 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
 
     }
 
-
     /**
      * 供应商签署合同（供应商和平台的两份合同）
      * 
@@ -267,17 +274,21 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         BTAssert.notNull(anRequestNo, "融资信息为空,操作失败");
         ScfReceivableRequest request = this.selectByPrimaryKey(anRequestNo);
         BTAssert.notNull(request, "融资信息为空,操作失败");
-        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_NOEFFECTIVE, true, "当前申请尚未生效");
-        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FINISHED, true, "当前申请已经完结");
-        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_ANNUL, true, "当前申请已经完结");
+        checkStatus(request.getBusinStatus(),
+                ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_NOEFFECTIVE, true, "当前申请尚未生效");
+        checkStatus(request.getBusinStatus(),
+                ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FINISHED, true, "当前申请已经完结");
+        checkStatus(request.getBusinStatus(),
+                ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_ANNUL, true, "当前申请已经完结");
         request.setSupplierSignFlag(ReceivableRequestConstantCollentions.SIGN_AGREEMENT_FLAG_YES);
         // 处理供应商电子合同和平台电子合同
         // agreementService.saveSupplierSignAgreement(request);
-        //request.setElecAgreement(elecAgreementService.saveUpdateBusinStatus(request.getAgreementAppNo(), request.getCustNo(), "2"));
-        
-        //插入日志
+        // request.setElecAgreement(elecAgreementService.saveUpdateBusinStatus(request.getAgreementAppNo(),
+        // request.getCustNo(), "2"));
+
+        // 插入日志
         logService.saveAddRequestLog(request);
-        
+
         this.updateByPrimaryKeySelective(request);
         return request;
 
@@ -291,7 +302,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
      * @param anDescription
      * @return
      */
-    public ScfReceivableRequest saveSupplierFinishConfirmRequest(String anRequestNo, String anRequestPayDate, String anDescription) {
+    public ScfReceivableRequest saveSupplierFinishConfirmRequest(String anRequestNo, String anRequestPayDate,
+            String anDescription) {
 
         BTAssert.notNull(anRequestNo, "融资信息为空,操作失败");
         ScfReceivableRequest request = this.selectByPrimaryKey(anRequestNo);
@@ -299,7 +311,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         if (!getCurrentUserCustNos().contains(request.getCustNo())) {
             BTAssert.notNull(null, "你没有当前处理的权限,操作失败");
         }
-        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_SUPPLIER_SIGN_AGREEMENT, false, "请先签署合同，在进行提交");
+        checkStatus(request.getBusinStatus(),
+                ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_SUPPLIER_SIGN_AGREEMENT, false, "请先签署合同，在进行提交");
 
         request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TRANSFER_AGREEMENT_CORE);
         if ("2".equals(request.getReceivableRequestType())) {
@@ -307,15 +320,15 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
             request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_CORE_CONFIRM);
 
         }
-        
+
         // 封装应付款钱信息
         fillRequestRaxInfo(request, anRequestPayDate);
         request.setDescription(anDescription);
         request.setOwnCompany(request.getCoreCustNo());
-        
-        //插入日志
+
+        // 插入日志
         logService.saveAddRequestLog(request);
-        
+
         this.updateByPrimaryKeySelective(request);
         return request;
 
@@ -335,9 +348,13 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         if (!getCurrentUserCustNos().contains(request.getCustNo())) {
             BTAssert.notNull(null, "你没有当前处理的权限,操作失败");
         }
-        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FACTORY_CONFIRM_PAY, true, "资金方已经付款,无法作废");
-        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FINISHED, true, "该融资已经结束，无法废止");
-        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_ANNUL, true, "该融资已经废止");
+        checkStatus(request.getBusinStatus(),
+                ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FACTORY_CONFIRM_PAY, true,
+                "资金方已经付款,无法作废");
+        checkStatus(request.getBusinStatus(),
+                ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FINISHED, true, "该融资已经结束，无法废止");
+        checkStatus(request.getBusinStatus(),
+                ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_ANNUL, true, "该融资已经废止");
         // agreementService.saveAnnulAgreement(request);
         // 更新合同的状态
         elecAgreementService.saveUpdateBusinStatus(request.getAgreementAppNo(), request.getCustNo(), "9");
@@ -360,7 +377,9 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         BTAssert.notNull(anRequestNo, "融资信息为空,操作失败");
         ScfReceivableRequest request = this.findOneByRequestNo(anRequestNo);
         BTAssert.notNull(request, "融资信息为空,操作失败");
-        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_SUPPLIER_SUBMIT, false, "合同只能签署一次");
+        checkStatus(request.getBusinStatus(),
+                ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_SUPPLIER_SUBMIT, false,
+                "合同只能签署一次");
         request.setBusinStatus(ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FACTORY_SIGN);
         request.setCoreSignFlag(ReceivableRequestConstantCollentions.SIGN_AGREEMENT_FLAG_YES);
         request.setFactorySignFlag(ReceivableRequestConstantCollentions.SIGN_AGREEMENT_FLAG_YES);
@@ -368,16 +387,14 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         // agreementService.saveCoreSignAgreement(request);
         // elecAgreementService.saveUpdateBusinStatus(request.getAgreementAppNo(), request.getCoreCustNo(), "1");
         sendReceivableTopic(anRequestNo);
-        
-        //插入日志
+
+        // 插入日志
         logService.saveAddRequestLog(request);
-        
+
         this.updateByPrimaryKeySelective(request);
         return request;
 
     }
-
-   
 
     /**
      * 核心企业完成付款操作
@@ -387,7 +404,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
      * @param anDescription
      * @return
      */
-    public ScfReceivableRequest saveCoreFinishPayRequest(String anRequestNo, String anRequestPayDate, String anDescription) {
+    public ScfReceivableRequest saveCoreFinishPayRequest(String anRequestNo, String anRequestPayDate,
+            String anDescription) {
 
         BTAssert.notNull(anRequestNo, "融资信息为空,操作失败");
         ScfReceivableRequest request = this.findOneByRequestNo(anRequestNo);
@@ -395,7 +413,9 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         if (!getCurrentUserCustNos().contains(request.getCoreCustNo())) {
             BTAssert.notNull(null, "你没有当前处理的权限,操作失败");
         }
-        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FACTORY_SIGN, false, "请先签署合同，再进行付款");
+        checkStatus(request.getBusinStatus(),
+                ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FACTORY_SIGN, false,
+                "请先签署合同，再进行付款");
         if (request.getElecAgreement() == null || !"1".equals(request.getElecAgreement().getSignStatus())) {
             // 发送微信通知
             sendReceivableTopic(anRequestNo);
@@ -406,10 +426,10 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         fillRequestRaxInfo(request, anRequestPayDate);
         request.setDescription(anDescription);
         request.setOwnCompany(request.getCoreCustNo());
-        
-        //插入日志
+
+        // 插入日志
         logService.saveAddRequestLog(request);
-        
+
         this.updateByPrimaryKeySelective(request);
         return request;
 
@@ -445,8 +465,6 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         return request;
     }
 
-    
-
     /**
      * 核心企业查询可以提交的融资信息
      * 
@@ -456,21 +474,24 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
      * @param anPageSize
      * @return
      */
-    public Page<ScfReceivableRequest> queryReceivableRequestWithCore(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfReceivableRequest> queryReceivableRequestWithCore(Map<String, Object> anMap, String anFlag,
+            int anPageNum, int anPageSize) {
 
         BTAssert.notNull(anMap, "查询条件为空,操作失败");
         if (!anMap.containsKey("coreCustNo")) {
             anMap.put("coreCustNo", getCurrentUserCustNos());
         }
         anMap = Collections3.filterMapEmptyObject(anMap);
-        anMap = Collections3.filterMap(anMap,
-                new String[] { "custNo", "coreCustNo", "requestNo", "GTEregDate", "LTEregDate", "receivableRequestType" });
+        anMap = Collections3.filterMap(anMap, new String[] { "custNo", "coreCustNo", "requestNo", "GTEregDate",
+                "LTEregDate", "receivableRequestType" });
         anMap = Collections3.fuzzyMap(anMap, new String[] { "requestNo" });
-        anMap.put("businStatus", new String[] { ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_SUPPLIER_SUBMIT,
-                ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FACTORY_SIGN,
-                ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FACTORY_CONFIRM_PAY});
+        anMap.put("businStatus",
+                new String[] { ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_SUPPLIER_SUBMIT,
+                        ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FACTORY_SIGN,
+                        ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FACTORY_CONFIRM_PAY });
         anMap.put("receivableRequestType", "1");
-        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
+        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag),
+                "requestNo desc");
         return page;
     }
 
@@ -483,18 +504,20 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
      * @param anPageSize
      * @return
      */
-    public Page<ScfReceivableRequest> queryFinishReceivableRequestWithCore(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfReceivableRequest> queryFinishReceivableRequestWithCore(Map<String, Object> anMap, String anFlag,
+            int anPageNum, int anPageSize) {
 
         BTAssert.notNull(anMap, "查询条件为空,操作失败");
         if (!anMap.containsKey("coreCustNo")) {
             anMap.put("coreCustNo", getCurrentUserCustNos());
         }
         anMap = Collections3.filterMapEmptyObject(anMap);
-        anMap = Collections3.filterMap(anMap,
-                new String[] { "custNo", "coreCustNo", "GTEregDate", "LTEregDate", "GTEendDate", "LTEendDate", "receivableRequestType" });
+        anMap = Collections3.filterMap(anMap, new String[] { "custNo", "coreCustNo", "GTEregDate", "LTEregDate",
+                "GTEendDate", "LTEendDate", "receivableRequestType" });
         anMap.put("businStatus", ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FINISHED);
         // anMap.put("receivableRequestType", "1");
-        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
+        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag),
+                "requestNo desc");
         return page;
     }
 
@@ -520,7 +543,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
             payBalance = MathExtend.divide(payBalance, new BigDecimal(36500));
             anRequest.setRequestPayBalance(balance.subtract(payBalance));
             // 计算供应商应付平台的钱
-            BigDecimal payPlatBalance = balance.multiply(anRequest.getCustOpatRate()).multiply(new BigDecimal(dayLength));
+            BigDecimal payPlatBalance = balance.multiply(anRequest.getCustOpatRate())
+                    .multiply(new BigDecimal(dayLength));
             payPlatBalance = MathExtend.divide(payPlatBalance, new BigDecimal(36500));
             anRequest.setRequestPayPlatBalance(payPlatBalance);
             anRequest.setRequestPayDate(anRequestPayDate.replaceAll("-", ""));
@@ -562,7 +586,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
      * 检查状态信息
      */
     public void checkStatus(String anBusinStatus, String anTargetStatus, boolean anFlag, String anMessage) {
-        if (BetterStringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
+        if (StringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
             logger.warn(anMessage);
             throw new BytterTradeException(40001, anMessage);
         }
@@ -618,8 +642,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
             ScfSupplierOffer offer = offerService.findOffer(request.getCustNo(), request.getFactoryNo());
             BTAssert.notNull(offer, "请通知资金方设置融资利率,操作失败");
             request.setCustCoreRate(offer.getCoreCustRate());
-        }
-        else if ("2".equals(requestType)) {
+        } else if ("2".equals(requestType)) {
 
             ScfSupplierOffer platOffer = offerService.findOffer(request.getCustNo(), findPlatCustInfo());
             BTAssert.notNull(platOffer, "请通知平台设置服务费利率,操作失败");
@@ -699,11 +722,10 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         if (!anMap.containsKey("requestPayDate")) {
             anMap.put("requestPayDate", BetterDateUtils.getNumDate());
         }
-        anMap = Collections3
-                .filterMap(anMap,
-                        new String[] { "description", "custBankName", "custBankAccount", "custBankAccountName", "requestBalance", "custNo",
-                                "coreCustNo", "factoryNo", "orderList", "invoiceList", "agreementList", "receivableList", "acceptBillList",
-                                "requestPayDate" });
+        anMap = Collections3.filterMap(anMap,
+                new String[] { "description", "custBankName", "custBankAccount", "custBankAccountName",
+                        "requestBalance", "custNo", "coreCustNo", "factoryNo", "orderList", "invoiceList",
+                        "agreementList", "receivableList", "acceptBillList", "requestPayDate" });
         try {
             BeanUtils.populate(request, anMap);
         }
@@ -722,10 +744,10 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         // request.setFactoryNo(Long.parseLong(anMap.get("factoryNo").toString()));
         request.setFactoryName(custAccountService.queryCustName(request.getFactoryNo()));
         request.setEndDate(request.getRequestPayDate());
-        
-        //插入日志
+
+        // 插入日志
         logService.saveAddRequestLog(request);
-        
+
         this.insertSelective(request);
         return request;
 
@@ -742,25 +764,26 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
      *            true :供应商查询 false 核心企业查询
      * @return
      */
-    public Page<ScfReceivableRequest> queryReceivableRequestFour(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize,
-            boolean isCust) {
+    public Page<ScfReceivableRequest> queryReceivableRequestFour(Map<String, Object> anMap, String anFlag,
+            int anPageNum, int anPageSize, boolean isCust) {
 
         BTAssert.notNull(anMap, "查询失败，条件为空");
         anMap = Collections3.filterMapEmptyObject(anMap);
-        anMap = Collections3.filterMap(anMap, new String[] { "custNo", "factoryNo", "coreCustNo", "GTERegDate", "LTERegDate", "businStatus" });
+        anMap = Collections3.filterMap(anMap,
+                new String[] { "custNo", "factoryNo", "coreCustNo", "GTERegDate", "LTERegDate", "businStatus" });
         if (isCust) {
             if (!anMap.containsKey("custNo")) {
                 anMap.put("custNo", getCurrentUserCustNos());
             }
-        }
-        else {
+        } else {
             if (!anMap.containsKey("coreCustNo")) {
                 anMap.put("coreCustNo", getCurrentUserCustNos());
             }
 
         }
         anMap.put("receivableRequestType", "4");
-        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
+        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag),
+                "requestNo desc");
         return page;
 
     }
@@ -780,10 +803,10 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
             BTAssert.notNull(null, "你没有当前单据的操作权限");
         }
         request.setBusinStatus("1");
-        
-        //插入日志
+
+        // 插入日志
         logService.saveAddRequestLog(request);
-        
+
         this.updateByPrimaryKey(request);
         return request;
     }
@@ -804,10 +827,10 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         }
         request.setBusinStatus("2");
         assetService.saveRejectOrBreakAsset(request.getAssetId());
-        
-        //插入日志
+
+        // 插入日志
         logService.saveAddRequestLog(request);
-        
+
         this.updateByPrimaryKey(request);
         return request;
     }
@@ -857,7 +880,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
      * @param factoryNo
      * @return
      */
-    public ScfReceivableRequest saveSubmitRequestTwo(String anRequestNo, String anRequestPayDate, String anDescription, Long factoryNo) {
+    public ScfReceivableRequest saveSubmitRequestTwo(String anRequestNo, String anRequestPayDate, String anDescription,
+            Long factoryNo) {
 
         BTAssert.notNull(anRequestNo, "融资信息为空,操作失败");
         ScfReceivableRequest request = this.selectByPrimaryKey(anRequestNo);
@@ -866,7 +890,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         if (!getCurrentUserCustNos().contains(request.getCustNo())) {
             BTAssert.notNull(null, "你没有当前申请的权限,操作失败");
         }
-        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_NOEFFECTIVE, false, "当前申请已不能进行再次申请");
+        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_NOEFFECTIVE,
+                false, "当前申请已不能进行再次申请");
         ScfAsset asset = assetService.saveConfirmAsset(request.getAssetId());
         request.setAsset(asset);
         request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_SUBMIT_REQUEST);
@@ -899,7 +924,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         // 查询能够查询的保理公司列表
         List<SimpleDataEntity> factoryList = relationService.queryFactoryByCore(request.getCoreCustNo());
         for (SimpleDataEntity simpleDataEntity : factoryList) {
-            ScfSupplierOffer offer = offerService.findOffer(request.getCustNo(), Long.parseLong(simpleDataEntity.getValue()));
+            ScfSupplierOffer offer = offerService.findOffer(request.getCustNo(),
+                    Long.parseLong(simpleDataEntity.getValue()));
             if (offer == null || offer.getCoreCustRate() == null) {
                 factoryList.remove(simpleDataEntity);
             }
@@ -922,7 +948,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
      * @return
      */
     @Deprecated
-    public ScfReceivableRequest saveCoreConfrimPayRequest(String anRequestNo, String anRequestPayDate, String anDescription) {
+    public ScfReceivableRequest saveCoreConfrimPayRequest(String anRequestNo, String anRequestPayDate,
+            String anDescription) {
 
         BTAssert.notNull(anRequestNo, "融资信息为空,操作失败");
         ScfReceivableRequest request = this.selectByPrimaryKey(anRequestNo);
@@ -930,7 +957,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         if (!getCurrentUserCustNos().contains(request.getCoreCustNo())) {
             BTAssert.notNull(null, "你没有当前处理的权限,操作失败");
         }
-        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_SIGN_AGREEMENT, false, "请先签署合同，再进行付款");
+        checkStatus(request.getBusinStatus(),
+                ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_SIGN_AGREEMENT, false, "请先签署合同，再进行付款");
         request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_CORE_CONFIRM);
         // 封装应付款钱信息
         fillRequestRaxInfo(request, anRequestPayDate);
@@ -952,17 +980,19 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         BTAssert.notNull(anRequestNo, "融资信息为空,操作失败");
         ScfReceivableRequest request = this.findOneByRequestNo(anRequestNo);
         BTAssert.notNull(request, "融资信息为空,操作失败");
-        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_SUPPLIER_SUBMIT, false, "电子合同只能签署一次!");
+        checkStatus(request.getBusinStatus(),
+                ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_SUPPLIER_SUBMIT, false,
+                "电子合同只能签署一次!");
         request.setBusinStatus(ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FACTORY_SIGN);
         request.setFactorySignFlag(ReceivableRequestConstantCollentions.SIGN_AGREEMENT_FLAG_YES);
         // 处理供应商电子合同和平台电子合同
         // agreementService.saveFactorySignAgreement(request);
         // elecAgreementService.saveUpdateBusinStatus(request.getAgreementAppNo(), request.getFactoryNo(), "1");
         sendReceivableTopic(anRequestNo);
-        
-        //插入日志
+
+        // 插入日志
         logService.saveAddRequestLog(request);
-        
+
         this.updateByPrimaryKeySelective(request);
         return request;
 
@@ -976,7 +1006,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
      * @param anDescription
      * @return
      */
-    public ScfReceivableRequest saveFactoryConfrimPayRequest(String anRequestNo, String anRequestPayDate, String anDescription) {
+    public ScfReceivableRequest saveFactoryConfrimPayRequest(String anRequestNo, String anRequestPayDate,
+            String anDescription) {
 
         BTAssert.notNull(anRequestNo, "融资信息为空,操作失败");
         ScfReceivableRequest request = this.findOneByRequestNo(anRequestNo);
@@ -984,7 +1015,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         if (!getCurrentUserCustNos().contains(request.getFactoryNo())) {
             BTAssert.notNull(null, "你没有当前处理的权限,操作失败");
         }
-        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FACTORY_SIGN, false,
+        checkStatus(request.getBusinStatus(),
+                ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FACTORY_SIGN, false,
                 "请先签署合同，再进行付款");
         request.setBusinStatus(ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FINISHED);
 
@@ -996,10 +1028,10 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         fillRequestRaxInfo(request, anRequestPayDate);
         request.setDescription(anDescription);
         request.setOwnCompany(request.getFactoryNo());
-        
-        //插入日志
+
+        // 插入日志
         logService.saveAddRequestLog(request);
-        
+
         this.updateByPrimaryKeySelective(request);
         return request;
 
@@ -1014,22 +1046,24 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
      * @param anPageSize
      * @return
      */
-    public Page<ScfReceivableRequest> queryReceivableRequestTwoWithSupplier(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfReceivableRequest> queryReceivableRequestTwoWithSupplier(Map<String, Object> anMap, String anFlag,
+            int anPageNum, int anPageSize) {
 
         BTAssert.notNull(anMap, "查询条件为空,操作失败");
         if (!anMap.containsKey("custNo")) {
             anMap.put("custNo", getCurrentUserCustNos());
         }
         anMap = Collections3.filterMapEmptyObject(anMap);
-        anMap = Collections3.filterMap(anMap,
-                new String[] { "custNo", "coreCustNo", "requestNo", "GTEregDate", "LTEregDate", "receivableRequestType" });
+        anMap = Collections3.filterMap(anMap, new String[] { "custNo", "coreCustNo", "requestNo", "GTEregDate",
+                "LTEregDate", "receivableRequestType" });
         anMap = Collections3.fuzzyMap(anMap, new String[] { "requestNo" });
         anMap.put("businStatus",
                 new String[] { ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_SUPPLIER_SUBMIT,
                         ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FACTORY_SIGN,
-                        ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FACTORY_CONFIRM_PAY});
+                        ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FACTORY_CONFIRM_PAY });
         // anMap.put("receivableRequestType", "2");
-        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
+        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag),
+                "requestNo desc");
         return page;
     }
 
@@ -1042,19 +1076,20 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
      * @param anPageSize
      * @return
      */
-    public Page<ScfReceivableRequest> queryTwoFinishReceivableRequestWithSupplier(Map<String, Object> anMap, String anFlag, int anPageNum,
-            int anPageSize) {
+    public Page<ScfReceivableRequest> queryTwoFinishReceivableRequestWithSupplier(Map<String, Object> anMap,
+            String anFlag, int anPageNum, int anPageSize) {
 
         BTAssert.notNull(anMap, "查询条件为空,操作失败");
         if (!anMap.containsKey("custNo")) {
             anMap.put("custNo", getCurrentUserCustNos());
         }
         anMap = Collections3.filterMapEmptyObject(anMap);
-        anMap = Collections3.filterMap(anMap,
-                new String[] { "custNo", "coreCustNo", "GTEregDate", "LTEregDate", "GTEendDate", "LTEendDate", "receivableRequestType" });
+        anMap = Collections3.filterMap(anMap, new String[] { "custNo", "coreCustNo", "GTEregDate", "LTEregDate",
+                "GTEendDate", "LTEendDate", "receivableRequestType" });
         anMap.put("businStatus", ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FINISHED);
         // anMap.put("receivableRequestType", "2");
-        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
+        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag),
+                "requestNo desc");
         return page;
     }
 
@@ -1068,15 +1103,16 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
      * @return
      */
     @Deprecated
-    public Page<ScfReceivableRequest> queryTwoReceivableRequestWithCore(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfReceivableRequest> queryTwoReceivableRequestWithCore(Map<String, Object> anMap, String anFlag,
+            int anPageNum, int anPageSize) {
 
         BTAssert.notNull(anMap, "查询条件为空,操作失败");
         if (!anMap.containsKey("coreCustNo")) {
             anMap.put("coreCustNo", getCurrentUserCustNos());
         }
         anMap = Collections3.filterMapEmptyObject(anMap);
-        anMap = Collections3.filterMap(anMap,
-                new String[] { "custNo", "coreCustNo", "requestNo", "GTEregDate", "LTEregDate", "receivableRequestType" });
+        anMap = Collections3.filterMap(anMap, new String[] { "custNo", "coreCustNo", "requestNo", "GTEregDate",
+                "LTEregDate", "receivableRequestType" });
         anMap = Collections3.fuzzyMap(anMap, new String[] { "requestNo" });
         anMap.put("businStatus",
                 new String[] { ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TRANSFER_AGREEMENT_CORE,
@@ -1086,7 +1122,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
                         ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_FACTORY_PAY_CONFIRM,
                         ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_REQUEST_END });
         anMap.put("receivableRequestType", "2");
-        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
+        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag),
+                "requestNo desc");
         return page;
     }
 
@@ -1100,19 +1137,20 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
      * @return
      */
     @Deprecated
-    public Page<ScfReceivableRequest> queryTwoFinishReceivableRequestWithCore(Map<String, Object> anMap, String anFlag, int anPageNum,
-            int anPageSize) {
+    public Page<ScfReceivableRequest> queryTwoFinishReceivableRequestWithCore(Map<String, Object> anMap, String anFlag,
+            int anPageNum, int anPageSize) {
 
         BTAssert.notNull(anMap, "查询条件为空,操作失败");
         if (!anMap.containsKey("coreCustNo")) {
             anMap.put("coreCustNo", getCurrentUserCustNos());
         }
         anMap = Collections3.filterMapEmptyObject(anMap);
-        anMap = Collections3.filterMap(anMap,
-                new String[] { "custNo", "coreCustNo", "GTEregDate", "LTEregDate", "GTEendDate", "LTEendDate", "receivableRequestType" });
+        anMap = Collections3.filterMap(anMap, new String[] { "custNo", "coreCustNo", "GTEregDate", "LTEregDate",
+                "GTEendDate", "LTEendDate", "receivableRequestType" });
         anMap.put("businStatus", ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_REQUEST_END);
         anMap.put("receivableRequestType", "2");
-        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
+        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag),
+                "requestNo desc");
         return page;
     }
 
@@ -1125,21 +1163,24 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
      * @param anPageSize
      * @return
      */
-    public Page<ScfReceivableRequest> queryTwoReceivableRequestWithFactory(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfReceivableRequest> queryTwoReceivableRequestWithFactory(Map<String, Object> anMap, String anFlag,
+            int anPageNum, int anPageSize) {
 
         BTAssert.notNull(anMap, "查询条件为空,操作失败");
         if (!anMap.containsKey("factoryNo")) {
             anMap.put("factoryNo", getCurrentUserCustNos());
         }
         anMap = Collections3.filterMapEmptyObject(anMap);
-        anMap = Collections3.filterMap(anMap, new String[] { "custNo", "coreCustNo", "requestNo", "GTEregDate", "LTEregDate", "factoryNo" });
+        anMap = Collections3.filterMap(anMap,
+                new String[] { "custNo", "coreCustNo", "requestNo", "GTEregDate", "LTEregDate", "factoryNo" });
         anMap = Collections3.fuzzyMap(anMap, new String[] { "requestNo" });
         anMap.put("businStatus",
                 new String[] { ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_SUPPLIER_SUBMIT,
                         ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FACTORY_SIGN,
                         ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FACTORY_CONFIRM_PAY });
         anMap.put("receivableRequestType", "2");
-        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
+        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag),
+                "requestNo desc");
         return page;
     }
 
@@ -1152,23 +1193,23 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
      * @param anPageSize
      * @return
      */
-    public Page<ScfReceivableRequest> queryTwoFinishReceivableRequestWithFactory(Map<String, Object> anMap, String anFlag, int anPageNum,
-            int anPageSize) {
+    public Page<ScfReceivableRequest> queryTwoFinishReceivableRequestWithFactory(Map<String, Object> anMap,
+            String anFlag, int anPageNum, int anPageSize) {
 
         BTAssert.notNull(anMap, "查询条件为空,操作失败");
         if (!anMap.containsKey("factoryNo")) {
             anMap.put("factoryNo", getCurrentUserCustNos());
         }
         anMap = Collections3.filterMapEmptyObject(anMap);
-        anMap = Collections3.filterMap(anMap,
-                new String[] { "custNo", "coreCustNo", "GTEregDate", "LTEregDate", "GTEendDate", "LTEendDate", "factoryNo" });
+        anMap = Collections3.filterMap(anMap, new String[] { "custNo", "coreCustNo", "GTEregDate", "LTEregDate",
+                "GTEendDate", "LTEendDate", "factoryNo" });
         anMap.put("businStatus", ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FINISHED);
         anMap.put("receivableRequestType", "2");
-        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
+        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag),
+                "requestNo desc");
         return page;
     }
 
-    
     public CustOperatorInfo findDefaultOperatorInfo(Long custNo) {
 
         return operatorService.findDefaultOperator(baseService.findBaseInfo(custNo).getOperOrg());
@@ -1196,28 +1237,23 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         return new ScfReceivableRequest();
 
     }
-    
+
     /**
      * 通过电子合同编号更新供应商合同签署状态
      * @param anAppNo
      */
     public void saveUpdateSupplierSignByAppNo(String anAppNo) {
-        
-        Map paramMap = QueryTermBuilder.newInstance()
-                .put("agreementAppNo", anAppNo)
-                .build();
-        
+
+        Map paramMap = QueryTermBuilder.newInstance().put("agreementAppNo", anAppNo).build();
+
         List<ScfReceivableRequest> list = this.selectByProperty(paramMap);
-        if(!Collections3.isEmpty(list)){
+        if (!Collections3.isEmpty(list)) {
             ScfReceivableRequest request = list.get(0);
             request.setSupplierSignFlag(ReceivableRequestConstantCollentions.SIGN_AGREEMENT_FLAG_YES);
             this.updateByPrimaryKeySelective(request);
         }
-        
-        
-    }
 
-    
+    }
 
     /**
      * 融资申请选择可以使用的保理产品列表
@@ -1231,7 +1267,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         ScfReceivableRequest request = findOneByRequestNo(requestNo);
         BTAssert.notNull(request, "融资信息为空,操作失败");
         List<ScfCoreProductCust> productDescs = new ArrayList<>();
-        List<ScfCoreProductCust> products = productService.queryCanUseProduct(request.getCustNo(), request.getCoreCustNo());
+        List<ScfCoreProductCust> products = productService.queryCanUseProduct(request.getCustNo(),
+                request.getCoreCustNo());
         for (ScfCoreProductCust product : products) {
             if (queryCheckRequestAndCode(request, product.getProductCode())) {
                 productDescs.add(product);
@@ -1253,13 +1290,14 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         boolean falg = true;
         for (ScfAssetDict assetDict : config.getAssetDictList()) {
             if (assetDict.getAssetInfoType().equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE)) {
-                if (!request.getAsset().getBasedataMap().containsKey(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY)) {
+                if (!request.getAsset().getBasedataMap()
+                        .containsKey(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY)) {
                     falg = false;
                     return falg;
-                }
-                else {
+                } else {
 
-                    List object = (List) request.getAsset().getBasedataMap().get(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY);
+                    List object = (List) request.getAsset().getBasedataMap()
+                            .get(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY);
                     if (Collections3.isEmpty(object)) {
                         return false;
                     }
@@ -1270,10 +1308,10 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
                 if (!request.getAsset().getBasedataMap().containsKey(AssetConstantCollentions.SCF_INVOICE_LIST_KEY)) {
                     falg = false;
                     return falg;
-                }
-                else {
+                } else {
 
-                    List object = (List) request.getAsset().getBasedataMap().get(AssetConstantCollentions.SCF_INVOICE_LIST_KEY);
+                    List object = (List) request.getAsset().getBasedataMap()
+                            .get(AssetConstantCollentions.SCF_INVOICE_LIST_KEY);
                     if (Collections3.isEmpty(object)) {
                         return false;
                     }
@@ -1281,12 +1319,13 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
             }
 
             if (assetDict.getAssetInfoType().equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT)) {
-                if (!request.getAsset().getBasedataMap().containsKey(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY)) {
+                if (!request.getAsset().getBasedataMap()
+                        .containsKey(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY)) {
                     falg = false;
                     return falg;
-                }
-                else {
-                    List object = (List) request.getAsset().getBasedataMap().get(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY);
+                } else {
+                    List object = (List) request.getAsset().getBasedataMap()
+                            .get(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY);
                     if (Collections3.isEmpty(object)) {
                         return false;
                     }
@@ -1315,14 +1354,13 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         return queryCheckRequestAndCode(request, requestProductCode);
 
     }
-    
+
     /**
      * 查询当前日期到期的未融资申请完成的所有申请
      * @return
      */
-    public List<ScfReceivableRequest> queryEndedDataList(){
-        
-        
+    public List<ScfReceivableRequest> queryEndedDataList() {
+
         List<String> businStatusListParam = new ArrayList<>();
         businStatusListParam.add(ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_NOEFFECTIVE);
         businStatusListParam.add(ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_SUPPLIER_SUBMIT);
@@ -1331,13 +1369,11 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         String numDate = BetterDateUtils.getForwardDay();
         // long parseLong = Long.parseLong(numDate);
 
-        Map<String, Object> paramMap = QueryTermBuilder.newInstance()
-                .put("businStatus", businStatusListParam)
-                .put("LTEendDate", numDate)
-                .build();
+        Map<String, Object> paramMap = QueryTermBuilder.newInstance().put("businStatus", businStatusListParam)
+                .put("LTEendDate", numDate).build();
 
         List<ScfReceivableRequest> endedList = this.selectByProperty(paramMap);
-        
+
         return endedList;
     }
 
@@ -1364,7 +1400,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
      * 
      * 
      */
-    private void convertProdectConfigToRequestAndAsset(ScfReceivableRequest anRequest, ScfProductConfig anConfig, Map<String, Object> anMap) {
+    private void convertProdectConfigToRequestAndAsset(ScfReceivableRequest anRequest, ScfProductConfig anConfig,
+            Map<String, Object> anMap) {
 
         convertProdectConfigToRequest(anRequest, anConfig);
         packageAndCheckAsset(anRequest, anConfig, anMap);
@@ -1378,16 +1415,18 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
      * @param anConfig
      * @param anMap
      */
-    private void packageAndCheckAsset(ScfReceivableRequest anRequest, ScfProductConfig anConfig, Map<String, Object> anMap) {
+    private void packageAndCheckAsset(ScfReceivableRequest anRequest, ScfProductConfig anConfig,
+            Map<String, Object> anMap) {
 
         for (ScfAssetDict assetDict : anConfig.getAssetDictList()) {
             if (assetDict.getAssetInfoType().equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_RECEIVABLE)) {
-                if (!anRequest.getAsset().getBasedataMap().containsKey(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY)) {
+                if (!anRequest.getAsset().getBasedataMap()
+                        .containsKey(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY)) {
                     BTAssert.notNull(null, "当前融资产品需要应收账款");
-                }
-                else {
+                } else {
 
-                    if (Collections3.isEmpty((List) anRequest.getAsset().getBasedataMap().get(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY))) {
+                    if (Collections3.isEmpty((List) anRequest.getAsset().getBasedataMap()
+                            .get(AssetConstantCollentions.SCF_RECEICEABLE_LIST_KEY))) {
                         BTAssert.notNull(null, "当前融资产品需要应收账款");
                     }
                 }
@@ -1395,22 +1434,24 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
 
             if (assetDict.getAssetInfoType().equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_INVOICE)) {
 
-                if (anMap != null && anMap.containsKey("wechaMarker") && "1".equals(anMap.get("wechaMarker").toString())) {
+                if (anMap != null && anMap.containsKey("wechaMarker")
+                        && "1".equals(anMap.get("wechaMarker").toString())) {
 
                     // 资产上传发票附件
-                    if (!anMap.containsKey("statementBatchNo") || StringUtils.isBlank(anMap.get("statementBatchNo").toString())) {
+                    if (!anMap.containsKey("statementBatchNo")
+                            || StringUtils.isBlank(anMap.get("statementBatchNo").toString())) {
                         BTAssert.notNull(null, "当前融资产品需要商业发票");
                     }
 
-                }
-                else {
+                } else {
 
-                    if (!anRequest.getAsset().getBasedataMap().containsKey(AssetConstantCollentions.SCF_INVOICE_LIST_KEY)) {
+                    if (!anRequest.getAsset().getBasedataMap()
+                            .containsKey(AssetConstantCollentions.SCF_INVOICE_LIST_KEY)) {
                         BTAssert.notNull(null, "当前融资产品需要商业发票");
-                    }
-                    else {
+                    } else {
 
-                        if (Collections3.isEmpty((List) anRequest.getAsset().getBasedataMap().get(AssetConstantCollentions.SCF_INVOICE_LIST_KEY))) {
+                        if (Collections3.isEmpty((List) anRequest.getAsset().getBasedataMap()
+                                .get(AssetConstantCollentions.SCF_INVOICE_LIST_KEY))) {
                             BTAssert.notNull(null, "当前融资产品需要商业发票");
                         }
                     }
@@ -1419,23 +1460,24 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
 
             if (assetDict.getAssetInfoType().equals(AssetConstantCollentions.ASSET_BASEDATA_INFO_TYPE_AGREEMENT)) {
 
-                if (anMap != null && anMap.containsKey("wechaMarker") && "1".equals(anMap.get("wechaMarker").toString())) {
+                if (anMap != null && anMap.containsKey("wechaMarker")
+                        && "1".equals(anMap.get("wechaMarker").toString())) {
 
                     // 资产上传发票附件
-                    if (!anMap.containsKey("goodsBatchNo") || StringUtils.isBlank(anMap.get("goodsBatchNo").toString())) {
+                    if (!anMap.containsKey("goodsBatchNo")
+                            || StringUtils.isBlank(anMap.get("goodsBatchNo").toString())) {
                         BTAssert.notNull(null, "当前融资产品需要贸易合同");
                     }
 
-                }
-                else {
+                } else {
 
-                    if (!anRequest.getAsset().getBasedataMap().containsKey(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY)) {
+                    if (!anRequest.getAsset().getBasedataMap()
+                            .containsKey(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY)) {
                         BTAssert.notNull(null, "当前融资产品需要贸易合同");
-                    }
-                    else {
+                    } else {
 
-                        if (Collections3
-                                .isEmpty((List) anRequest.getAsset().getBasedataMap().get(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY))) {
+                        if (Collections3.isEmpty((List) anRequest.getAsset().getBasedataMap()
+                                .get(AssetConstantCollentions.CUST_AGREEMENT_LIST_KEY))) {
                             BTAssert.notNull(null, "当前融资产品需要贸易合同");
                         }
                     }
@@ -1456,7 +1498,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
             }
             String statementBatchNo = "";
             // 发票
-            if (anMap.containsKey("statementBatchNo") && StringUtils.isNotBlank(anMap.get("statementBatchNo").toString())) {
+            if (anMap.containsKey("statementBatchNo")
+                    && StringUtils.isNotBlank(anMap.get("statementBatchNo").toString())) {
 
                 statementBatchNo = anMap.get("statementBatchNo").toString();
                 assetService.saveUpdateAssetBatchNo(anRequest.getAssetId(), statementBatchNo, "2");
@@ -1465,7 +1508,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         }
 
     }
-    
+
     /**
      * 封装最高的利率结算中心
      * 
@@ -1488,7 +1531,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         anRequest.setFactoryName(Collections3.getFirst(offerList).getCoreCustName());
 
     }
-    
+
     /**
      * 发送微信通知给供应商签署合同
      * 
@@ -1536,7 +1579,6 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         anRequest.setFactoryName(Collections3.getFirst(factoryList).getCoreCustName());
 
     }
-    
 
     private void checkReceivableContainInvoices(String invoiceIds) {
 
@@ -1553,14 +1595,15 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         }
 
         for (ScfInvoiceDO invoiceDo : invoiceList) {
-            checkStatus(invoiceDo.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false, "对应的发票不是生效状态");
-            checkStatus(invoiceDo.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true, "对应的发票已经用于融资申请");
+            checkStatus(invoiceDo.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE, false,
+                    "对应的发票不是生效状态");
+            checkStatus(invoiceDo.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true,
+                    "对应的发票已经用于融资申请");
 
         }
 
     }
-    
-    
+
     /*
      * 模式一应收账款申请 融资资产新增
      * 申请流程调整
@@ -1585,7 +1628,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         return request;
 
     }
-    
+
     /**
      * 供应商提交申请融资信息 并且生成电子合同
      * 申请流程调整
@@ -1602,7 +1645,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         if (!getCurrentUserCustNos().contains(request.getCustNo())) {
             BTAssert.notNull(null, "你没有当前申请的权限,操作失败");
         }
-        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_NOEFFECTIVE, false, "当前申请已不能进行再次申请");
+        checkStatus(request.getBusinStatus(), ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_NOEFFECTIVE,
+                false, "当前申请已不能进行再次申请");
         ScfAsset asset = assetService.saveConfirmAsset(request.getAssetId());
         request.setAsset(asset);
         request.setBusinStatus(ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_SUBMIT_REQUEST);
@@ -1614,7 +1658,7 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         return request;
 
     }
-    
+
     /**
      * 供应商查询还有那些融资申请可以再次提交
      * 融资申请模式改变
@@ -1625,15 +1669,16 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
      * @return
      */
     @Deprecated
-    public Page<ScfReceivableRequest> queryReceivableRequestWithSupplier(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfReceivableRequest> queryReceivableRequestWithSupplier(Map<String, Object> anMap, String anFlag,
+            int anPageNum, int anPageSize) {
 
         BTAssert.notNull(anMap, "查询条件为空,操作失败");
         if (!anMap.containsKey("custNo")) {
             anMap.put("custNo", getCurrentUserCustNos());
         }
         anMap = Collections3.filterMapEmptyObject(anMap);
-        anMap = Collections3.filterMap(anMap,
-                new String[] { "custNo", "coreCustNo", "requestNo", "GTEregDate", "LTEregDate", "receivableRequestType" });
+        anMap = Collections3.filterMap(anMap, new String[] { "custNo", "coreCustNo", "requestNo", "GTEregDate",
+                "LTEregDate", "receivableRequestType" });
         anMap = Collections3.fuzzyMap(anMap, new String[] { "requestNo" });
         anMap.put("businStatus",
                 new String[] { ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_SUBMIT_REQUEST,
@@ -1643,7 +1688,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
                         ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_CORE_PAY_CONFIRM,
                         ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_FACTORY_SIGN_AGREEMENT });
         anMap.put("receivableRequestType", "1");
-        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
+        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag),
+                "requestNo desc");
         return page;
     }
 
@@ -1657,19 +1703,20 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
      * @return
      */
     @Deprecated
-    public Page<ScfReceivableRequest> queryFinishReceivableRequestWithSupplier(Map<String, Object> anMap, String anFlag, int anPageNum,
-            int anPageSize) {
+    public Page<ScfReceivableRequest> queryFinishReceivableRequestWithSupplier(Map<String, Object> anMap, String anFlag,
+            int anPageNum, int anPageSize) {
 
         BTAssert.notNull(anMap, "查询条件为空,操作失败");
         if (!anMap.containsKey("custNo")) {
             anMap.put("custNo", getCurrentUserCustNos());
         }
         anMap = Collections3.filterMapEmptyObject(anMap);
-        anMap = Collections3.filterMap(anMap,
-                new String[] { "custNo", "coreCustNo", "GTEregDate", "LTEregDate", "GTEendDate", "LTEendDate", "receivableRequestType" });
+        anMap = Collections3.filterMap(anMap, new String[] { "custNo", "coreCustNo", "GTEregDate", "LTEregDate",
+                "GTEendDate", "LTEendDate", "receivableRequestType" });
         anMap.put("businStatus", ReceivableRequestConstantCollentions.OFFER_BUSIN_STATUS_TWO_REQUEST_END);
         anMap.put("receivableRequestType", "1");
-        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "requestNo desc");
+        Page<ScfReceivableRequest> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag),
+                "requestNo desc");
         return page;
     }
 
@@ -1678,12 +1725,17 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
      */
     @Override
     public ScfReceivableRequest saveExpired(ScfReceivableRequest anRequest) {
-        
+
         BTAssert.notNull(anRequest, "对象为空");
-        checkStatus(anRequest.getBusinStatus(), ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FACTORY_CONFIRM_PAY, true, "当前单据已经确认付款");
-        checkStatus(anRequest.getBusinStatus(), ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FINISHED, true, "当前单据已经完结");
-        checkStatus(anRequest.getBusinStatus(), ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_ANNUL, true, "当前单据已经废止");
-        checkStatus(anRequest.getBusinStatus(), ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_EXPIRED, true, "当前单据已经过期");
+        checkStatus(anRequest.getBusinStatus(),
+                ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FACTORY_CONFIRM_PAY, true,
+                "当前单据已经确认付款");
+        checkStatus(anRequest.getBusinStatus(),
+                ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FINISHED, true, "当前单据已经完结");
+        checkStatus(anRequest.getBusinStatus(),
+                ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_ANNUL, true, "当前单据已经废止");
+        checkStatus(anRequest.getBusinStatus(),
+                ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_EXPIRED, true, "当前单据已经过期");
         anRequest.setBusinStatus(ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_EXPIRED);
         this.updateByPrimaryKeySelective(anRequest);
         return anRequest;

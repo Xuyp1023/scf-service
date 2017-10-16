@@ -58,7 +58,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
 
     @Autowired
     private CustAccountService custAccountService;
-    
+
     @Autowired
     private ScfRequestService requestService;
 
@@ -74,18 +74,20 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
      * @param anIsOnlyNormal
      *            是否过滤，仅查询正常未融资数据 1：未融资 0：查询所有
      */
-    public Page<ScfOrder> queryOrder(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfOrder> queryOrder(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum,
+            int anPageSize) {
         // 操作员只能查询本机构数据
         // anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
         // 只查询数据非自动生成的数据来源
         anMap.put("dataSource", "1");
-        if (BetterStringUtils.equals(anIsOnlyNormal, "1")) {
+        if (org.apache.commons.lang3.StringUtils.equals(anIsOnlyNormal, "1")) {
             anMap.put("businStatus", "0");
         }
         // 模糊查询
         anMap = Collections3.fuzzyMap(anMap, new String[] { "orderNo", "settlement" });
 
-        Page<ScfOrder> anOrderList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "businStatus,orderNo");
+        Page<ScfOrder> anOrderList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag),
+                "businStatus,orderNo");
 
         for (ScfOrder anOrder : anOrderList) {
             anOrder.setCustName(custAccountService.queryCustName(anOrder.getCustNo()));
@@ -111,19 +113,20 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         for (ScfOrderRelation anOrderRealtion : anOrderRelationList) {
             Map<String, Object> queryMap = new HashMap<String, Object>();
             queryMap.put("id", anOrderRealtion.getInfoId());
-            if (BetterStringUtils.equals(ScfOrderRelationType.AGGREMENT.getCode(), anOrderRealtion.getInfoType())) {
-                anOrder.getAgreementList().add(custAgreementService.findCustAgreementDetail(anOrderRealtion.getInfoId()));
-            }
-            else if (BetterStringUtils.equals(ScfOrderRelationType.ACCEPTBILL.getCode(), anOrderRealtion.getInfoType())) {
+            if (org.apache.commons.lang3.StringUtils.equals(ScfOrderRelationType.AGGREMENT.getCode(), anOrderRealtion.getInfoType())) {
+                anOrder.getAgreementList()
+                        .add(custAgreementService.findCustAgreementDetail(anOrderRealtion.getInfoId()));
+            } else if (org.apache.commons.lang3.StringUtils.equals(ScfOrderRelationType.ACCEPTBILL.getCode(),
+                    anOrderRealtion.getInfoType())) {
                 anOrder.getAcceptBillList().addAll(acceptBillService.selectByProperty(queryMap));
-            }
-            else if (BetterStringUtils.equals(ScfOrderRelationType.INVOICE.getCode(), anOrderRealtion.getInfoType())) {
+            } else if (org.apache.commons.lang3.StringUtils.equals(ScfOrderRelationType.INVOICE.getCode(),
+                    anOrderRealtion.getInfoType())) {
                 anOrder.getInvoiceList().addAll((invoiceService.findInvoice(queryMap)));
-            }
-            else if (BetterStringUtils.equals(ScfOrderRelationType.RECEIVABLE.getCode(), anOrderRealtion.getInfoType())) {
+            } else if (org.apache.commons.lang3.StringUtils.equals(ScfOrderRelationType.RECEIVABLE.getCode(),
+                    anOrderRealtion.getInfoType())) {
                 anOrder.getReceivableList().addAll(receivableService.selectByProperty(queryMap));
-            }
-            else if (BetterStringUtils.equals(ScfOrderRelationType.TRANSPORT.getCode(), anOrderRealtion.getInfoType())) {
+            } else if (org.apache.commons.lang3.StringUtils.equals(ScfOrderRelationType.TRANSPORT.getCode(),
+                    anOrderRealtion.getInfoType())) {
                 anOrder.getTransportList().addAll(transportService.findTransport(queryMap));
             }
         }
@@ -138,7 +141,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
     public List<ScfOrder> findOrderList(Map<String, Object> anMap, String anIsOnlyNormal) {
         // 只查询数据非自动生成的数据来源
         anMap.put("dataSource", "1");
-        if (BetterStringUtils.equals(anIsOnlyNormal, "1")) {
+        if (org.apache.commons.lang3.StringUtils.equals(anIsOnlyNormal, "1")) {
             anMap.put("businStatus", "0");
         }
 
@@ -183,8 +186,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
             orderRealtionType = ScfOrderRelationType.ORDER;
             // 订单已经包含下属信息，直接返回
             return this.findRelationInfo(anRequestNo, orderRealtionType);
-        }
-        else if ("2".equals(anRequestType)) {
+        } else if ("2".equals(anRequestType)) {
             orderRealtionType = ScfOrderRelationType.ACCEPTBILL;
             // 查询汇票基本信息
             List<ScfAcceptBill> acceptBillList = this.findRelationInfo(anRequestNo, orderRealtionType);
@@ -193,11 +195,11 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
             for (ScfAcceptBill acceptBill : acceptBillList) {
                 anIdList.add(acceptBill.getId());
             }
-            Map<String, Object> queryAcceptBillMap = QueryTermBuilder.newInstance().put("id", anIdList.toArray()).build();
+            Map<String, Object> queryAcceptBillMap = QueryTermBuilder.newInstance().put("id", anIdList.toArray())
+                    .build();
             result.addAll(acceptBillService.findAcceptBill(queryAcceptBillMap));
             return result;
-        }
-        else if ("3".equals(anRequestType)) {
+        } else if ("3".equals(anRequestType)) {
             orderRealtionType = ScfOrderRelationType.RECEIVABLE;
             // 查询应收账款基本信息
             List<ScfReceivable> receivableList = this.findRelationInfo(anRequestNo, orderRealtionType);
@@ -206,7 +208,8 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
             for (ScfReceivable receiable : receivableList) {
                 anIdList.add(receiable.getId());
             }
-            Map<String, Object> queryReceivableMap = QueryTermBuilder.newInstance().put("id", anIdList.toArray()).build();
+            Map<String, Object> queryReceivableMap = QueryTermBuilder.newInstance().put("id", anIdList.toArray())
+                    .build();
             result.addAll(receivableService.findReceivable(queryReceivableMap));
             return result;
         }
@@ -248,9 +251,11 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         anModiOrder.setId(anOrder.getId());
         anModiOrder.initModifyValue(UserUtils.getOperatorInfo());
         // 保存附件信息
-        anModiOrder.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anOtherFileList, anOrder.getBatchNo()));
+        anModiOrder
+                .setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anOtherFileList, anOrder.getBatchNo()));
         // 保存其他文件信息
-        anModiOrder.setOtherBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anFileList, anOrder.getOtherBatchNo()));
+        anModiOrder.setOtherBatchNo(
+                custFileDubboService.updateAndDelCustFileItemInfo(anFileList, anOrder.getOtherBatchNo()));
         // 数据存盘
         this.updateByPrimaryKeySelective(anModiOrder);
         return anModiOrder;
@@ -267,7 +272,8 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         // 保存附件信息
         anOrder.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anOrder.getBatchNo()));
         // 保存其他文件信息
-        anOrder.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anOrder.getOtherBatchNo()));
+        anOrder.setOtherBatchNo(
+                custFileDubboService.updateCustFileItemInfo(anOtherFileList, anOrder.getOtherBatchNo()));
         this.insert(anOrder);
         return anOrder;
     }
@@ -280,11 +286,12 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
      * @param anOperOrg
      *            操作机构
      */
+    @Override
     public void checkInfoExist(Long anId, String anOperOrg) {
         Map<String, Object> anMap = new HashMap<String, Object>();
         String[] anBusinStatusList = { "0" };
         anMap.put("id", anId);
-        if(!(UserUtils.factorUser()||UserUtils.platformUser())) {
+        if (!(UserUtils.factorUser() || UserUtils.platformUser())) {
             anMap.put("businStatus", anBusinStatusList);
         }
         // 查询每个状态数据
@@ -299,7 +306,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
      * 检查用户是否有权限操作数据
      */
     private void checkOperator(String anOperOrg, String anMessage) {
-        if (BetterStringUtils.equals(UserUtils.getOperatorInfo().getOperOrg(), anOperOrg) == false) {
+        if (org.apache.commons.lang3.StringUtils.equals(UserUtils.getOperatorInfo().getOperOrg(), anOperOrg) == false) {
             logger.warn(anMessage);
             throw new BytterTradeException(40001, anMessage);
         }
@@ -378,24 +385,20 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         anMap.put("requestNo", anRequestNo);
         List<ScfOrder> orderList = this.findOrder(anMap);
         // 查询订单信息时 直接返回订单
-        if (BetterStringUtils.equals(ScfOrderRelationType.ORDER.getCode(), anInfoType.getCode())) {
+        if (org.apache.commons.lang3.StringUtils.equals(ScfOrderRelationType.ORDER.getCode(), anInfoType.getCode())) {
             return orderList;
         }
         List<Object> infoList = new ArrayList<Object>();
         for (ScfOrder anOrder : orderList) {
-            if (BetterStringUtils.equals(ScfOrderRelationType.AGGREMENT.getCode(), anInfoType.getCode())) {
+            if (org.apache.commons.lang3.StringUtils.equals(ScfOrderRelationType.AGGREMENT.getCode(), anInfoType.getCode())) {
                 infoList.addAll(anOrder.getAgreementList());
-            }
-            else if (BetterStringUtils.equals(ScfOrderRelationType.ACCEPTBILL.getCode(), anInfoType.getCode())) {
+            } else if (org.apache.commons.lang3.StringUtils.equals(ScfOrderRelationType.ACCEPTBILL.getCode(), anInfoType.getCode())) {
                 infoList.addAll(anOrder.getAcceptBillList());
-            }
-            else if (BetterStringUtils.equals(ScfOrderRelationType.INVOICE.getCode(), anInfoType.getCode())) {
+            } else if (org.apache.commons.lang3.StringUtils.equals(ScfOrderRelationType.INVOICE.getCode(), anInfoType.getCode())) {
                 infoList.addAll(anOrder.getInvoiceList());
-            }
-            else if (BetterStringUtils.equals(ScfOrderRelationType.RECEIVABLE.getCode(), anInfoType.getCode())) {
+            } else if (org.apache.commons.lang3.StringUtils.equals(ScfOrderRelationType.RECEIVABLE.getCode(), anInfoType.getCode())) {
                 infoList.addAll(anOrder.getReceivableList());
-            }
-            else if (BetterStringUtils.equals(ScfOrderRelationType.TRANSPORT.getCode(), anInfoType.getCode())) {
+            } else if (org.apache.commons.lang3.StringUtils.equals(ScfOrderRelationType.TRANSPORT.getCode(), anInfoType.getCode())) {
                 infoList.addAll(anOrder.getTransportList());
             }
         }
@@ -457,7 +460,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         List<String> orderIdList = new ArrayList<String>();
         for (ScfOrderRelation orderRelation : orderRelationList) {
             for (String choseId : anChosedIds) {
-                if (!BetterStringUtils.equals(orderRelation.getOrderId().toString(), choseId)) {
+                if (!org.apache.commons.lang3.StringUtils.equals(orderRelation.getOrderId().toString(), choseId)) {
                     orderIdList.add(orderRelation.getOrderId().toString());
                 }
             }
@@ -473,7 +476,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
     public void saveInfoRequestNo(String anRequestType, String anRequestNo, String anIdList) {
         String[] anIds = anIdList.split(",");
         // 订单
-        if (BetterStringUtils.equals(anRequestType, "1") || BetterStringUtils.equals(anRequestType, "4")) {
+        if (org.apache.commons.lang3.StringUtils.equals(anRequestType, "1") || org.apache.commons.lang3.StringUtils.equals(anRequestType, "4")) {
             for (String anOrderId : anIds) {
                 this.saveOrderRequestNo(Long.valueOf(anOrderId), anRequestNo);
             }
@@ -484,11 +487,11 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
                 Map<String, Object> anMap = new HashMap<String, Object>();
                 anMap.put("infoId", anInfoId);
                 // 票据
-                if (BetterStringUtils.equals(anRequestType, "2")) {
+                if (org.apache.commons.lang3.StringUtils.equals(anRequestType, "2")) {
                     anMap.put("infoType", ScfOrderRelationType.ACCEPTBILL.getCode());
                 }
                 // 应收
-                else if (BetterStringUtils.equals(anRequestType, "3")) {
+                else if (org.apache.commons.lang3.StringUtils.equals(anRequestType, "3")) {
                     anMap.put("infoType", ScfOrderRelationType.RECEIVABLE.getCode());
                 }
                 List<ScfOrderRelation> anOrderRelationList = orderRelationService.findOrderRelation(anMap);
@@ -496,7 +499,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
                 // 若未找到相应信息生成默认数据
                 if (Collections3.isEmpty(anOrderRelationList)) {
                     // 通过票据生成
-                    if (BetterStringUtils.equals(anRequestType, "2")) {
+                    if (org.apache.commons.lang3.StringUtils.equals(anRequestType, "2")) {
                         ScfOrder order = new ScfOrder(acceptBillService.selectByPrimaryKey(Long.parseLong(anInfoId)));
                         order.setRequestNo(anRequestNo);
                         this.insert(order);
@@ -509,7 +512,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
                         orderRelationService.insert(relation);
                     }
                     // 应收账款生成
-                    else if (BetterStringUtils.equals(anRequestType, "3")) {
+                    else if (org.apache.commons.lang3.StringUtils.equals(anRequestType, "3")) {
                         ScfOrder order = new ScfOrder(receivableService.selectByPrimaryKey(Long.parseLong(anInfoId)));
                         order.setRequestNo(anRequestNo);
                         this.insert(order);
@@ -521,8 +524,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
                         relation.setInfoId(Long.valueOf(anInfoId));
                         orderRelationService.insert(relation);
                     }
-                }
-                else {
+                } else {
                     for (ScfOrderRelation anOrderRelation : anOrderRelationList) {
                         this.saveOrderRequestNo(anOrderRelation.getOrderId(), anRequestNo);
                     }
@@ -593,12 +595,12 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
             result.addAll(custFileDubboService.findCustFiles(receivable.getOtherBatchNo()));
         }
 
-        //微信申请时 传上的附件
+        // 微信申请时 传上的附件
         ScfRequest request = requestService.findRequestDetail(anRequestNo);
-        if(null != request.getBatchNo()){
-        	result.addAll(custFileDubboService.findCustFiles(Long.parseLong(request.getBatchNo().toString())));
+        if (null != request.getBatchNo()) {
+            result.addAll(custFileDubboService.findCustFiles(Long.parseLong(request.getBatchNo().toString())));
         }
-        
+
         // 对文件信息去重
         HashSet<CustFileItem> tempSet = new HashSet<CustFileItem>(result);
         result.clear();
@@ -614,22 +616,21 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         List<CustAgreement> agreementList = new ArrayList<CustAgreement>();
         List<ScfInvoice> invoiceList = new ArrayList<ScfInvoice>();
         for (String anId : idList) {
-            List<ScfOrder> orderList = this.findOrder(QueryTermBuilder.newInstance().put("id", Long.valueOf(anId)).build());
+            List<ScfOrder> orderList = this
+                    .findOrder(QueryTermBuilder.newInstance().put("id", Long.valueOf(anId)).build());
             if ("1".equals(anRequestType)) {
                 for (ScfOrder anOrder : orderList) {
                     agreementList.addAll(anOrder.getAgreementList());
                     invoiceList.addAll(anOrder.getInvoiceList());
                 }
-            }
-            else if ("2".equals(anRequestType)) {
+            } else if ("2".equals(anRequestType)) {
                 List<ScfAcceptBill> acceptBillList = acceptBillService
                         .findAcceptBill(QueryTermBuilder.newInstance().put("id", Long.valueOf(anId)).build());
                 for (ScfAcceptBill anAcceptBill : acceptBillList) {
                     agreementList.addAll(anAcceptBill.getAgreementList());
                     invoiceList.addAll(anAcceptBill.getInvoiceList());
                 }
-            }
-            else if ("3".equals(anRequestType)) {
+            } else if ("3".equals(anRequestType)) {
                 List<ScfReceivable> receivableList = receivableService
                         .findReceivable(QueryTermBuilder.newInstance().put("id", Long.valueOf(anId)).build());
                 for (ScfReceivable anReceivbale : receivableList) {
@@ -657,32 +658,34 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
      */
     public void checkAndGenerateTradeAgreement(Long anAcceptBillId, Long anFactorNo) {
         ScfAcceptBill anAcceptBill = acceptBillService.findAcceptBillDetailsById(anAcceptBillId);
-        
+
         List<CustFileItem> fileList = custFileDubboService.findCustFiles(anAcceptBill.getBatchNo());
         // 查询汇票附件中的合同附件和发票附件
         List<Long> agreeFileIdList = new ArrayList<Long>();
         List<Long> invoiceFileIdList = new ArrayList<Long>();
         for (CustFileItem anFile : fileList) {
-            if (BetterStringUtils.equals("agreeAccessory", anFile.getFileInfoType())) {
+            if (org.apache.commons.lang3.StringUtils.equals("agreeAccessory", anFile.getFileInfoType())) {
                 agreeFileIdList.add(anFile.getId());
             }
-            if (BetterStringUtils.equals("invoiceFile", anFile.getFileInfoType())) {
+            if (org.apache.commons.lang3.StringUtils.equals("invoiceFile", anFile.getFileInfoType())) {
                 invoiceFileIdList.add(anFile.getId());
             }
         }
-        
-        //生成相关数据
+
+        // 生成相关数据
         if (Collections3.isEmpty(anAcceptBill.getAgreementList())) {
-            CustAgreement anAgree = custAgreementService.addSysCustAgreement(anAcceptBill.getCoreCustNo(), anAcceptBill.getCustNo(), anFactorNo,
+            CustAgreement anAgree = custAgreementService.addSysCustAgreement(anAcceptBill.getCoreCustNo(),
+                    anAcceptBill.getCustNo(), anFactorNo,
                     StringUtils.collectionToDelimitedString(agreeFileIdList, ","));
-            orderRelationService.addOrderRelation(ScfOrderRelationType.ACCEPTBILL.getCode(), anAcceptBillId, ScfOrderRelationType.AGGREMENT.getCode(),
-                    anAgree.getId().toString());
+            orderRelationService.addOrderRelation(ScfOrderRelationType.ACCEPTBILL.getCode(), anAcceptBillId,
+                    ScfOrderRelationType.AGGREMENT.getCode(), anAgree.getId().toString());
         }
         if (Collections3.isEmpty(anAcceptBill.getInvoiceList())) {
-            ScfInvoice anInvoice = invoiceService.addSysInvoice(anAcceptBill.getCustNo(), StringUtils.collectionToDelimitedString(invoiceFileIdList, ","));
-            orderRelationService.addOrderRelation(ScfOrderRelationType.ACCEPTBILL.getCode(), anAcceptBillId, ScfOrderRelationType.INVOICE.getCode(),
-                    anInvoice.getId().toString());
-            //冻结发票
+            ScfInvoice anInvoice = invoiceService.addSysInvoice(anAcceptBill.getCustNo(),
+                    StringUtils.collectionToDelimitedString(invoiceFileIdList, ","));
+            orderRelationService.addOrderRelation(ScfOrderRelationType.ACCEPTBILL.getCode(), anAcceptBillId,
+                    ScfOrderRelationType.INVOICE.getCode(), anInvoice.getId().toString());
+            // 冻结发票
             invoiceService.saveForzenInvoice(anInvoice.getId());
         }
     }
@@ -696,13 +699,13 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         ScfAcceptBill anAcceptBill = acceptBillService.findAcceptBillDetailsById(anAcceptBillId);
         BTAssert.notNull(anAcceptBill, "无法获取票据信息");
         for (CustAgreement anAgree : anAcceptBill.getAgreementList()) {
-            if (!BetterStringUtils.equals("1", anAgree.getStatus())) {
+            if (!org.apache.commons.lang3.StringUtils.equals("1", anAgree.getStatus())) {
                 agreeNameList.add(anAgree.getAgreeName());
             }
         }
         return agreeNameList;
     }
-    
+
     /**
      * 查询相应融资条件下的资料
      * 出具保理方案 - 110
@@ -719,7 +722,7 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         Map<String, Object> queryMap = QueryTermBuilder.newInstance().put("requestNo", requestNoList.toArray()).build();
         return this.findOrder(queryMap);
     }
-    
+
     /**
      * 根据融资类型和资料id串判断资料中的合同是否有未启用的
      * 1:订单，2:票据;3:应收款
@@ -728,93 +731,94 @@ public class ScfOrderService extends BaseService<ScfOrderMapper, ScfOrder> imple
         List<CustAgreement> agreeList = new ArrayList<>();
         switch (anRequestType) {
         case "1":
-            List<ScfOrder> orderList = this.findOrder(QueryTermBuilder.newInstance().put("id", anInfoIdList.split(",")).build());
-            for(ScfOrder anOrder : orderList) {
+            List<ScfOrder> orderList = this
+                    .findOrder(QueryTermBuilder.newInstance().put("id", anInfoIdList.split(",")).build());
+            for (ScfOrder anOrder : orderList) {
                 agreeList.addAll(anOrder.getAgreementList());
             }
             break;
         case "2":
-            List<ScfAcceptBill> acceptBillList = acceptBillService.findAcceptBill(QueryTermBuilder.newInstance().put("id", anInfoIdList.split(",")).build());
-            for(ScfAcceptBill anBill : acceptBillList) {
+            List<ScfAcceptBill> acceptBillList = acceptBillService
+                    .findAcceptBill(QueryTermBuilder.newInstance().put("id", anInfoIdList.split(",")).build());
+            for (ScfAcceptBill anBill : acceptBillList) {
                 agreeList.addAll(anBill.getAgreementList());
             }
         case "3":
-            List<ScfReceivable> receivableList = receivableService.findReceivable(QueryTermBuilder.newInstance().put("id", anInfoIdList.split(",")).build());
-            for(ScfReceivable anReceivable : receivableList) {
+            List<ScfReceivable> receivableList = receivableService
+                    .findReceivable(QueryTermBuilder.newInstance().put("id", anInfoIdList.split(",")).build());
+            for (ScfReceivable anReceivable : receivableList) {
                 agreeList.addAll(anReceivable.getAgreementList());
             }
         default:
             break;
         }
         for (CustAgreement anAgree : agreeList) {
-            BTAssert.isTrue(BetterStringUtils.equals("1", anAgree.getStatus()), "资料中存在未启用合同，请先启用合同！");
+            BTAssert.isTrue(org.apache.commons.lang3.StringUtils.equals("1", anAgree.getStatus()), "资料中存在未启用合同，请先启用合同！");
         }
     }
 
-   /** 
+    /** 
     * 
     */
-   public List getSubjectMaster(String anId, String anType) {
-       List agreeList = new ArrayList<>();
-       //1,s订单，2:票据;3:应收款
-       if(BetterStringUtils.equals("1", anType)) {
-    	   agreeList = this.findOrder(QueryTermBuilder.newInstance().put("id", anId.split(",")).build());
-       }
-       else if(BetterStringUtils.equals("2", anType)) {
-    	   agreeList = acceptBillService.findAcceptBill(QueryTermBuilder.newInstance().put("id", anId.split(",")).build());
-       }
-       else if(BetterStringUtils.equals("3", anType)) {
-    	   agreeList = receivableService.findReceivable(QueryTermBuilder.newInstance().put("id", anId.split(",")).build());
-       }
-       return agreeList;
-   }
-   
-   public Long getCoreCustNoByMaster(String anId, String anType){
-	   List list = getSubjectMaster(anId, anType);
-	   if(Collections3.isEmpty(list)){
-		   return null;
-	   }
-	   
-	   if(BetterStringUtils.equals("1", anType)) {
-    	   return ((ScfOrder)list.get(0)).getCoreCustNo();
-       }
-       else if(BetterStringUtils.equals("2", anType)) {
-    	   return ((ScfAcceptBill)list.get(0)).getCoreCustNo();
-       }
-       else if(BetterStringUtils.equals("3", anType)) {
-    	   return ((ScfReceivable)list.get(0)).getCoreCustNo();
-       }
-	   
-	   return null;
-   }
-   
-   /**
+    public List getSubjectMaster(String anId, String anType) {
+        List agreeList = new ArrayList<>();
+        // 1,s订单，2:票据;3:应收款
+        if (org.apache.commons.lang3.StringUtils.equals("1", anType)) {
+            agreeList = this.findOrder(QueryTermBuilder.newInstance().put("id", anId.split(",")).build());
+        } else if (org.apache.commons.lang3.StringUtils.equals("2", anType)) {
+            agreeList = acceptBillService
+                    .findAcceptBill(QueryTermBuilder.newInstance().put("id", anId.split(",")).build());
+        } else if (org.apache.commons.lang3.StringUtils.equals("3", anType)) {
+            agreeList = receivableService
+                    .findReceivable(QueryTermBuilder.newInstance().put("id", anId.split(",")).build());
+        }
+        return agreeList;
+    }
+
+    public Long getCoreCustNoByMaster(String anId, String anType) {
+        List list = getSubjectMaster(anId, anType);
+        if (Collections3.isEmpty(list)) {
+            return null;
+        }
+
+        if (org.apache.commons.lang3.StringUtils.equals("1", anType)) {
+            return ((ScfOrder) list.get(0)).getCoreCustNo();
+        } else if (org.apache.commons.lang3.StringUtils.equals("2", anType)) {
+            return ((ScfAcceptBill) list.get(0)).getCoreCustNo();
+        } else if (org.apache.commons.lang3.StringUtils.equals("3", anType)) {
+            return ((ScfReceivable) list.get(0)).getCoreCustNo();
+        }
+
+        return null;
+    }
+
+    /**
     * 根据资料id和资料类型查询融资实体
     */
-   public ScfRequest findRequestByInfoId(Long anInfoId, String anInfoType) {
-       Long orderId = null;
+    public ScfRequest findRequestByInfoId(Long anInfoId, String anInfoType) {
+        Long orderId = null;
 
-       if (BetterStringUtils.equals(ScfOrderRelationType.ORDER.getCode(), anInfoType)) {
-           orderId = anInfoId;
-       }
-       else {
-           Map<String, Object> anMap = QueryTermBuilder.newInstance().put("infoType", anInfoType).put("infoId", anInfoId).build();
-           ScfOrderRelation relation = Collections3.getFirst(orderRelationService.selectByProperty(anMap));
-           orderId = relation.getOrderId();
-       }
-       ScfOrder order = this.selectByPrimaryKey(orderId);
-       ScfRequest request = requestService.selectByPrimaryKey(order.getRequestNo());
-       return request;
-   }
-   
-   /**
+        if (org.apache.commons.lang3.StringUtils.equals(ScfOrderRelationType.ORDER.getCode(), anInfoType)) {
+            orderId = anInfoId;
+        } else {
+            Map<String, Object> anMap = QueryTermBuilder.newInstance().put("infoType", anInfoType)
+                    .put("infoId", anInfoId).build();
+            ScfOrderRelation relation = Collections3.getFirst(orderRelationService.selectByProperty(anMap));
+            orderId = relation.getOrderId();
+        }
+        ScfOrder order = this.selectByPrimaryKey(orderId);
+        ScfRequest request = requestService.selectByPrimaryKey(order.getRequestNo());
+        return request;
+    }
+
+    /**
     * 检查状态信息
     */
-   public void checkStatus(String anBusinStatus, String anTargetStatus, boolean anFlag, String anMessage) {
-       if (BetterStringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
-           logger.warn(anMessage);
-           throw new BytterTradeException(40001, anMessage);
-       }
-   }
-   
+    public void checkStatus(String anBusinStatus, String anTargetStatus, boolean anFlag, String anMessage) {
+        if (org.apache.commons.lang3.StringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
+            logger.warn(anMessage);
+            throw new BytterTradeException(40001, anMessage);
+        }
+    }
+
 }

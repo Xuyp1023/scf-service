@@ -24,199 +24,199 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @Table(name = "t_scf_pay_record")
 public class ScfPayRecord implements BetterjrEntity {
     @Id
-    @Column(name = "ID",  columnDefinition="BIGINT" )
-    @MetaData( value="", comments = "")
+    @Column(name = "ID", columnDefinition = "BIGINT")
+    @MetaData(value = "", comments = "")
     @OrderBy("desc")
     private Long id;
 
     /**
      * 保理公司编号
      */
-    @Column(name = "L_FACTORNO",  columnDefinition="BIGINT" )
-    @MetaData( value="保理公司编号", comments = "保理公司编号")
+    @Column(name = "L_FACTORNO", columnDefinition = "BIGINT")
+    @MetaData(value = "保理公司编号", comments = "保理公司编号")
     private Long factorNo;
 
     /**
      * 客户编号
      */
-    @Column(name = "L_CUSTNO",  columnDefinition="BIGINT" )
-    @MetaData( value="客户编号", comments = "客户编号")
+    @Column(name = "L_CUSTNO", columnDefinition = "BIGINT")
+    @MetaData(value = "客户编号", comments = "客户编号")
     private Long custNo;
 
     /**
      * 核心企业编号
      */
-    @Column(name = "L_CORE_CUSTNO",  columnDefinition="BIGINT" )
-    @MetaData( value="核心企业编号", comments = "核心企业编号")
+    @Column(name = "L_CORE_CUSTNO", columnDefinition = "BIGINT")
+    @MetaData(value = "核心企业编号", comments = "核心企业编号")
     private Long coreCustNo;
 
     /**
      * 还款人编号
      */
-    @Column(name = "L_PAY_CUSTNO",  columnDefinition="BIGINT" )
-    @MetaData( value="还款人编号", comments = "还款人编号")
+    @Column(name = "L_PAY_CUSTNO", columnDefinition = "BIGINT")
+    @MetaData(value = "还款人编号", comments = "还款人编号")
     private Long payCustNo;
 
     /**
      * 申请单号
      */
-    @Column(name = "C_REQUESTNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="申请单号", comments = "申请单号")
+    @Column(name = "C_REQUESTNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "申请单号", comments = "申请单号")
     private String requestNo;
 
     /**
      * 还款计划id
      */
-    @Column(name = "L_PAYPLAN_ID",  columnDefinition="BIGINT" )
-    @MetaData( value="还款计划id", comments = "还款计划id")
+    @Column(name = "L_PAYPLAN_ID", columnDefinition = "BIGINT")
+    @MetaData(value = "还款计划id", comments = "还款计划id")
     private Long payPlanId;
 
     /**
      * 还款日期
      */
-    @Column(name = "D_PAY_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="还款日期", comments = "还款日期")
+    @Column(name = "D_PAY_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "还款日期", comments = "还款日期")
     private String payDate;
 
     /**
      * 计划还款日期
      */
-    @Column(name = "D_PLAN_PAY_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="计划还款日期", comments = "计划还款日期")
+    @Column(name = "D_PLAN_PAY_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "计划还款日期", comments = "计划还款日期")
     private String planPayDate;
 
     /**
      * 计算开始日期
      */
-    @Column(name = "D_START_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="计算开始日期", comments = "计算开始日期")
+    @Column(name = "D_START_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "计算开始日期", comments = "计算开始日期")
     private String dStartDate;
 
     /**
      * 还款本金
      */
-    @Column(name = "F_PRINCIPAL_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="还款本金", comments = "还款本金")
+    @Column(name = "F_PRINCIPAL_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "还款本金", comments = "还款本金")
     private BigDecimal principalBalance;
 
     /**
      * 还款利息
      */
-    @Column(name = "F_INTEREST_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="还款利息", comments = "还款利息")
+    @Column(name = "F_INTEREST_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "还款利息", comments = "还款利息")
     private BigDecimal interestBalance;
 
     /**
      * 逾期天数
      */
-    @Column(name = "L_OVERDUE_DAYS",  columnDefinition="INT" )
-    @MetaData( value="逾期天数", comments = "逾期天数")
+    @Column(name = "L_OVERDUE_DAYS", columnDefinition = "INT")
+    @MetaData(value = "逾期天数", comments = "逾期天数")
     private Integer overdueDays;
 
     /**
      * 还款管理费
      */
-    @Column(name = "F_MANAGEMENT_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="还款管理费", comments = "还款管理费")
+    @Column(name = "F_MANAGEMENT_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "还款管理费", comments = "还款管理费")
     private BigDecimal managementBalance;
 
     /**
      * 还款罚息
      */
-    @Column(name = "F_PENALTY_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="还款罚息", comments = "还款罚息")
+    @Column(name = "F_PENALTY_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "还款罚息", comments = "还款罚息")
     private BigDecimal penaltyBalance;
 
     /**
      * 还款滞纳金
      */
-    @Column(name = "F_LATEFEE_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="还款滞纳金", comments = "还款滞纳金")
+    @Column(name = "F_LATEFEE_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "还款滞纳金", comments = "还款滞纳金")
     private BigDecimal latefeeBalance;
 
     /**
      * 还款提前还款手续费
      */
-    @Column(name = "F_SERVICEFEE_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="还款提前还款手续费", comments = "还款提前还款手续费")
+    @Column(name = "F_SERVICEFEE_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "还款提前还款手续费", comments = "还款提前还款手续费")
     private BigDecimal servicefeeBalance;
 
     /**
      * 合计
      */
-    @Column(name = "F_TOTAL_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="合计", comments = "合计")
+    @Column(name = "F_TOTAL_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "合计", comments = "合计")
     private BigDecimal totalBalance;
 
     /**
      * 融资利率
      */
-    @Column(name = "F_RATIO",  columnDefinition="DOUBLE" )
-    @MetaData( value="融资利率", comments = "融资利率")
+    @Column(name = "F_RATIO", columnDefinition = "DOUBLE")
+    @MetaData(value = "融资利率", comments = "融资利率")
     private BigDecimal ratio;
 
     /**
      * 管理费利率
      */
-    @Column(name = "F_MANAGEMENT_RATIO",  columnDefinition="DOUBLE" )
-    @MetaData( value="管理费利率", comments = "管理费利率")
+    @Column(name = "F_MANAGEMENT_RATIO", columnDefinition = "DOUBLE")
+    @MetaData(value = "管理费利率", comments = "管理费利率")
     private BigDecimal managementRatio;
 
     /**
      * 还款类型：1：正常还款，2：提前还款，3：逾期还款，4：豁免，5：逾期豁免，6.经销商还款 7展期
      */
-    @Column(name = "C_PAY_TYPE",  columnDefinition="VARCHAR" )
-    @MetaData( value="还款类型：1：正常还款", comments = "还款类型：1：正常还款，2：提前还款，3：逾期还款，4：豁免，5：逾期豁免，6.经销商还款, 7展期")
+    @Column(name = "C_PAY_TYPE", columnDefinition = "VARCHAR")
+    @MetaData(value = "还款类型：1：正常还款", comments = "还款类型：1：正常还款，2：提前还款，3：逾期还款，4：豁免，5：逾期豁免，6.经销商还款, 7展期")
     private String payType;
 
     /**
      * 发货通知单id,多个以逗号隔开
      */
-    @Column(name = "C_DELIVERYS",  columnDefinition="VARCHAR" )
-    @MetaData( value="发货通知单id,多个以逗号隔开", comments = "发货通知单id,多个以逗号隔开")
+    @Column(name = "C_DELIVERYS", columnDefinition = "VARCHAR")
+    @MetaData(value = "发货通知单id,多个以逗号隔开", comments = "发货通知单id,多个以逗号隔开")
     private String deliverys;
 
     /**
      * 操作机构
      */
-    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
-    @MetaData( value="操作机构", comments = "操作机构")
+    @Column(name = "C_OPERORG", columnDefinition = "VARCHAR")
+    @MetaData(value = "操作机构", comments = "操作机构")
     private String operOrg;
 
-    @Column(name = "L_REG_OPERID",  columnDefinition="BIGINT" )
-    @MetaData( value="", comments = "")
+    @Column(name = "L_REG_OPERID", columnDefinition = "BIGINT")
+    @MetaData(value = "", comments = "")
     private Long regOperId;
 
-    @Column(name = "C_REG_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "C_REG_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String regOperName;
 
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String regDate;
 
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String regTime;
 
-    @Column(name = "L_MODI_OPERID",  columnDefinition="BIGINT" )
-    @MetaData( value="", comments = "")
+    @Column(name = "L_MODI_OPERID", columnDefinition = "BIGINT")
+    @MetaData(value = "", comments = "")
     private Long modiOperId;
 
-    @Column(name = "C_MODI_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "C_MODI_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String modiOperName;
 
-    @Column(name = "D_MODI_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "D_MODI_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String modiDate;
 
-    @Column(name = "T_MODI_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "T_MODI_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String modiTime;
 
-    @Column(name = "N_VERSION",  columnDefinition="BIGINT" )
-    @MetaData( value="", comments = "")
+    @Column(name = "N_VERSION", columnDefinition = "BIGINT")
+    @MetaData(value = "", comments = "")
     private Long version;
 
     private static final long serialVersionUID = 1471350583041L;
@@ -538,37 +538,66 @@ public class ScfPayRecord implements BetterjrEntity {
         }
         ScfPayRecord other = (ScfPayRecord) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getFactorNo() == null ? other.getFactorNo() == null : this.getFactorNo().equals(other.getFactorNo()))
-            && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-            && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
-            && (this.getPayCustNo() == null ? other.getPayCustNo() == null : this.getPayCustNo().equals(other.getPayCustNo()))
-            && (this.getRequestNo() == null ? other.getRequestNo() == null : this.getRequestNo().equals(other.getRequestNo()))
-            && (this.getPayPlanId() == null ? other.getPayPlanId() == null : this.getPayPlanId().equals(other.getPayPlanId()))
-            && (this.getPayDate() == null ? other.getPayDate() == null : this.getPayDate().equals(other.getPayDate()))
-            && (this.getPlanPayDate() == null ? other.getPlanPayDate() == null : this.getPlanPayDate().equals(other.getPlanPayDate()))
-            && (this.getdStartDate() == null ? other.getdStartDate() == null : this.getdStartDate().equals(other.getdStartDate()))
-            && (this.getPrincipalBalance() == null ? other.getPrincipalBalance() == null : this.getPrincipalBalance().equals(other.getPrincipalBalance()))
-            && (this.getInterestBalance() == null ? other.getInterestBalance() == null : this.getInterestBalance().equals(other.getInterestBalance()))
-            && (this.getOverdueDays() == null ? other.getOverdueDays() == null : this.getOverdueDays().equals(other.getOverdueDays()))
-            && (this.getManagementBalance() == null ? other.getManagementBalance() == null : this.getManagementBalance().equals(other.getManagementBalance()))
-            && (this.getPenaltyBalance() == null ? other.getPenaltyBalance() == null : this.getPenaltyBalance().equals(other.getPenaltyBalance()))
-            && (this.getLatefeeBalance() == null ? other.getLatefeeBalance() == null : this.getLatefeeBalance().equals(other.getLatefeeBalance()))
-            && (this.getServicefeeBalance() == null ? other.getServicefeeBalance() == null : this.getServicefeeBalance().equals(other.getServicefeeBalance()))
-            && (this.getTotalBalance() == null ? other.getTotalBalance() == null : this.getTotalBalance().equals(other.getTotalBalance()))
-            && (this.getRatio() == null ? other.getRatio() == null : this.getRatio().equals(other.getRatio()))
-            && (this.getManagementRatio() == null ? other.getManagementRatio() == null : this.getManagementRatio().equals(other.getManagementRatio()))
-            && (this.getPayType() == null ? other.getPayType() == null : this.getPayType().equals(other.getPayType()))
-            && (this.getDeliverys() == null ? other.getDeliverys() == null : this.getDeliverys().equals(other.getDeliverys()))
-            && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
-            && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
-            && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-            && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
-            && (this.getModiOperId() == null ? other.getModiOperId() == null : this.getModiOperId().equals(other.getModiOperId()))
-            && (this.getModiOperName() == null ? other.getModiOperName() == null : this.getModiOperName().equals(other.getModiOperName()))
-            && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-            && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()))
-            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
+                && (this.getFactorNo() == null ? other.getFactorNo() == null
+                        : this.getFactorNo().equals(other.getFactorNo()))
+                && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
+                && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null
+                        : this.getCoreCustNo().equals(other.getCoreCustNo()))
+                && (this.getPayCustNo() == null ? other.getPayCustNo() == null
+                        : this.getPayCustNo().equals(other.getPayCustNo()))
+                && (this.getRequestNo() == null ? other.getRequestNo() == null
+                        : this.getRequestNo().equals(other.getRequestNo()))
+                && (this.getPayPlanId() == null ? other.getPayPlanId() == null
+                        : this.getPayPlanId().equals(other.getPayPlanId()))
+                && (this.getPayDate() == null ? other.getPayDate() == null
+                        : this.getPayDate().equals(other.getPayDate()))
+                && (this.getPlanPayDate() == null ? other.getPlanPayDate() == null
+                        : this.getPlanPayDate().equals(other.getPlanPayDate()))
+                && (this.getdStartDate() == null ? other.getdStartDate() == null
+                        : this.getdStartDate().equals(other.getdStartDate()))
+                && (this.getPrincipalBalance() == null ? other.getPrincipalBalance() == null
+                        : this.getPrincipalBalance().equals(other.getPrincipalBalance()))
+                && (this.getInterestBalance() == null ? other.getInterestBalance() == null
+                        : this.getInterestBalance().equals(other.getInterestBalance()))
+                && (this.getOverdueDays() == null ? other.getOverdueDays() == null
+                        : this.getOverdueDays().equals(other.getOverdueDays()))
+                && (this.getManagementBalance() == null ? other.getManagementBalance() == null
+                        : this.getManagementBalance().equals(other.getManagementBalance()))
+                && (this.getPenaltyBalance() == null ? other.getPenaltyBalance() == null
+                        : this.getPenaltyBalance().equals(other.getPenaltyBalance()))
+                && (this.getLatefeeBalance() == null ? other.getLatefeeBalance() == null
+                        : this.getLatefeeBalance().equals(other.getLatefeeBalance()))
+                && (this.getServicefeeBalance() == null ? other.getServicefeeBalance() == null
+                        : this.getServicefeeBalance().equals(other.getServicefeeBalance()))
+                && (this.getTotalBalance() == null ? other.getTotalBalance() == null
+                        : this.getTotalBalance().equals(other.getTotalBalance()))
+                && (this.getRatio() == null ? other.getRatio() == null : this.getRatio().equals(other.getRatio()))
+                && (this.getManagementRatio() == null ? other.getManagementRatio() == null
+                        : this.getManagementRatio().equals(other.getManagementRatio()))
+                && (this.getPayType() == null ? other.getPayType() == null
+                        : this.getPayType().equals(other.getPayType()))
+                && (this.getDeliverys() == null ? other.getDeliverys() == null
+                        : this.getDeliverys().equals(other.getDeliverys()))
+                && (this.getOperOrg() == null ? other.getOperOrg() == null
+                        : this.getOperOrg().equals(other.getOperOrg()))
+                && (this.getRegOperId() == null ? other.getRegOperId() == null
+                        : this.getRegOperId().equals(other.getRegOperId()))
+                && (this.getRegOperName() == null ? other.getRegOperName() == null
+                        : this.getRegOperName().equals(other.getRegOperName()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getRegTime() == null ? other.getRegTime() == null
+                        : this.getRegTime().equals(other.getRegTime()))
+                && (this.getModiOperId() == null ? other.getModiOperId() == null
+                        : this.getModiOperId().equals(other.getModiOperId()))
+                && (this.getModiOperName() == null ? other.getModiOperName() == null
+                        : this.getModiOperName().equals(other.getModiOperName()))
+                && (this.getModiDate() == null ? other.getModiDate() == null
+                        : this.getModiDate().equals(other.getModiDate()))
+                && (this.getModiTime() == null ? other.getModiTime() == null
+                        : this.getModiTime().equals(other.getModiTime()))
+                && (this.getVersion() == null ? other.getVersion() == null
+                        : this.getVersion().equals(other.getVersion()));
     }
 
     @Override
@@ -609,7 +638,7 @@ public class ScfPayRecord implements BetterjrEntity {
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
         return result;
     }
-    
+
     public void init(ScfPayRecord anRecord) {
         this.id = SerialGenerator.getLongValue("ScfPayRecord.id");
         this.regOperName = UserUtils.getUserName();
@@ -627,8 +656,8 @@ public class ScfPayRecord implements BetterjrEntity {
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
     }
-    
-    private void fillBalance(ScfPayRecord anRecord){
+
+    private void fillBalance(ScfPayRecord anRecord) {
         anRecord.interestBalance = MathExtend.defaultValue(anRecord.interestBalance, BigDecimal.ZERO);
         anRecord.managementBalance = MathExtend.defaultValue(anRecord.managementBalance, BigDecimal.ZERO);
         anRecord.latefeeBalance = MathExtend.defaultValue(anRecord.latefeeBalance, BigDecimal.ZERO);
@@ -639,5 +668,5 @@ public class ScfPayRecord implements BetterjrEntity {
         anRecord.managementRatio = MathExtend.defaultValue(anRecord.managementRatio, BigDecimal.ZERO);
         anRecord.ratio = MathExtend.defaultValue(anRecord.ratio, BigDecimal.ZERO);
     }
-    
+
 }

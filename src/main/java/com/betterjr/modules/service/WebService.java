@@ -6,12 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.betterjr.common.utils.BetterStringUtils;
-import com.betterjr.common.utils.Collections3;
-import com.betterjr.common.web.AjaxObject;
 import com.betterjr.modules.acceptbill.entity.ScfAcceptBill;
 import com.betterjr.modules.acceptbill.service.ScfAcceptBillService;
 import com.betterjr.modules.agreement.entity.ScfRequestNotice;
@@ -21,7 +20,6 @@ import com.betterjr.modules.enquiry.service.ScfEnquiryService;
 import com.betterjr.modules.loan.entity.ScfRequest;
 import com.betterjr.modules.loan.service.ScfRequestService;
 import com.betterjr.modules.order.entity.ScfInvoice;
-import com.betterjr.modules.order.entity.ScfOrder;
 import com.betterjr.modules.order.helper.ScfOrderRelationType;
 import com.betterjr.modules.order.service.ScfOrderService;
 
@@ -40,6 +38,7 @@ public class WebService {
     private ScfAgreementService agreementService;
     @Autowired
     private ScfRequestNoticeService requestNoticeService;
+
     /**
      * 4.7 融资业务申请; 1.供应商必须已经开户且状态是有效;2.供应商的融资剩余额度必须大于申请融资金额;3.供应商申请融资必须得到核心企业允许(应收账款确认)
      * 
@@ -57,23 +56,23 @@ public class WebService {
      *            申请融资金额
      * @return
      */
-    public Map<String, Object> businApp(String custId, String unitCode, String requestNo, String coreCustCode, String productId,
-            BigDecimal applicationMoney) {
+    public Map<String, Object> businApp(String custId, String unitCode, String requestNo, String coreCustCode,
+            String productId, BigDecimal applicationMoney) {
         Map<String, Object> retMap = new HashMap<String, Object>();
         ScfRequest request = new ScfRequest();
-        if (BetterStringUtils.isBlank(custId)) {
+        if (StringUtils.isBlank(custId)) {
             return retMap;
         }
-        if (BetterStringUtils.isBlank(unitCode)) {
+        if (StringUtils.isBlank(unitCode)) {
             return retMap;
         }
-        if (BetterStringUtils.isBlank(requestNo)) {
+        if (StringUtils.isBlank(requestNo)) {
             return retMap;
         }
-        if (BetterStringUtils.isBlank(coreCustCode)) {
+        if (StringUtils.isBlank(coreCustCode)) {
             return retMap;
         }
-        if (BetterStringUtils.isBlank(productId)) {
+        if (StringUtils.isBlank(productId)) {
             return retMap;
         }
 
@@ -108,19 +107,18 @@ public class WebService {
      */
     public List<Map<String, Object>> businAppDraft(String requestNo, String loanNo, String businFlag) {
         List<Map<String, Object>> billList = new ArrayList<Map<String, Object>>();
-        if (BetterStringUtils.isBlank(requestNo)) {
+        if (StringUtils.isBlank(requestNo)) {
             return billList;
         }
-        if (BetterStringUtils.isBlank(loanNo)) {
+        if (StringUtils.isBlank(loanNo)) {
             return billList;
         }
 
         String billsId = "";
-        if (BetterStringUtils.isBlank(businFlag) || BetterStringUtils.equals("0", businFlag)) {
+        if (StringUtils.isBlank(businFlag) || StringUtils.equals("0", businFlag)) {
             ScfRequest request = requestService.findRequestDetail(requestNo);
             billsId = request.getOrders();
-        }
-        else {
+        } else {
             billsId = enquiryService.findEnquiryByNo(requestNo).getOrders();
         }
 
@@ -163,19 +161,18 @@ public class WebService {
      */
     public List<Map<String, Object>> businAppReceipt(String requestNo, String loanNo, String businFlag) {
         List<Map<String, Object>> billList = new ArrayList<Map<String, Object>>();
-        if (BetterStringUtils.isBlank(requestNo)) {
+        if (StringUtils.isBlank(requestNo)) {
             return billList;
         }
-        if (BetterStringUtils.isBlank(loanNo)) {
+        if (StringUtils.isBlank(loanNo)) {
             return billList;
         }
 
         String billsId = "";
-        if (BetterStringUtils.isBlank(businFlag) || BetterStringUtils.equals("0", businFlag)) {
+        if (StringUtils.isBlank(businFlag) || StringUtils.equals("0", businFlag)) {
             ScfRequest request = requestService.findRequestDetail(requestNo);
             billsId = request.getOrders();
-        }
-        else {
+        } else {
             billsId = enquiryService.findEnquiryByNo(requestNo).getOrders();
         }
 
@@ -207,19 +204,18 @@ public class WebService {
      */
     public List<Map<String, Object>> businAppAgree(String requestNo, String loanNo, String businFlag) {
         List<Map<String, Object>> billList = new ArrayList<Map<String, Object>>();
-        if (BetterStringUtils.isBlank(requestNo)) {
+        if (StringUtils.isBlank(requestNo)) {
             return billList;
         }
-        if (BetterStringUtils.isBlank(loanNo)) {
+        if (StringUtils.isBlank(loanNo)) {
             return billList;
         }
 
         String billsId = "";
-        if (BetterStringUtils.isBlank(businFlag) || BetterStringUtils.equals("0", businFlag)) {
+        if (StringUtils.isBlank(businFlag) || StringUtils.equals("0", businFlag)) {
             ScfRequest request = requestService.findRequestDetail(requestNo);
             billsId = request.getOrders();
-        }
-        else {
+        } else {
             billsId = enquiryService.findEnquiryByNo(requestNo).getOrders();
         }
 
@@ -266,16 +262,17 @@ public class WebService {
      * @param repaymentTime
      *            还款截止日期
      */
-    public int notice2Bytter(String requestNo, String loanNo, BigDecimal applicationMoney, String applayStatus, String closeReason, String fileUrl,
-            String cashRequestNo, BigDecimal discountMoney, BigDecimal paymentMoney, String paymentTime, BigDecimal rate, String repaymentTime) {
+    public int notice2Bytter(String requestNo, String loanNo, BigDecimal applicationMoney, String applayStatus,
+            String closeReason, String fileUrl, String cashRequestNo, BigDecimal discountMoney, BigDecimal paymentMoney,
+            String paymentTime, BigDecimal rate, String repaymentTime) {
 
-        if (BetterStringUtils.isBlank(requestNo)) {
+        if (StringUtils.isBlank(requestNo)) {
             return 0;
         }
-        if (BetterStringUtils.isBlank(loanNo)) {
+        if (StringUtils.isBlank(loanNo)) {
             return 0;
         }
-        if (BetterStringUtils.isBlank(applayStatus)) {
+        if (StringUtils.isBlank(applayStatus)) {
             return 0;
         }
 
@@ -289,13 +286,13 @@ public class WebService {
         if (null != applicationMoney) {
             anRequest.setBalance(applicationMoney);
         }
-        if (BetterStringUtils.isBlank(closeReason)) {
+        if (StringUtils.isBlank(closeReason)) {
             anRequest.setDescription(closeReason);
         }
-        if (BetterStringUtils.isBlank(fileUrl)) {
+        if (StringUtils.isBlank(fileUrl)) {
             // 这个没有呢
         }
-        if (BetterStringUtils.isBlank(cashRequestNo)) {
+        if (StringUtils.isBlank(cashRequestNo)) {
             // 这个是干嘛用的？
         }
         if (null != discountMoney) {
@@ -304,13 +301,13 @@ public class WebService {
         if (null != paymentMoney) {
             anRequest.setLoanBalance(paymentMoney);
         }
-        if (BetterStringUtils.isBlank(paymentTime)) {
+        if (StringUtils.isBlank(paymentTime)) {
             anRequest.setActualDate(paymentTime);
         }
         if (null != rate) {
             anRequest.setRatio(rate);
         }
-        if (BetterStringUtils.isBlank(repaymentTime)) {
+        if (StringUtils.isBlank(repaymentTime)) {
             anRequest.setEndDate(repaymentTime);
         }
 
@@ -360,16 +357,17 @@ public class WebService {
      * @param updateTime
      *            更新时间
      */
-    public int transNotice2Bytter(String requestNo, String loanNo, String confirmNo, String buyerName, String agreeName, String bankAccount,
-            String factorAddr, String factorPost, String factorLinkMan, String updateTime) {
-        //验证参数是否为空
-        String[] params = new String[] { requestNo, loanNo, confirmNo, buyerName, agreeName, bankAccount, factorAddr, factorPost, factorLinkMan, updateTime };
+    public int transNotice2Bytter(String requestNo, String loanNo, String confirmNo, String buyerName, String agreeName,
+            String bankAccount, String factorAddr, String factorPost, String factorLinkMan, String updateTime) {
+        // 验证参数是否为空
+        String[] params = new String[] { requestNo, loanNo, confirmNo, buyerName, agreeName, bankAccount, factorAddr,
+                factorPost, factorLinkMan, updateTime };
         for (int i = 0; i < params.length; i++) {
-            if(BetterStringUtils.isBlank(params[i])){
+            if (StringUtils.isBlank(params[i])) {
                 return 0;
             }
         }
-        
+
         try {
             ScfRequest request = requestService.findRequestDetail(requestNo);
             ScfRequestNotice noticeRequest = requestService.getNotice(request);
@@ -382,22 +380,22 @@ public class WebService {
             noticeRequest.setFactorPost(factorPost);
             noticeRequest.setFactorLinkMan(factorLinkMan);
             noticeRequest.setNoticeTime(updateTime);
-            
-            String agreeNo = requestNoticeService.updateTransNotice(noticeRequest, request.getCustName(),request.getApprovedBalance());
-            boolean isOktransCredit = agreementService.transCredit(requestService.getCreditList(request),agreeNo);
-            if(agreeNo!=null && isOktransCredit){
+
+            String agreeNo = requestNoticeService.updateTransNotice(noticeRequest, request.getCustName(),
+                    request.getApprovedBalance());
+            boolean isOktransCredit = agreementService.transCredit(requestService.getCreditList(request), agreeNo);
+            if (agreeNo != null && isOktransCredit) {
                 // 添加转让明细（因为在转让申请时就添加了 转让明细，如果核心企业不同意，那明细需要删除，但目前没有做删除这步）
                 return 1;
-            }else{
+            } else {
                 return 0;
             }
 
-           
         }
         catch (Exception e) {
             return 0;
         }
-       
+
     }
 
 }

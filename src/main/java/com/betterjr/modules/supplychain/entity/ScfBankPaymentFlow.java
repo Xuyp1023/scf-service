@@ -342,25 +342,39 @@ public class ScfBankPaymentFlow implements ScfClientDataParentFace {
         }
         final ScfBankPaymentFlow other = (ScfBankPaymentFlow) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-                && (this.getSupplier() == null ? other.getSupplier() == null : this.getSupplier().equals(other.getSupplier()))
-                && (this.getBuyerNo() == null ? other.getBuyerNo() == null : this.getBuyerNo().equals(other.getBuyerNo()))
-                && (this.getSuppBankAccount() == null ? other.getSuppBankAccount() == null : this.getSuppBankAccount().equals(
-                        other.getSuppBankAccount()))
-                && (this.getSuppBankName() == null ? other.getSuppBankName() == null : this.getSuppBankName().equals(other.getSuppBankName()))
+                && (this.getSupplier() == null ? other.getSupplier() == null
+                        : this.getSupplier().equals(other.getSupplier()))
+                && (this.getBuyerNo() == null ? other.getBuyerNo() == null
+                        : this.getBuyerNo().equals(other.getBuyerNo()))
+                && (this.getSuppBankAccount() == null ? other.getSuppBankAccount() == null
+                        : this.getSuppBankAccount().equals(other.getSuppBankAccount()))
+                && (this.getSuppBankName() == null ? other.getSuppBankName() == null
+                        : this.getSuppBankName().equals(other.getSuppBankName()))
                 && (this.getBuyer() == null ? other.getBuyer() == null : this.getBuyer().equals(other.getBuyer()))
-                && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
-                && (this.getBuyerBankAccount() == null ? other.getBuyerBankAccount() == null : this.getBuyerBankAccount().equals(
-                        other.getBuyerBankAccount()))
-                && (this.getBuyerBankName() == null ? other.getBuyerBankName() == null : this.getBuyerBankName().equals(other.getBuyerBankName()))
-                && (this.getBtInnerId() == null ? other.getBtInnerId() == null : this.getBtInnerId().equals(other.getBtInnerId()))
-                && (this.getBalance() == null ? other.getBalance() == null : this.getBalance().equals(other.getBalance()))
-                && (this.getRequestDate() == null ? other.getRequestDate() == null : this.getRequestDate().equals(other.getRequestDate()))
-                && (this.getRequestTime() == null ? other.getRequestTime() == null : this.getRequestTime().equals(other.getRequestTime()))
-                && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()))
-                && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-                && (this.getRequestNo() == null ? other.getRequestNo() == null : this.getRequestNo().equals(other.getRequestNo()))
-                && (this.getCoreOperOrg() == null ? other.getCoreOperOrg() == null : this.getCoreOperOrg().equals(other.getCoreOperOrg()))
-                && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()));
+                && (this.getSupplierNo() == null ? other.getSupplierNo() == null
+                        : this.getSupplierNo().equals(other.getSupplierNo()))
+                && (this.getBuyerBankAccount() == null ? other.getBuyerBankAccount() == null
+                        : this.getBuyerBankAccount().equals(other.getBuyerBankAccount()))
+                && (this.getBuyerBankName() == null ? other.getBuyerBankName() == null
+                        : this.getBuyerBankName().equals(other.getBuyerBankName()))
+                && (this.getBtInnerId() == null ? other.getBtInnerId() == null
+                        : this.getBtInnerId().equals(other.getBtInnerId()))
+                && (this.getBalance() == null ? other.getBalance() == null
+                        : this.getBalance().equals(other.getBalance()))
+                && (this.getRequestDate() == null ? other.getRequestDate() == null
+                        : this.getRequestDate().equals(other.getRequestDate()))
+                && (this.getRequestTime() == null ? other.getRequestTime() == null
+                        : this.getRequestTime().equals(other.getRequestTime()))
+                && (this.getDescription() == null ? other.getDescription() == null
+                        : this.getDescription().equals(other.getDescription()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getRequestNo() == null ? other.getRequestNo() == null
+                        : this.getRequestNo().equals(other.getRequestNo()))
+                && (this.getCoreOperOrg() == null ? other.getCoreOperOrg() == null
+                        : this.getCoreOperOrg().equals(other.getCoreOperOrg()))
+                && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null
+                        : this.getCoreCustNo().equals(other.getCoreCustNo()));
     }
 
     @Override
@@ -440,8 +454,7 @@ public class ScfBankPaymentFlow implements ScfClientDataParentFace {
     }
 
     @Override
-    public void modifytValue() {
-    }
+    public void modifytValue() {}
 
     @Override
     public String findBankAccountName() {

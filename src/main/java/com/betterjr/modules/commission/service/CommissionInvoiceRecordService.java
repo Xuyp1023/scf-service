@@ -22,7 +22,8 @@ import com.betterjr.modules.commission.entity.CommissionInvoiceRecord;
 import com.betterjr.modules.commission.entity.CommissionMonthlyStatement;
 
 @Service
-public class CommissionInvoiceRecordService extends BaseService<CommissionInvoiceRecordMapper, CommissionInvoiceRecord> {
+public class CommissionInvoiceRecordService
+        extends BaseService<CommissionInvoiceRecordMapper, CommissionInvoiceRecord> {
 
     @Autowired
     private CommissionMonthlyStatementService monthlyService;
@@ -38,7 +39,8 @@ public class CommissionInvoiceRecordService extends BaseService<CommissionInvoic
      * @return
      * @throws Exception
      */
-    public Page<CommissionMonthlyStatement> queryCanInvoiceMonthlyList(Map<String, Object> anParam, int anPageNum, int anPageSize) {
+    public Page<CommissionMonthlyStatement> queryCanInvoiceMonthlyList(Map<String, Object> anParam, int anPageNum,
+            int anPageSize) {
 
         BTAssert.notNull(anParam, "查询月账单失败！条件为空");
         // 去除空白字符串的查询条件
@@ -46,11 +48,11 @@ public class CommissionInvoiceRecordService extends BaseService<CommissionInvoic
         BTAssert.notNull(anParam.get("coreCustNo"), "查询月账单失败！条件为空");
         BTAssert.notNull(anParam.get("invoiceType"), "查询月账单失败！条件为空");
         // 指定查询普发票还是专用发票
-        if (CommissionConstantCollentions.COMMISSION_INVOICE_CUSTINFO_CUSTTYPE_PLAIN.equals(anParam.get("invoiceType").toString())) {
+        if (CommissionConstantCollentions.COMMISSION_INVOICE_CUSTINFO_CUSTTYPE_PLAIN
+                .equals(anParam.get("invoiceType").toString())) {
 
             anParam.put("plainInvoiceFlag", "0");
-        }
-        else {
+        } else {
 
             anParam.put("specialInvoiceFlag", "0");
         }
@@ -58,7 +60,8 @@ public class CommissionInvoiceRecordService extends BaseService<CommissionInvoic
         anParam.put("ownCustNo", anParam.get("coreCustNo"));
         anParam.remove("coreCustNo");
         anParam.remove("invoiceType");
-        Page<CommissionMonthlyStatement> page = monthlyService.selectPropertyByPage(anParam, anPageNum, anPageSize, true, "id desc");
+        Page<CommissionMonthlyStatement> page = monthlyService.selectPropertyByPage(anParam, anPageNum, anPageSize,
+                true, "id desc");
 
         return page;
 
@@ -87,17 +90,18 @@ public class CommissionInvoiceRecordService extends BaseService<CommissionInvoic
             }
 
             // 封装总金额
-            if (anInvoice.getInvoiceType().equals(CommissionConstantCollentions.COMMISSION_INVOICE_CUSTINFO_CUSTTYPE_PLAIN)) {
+            if (anInvoice.getInvoiceType()
+                    .equals(CommissionConstantCollentions.COMMISSION_INVOICE_CUSTINFO_CUSTTYPE_PLAIN)) {
                 // 普通发票的处理 发票总金额=月账单的付款成功金额
                 anInvoice.setBalance(MathExtend.add(anInvoice.getBalance(), monthly.getPaySuccessBalance()));
 
-            }
-            else if (anInvoice.getInvoiceType().equals(CommissionConstantCollentions.COMMISSION_INVOICE_CUSTINFO_CUSTTYPE_SPECIAL)) {
+            } else if (anInvoice.getInvoiceType()
+                    .equals(CommissionConstantCollentions.COMMISSION_INVOICE_CUSTINFO_CUSTTYPE_SPECIAL)) {
                 // 专用发票的处理 发票总金额=手续费+利息
-                anInvoice.setBalance(MathExtend.add(anInvoice.getBalance(), MathExtend.add(monthly.getInterest(), monthly.getTaxBalance())));
+                anInvoice.setBalance(MathExtend.add(anInvoice.getBalance(),
+                        MathExtend.add(monthly.getInterest(), monthly.getTaxBalance())));
 
-            }
-            else {
+            } else {
 
                 BTAssert.notNull(null, "暂时只支持普通发票和专用发票，创建失败");
             }
@@ -107,8 +111,7 @@ public class CommissionInvoiceRecordService extends BaseService<CommissionInvoic
 
                 anInvoice.setTaxRate(monthly.getTaxRate());
 
-            }
-            else {
+            } else {
 
                 if (anInvoice.getTaxRate().compareTo(monthly.getTaxRate()) != 0) {
                     BTAssert.notNull(null, "选择的账单税率不一致，请重新选择");
@@ -140,8 +143,7 @@ public class CommissionInvoiceRecordService extends BaseService<CommissionInvoic
         if (record.getInvoiceType().equals(CommissionConstantCollentions.COMMISSION_INVOICE_CUSTINFO_CUSTTYPE_PLAIN)) {
 
             record.setBalance(anMonthly.getPaySuccessBalance());
-        }
-        else {
+        } else {
 
             record.setBalance(MathExtend.add(anMonthly.getInterest(), anMonthly.getTaxBalance()));
         }
@@ -172,12 +174,12 @@ public class CommissionInvoiceRecordService extends BaseService<CommissionInvoic
                     }
                 }
 
-            }
-            else {
+            } else {
 
                 try {
                     Long.parseLong(anMonthlyIds);
-                    CommissionMonthlyStatement monthly = monthlyService.selectByPrimaryKey(Long.parseLong(anMonthlyIds));
+                    CommissionMonthlyStatement monthly = monthlyService
+                            .selectByPrimaryKey(Long.parseLong(anMonthlyIds));
                     recordList.add(monthly);
                 }
                 catch (Exception e) {
@@ -216,8 +218,7 @@ public class CommissionInvoiceRecordService extends BaseService<CommissionInvoic
                     BTAssert.notNull(null, "提交发票失败！当前发票对应的月账单已经生成了发票");
                 }
                 monthly.setPlainInvoiceFlag("1");
-            }
-            else {
+            } else {
 
                 if ("1".equals(monthly.getSpecialInvoiceFlag())) {
                     BTAssert.notNull(null, "提交发票失败！当前发票对应的月账单已经生成了发票");
@@ -244,11 +245,11 @@ public class CommissionInvoiceRecordService extends BaseService<CommissionInvoic
         for (CommissionInvoiceRecord record : list) {
 
             CommissionMonthlyStatement monthly = monthlyService.selectByPrimaryKey(record.getMonthlyId());
-            if (record.getInvoiceType().equals(CommissionConstantCollentions.COMMISSION_INVOICE_CUSTINFO_CUSTTYPE_PLAIN)) {
+            if (record.getInvoiceType()
+                    .equals(CommissionConstantCollentions.COMMISSION_INVOICE_CUSTINFO_CUSTTYPE_PLAIN)) {
 
                 monthly.setPlainInvoiceFlag("0");
-            }
-            else {
+            } else {
 
                 monthly.setSpecialInvoiceFlag("0");
             }

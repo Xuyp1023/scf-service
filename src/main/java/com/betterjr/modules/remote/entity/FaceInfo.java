@@ -12,116 +12,116 @@ public class FaceInfo implements BetterjrEntity {
     /**
      * 接口
      */
-    @Column(name = "C_FACE",  columnDefinition="VARCHAR" )
-    @MetaData( value="接口", comments = "接口")
+    @Column(name = "C_FACE", columnDefinition = "VARCHAR")
+    @MetaData(value = "接口", comments = "接口")
     private String faceNo;
 
     /**
      * 文件组代码
      */
-    @Column(name = "C_GROUP",  columnDefinition="VARCHAR" )
-    @MetaData( value="文件组代码", comments = "文件组代码")
+    @Column(name = "C_GROUP", columnDefinition = "VARCHAR")
+    @MetaData(value = "文件组代码", comments = "文件组代码")
     private String faceGroup;
 
     /**
      * 文件组描述
      */
-    @Column(name = "C_GROUPDSC",  columnDefinition="VARCHAR" )
-    @MetaData( value="文件组描述", comments = "文件组描述")
+    @Column(name = "C_GROUPDSC", columnDefinition = "VARCHAR")
+    @MetaData(value = "文件组描述", comments = "文件组描述")
     private String groupDesc;
 
     /**
      * 文件格式类型
      */
-    @Column(name = "C_FMTTYPE",  columnDefinition="VARCHAR" )
-    @MetaData( value="文件格式类型", comments = "文件格式类型")
+    @Column(name = "C_FMTTYPE", columnDefinition = "VARCHAR")
+    @MetaData(value = "文件格式类型", comments = "文件格式类型")
     private String formatType;
 
     /**
      * 文件格式类型描述
      */
-    @Column(name = "C_FMTTYPEDSC",  columnDefinition="VARCHAR" )
-    @MetaData( value="文件格式类型描述", comments = "文件格式类型描述")
+    @Column(name = "C_FMTTYPEDSC", columnDefinition = "VARCHAR")
+    @MetaData(value = "文件格式类型描述", comments = "文件格式类型描述")
     private String formatDesc;
 
     /**
      * 文件类型
      */
-    @Column(name = "C_FILETYPE",  columnDefinition="VARCHAR" )
-    @MetaData( value="文件类型", comments = "文件类型")
+    @Column(name = "C_FILETYPE", columnDefinition = "VARCHAR")
+    @MetaData(value = "文件类型", comments = "文件类型")
     private String fileType;
 
     /**
      * 文件类型描述
      */
-    @Column(name = "C_FILETYPEDSC",  columnDefinition="VARCHAR" )
-    @MetaData( value="文件类型描述", comments = "文件类型描述")
+    @Column(name = "C_FILETYPEDSC", columnDefinition = "VARCHAR")
+    @MetaData(value = "文件类型描述", comments = "文件类型描述")
     private String fileDesc;
 
     /**
      * 文件名称
      */
-    @Column(name = "C_FILENAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="文件名称", comments = "文件名称")
+    @Column(name = "C_FILENAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "文件名称", comments = "文件名称")
     private String fileName;
 
     /**
      * 指定的IO表
      */
-    @Column(name = "C_TABLENAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="指定的IO表", comments = "指定的IO表")
+    @Column(name = "C_TABLENAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "指定的IO表", comments = "指定的IO表")
     private String tableName;
 
     /**
      * 入出SQL条件
      */
-    @Column(name = "C_SQLWHERE",  columnDefinition="VARCHAR" )
-    @MetaData( value="入出SQL条件", comments = "入出SQL条件")
+    @Column(name = "C_SQLWHERE", columnDefinition = "VARCHAR")
+    @MetaData(value = "入出SQL条件", comments = "入出SQL条件")
     private String sqlWhere;
 
     /**
      * 数据项读写方向0转出，1转入，2转入转出相互映
      */
-    @Column(name = "C_IO",  columnDefinition="VARCHAR" )
-    @MetaData( value="数据项读写方向0转出", comments = "数据项读写方向0转出，1转入，2转入转出相互映")
+    @Column(name = "C_IO", columnDefinition = "VARCHAR")
+    @MetaData(value = "数据项读写方向0转出", comments = "数据项读写方向0转出，1转入，2转入转出相互映")
     private String direction;
 
     /**
      * 文件处理日期变量
      */
-    @Column(name = "C_DEFDATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="文件处理日期变量", comments = "文件处理日期变量")
+    @Column(name = "C_DEFDATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "文件处理日期变量", comments = "文件处理日期变量")
     private String defValue;
 
     /**
      * 导入数据涉及更新的表
      */
-    @Column(name = "C_TABLEUPDATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="导入数据涉及更新的表", comments = "导入数据涉及更新的表")
+    @Column(name = "C_TABLEUPDATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "导入数据涉及更新的表", comments = "导入数据涉及更新的表")
     private String tableUpdate;
 
     /**
      * 异常状态模板；即接口返回码字典
      */
-    @Column(name = "C_ERR_MODE",  columnDefinition="VARCHAR" )
-    @MetaData( value="异常状态模板", comments = "异常状态模板；即接口返回码字典")
+    @Column(name = "C_ERR_MODE", columnDefinition = "VARCHAR")
+    @MetaData(value = "异常状态模板", comments = "异常状态模板；即接口返回码字典")
     private String errCodeMode;
 
     /**
      * 临时数据预处理类
      */
-    @Column(name = "C_PREPARE",  columnDefinition="VARCHAR" )
-    @MetaData( value="临时数据预处理类", comments = "临时数据预处理类")
+    @Column(name = "C_PREPARE", columnDefinition = "VARCHAR")
+    @MetaData(value = "临时数据预处理类", comments = "临时数据预处理类")
     private String workPrepare;
 
     /**
      * 数据项顺序号
      */
-    @Column(name = "N_ORDER",  columnDefinition="INTEGER" )
-    @MetaData( value="数据项顺序号", comments = "数据项顺序号")
-    @OrderBy("ASC") 
+    @Column(name = "N_ORDER", columnDefinition = "INTEGER")
+    @MetaData(value = "数据项顺序号", comments = "数据项顺序号")
+    @OrderBy("ASC")
     private Integer fieldOrder;
-    
+
     private static final long serialVersionUID = 1440666748879L;
 
     public String getFaceNo() {
@@ -291,21 +291,36 @@ public class FaceInfo implements BetterjrEntity {
         }
         FaceInfo other = (FaceInfo) that;
         return (this.getFaceNo() == null ? other.getFaceNo() == null : this.getFaceNo().equals(other.getFaceNo()))
-            && (this.getFaceGroup() == null ? other.getFaceGroup() == null : this.getFaceGroup().equals(other.getFaceGroup()))
-            && (this.getGroupDesc() == null ? other.getGroupDesc() == null : this.getGroupDesc().equals(other.getGroupDesc()))
-            && (this.getFormatType() == null ? other.getFormatType() == null : this.getFormatType().equals(other.getFormatType()))
-            && (this.getFormatDesc() == null ? other.getFormatDesc() == null : this.getFormatDesc().equals(other.getFormatDesc()))
-            && (this.getFileType() == null ? other.getFileType() == null : this.getFileType().equals(other.getFileType()))
-            && (this.getFileDesc() == null ? other.getFileDesc() == null : this.getFileDesc().equals(other.getFileDesc()))
-            && (this.getFileName() == null ? other.getFileName() == null : this.getFileName().equals(other.getFileName()))
-            && (this.getTableName() == null ? other.getTableName() == null : this.getTableName().equals(other.getTableName()))
-            && (this.getSqlWhere() == null ? other.getSqlWhere() == null : this.getSqlWhere().equals(other.getSqlWhere()))
-            && (this.getDirection() == null ? other.getDirection() == null : this.getDirection().equals(other.getDirection()))
-            && (this.getDefValue() == null ? other.getDefValue() == null : this.getDefValue().equals(other.getDefValue()))
-            && (this.getTableUpdate() == null ? other.getTableUpdate() == null : this.getTableUpdate().equals(other.getTableUpdate()))
-            && (this.getErrCodeMode() == null ? other.getErrCodeMode() == null : this.getErrCodeMode().equals(other.getErrCodeMode()))
-            && (this.getFieldOrder() == null ? other.getFieldOrder() == null : this.getFieldOrder().equals(other.getFieldOrder()))
-            && (this.getWorkPrepare() == null ? other.getWorkPrepare() == null : this.getWorkPrepare().equals(other.getWorkPrepare()));
+                && (this.getFaceGroup() == null ? other.getFaceGroup() == null
+                        : this.getFaceGroup().equals(other.getFaceGroup()))
+                && (this.getGroupDesc() == null ? other.getGroupDesc() == null
+                        : this.getGroupDesc().equals(other.getGroupDesc()))
+                && (this.getFormatType() == null ? other.getFormatType() == null
+                        : this.getFormatType().equals(other.getFormatType()))
+                && (this.getFormatDesc() == null ? other.getFormatDesc() == null
+                        : this.getFormatDesc().equals(other.getFormatDesc()))
+                && (this.getFileType() == null ? other.getFileType() == null
+                        : this.getFileType().equals(other.getFileType()))
+                && (this.getFileDesc() == null ? other.getFileDesc() == null
+                        : this.getFileDesc().equals(other.getFileDesc()))
+                && (this.getFileName() == null ? other.getFileName() == null
+                        : this.getFileName().equals(other.getFileName()))
+                && (this.getTableName() == null ? other.getTableName() == null
+                        : this.getTableName().equals(other.getTableName()))
+                && (this.getSqlWhere() == null ? other.getSqlWhere() == null
+                        : this.getSqlWhere().equals(other.getSqlWhere()))
+                && (this.getDirection() == null ? other.getDirection() == null
+                        : this.getDirection().equals(other.getDirection()))
+                && (this.getDefValue() == null ? other.getDefValue() == null
+                        : this.getDefValue().equals(other.getDefValue()))
+                && (this.getTableUpdate() == null ? other.getTableUpdate() == null
+                        : this.getTableUpdate().equals(other.getTableUpdate()))
+                && (this.getErrCodeMode() == null ? other.getErrCodeMode() == null
+                        : this.getErrCodeMode().equals(other.getErrCodeMode()))
+                && (this.getFieldOrder() == null ? other.getFieldOrder() == null
+                        : this.getFieldOrder().equals(other.getFieldOrder()))
+                && (this.getWorkPrepare() == null ? other.getWorkPrepare() == null
+                        : this.getWorkPrepare().equals(other.getWorkPrepare()));
     }
 
     @Override
@@ -328,6 +343,6 @@ public class FaceInfo implements BetterjrEntity {
         result = prime * result + ((getErrCodeMode() == null) ? 0 : getErrCodeMode().hashCode());
         result = prime * result + ((getFieldOrder() == null) ? 0 : getFieldOrder().hashCode());
         result = prime * result + ((getWorkPrepare() == null) ? 0 : getWorkPrepare().hashCode());
-       return result;
+        return result;
     }
 }

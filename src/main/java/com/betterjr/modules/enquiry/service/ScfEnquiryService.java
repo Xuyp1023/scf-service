@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -80,7 +81,7 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
         }
         return page;
     }
-    
+
     /**
      * 查询询价列表
      * 
@@ -90,11 +91,12 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
      * @param anPageSize
      * @return
      */
-    public Page<ScfEnquiry> querySingleOrderEnquiryList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfEnquiry> querySingleOrderEnquiryList(Map<String, Object> anMap, int anFlag, int anPageNum,
+            int anPageSize) {
         Page<ScfEnquiry> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
-        for (ScfEnquiry enquiry :page) {
+        for (ScfEnquiry enquiry : page) {
             this.fillOrder(enquiry, 2);
-            //设置报价状态
+            // 设置报价状态
             this.fillBusinStatus(enquiry);
         }
         return page;
@@ -108,42 +110,42 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
     private void fillOrder(ScfEnquiry enquiry, int type) {
         List idList = BetterStringUtils.splitTrim(enquiry.getOrders());
         enquiry.setCustName(custAccountService.queryCustName(enquiry.getCustNo()));
-        
-        if(1 == type){
-            if(BetterStringUtils.equals("1", enquiry.getRequestType())){
+
+        if (1 == type) {
+            if (StringUtils.equals("1", enquiry.getRequestType())) {
                 enquiry.setOrder(scfOrderService.selectByListProperty("id", idList));
-            }else if(BetterStringUtils.equals("2", enquiry.getRequestType())){
+            } else if (StringUtils.equals("2", enquiry.getRequestType())) {
                 enquiry.setOrder(billService.selectByListProperty("id", idList));
-            }else{
+            } else {
                 enquiry.setOrder(receivableService.selectByListProperty("id", idList));
             }
-            return ;
+            return;
         }
-        
-        if(BetterStringUtils.equals("1", enquiry.getRequestType())){
+
+        if (StringUtils.equals("1", enquiry.getRequestType())) {
             enquiry.setOrder(Collections3.getFirst(scfOrderService.selectByListProperty("id", idList)));
-        }else if(BetterStringUtils.equals("2", enquiry.getRequestType())){
+        } else if (StringUtils.equals("2", enquiry.getRequestType())) {
             enquiry.setOrder(Collections3.getFirst(billService.selectByListProperty("id", idList)));
-        }else{
+        } else {
             enquiry.setOrder(Collections3.getFirst(receivableService.selectByListProperty("id", idList)));
         }
     }
 
     private void fillBusinStatus(ScfEnquiry enquiry) {
-        //状态：-2：已融资，-1：放弃，0：未报价，1：已报价
+        // 状态：-2：已融资，-1：放弃，0：未报价，1：已报价
         switch (enquiry.getBusinStatus()) {
-            case "1":
-                enquiry.setBusinStatusText(enquiry.getOfferCount() + "个报价");
-                break;
-            case "0":
-                enquiry.setBusinStatusText("未报价");
-                break;
-             case "-1":
-                 enquiry.setBusinStatusText("已放弃");
-                break;
-            default:
-                enquiry.setBusinStatusText("已融资");
-                break;
+        case "1":
+            enquiry.setBusinStatusText(enquiry.getOfferCount() + "个报价");
+            break;
+        case "0":
+            enquiry.setBusinStatusText("未报价");
+            break;
+        case "-1":
+            enquiry.setBusinStatusText("已放弃");
+            break;
+        default:
+            enquiry.setBusinStatusText("已融资");
+            break;
         }
     }
 
@@ -158,7 +160,7 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
         fillOrder(enquiry, 1);
         return enquiry;
     }
-    
+
     /**
      * 查询询价详情
      * 
@@ -171,7 +173,7 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
         this.fillBusinStatus(enquiry);
         return enquiry;
     }
-    
+
     /**
      * 查询询价详情
      * 
@@ -183,9 +185,9 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
         anPropValue.put("enquiryNo", anEnquiryNo);
         List<ScfEnquiry> list = this.selectByClassProperty(ScfEnquiry.class, anPropValue);
         ScfEnquiry enquiry = Collections3.getFirst(list);
-        if(null != enquiry){
+        if (null != enquiry) {
             enquiry.setCustName(custAccountService.queryCustName(enquiry.getCustNo()));
-            if(false == BetterStringUtils.isBlank(enquiry.getOrders())){
+            if (false == StringUtils.isBlank(enquiry.getOrders())) {
                 enquiry.setOrder(billService.findAcceptBill(Long.parseLong(enquiry.getOrders().split(",")[0])));
             }
         }
@@ -202,17 +204,18 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
         ScfEnquiry enquiry = (ScfEnquiry) RuleServiceDubboFilterInvoker.getInputObj();
         BTAssert.notNull(enquiry, "修改询价 失败 saveModifyEnquiry service failed Enquiry =null");
         enquiry.setId(anId);
-        
-        //放弃融资
-        if(BetterStringUtils.isNotBlank(enquiry.getBusinStatus()) && BetterStringUtils.equals("-1", enquiry.getBusinStatus())){
+
+        // 放弃融资
+        if (StringUtils.isNotBlank(enquiry.getBusinStatus())
+                && StringUtils.equals("-1", enquiry.getBusinStatus())) {
             return saveUpdate(enquiry);
         }
-        
+
         // 原询价
         ScfEnquiry sourceEnquiry = this.selectByPrimaryKey(enquiry.getId());
 
         // 如果原意向企业ids与修改后的值不同则要修改
-        if (BetterStringUtils.equals(sourceEnquiry.getFactors(), enquiry.getFactors()) == false) {
+        if (StringUtils.equals(sourceEnquiry.getFactors(), enquiry.getFactors()) == false) {
             updateObjectRelation(enquiry, sourceEnquiry);
         }
 
@@ -280,7 +283,8 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
      * @param anFactorNo
      * @return
      */
-    public Page<ScfEnquiry> queryEnquiryByfactorNo(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfEnquiry> queryEnquiryByfactorNo(Map<String, Object> anMap, int anFlag, int anPageNum,
+            int anPageSize) {
         // 根据保理公司编号获取询价关系
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("factorNo", anMap.get("factorNo"));
@@ -307,7 +311,7 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
             // 查询我的报价
             Map<String, Object> qyOfferMap = new HashMap<String, Object>();
             qyOfferMap.put("factorNo", anMap.get("factorNo"));
-            qyOfferMap.put("businStatus", new String[]{"1", "3"});
+            qyOfferMap.put("businStatus", new String[] { "1", "3" });
             qyOfferMap.put("enquiryNo", scfEnquiry.getEnquiryNo());
             List<ScfOffer> offerList = offerService.selectByClassProperty(ScfOffer.class, qyOfferMap);
             scfEnquiry.setOfferList(offerList);
@@ -316,5 +320,5 @@ public class ScfEnquiryService extends BaseService<ScfEnquiryMapper, ScfEnquiry>
 
         return enquiryList;
     }
-    
+
 }

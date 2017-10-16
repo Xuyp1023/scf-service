@@ -86,8 +86,7 @@ public class RemoteProxyService implements InvocationHandler {
                 list.add(inputHelper.readObject(func.getWorkReturnClass(), func.getPropMap()));
             }
             resultInfo = new RemoteResultInfo(mapData, list, deSerialize.getStatus(), deSerialize.getReturnMsg());
-        }
-        else {
+        } else {
             resultInfo = new RemoteResultInfo(mapData, mapData, deSerialize.getStatus(), deSerialize.getReturnMsg());
         }
 
@@ -107,18 +106,19 @@ public class RemoteProxyService implements InvocationHandler {
         for (int i = 0; i < anArgs.length; i++) {
             Parameter pp = params[i];
             map.put(pp.getName(), anArgs[i]);
-            if ((anArgs[i] instanceof Map || anArgs[i] instanceof List || anArgs[i] instanceof BaseRemoteEntity) == false) {
+            if ((anArgs[i] instanceof Map || anArgs[i] instanceof List
+                    || anArgs[i] instanceof BaseRemoteEntity) == false) {
                 useMap = true;
             }
         }
         if (useMap) {
             return new Object[] { map };
-        }
-        else {
+        } else {
             return anArgs;
         }
     }
 
+    @Override
     public Object invoke(Object anProxy, Method anMethod, Object[] anArgs) throws Throwable {
         String methodName = anMethod.getName();
         anArgs = prepareParam(anMethod, anArgs);
@@ -139,14 +139,11 @@ public class RemoteProxyService implements InvocationHandler {
             }
 
             return false;
-        }
-        else if (methodName.equals("hashCode") && params.length == 0) {
+        } else if (methodName.equals("hashCode") && params.length == 0) {
             return new Integer(this.hashCode());
-        }
-        else if (methodName.equals("getHessianType")) {
+        } else if (methodName.equals("getHessianType")) {
             return anProxy.getClass().getInterfaces()[0].getName();
-        }
-        else if (methodName.equals("toString") && params.length == 0) {
+        } else if (methodName.equals("toString") && params.length == 0) {
             return "RemoteProxyService ";
         }
         RemoteConnection conn = null;
@@ -159,7 +156,8 @@ public class RemoteProxyService implements InvocationHandler {
         return resultInfo;
     }
 
-    protected RemoteResultInfo afterProcess(RemoteResultInfo anResultInfo, RemoteConnection anConn, String anMethodName, Object[] anArgs) {
+    protected RemoteResultInfo afterProcess(RemoteResultInfo anResultInfo, RemoteConnection anConn, String anMethodName,
+            Object[] anArgs) {
 
         return anResultInfo;
     }
@@ -193,7 +191,8 @@ public class RemoteProxyService implements InvocationHandler {
     protected Map<String, Object> prepareSendMap(WorkFarFunction anFunc, Map<String, RemoteFieldInfo> anHeaderInfo,
             Map<String, RemoteFieldInfo> sendParams, RemoteConnection conn) {
         RemoteBaseSerializer xmlSerializer = anFunc.getRemoteSerializer();
-        xmlSerializer.init(anFunc, anHeaderInfo, sendParams, this.faceInfo.getConfig(), this.faceInfo.getKeyManager(), conn);
+        xmlSerializer.init(anFunc, anHeaderInfo, sendParams, this.faceInfo.getConfig(), this.faceInfo.getKeyManager(),
+                conn);
 
         return xmlSerializer.readResult();
     }
@@ -216,8 +215,7 @@ public class RemoteProxyService implements InvocationHandler {
     private static Class findReturnClass(Object anParam) {
         if (anParam instanceof Class) {
             return (Class) anParam;
-        }
-        else if (anParam instanceof ParameterizedType) {
+        } else if (anParam instanceof ParameterizedType) {
             ParameterizedType param = (ParameterizedType) anParam;
             Type tt = param.getRawType();
             if (tt instanceof Class && (Map.class.isAssignableFrom((Class) tt))) {
@@ -227,9 +225,8 @@ public class RemoteProxyService implements InvocationHandler {
             if (param.getActualTypeArguments().length > 0) {
                 Type txt = param.getActualTypeArguments()[0];
                 if (txt instanceof ParameterizedType) {
-                    return findReturnClass((ParameterizedType) txt);
-                }
-                else if (txt instanceof Class) {
+                    return findReturnClass(txt);
+                } else if (txt instanceof Class) {
                     return (Class) txt;
                 }
             }
@@ -271,8 +268,7 @@ public class RemoteProxyService implements InvocationHandler {
                     Collection dataList;
                     if (args[0] instanceof Collection) {
                         dataList = (Collection) args[0];
-                    }
-                    else {
+                    } else {
                         dataList = Collections3.arrayToList(args[0]);
                     }
                     List<Map> result = new ArrayList();
@@ -281,20 +277,18 @@ public class RemoteProxyService implements InvocationHandler {
                         result.add(outputHelper.outPutData(func, this.faceInfo.getMustItem() == Boolean.TRUE));
                     }
                     paramList = new HashMap();
-                    RemoteDataFieldInfo fieldInfo = new RemoteDataFieldInfo("listData", result, "Data", FaceDataStyle.DATA);
+                    RemoteDataFieldInfo fieldInfo = new RemoteDataFieldInfo("listData", result, "Data",
+                            FaceDataStyle.DATA);
                     paramList.put("listData", fieldInfo);
-                }
-                else {
+                } else {
                     outputHelper = new BetterjrBaseOutputHelper(args[0], converter);
                     paramList = outputHelper.outPutData(func, this.faceInfo.getMustItem() == Boolean.TRUE);
                 }
                 formParams = prepareSendMap(func, headMap, paramList, conn);
-            }
-            else {
+            } else {
                 if (args[0] instanceof Map) {
                     formParams = (Map) args[0];
-                }
-                else {
+                } else {
                     formParams = new LinkedHashMap();
                     formParams.put("data", args[0]);
                 }
@@ -335,10 +329,9 @@ public class RemoteProxyService implements InvocationHandler {
                 catch (InvocationTargetException e) {
                     Throwable cause = e.getCause();
                     if (cause != null && cause instanceof BytterWebServiceException) {
-                       // logger.error("WebServiceException ", cause);
+                        // logger.error("WebServiceException ", cause);
                         resultCode = ((BytterWebServiceException) cause).getErrorCode();
-                    }
-                    else {
+                    } else {
                         logger.error("QlExpress error ", e);
                         resultCode = WebServiceErrorCode.E9999;
                     }
@@ -347,8 +340,7 @@ public class RemoteProxyService implements InvocationHandler {
                     logger.error("QlExpress error ", e);
                     resultCode = WebServiceErrorCode.E9999;
                 }
-            }
-            else {
+            } else {
                 result = "";
                 resultCode = response.getErrorCode();
                 func = this.faceInfo.findFistFunction();
@@ -376,11 +368,10 @@ public class RemoteProxyService implements InvocationHandler {
         File file = FileUtils.getRealFile(path);
         if (file != null) {
             msg = signFileWithAbsoPath(file);
-        }
-        else {
+        } else {
             msg = "file document not exists!";
         }
-        
+
         return msg;
     }
 
@@ -390,12 +381,12 @@ public class RemoteProxyService implements InvocationHandler {
      * @return
      */
     public String signFileWithAbsoPath(File anFile) {
-        
+
         return SignHelper.signFile(anFile, faceInfo.getKeyManager().getPrivKey());
     }
-    
-    public void initFaceInfo(String face){
-        Map<String, WorkFarFaceInfo> mapFaceInfo=this.proxyFactory.getFarMapInfo();
-        this.faceInfo=mapFaceInfo.get(face);
+
+    public void initFaceInfo(String face) {
+        Map<String, WorkFarFaceInfo> mapFaceInfo = this.proxyFactory.getFarMapInfo();
+        this.faceInfo = mapFaceInfo.get(face);
     }
 }

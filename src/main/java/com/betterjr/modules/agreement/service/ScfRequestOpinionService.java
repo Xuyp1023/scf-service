@@ -57,14 +57,14 @@ public class ScfRequestOpinionService extends BaseService<ScfRequestOpinionMappe
      *            核心企业确认书信息
      * @return
      */
-    public boolean updateOpinionInfo(final ScfRequestOpinion anOpinion, final String anSupplier, final BigDecimal anBalance) {
+    public boolean updateOpinionInfo(final ScfRequestOpinion anOpinion, final String anSupplier,
+            final BigDecimal anBalance) {
         anOpinion.setAgreeName(anSupplier + "应收账款债权转让通知确认");
         final ScfRequestOpinion tmpOpinion = this.selectByPrimaryKey(anOpinion.getRequestNo());
         final ScfRequestNotice notice = scfRequestNoticeService.selectByPrimaryKey(anOpinion.getRequestNo());
         if (notice == null) {
             logger.error("updateOpinionInfo the requestNo : " + anOpinion.getRequestNo() + ", not find NoticeInfo");
-        }
-        else {
+        } else {
             anOpinion.setNoticeNo(notice.getNoticeNo());
         }
 
@@ -82,23 +82,23 @@ public class ScfRequestOpinionService extends BaseService<ScfRequestOpinionMappe
         boolean result = true;
         if (tmpOpinion == null) {
             this.insert(anOpinion);
-        }
-        else if ("0".equals(tmpOpinion.getOpinionStatus())) {
+        } else if ("0".equals(tmpOpinion.getOpinionStatus())) {
             this.updateByPrimaryKey(anOpinion);
-        }
-        else {
+        } else {
             logger.warn("updateOpinionInfo  the request " + anOpinion + ", has used!");
             result = false;
         }
 
         if (result) {
-            final ScfElecAgreement elecAgreement = ScfElecAgreement.createByOpinion(anOpinion.getAgreeName(), anOpinion.getConfirmNo(), anBalance);
+            final ScfElecAgreement elecAgreement = ScfElecAgreement.createByOpinion(anOpinion.getAgreeName(),
+                    anOpinion.getConfirmNo(), anBalance);
             elecAgreement.setSupplierNo(anOpinion.getSupplierNo());
             elecAgreement.setRequestNo(anOpinion.getRequestNo());
             elecAgreement.setBuyerNo(anOpinion.getBuyerNo());
             elecAgreement.setFactorNo(anOpinion.getFactorNo());
             elecAgreement.setSupplier(anSupplier);
-            elecAgreementService.addElecAgreementInfo(elecAgreement, "buyerConfirm", Arrays.asList(anOpinion.getBuyerNo()));
+            elecAgreementService.addElecAgreementInfo(elecAgreement, "buyerConfirm",
+                    Arrays.asList(anOpinion.getBuyerNo()));
             // , Long.parseLong(elecAgreement.getFactorNo())
         }
 

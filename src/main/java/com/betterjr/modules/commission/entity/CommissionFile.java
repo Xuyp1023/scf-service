@@ -462,15 +462,18 @@ public class CommissionFile implements BetterjrEntity {
 
     @Override
     public String toString() {
-        return "CommissionFile [id=" + this.id + ", refNo=" + this.refNo + ", batchNo=" + this.batchNo + ", digest=" + this.digest + ", signature="
-                + this.signature + ", fileId=" + this.fileId + ", downFileId=" + this.downFileId + ", fileName=" + this.fileName + ", importDate="
-                + this.importDate + ", importTime=" + this.importTime + ", custNo=" + this.custNo + ", custName=" + this.custName + ", operOrg="
-                + this.operOrg + ", payStatus=" + this.payStatus + ", businStatus=" + this.businStatus + ", resolveStatus=" + this.resolveStatus
-                + ", showMessage=" + this.showMessage + ", totalBlance=" + this.totalBlance + ", totalAmount=" + this.totalAmount + ", infoType="
-                + this.infoType + ", regOperId=" + this.regOperId + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate + ", regTime="
-                + this.regTime + ", modiOperId=" + this.modiOperId + ", modiOperName=" + this.modiOperName + ", modiDate=" + this.modiDate
-                + ", modiTime=" + this.modiTime + ", version=" + this.version + ", confirmStatus=" + this.confirmStatus + ", confirmDate="
-                + this.confirmDate + ", confirmTime=" + this.confirmTime + ", confirmMessage=" + this.confirmMessage + ", fileDownId="
+        return "CommissionFile [id=" + this.id + ", refNo=" + this.refNo + ", batchNo=" + this.batchNo + ", digest="
+                + this.digest + ", signature=" + this.signature + ", fileId=" + this.fileId + ", downFileId="
+                + this.downFileId + ", fileName=" + this.fileName + ", importDate=" + this.importDate + ", importTime="
+                + this.importTime + ", custNo=" + this.custNo + ", custName=" + this.custName + ", operOrg="
+                + this.operOrg + ", payStatus=" + this.payStatus + ", businStatus=" + this.businStatus
+                + ", resolveStatus=" + this.resolveStatus + ", showMessage=" + this.showMessage + ", totalBlance="
+                + this.totalBlance + ", totalAmount=" + this.totalAmount + ", infoType=" + this.infoType
+                + ", regOperId=" + this.regOperId + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate
+                + ", regTime=" + this.regTime + ", modiOperId=" + this.modiOperId + ", modiOperName="
+                + this.modiOperName + ", modiDate=" + this.modiDate + ", modiTime=" + this.modiTime + ", version="
+                + this.version + ", confirmStatus=" + this.confirmStatus + ", confirmDate=" + this.confirmDate
+                + ", confirmTime=" + this.confirmTime + ", confirmMessage=" + this.confirmMessage + ", fileDownId="
                 + this.fileDownId + ", auditOperId=" + this.auditOperId + ", auditOperName=" + this.auditOperName + "]";
     }
 
@@ -523,140 +526,106 @@ public class CommissionFile implements BetterjrEntity {
         CommissionFile other = (CommissionFile) obj;
         if (this.batchNo == null) {
             if (other.batchNo != null) return false;
-        }
-        else if (!this.batchNo.equals(other.batchNo)) return false;
+        } else if (!this.batchNo.equals(other.batchNo)) return false;
         if (this.businStatus == null) {
             if (other.businStatus != null) return false;
-        }
-        else if (!this.businStatus.equals(other.businStatus)) return false;
+        } else if (!this.businStatus.equals(other.businStatus)) return false;
         if (this.confirmDate == null) {
             if (other.confirmDate != null) return false;
-        }
-        else if (!this.confirmDate.equals(other.confirmDate)) return false;
+        } else if (!this.confirmDate.equals(other.confirmDate)) return false;
         if (this.confirmMessage == null) {
             if (other.confirmMessage != null) return false;
-        }
-        else if (!this.confirmMessage.equals(other.confirmMessage)) return false;
+        } else if (!this.confirmMessage.equals(other.confirmMessage)) return false;
         if (this.confirmStatus == null) {
             if (other.confirmStatus != null) return false;
-        }
-        else if (!this.confirmStatus.equals(other.confirmStatus)) return false;
+        } else if (!this.confirmStatus.equals(other.confirmStatus)) return false;
         if (this.confirmTime == null) {
             if (other.confirmTime != null) return false;
-        }
-        else if (!this.confirmTime.equals(other.confirmTime)) return false;
+        } else if (!this.confirmTime.equals(other.confirmTime)) return false;
         if (this.custName == null) {
             if (other.custName != null) return false;
-        }
-        else if (!this.custName.equals(other.custName)) return false;
+        } else if (!this.custName.equals(other.custName)) return false;
         if (this.custNo == null) {
             if (other.custNo != null) return false;
-        }
-        else if (!this.custNo.equals(other.custNo)) return false;
+        } else if (!this.custNo.equals(other.custNo)) return false;
         if (this.digest == null) {
             if (other.digest != null) return false;
-        }
-        else if (!this.digest.equals(other.digest)) return false;
+        } else if (!this.digest.equals(other.digest)) return false;
         if (this.downFileId == null) {
             if (other.downFileId != null) return false;
-        }
-        else if (!this.downFileId.equals(other.downFileId)) return false;
+        } else if (!this.downFileId.equals(other.downFileId)) return false;
         if (this.fileDownId == null) {
             if (other.fileDownId != null) return false;
-        }
-        else if (!this.fileDownId.equals(other.fileDownId)) return false;
+        } else if (!this.fileDownId.equals(other.fileDownId)) return false;
         if (this.fileId == null) {
             if (other.fileId != null) return false;
-        }
-        else if (!this.fileId.equals(other.fileId)) return false;
+        } else if (!this.fileId.equals(other.fileId)) return false;
         if (this.fileName == null) {
             if (other.fileName != null) return false;
-        }
-        else if (!this.fileName.equals(other.fileName)) return false;
+        } else if (!this.fileName.equals(other.fileName)) return false;
         if (this.id == null) {
             if (other.id != null) return false;
-        }
-        else if (!this.id.equals(other.id)) return false;
+        } else if (!this.id.equals(other.id)) return false;
         if (this.importDate == null) {
             if (other.importDate != null) return false;
-        }
-        else if (!this.importDate.equals(other.importDate)) return false;
+        } else if (!this.importDate.equals(other.importDate)) return false;
         if (this.importTime == null) {
             if (other.importTime != null) return false;
-        }
-        else if (!this.importTime.equals(other.importTime)) return false;
+        } else if (!this.importTime.equals(other.importTime)) return false;
         if (this.infoType == null) {
             if (other.infoType != null) return false;
-        }
-        else if (!this.infoType.equals(other.infoType)) return false;
+        } else if (!this.infoType.equals(other.infoType)) return false;
         if (this.modiDate == null) {
             if (other.modiDate != null) return false;
-        }
-        else if (!this.modiDate.equals(other.modiDate)) return false;
+        } else if (!this.modiDate.equals(other.modiDate)) return false;
         if (this.modiOperId == null) {
             if (other.modiOperId != null) return false;
-        }
-        else if (!this.modiOperId.equals(other.modiOperId)) return false;
+        } else if (!this.modiOperId.equals(other.modiOperId)) return false;
         if (this.modiOperName == null) {
             if (other.modiOperName != null) return false;
-        }
-        else if (!this.modiOperName.equals(other.modiOperName)) return false;
+        } else if (!this.modiOperName.equals(other.modiOperName)) return false;
         if (this.modiTime == null) {
             if (other.modiTime != null) return false;
-        }
-        else if (!this.modiTime.equals(other.modiTime)) return false;
+        } else if (!this.modiTime.equals(other.modiTime)) return false;
         if (this.operOrg == null) {
             if (other.operOrg != null) return false;
-        }
-        else if (!this.operOrg.equals(other.operOrg)) return false;
+        } else if (!this.operOrg.equals(other.operOrg)) return false;
         if (this.payStatus == null) {
             if (other.payStatus != null) return false;
-        }
-        else if (!this.payStatus.equals(other.payStatus)) return false;
+        } else if (!this.payStatus.equals(other.payStatus)) return false;
         if (this.refNo == null) {
             if (other.refNo != null) return false;
-        }
-        else if (!this.refNo.equals(other.refNo)) return false;
+        } else if (!this.refNo.equals(other.refNo)) return false;
         if (this.regDate == null) {
             if (other.regDate != null) return false;
-        }
-        else if (!this.regDate.equals(other.regDate)) return false;
+        } else if (!this.regDate.equals(other.regDate)) return false;
         if (this.regOperId == null) {
             if (other.regOperId != null) return false;
-        }
-        else if (!this.regOperId.equals(other.regOperId)) return false;
+        } else if (!this.regOperId.equals(other.regOperId)) return false;
         if (this.regOperName == null) {
             if (other.regOperName != null) return false;
-        }
-        else if (!this.regOperName.equals(other.regOperName)) return false;
+        } else if (!this.regOperName.equals(other.regOperName)) return false;
         if (this.regTime == null) {
             if (other.regTime != null) return false;
-        }
-        else if (!this.regTime.equals(other.regTime)) return false;
+        } else if (!this.regTime.equals(other.regTime)) return false;
         if (this.resolveStatus == null) {
             if (other.resolveStatus != null) return false;
-        }
-        else if (!this.resolveStatus.equals(other.resolveStatus)) return false;
+        } else if (!this.resolveStatus.equals(other.resolveStatus)) return false;
         if (this.showMessage == null) {
             if (other.showMessage != null) return false;
-        }
-        else if (!this.showMessage.equals(other.showMessage)) return false;
+        } else if (!this.showMessage.equals(other.showMessage)) return false;
         if (this.signature == null) {
             if (other.signature != null) return false;
-        }
-        else if (!this.signature.equals(other.signature)) return false;
+        } else if (!this.signature.equals(other.signature)) return false;
         if (this.totalAmount == null) {
             if (other.totalAmount != null) return false;
-        }
-        else if (!this.totalAmount.equals(other.totalAmount)) return false;
+        } else if (!this.totalAmount.equals(other.totalAmount)) return false;
         if (this.totalBlance == null) {
             if (other.totalBlance != null) return false;
-        }
-        else if (!this.totalBlance.equals(other.totalBlance)) return false;
+        } else if (!this.totalBlance.equals(other.totalBlance)) return false;
         if (this.version == null) {
             if (other.version != null) return false;
-        }
-        else if (!this.version.equals(other.version)) return false;
+        } else if (!this.version.equals(other.version)) return false;
         return true;
     }
 
@@ -716,8 +685,9 @@ public class CommissionFile implements BetterjrEntity {
 
     public Map<String, Object> resolveToRecordMap(CommissionFile anFile) {
 
-        Map<String, Object> appendMap = QueryTermBuilder.newInstance().put("custNo", anFile.getCustNo()).put("custName", anFile.getCustName())
-                .put("operOrg", anFile.getOperOrg()).put("importDate", anFile.getImportDate()).put("importTime", anFile.getImportTime())
+        Map<String, Object> appendMap = QueryTermBuilder.newInstance().put("custNo", anFile.getCustNo())
+                .put("custName", anFile.getCustName()).put("operOrg", anFile.getOperOrg())
+                .put("importDate", anFile.getImportDate()).put("importTime", anFile.getImportTime())
                 .put("fileId", anFile.getId()).build();
         return appendMap;
     }

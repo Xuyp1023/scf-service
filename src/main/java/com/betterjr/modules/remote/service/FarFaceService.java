@@ -4,18 +4,16 @@ import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 
 import com.betterjr.common.service.BaseService;
 import com.betterjr.modules.remote.dao.FarInfterfaceInfoMapper;
 import com.betterjr.modules.remote.entity.*;
- 
+
 @Service
 public class FarFaceService extends BaseService<FarInfterfaceInfoMapper, FarInfterfaceInfo> {
     private static final Logger logger = LoggerFactory.getLogger(FarFaceService.class);
- 
 
     /**
      * 
@@ -28,14 +26,14 @@ public class FarFaceService extends BaseService<FarInfterfaceInfoMapper, FarInft
     public Map<String, WorkFarFaceInfo> findFarFaceList() {
         Map<String, WorkFarFaceInfo> faceMap = new HashMap();
         String faceNo = null;
-        //for (FarInfterfaceInfo faceInfo : this.selectByProperty("faceGroup", "FUND")) {
-        //暂时只支持供应链金融，基金业务分布式后再取全部数据  by zhoucy 20161025
+        // for (FarInfterfaceInfo faceInfo : this.selectByProperty("faceGroup", "FUND")) {
+        // 暂时只支持供应链金融，基金业务分布式后再取全部数据 by zhoucy 20161025
         for (FarInfterfaceInfo faceInfo : this.selectByProperty("faceGroup", "SCF")) {
             faceNo = faceInfo.getFaceNo();
             Map<String, FaceFieldDictInfo> fieldMap = findFaceDict(faceNo);
             Map<String, WorkFarFunction> funMap = findFarFunList(faceNo, fieldMap);
-            WorkFarFaceInfo farFaceInfo = new WorkFarFaceInfo(faceInfo, funMap, findConfigInfo(faceNo), findConverInfo(faceNo, "1"), findConverInfo(
-                    faceNo, "2"), findHeadInfo(faceNo));
+            WorkFarFaceInfo farFaceInfo = new WorkFarFaceInfo(faceInfo, funMap, findConfigInfo(faceNo),
+                    findConverInfo(faceNo, "1"), findConverInfo(faceNo, "2"), findHeadInfo(faceNo));
 
             faceMap.put(faceInfo.getFaceNo(), farFaceInfo);
         }
@@ -56,7 +54,7 @@ public class FarFaceService extends BaseService<FarInfterfaceInfoMapper, FarInft
         Map<String, WorkFarFunction> mapFun = new LinkedCaseInsensitiveMap();
         for (FarFunctionInfo funcInfo : mapper.findFunctionByFaceNo(anFaceNo)) {
             List fieldMap = findFieldMap(anFaceNo, funcInfo.getFunCode(), anFieldMap);
-            logger.info("work funcInfo :"+funcInfo);
+            logger.info("work funcInfo :" + funcInfo);
             mapFun.put(funcInfo.getFunBeanName(), new WorkFarFunction(funcInfo, fieldMap));
         }
 
@@ -73,17 +71,17 @@ public class FarFaceService extends BaseService<FarInfterfaceInfoMapper, FarInft
      * @return 出参说明，结果条件
      * @throws 异常情况
      */
-    public List<WorkFaceFieldInfo> findFieldMap(String anFaceNo, String anFunNo, Map<String, FaceFieldDictInfo> anFieldMap) {
+    public List<WorkFaceFieldInfo> findFieldMap(String anFaceNo, String anFunNo,
+            Map<String, FaceFieldDictInfo> anFieldMap) {
         List<WorkFaceFieldInfo> fieldMap = new LinkedList();
         FaceFieldDictInfo dictField;
         for (FarFieldMapInfo fieldInfo : mapper.findFieldMapByFaceNo(anFaceNo, anFunNo)) {
             dictField = anFieldMap.get(fieldInfo.getFaceField());
-            if (dictField == null && fieldInfo.getFieldOrder()> -1) {
-                logger.warn("work func :" + anFaceNo + "." + anFunNo + ", field :" + fieldInfo.getFaceField() + " = " + fieldInfo.getBeanField()
-                        + ", not find in T_FACE_FIELDDICT ");
-            }
-            else {
-                if (fieldInfo.getFieldOrder() < 0 && dictField == null){
+            if (dictField == null && fieldInfo.getFieldOrder() > -1) {
+                logger.warn("work func :" + anFaceNo + "." + anFunNo + ", field :" + fieldInfo.getFaceField() + " = "
+                        + fieldInfo.getBeanField() + ", not find in T_FACE_FIELDDICT ");
+            } else {
+                if (fieldInfo.getFieldOrder() < 0 && dictField == null) {
                     dictField = new FaceFieldDictInfo(fieldInfo);
                 }
                 WorkFaceFieldInfo workField = new WorkFaceFieldInfo(fieldInfo, dictField);

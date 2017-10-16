@@ -21,17 +21,18 @@ import com.betterjr.modules.template.service.ScfContractTemplateService;
  */
 @Service("scfElecOpinionLocalService")
 @Scope("singleton")
-public class ScfElecOpinionLocalService  extends ScfElecAgreeLocalService {
+public class ScfElecOpinionLocalService extends ScfElecAgreeLocalService {
     private static final Logger logger = LoggerFactory.getLogger(ScfElecOpinionLocalService.class);
 
     private ScfRequestOpinionService requestOpinionService = null;
-    private ScfRequestService requestService  = null;
+    private ScfRequestService requestService = null;
     private ScfContractTemplateService contractTemplateService = null;
 
-    protected void subInit(){
-       this.requestOpinionService = SpringContextHolder.getBean(ScfRequestOpinionService.class);
-       this.requestService = SpringContextHolder.getBean(ScfRequestService.class);
-       this.contractTemplateService = SpringContextHolder.getBean(ScfContractTemplateService.class);
+    @Override
+    protected void subInit() {
+        this.requestOpinionService = SpringContextHolder.getBean(ScfRequestOpinionService.class);
+        this.requestService = SpringContextHolder.getBean(ScfRequestService.class);
+        this.contractTemplateService = SpringContextHolder.getBean(ScfContractTemplateService.class);
     }
 
     @Override
@@ -39,19 +40,19 @@ public class ScfElecOpinionLocalService  extends ScfElecAgreeLocalService {
         Map<String, Object> result = new HashMap();
         String requestNo = this.elecAgree.getRequestNo();
         ScfRequestOpinion opinionInfo = requestOpinionService.selectByPrimaryKey(requestNo);
-        if(null == opinionInfo) {
-            logger.error("Can't get opinion information with request no:"+requestNo);
+        if (null == opinionInfo) {
+            logger.error("Can't get opinion information with request no:" + requestNo);
             throw new BytterTradeException(40001, "无法获取确认书信息");
         }
         opinionInfo.setBuyerName(requestOpinionService.queryCustName(opinionInfo.getBuyerNo()));
         result.put("opinionInfo", opinionInfo);
- 
-        //取当前服务器日期作为签署日期
+
+        // 取当前服务器日期作为签署日期
         result.put("signDate", findSignDate());
-        
-        //获取保理公司自定义模板
+
+        // 获取保理公司自定义模板
         result.put("template", requestService.getFactoryContactTemplate(requestNo, getViewModeFile()));
-        
+
         return result;
     }
 
@@ -63,8 +64,8 @@ public class ScfElecOpinionLocalService  extends ScfElecAgreeLocalService {
 
     @Override
     public boolean cancelElecAgreement(String anDescribe) {
-        if (elecAgreeService.checkCancelElecAgreement(this.elecAgree.getAppNo())){
-             return this.elecAgreeService.saveAndCancelElecAgreement(this.elecAgree.getAppNo(),anDescribe);
+        if (elecAgreeService.checkCancelElecAgreement(this.elecAgree.getAppNo())) {
+            return this.elecAgreeService.saveAndCancelElecAgreement(this.elecAgree.getAppNo(), anDescribe);
         }
         return false;
     }

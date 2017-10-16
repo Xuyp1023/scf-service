@@ -39,7 +39,9 @@ public class ScfAgreementTemplateDubboService implements IScfAgreementTemplateSe
     @Override
     public String webFindTemplateWithStatus(Long anCoreCustNo, String anBusinStatus) {
 
-        return AjaxObject.newOk("合同模版查询成功", templateService.findAgreementTemplateWithStatus(anCoreCustNo, anBusinStatus)).toJson();
+        return AjaxObject
+                .newOk("合同模版查询成功", templateService.findAgreementTemplateWithStatus(anCoreCustNo, anBusinStatus))
+                .toJson();
     }
 
     @Override
@@ -63,7 +65,8 @@ public class ScfAgreementTemplateDubboService implements IScfAgreementTemplateSe
     @Override
     public String webQueryTemplatePage(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
 
-        return AjaxObject.newOkWithPage("合同模版查询成功", templateService.queryAgreementTemplatePage(anMap, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject.newOkWithPage("合同模版查询成功",
+                templateService.queryAgreementTemplatePage(anMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
 }

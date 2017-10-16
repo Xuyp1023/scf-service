@@ -204,16 +204,26 @@ public class FarFieldMapInfo implements BetterjrEntity {
         }
         FarFieldMapInfo other = (FarFieldMapInfo) that;
         return (this.getFaceNo() == null ? other.getFaceNo() == null : this.getFaceNo().equals(other.getFaceNo()))
-                && (this.getFunCode() == null ? other.getFunCode() == null : this.getFunCode().equals(other.getFunCode()))
-                && (this.getFieldOrder() == null ? other.getFieldOrder() == null : this.getFieldOrder().equals(other.getFieldOrder()))
-                && (this.getFaceField() == null ? other.getFaceField() == null : this.getFaceField().equals(other.getFaceField()))
-                && (this.getBeanField() == null ? other.getBeanField() == null : this.getBeanField().equals(other.getBeanField()))
-                && (this.getJavaClass() == null ? other.getJavaClass() == null : this.getJavaClass().equals(other.getJavaClass()))
-                && (this.getDirection() == null ? other.getDirection() == null : this.getDirection().equals(other.getDirection()))
-                && (this.getWorkLevel() == null ? other.getWorkLevel() == null : this.getWorkLevel().equals(other.getWorkLevel()))
-                && (this.getValueMode() == null ? other.getValueMode() == null : this.getValueMode().equals(other.getValueMode()))
-                && (this.getMustItem() == null ? other.getMustItem() == null : this.getMustItem().equals(other.getMustItem()))
-                && (this.getWorkExpress() == null ? other.getWorkExpress() == null : this.getWorkExpress().equals(other.getWorkExpress()));
+                && (this.getFunCode() == null ? other.getFunCode() == null
+                        : this.getFunCode().equals(other.getFunCode()))
+                && (this.getFieldOrder() == null ? other.getFieldOrder() == null
+                        : this.getFieldOrder().equals(other.getFieldOrder()))
+                && (this.getFaceField() == null ? other.getFaceField() == null
+                        : this.getFaceField().equals(other.getFaceField()))
+                && (this.getBeanField() == null ? other.getBeanField() == null
+                        : this.getBeanField().equals(other.getBeanField()))
+                && (this.getJavaClass() == null ? other.getJavaClass() == null
+                        : this.getJavaClass().equals(other.getJavaClass()))
+                && (this.getDirection() == null ? other.getDirection() == null
+                        : this.getDirection().equals(other.getDirection()))
+                && (this.getWorkLevel() == null ? other.getWorkLevel() == null
+                        : this.getWorkLevel().equals(other.getWorkLevel()))
+                && (this.getValueMode() == null ? other.getValueMode() == null
+                        : this.getValueMode().equals(other.getValueMode()))
+                && (this.getMustItem() == null ? other.getMustItem() == null
+                        : this.getMustItem().equals(other.getMustItem()))
+                && (this.getWorkExpress() == null ? other.getWorkExpress() == null
+                        : this.getWorkExpress().equals(other.getWorkExpress()));
     }
 
     @Override

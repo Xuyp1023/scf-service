@@ -13,10 +13,10 @@ import com.betterjr.modules.loan.entity.ScfRequest;
  *
  */
 @Service
-public class ScfSignService extends ScfBaseApprovalService{
-	
-	public void processHandle(Map<String, Object> anContext){
-		ScfRequest request = this.getReqtuest(anContext.get("requestNo").toString());
-	}
+public class ScfSignService extends ScfBaseApprovalService {
+
+    public void processHandle(Map<String, Object> anContext) {
+        ScfRequest request = this.getReqtuest(anContext.get("requestNo").toString());
+    }
 
 }

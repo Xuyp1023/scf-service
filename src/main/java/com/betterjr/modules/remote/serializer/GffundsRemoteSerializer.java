@@ -16,18 +16,19 @@ public class GffundsRemoteSerializer extends RemoteBaseSerializer {
         return null;
     }
 
+    @Override
     public Map<String, Object> readResult() {
         Map<String, Object> map = mergeHeadInfo();
         String tmpData = JsonMapper.toJsonString(map);
-        logger.debug("businessInput:"+tmpData);
-        String encyData=null;
+        logger.debug("businessInput:" + tmpData);
+        String encyData = null;
         if (this.getBoolean("encrypt_use", true)) {
             encyData = this.func.getWorkFace().getCryptService().encrypt(tmpData);
         }
 
         map.clear();
         map.put("encmsg", encyData);
-        map.put("service", this.func.getFunCode());        
+        map.put("service", this.func.getFunCode());
         Map tmpM = this.getMapValue("merchantVersion");
         map.putAll(tmpM);
         tmpData = Collections3.buildSignSourceString(map);
@@ -36,10 +37,8 @@ public class GffundsRemoteSerializer extends RemoteBaseSerializer {
         logger.debug("mysignData =" + signStr);
         map.put("checkvalue", signStr);
         logger.debug("mysignData =" + map);
-        
+
         return map;
     }
 
-    
- 
 }

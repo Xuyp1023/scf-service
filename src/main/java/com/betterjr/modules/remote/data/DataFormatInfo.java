@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.*;
 
 public enum DataFormatInfo {
-    JSON, XML,HX_XML, FIX, TEXT, FORM, MULTIPART, STREAM;
+    JSON, XML, HX_XML, FIX, TEXT, FORM, MULTIPART, STREAM;
     private static Map<DataFormatInfo, String> map = new HashMap();
 
     static {

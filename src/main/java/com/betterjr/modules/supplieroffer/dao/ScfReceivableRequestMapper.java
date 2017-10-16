@@ -5,6 +5,6 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.supplieroffer.entity.ScfReceivableRequest;
 
 @BetterjrMapper
-public interface ScfReceivableRequestMapper extends Mapper<ScfReceivableRequest>{
+public interface ScfReceivableRequestMapper extends Mapper<ScfReceivableRequest> {
 
 }

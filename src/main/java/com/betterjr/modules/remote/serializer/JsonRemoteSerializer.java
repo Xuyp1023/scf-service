@@ -16,6 +16,7 @@ public class JsonRemoteSerializer extends RemoteBaseSerializer {
         return null;
     }
 
+    @Override
     public Map<String, Object> readResult() {
         Map<String, Object> map = mergeHeadInfo();
         String tmpData = JsonMapper.toJsonString(map);

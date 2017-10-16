@@ -36,7 +36,7 @@ public enum RecieveFileType {
      * @return
      */
     public String findFileName(String anFileName) {
-        if (BetterStringUtils.isNotBlank(anFileName)) {
+        if (StringUtils.isNotBlank(anFileName)) {
             if (anFileName.toLowerCase().endsWith(this.fileType)) {
                 return anFileName;
             }

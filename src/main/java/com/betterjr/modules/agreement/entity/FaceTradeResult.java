@@ -71,15 +71,15 @@ public class FaceTradeResult implements BaseRemoteEntity {
 
     // 分红方式
     private String bonusType;
-    
-    //基金经办人流水号
+
+    // 基金经办人流水号
     private Long contactorSerial;
-    
-    //状态
+
+    // 状态
     private String status;
-    //申请单状态
+    // 申请单状态
     private String applayStatus;
-    //附件url
+    // 附件url
     private String url;
     // 描述
     private String describe;
@@ -227,7 +227,6 @@ public class FaceTradeResult implements BaseRemoteEntity {
     public void setTradeTime(String anTradeTime) {
         tradeTime = anTradeTime;
     }
- 
 
     public BigDecimal getShares() {
         return this.shares;

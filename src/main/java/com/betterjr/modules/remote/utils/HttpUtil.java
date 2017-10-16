@@ -53,7 +53,7 @@ import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.impl.cookie.DefaultCookieSpec;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContexts;
- 
+
 class AnyTrustStrategy implements TrustStrategy {
 
     @Override
@@ -110,8 +110,7 @@ public class HttpUtil {
             InputStreamReader inReader = null;
             if (encoding == null) {
                 inReader = new InputStreamReader(in, defaultEncoding);
-            }
-            else {
+            } else {
                 inReader = new InputStreamReader(in, encoding);
             }
             char[] buffer = new char[bufferSize];
@@ -160,7 +159,8 @@ public class HttpUtil {
         // 指定cookie存储对象
         cookieStore = new BasicCookieStore();
         // 构建客户端
-        client = HttpClientBuilder.create().setDefaultCookieStore(cookieStore).setConnectionManager(connManager).build();
+        client = HttpClientBuilder.create().setDefaultCookieStore(cookieStore).setConnectionManager(connManager)
+                .build();
     }
 
     public static HttpUtil getInstance() {
@@ -174,11 +174,11 @@ public class HttpUtil {
 
     public InputStream doGet(String url) throws URISyntaxException, ClientProtocolException, IOException {
         HttpResponse response = this.doGet(url, null);
-       // System.out.println(EntityUtils.getContentCharSet(response.getEntity()));
+        // System.out.println(EntityUtils.getContentCharSet(response.getEntity()));
         ContentType cType = ContentType.get(response.getEntity());
-        System.out.println(cType.getCharset() ); 
+        System.out.println(cType.getCharset());
         System.out.println(response.getEntity().getContentType());
-        
+
         return response != null ? response.getEntity().getContent() : null;
     }
 
@@ -186,12 +186,14 @@ public class HttpUtil {
         return HttpUtil.readStream(this.doGet(url), null);
     }
 
-    public InputStream doGetForStream(String url, Map<String, String> queryParams) throws URISyntaxException, ClientProtocolException, IOException {
+    public InputStream doGetForStream(String url, Map<String, String> queryParams)
+            throws URISyntaxException, ClientProtocolException, IOException {
         HttpResponse response = this.doGet(url, queryParams);
         return response != null ? response.getEntity().getContent() : null;
     }
 
-    public String doGetForString(String url, Map<String, String> queryParams) throws URISyntaxException, ClientProtocolException, IOException {
+    public String doGetForString(String url, Map<String, String> queryParams)
+            throws URISyntaxException, ClientProtocolException, IOException {
         return HttpUtil.readStream(this.doGetForStream(url, queryParams), null);
     }
 
@@ -207,7 +209,8 @@ public class HttpUtil {
      * @throws IOException
      * @throws ClientProtocolException
      */
-    public HttpResponse doGet(String url, Map<String, String> queryParams) throws URISyntaxException, ClientProtocolException, IOException {
+    public HttpResponse doGet(String url, Map<String, String> queryParams)
+            throws URISyntaxException, ClientProtocolException, IOException {
         HttpGet gm = new HttpGet();
         URIBuilder builder = new URIBuilder(url);
         // 填入查询参数
@@ -218,12 +221,14 @@ public class HttpUtil {
         return client.execute(gm);
     }
 
-    public InputStream doPostForStream(String url, Map<String, String> queryParams) throws URISyntaxException, ClientProtocolException, IOException {
+    public InputStream doPostForStream(String url, Map<String, String> queryParams)
+            throws URISyntaxException, ClientProtocolException, IOException {
         HttpResponse response = this.doPost(url, queryParams, null);
         return response != null ? response.getEntity().getContent() : null;
     }
 
-    public String doPostForString(String url, Map<String, String> queryParams) throws URISyntaxException, ClientProtocolException, IOException {
+    public String doPostForString(String url, Map<String, String> queryParams)
+            throws URISyntaxException, ClientProtocolException, IOException {
         return HttpUtil.readStream(this.doPostForStream(url, queryParams), null);
     }
 
@@ -413,10 +418,10 @@ public class HttpUtil {
         cookies.put(key, value);
         return setCookie(cookies, domain, path, useSecure);
     }
-    
-    public static void main(String[] args) throws ClientProtocolException, URISyntaxException, IOException{
+
+    public static void main(String[] args) throws ClientProtocolException, URISyntaxException, IOException {
         InputStream in = HttpUtil.getInstance().doGet("https://etrading.dcfund.com.cn/etrading/page/frame/Login.jsp");
         String tmpStr = readStream(in, "UTF-8");
-         System.out.println(tmpStr);
+        System.out.println(tmpStr);
     }
 }

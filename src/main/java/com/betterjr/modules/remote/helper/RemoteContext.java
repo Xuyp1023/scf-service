@@ -9,5 +9,5 @@ package com.betterjr.modules.remote.helper;
  */
 
 public class RemoteContext {
-    
+
 }

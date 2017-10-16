@@ -12,10 +12,11 @@ import com.betterjr.common.utils.BetterStringUtils;
 import com.betterjr.common.utils.UserUtils;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
 import com.betterjr.modules.customer.entity.CustMechBankAccount;
-import com.betterjr.modules.version.entity.BaseVersionEntity;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.persistence.*;
+
+import org.apache.commons.lang3.StringUtils;
 
 @Access(AccessType.FIELD)
 @Entity
@@ -25,215 +26,214 @@ public class CustAgreement implements BetterjrEntity {
      * 流水号
      */
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
-    @MetaData( value="流水号", comments = "流水号")
+    @Column(name = "ID", columnDefinition = "INTEGER")
+    @MetaData(value = "流水号", comments = "流水号")
     private Long id;
 
     /**
      * 合同名称
      */
-    @Column(name = "C_AGREENAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="合同名称", comments = "合同名称")
+    @Column(name = "C_AGREENAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "合同名称", comments = "合同名称")
     private String agreeName;
 
     /**
      * 合同编号
      */
-    @Column(name = "C_AGREENO",  columnDefinition="VARCHAR" )
-    @MetaData( value="合同编号", comments = "合同编号")
+    @Column(name = "C_AGREENO", columnDefinition = "VARCHAR")
+    @MetaData(value = "合同编号", comments = "合同编号")
     private String agreeNo;
 
     /**
      * 供应商（乙方）
      */
-    @Column(name = "C_SUPPLIER",  columnDefinition="VARCHAR" )
-    @MetaData( value="供应商（乙方）", comments = "供应商（乙方）")
+    @Column(name = "C_SUPPLIER", columnDefinition = "VARCHAR")
+    @MetaData(value = "供应商（乙方）", comments = "供应商（乙方）")
     private String supplier;
 
     /**
      * 买方（甲方）
      */
-    @Column(name = "C_BUYER",  columnDefinition="VARCHAR" )
-    @MetaData( value="买方（甲方）", comments = "买方（甲方）")
+    @Column(name = "C_BUYER", columnDefinition = "VARCHAR")
+    @MetaData(value = "买方（甲方）", comments = "买方（甲方）")
     private String buyer;
 
     /**
      * 乙方联系人
      */
-    @Column(name = "C_SUPPLIER_LINKMAN",  columnDefinition="VARCHAR" )
-    @MetaData( value="乙方联系人", comments = "乙方联系人")
+    @Column(name = "C_SUPPLIER_LINKMAN", columnDefinition = "VARCHAR")
+    @MetaData(value = "乙方联系人", comments = "乙方联系人")
     private String supplierLinkman;
 
     /**
      * 甲方联系人
      */
-    @Column(name = "C_BUYER_LINKMAN",  columnDefinition="VARCHAR" )
-    @MetaData( value="甲方联系人", comments = "甲方联系人")
+    @Column(name = "C_BUYER_LINKMAN", columnDefinition = "VARCHAR")
+    @MetaData(value = "甲方联系人", comments = "甲方联系人")
     private String buyerLinkman;
 
     /**
      * 合同金额
      */
-    @Column(name = "F_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="合同金额", comments = "合同金额")
+    @Column(name = "F_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "合同金额", comments = "合同金额")
     private BigDecimal balance;
 
     /**
      * 交付日期
      */
-    @Column(name = "D_DELIVERY_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="交付日期", comments = "交付日期")
+    @Column(name = "D_DELIVERY_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "交付日期", comments = "交付日期")
     private String deliveryDate;
 
     /**
      * 交付地点
      */
-    @Column(name = "C_DELIVERY_ADDR",  columnDefinition="VARCHAR" )
-    @MetaData( value="交付地点", comments = "交付地点")
+    @Column(name = "C_DELIVERY_ADDR", columnDefinition = "VARCHAR")
+    @MetaData(value = "交付地点", comments = "交付地点")
     private String deliveryAddr;
 
     /**
      * 验收方式
      */
-    @Column(name = "C_CHECK_ACCEPT",  columnDefinition="VARCHAR" )
-    @MetaData( value="验收方式", comments = "验收方式")
+    @Column(name = "C_CHECK_ACCEPT", columnDefinition = "VARCHAR")
+    @MetaData(value = "验收方式", comments = "验收方式")
     private String checkAccept;
 
     /**
      * 提出异议期限
      */
-    @Column(name = "C_OBJECTION_PERIOD",  columnDefinition="VARCHAR" )
-    @MetaData( value="提出异议期限", comments = "提出异议期限")
+    @Column(name = "C_OBJECTION_PERIOD", columnDefinition = "VARCHAR")
+    @MetaData(value = "提出异议期限", comments = "提出异议期限")
     private String objectionPeriod;
 
     /**
      * 收款方银行账户
      */
-    @Column(name = "C_BANKACCO",  columnDefinition="VARCHAR" )
-    @MetaData( value="收款方银行账户", comments = "收款方银行账户")
+    @Column(name = "C_BANKACCO", columnDefinition = "VARCHAR")
+    @MetaData(value = "收款方银行账户", comments = "收款方银行账户")
     private String bankAccount;
 
     /**
      * 收款方银行全称
      */
-    @Column(name = "C_BANKNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="收款方银行全称", comments = "收款方银行全称")
+    @Column(name = "C_BANKNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "收款方银行全称", comments = "收款方银行全称")
     private String bankName;
 
     /**
      * 收款方银行户名
      */
-    @Column(name = "C_BANKACCONAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="收款方银行户名", comments = "收款方银行户名")
+    @Column(name = "C_BANKACCONAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "收款方银行户名", comments = "收款方银行户名")
     private String bankAccountName;
 
     /**
      * 合同起始日期
      */
-    @Column(name = "D_AGREE_START_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="合同起始日期", comments = "合同起始日期")
+    @Column(name = "D_AGREE_START_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "合同起始日期", comments = "合同起始日期")
     @OrderBy
     private String agreeStartDate;
 
     /**
      * 合同截止日期
      */
-    @Column(name = "D_AGREE_END_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="合同截止日期", comments = "合同截止日期")
+    @Column(name = "D_AGREE_END_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "合同截止日期", comments = "合同截止日期")
     private String agreeEndDate;
 
     /**
      * 登记日期
      */
-    @Column(name = "D_REGDATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="登记日期", comments = "登记日期")
+    @Column(name = "D_REGDATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "登记日期", comments = "登记日期")
     private String regDate;
 
     /**
      * 修改日期
      */
-    @Column(name = "D_MODIDATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="修改日期", comments = "修改日期")
+    @Column(name = "D_MODIDATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "修改日期", comments = "修改日期")
     private String modiDate;
 
     /**
      * 状态；0草稿，1启用，2终止
      */
-    @Column(name = "C_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="状态", comments = "状态；0草稿，1启用，2终止")
+    @Column(name = "C_STATUS", columnDefinition = "VARCHAR")
+    @MetaData(value = "状态", comments = "状态；0草稿，1启用，2终止")
     private String status;
 
     /**
      * 买方客户号
      */
-    @Column(name = "L_BUYER_NO",  columnDefinition="INTEGER" )
-    @MetaData( value="买方客户号", comments = "买方客户号")
+    @Column(name = "L_BUYER_NO", columnDefinition = "INTEGER")
+    @MetaData(value = "买方客户号", comments = "买方客户号")
     private Long buyerNo;
 
     /**
      * 卖方客户号
      */
-    @Column(name = "L_SUPPLIER_NO",  columnDefinition="INTEGER" )
-    @MetaData( value="卖方客户号", comments = "卖方客户号")
+    @Column(name = "L_SUPPLIER_NO", columnDefinition = "INTEGER")
+    @MetaData(value = "卖方客户号", comments = "卖方客户号")
     private Long supplierNo;
 
     /**
      * 操作员编码
      */
-    @Column(name = "C_OPERNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="操作员编码", comments = "操作员编码")
+    @Column(name = "C_OPERNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "操作员编码", comments = "操作员编码")
     private String operCode;
 
     /**
      * 操作员名字
      */
-    @Column(name = "C_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="操作员名字", comments = "操作员名字")
+    @Column(name = "C_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "操作员名字", comments = "操作员名字")
     private String operName;
 
     /**
      * 操作机构
      */
-    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
-    @MetaData( value="操作机构", comments = "操作机构")
+    @Column(name = "C_OPERORG", columnDefinition = "VARCHAR")
+    @MetaData(value = "操作机构", comments = "操作机构")
     private String operOrg;
 
     /**
      * 上传的批次号，对应fileinfo中的ID
      */
-    @Column(name = "N_BATCHNO",  columnDefinition="INTEGER" )
-    @MetaData( value="上传的批次号", comments = "上传的批次号，对应fileinfo中的ID")
+    @Column(name = "N_BATCHNO", columnDefinition = "INTEGER")
+    @MetaData(value = "上传的批次号", comments = "上传的批次号，对应fileinfo中的ID")
     private Long batchNo;
-    
+
     /**
      * 实际的买方（甲方）
      */
-    @Column(name = "C_REAL_BUYER",  columnDefinition="VARCHAR" )
-    @MetaData( value="实际买方", comments = "实际的买方")
+    @Column(name = "C_REAL_BUYER", columnDefinition = "VARCHAR")
+    @MetaData(value = "实际买方", comments = "实际的买方")
     private String realBuyer;
-    
+
     /**
      * 实际的供应商（乙方）
      */
-    @Column(name = "C_REAL_SUPPLIER",  columnDefinition="VARCHAR" )
-    @MetaData( value="实际供应商", comments = "实际供应商")
+    @Column(name = "C_REAL_SUPPLIER", columnDefinition = "VARCHAR")
+    @MetaData(value = "实际供应商", comments = "实际供应商")
     private String realSupplier;
-    
+
     /**
      * 保理公司编号
      */
-    @Column(name = "L_FACTORNO",  columnDefinition="INTEGER" )
-    @MetaData( value="保理公司客户号", comments = "保理公司客户号")
+    @Column(name = "L_FACTORNO", columnDefinition = "INTEGER")
+    @MetaData(value = "保理公司客户号", comments = "保理公司客户号")
     private Long factorNo;
-    
-    
-    @Column(name = "C_DEFAULT",  columnDefinition="VARCHAR" )
-    @MetaData( value="标识", comments = "0系统加入，1前端加入，2可删除")
+
+    @Column(name = "C_DEFAULT", columnDefinition = "VARCHAR")
+    @MetaData(value = "标识", comments = "0系统加入，1前端加入，2可删除")
     private String defaultFlag;
-    
+
     @Transient
     private String isDeleted;
-    
+
     private static final long serialVersionUID = 1458113450523L;
 
     public Long getId() {
@@ -292,7 +292,7 @@ public class CustAgreement implements BetterjrEntity {
         this.buyerLinkman = buyerLinkman == null ? null : buyerLinkman.trim();
     }
 
-//    @JsonSerialize(using = CustDecimalJsonSerializer.class)
+    // @JsonSerialize(using = CustDecimalJsonSerializer.class)
     public BigDecimal getBalance() {
         return balance;
     }
@@ -541,31 +541,54 @@ public class CustAgreement implements BetterjrEntity {
         }
         CustAgreement other = (CustAgreement) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getAgreeName() == null ? other.getAgreeName() == null : this.getAgreeName().equals(other.getAgreeName()))
-            && (this.getAgreeNo() == null ? other.getAgreeNo() == null : this.getAgreeNo().equals(other.getAgreeNo()))
-            && (this.getSupplier() == null ? other.getSupplier() == null : this.getSupplier().equals(other.getSupplier()))
-            && (this.getBuyer() == null ? other.getBuyer() == null : this.getBuyer().equals(other.getBuyer()))
-            && (this.getSupplierLinkman() == null ? other.getSupplierLinkman() == null : this.getSupplierLinkman().equals(other.getSupplierLinkman()))
-            && (this.getBuyerLinkman() == null ? other.getBuyerLinkman() == null : this.getBuyerLinkman().equals(other.getBuyerLinkman()))
-            && (this.getBalance() == null ? other.getBalance() == null : this.getBalance().equals(other.getBalance()))
-            && (this.getDeliveryDate() == null ? other.getDeliveryDate() == null : this.getDeliveryDate().equals(other.getDeliveryDate()))
-            && (this.getDeliveryAddr() == null ? other.getDeliveryAddr() == null : this.getDeliveryAddr().equals(other.getDeliveryAddr()))
-            && (this.getCheckAccept() == null ? other.getCheckAccept() == null : this.getCheckAccept().equals(other.getCheckAccept()))
-            && (this.getObjectionPeriod() == null ? other.getObjectionPeriod() == null : this.getObjectionPeriod().equals(other.getObjectionPeriod()))
-            && (this.getBankAccount() == null ? other.getBankAccount() == null : this.getBankAccount().equals(other.getBankAccount()))
-            && (this.getBankName() == null ? other.getBankName() == null : this.getBankName().equals(other.getBankName()))
-            && (this.getBankAccountName() == null ? other.getBankAccountName() == null : this.getBankAccountName().equals(other.getBankAccountName()))
-            && (this.getAgreeStartDate() == null ? other.getAgreeStartDate() == null : this.getAgreeStartDate().equals(other.getAgreeStartDate()))
-            && (this.getAgreeEndDate() == null ? other.getAgreeEndDate() == null : this.getAgreeEndDate().equals(other.getAgreeEndDate()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-            && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-            && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
-            && (this.getBuyerNo() == null ? other.getBuyerNo() == null : this.getBuyerNo().equals(other.getBuyerNo()))
-            && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
-            && (this.getOperCode() == null ? other.getOperCode() == null : this.getOperCode().equals(other.getOperCode()))
-            && (this.getOperName() == null ? other.getOperName() == null : this.getOperName().equals(other.getOperName()))
-            && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
-            && (this.getBatchNo() == null ? other.getBatchNo() == null : this.getBatchNo().equals(other.getBatchNo()));
+                && (this.getAgreeName() == null ? other.getAgreeName() == null
+                        : this.getAgreeName().equals(other.getAgreeName()))
+                && (this.getAgreeNo() == null ? other.getAgreeNo() == null
+                        : this.getAgreeNo().equals(other.getAgreeNo()))
+                && (this.getSupplier() == null ? other.getSupplier() == null
+                        : this.getSupplier().equals(other.getSupplier()))
+                && (this.getBuyer() == null ? other.getBuyer() == null : this.getBuyer().equals(other.getBuyer()))
+                && (this.getSupplierLinkman() == null ? other.getSupplierLinkman() == null
+                        : this.getSupplierLinkman().equals(other.getSupplierLinkman()))
+                && (this.getBuyerLinkman() == null ? other.getBuyerLinkman() == null
+                        : this.getBuyerLinkman().equals(other.getBuyerLinkman()))
+                && (this.getBalance() == null ? other.getBalance() == null
+                        : this.getBalance().equals(other.getBalance()))
+                && (this.getDeliveryDate() == null ? other.getDeliveryDate() == null
+                        : this.getDeliveryDate().equals(other.getDeliveryDate()))
+                && (this.getDeliveryAddr() == null ? other.getDeliveryAddr() == null
+                        : this.getDeliveryAddr().equals(other.getDeliveryAddr()))
+                && (this.getCheckAccept() == null ? other.getCheckAccept() == null
+                        : this.getCheckAccept().equals(other.getCheckAccept()))
+                && (this.getObjectionPeriod() == null ? other.getObjectionPeriod() == null
+                        : this.getObjectionPeriod().equals(other.getObjectionPeriod()))
+                && (this.getBankAccount() == null ? other.getBankAccount() == null
+                        : this.getBankAccount().equals(other.getBankAccount()))
+                && (this.getBankName() == null ? other.getBankName() == null
+                        : this.getBankName().equals(other.getBankName()))
+                && (this.getBankAccountName() == null ? other.getBankAccountName() == null
+                        : this.getBankAccountName().equals(other.getBankAccountName()))
+                && (this.getAgreeStartDate() == null ? other.getAgreeStartDate() == null
+                        : this.getAgreeStartDate().equals(other.getAgreeStartDate()))
+                && (this.getAgreeEndDate() == null ? other.getAgreeEndDate() == null
+                        : this.getAgreeEndDate().equals(other.getAgreeEndDate()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getModiDate() == null ? other.getModiDate() == null
+                        : this.getModiDate().equals(other.getModiDate()))
+                && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
+                && (this.getBuyerNo() == null ? other.getBuyerNo() == null
+                        : this.getBuyerNo().equals(other.getBuyerNo()))
+                && (this.getSupplierNo() == null ? other.getSupplierNo() == null
+                        : this.getSupplierNo().equals(other.getSupplierNo()))
+                && (this.getOperCode() == null ? other.getOperCode() == null
+                        : this.getOperCode().equals(other.getOperCode()))
+                && (this.getOperName() == null ? other.getOperName() == null
+                        : this.getOperName().equals(other.getOperName()))
+                && (this.getOperOrg() == null ? other.getOperOrg() == null
+                        : this.getOperOrg().equals(other.getOperOrg()))
+                && (this.getBatchNo() == null ? other.getBatchNo() == null
+                        : this.getBatchNo().equals(other.getBatchNo()));
     }
 
     @Override
@@ -600,12 +623,12 @@ public class CustAgreement implements BetterjrEntity {
         result = prime * result + ((getBatchNo() == null) ? 0 : getBatchNo().hashCode());
         return result;
     }
-    
+
     public CustAgreement() {
-        
+
     }
 
-    public void modifyAgreement(CustAgreement anAgree){
+    public void modifyAgreement(CustAgreement anAgree) {
         this.id = anAgree.getId();
         this.status = anAgree.getStatus();
         this.modiDate = BetterDateUtils.getNumDate();
@@ -613,15 +636,15 @@ public class CustAgreement implements BetterjrEntity {
         this.operOrg = anAgree.getOperOrg();
         this.operCode = anAgree.getOperCode();
         this.operName = anAgree.getOperName();
-        this.factorNo=anAgree.getFactorNo();
+        this.factorNo = anAgree.getFactorNo();
     }
-    
-    public void updateStatus(String anStatus){
-       this.status = anStatus;
-       this.modiDate = BetterDateUtils.getNumDate();
+
+    public void updateStatus(String anStatus) {
+        this.status = anStatus;
+        this.modiDate = BetterDateUtils.getNumDate();
     }
-    
-    public void initDefValue(CustOperatorInfo anCustOperInfo,Long buyerNo, String anBuyer, String anSupplier) {
+
+    public void initDefValue(CustOperatorInfo anCustOperInfo, Long buyerNo, String anBuyer, String anSupplier) {
         this.id = SerialGenerator.getLongValue("CustAgreement.id");
         this.regDate = BetterDateUtils.getNumDate();
         this.modiDate = BetterDateUtils.getNumDate();
@@ -630,39 +653,40 @@ public class CustAgreement implements BetterjrEntity {
         this.operCode = anCustOperInfo.getId().toString();
         this.operName = anCustOperInfo.getName();
         this.buyer = anBuyer;
-        this.buyerNo=buyerNo;
-        this.defaultFlag="1";
+        this.buyerNo = buyerNo;
+        this.defaultFlag = "1";
         this.supplier = anSupplier;
-        if (BetterStringUtils.isBlank(this.realBuyer)){
+        if (StringUtils.isBlank(this.realBuyer)) {
             this.realBuyer = this.buyer;
         }
-        if (BetterStringUtils.isBlank(this.realSupplier)){
-           this.realSupplier = this.supplier; 
+        if (StringUtils.isBlank(this.realSupplier)) {
+            this.realSupplier = this.supplier;
         }
-        if(UserUtils.factorUser()){ // 如果登录的是保理公司，则设置当前保理客户号
-            this.factorNo=UserUtils.getDefCustInfo().getCustNo();
+        if (UserUtils.factorUser()) { // 如果登录的是保理公司，则设置当前保理客户号
+            this.factorNo = UserUtils.getDefCustInfo().getCustNo();
         }
     }
-    
-    public void initSysValue(CustOperatorInfo anCustOperInfo,Long buyerNo, String anBuyer,Long anSupplierNo,String anSupplier,Long anFactorNo,CustMechBankAccount bankAccount) {
+
+    public void initSysValue(CustOperatorInfo anCustOperInfo, Long buyerNo, String anBuyer, Long anSupplierNo,
+            String anSupplier, Long anFactorNo, CustMechBankAccount bankAccount) {
         this.id = SerialGenerator.getLongValue("CustAgreement.id");
         this.regDate = BetterDateUtils.getNumDate();
         this.modiDate = BetterDateUtils.getNumDate();
         this.status = "0";
         this.operOrg = anCustOperInfo.getOperOrg();
-        this.operCode =  anCustOperInfo.getId().toString();
+        this.operCode = anCustOperInfo.getId().toString();
         this.operName = anCustOperInfo.getName();
         this.buyer = anBuyer;
-        this.buyerNo=buyerNo;
+        this.buyerNo = buyerNo;
         this.supplier = anSupplier;
-        this.realBuyer=anBuyer;
-        this.realSupplier=anSupplier;
-        this.factorNo=anFactorNo;
-        this.supplierNo=anSupplierNo;
-        this.bankAccount=bankAccount.getBankAcco();
-        this.bankAccountName=bankAccount.getBankAccoName();
-        this.bankName=bankAccount.getBankName();
-        this.defaultFlag="0";
+        this.realBuyer = anBuyer;
+        this.realSupplier = anSupplier;
+        this.factorNo = anFactorNo;
+        this.supplierNo = anSupplierNo;
+        this.bankAccount = bankAccount.getBankAcco();
+        this.bankAccountName = bankAccount.getBankAccoName();
+        this.bankName = bankAccount.getBankName();
+        this.defaultFlag = "0";
     }
-    
+
 }

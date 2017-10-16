@@ -42,7 +42,8 @@ public class FileDownService {
         logger.info("文件导出服务： 操作人：" + UserUtils.getOperatorInfo().getName());
         BTAssert.notNull(data, "导出的数据文件为空");
         // 获取佣金记录导出模版文件
-        // CustFileItem fileItem = custFileService.findOne(CommissionConstantCollentions.COMMISSION_FILE_DOWN_FILEITEM_FILEID);//文件上次详情
+        // CustFileItem fileItem =
+        // custFileService.findOne(CommissionConstantCollentions.COMMISSION_FILE_DOWN_FILEITEM_FILEID);//文件上次详情
         CustFileItem fileItem = custFileService.findOne(tempFileId);// 文件上次详情
         BTAssert.notNull(fileItem, "导出模版为空");
         String fileType = fileItem.getFileType();
@@ -61,7 +62,8 @@ public class FileDownService {
         }
         byte[] b = os.toByteArray();
         ByteArrayInputStream in = new ByteArrayInputStream(b);
-        // String fileName=anRecordList.get(0).getCustName()+anRecordList.get(0).getFileId()+"佣金数据导出."+fileItem.getFileType();
+        // String
+        // fileName=anRecordList.get(0).getCustName()+anRecordList.get(0).getFileId()+"佣金数据导出."+fileItem.getFileType();
         if (!fileName.contains(".") || !(fileName.endsWith("xls") || fileName.endsWith("xlsx"))) {
             fileName = fileName + "." + fileType;
         }

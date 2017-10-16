@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.mapper.BeanMapper;
 import com.betterjr.common.selectkey.SerialGenerator;
@@ -26,142 +28,140 @@ public class ScfSupplierBank implements ScfClientDataParentFace {
      * 编号
      */
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
-    @MetaData( value="编号", comments = "编号")
+    @Column(name = "ID", columnDefinition = "INTEGER")
+    @MetaData(value = "编号", comments = "编号")
     private Long id;
 
     /**
      * 客户编号
      */
-    @Column(name = "L_CUSTNO",  columnDefinition="INTEGER" )
-    @MetaData( value="客户编号", comments = "客户编号")
+    @Column(name = "L_CUSTNO", columnDefinition = "INTEGER")
+    @MetaData(value = "客户编号", comments = "客户编号")
     private Long custNo;
 
     /**
      * 客户全称
      */
-    @Column(name = "C_CUSTNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="客户全称", comments = "客户全称")
+    @Column(name = "C_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "客户全称", comments = "客户全称")
     private String custName;
 
     /**
      * 核心企额客户编号
      */
-    @Column(name = "L_CORE_CUSTNO",  columnDefinition="INTEGER" )
-    @MetaData( value="核心企额客户编号", comments = "核心企额客户编号")
+    @Column(name = "L_CORE_CUSTNO", columnDefinition = "INTEGER")
+    @MetaData(value = "核心企额客户编号", comments = "核心企额客户编号")
     private Long coreCustNo;
 
     /**
      * 银行账户
      */
-    @Column(name = "C_BANKACCO",  columnDefinition="VARCHAR" )
-    @MetaData( value="银行账户", comments = "银行账户")
+    @Column(name = "C_BANKACCO", columnDefinition = "VARCHAR")
+    @MetaData(value = "银行账户", comments = "银行账户")
     private String bankAccount;
 
     /**
      * 银行账户
      */
-    @Column(name = "C_BANKNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="开户银行", comments = "开户银行")
+    @Column(name = "C_BANKNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "开户银行", comments = "开户银行")
     private String bankName;
 
     /**
      * 银行户名
      */
-    @Column(name = "C_BANKACCONAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="银行户名", comments = "银行户名")
+    @Column(name = "C_BANKACCONAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "银行户名", comments = "银行户名")
     private String bankAccountName;
-
 
     /**
      * 联行号
      */
-    @Column(name = "C_BANKSOURCECODE",  columnDefinition="VARCHAR" )
-    @MetaData( value="联行号", comments = "联行号")
+    @Column(name = "C_BANKSOURCECODE", columnDefinition = "VARCHAR")
+    @MetaData(value = "联行号", comments = "联行号")
     private String bankSourceCode;
 
     /**
      * 银行类别
      */
-    @Column(name = "C_BANKTYPECODE",  columnDefinition="VARCHAR" )
-    @MetaData( value="银行类别", comments = "银行类别")
+    @Column(name = "C_BANKTYPECODE", columnDefinition = "VARCHAR")
+    @MetaData(value = "银行类别", comments = "银行类别")
     private String bankTypeCode;
 
     /**
      * 账号所在省
      */
-    @Column(name = "C_ACCOUNTPROVINCE",  columnDefinition="VARCHAR" )
-    @MetaData( value="账号所在省", comments = "账号所在省")
+    @Column(name = "C_ACCOUNTPROVINCE", columnDefinition = "VARCHAR")
+    @MetaData(value = "账号所在省", comments = "账号所在省")
     private String provinceName;
 
     /**
      * 账号所在市
      */
-    @Column(name = "C_ACCOUNTCITY",  columnDefinition="VARCHAR" )
-    @MetaData( value="账号所在市", comments = "账号所在市")
+    @Column(name = "C_ACCOUNTCITY", columnDefinition = "VARCHAR")
+    @MetaData(value = "账号所在市", comments = "账号所在市")
     private String cityName;
 
     /**
      * 签约账号
      */
-    @Column(name = "C_SIGNACCOUNT",  columnDefinition="VARCHAR" )
-    @MetaData( value="签约账号", comments = "签约账号")
+    @Column(name = "C_SIGNACCOUNT", columnDefinition = "VARCHAR")
+    @MetaData(value = "签约账号", comments = "签约账号")
     private Boolean signAccount;
 
     /**
      * 首选账号
      */
-    @Column(name = "C_DEFAULT",  columnDefinition="VARCHAR" )
-    @MetaData( value="首选账号", comments = "首选账号")
+    @Column(name = "C_DEFAULT", columnDefinition = "VARCHAR")
+    @MetaData(value = "首选账号", comments = "首选账号")
     private Boolean defaultAccount;
 
     /**
      * 登记日期
      */
-    @Column(name = "D_REGDATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="登记日期", comments = "登记日期")
+    @Column(name = "D_REGDATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "登记日期", comments = "登记日期")
     private String regDate;
 
     /**
      * 状态，0未处理，1正常，2申请中， 3取消中，4取消
      */
-    @Column(name = "C_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="状态", comments = "状态，0未处理，1正常，2申请中， 3取消中，4取消")
+    @Column(name = "C_STATUS", columnDefinition = "VARCHAR")
+    @MetaData(value = "状态", comments = "状态，0未处理，1正常，2申请中， 3取消中，4取消")
     private String accountStatus;
 
     /**
      * 修改日期
      */
-    @Column(name = "D_MODIDATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="修改日期", comments = "修改日期")
+    @Column(name = "D_MODIDATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "修改日期", comments = "修改日期")
     private String modiDate;
 
     /**
      * 客户类型：0：机构；1：个人
      */
-    @Column(name = "C_CUSTTYPE",  columnDefinition="VARCHAR" )
-    @MetaData( value="客户类型：0：机构", comments = "客户类型：0：机构；1：个人")
+    @Column(name = "C_CUSTTYPE", columnDefinition = "VARCHAR")
+    @MetaData(value = "客户类型：0：机构", comments = "客户类型：0：机构；1：个人")
     private String custType;
 
     /**
      * 操作员所在机构，证书登录，则是证书的企业名称O字段
      */
-    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
-    @MetaData( value="操作员所在机构", comments = "操作员所在机构，证书登录，则是证书的企业名称O字段")
+    @Column(name = "C_OPERORG", columnDefinition = "VARCHAR")
+    @MetaData(value = "操作员所在机构", comments = "操作员所在机构，证书登录，则是证书的企业名称O字段")
     private String operOrg;
 
     /**
      * 客户在资金管理系统中的客户号
      */
-    @Column(name = "C_BTNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="客户在资金管理系统中的客户号", comments = "客户在资金管理系统中的客户号")
+    @Column(name = "C_BTNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "客户在资金管理系统中的客户号", comments = "客户在资金管理系统中的客户号")
     private String btNo;
 
     @JsonIgnore
     @Column(name = "C_CORE_OPERORG", columnDefinition = "VARCHAR")
     @MetaData(value = "操作员所在机构", comments = "数据所属核心企业")
     private String coreOperOrg;
-
 
     private static final long serialVersionUID = 5567237665659725591L;
 
@@ -379,23 +379,40 @@ public class ScfSupplierBank implements ScfClientDataParentFace {
         final ScfSupplierBank other = (ScfSupplierBank) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
                 && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-                && (this.getCustName() == null ? other.getCustName() == null : this.getCustName().equals(other.getCustName()))
-                && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
-                && (this.getBankAccount() == null ? other.getBankAccount() == null : this.getBankAccount().equals(other.getBankAccount()))
-                && (this.getBankAccountName() == null ? other.getBankAccountName() == null : this.getBankAccountName().equals(other.getBankAccountName()))
-                && (this.getBankSourceCode() == null ? other.getBankSourceCode() == null : this.getBankSourceCode().equals(other.getBankSourceCode()))
-                && (this.getBankTypeCode() == null ? other.getBankTypeCode() == null : this.getBankTypeCode().equals(other.getBankTypeCode()))
-                && (this.getProvinceName() == null ? other.getProvinceName() == null : this.getProvinceName().equals(other.getProvinceName()))
-                && (this.getCityName() == null ? other.getCityName() == null : this.getCityName().equals(other.getCityName()))
-                && (this.getSignAccount() == null ? other.getSignAccount() == null : this.getSignAccount().equals(other.getSignAccount()))
-                && (this.getDefaultAccount() == null ? other.getDefaultAccount() == null : this.getDefaultAccount().equals(other.getDefaultAccount()))
-                && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-                && (this.getAccountStatus() == null ? other.getAccountStatus() == null : this.getAccountStatus().equals(other.getAccountStatus()))
-                && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-                && (this.getCustType() == null ? other.getCustType() == null : this.getCustType().equals(other.getCustType()))
-                && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
-                && (this.getBankName() == null ? other.getBankName() == null : this.getBankName().equals(other.getBankName()))
-                && (this.getCoreOperOrg() == null ? other.getCoreOperOrg() == null : this.getCoreOperOrg().equals(other.getCoreOperOrg()))
+                && (this.getCustName() == null ? other.getCustName() == null
+                        : this.getCustName().equals(other.getCustName()))
+                && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null
+                        : this.getCoreCustNo().equals(other.getCoreCustNo()))
+                && (this.getBankAccount() == null ? other.getBankAccount() == null
+                        : this.getBankAccount().equals(other.getBankAccount()))
+                && (this.getBankAccountName() == null ? other.getBankAccountName() == null
+                        : this.getBankAccountName().equals(other.getBankAccountName()))
+                && (this.getBankSourceCode() == null ? other.getBankSourceCode() == null
+                        : this.getBankSourceCode().equals(other.getBankSourceCode()))
+                && (this.getBankTypeCode() == null ? other.getBankTypeCode() == null
+                        : this.getBankTypeCode().equals(other.getBankTypeCode()))
+                && (this.getProvinceName() == null ? other.getProvinceName() == null
+                        : this.getProvinceName().equals(other.getProvinceName()))
+                && (this.getCityName() == null ? other.getCityName() == null
+                        : this.getCityName().equals(other.getCityName()))
+                && (this.getSignAccount() == null ? other.getSignAccount() == null
+                        : this.getSignAccount().equals(other.getSignAccount()))
+                && (this.getDefaultAccount() == null ? other.getDefaultAccount() == null
+                        : this.getDefaultAccount().equals(other.getDefaultAccount()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getAccountStatus() == null ? other.getAccountStatus() == null
+                        : this.getAccountStatus().equals(other.getAccountStatus()))
+                && (this.getModiDate() == null ? other.getModiDate() == null
+                        : this.getModiDate().equals(other.getModiDate()))
+                && (this.getCustType() == null ? other.getCustType() == null
+                        : this.getCustType().equals(other.getCustType()))
+                && (this.getOperOrg() == null ? other.getOperOrg() == null
+                        : this.getOperOrg().equals(other.getOperOrg()))
+                && (this.getBankName() == null ? other.getBankName() == null
+                        : this.getBankName().equals(other.getBankName()))
+                && (this.getCoreOperOrg() == null ? other.getCoreOperOrg() == null
+                        : this.getCoreOperOrg().equals(other.getCoreOperOrg()))
                 && (this.getBtNo() == null ? other.getBtNo() == null : this.getBtNo().equals(other.getBtNo()));
     }
 
@@ -427,23 +444,23 @@ public class ScfSupplierBank implements ScfClientDataParentFace {
     }
 
     @Override
-    public void fillDefaultValue(){
+    public void fillDefaultValue() {
         this.id = SerialGenerator.getLongValue("ScfSupplierBank.id");
         this.custType = "0";
         this.regDate = BetterDateUtils.getNumDate();
         this.modiDate = BetterDateUtils.getNumDateTime();
         this.accountStatus = "1";
         this.custNo = MathExtend.defaultLongZero(custNo);
-        this.operOrg = BetterStringUtils.defaultIfEmpty(this.operOrg, " ");
+        this.operOrg = StringUtils.defaultIfEmpty(this.operOrg, " ");
     }
 
     @Override
-    public void modifytValue(){
+    public void modifytValue() {
 
         this.modiDate = BetterDateUtils.getNumDateTime();
     }
 
-    public Map<String, Object> converToTmpDataMap(){
+    public Map<String, Object> converToTmpDataMap() {
         final Map<String, Object> tmpMap = BeanMapper.map(this, Map.class);
 
         return tmpMap;

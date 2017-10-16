@@ -459,146 +459,117 @@ public class CommissionRecord implements BetterjrEntity {
         CommissionRecord other = (CommissionRecord) obj;
         if (this.amount == null) {
             if (other.amount != null) return false;
-        }
-        else if (!this.amount.equals(other.amount)) return false;
+        } else if (!this.amount.equals(other.amount)) return false;
         if (this.area == null) {
             if (other.area != null) return false;
-        }
-        else if (!this.area.equals(other.area)) return false;
+        } else if (!this.area.equals(other.area)) return false;
         if (this.balance == null) {
             if (other.balance != null) return false;
-        }
-        else if (!this.balance.equals(other.balance)) return false;
+        } else if (!this.balance.equals(other.balance)) return false;
         if (this.bank == null) {
             if (other.bank != null) return false;
-        }
-        else if (!this.bank.equals(other.bank)) return false;
+        } else if (!this.bank.equals(other.bank)) return false;
         if (this.bankAccount == null) {
             if (other.bankAccount != null) return false;
-        }
-        else if (!this.bankAccount.equals(other.bankAccount)) return false;
+        } else if (!this.bankAccount.equals(other.bankAccount)) return false;
         if (this.bankAccountName == null) {
             if (other.bankAccountName != null) return false;
-        }
-        else if (!this.bankAccountName.equals(other.bankAccountName)) return false;
+        } else if (!this.bankAccountName.equals(other.bankAccountName)) return false;
         if (this.bankAddress == null) {
             if (other.bankAddress != null) return false;
-        }
-        else if (!this.bankAddress.equals(other.bankAddress)) return false;
+        } else if (!this.bankAddress.equals(other.bankAddress)) return false;
         if (this.bankName == null) {
             if (other.bankName != null) return false;
-        }
-        else if (!this.bankName.equals(other.bankName)) return false;
+        } else if (!this.bankName.equals(other.bankName)) return false;
         if (this.businStatus == null) {
             if (other.businStatus != null) return false;
-        }
-        else if (!this.businStatus.equals(other.businStatus)) return false;
+        } else if (!this.businStatus.equals(other.businStatus)) return false;
         if (this.confirmStatus == null) {
             if (other.confirmStatus != null) return false;
-        }
-        else if (!this.confirmStatus.equals(other.confirmStatus)) return false;
+        } else if (!this.confirmStatus.equals(other.confirmStatus)) return false;
         if (this.contacts == null) {
             if (other.contacts != null) return false;
-        }
-        else if (!this.contacts.equals(other.contacts)) return false;
+        } else if (!this.contacts.equals(other.contacts)) return false;
         if (this.contactsMobileNo == null) {
             if (other.contactsMobileNo != null) return false;
-        }
-        else if (!this.contactsMobileNo.equals(other.contactsMobileNo)) return false;
+        } else if (!this.contactsMobileNo.equals(other.contactsMobileNo)) return false;
         if (this.custName == null) {
             if (other.custName != null) return false;
-        }
-        else if (!this.custName.equals(other.custName)) return false;
+        } else if (!this.custName.equals(other.custName)) return false;
         if (this.custNo == null) {
             if (other.custNo != null) return false;
-        }
-        else if (!this.custNo.equals(other.custNo)) return false;
+        } else if (!this.custNo.equals(other.custNo)) return false;
         if (this.customerName == null) {
             if (other.customerName != null) return false;
-        }
-        else if (!this.customerName.equals(other.customerName)) return false;
+        } else if (!this.customerName.equals(other.customerName)) return false;
         if (this.fileId == null) {
             if (other.fileId != null) return false;
-        }
-        else if (!this.fileId.equals(other.fileId)) return false;
+        } else if (!this.fileId.equals(other.fileId)) return false;
         if (this.id == null) {
             if (other.id != null) return false;
-        }
-        else if (!this.id.equals(other.id)) return false;
+        } else if (!this.id.equals(other.id)) return false;
         if (this.importDate == null) {
             if (other.importDate != null) return false;
-        }
-        else if (!this.importDate.equals(other.importDate)) return false;
+        } else if (!this.importDate.equals(other.importDate)) return false;
         if (this.importTime == null) {
             if (other.importTime != null) return false;
-        }
-        else if (!this.importTime.equals(other.importTime)) return false;
+        } else if (!this.importTime.equals(other.importTime)) return false;
         if (this.modiDate == null) {
             if (other.modiDate != null) return false;
-        }
-        else if (!this.modiDate.equals(other.modiDate)) return false;
+        } else if (!this.modiDate.equals(other.modiDate)) return false;
         if (this.modiOperId == null) {
             if (other.modiOperId != null) return false;
-        }
-        else if (!this.modiOperId.equals(other.modiOperId)) return false;
+        } else if (!this.modiOperId.equals(other.modiOperId)) return false;
         if (this.modiOperName == null) {
             if (other.modiOperName != null) return false;
-        }
-        else if (!this.modiOperName.equals(other.modiOperName)) return false;
+        } else if (!this.modiOperName.equals(other.modiOperName)) return false;
         if (this.modiTime == null) {
             if (other.modiTime != null) return false;
-        }
-        else if (!this.modiTime.equals(other.modiTime)) return false;
+        } else if (!this.modiTime.equals(other.modiTime)) return false;
         if (this.operOrg == null) {
             if (other.operOrg != null) return false;
-        }
-        else if (!this.operOrg.equals(other.operOrg)) return false;
+        } else if (!this.operOrg.equals(other.operOrg)) return false;
         if (this.payStatus == null) {
             if (other.payStatus != null) return false;
-        }
-        else if (!this.payStatus.equals(other.payStatus)) return false;
+        } else if (!this.payStatus.equals(other.payStatus)) return false;
         if (this.refNo == null) {
             if (other.refNo != null) return false;
-        }
-        else if (!this.refNo.equals(other.refNo)) return false;
+        } else if (!this.refNo.equals(other.refNo)) return false;
         if (this.regDate == null) {
             if (other.regDate != null) return false;
-        }
-        else if (!this.regDate.equals(other.regDate)) return false;
+        } else if (!this.regDate.equals(other.regDate)) return false;
         if (this.regOperId == null) {
             if (other.regOperId != null) return false;
-        }
-        else if (!this.regOperId.equals(other.regOperId)) return false;
+        } else if (!this.regOperId.equals(other.regOperId)) return false;
         if (this.regOperName == null) {
             if (other.regOperName != null) return false;
-        }
-        else if (!this.regOperName.equals(other.regOperName)) return false;
+        } else if (!this.regOperName.equals(other.regOperName)) return false;
         if (this.regTime == null) {
             if (other.regTime != null) return false;
-        }
-        else if (!this.regTime.equals(other.regTime)) return false;
+        } else if (!this.regTime.equals(other.regTime)) return false;
         if (this.unit == null) {
             if (other.unit != null) return false;
-        }
-        else if (!this.unit.equals(other.unit)) return false;
+        } else if (!this.unit.equals(other.unit)) return false;
         if (this.version == null) {
             if (other.version != null) return false;
-        }
-        else if (!this.version.equals(other.version)) return false;
+        } else if (!this.version.equals(other.version)) return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "CommissionRecord [id=" + this.id + ", fileId=" + this.fileId + ", refNo=" + this.refNo + ", importDate=" + this.importDate
-                + ", importTime=" + this.importTime + ", area=" + this.area + ", customerName=" + this.customerName + ", amount=" + this.amount
-                + ", unit=" + this.unit + ", balance=" + this.balance + ", bankAccount=" + this.bankAccount + ", bankAccountName="
-                + this.bankAccountName + ", bank=" + this.bank + ", bankName=" + this.bankName + ", bankAddress=" + this.bankAddress + ", contacts="
-                + this.contacts + ", contactsMobileNo=" + this.contactsMobileNo + ", custNo=" + this.custNo + ", custName=" + this.custName
-                + ", operOrg=" + this.operOrg + ", payStatus=" + this.payStatus + ", businStatus=" + this.businStatus + ", regOperId="
-                + this.regOperId + ", regOperName=" + this.regOperName + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", modiOperId="
-                + this.modiOperId + ", modiOperName=" + this.modiOperName + ", modiDate=" + this.modiDate + ", modiTime=" + this.modiTime
-                + ", version=" + this.version + ", confirmStatus=" + this.confirmStatus + "]";
+        return "CommissionRecord [id=" + this.id + ", fileId=" + this.fileId + ", refNo=" + this.refNo + ", importDate="
+                + this.importDate + ", importTime=" + this.importTime + ", area=" + this.area + ", customerName="
+                + this.customerName + ", amount=" + this.amount + ", unit=" + this.unit + ", balance=" + this.balance
+                + ", bankAccount=" + this.bankAccount + ", bankAccountName=" + this.bankAccountName + ", bank="
+                + this.bank + ", bankName=" + this.bankName + ", bankAddress=" + this.bankAddress + ", contacts="
+                + this.contacts + ", contactsMobileNo=" + this.contactsMobileNo + ", custNo=" + this.custNo
+                + ", custName=" + this.custName + ", operOrg=" + this.operOrg + ", payStatus=" + this.payStatus
+                + ", businStatus=" + this.businStatus + ", regOperId=" + this.regOperId + ", regOperName="
+                + this.regOperName + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", modiOperId="
+                + this.modiOperId + ", modiOperName=" + this.modiOperName + ", modiDate=" + this.modiDate
+                + ", modiTime=" + this.modiTime + ", version=" + this.version + ", confirmStatus=" + this.confirmStatus
+                + "]";
     }
 
     public CommissionRecord() {
@@ -622,7 +593,8 @@ public class CommissionRecord implements BetterjrEntity {
             this.setRegOperName(anOperatorInfo.getName());
             this.setVersion("1");
             this.confirmStatus = CommissionConstantCollentions.COMMISSION_FILE_CONFIRM_STATUS_UNCONFIRMED;
-            this.refNo = SequenceFactory.generate("PLAT_COMMISSION_RECORD", this.getOperOrg(), "CP#{Date:yyMMdd}#{Seq:8}", "D");
+            this.refNo = SequenceFactory.generate("PLAT_COMMISSION_RECORD", this.getOperOrg(),
+                    "CP#{Date:yyMMdd}#{Seq:8}", "D");
             this.id = SerialGenerator.getLongValue("CommissionRecord.id");
         }
         catch (Exception e) {

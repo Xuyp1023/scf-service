@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.agreement.entity.ScfAgreementStandard;
 
 @BetterjrMapper
-public interface ScfAgreementStandardMapper extends Mapper<ScfAgreementStandard> {
-}
+public interface ScfAgreementStandardMapper extends Mapper<ScfAgreementStandard> {}

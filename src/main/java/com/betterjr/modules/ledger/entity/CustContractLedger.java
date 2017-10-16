@@ -10,55 +10,55 @@ import javax.persistence.*;
 @Table(name = "t_contract_ledger_cust")
 public class CustContractLedger implements BetterjrEntity {
     @Id
-    @Column(name = "l_custNo",  columnDefinition="INTEGER" )
+    @Column(name = "l_custNo", columnDefinition = "INTEGER")
     private Long custNo;
 
     @Id
-    @Column(name = "l_contractId",  columnDefinition="INTEGER" )
+    @Column(name = "l_contractId", columnDefinition = "INTEGER")
     private Long contractId;
 
-    @Column(name = "c_custName",  columnDefinition="VARCHAR" )
+    @Column(name = "c_custName", columnDefinition = "VARCHAR")
     private String custName;
 
-    @Column(name = "c_representative",  columnDefinition="VARCHAR" )
+    @Column(name = "c_representative", columnDefinition = "VARCHAR")
     private String representative;
 
-    @Column(name = "c_bankName",  columnDefinition="VARCHAR" )
+    @Column(name = "c_bankName", columnDefinition = "VARCHAR")
     private String bankName;
 
-    @Column(name = "c_bankAccount",  columnDefinition="VARCHAR" )
+    @Column(name = "c_bankAccount", columnDefinition = "VARCHAR")
     private String bankAccount;
 
-    @Column(name = "c_tax_code",  columnDefinition="VARCHAR" )
+    @Column(name = "c_tax_code", columnDefinition = "VARCHAR")
     private String taxCode;
 
-    @Column(name = "c_phone",  columnDefinition="VARCHAR" )
+    @Column(name = "c_phone", columnDefinition = "VARCHAR")
     private String phone;
 
-    @Column(name = "c_fax",  columnDefinition="VARCHAR" )
+    @Column(name = "c_fax", columnDefinition = "VARCHAR")
     private String fax;
 
-    @Column(name = "c_address",  columnDefinition="VARCHAR" )
+    @Column(name = "c_address", columnDefinition = "VARCHAR")
     private String address;
 
-    @Column(name = "c_email",  columnDefinition="VARCHAR" )
+    @Column(name = "c_email", columnDefinition = "VARCHAR")
     private String email;
 
-    @Column(name = "c_busin_status",  columnDefinition="VARCHAR" )
+    @Column(name = "c_busin_status", columnDefinition = "VARCHAR")
     private String businStatus;
-    
-    @Column(name = "c_reg_date",  columnDefinition="VARCHAR" )
+
+    @Column(name = "c_reg_date", columnDefinition = "VARCHAR")
     private String regDate;
-    
-    @Column(name = "c_reg_time",  columnDefinition="VARCHAR" )
+
+    @Column(name = "c_reg_time", columnDefinition = "VARCHAR")
     private String regTime;
-    
-    @Column(name = "c_bankAccountName",  columnDefinition="VARCHAR" )
+
+    @Column(name = "c_bankAccountName", columnDefinition = "VARCHAR")
     private String bankAccountName;
 
-    @Column(name = "c_zipCode",  columnDefinition="VARCHAR" )
+    @Column(name = "c_zipCode", columnDefinition = "VARCHAR")
     private String zipCode;
-    
+
     private static final long serialVersionUID = 1482311479891L;
 
     public Long getCustNo() {
@@ -226,17 +226,25 @@ public class CustContractLedger implements BetterjrEntity {
         }
         CustContractLedger other = (CustContractLedger) that;
         return (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-            && (this.getContractId() == null ? other.getContractId() == null : this.getContractId().equals(other.getContractId()))
-            && (this.getCustName() == null ? other.getCustName() == null : this.getCustName().equals(other.getCustName()))
-            && (this.getRepresentative() == null ? other.getRepresentative() == null : this.getRepresentative().equals(other.getRepresentative()))
-            && (this.getBankName() == null ? other.getBankName() == null : this.getBankName().equals(other.getBankName()))
-            && (this.getBankAccount() == null ? other.getBankAccount() == null : this.getBankAccount().equals(other.getBankAccount()))
-            && (this.getTaxCode() == null ? other.getTaxCode() == null : this.getTaxCode().equals(other.getTaxCode()))
-            && (this.getPhone() == null ? other.getPhone() == null : this.getPhone().equals(other.getPhone()))
-            && (this.getFax() == null ? other.getFax() == null : this.getFax().equals(other.getFax()))
-            && (this.getAddress() == null ? other.getAddress() == null : this.getAddress().equals(other.getAddress()))
-            && (this.getEmail() == null ? other.getEmail() == null : this.getEmail().equals(other.getEmail()))
-            && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()));
+                && (this.getContractId() == null ? other.getContractId() == null
+                        : this.getContractId().equals(other.getContractId()))
+                && (this.getCustName() == null ? other.getCustName() == null
+                        : this.getCustName().equals(other.getCustName()))
+                && (this.getRepresentative() == null ? other.getRepresentative() == null
+                        : this.getRepresentative().equals(other.getRepresentative()))
+                && (this.getBankName() == null ? other.getBankName() == null
+                        : this.getBankName().equals(other.getBankName()))
+                && (this.getBankAccount() == null ? other.getBankAccount() == null
+                        : this.getBankAccount().equals(other.getBankAccount()))
+                && (this.getTaxCode() == null ? other.getTaxCode() == null
+                        : this.getTaxCode().equals(other.getTaxCode()))
+                && (this.getPhone() == null ? other.getPhone() == null : this.getPhone().equals(other.getPhone()))
+                && (this.getFax() == null ? other.getFax() == null : this.getFax().equals(other.getFax()))
+                && (this.getAddress() == null ? other.getAddress() == null
+                        : this.getAddress().equals(other.getAddress()))
+                && (this.getEmail() == null ? other.getEmail() == null : this.getEmail().equals(other.getEmail()))
+                && (this.getBusinStatus() == null ? other.getBusinStatus() == null
+                        : this.getBusinStatus().equals(other.getBusinStatus()));
     }
 
     @Override
@@ -257,10 +265,10 @@ public class CustContractLedger implements BetterjrEntity {
         result = prime * result + ((getBusinStatus() == null) ? 0 : getBusinStatus().hashCode());
         return result;
     }
-    
-    public void initValue(){
+
+    public void initValue() {
         this.regDate = BetterDateUtils.getNumDate();
         this.regTime = BetterDateUtils.getNumTime();
-        this.businStatus="1";
+        this.businStatus = "1";
     }
 }

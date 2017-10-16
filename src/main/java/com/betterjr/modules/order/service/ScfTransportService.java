@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.exception.BytterTradeException;
@@ -18,7 +19,8 @@ import com.betterjr.modules.order.entity.ScfTransport;
 import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
 
 @Service
-public class ScfTransportService extends BaseService<ScfTransportMapper, ScfTransport> implements IScfOrderInfoCheckService {
+public class ScfTransportService extends BaseService<ScfTransportMapper, ScfTransport>
+        implements IScfOrderInfoCheckService {
 
     /**
      * 订单运输单据录入
@@ -36,48 +38,48 @@ public class ScfTransportService extends BaseService<ScfTransportMapper, ScfTran
      * 
      * @param anDateType 日期查询,0-发货日期 1-收货日期
      */
-    public Page<ScfTransport> queryTransport(Map<String,Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfTransport> queryTransport(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
         // 操作员只能查询本机构数据
         anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
         // 日期查询,0-发货日期 1-收货日期
-        if (BetterStringUtils.equals((String)anMap.get("dateType"), "0")) {
+        if (StringUtils.equals((String) anMap.get("dateType"), "0")) {
             anMap.put("GTEsendDate", anMap.get("GTEDate"));
             anMap.put("LTEsendDate", anMap.get("LTEDate"));
-        }
-        else if (BetterStringUtils.equals((String)anMap.get("dateType"), "1")) {
+        } else if (StringUtils.equals((String) anMap.get("dateType"), "1")) {
             anMap.put("GTEreceiveDate", anMap.get("GTEDate"));
             anMap.put("LTEreceiveDate", anMap.get("LTEDate"));
         }
         anMap.remove("GTEDate");
         anMap.remove("LTEDate");
         anMap.remove("dateType");
-        Page<ScfTransport> anTransportList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag));
+        Page<ScfTransport> anTransportList = this.selectPropertyByPage(anMap, anPageNum, anPageSize,
+                "1".equals(anFlag));
 
         return anTransportList;
     }
-   
+
     /**
      * 查询运输单据
      */
     public List<ScfTransport> findTransport(Map<String, Object> anMap) {
-    	return this.selectByClassProperty(ScfTransport.class, anMap);
+        return this.selectByClassProperty(ScfTransport.class, anMap);
     }
-   
-    
+
+    @Override
     public void checkInfoExist(Long anId, String anOperOrg) {
         Map<String, Object> anMap = new HashMap<String, Object>();
         anMap.put("id", anId);
         List<ScfTransport> transportList = this.selectByClassProperty(ScfTransport.class, anMap);
-        if(Collections3.isEmpty(transportList)) {
+        if (Collections3.isEmpty(transportList)) {
             logger.warn("不存在相对应id,操作机构,业务状态的运输单据");
             throw new BytterTradeException(40001, "不存在相对应id,操作机构,业务状态的运输单据");
         }
     }
-    
+
     /**
      * 运输单据编辑
      */
-    public ScfTransport saveModifyTransport(ScfTransport anModiTransport, Long anId,String anFileList) {
+    public ScfTransport saveModifyTransport(ScfTransport anModiTransport, Long anId, String anFileList) {
         ScfTransport anTransport = this.selectByPrimaryKey(anId);
         BTAssert.notNull(anTransport, "无法获取运输单据信息");
         anModiTransport.setId(anTransport.getId());
@@ -85,7 +87,7 @@ public class ScfTransportService extends BaseService<ScfTransportMapper, ScfTran
         this.updateByPrimaryKeySelective(anModiTransport);
         return anModiTransport;
     }
-    
+
     /**
      * 运输单据删除
      */

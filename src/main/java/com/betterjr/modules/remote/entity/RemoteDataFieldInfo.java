@@ -50,6 +50,7 @@ public class RemoteDataFieldInfo implements RemoteFieldInfo {
         return userStyle;
     }
 
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
@@ -60,7 +61,7 @@ public class RemoteDataFieldInfo implements RemoteFieldInfo {
         sb.append(", userStyle=").append(userStyle);
         sb.append(", dataStyle=").append(dataStyle);
         sb.append("]");
-        
+
         return sb.toString();
     }
 

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,8 +55,8 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         // 状态(0:登记;1:上架;2:下架;)
         Object businStatus = anMap.get("businStatus");
         if (null == businStatus || businStatus.toString().isEmpty()) {
-            anMap.put("businStatus",
-                    new String[] { ProductConstants.PRO_STATUS_REG, ProductConstants.PRO_STATUS_SHELVES, ProductConstants.PRO_STATUS_OFFLINE });
+            anMap.put("businStatus", new String[] { ProductConstants.PRO_STATUS_REG,
+                    ProductConstants.PRO_STATUS_SHELVES, ProductConstants.PRO_STATUS_OFFLINE });
         }
         // 操作员只能查询所属机构的融资产品信息
         anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
@@ -118,21 +119,23 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         // 构建查询条件
         List<Long> coreCustList = new ArrayList<Long>();
         // 查找当前供应商对应的核心企业
-        List<CustRelationData> supplierRelations = relationService.webQueryCustRelationData(custNo, CustomerConstants.RELATE_TYPE_SUPPLIER_CORE);
+        List<CustRelationData> supplierRelations = relationService.webQueryCustRelationData(custNo,
+                CustomerConstants.RELATE_TYPE_SUPPLIER_CORE);
         for (CustRelationData relation : supplierRelations) {
             if (coreCustList.contains(relation.getRelateCustno())) {
                 coreCustList.add(relation.getRelateCustno());
             }
         }
         // 查找当经销商对应的核心企业
-        List<CustRelationData> sellerRelations = relationService.webQueryCustRelationData(custNo, CustomerConstants.RELATE_TYPE_SELLER_CORE);
+        List<CustRelationData> sellerRelations = relationService.webQueryCustRelationData(custNo,
+                CustomerConstants.RELATE_TYPE_SELLER_CORE);
         for (CustRelationData relation : sellerRelations) {
             if (coreCustList.contains(relation.getRelateCustno())) {
                 coreCustList.add(relation.getRelateCustno());
             }
         }
-        Map<String, Object> anMap = QueryTermBuilder.newInstance().put("businStatus", ProductConstants.PRO_STATUS_SHELVES)
-                .put("coreCustNo", coreCustList).build();
+        Map<String, Object> anMap = QueryTermBuilder.newInstance()
+                .put("businStatus", ProductConstants.PRO_STATUS_SHELVES).put("coreCustNo", coreCustList).build();
 
         for (ScfProduct product : this.selectByProperty(anMap)) {
             result.add(new SimpleDataEntity(product.getProductName(), String.valueOf(product.getId())));
@@ -152,13 +155,13 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
     public ScfProduct findProductByCode(Long anCoreCustNo, Long anFactorNo, String anProductCode) {
         BTAssert.notNull(anCoreCustNo, "请选择核心企业!");
         BTAssert.notNull(anFactorNo, "请选择保理公司!");
-        if (BetterStringUtils.isBlank(anProductCode)) {
+        if (StringUtils.isBlank(anProductCode)) {
             logger.info("产品编号不能为空");
             throw new BytterTradeException(40001, "产品编号不能为空!");
         }
         // 构建查询条件,使用保理产品编号查询产品详细信息
-        Map<String, Object> anMap = QueryTermBuilder.newInstance().put("coreCustNo", anCoreCustNo).put("factorNo", anFactorNo)
-                .put("productCode", anProductCode).build();
+        Map<String, Object> anMap = QueryTermBuilder.newInstance().put("coreCustNo", anCoreCustNo)
+                .put("factorNo", anFactorNo).put("productCode", anProductCode).build();
         return Collections3.getFirst(this.selectByProperty(anMap));
     }
 
@@ -178,7 +181,8 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         initName(anProduct);
 
         // 产品编号不允许重复
-        ScfProduct product = findProductByCode(anProduct.getCoreCustNo(), anProduct.getFactorNo(), anProduct.getProductCode());
+        ScfProduct product = findProductByCode(anProduct.getCoreCustNo(), anProduct.getFactorNo(),
+                anProduct.getProductCode());
         BTAssert.isNull(product, "产品编号不允许重复!");
 
         // 数据存盘
@@ -189,7 +193,8 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
 
     private void initName(ScfProduct anProduct) {
         // 设置操作员所属保理公司客户号
-        Long anFactorNo = Collections3.getFirst(custAndOperatorRelaService.findCustNoList(anProduct.getRegOperId(), anProduct.getOperOrg()));
+        Long anFactorNo = Collections3
+                .getFirst(custAndOperatorRelaService.findCustNoList(anProduct.getRegOperId(), anProduct.getOperOrg()));
         anProduct.setFactorNo(anFactorNo);
         anProduct.setFactorName(custAccountService.queryCustName(anProduct.getFactorNo()));
         anProduct.setFactorCorp(DictUtils.getDictCode("ScfFactorGroup", String.valueOf(anFactorNo)));
@@ -318,19 +323,19 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
     }
 
     private void checkOperator(String anOperOrg, String anMessage) {
-        if (BetterStringUtils.equals(UserUtils.getOperatorInfo().getOperOrg(), anOperOrg) == false) {
+        if (StringUtils.equals(UserUtils.getOperatorInfo().getOperOrg(), anOperOrg) == false) {
             logger.warn(anMessage);
             throw new BytterTradeException(40001, anMessage);
         }
     }
 
     private void checkStatus(String anBusinStatus, String anTargetStatus, boolean anFlag, String anMessage) {
-        if (BetterStringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
+        if (StringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
             logger.warn(anMessage);
             throw new BytterTradeException(40001, anMessage);
         }
     }
-    
+
     /**
      * 保存或增保理产品信息
      * @param anProduct
@@ -340,31 +345,31 @@ public class ScfProductService extends BaseService<ScfProductMapper, ScfProduct>
         workCondition.put("productCode", anProduct.getProductCode());
         workCondition.put("factorCorp", anProduct.getFactorCorp());
         List<ScfProduct> resultList = this.selectByProperty(workCondition);
-        if (Collections3.isEmpty(resultList)){
+        if (Collections3.isEmpty(resultList)) {
             anProduct.initValue(null);
             anProduct.initDefValue();
-            anProduct.setCoreName(DictUtils.getDictLabelByCode("FactorCoreCustInfo", Long.toString(anProduct.getCoreCustNo())));
-            try{
-                anProduct.setFactorNo(Long.parseLong(DictUtils.getDictValueByCode("ScfFactorGroup", anProduct.getFactorCorp())));
-                anProduct.setFactorName( DictUtils.getDictLabelByCode("ScfFactorGroup", anProduct.getFactorCorp()));
+            anProduct.setCoreName(
+                    DictUtils.getDictLabelByCode("FactorCoreCustInfo", Long.toString(anProduct.getCoreCustNo())));
+            try {
+                anProduct.setFactorNo(
+                        Long.parseLong(DictUtils.getDictValueByCode("ScfFactorGroup", anProduct.getFactorCorp())));
+                anProduct.setFactorName(DictUtils.getDictLabelByCode("ScfFactorGroup", anProduct.getFactorCorp()));
             }
-            catch(Exception ex){
+            catch (Exception ex) {
                 logger.warn("saveOrUpdateProduct not find FactorNo in dict ScfFactorGroup");
             }
-            CustInfo custInfo = this.custAccountService.selectByPrimaryKey( anProduct.getFactorNo() );
-            if (custInfo != null){
-                anProduct.setOperOrg( custInfo.getOperOrg());
+            CustInfo custInfo = this.custAccountService.selectByPrimaryKey(anProduct.getFactorNo());
+            if (custInfo != null) {
+                anProduct.setOperOrg(custInfo.getOperOrg());
             }
             this.insert(anProduct);
-        }
-        else {
+        } else {
             ScfProduct tmpScfProd = Collections3.getFirst(resultList);
             anProduct.modifyValue(tmpScfProd);
             anProduct.modifyValue(null, tmpScfProd);
             this.updateByExample(anProduct, workCondition);
         }
     }
-
 
     /***
      * 根据产品id获取产品对象

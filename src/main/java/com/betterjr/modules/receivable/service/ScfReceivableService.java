@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,8 @@ import com.betterjr.modules.receivable.dao.ScfReceivableMapper;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
 
 @Service
-public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfReceivable> implements IScfOrderInfoCheckService {
+public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfReceivable>
+        implements IScfOrderInfoCheckService {
 
     @Autowired
     private ScfOrderRelationService orderRelationService;
@@ -55,7 +57,8 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
     /**
      * 应收账款编辑
      */
-    public ScfReceivable saveModifyReceivable(ScfReceivable anMoidReceivable, Long anId, String anFileList, String anOtherFileList) {
+    public ScfReceivable saveModifyReceivable(ScfReceivable anMoidReceivable, Long anId, String anFileList,
+            String anOtherFileList) {
         logger.info("Begin to modify receivable");
 
         ScfReceivable anReceivable = this.selectByPrimaryKey(anId);
@@ -71,8 +74,10 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
         anMoidReceivable.setId(anId);
         anMoidReceivable.initModifyValue(UserUtils.getOperatorInfo());
         // 保存附件信息
-        anMoidReceivable.setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anFileList, anReceivable.getBatchNo()));
-        anMoidReceivable.setOtherBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anOtherFileList, anReceivable.getOtherBatchNo()));
+        anMoidReceivable
+                .setBatchNo(custFileDubboService.updateAndDelCustFileItemInfo(anFileList, anReceivable.getBatchNo()));
+        anMoidReceivable.setOtherBatchNo(
+                custFileDubboService.updateAndDelCustFileItemInfo(anOtherFileList, anReceivable.getOtherBatchNo()));
         // 数据存盘
         this.updateByPrimaryKeySelective(anMoidReceivable);
         return anMoidReceivable;
@@ -81,20 +86,21 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
     /**
      * 应收账款分页查询 anIsOnlyNormal 是否过滤，仅查询正常未融资数据 1：未融资 0：查询所有
      */
-    public Page<ScfReceivable> queryReceivable(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfReceivable> queryReceivable(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag,
+            int anPageNum, int anPageSize) {
         // 操作员只能查询本机构数据
         // anMap.put("operOrg", UserUtils.getOperatorInfo().getOperOrg());
         if (!UserUtils.coreUser()) {
             // 已审核
             anMap.put("aduit", "1");
         }
-        if (BetterStringUtils.equals(anIsOnlyNormal, "1")) {
+        if (StringUtils.equals(anIsOnlyNormal, "1")) {
             anMap.put("businStatus", "0");
         }
         // 应收账款模糊查询
         anMap = Collections3.fuzzyMap(anMap, new String[] { "receivableNo" });
-        Page<ScfReceivable> anReceivableList = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag),
-                "aduit,businStatus, receivableNo");
+        Page<ScfReceivable> anReceivableList = this.selectPropertyByPage(anMap, anPageNum, anPageSize,
+                "1".equals(anFlag), "aduit,businStatus, receivableNo");
 
         // 补全关联信息
         for (ScfReceivable anReceivable : anReceivableList) {
@@ -111,7 +117,7 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
      * 应收账款无分页查询 anIsOnlyNormal 是否过滤，仅查询正常未融资数据 1：未融资 0：查询所有
      */
     public List<ScfReceivable> findReceivableList(Map<String, Object> anMap, String anIsOnlyNormal) {
-        if (BetterStringUtils.equals(anIsOnlyNormal, "1")) {
+        if (StringUtils.equals(anIsOnlyNormal, "1")) {
             anMap.put("businStatus", "0");
         }
 
@@ -121,7 +127,8 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
 
         // 过滤掉 不能融资的应收账（发票或者合同不全）
         for (ScfReceivable receivable : receivaList) {
-            if (false == orderService.checkInfoCompleted(receivable.getId().toString(), RequestType.RECEIVABLE.getCode())) {
+            if (false == orderService.checkInfoCompleted(receivable.getId().toString(),
+                    RequestType.RECEIVABLE.getCode())) {
                 continue;
             }
             retList.add(receivable);
@@ -187,6 +194,7 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
      * @param anOperOrg
      *            操作机构
      */
+    @Override
     public void checkInfoExist(Long anId, String anOperOrg) {
         Map<String, Object> anMap = new HashMap<String, Object>();
         // 可编辑的业务状态
@@ -207,7 +215,7 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
      * 检查用户是否有权限操作数据
      */
     private void checkOperator(String anOperOrg, String anMessage) {
-        if (BetterStringUtils.equals(UserUtils.getOperatorInfo().getOperOrg(), anOperOrg) == false) {
+        if (StringUtils.equals(UserUtils.getOperatorInfo().getOperOrg(), anOperOrg) == false) {
             logger.warn(anMessage);
             throw new BytterTradeException(40001, anMessage);
         }
@@ -287,7 +295,8 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
         // 保存附件信息
         anReceivable.setBatchNo(custFileDubboService.updateCustFileItemInfo(anFileList, anReceivable.getBatchNo()));
         // 保存其他文件信息
-        anReceivable.setOtherBatchNo(custFileDubboService.updateCustFileItemInfo(anOtherFileList, anReceivable.getOtherBatchNo()));
+        anReceivable.setOtherBatchNo(
+                custFileDubboService.updateCustFileItemInfo(anOtherFileList, anReceivable.getOtherBatchNo()));
         this.insert(anReceivable);
         return anReceivable;
     }
@@ -308,7 +317,7 @@ public class ScfReceivableService extends BaseService<ScfReceivableMapper, ScfRe
      * 检查状态信息
      */
     public void checkStatus(String anBusinStatus, String anTargetStatus, boolean anFlag, String anMessage) {
-        if (BetterStringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
+        if (StringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
             logger.warn(anMessage);
             throw new BytterTradeException(40001, anMessage);
         }

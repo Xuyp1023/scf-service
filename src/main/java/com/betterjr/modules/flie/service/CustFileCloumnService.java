@@ -16,15 +16,16 @@ public class CustFileCloumnService extends BaseService<CustFileCloumnMapper, Cus
 
     public List<CustFileCloumn> queryFileCloumnByInfoType(String anInfoType, String anUpFlag) {
 
-        Map<String, Object> paramMap = QueryTermBuilder.newInstance().put("infoType", anInfoType).put("upFlag", anUpFlag).put("businStatus", "0")
-                .build();
+        Map<String, Object> paramMap = QueryTermBuilder.newInstance().put("infoType", anInfoType)
+                .put("upFlag", anUpFlag).put("businStatus", "0").build();
 
         return this.selectByClassProperty(CustFileCloumn.class, paramMap, "cloumnOrder asc");
     }
 
     public List<CustFileCloumn> queryFileCloumnByInfoTypeIsMust(String anInfoType, String anUpFlag) {
 
-        Map<String, Object> paramMap = QueryTermBuilder.newInstance().put("infoType", anInfoType).put("upFlag", anUpFlag).put("businStatus", "0")
+        Map<String, Object> paramMap = QueryTermBuilder.newInstance().put("infoType", anInfoType)
+                .put("upFlag", anUpFlag).put("businStatus", "0")
                 .put("isMust", FileResolveConstants.RESOLVE_FILE_IS_MUST).build();
 
         return this.selectByClassProperty(CustFileCloumn.class, paramMap, "cloumnOrder asc");

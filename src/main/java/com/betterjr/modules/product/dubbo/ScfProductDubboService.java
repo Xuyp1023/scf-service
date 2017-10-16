@@ -22,19 +22,22 @@ public class ScfProductDubboService implements IScfProductService {
 
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
 
-        return AjaxObject.newOkWithPage("融资产品信息查询成功", scfProductService.queryProduct(anQueryConditionMap, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject.newOkWithPage("融资产品信息查询成功",
+                scfProductService.queryProduct(anQueryConditionMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     @Override
     public String webQueryProduct(Long anCoreCustNo, String anFlag, int anPageNum, int anPageSize) {
 
-        return AjaxObject.newOkWithPage("融资产品信息查询成功", scfProductService.queryProduct(anCoreCustNo, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject.newOkWithPage("融资产品信息查询成功",
+                scfProductService.queryProduct(anCoreCustNo, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     @Override
     public String webQueryProductKeyAndValue(Long anCoreCustNo, Long anFactorNo) {
 
-        return AjaxObject.newOk("融资产品下拉列表查询成功", scfProductService.queryProductKeyAndValue(anCoreCustNo, anFactorNo)).toJson();
+        return AjaxObject.newOk("融资产品下拉列表查询成功", scfProductService.queryProductKeyAndValue(anCoreCustNo, anFactorNo))
+                .toJson();
     }
 
     @Override
@@ -46,7 +49,9 @@ public class ScfProductDubboService implements IScfProductService {
     @Override
     public String webFindProductByCode(Long anCoreCustNo, Long anFactorNo, String anProductCode) {
 
-        return AjaxObject.newOk("融资产品信息查询成功", scfProductService.findProductByCode(anCoreCustNo, anFactorNo, anProductCode)).toJson();
+        return AjaxObject
+                .newOk("融资产品信息查询成功", scfProductService.findProductByCode(anCoreCustNo, anFactorNo, anProductCode))
+                .toJson();
     }
 
     @Override

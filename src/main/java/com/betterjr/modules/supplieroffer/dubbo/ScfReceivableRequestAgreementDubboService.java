@@ -18,13 +18,17 @@ public class ScfReceivableRequestAgreementDubboService implements IScfReceivable
     @Override
     public String webQueryAgreementWithCore(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
 
-        return AjaxObject.newOkWithPage("查询合同成功", agreementService.queryAgreementWithCore(anMap, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject
+                .newOkWithPage("查询合同成功", agreementService.queryAgreementWithCore(anMap, anFlag, anPageNum, anPageSize))
+                .toJson();
     }
 
     @Override
-    public String webQueryAgreementWithSupplier(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public String webQueryAgreementWithSupplier(Map<String, Object> anMap, String anFlag, int anPageNum,
+            int anPageSize) {
 
-        return AjaxObject.newOkWithPage("查询合同成功", agreementService.queryAgreementWithSupplier(anMap, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject.newOkWithPage("查询合同成功",
+                agreementService.queryAgreementWithSupplier(anMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     @Override

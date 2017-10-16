@@ -45,11 +45,9 @@ public enum FaceDataStyle {
                 tmpMap = new HashMap();
                 dataMap.put(tmpKey, tmpMap);
                 dataMap = tmpMap;
-            }
-            else if (obj instanceof Map) {
+            } else if (obj instanceof Map) {
                 dataMap = (Map) obj;
-            }
-            else if (obj instanceof Collection) {
+            } else if (obj instanceof Collection) {
                 tmpMap = new HashMap();
                 ((Collection) obj).add(tmpMap);
                 dataMap = tmpMap;

@@ -6,7 +6,7 @@ public class DigitValidBean implements java.io.Serializable {
 
     private static final long serialVersionUID = 7684483859666570526L;
 
-    @Digits(message="", fraction = 0, integer = 0)
+    @Digits(message = "", fraction = 0, integer = 0)
     private String value;
 
     public String getValue() {

@@ -10,10 +10,10 @@ import com.betterjr.modules.productconfig.entity.ScfAssetDict;
 @Service
 public class ScfAssetDictService extends BaseService<ScfAssetDictMapper, ScfAssetDict> {
 
-	public ScfAssetDict addDict(ScfAssetDict anDict) {
-		BTAssert.notNull(anDict, "产品配置失败");
-		anDict.init();
-		this.insert(anDict);
-		return this.selectByPrimaryKey(anDict.getId());
-	}
+    public ScfAssetDict addDict(ScfAssetDict anDict) {
+        BTAssert.notNull(anDict, "产品配置失败");
+        anDict.init();
+        this.insert(anDict);
+        return this.selectByPrimaryKey(anDict.getId());
+    }
 }

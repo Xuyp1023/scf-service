@@ -258,17 +258,28 @@ public class ScfCreditDetail implements BetterjrEntity {
         ScfCreditDetail other = (ScfCreditDetail) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
                 && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-                && (this.getCustName() == null ? other.getCustName() == null : this.getCustName().equals(other.getCustName()))
-                && (this.getOccupyDate() == null ? other.getOccupyDate() == null : this.getOccupyDate().equals(other.getOccupyDate()))
-                && (this.getOccupyTime() == null ? other.getOccupyTime() == null : this.getOccupyTime().equals(other.getOccupyTime()))
-                && (this.getBalance() == null ? other.getBalance() == null : this.getBalance().equals(other.getBalance()))
-                && (this.getDirection() == null ? other.getDirection() == null : this.getDirection().equals(other.getDirection()))
-                && (this.getBusinFlag() == null ? other.getBusinFlag() == null : this.getBusinFlag().equals(other.getBusinFlag()))
-                && (this.getBusinId() == null ? other.getBusinId() == null : this.getBusinId().equals(other.getBusinId()))
-                && (this.getRequestNo() == null ? other.getRequestNo() == null : this.getRequestNo().equals(other.getRequestNo()))
-                && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
-                && (this.getCreditId() == null ? other.getCreditId() == null : this.getCreditId().equals(other.getCreditId()))
-                && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()));
+                && (this.getCustName() == null ? other.getCustName() == null
+                        : this.getCustName().equals(other.getCustName()))
+                && (this.getOccupyDate() == null ? other.getOccupyDate() == null
+                        : this.getOccupyDate().equals(other.getOccupyDate()))
+                && (this.getOccupyTime() == null ? other.getOccupyTime() == null
+                        : this.getOccupyTime().equals(other.getOccupyTime()))
+                && (this.getBalance() == null ? other.getBalance() == null
+                        : this.getBalance().equals(other.getBalance()))
+                && (this.getDirection() == null ? other.getDirection() == null
+                        : this.getDirection().equals(other.getDirection()))
+                && (this.getBusinFlag() == null ? other.getBusinFlag() == null
+                        : this.getBusinFlag().equals(other.getBusinFlag()))
+                && (this.getBusinId() == null ? other.getBusinId() == null
+                        : this.getBusinId().equals(other.getBusinId()))
+                && (this.getRequestNo() == null ? other.getRequestNo() == null
+                        : this.getRequestNo().equals(other.getRequestNo()))
+                && (this.getBusinStatus() == null ? other.getBusinStatus() == null
+                        : this.getBusinStatus().equals(other.getBusinStatus()))
+                && (this.getCreditId() == null ? other.getCreditId() == null
+                        : this.getCreditId().equals(other.getCreditId()))
+                && (this.getDescription() == null ? other.getDescription() == null
+                        : this.getDescription().equals(other.getDescription()));
     }
 
     @Override

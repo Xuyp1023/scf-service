@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,15 +34,16 @@ import com.betterjr.modules.order.helper.IScfOrderInfoCheckService;
  *
  */
 @Service
-public class ScfCustAgreementService extends BaseService<CustAgreementMapper, CustAgreement> implements IScfOrderInfoCheckService {
+public class ScfCustAgreementService extends BaseService<CustAgreementMapper, CustAgreement>
+        implements IScfOrderInfoCheckService {
 
     @Autowired
     private CustAccountService custAccoService;
-    @Reference(interfaceClass=ICustFileService.class)
+    @Reference(interfaceClass = ICustFileService.class)
     private ICustFileService custFileService;
-    @Reference(interfaceClass=ICustMechBankAccountService.class)
+    @Reference(interfaceClass = ICustMechBankAccountService.class)
     private ICustMechBankAccountService custMechBankAccountService;
-    
+
     /**
      * 查询用户合同分页信息
      * 
@@ -50,19 +52,20 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
      */
     public Page<CustAgreement> queryCustAgreementsByPage(Map<String, Object> anParam, int anPageNum, int anPageSize) {
         logger.info("Begin get customer agreement list." + anParam);
-        Map<String, Object> map = new HashMap();    
+        Map<String, Object> map = new HashMap();
         SupplyChainUtil.addCondition(anParam, map);
-        if(UserUtils.factorUser()){ // 如果当前登录是保理公司，则需要增加保理客户号的查询条件
+        if (UserUtils.factorUser()) { // 如果当前登录是保理公司，则需要增加保理客户号的查询条件
             map.put("factorNo", UserUtils.getDefCustInfo().getCustNo());
-        }else{
+        } else {
             // 获取当前登录操作员信息
             map.put("operOrg", UserUtils.findOperOrg());
         }
-        Page<CustAgreement> agreements = this.selectPropertyByPage(map, anPageNum, anPageSize, "1".equals(anParam.get("flag")),"id desc");
+        Page<CustAgreement> agreements = this.selectPropertyByPage(map, anPageNum, anPageSize,
+                "1".equals(anParam.get("flag")), "id desc");
 
         return agreements;
     }
-    
+
     /**
      * 添加供应商合同
      * 
@@ -71,9 +74,11 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
      * @return
      */
     public CustAgreement addCustAgreement(CustAgreement anCustAgreement, String anFileList) {
-        //初始化合同默认值
-        anCustAgreement.initDefValue(UserUtils.getOperatorInfo(),anCustAgreement.getBuyerNo(), custAccoService.queryCustName(anCustAgreement.getBuyerNo()), custAccoService.queryCustName(anCustAgreement.getSupplierNo()));
-        if(BetterStringUtils.isNotBlank(anCustAgreement.getIsDeleted())){
+        // 初始化合同默认值
+        anCustAgreement.initDefValue(UserUtils.getOperatorInfo(), anCustAgreement.getBuyerNo(),
+                custAccoService.queryCustName(anCustAgreement.getBuyerNo()),
+                custAccoService.queryCustName(anCustAgreement.getSupplierNo()));
+        if (StringUtils.isNotBlank(anCustAgreement.getIsDeleted())) {
             anCustAgreement.setDefaultFlag(anCustAgreement.getIsDeleted());
             anCustAgreement.setStatus("1");// 当从初录添加的贸易合同，默认为已启用状态
         }
@@ -84,7 +89,7 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
         this.insert(anCustAgreement);
         return anCustAgreement;
     }
-    
+
     /*****
      * 添加系统默认的贸易合同信息
      * @param anCoreCustNo 核心企业客户号
@@ -93,29 +98,32 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
      * @param anFileList   附件列表(多附件以,号分隔)
      * @return 贸易合同信息
      */
-    public CustAgreement addSysCustAgreement(Long anCoreCustNo,Long anSupplierNo,Long anFactorNo, String anFileList){
+    public CustAgreement addSysCustAgreement(Long anCoreCustNo, Long anSupplierNo, Long anFactorNo, String anFileList) {
         Map<String, Object> anMap = new HashMap();
         anMap.put("buyerNo", anCoreCustNo);
         anMap.put("supplierNo", anSupplierNo);
         anMap.put("factorNo", anFactorNo);
         anMap.put("status", "0");
-        CustAgreement custAgreement=findCustAgreement(anMap);
-        if(custAgreement==null){
-            custAgreement=new CustAgreement();
+        CustAgreement custAgreement = findCustAgreement(anMap);
+        if (custAgreement == null) {
+            custAgreement = new CustAgreement();
             // 获取客户银行账号信息
-            CustMechBankAccount bankAccount=custMechBankAccountService.findDefaultBankAccount(anSupplierNo);
-            custAgreement.initSysValue(UserUtils.getOperatorInfo(), anCoreCustNo, custAccoService.queryCustName(anCoreCustNo), anSupplierNo, custAccoService.queryCustName(anSupplierNo), anFactorNo,bankAccount);// 保存合同附件信息
-            if(BetterStringUtils.isNotBlank(anFileList)){
-                custAgreement.setBatchNo(custFileService.updateCustFileItemInfo(anFileList, custAgreement.getBatchNo()));
+            CustMechBankAccount bankAccount = custMechBankAccountService.findDefaultBankAccount(anSupplierNo);
+            custAgreement.initSysValue(UserUtils.getOperatorInfo(), anCoreCustNo,
+                    custAccoService.queryCustName(anCoreCustNo), anSupplierNo,
+                    custAccoService.queryCustName(anSupplierNo), anFactorNo, bankAccount);// 保存合同附件信息
+            if (StringUtils.isNotBlank(anFileList)) {
+                custAgreement
+                        .setBatchNo(custFileService.updateCustFileItemInfo(anFileList, custAgreement.getBatchNo()));
             }
             // 保存客户合同信息
             this.insert(custAgreement);
         }
         return custAgreement;
     }
-    
-    public CustAgreement findCustAgreement(Map<String, Object> anMap){
-        List<CustAgreement> custAgreementList=this.selectByProperty(anMap);
+
+    public CustAgreement findCustAgreement(Map<String, Object> anMap) {
+        List<CustAgreement> custAgreementList = this.selectByProperty(anMap);
         return Collections3.getFirst(custAgreementList);
     }
 
@@ -131,26 +139,26 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
 
         return anAgreement;
     }
-    
+
     /**
      * 删除关联的合同附件信息
      * @param anId
      * @param anBillId
      */
-    public void deleteFileItem(Long anId, Long anAgreeId){
+    public void deleteFileItem(Long anId, Long anAgreeId) {
         CustAgreement agree = this.selectByPrimaryKey(anAgreeId);
-        if (agree == null){
-            
-           return;           
+        if (agree == null) {
+
+            return;
         }
-        
+
         this.custFileService.deleteFileItem(anId, agree.getBatchNo());
     }
-    
-    public boolean deleteContractAgree(Long anAgreeId){
-        return this.deleteByPrimaryKey(anAgreeId)>0;
+
+    public boolean deleteContractAgree(Long anAgreeId) {
+        return this.deleteByPrimaryKey(anAgreeId) > 0;
     }
-    
+
     /**
      * 设置指定客户合同状态
      * 
@@ -161,28 +169,27 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
         CustAgreement tmpAgreement = this.selectByPrimaryKey(anAgreeId);
         String reqStatus = String.valueOf(anType);
         if (null == tmpAgreement) {
-            
+
             return;
         }
 
         if (tmpAgreement.getStatus().compareTo(reqStatus) > 0) {
 
             throw new BytterTradeException(40001, "合同状态变化错误！");
-        }
-        else if (tmpAgreement.getStatus().compareTo(reqStatus) < 0) {
+        } else if (tmpAgreement.getStatus().compareTo(reqStatus) < 0) {
             if ("1".equals(reqStatus) && (tmpAgreement.getBatchNo() == null)) {
 
                 throw new BytterTradeException(40001, "合同没有相关附件，不能启用！");
             }
-        }
-        else{
+        } else {
             return;
         }
-        
+
         tmpAgreement.setStatus(reqStatus);
         this.updateByPrimaryKey(tmpAgreement);
-        
-        logger.debug("saveCustAgreementStatus customer agreement to status "+ anType+"， successful with id " + anAgreeId);
+
+        logger.debug(
+                "saveCustAgreementStatus customer agreement to status " + anType + "， successful with id " + anAgreeId);
     }
 
     /**
@@ -245,7 +252,7 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
                 list.add(ScfSupplierAgreement.createInstance(supplierAgree, ent.getValue()));
             }
         }
-        
+
         return list;
     }
 
@@ -258,11 +265,11 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
         logger.info("Begin to get relative agreement list.");
         List<SimpleDataEntity> tmpList = new ArrayList<SimpleDataEntity>();
         String tmpOperOrg = UserUtils.findOperOrg();
-        if (BetterStringUtils.isBlank(tmpOperOrg)){
-            
+        if (StringUtils.isBlank(tmpOperOrg)) {
+
             return tmpList;
         }
-        
+
         Map<String, Object> map = new HashMap();
         logger.debug("operator org:" + tmpOperOrg);
         map.put("operOrg", tmpOperOrg);
@@ -294,18 +301,17 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
      * 根据合同号，获得合同对应的文件批次号
      * @param anAgreeId 合同号
      * @return
-     */    
+     */
     public Long findBatchNoById(Long anAgreeId) {
         try {
-            if (anAgreeId == null){
-               return Long.MIN_VALUE; 
-            }
-            else{
+            if (anAgreeId == null) {
+                return Long.MIN_VALUE;
+            } else {
                 return Long.parseLong(findAgreeNoById(Long.toString(anAgreeId), true));
             }
         }
         catch (Exception ex) {
-            
+
             return new Long(Integer.MIN_VALUE);
         }
     }
@@ -320,8 +326,7 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
 
                         return Long.toString(agree.getBatchNo());
                     }
-                }
-                else {
+                } else {
                     return agree.getAgreeNo();
                 }
             }
@@ -335,13 +340,13 @@ public class ScfCustAgreementService extends BaseService<CustAgreementMapper, Cu
 
     @Override
     public void checkInfoExist(Long anId, String anOperOrg) {
-        Map<String,Object> anMap=new HashMap<String, Object>();
+        Map<String, Object> anMap = new HashMap<String, Object>();
         anMap.put("id", anId);
-        List<CustAgreement> custAgreementList=this.selectByProperty(anMap);
+        List<CustAgreement> custAgreementList = this.selectByProperty(anMap);
         if (Collections3.isEmpty(custAgreementList)) {
             logger.error("不存在相对应合同编号,操作机构的合同");
             throw new BytterTradeException(40001, "不存在相对应合同编号,操作机构的合同");
         }
     }
-    
+
 }

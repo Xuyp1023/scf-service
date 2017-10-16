@@ -5,6 +5,6 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.productconfig.entity.ScfProductAssetDictRelation;
 
 @BetterjrMapper
-public interface ScfProductAssetDictRelationMapper extends Mapper< ScfProductAssetDictRelation>{
+public interface ScfProductAssetDictRelationMapper extends Mapper<ScfProductAssetDictRelation> {
 
 }

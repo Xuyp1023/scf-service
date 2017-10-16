@@ -1,6 +1,9 @@
 package com.betterjr.modules.remote.connection;
 
 import java.util.*;
+
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -27,13 +30,13 @@ public class LocateConnection extends RemoteConnection {
     /**
      * 如果是上传文件，则直接将结果返回到workData对象里面，如果是下载下来的文件，则放到localFile中。
      */
-/*    public StringBuilder readStream() {
+    /*    public StringBuilder readStream() {
         if (localFile != null && localFile.exists()) {
             try {
                 return this.factory.readStream(new FileInputStream(this.localFile));
             }
             catch (FileNotFoundException e) {
-
+    
                 return new StringBuilder();
             }
         }
@@ -41,7 +44,7 @@ public class LocateConnection extends RemoteConnection {
             return this.factory.readStream(this.workData);
         }
     }
-*/
+    */
     /**
      * 创建本地的文件，如果文件存在，并且有值，则产生一个临时文件，如果存在没有值，则直接删除。
      * 
@@ -58,8 +61,7 @@ public class LocateConnection extends RemoteConnection {
         if (file.exists()) {
             if (file.length() < 10) {
                 file.delete();
-            }
-            else {
+            } else {
                 File tmpFile;
                 try {
                     tmpFile = File.createTempFile(file.getName(), ".tmp", file.getParentFile());
@@ -73,6 +75,7 @@ public class LocateConnection extends RemoteConnection {
         return file;
     }
 
+    @Override
     public InputStream getWorkData() {
         try {
             return new FileInputStream(this.localFile);
@@ -82,6 +85,7 @@ public class LocateConnection extends RemoteConnection {
         }
     }
 
+    @Override
     public void sendRequest(Map<String, Object> queryParams, Map<String, Object> formParams) {
         Object obj = formParams.get("data");
         if (obj == null) {
@@ -94,28 +98,27 @@ public class LocateConnection extends RemoteConnection {
         if (obj != null && obj instanceof CustFileUpload) {
             CustFileUpload uploadInfo = (CustFileUpload) obj;
             String tmpDir = uploadInfo.getRemoteSendPath();
-            if (BetterStringUtils.isBlank(tmpDir)) {
+            if (StringUtils.isBlank(tmpDir)) {
                 tmpDir = this.uri.getPath();
             }
             remoteD = BetterDateUtils.formatRemotePath(tmpDir, (String) formParams.get("workDate"));
             logger.warn("work local File is :" + this.localBasePath.concat(uploadInfo.getFilePath()));
             logger.warn("work remote FileName is :" + uploadInfo.findFileName());
             bb = this.upload(this.localBasePath.concat(uploadInfo.getFilePath()), uploadInfo.findFileName(), remoteD);
-            workInfo = new RemoteWorkFileInfo(this.localBasePath.concat(uploadInfo.getFilePath()), remoteD, RemoteFileWorkMode.UPLOAD,
-                    uploadInfo.findFileName());
-        }
-        else if (obj instanceof RemoteWorkFileInfo) {
+            workInfo = new RemoteWorkFileInfo(this.localBasePath.concat(uploadInfo.getFilePath()), remoteD,
+                    RemoteFileWorkMode.UPLOAD, uploadInfo.findFileName());
+        } else if (obj instanceof RemoteWorkFileInfo) {
             workInfo = (RemoteWorkFileInfo) obj;
-            if (BetterStringUtils.isNotBlank(workInfo.getRemotePath())) {
-                remoteD = BetterDateUtils.formatRemotePath(workInfo.getRemotePath(), (String) formParams.get("workDate"));
+            if (StringUtils.isNotBlank(workInfo.getRemotePath())) {
+                remoteD = BetterDateUtils.formatRemotePath(workInfo.getRemotePath(),
+                        (String) formParams.get("workDate"));
             }
             if (workInfo.getWorkMode() == RemoteFileWorkMode.DOWNLOAD) {
                 bb = this.download(remoteD, workInfo.getLocalPath());
                 if (bb) {
                     this.localFile = new File(workInfo.getLocalPath());
                 }
-            }
-            else {
+            } else {
                 bb = this.upload(workInfo.getLocalPath(), workInfo.getFileName(), remoteD);
             }
         }
@@ -123,8 +126,7 @@ public class LocateConnection extends RemoteConnection {
         if (bb) {
             result.put("status", "0000");
             result.put("msg", "success");
-        }
-        else {
+        } else {
             result.put("status", "9999");
             result.put("msg", "fail");
         }
@@ -140,13 +142,12 @@ public class LocateConnection extends RemoteConnection {
         this.localBasePath = SysConfigService.getString("LocalBasePath");
 
         String ftpWorkPath = func.getWorkFace().getFtpUrl();
-        if (BetterStringUtils.isBlank(ftpWorkPath)) {
+        if (StringUtils.isBlank(ftpWorkPath)) {
             ftpWorkPath = anFactory.getString("ftp_WorkPath");
         }
-        if (BetterStringUtils.isBlank(ftpWorkPath)) {
+        if (StringUtils.isBlank(ftpWorkPath)) {
             ftpWorkPath = func.getUrl();
-        }
-        else {
+        } else {
             ftpWorkPath = ftpWorkPath.concat(func.getUrl());
         }
         try {
@@ -164,7 +165,8 @@ public class LocateConnection extends RemoteConnection {
         this.init(ftpUserName, ftpUserPass, useSecue, timeOut, func, anFactory);
     }
 
-    public void init(String anUserName, String anPass, boolean useSecue, int anTimeOut, WorkFarFunction func, RemoteConnectionFactory anFactory) {
+    public void init(String anUserName, String anPass, boolean useSecue, int anTimeOut, WorkFarFunction func,
+            RemoteConnectionFactory anFactory) {
 
     }
 
@@ -205,10 +207,12 @@ public class LocateConnection extends RemoteConnection {
         return false;
     }
 
+    @Override
     public void destroy() {
         close();
     }
 
+    @Override
     public void close() {
         super.close();
     }

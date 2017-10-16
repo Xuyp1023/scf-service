@@ -25,143 +25,143 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @Table(name = "t_scf_exempt")
 public class ScfExempt implements BetterjrEntity {
     @Id
-    @Column(name = "ID",  columnDefinition="BIGINT" )
-    @MetaData( value="", comments = "")
+    @Column(name = "ID", columnDefinition = "BIGINT")
+    @MetaData(value = "", comments = "")
     @OrderBy("desc")
     private Long id;
 
     /**
      * 保理公司编号
      */
-    @Column(name = "L_FACTORNO",  columnDefinition="BIGINT" )
-    @MetaData( value="保理公司编号", comments = "保理公司编号")
+    @Column(name = "L_FACTORNO", columnDefinition = "BIGINT")
+    @MetaData(value = "保理公司编号", comments = "保理公司编号")
     private Long factorNo;
 
     /**
      * 客户编号
      */
-    @Column(name = "L_CUSTNO",  columnDefinition="BIGINT" )
-    @MetaData( value="客户编号", comments = "客户编号")
+    @Column(name = "L_CUSTNO", columnDefinition = "BIGINT")
+    @MetaData(value = "客户编号", comments = "客户编号")
     private Long custNo;
 
     /**
      * 申请编号
      */
-    @Column(name = "C_REQUESTNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="申请编号", comments = "申请编号")
+    @Column(name = "C_REQUESTNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "申请编号", comments = "申请编号")
     private String requestNo;
 
     /**
      * 还款计划ID
      */
-    @Column(name = "L_PAY_PLAN_ID",  columnDefinition="BIGINT" )
-    @MetaData( value="还款计划ID", comments = "还款计划ID")
+    @Column(name = "L_PAY_PLAN_ID", columnDefinition = "BIGINT")
+    @MetaData(value = "还款计划ID", comments = "还款计划ID")
     private Long payPlanId;
 
     /**
      * 豁免时间
      */
-    @Column(name = "EXEMPT_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="豁免时间", comments = "豁免时间")
+    @Column(name = "EXEMPT_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "豁免时间", comments = "豁免时间")
     private String exemptDate;
 
     /**
      * 本金
      */
-    @Column(name = "F_PRINCIPAL_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="本金", comments = "本金")
+    @Column(name = "F_PRINCIPAL_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "本金", comments = "本金")
     private BigDecimal principalBalance;
 
     /**
      * 利息
      */
-    @Column(name = "F_INTEREST_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="利息", comments = "利息")
+    @Column(name = "F_INTEREST_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "利息", comments = "利息")
     private BigDecimal interestBalance;
 
     /**
      * 管理费
      */
-    @Column(name = "F_MANAGEMENT_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="管理费", comments = "管理费")
+    @Column(name = "F_MANAGEMENT_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "管理费", comments = "管理费")
     private BigDecimal managementBalance;
 
     /**
      * 罚息
      */
-    @Column(name = "F_PENALTY_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="罚息", comments = "罚息")
+    @Column(name = "F_PENALTY_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "罚息", comments = "罚息")
     private BigDecimal penaltyBalance;
 
     /**
      * 滞纳金
      */
-    @Column(name = "F_LATEFEE_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="滞纳金", comments = "滞纳金")
+    @Column(name = "F_LATEFEE_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "滞纳金", comments = "滞纳金")
     private BigDecimal latefeeBalance;
 
     /**
      * 手续费
      */
-    @Column(name = "F_SERVICEFEE_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="手续费", comments = "手续费")
+    @Column(name = "F_SERVICEFEE_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "手续费", comments = "手续费")
     private BigDecimal servicefeeBalance;
 
     /**
      * 合计
      */
-    @Column(name = "F_TOTAL_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="合计", comments = "合计")
+    @Column(name = "F_TOTAL_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "合计", comments = "合计")
     private BigDecimal totalBalance;
 
     /**
      * 备注
      */
-    @Column(name = "C_DESCRIPTION",  columnDefinition="VARCHAR" )
-    @MetaData( value="备注", comments = "备注")
+    @Column(name = "C_DESCRIPTION", columnDefinition = "VARCHAR")
+    @MetaData(value = "备注", comments = "备注")
     private String description;
 
     /**
      * 操作机构
      */
-    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
-    @MetaData( value="操作机构", comments = "操作机构")
+    @Column(name = "C_OPERORG", columnDefinition = "VARCHAR")
+    @MetaData(value = "操作机构", comments = "操作机构")
     private String operOrg;
 
-    @Column(name = "L_REG_OPERID",  columnDefinition="BIGINT" )
-    @MetaData( value="", comments = "")
+    @Column(name = "L_REG_OPERID", columnDefinition = "BIGINT")
+    @MetaData(value = "", comments = "")
     private Long regOperId;
 
-    @Column(name = "C_REG_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "C_REG_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String regOperName;
 
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String regDate;
 
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String regTime;
 
-    @Column(name = "L_MODI_OPERID",  columnDefinition="BIGINT" )
-    @MetaData( value="", comments = "")
+    @Column(name = "L_MODI_OPERID", columnDefinition = "BIGINT")
+    @MetaData(value = "", comments = "")
     private Long modiOperId;
 
-    @Column(name = "C_MODI_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "C_MODI_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String modiOperName;
 
-    @Column(name = "D_MODI_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "D_MODI_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String modiDate;
 
-    @Column(name = "T_MODI_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "T_MODI_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String modiTime;
 
-    @Column(name = "N_VERSION",  columnDefinition="BIGINT" )
-    @MetaData( value="", comments = "")
+    @Column(name = "N_VERSION", columnDefinition = "BIGINT")
+    @MetaData(value = "", comments = "")
     private Long version;
 
     private static final long serialVersionUID = 1471942242070L;
@@ -409,29 +409,51 @@ public class ScfExempt implements BetterjrEntity {
         }
         ScfExempt other = (ScfExempt) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getFactorNo() == null ? other.getFactorNo() == null : this.getFactorNo().equals(other.getFactorNo()))
-            && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-            && (this.getRequestNo() == null ? other.getRequestNo() == null : this.getRequestNo().equals(other.getRequestNo()))
-            && (this.getPayPlanId() == null ? other.getPayPlanId() == null : this.getPayPlanId().equals(other.getPayPlanId()))
-            && (this.getExemptDate() == null ? other.getExemptDate() == null : this.getExemptDate().equals(other.getExemptDate()))
-            && (this.getPrincipalBalance() == null ? other.getPrincipalBalance() == null : this.getPrincipalBalance().equals(other.getPrincipalBalance()))
-            && (this.getInterestBalance() == null ? other.getInterestBalance() == null : this.getInterestBalance().equals(other.getInterestBalance()))
-            && (this.getManagementBalance() == null ? other.getManagementBalance() == null : this.getManagementBalance().equals(other.getManagementBalance()))
-            && (this.getPenaltyBalance() == null ? other.getPenaltyBalance() == null : this.getPenaltyBalance().equals(other.getPenaltyBalance()))
-            && (this.getLatefeeBalance() == null ? other.getLatefeeBalance() == null : this.getLatefeeBalance().equals(other.getLatefeeBalance()))
-            && (this.getServicefeeBalance() == null ? other.getServicefeeBalance() == null : this.getServicefeeBalance().equals(other.getServicefeeBalance()))
-            && (this.getTotalBalance() == null ? other.getTotalBalance() == null : this.getTotalBalance().equals(other.getTotalBalance()))
-            && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()))
-            && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
-            && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
-            && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-            && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
-            && (this.getModiOperId() == null ? other.getModiOperId() == null : this.getModiOperId().equals(other.getModiOperId()))
-            && (this.getModiOperName() == null ? other.getModiOperName() == null : this.getModiOperName().equals(other.getModiOperName()))
-            && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-            && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()))
-            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
+                && (this.getFactorNo() == null ? other.getFactorNo() == null
+                        : this.getFactorNo().equals(other.getFactorNo()))
+                && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
+                && (this.getRequestNo() == null ? other.getRequestNo() == null
+                        : this.getRequestNo().equals(other.getRequestNo()))
+                && (this.getPayPlanId() == null ? other.getPayPlanId() == null
+                        : this.getPayPlanId().equals(other.getPayPlanId()))
+                && (this.getExemptDate() == null ? other.getExemptDate() == null
+                        : this.getExemptDate().equals(other.getExemptDate()))
+                && (this.getPrincipalBalance() == null ? other.getPrincipalBalance() == null
+                        : this.getPrincipalBalance().equals(other.getPrincipalBalance()))
+                && (this.getInterestBalance() == null ? other.getInterestBalance() == null
+                        : this.getInterestBalance().equals(other.getInterestBalance()))
+                && (this.getManagementBalance() == null ? other.getManagementBalance() == null
+                        : this.getManagementBalance().equals(other.getManagementBalance()))
+                && (this.getPenaltyBalance() == null ? other.getPenaltyBalance() == null
+                        : this.getPenaltyBalance().equals(other.getPenaltyBalance()))
+                && (this.getLatefeeBalance() == null ? other.getLatefeeBalance() == null
+                        : this.getLatefeeBalance().equals(other.getLatefeeBalance()))
+                && (this.getServicefeeBalance() == null ? other.getServicefeeBalance() == null
+                        : this.getServicefeeBalance().equals(other.getServicefeeBalance()))
+                && (this.getTotalBalance() == null ? other.getTotalBalance() == null
+                        : this.getTotalBalance().equals(other.getTotalBalance()))
+                && (this.getDescription() == null ? other.getDescription() == null
+                        : this.getDescription().equals(other.getDescription()))
+                && (this.getOperOrg() == null ? other.getOperOrg() == null
+                        : this.getOperOrg().equals(other.getOperOrg()))
+                && (this.getRegOperId() == null ? other.getRegOperId() == null
+                        : this.getRegOperId().equals(other.getRegOperId()))
+                && (this.getRegOperName() == null ? other.getRegOperName() == null
+                        : this.getRegOperName().equals(other.getRegOperName()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getRegTime() == null ? other.getRegTime() == null
+                        : this.getRegTime().equals(other.getRegTime()))
+                && (this.getModiOperId() == null ? other.getModiOperId() == null
+                        : this.getModiOperId().equals(other.getModiOperId()))
+                && (this.getModiOperName() == null ? other.getModiOperName() == null
+                        : this.getModiOperName().equals(other.getModiOperName()))
+                && (this.getModiDate() == null ? other.getModiDate() == null
+                        : this.getModiDate().equals(other.getModiDate()))
+                && (this.getModiTime() == null ? other.getModiTime() == null
+                        : this.getModiTime().equals(other.getModiTime()))
+                && (this.getVersion() == null ? other.getVersion() == null
+                        : this.getVersion().equals(other.getVersion()));
     }
 
     @Override
@@ -469,6 +491,7 @@ public class ScfExempt implements BetterjrEntity {
     public String factorName;
     @Transient
     private String custName;
+
     public String getFactorName() {
         return factorName;
     }
@@ -502,8 +525,8 @@ public class ScfExempt implements BetterjrEntity {
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
     }
-    
-    private void fillDefaultValue(ScfExempt amExempt){
+
+    private void fillDefaultValue(ScfExempt amExempt) {
         amExempt.interestBalance = MathExtend.defaultValue(amExempt.interestBalance, BigDecimal.ZERO);
         amExempt.latefeeBalance = MathExtend.defaultValue(amExempt.latefeeBalance, BigDecimal.ZERO);
         amExempt.managementBalance = MathExtend.defaultValue(amExempt.managementBalance, BigDecimal.ZERO);

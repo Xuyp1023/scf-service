@@ -19,22 +19,21 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "t_scf_coreproduct_cust")
-public class ScfCoreProductCust implements BetterjrEntity{
+public class ScfCoreProductCust implements BetterjrEntity {
 
     /**
      * 
      */
     private static final long serialVersionUID = -910310462856523101L;
-    
-    
+
     /**
      * 流水号
      */
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
-    @MetaData( value="流水号", comments = "流水号")
+    @Column(name = "ID", columnDefinition = "INTEGER")
+    @MetaData(value = "流水号", comments = "流水号")
     private Long id;
-    
+
     /**
      * 产品编号
      */
@@ -48,98 +47,98 @@ public class ScfCoreProductCust implements BetterjrEntity{
     @Column(name = "C_PRODUCT_NAME", columnDefinition = "VARCHAR")
     @MetaData(value = "产品名称", comments = "产品名称")
     private String productName;
-    
+
     /**
      * 应收账款融资类型   1 采购方提前付款  2结算中心提前付款 3：内部保理付款  4 银行保理 5 外部保理付款
      */
-    @Column(name = "C_RECEIVABLE_REQUEST_TYPE",  columnDefinition="VARCHAR" )
-    @MetaData( value="应收账款融资类型", comments = "应收账款融资类型")
+    @Column(name = "C_RECEIVABLE_REQUEST_TYPE", columnDefinition = "VARCHAR")
+    @MetaData(value = "应收账款融资类型", comments = "应收账款融资类型")
     private String receivableRequestType;
-    
+
     /**
      * 保理公司编号
      */
-    @Column(name = "L_FACTORY_CUSTNO",  columnDefinition="INTEGER" )
-    @MetaData( value="保理公司编号", comments = "保理公司编号")
+    @Column(name = "L_FACTORY_CUSTNO", columnDefinition = "INTEGER")
+    @MetaData(value = "保理公司编号", comments = "保理公司编号")
     private Long factoryNo;
-    
+
     /**
      * 保理公司名称
      */
-    @Column(name = "C_FACTORY_CUSTNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="保理公司名称", comments = "保理公司名称")
+    @Column(name = "C_FACTORY_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "保理公司名称", comments = "保理公司名称")
     private String factoryName;
-    
+
     /**
      * 核心企业编号
      */
-    @Column(name = "L_CORE_CUSTNO",  columnDefinition="INTEGER" )
-    @MetaData( value="核心企业编号", comments = "核心企业编号")
+    @Column(name = "L_CORE_CUSTNO", columnDefinition = "INTEGER")
+    @MetaData(value = "核心企业编号", comments = "核心企业编号")
     private Long coreCustNo;
-    
+
     /**
      * 核心企业名称
      */
-    @Column(name = "C_CORE_CUSTNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="核心企业名称", comments = "核心企业名称")
+    @Column(name = "C_CORE_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "核心企业名称", comments = "核心企业名称")
     private String coreCustName;
-    
+
     /**
      * 供应商编号
      */
-    @Column(name = "L_CUSTNO",  columnDefinition="INTEGER" )
-    @MetaData( value="供应商编号", comments = "供应商编号")
+    @Column(name = "L_CUSTNO", columnDefinition = "INTEGER")
+    @MetaData(value = "供应商编号", comments = "供应商编号")
     private Long custNo;
-    
+
     /**
      * 供应商名称
      */
-    @Column(name = "C_CUSTNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="供应商名称", comments = "供应商名称")
+    @Column(name = "C_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "供应商名称", comments = "供应商名称")
     private String custName;
-    
+
     /**
      * 申请日期
      */
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="申请日期", comments = "申请日期")
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "申请日期", comments = "申请日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String regDate;
-    
+
     /**
      * 申请时间
      */
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="申请时间", comments = "申请时间")
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "申请时间", comments = "申请时间")
     private String regTime;
-    
+
     /**
      * 注册人
      */
-    @Column(name = "L_REG_OPERID",  columnDefinition="INTEGER" )
-    @MetaData( value="注册人", comments = "注册人")
-    private Long regOperId ;
+    @Column(name = "L_REG_OPERID", columnDefinition = "INTEGER")
+    @MetaData(value = "注册人", comments = "注册人")
+    private Long regOperId;
 
     /**
      * 注册人名称
      */
-    @Column(name = "C_REG_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="注册人名称", comments = "注册人名称")
+    @Column(name = "C_REG_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "注册人名称", comments = "注册人名称")
     private String regOperName;
-    
+
     /**
      * 业务状态 0 不可用    1 未分配给供应商   2 已经分配给供应商
      */
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="业务状态 0 不可用    1 未分配给供应商   2 已经分配给供应商", comments = "业务状态 0 不可用    1 未分配给供应商   2 已经分配给供应商")
+    @Column(name = "C_BUSIN_STATUS", columnDefinition = "VARCHAR")
+    @MetaData(value = "业务状态 0 不可用    1 未分配给供应商   2 已经分配给供应商", comments = "业务状态 0 不可用    1 未分配给供应商   2 已经分配给供应商")
     private String businStatus;
-    
+
     /**
      * 保理产品Id
      */
-    @Column(name = "L_PRODUCT_ID",  columnDefinition="INTEGER" )
-    @MetaData( value="保理产品Id", comments = "保理产品Id")
-    private Long productId ;
+    @Column(name = "L_PRODUCT_ID", columnDefinition = "INTEGER")
+    @MetaData(value = "保理产品Id", comments = "保理产品Id")
+    private Long productId;
 
     public Long getId() {
         return this.id;
@@ -300,92 +299,75 @@ public class ScfCoreProductCust implements BetterjrEntity{
         ScfCoreProductCust other = (ScfCoreProductCust) obj;
         if (this.businStatus == null) {
             if (other.businStatus != null) return false;
-        }
-        else if (!this.businStatus.equals(other.businStatus)) return false;
+        } else if (!this.businStatus.equals(other.businStatus)) return false;
         if (this.coreCustName == null) {
             if (other.coreCustName != null) return false;
-        }
-        else if (!this.coreCustName.equals(other.coreCustName)) return false;
+        } else if (!this.coreCustName.equals(other.coreCustName)) return false;
         if (this.coreCustNo == null) {
             if (other.coreCustNo != null) return false;
-        }
-        else if (!this.coreCustNo.equals(other.coreCustNo)) return false;
+        } else if (!this.coreCustNo.equals(other.coreCustNo)) return false;
         if (this.custName == null) {
             if (other.custName != null) return false;
-        }
-        else if (!this.custName.equals(other.custName)) return false;
+        } else if (!this.custName.equals(other.custName)) return false;
         if (this.custNo == null) {
             if (other.custNo != null) return false;
-        }
-        else if (!this.custNo.equals(other.custNo)) return false;
+        } else if (!this.custNo.equals(other.custNo)) return false;
         if (this.factoryName == null) {
             if (other.factoryName != null) return false;
-        }
-        else if (!this.factoryName.equals(other.factoryName)) return false;
+        } else if (!this.factoryName.equals(other.factoryName)) return false;
         if (this.factoryNo == null) {
             if (other.factoryNo != null) return false;
-        }
-        else if (!this.factoryNo.equals(other.factoryNo)) return false;
+        } else if (!this.factoryNo.equals(other.factoryNo)) return false;
         if (this.id == null) {
             if (other.id != null) return false;
-        }
-        else if (!this.id.equals(other.id)) return false;
+        } else if (!this.id.equals(other.id)) return false;
         if (this.productCode == null) {
             if (other.productCode != null) return false;
-        }
-        else if (!this.productCode.equals(other.productCode)) return false;
+        } else if (!this.productCode.equals(other.productCode)) return false;
         if (this.productId == null) {
             if (other.productId != null) return false;
-        }
-        else if (!this.productId.equals(other.productId)) return false;
+        } else if (!this.productId.equals(other.productId)) return false;
         if (this.productName == null) {
             if (other.productName != null) return false;
-        }
-        else if (!this.productName.equals(other.productName)) return false;
+        } else if (!this.productName.equals(other.productName)) return false;
         if (this.receivableRequestType == null) {
             if (other.receivableRequestType != null) return false;
-        }
-        else if (!this.receivableRequestType.equals(other.receivableRequestType)) return false;
+        } else if (!this.receivableRequestType.equals(other.receivableRequestType)) return false;
         if (this.regDate == null) {
             if (other.regDate != null) return false;
-        }
-        else if (!this.regDate.equals(other.regDate)) return false;
+        } else if (!this.regDate.equals(other.regDate)) return false;
         if (this.regOperId == null) {
             if (other.regOperId != null) return false;
-        }
-        else if (!this.regOperId.equals(other.regOperId)) return false;
+        } else if (!this.regOperId.equals(other.regOperId)) return false;
         if (this.regOperName == null) {
             if (other.regOperName != null) return false;
-        }
-        else if (!this.regOperName.equals(other.regOperName)) return false;
+        } else if (!this.regOperName.equals(other.regOperName)) return false;
         if (this.regTime == null) {
             if (other.regTime != null) return false;
-        }
-        else if (!this.regTime.equals(other.regTime)) return false;
+        } else if (!this.regTime.equals(other.regTime)) return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "ScfCoreProductCust [id=" + this.id + ", productCode=" + this.productCode + ", productName=" + this.productName
-                + ", receivableRequestType=" + this.receivableRequestType + ", factoryNo=" + this.factoryNo + ", factoryName=" + this.factoryName
-                + ", coreCustNo=" + this.coreCustNo + ", coreCustName=" + this.coreCustName + ", custNo=" + this.custNo + ", custName="
-                + this.custName + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", regOperId=" + this.regOperId + ", regOperName="
-                + this.regOperName + ", businStatus=" + this.businStatus + ", productId=" + this.productId + "]";
+        return "ScfCoreProductCust [id=" + this.id + ", productCode=" + this.productCode + ", productName="
+                + this.productName + ", receivableRequestType=" + this.receivableRequestType + ", factoryNo="
+                + this.factoryNo + ", factoryName=" + this.factoryName + ", coreCustNo=" + this.coreCustNo
+                + ", coreCustName=" + this.coreCustName + ", custNo=" + this.custNo + ", custName=" + this.custName
+                + ", regDate=" + this.regDate + ", regTime=" + this.regTime + ", regOperId=" + this.regOperId
+                + ", regOperName=" + this.regOperName + ", businStatus=" + this.businStatus + ", productId="
+                + this.productId + "]";
     }
 
     public void saveAddValue(CustOperatorInfo anOperatorInfo) {
-        
+
         this.setBusinStatus(CoreProductCustConstantCollentions.PRODUCT_BUSIN_STATUS_EFFECTIVE);
         this.regDate = BetterDateUtils.getNumDate();
-        this.regTime=BetterDateUtils.getNumTime();
-        this.regOperId=anOperatorInfo.getId();
+        this.regTime = BetterDateUtils.getNumTime();
+        this.regOperId = anOperatorInfo.getId();
         this.regOperName = anOperatorInfo.getName();
         this.setId(SerialGenerator.getLongValue("ScfCoreProductCust.id"));
-        
+
     }
-    
-    
-    
 
 }

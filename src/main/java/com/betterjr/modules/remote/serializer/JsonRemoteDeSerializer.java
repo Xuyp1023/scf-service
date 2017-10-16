@@ -14,9 +14,10 @@ public class JsonRemoteDeSerializer extends RemoteBaseDeSerializer implements Re
     private static final long serialVersionUID = 4975873332459749906L;
     public static final String DIGEST_ALGORITHM = "SHA-512";
 
+    @Override
     public List<Map<String, Object>> readResult() {
         if (this.func.isHttp() == false) {
-            Map<String, Object> result = (Map) JsonMapper.parserJson(this.data);
+            Map<String, Object> result = JsonMapper.parserJson(this.data);
             this.state = (String) result.get("status");
             this.message = (String) result.get("msg");
             return Arrays.asList(result);
@@ -41,11 +42,12 @@ public class JsonRemoteDeSerializer extends RemoteBaseDeSerializer implements Re
 
         tmpData = obj.toString();
         if (this.getBoolean("encrypt_Use", true)) {
-            tmpData = new String(this.func.getWorkFace().getCryptService().bosDecode(tmpData, this.keyManager.getPrivKey()));
+            tmpData = new String(
+                    this.func.getWorkFace().getCryptService().bosDecode(tmpData, this.keyManager.getPrivKey()));
         }
 
         String tmpStr = SignHelper.digest(tmpData.getBytes(), DIGEST_ALGORITHM);
-        if (this.keyManager.verifySign(tmpStr, signData ) == false) {
+        if (this.keyManager.verifySign(tmpStr, signData) == false) {
 
             throw new BytterSecurityException(25701, "sign Data verifyXmlSign false");
         }
@@ -57,8 +59,7 @@ public class JsonRemoteDeSerializer extends RemoteBaseDeSerializer implements Re
         logger.info("return data :" + objMap.toString());
         if ("1".equals(this.func.getOutputMode())) {
             return (List) objMap.get(this.getString("resp_realDataNode"));
-        }
-        else {
+        } else {
             return Arrays.asList(objMap);
         }
     }

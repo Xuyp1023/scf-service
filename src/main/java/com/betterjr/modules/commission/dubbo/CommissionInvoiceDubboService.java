@@ -22,13 +22,17 @@ public class CommissionInvoiceDubboService implements ICommissionInvoiceService 
     @Override
     public String webSaveDemandInvoice(Long anCustNo, Long anCoreCustNo, String anMonthlyIds, String anInvoiceType) {
 
-        return AjaxObject.newOk("发票索取成功", invoiceService.saveDemandInvoice(anCustNo, anCoreCustNo, anMonthlyIds, anInvoiceType)).toJson();
+        return AjaxObject
+                .newOk("发票索取成功", invoiceService.saveDemandInvoice(anCustNo, anCoreCustNo, anMonthlyIds, anInvoiceType))
+                .toJson();
     }
 
     @Override
     public String webSaveInvoiceEffective(Long anInvoiceId, String anInvoiceContent, String anDescription) {
 
-        return AjaxObject.newOk("发票确认成功", invoiceService.saveInvoiceEffective(anInvoiceId, anInvoiceContent, anDescription)).toJson();
+        return AjaxObject
+                .newOk("发票确认成功", invoiceService.saveInvoiceEffective(anInvoiceId, anInvoiceContent, anDescription))
+                .toJson();
     }
 
     @Override
@@ -51,10 +55,13 @@ public class CommissionInvoiceDubboService implements ICommissionInvoiceService 
     }
 
     @Override
-    public String webQueryCommissionInvoice(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize, boolean anIsConfirm) {
+    public String webQueryCommissionInvoice(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize,
+            boolean anIsConfirm) {
 
         Map<String, Object> queryMap = RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOkWithPage("发票查询成功", invoiceService.queryCommissionInvoice(queryMap, anFlag, anPageNum, anPageSize, anIsConfirm))
+        return AjaxObject
+                .newOkWithPage("发票查询成功",
+                        invoiceService.queryCommissionInvoice(queryMap, anFlag, anPageNum, anPageSize, anIsConfirm))
                 .toJson();
     }
 
@@ -69,7 +76,9 @@ public class CommissionInvoiceDubboService implements ICommissionInvoiceService 
 
         Map<String, Object> queryMap = RuleServiceDubboFilterInvoker.getInputObj();
 
-        return AjaxObject.newOkWithPage("发票查询成功", recordService.queryCanInvoiceMonthlyList(queryMap, anPageNum, anPageSize)).toJson();
+        return AjaxObject
+                .newOkWithPage("发票查询成功", recordService.queryCanInvoiceMonthlyList(queryMap, anPageNum, anPageSize))
+                .toJson();
 
     }
 

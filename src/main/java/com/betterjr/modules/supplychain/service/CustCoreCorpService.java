@@ -18,17 +18,16 @@ public class CustCoreCorpService extends BaseService<CustCoreCorpInfoMapper, Cus
      * 保存核心企业组织机构信息
      * @param anCoreCorpList
      */
-    public void saveCoreCorpList(final List<CustCoreCorpInfo> anCoreCorpList, final String anOperOrg){
+    public void saveCoreCorpList(final List<CustCoreCorpInfo> anCoreCorpList, final String anOperOrg) {
         CustCoreCorpInfo tmpCorpInfo;
         logger.info("saveCoreCorpList Data Size:" + anCoreCorpList.size());
-        for(final CustCoreCorpInfo corpInfo : anCoreCorpList){
+        for (final CustCoreCorpInfo corpInfo : anCoreCorpList) {
             tmpCorpInfo = findByCorpNo(anOperOrg, corpInfo.getCorpNo());
-            if (tmpCorpInfo == null){
+            if (tmpCorpInfo == null) {
                 corpInfo.initValue(null);
                 corpInfo.initDefValue(anOperOrg);
                 this.insert(corpInfo);
-            }
-            else{
+            } else {
                 corpInfo.modifyValue(null, tmpCorpInfo);
                 corpInfo.modifyDefValue(tmpCorpInfo);
                 this.updateByPrimaryKey(corpInfo);
@@ -36,13 +35,15 @@ public class CustCoreCorpService extends BaseService<CustCoreCorpInfoMapper, Cus
         }
     }
 
-    private CustCoreCorpInfo findByCorpNo(final String anOperOrg, final String anCorpNo){
-        final Map<String, Object> termMap = QueryTermBuilder.newInstance().put("operOrg", anOperOrg).put("corpNo", anCorpNo).build();
-        return Collections3.getFirst( selectByProperty(termMap));
+    private CustCoreCorpInfo findByCorpNo(final String anOperOrg, final String anCorpNo) {
+        final Map<String, Object> termMap = QueryTermBuilder.newInstance().put("operOrg", anOperOrg)
+                .put("corpNo", anCorpNo).build();
+        return Collections3.getFirst(selectByProperty(termMap));
     }
 
     public CustCoreCorpInfo findByCorpId(final String anOperOrg, final String anCorpId) {
-        final Map<String, Object> termMap = QueryTermBuilder.newInstance().put("operOrg", anOperOrg).put("corpId", anCorpId).build();
-        return Collections3.getFirst(selectByProperty(termMap) );
+        final Map<String, Object> termMap = QueryTermBuilder.newInstance().put("operOrg", anOperOrg)
+                .put("corpId", anCorpId).build();
+        return Collections3.getFirst(selectByProperty(termMap));
     }
 }

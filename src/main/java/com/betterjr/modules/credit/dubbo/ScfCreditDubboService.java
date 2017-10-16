@@ -27,7 +27,8 @@ public class ScfCreditDubboService implements IScfCreditService {
 
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
 
-        return AjaxObject.newOkWithPage("授信额度信息查询成功", scfCreditService.queryCredit(anQueryConditionMap, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject.newOkWithPage("授信额度信息查询成功",
+                scfCreditService.queryCredit(anQueryConditionMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     @Override
@@ -35,33 +36,39 @@ public class ScfCreditDubboService implements IScfCreditService {
 
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
 
-        return AjaxObject.newOkWithPage("授信余额信息查询成功", scfCreditService.queryCredit(anQueryConditionMap, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject.newOkWithPage("授信余额信息查询成功",
+                scfCreditService.queryCredit(anQueryConditionMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     @Override
-    public String webQueryCreditDetail(Map<String, Object> anMap, Long anCreditId, String anFlag, int anPageNum, int anPageSize) {
+    public String webQueryCreditDetail(Map<String, Object> anMap, Long anCreditId, String anFlag, int anPageNum,
+            int anPageSize) {
 
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
 
-        return AjaxObject.newOkWithPage("授信额度变动信息查询成功",
-                scfCreditDetailService.queryCreditDetail(anQueryConditionMap, anCreditId, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject.newOkWithPage("授信额度变动信息查询成功", scfCreditDetailService.queryCreditDetail(anQueryConditionMap,
+                anCreditId, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     @Override
     public String webFindCredit(Long anCustNo, Long anCoreCustNo, Long anFactorNo, String anCreditMode) {
-    	
-    	return AjaxObject.newOk("授信额度信息查询成功", scfCreditService.findCredit(anCustNo, anCoreCustNo, anFactorNo, anCreditMode)).toJson();
+
+        return AjaxObject
+                .newOk("授信额度信息查询成功", scfCreditService.findCredit(anCustNo, anCoreCustNo, anFactorNo, anCreditMode))
+                .toJson();
     }
-    
+
     @Override
     public String webFindCreditSimpleData(Long anCustNo, Long anCoreCustNo, Long anFactorNo) {
-    	
-    	return AjaxObject.newOk("授信额度信息查询成功", scfCreditService.findCreditSimpleData(anCustNo, anCoreCustNo, anFactorNo)).toJson();
+
+        return AjaxObject.newOk("授信额度信息查询成功", scfCreditService.findCreditSimpleData(anCustNo, anCoreCustNo, anFactorNo))
+                .toJson();
     }
-    
+
     @Override
     public String webFindCreditList(Long anCustNo, Long anCoreCustNo, Long anFactorNo) {
-        return AjaxObject.newOk("授信额度信息查询成功", scfCreditService.findCreditList(anCustNo, anCoreCustNo, anFactorNo)).toJson();
+        return AjaxObject.newOk("授信额度信息查询成功", scfCreditService.findCreditList(anCustNo, anCoreCustNo, anFactorNo))
+                .toJson();
     }
 
     @Override
@@ -98,11 +105,13 @@ public class ScfCreditDubboService implements IScfCreditService {
         return AjaxObject.newOk("授信终止成功", scfCreditService.saveTerminatCredit(anId)).toJson();
     }
 
+    @Override
     public void saveOccupyCredit(ScfCreditInfo anOccupyCredit) {
 
         scfCreditDetailService.saveOccupyCredit(anOccupyCredit);
     }
 
+    @Override
     public void saveReleaseCredit(ScfCreditInfo anOccupyCredit) {
 
         scfCreditDetailService.saveReleaseCredit(anOccupyCredit);

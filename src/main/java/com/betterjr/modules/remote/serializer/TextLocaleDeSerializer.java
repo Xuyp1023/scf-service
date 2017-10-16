@@ -8,6 +8,7 @@ import java.util.*;
 import java.io.*;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +54,7 @@ public class TextLocaleDeSerializer extends RemoteAlgorithmService {
     protected Map<String, WorkFaceFieldInfo> buildFieldMap(Map<String, WorkFaceFieldInfo> anPropMap) {
         String defFieldOrder = this.getString("text.fieldMap." + this.func.getFunCode());
         // 如果没有定义，直接使用fieldMap的值
-        if (BetterStringUtils.isNotBlank(defFieldOrder)) {
+        if (StringUtils.isNotBlank(defFieldOrder)) {
             String[] arrStr = defFieldOrder.split(";");
             // anPropMap大于或等于表示已经处理过了。
             // if (anPropMap.size() <= arrStr.length) {
@@ -64,7 +65,7 @@ public class TextLocaleDeSerializer extends RemoteAlgorithmService {
             for (int i = 0, k = arrStr.length; i < k; i++) {
                 bfield = arrStr[i].trim();
                 // 如果不需要的数据，使用空格作为占位符号
-                if (BetterStringUtils.isBlank(bfield)) {
+                if (StringUtils.isBlank(bfield)) {
                     continue;
                 }
                 workField = anPropMap.get(bfield);
@@ -72,12 +73,12 @@ public class TextLocaleDeSerializer extends RemoteAlgorithmService {
                     // 表示不存在，需要根据JAVABean的属性信息产生映射关系
                     refField = ReflectionUtils.getClassField(resultClass, bfield);
                     if (refField == null) {
-                        throw new BytterValidException(87654, "declare field " + bfield + ", not find in resultClass" + resultClass.getName());
+                        throw new BytterValidException(87654,
+                                "declare field " + bfield + ", not find in resultClass" + resultClass.getName());
                     }
                     workField = new WorkFaceFieldInfo(i, refField, this.func);
                     anPropMap.put(workField.getBeanField(), workField);
-                }
-                else {
+                } else {
                     workField.setFieldOrder(i);
                 }
             }
@@ -113,7 +114,8 @@ public class TextLocaleDeSerializer extends RemoteAlgorithmService {
         try {
             logger.info("will load Text File Is " + anFile);
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(anFile), tmpCharset));
-            dataReader = new CSVReader(reader, splitChar.charAt(0), quotechar.charAt(0), escapeChar.charAt(0), skipLine);
+            dataReader = new CSVReader(reader, splitChar.charAt(0), quotechar.charAt(0), escapeChar.charAt(0),
+                    skipLine);
             Iterator<String[]> tmpData = dataReader.iterator();
             Map<String, WorkFaceFieldInfo> propMap = this.func.getPropMap();
             Map<String, String> tmpMapValues = null;

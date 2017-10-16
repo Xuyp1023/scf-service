@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.order.entity.ScfOrder;
 
 @BetterjrMapper
-public interface ScfOrderMapper extends Mapper<ScfOrder> {
-}
+public interface ScfOrderMapper extends Mapper<ScfOrder> {}

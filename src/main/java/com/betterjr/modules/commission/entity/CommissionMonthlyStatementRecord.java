@@ -26,142 +26,142 @@ public class CommissionMonthlyStatementRecord implements BetterjrEntity {
      * 编号
      */
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
-    @MetaData( value="编号", comments = "编号")
+    @Column(name = "ID", columnDefinition = "INTEGER")
+    @MetaData(value = "编号", comments = "编号")
     private Long id;
 
     /**
      * 月报表ID
      */
-    @Column(name = "L_MONTHLY_STATEMENT_ID",  columnDefinition="INTEGER" )
-    @MetaData( value="月报表ID", comments = "月报表ID")
+    @Column(name = "L_MONTHLY_STATEMENT_ID", columnDefinition = "INTEGER")
+    @MetaData(value = "月报表ID", comments = "月报表ID")
     private Long monthlyStatementId;
 
     /**
      * 月报表凭证编号
      */
-    @Column(name = "C_MONTHLY_STATEMENT_REFNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="月报表凭证编号", comments = "月报表凭证编号")
+    @Column(name = "C_MONTHLY_STATEMENT_REFNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "月报表凭证编号", comments = "月报表凭证编号")
     private String monthlyStatementRefNo;
 
     /**
      * 日报表ID
      */
-    @Column(name = "L_DAILY_STATEMENT_ID",  columnDefinition="INTEGER" )
-    @MetaData( value="日报表ID", comments = "日报表ID")
+    @Column(name = "L_DAILY_STATEMENT_ID", columnDefinition = "INTEGER")
+    @MetaData(value = "日报表ID", comments = "日报表ID")
     private Long dailyStatementId;
 
     /**
      * 日报表凭证编号
      */
-    @Column(name = "C_DAILY_STATEMENT_REFNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="日报表凭证编号", comments = "日报表凭证编号")
+    @Column(name = "C_DAILY_STATEMENT_REFNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "日报表凭证编号", comments = "日报表凭证编号")
     private String dailyStatementRefNo;
 
     /**
      * 支付日期
      */
     @JsonSerialize(using = CustDateJsonSerializer.class)
-    @Column(name = "D_PAY_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="支付日期", comments = "支付日期")
+    @Column(name = "D_PAY_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "支付日期", comments = "支付日期")
     private String payDate;
 
     /**
      * 支付总金额
      */
-    @Column(name = "F_PAY_TOTAL_BALANCE",  columnDefinition="DECIMAL" )
-    @MetaData( value="支付总金额", comments = "支付总金额")
+    @Column(name = "F_PAY_TOTAL_BALANCE", columnDefinition = "DECIMAL")
+    @MetaData(value = "支付总金额", comments = "支付总金额")
     private BigDecimal payTotalBalance;
 
     /**
      * 支付总笔数
      */
-    @Column(name = "N_PAY_TOTAL_AMOUNT",  columnDefinition="DECIMAL" )
-    @MetaData( value="支付总笔数", comments = "支付总笔数")
+    @Column(name = "N_PAY_TOTAL_AMOUNT", columnDefinition = "DECIMAL")
+    @MetaData(value = "支付总笔数", comments = "支付总笔数")
     private BigDecimal payTotalAmount;
 
     /**
      * 支付成功金额
      */
-    @Column(name = "F_PAY_SUCCESS_BALANCE",  columnDefinition="DECIMAL" )
-    @MetaData( value="支付成功金额", comments = "支付成功金额")
+    @Column(name = "F_PAY_SUCCESS_BALANCE", columnDefinition = "DECIMAL")
+    @MetaData(value = "支付成功金额", comments = "支付成功金额")
     private BigDecimal paySuccessBalance;
 
     /**
      * 支付成功笔数
      */
-    @Column(name = "N_PAY_SUCCESS_AMOUNT",  columnDefinition="DECIMAL" )
-    @MetaData( value="支付成功笔数", comments = "支付成功笔数")
+    @Column(name = "N_PAY_SUCCESS_AMOUNT", columnDefinition = "DECIMAL")
+    @MetaData(value = "支付成功笔数", comments = "支付成功笔数")
     private BigDecimal paySuccessAmount;
 
     /**
      * 支付失败金额
      */
-    @Column(name = "F_PAY_FAILURE_BALANCE",  columnDefinition="DECIMAL" )
-    @MetaData( value="支付失败金额", comments = "支付失败金额")
+    @Column(name = "F_PAY_FAILURE_BALANCE", columnDefinition = "DECIMAL")
+    @MetaData(value = "支付失败金额", comments = "支付失败金额")
     private BigDecimal payFailureBalance;
 
     /**
      * 支付失败笔数
      */
-    @Column(name = "N_PAY_FAILURE_AMOUNT",  columnDefinition="DECIMAL" )
-    @MetaData( value="支付失败笔数", comments = "支付失败笔数")
+    @Column(name = "N_PAY_FAILURE_AMOUNT", columnDefinition = "DECIMAL")
+    @MetaData(value = "支付失败笔数", comments = "支付失败笔数")
     private BigDecimal payFailureAmount;
 
     /**
      * 利息
      */
-    @Column(name = "F_INTEREST",  columnDefinition="DECIMAL" )
-    @MetaData( value="利息", comments = "利息")
+    @Column(name = "F_INTEREST", columnDefinition = "DECIMAL")
+    @MetaData(value = "利息", comments = "利息")
     private BigDecimal interest;
 
     /**
      * 佣金年利率
      */
-    @Column(name = "F_INTEREST_RATE",  columnDefinition="DECIMAL" )
-    @MetaData( value="佣金年利率", comments = "佣金年利率")
+    @Column(name = "F_INTEREST_RATE", columnDefinition = "DECIMAL")
+    @MetaData(value = "佣金年利率", comments = "佣金年利率")
     private BigDecimal interestRate;
 
     /**
      * 客户ID
      */
-    @Column(name = "L_CUSTNO",  columnDefinition="INTEGER" )
-    @MetaData( value="客户ID", comments = "客户ID")
+    @Column(name = "L_CUSTNO", columnDefinition = "INTEGER")
+    @MetaData(value = "客户ID", comments = "客户ID")
     private Long custNo;
 
     /**
      * 客户名称
      */
-    @Column(name = "C_CUSTNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="客户名称", comments = "客户名称")
+    @Column(name = "C_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "客户名称", comments = "客户名称")
     private String custName;
 
-    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "C_OPERORG", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String operOrg;
 
-    @Column(name = "L_REG_OPERID",  columnDefinition="Long" )
-    @MetaData( value="", comments = "")
+    @Column(name = "L_REG_OPERID", columnDefinition = "Long")
+    @MetaData(value = "", comments = "")
     private Long regOperId;
 
-    @Column(name = "C_REG_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "C_REG_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String regOperName;
 
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String regDate;
 
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String regTime;
 
-    @Column(name = "N_VERSION",  columnDefinition="INTEGER" )
-    @MetaData( value="", comments = "")
+    @Column(name = "N_VERSION", columnDefinition = "INTEGER")
+    @MetaData(value = "", comments = "")
     private Long version;
 
-    @Column(name = "F_DAYS",  columnDefinition="INTEGER" )
-    @MetaData( value="结算利息的天数", comments = "结算利息的天数")
+    @Column(name = "F_DAYS", columnDefinition = "INTEGER")
+    @MetaData(value = "结算利息的天数", comments = "结算利息的天数")
     private Long days;
 
     private static final long serialVersionUID = 1493796206917L;
@@ -397,27 +397,47 @@ public class CommissionMonthlyStatementRecord implements BetterjrEntity {
         }
         CommissionMonthlyStatementRecord other = (CommissionMonthlyStatementRecord) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getMonthlyStatementId() == null ? other.getMonthlyStatementId() == null : this.getMonthlyStatementId().equals(other.getMonthlyStatementId()))
-            && (this.getMonthlyStatementRefNo() == null ? other.getMonthlyStatementRefNo() == null : this.getMonthlyStatementRefNo().equals(other.getMonthlyStatementRefNo()))
-            && (this.getDailyStatementId() == null ? other.getDailyStatementId() == null : this.getDailyStatementId().equals(other.getDailyStatementId()))
-            && (this.getDailyStatementRefNo() == null ? other.getDailyStatementRefNo() == null : this.getDailyStatementRefNo().equals(other.getDailyStatementRefNo()))
-            && (this.getPayDate() == null ? other.getPayDate() == null : this.getPayDate().equals(other.getPayDate()))
-            && (this.getPayTotalBalance() == null ? other.getPayTotalBalance() == null : this.getPayTotalBalance().equals(other.getPayTotalBalance()))
-            && (this.getPayTotalAmount() == null ? other.getPayTotalAmount() == null : this.getPayTotalAmount().equals(other.getPayTotalAmount()))
-            && (this.getPaySuccessBalance() == null ? other.getPaySuccessBalance() == null : this.getPaySuccessBalance().equals(other.getPaySuccessBalance()))
-            && (this.getPaySuccessAmount() == null ? other.getPaySuccessAmount() == null : this.getPaySuccessAmount().equals(other.getPaySuccessAmount()))
-            && (this.getPayFailureBalance() == null ? other.getPayFailureBalance() == null : this.getPayFailureBalance().equals(other.getPayFailureBalance()))
-            && (this.getPayFailureAmount() == null ? other.getPayFailureAmount() == null : this.getPayFailureAmount().equals(other.getPayFailureAmount()))
-            && (this.getInterest() == null ? other.getInterest() == null : this.getInterest().equals(other.getInterest()))
-            && (this.getInterestRate() == null ? other.getInterestRate() == null : this.getInterestRate().equals(other.getInterestRate()))
-            && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-            && (this.getCustName() == null ? other.getCustName() == null : this.getCustName().equals(other.getCustName()))
-            && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
-            && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
-            && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-            && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
-            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
+                && (this.getMonthlyStatementId() == null ? other.getMonthlyStatementId() == null
+                        : this.getMonthlyStatementId().equals(other.getMonthlyStatementId()))
+                && (this.getMonthlyStatementRefNo() == null ? other.getMonthlyStatementRefNo() == null
+                        : this.getMonthlyStatementRefNo().equals(other.getMonthlyStatementRefNo()))
+                && (this.getDailyStatementId() == null ? other.getDailyStatementId() == null
+                        : this.getDailyStatementId().equals(other.getDailyStatementId()))
+                && (this.getDailyStatementRefNo() == null ? other.getDailyStatementRefNo() == null
+                        : this.getDailyStatementRefNo().equals(other.getDailyStatementRefNo()))
+                && (this.getPayDate() == null ? other.getPayDate() == null
+                        : this.getPayDate().equals(other.getPayDate()))
+                && (this.getPayTotalBalance() == null ? other.getPayTotalBalance() == null
+                        : this.getPayTotalBalance().equals(other.getPayTotalBalance()))
+                && (this.getPayTotalAmount() == null ? other.getPayTotalAmount() == null
+                        : this.getPayTotalAmount().equals(other.getPayTotalAmount()))
+                && (this.getPaySuccessBalance() == null ? other.getPaySuccessBalance() == null
+                        : this.getPaySuccessBalance().equals(other.getPaySuccessBalance()))
+                && (this.getPaySuccessAmount() == null ? other.getPaySuccessAmount() == null
+                        : this.getPaySuccessAmount().equals(other.getPaySuccessAmount()))
+                && (this.getPayFailureBalance() == null ? other.getPayFailureBalance() == null
+                        : this.getPayFailureBalance().equals(other.getPayFailureBalance()))
+                && (this.getPayFailureAmount() == null ? other.getPayFailureAmount() == null
+                        : this.getPayFailureAmount().equals(other.getPayFailureAmount()))
+                && (this.getInterest() == null ? other.getInterest() == null
+                        : this.getInterest().equals(other.getInterest()))
+                && (this.getInterestRate() == null ? other.getInterestRate() == null
+                        : this.getInterestRate().equals(other.getInterestRate()))
+                && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
+                && (this.getCustName() == null ? other.getCustName() == null
+                        : this.getCustName().equals(other.getCustName()))
+                && (this.getOperOrg() == null ? other.getOperOrg() == null
+                        : this.getOperOrg().equals(other.getOperOrg()))
+                && (this.getRegOperId() == null ? other.getRegOperId() == null
+                        : this.getRegOperId().equals(other.getRegOperId()))
+                && (this.getRegOperName() == null ? other.getRegOperName() == null
+                        : this.getRegOperName().equals(other.getRegOperName()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getRegTime() == null ? other.getRegTime() == null
+                        : this.getRegTime().equals(other.getRegTime()))
+                && (this.getVersion() == null ? other.getVersion() == null
+                        : this.getVersion().equals(other.getVersion()));
     }
 
     @Override
@@ -448,32 +468,32 @@ public class CommissionMonthlyStatementRecord implements BetterjrEntity {
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
         return result;
     }
-    
-    public void initValue(CommissionDailyStatement anDailyStatement){
+
+    public void initValue(CommissionDailyStatement anDailyStatement) {
         this.id = SerialGenerator.getLongValue("CommissionMonthlyStatementRecord.id");
-        if(anDailyStatement!=null){
-            this.dailyStatementId=anDailyStatement.getId();
-            this.dailyStatementRefNo=anDailyStatement.getRefNo();
-            this.payDate=anDailyStatement.getPayDate();
-            this.payTotalAmount=anDailyStatement.getPayTotalAmount();
-            this.payTotalBalance=anDailyStatement.getPayTotalBalance();
-            this.paySuccessAmount=anDailyStatement.getPaySuccessAmount();
-            this.paySuccessBalance=anDailyStatement.getPaySuccessBalance();
-            this.payFailureAmount=anDailyStatement.getPayFailureAmount();
-            this.payFailureBalance=anDailyStatement.getPayFailureBalance();
-            this.interest=anDailyStatement.getInterest();
-            this.interestRate=anDailyStatement.getInterestRate();
-            this.custName=anDailyStatement.getOwnCustName();
-            this.custNo=anDailyStatement.getOwnCustNo();
-            this.days=anDailyStatement.getDays();
+        if (anDailyStatement != null) {
+            this.dailyStatementId = anDailyStatement.getId();
+            this.dailyStatementRefNo = anDailyStatement.getRefNo();
+            this.payDate = anDailyStatement.getPayDate();
+            this.payTotalAmount = anDailyStatement.getPayTotalAmount();
+            this.payTotalBalance = anDailyStatement.getPayTotalBalance();
+            this.paySuccessAmount = anDailyStatement.getPaySuccessAmount();
+            this.paySuccessBalance = anDailyStatement.getPaySuccessBalance();
+            this.payFailureAmount = anDailyStatement.getPayFailureAmount();
+            this.payFailureBalance = anDailyStatement.getPayFailureBalance();
+            this.interest = anDailyStatement.getInterest();
+            this.interestRate = anDailyStatement.getInterestRate();
+            this.custName = anDailyStatement.getOwnCustName();
+            this.custNo = anDailyStatement.getOwnCustNo();
+            this.days = anDailyStatement.getDays();
         }
-        this.regDate=BetterDateUtils.getNumDate();
-        this.regTime=BetterDateUtils.getNumTime();
+        this.regDate = BetterDateUtils.getNumDate();
+        this.regTime = BetterDateUtils.getNumTime();
         final CustOperatorInfo custOperator = (CustOperatorInfo) UserUtils.getPrincipal().getUser();
-        if(custOperator!=null){
-            this.operOrg=custOperator.getOperOrg();
-            this.regOperId=custOperator.getId();
-            this.regOperName=custOperator.getName();
+        if (custOperator != null) {
+            this.operOrg = custOperator.getOperOrg();
+            this.regOperId = custOperator.getId();
+            this.regOperName = custOperator.getName();
         }
     }
 }

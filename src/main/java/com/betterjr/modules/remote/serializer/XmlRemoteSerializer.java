@@ -41,6 +41,7 @@ public class XmlRemoteSerializer extends RemoteBaseSerializer implements RemoteS
         return reqBody.asXML();
     }
 
+    @Override
     protected Object buildReqParams(Map<String, Object> anParamsMap) {
         Document document = DocumentHelper.createDocument();
 
@@ -50,7 +51,7 @@ public class XmlRemoteSerializer extends RemoteBaseSerializer implements RemoteS
         }
         SimpleDataEntity sde = new SimpleDataEntity(tmpStr, true);
         Element rootElement = document.addElement(sde.splitFirstValue());
-        XmlUtils.map2Xml(rootElement, (Map)anParamsMap.get(sde.splitFirstValue()));
+        XmlUtils.map2Xml(rootElement, (Map) anParamsMap.get(sde.splitFirstValue()));
 
         boolean useSign = this.getBoolean("signData", true);
         if (useSign) {
@@ -58,13 +59,12 @@ public class XmlRemoteSerializer extends RemoteBaseSerializer implements RemoteS
             if (StringUtils.isNotBlank(signNode)) {
                 Element reqBody = XmlUtils.findElement(rootElement, sde.findSplitValueData());
                 return signData(reqBody, signNode);
+            } else {
+                logger.error(document.asXML());
+                return SignHelper.signXml(DocumentUtil.getDocFromString(document.asXML()), this.keyManager.getPrivKey(),
+                        sde.splitLastValue(), this.enconding);
             }
-            else {
-                logger.error(document.asXML()); 
-                return SignHelper.signXml(DocumentUtil.getDocFromString(document.asXML()), this.keyManager.getPrivKey(), sde.splitLastValue(), this.enconding);
-            }
-        }
-        else {
+        } else {
             return document.asXML();
         }
     }
@@ -77,8 +77,7 @@ public class XmlRemoteSerializer extends RemoteBaseSerializer implements RemoteS
         String msgNode = this.getString("MessageNode", null);
         if (StringUtils.isNotBlank(msgNode)) {
             msgElement = rootElement.addElement("Message").addAttribute("id", serialNo);
-        }
-        else {
+        } else {
             msgElement = rootElement;
         }
         String REQ_BODY = this.getString("ReqBody", "ReqBody");
@@ -105,12 +104,11 @@ public class XmlRemoteSerializer extends RemoteBaseSerializer implements RemoteS
             if (StringUtils.isNotBlank(signNode)) {
 
                 return signData(reqBody, signNode);
-            } 
-            else {
-                return SignHelper.signXml(DocumentUtil.getDocFromString(document.asXML()), this.keyManager.getPrivKey(), REQ_BODY, this.enconding);
+            } else {
+                return SignHelper.signXml(DocumentUtil.getDocFromString(document.asXML()), this.keyManager.getPrivKey(),
+                        REQ_BODY, this.enconding);
             }
-        }
-        else {
+        } else {
             return document.asXML();
         }
     }

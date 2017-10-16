@@ -1,4 +1,4 @@
-    package com.betterjr.modules.commission.service;
+package com.betterjr.modules.commission.service;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,180 +39,188 @@ import com.betterjr.modules.customer.ICustMechBaseService;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.flie.service.JxlsFileService;
 import com.betterjr.modules.generator.SequenceFactory;
+
 /***
  * 日账单服务类
  * @author hubl
  *
  */
 @Service
-public class CommissionDailyStatementService  extends BaseService<CommissionDailyStatementMapper, CommissionDailyStatement>{
-    
+public class CommissionDailyStatementService
+        extends BaseService<CommissionDailyStatementMapper, CommissionDailyStatement> {
+
     @Autowired
     private CommissionPayResultRecordService payResultRecordService;
-    @Reference(interfaceClass=IDomainAttributeService.class)
+    @Reference(interfaceClass = IDomainAttributeService.class)
     private IDomainAttributeService domainAttributeDubboClientService;
     @Autowired
-    private CustAccountService custAccountService; 
+    private CustAccountService custAccountService;
     @Autowired
     private CommissionDailyStatementRecordService dailyStatementRecordService;
     @Autowired
     private CommissionMonthlyStatementService monthlyStatementService;
     @Autowired
     private JxlsFileService jxlsFileService;
-    
+
     @Autowired
     private CommissionParamService paramService;
     @Reference(interfaceClass = ICustMechBaseService.class)
     private ICustMechBaseService custMechBaseService;
-    
-    public Page<CommissionDailyStatement> queryDailyStatement(Map<String, Object> anParam, int anPageNum, int anPageSize){
+
+    public Page<CommissionDailyStatement> queryDailyStatement(Map<String, Object> anParam, int anPageNum,
+            int anPageSize) {
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
-        Map<String,Object> paramMap=new HashMap<String, Object>();
-        if(BetterStringUtils.isNotBlank((String)anParam.get("GTEregDate"))){
+        Map<String, Object> paramMap = new HashMap<String, Object>();
+        if (StringUtils.isNotBlank((String) anParam.get("GTEregDate"))) {
             paramMap.put("GTEpayDate", anParam.get("GTEregDate"));
             paramMap.put("LTEpayDate", anParam.get("LTEregDate"));
         }
-        if(BetterStringUtils.isNotBlank((String)anParam.get("custNo"))){
+        if (StringUtils.isNotBlank((String) anParam.get("custNo"))) {
             paramMap.put("ownCustNo", anParam.get("custNo"));
         }
-        if(BetterStringUtils.isNotBlank((String)anParam.get("businStatus"))){
+        if (StringUtils.isNotBlank((String) anParam.get("businStatus"))) {
             paramMap.put("businStatus", anParam.get("businStatus"));
-        }else{
-            paramMap.put("businStatus", new String[]{"0","1","2","3","9"});
+        } else {
+            paramMap.put("businStatus", new String[] { "0", "1", "2", "3", "9" });
         }
-        Page<CommissionDailyStatement> monthlyStatement=this.selectPropertyByPage(paramMap, anPageNum, anPageSize, "1".equals(anParam.get("flag")),"id desc");
+        Page<CommissionDailyStatement> monthlyStatement = this.selectPropertyByPage(paramMap, anPageNum, anPageSize,
+                "1".equals(anParam.get("flag")), "id desc");
         return monthlyStatement;
     }
-    
+
     /***
      * 根据先择的对账月份查询
      * @param anMonth
      * @return
      * @throws ParseException 
      */
-    public List<CommissionDailyStatement> findCpsDailyStatementByMonth(String anMonth,Long anCustNo,String anBusinStatus) throws ParseException{
-        anMonth=anMonth.replaceAll("-", "")+"01";
+    public List<CommissionDailyStatement> findCpsDailyStatementByMonth(String anMonth, Long anCustNo,
+            String anBusinStatus) throws ParseException {
+        anMonth = anMonth.replaceAll("-", "") + "01";
         // 不管是几月在将月份改为1-31 号，作为条件查询
-        Map<String,Object> monthMap=new HashMap<String, Object>();
+        Map<String, Object> monthMap = new HashMap<String, Object>();
         monthMap.put("GTEpayDate", CommissionDateUtils.getMinMonthDate(anMonth));
         monthMap.put("LTEpayDate", CommissionDateUtils.getMaxMonthDate(anMonth));
-        if(BetterStringUtils.isNotBlank(anBusinStatus)){
+        if (StringUtils.isNotBlank(anBusinStatus)) {
             monthMap.put("businStatus", anBusinStatus);
-        }else{
-            monthMap.put("businStatus", new String[]{"0","1","2"});
+        } else {
+            monthMap.put("businStatus", new String[] { "0", "1", "2" });
         }
         monthMap.put("ownCustNo", anCustNo);
-        logger.debug("monthMap:"+monthMap);
+        logger.debug("monthMap:" + monthMap);
         return findCpsDailyStatement(monthMap);
     }
-    
-    
+
     /***
      * 条件查询查询日对账单列表
      * @param anMap 查询条件
      * @return 账单列表
      */
-    public List<CommissionDailyStatement> findCpsDailyStatement(Map<String, Object> anMap){
+    public List<CommissionDailyStatement> findCpsDailyStatement(Map<String, Object> anMap) {
         return this.selectByProperty(anMap);
     }
-    
+
     /***
      * 查询日报表的统计数据
      * @param anMonth
      * @return 统计结果
      * @throws ParseException 
      */
-    public CalcPayResult findDailyStatementCount(String anMonth,Long anCustNo) throws ParseException{
-        anMonth=anMonth.replaceAll("-", "")+"01";
+    public CalcPayResult findDailyStatementCount(String anMonth, Long anCustNo) throws ParseException {
+        anMonth = anMonth.replaceAll("-", "") + "01";
         // 不管是几月在将月份改为1-31 号，作为条件查询
-        Map<String,Object> monthMap=new HashMap<String, Object>();
+        Map<String, Object> monthMap = new HashMap<String, Object>();
         monthMap.put("payBeginDate", CommissionDateUtils.getMinMonthDate(anMonth));
         monthMap.put("payEndDate", CommissionDateUtils.getMaxMonthDate(anMonth));
         monthMap.put("ownCustNo", anCustNo);
-        CalcPayResult payResult=this.mapper.selectDailyStatementCount(monthMap); // 查询所有记录数
-        logger.info("payResult:"+payResult);
+        CalcPayResult payResult = this.mapper.selectDailyStatementCount(monthMap); // 查询所有记录数
+        logger.info("payResult:" + payResult);
         return payResult;
     }
-    
+
     /***
      * 新增月账单时点击下一步时查询显示日账单的基础信息调用
      * @param anParam
      * @return
      * @throws ParseException 
      */
-    public Map<String,Object> findDailyStatementBasicsInfo(Map<String,Object> anParam) throws ParseException{
+    public Map<String, Object> findDailyStatementBasicsInfo(Map<String, Object> anParam) throws ParseException {
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
-        String billMonth=anParam.get("billMonth").toString();
-        Long anOwnCustNo=Long.parseLong(anParam.get("custNo").toString());
-        String anEndInterestDate=(String)anParam.get("endInterestDate"); // 结息日期
-        String month=billMonth.replaceAll("-", "")+"01";
-        String startDate=CommissionDateUtils.getMinMonthDate(month);
-        String endDate=CommissionDateUtils.getMaxMonthDate(month);
+        String billMonth = anParam.get("billMonth").toString();
+        Long anOwnCustNo = Long.parseLong(anParam.get("custNo").toString());
+        String anEndInterestDate = (String) anParam.get("endInterestDate"); // 结息日期
+        String month = billMonth.replaceAll("-", "") + "01";
+        String startDate = CommissionDateUtils.getMinMonthDate(month);
+        String endDate = CommissionDateUtils.getMaxMonthDate(month);
         // 根据对账月份查询
-        Map<String,Object> monthMap=new HashMap<String, Object>();
+        Map<String, Object> monthMap = new HashMap<String, Object>();
         monthMap.put("payBeginDate", startDate);
         monthMap.put("payEndDate", endDate);
         monthMap.put("ownCustNo", anOwnCustNo);
 
-        long time = BetterDateUtils.parseDate(BetterDateUtils.getNumMonth()).getTime()-BetterDateUtils.parseDate(billMonth).getTime();
-        if(time<=0){
+        long time = BetterDateUtils.parseDate(BetterDateUtils.getNumMonth()).getTime()
+                - BetterDateUtils.parseDate(billMonth).getTime();
+        if (time <= 0) {
             throw new BytterTradeException("对账月份必须小于当前月");
         }
-        
-        long interestTime = BetterDateUtils.parseDate(anEndInterestDate).getTime()-BetterDateUtils.parseDate(BetterDateUtils.getNumDate()).getTime();
-        if(interestTime<0){
+
+        long interestTime = BetterDateUtils.parseDate(anEndInterestDate).getTime()
+                - BetterDateUtils.parseDate(BetterDateUtils.getNumDate()).getTime();
+        if (interestTime < 0) {
             throw new BytterTradeException("结息日期不能小于当前日期");
         }
-        CalcPayResult payResult=this.mapper.selectDailyStatementCount(monthMap);
-        
-        Long failureTotalCount=payResult.getPayFailureAmount();
-        if(failureTotalCount>0){
+        CalcPayResult payResult = this.mapper.selectDailyStatementCount(monthMap);
+
+        Long failureTotalCount = payResult.getPayFailureAmount();
+        if (failureTotalCount > 0) {
             throw new BytterTradeException("日账单存在未生效数据，不能生成月账单");
         }
-        
-        List<CommissionMonthlyStatement> monthlyList=monthlyStatementService.findMonthlyStatementByMonth(billMonth,anOwnCustNo);
-        if(monthlyList!=null && monthlyList.size()>0){
+
+        List<CommissionMonthlyStatement> monthlyList = monthlyStatementService.findMonthlyStatementByMonth(billMonth,
+                anOwnCustNo);
+        if (monthlyList != null && monthlyList.size() > 0) {
             throw new BytterTradeException("该月对账单已经生成");
         }
-        
-        BigDecimal totalBalance=new BigDecimal(0.00);// 总金额
-        BigDecimal totalPayBalance=new BigDecimal(0.00);// 总发生金额
-        BigDecimal totalInterset=new BigDecimal(0.00);// 总利息
-        BigDecimal totalTaxBalance=new BigDecimal(0.00);// 总税额
-        BigDecimal interestBalance=new BigDecimal(0.00);// 结算金额
-        BigDecimal paySuccessBalance=new BigDecimal(0.00);// 成功金额
-        
-        List<CommissionDailyStatement> resultDailyStatementList=new ArrayList<CommissionDailyStatement>();
-        
-        monthMap=getConfigData(anOwnCustNo);
-        
-        BigDecimal rate=new BigDecimal(monthMap.get("interestRate").toString()); 
-        BigDecimal taxRate=new BigDecimal(monthMap.get("taxRate").toString());
-        
-        
-        
+
+        BigDecimal totalBalance = new BigDecimal(0.00);// 总金额
+        BigDecimal totalPayBalance = new BigDecimal(0.00);// 总发生金额
+        BigDecimal totalInterset = new BigDecimal(0.00);// 总利息
+        BigDecimal totalTaxBalance = new BigDecimal(0.00);// 总税额
+        BigDecimal interestBalance = new BigDecimal(0.00);// 结算金额
+        BigDecimal paySuccessBalance = new BigDecimal(0.00);// 成功金额
+
+        List<CommissionDailyStatement> resultDailyStatementList = new ArrayList<CommissionDailyStatement>();
+
+        monthMap = getConfigData(anOwnCustNo);
+
+        BigDecimal rate = new BigDecimal(monthMap.get("interestRate").toString());
+        BigDecimal taxRate = new BigDecimal(monthMap.get("taxRate").toString());
+
         // 获取日账单的列表，并计算好利息
-        List<CommissionDailyStatement> dailyStatementList=findCpsDailyStatementByMonth(billMonth,anOwnCustNo,"2");
-        for(CommissionDailyStatement dailyStatement:dailyStatementList){
-            BigDecimal payTotalBalance= dailyStatement.getPaySuccessBalance();
-            String payDate=dailyStatement.getPayDate();
-            long lTerm = BetterDateUtils.parseDate(anEndInterestDate).getTime()-BetterDateUtils.parseDate(payDate).getTime();
-            lTerm=lTerm/(24*60*60*1000);
-            if(lTerm<0){
+        List<CommissionDailyStatement> dailyStatementList = findCpsDailyStatementByMonth(billMonth, anOwnCustNo, "2");
+        for (CommissionDailyStatement dailyStatement : dailyStatementList) {
+            BigDecimal payTotalBalance = dailyStatement.getPaySuccessBalance();
+            String payDate = dailyStatement.getPayDate();
+            long lTerm = BetterDateUtils.parseDate(anEndInterestDate).getTime()
+                    - BetterDateUtils.parseDate(payDate).getTime();
+            lTerm = lTerm / (24 * 60 * 60 * 1000);
+            if (lTerm < 0) {
                 throw new BytterTradeException("日付款日期不能小于结息日期");
             }
-            BigDecimal term=new BigDecimal(lTerm);
-            
-            BigDecimal interset=getInterset(payTotalBalance,rate,term);
-            BigDecimal taxBalance = getTaxBalance(payTotalBalance,interset,taxRate);
-            
-            logger.info("每日利息：dailyStatement refNo:"+dailyStatement.getRefNo()+"，interset:"+interset+"，每日税额："+taxBalance);
-            totalBalance=MathExtend.add(totalBalance, dailyStatement.getTotalBalance());
-            interestBalance=MathExtend.add(MathExtend.add(MathExtend.add(interestBalance, payTotalBalance), interset),taxBalance);
-            totalPayBalance=MathExtend.add(totalPayBalance, payTotalBalance);
-            totalInterset=MathExtend.add(totalInterset, interset);
-            totalTaxBalance=MathExtend.add(totalTaxBalance, taxBalance);
-            paySuccessBalance=MathExtend.add(dailyStatement.getPaySuccessBalance(), paySuccessBalance);
+            BigDecimal term = new BigDecimal(lTerm);
+
+            BigDecimal interset = getInterset(payTotalBalance, rate, term);
+            BigDecimal taxBalance = getTaxBalance(payTotalBalance, interset, taxRate);
+
+            logger.info("每日利息：dailyStatement refNo:" + dailyStatement.getRefNo() + "，interset:" + interset + "，每日税额："
+                    + taxBalance);
+            totalBalance = MathExtend.add(totalBalance, dailyStatement.getTotalBalance());
+            interestBalance = MathExtend.add(MathExtend.add(MathExtend.add(interestBalance, payTotalBalance), interset),
+                    taxBalance);
+            totalPayBalance = MathExtend.add(totalPayBalance, payTotalBalance);
+            totalInterset = MathExtend.add(totalInterset, interset);
+            totalTaxBalance = MathExtend.add(totalTaxBalance, taxBalance);
+            paySuccessBalance = MathExtend.add(dailyStatement.getPaySuccessBalance(), paySuccessBalance);
             // 更新日报表利息
             dailyStatement.setInterest(interset);
             dailyStatement.setInterestRate(rate);
@@ -220,14 +229,15 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
             this.updateByPrimaryKey(dailyStatement);
             resultDailyStatementList.add(dailyStatement);
         }
-        
-        monthMap.put("billMonth",billMonth);
+
+        monthMap.put("billMonth", billMonth);
         monthMap.put("payBeginDate", startDate);
         monthMap.put("payEndDate", endDate);
         monthMap.put("ownCustNo", anOwnCustNo);
         monthMap.put("ownCustName", custAccountService.queryCustName(anOwnCustNo));
         final CustOperatorInfo custOperator = (CustOperatorInfo) UserUtils.getPrincipal().getUser();
-        monthMap.put("refNo", SequenceFactory.generate("PLAT_COMMISSION_MONTHLY_REFNO",custOperator.getOperOrg(), "MB#{Date:yyyyMM}#{Seq:10}", "M"));
+        monthMap.put("refNo", SequenceFactory.generate("PLAT_COMMISSION_MONTHLY_REFNO", custOperator.getOperOrg(),
+                "MB#{Date:yyyyMM}#{Seq:10}", "M"));
         monthMap.put("totalBalance", totalBalance);
         monthMap.put("payTotalBalance", totalPayBalance);
         monthMap.put("interest", totalInterset);
@@ -239,74 +249,72 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         monthMap.put("paySuccessBalance", paySuccessBalance);
         return monthMap;
     }
-    
-    
+
     /**
      * 获取当前登录用户所在的所有公司id集合
      * @return
      */
-    private Collection<Long> getCurrentUserCustNos(){
-        
+    private Collection<Long> getCurrentUserCustNos() {
+
         CustOperatorInfo operInfo = UserUtils.getOperatorInfo();
         BTAssert.notNull(operInfo, "查询参数配置失败!请先登录");
         Collection<CustInfo> custInfos = custMechBaseService.queryCustInfoByOperId(UserUtils.getOperatorInfo().getId());
         BTAssert.notNull(custInfos, "查询参数配置失败!获取当前企业失败");
-        Collection<Long> custNos=new ArrayList<>();
+        Collection<Long> custNos = new ArrayList<>();
         for (CustInfo custInfo : custInfos) {
             custNos.add(custInfo.getId());
         }
-        return  custNos;
+        return custNos;
     }
-    
-    
+
     /***
      * 查询日账单统计的数据
      * @param anMap
      * @return
      */
-    public CalcPayResult findDailyStatementCount(Map<String,Object> anMap){
+    public CalcPayResult findDailyStatementCount(Map<String, Object> anMap) {
         return this.mapper.selectDailyStatementCount(anMap);
     }
-    
+
     /***
      * 审核/作废
      * @param andailyStatementId
      * @param anBusinStatus
      * @return
      */
-    public boolean saveDailyStatementById(Long anDailyStatementId,String anBusinStatus){
+    public boolean saveDailyStatementById(Long anDailyStatementId, String anBusinStatus) {
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
-        CommissionDailyStatement dailyStatement=this.selectByPrimaryKey(anDailyStatementId);
+        CommissionDailyStatement dailyStatement = this.selectByPrimaryKey(anDailyStatementId);
         dailyStatement.setLastStatus(dailyStatement.getBusinStatus());
         dailyStatement.setBusinStatus(anBusinStatus);
-        
-        if(BetterStringUtils.equalsIgnoreCase("9", anBusinStatus)){
-            saveRecordStatus(dailyStatement.getPayDate(),dailyStatement.getOwnCustNo(),"2");
+
+        if (StringUtils.equalsIgnoreCase("9", anBusinStatus)) {
+            saveRecordStatus(dailyStatement.getPayDate(), dailyStatement.getOwnCustNo(), "2");
         }
-        return this.updateByPrimaryKey(dailyStatement)>0;
+        return this.updateByPrimaryKey(dailyStatement) > 0;
     }
-    
-    public boolean delDailyStatement(Long anDailyStatementId){
+
+    public boolean delDailyStatement(Long anDailyStatementId) {
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
-        CommissionDailyStatement dailyStatement=this.selectByPrimaryKey(anDailyStatementId);
+        CommissionDailyStatement dailyStatement = this.selectByPrimaryKey(anDailyStatementId);
         // 删除之前先回写佣金数据状态
-        saveRecordStatus(dailyStatement.getPayDate(),dailyStatement.getOwnCustNo(),"2");
+        saveRecordStatus(dailyStatement.getPayDate(), dailyStatement.getOwnCustNo(), "2");
         // 删除记录表数据
         dailyStatementRecordService.delDailyStatementRecord(anDailyStatementId, dailyStatement.getRefNo());
-        
-        return this.deleteByPrimaryKey(anDailyStatementId)>0;
+
+        return this.deleteByPrimaryKey(anDailyStatementId) > 0;
     }
-    
+
     /***
      * 查询佣金记录数
      * @param anPayDate
      * @param anOwnCustNo
      * @return
      */
-    public CalcPayResult findPayResultCount(String anPayDate,Long anOwnCustNo){
+    public CalcPayResult findPayResultCount(String anPayDate, Long anOwnCustNo) {
         return payResultRecordService.calcPayResultRecord(anOwnCustNo, anPayDate);
     }
-    
+
     /***
      * 查询支付佣金记录
      * @param anOwnCustNo
@@ -316,66 +324,74 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
      * @param anPageSize
      * @return
      */
-    public Page<CommissionPayResultRecord> queryPayResultRecord(Long anOwnCustNo,String anPayDate,String anPayStatus,int anFlag, int anPageNum, int anPageSize){
-        return payResultRecordService.queryAllPayResultRecords(anOwnCustNo, anPayDate,anPayStatus, anFlag, anPageNum, anPageSize);
+    public Page<CommissionPayResultRecord> queryPayResultRecord(Long anOwnCustNo, String anPayDate, String anPayStatus,
+            int anFlag, int anPageNum, int anPageSize) {
+        return payResultRecordService.queryAllPayResultRecords(anOwnCustNo, anPayDate, anPayStatus, anFlag, anPageNum,
+                anPageSize);
     }
-    
+
     /***
      * 新增日账单下一步操作
      * @param anPayDate
      * @param anOwnCustNo
      * @return
      */
-    public Map<String, Object> findPayResultInfo(String anPayDate,Long anOwnCustNo){
+    public Map<String, Object> findPayResultInfo(String anPayDate, Long anOwnCustNo) {
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
-        String[] businStatusArr=new String[]{"0","1","2","3"};
-         if(findDailyStatementByPayDate(anPayDate, anOwnCustNo,businStatusArr)){
-             throw new BytterTradeException("当前日期已经生成日对账单");
-         }
-         
-         CalcPayResult payResult = payResultRecordService.calcPayResultRecord(anOwnCustNo, anPayDate);
-         Long unconfirmAmount=payResult.getUnconfirmAmount();
-         BTAssert.isTrue(unconfirmAmount<=0, "佣金支付结果存在未确认数据，不能生成日账单");
-         Long totalAmount=payResult.getTotalAmount();
-         BTAssert.isTrue(totalAmount!=0, "没有查到佣金支付数据");
-         String result=payResultRecordService.findAllAuditResult(anOwnCustNo, anPayDate);
-         if(BetterStringUtils.equals("false", result)){
-             throw new BytterTradeException("佣金数据有未复核数据");
-         }
+        String[] businStatusArr = new String[] { "0", "1", "2", "3" };
+        if (findDailyStatementByPayDate(anPayDate, anOwnCustNo, businStatusArr)) {
+            throw new BytterTradeException("当前日期已经生成日对账单");
+        }
 
-//         long time = BetterDateUtils.parseDate(BetterDateUtils.getNumDate()).getTime()-BetterDateUtils.parseDate(anPayDate).getTime();
-//         BTAssert.isTrue(time>=0, "当前时间要小于对账月份时间");
-         
-         
-         Map<String, Object> resultMp=new HashMap<String, Object>();
-         resultMp=getConfigData(anOwnCustNo);
-         final CustOperatorInfo custOperator = (CustOperatorInfo) UserUtils.getPrincipal().getUser();
-         resultMp.put("refNo",SequenceFactory.generate("PLAT_COMMISSION_DAILY_REFNO",custOperator.getOperOrg(), "DB#{Date:yyyyMMdd}#{Seq:8}", "D"));
-         resultMp.put("totalBalance", payResult.getTotalBalance());
-         resultMp.put("payDate", anPayDate);
-         resultMp.put("ownCustNo", anOwnCustNo);
-         resultMp.put("ownCustName", custAccountService.queryCustName(anOwnCustNo));
-         resultMp.put("totalAmount", payResult.getTotalAmount());
-         resultMp.put("makeDateTime", BetterDateUtils.getDateTime());
-         resultMp.put("paySuccessBalance", payResult.getPaySuccessBalance());
-         resultMp.put("paySuccessAmount", payResult.getPaySuccessAmount());
-         
-         return resultMp;
+        CalcPayResult payResult = payResultRecordService.calcPayResultRecord(anOwnCustNo, anPayDate);
+        Long unconfirmAmount = payResult.getUnconfirmAmount();
+        BTAssert.isTrue(unconfirmAmount <= 0, "佣金支付结果存在未确认数据，不能生成日账单");
+        Long totalAmount = payResult.getTotalAmount();
+        BTAssert.isTrue(totalAmount != 0, "没有查到佣金支付数据");
+        String result = payResultRecordService.findAllAuditResult(anOwnCustNo, anPayDate);
+        if (StringUtils.equals("false", result)) {
+            throw new BytterTradeException("佣金数据有未复核数据");
+        }
+
+        // long time =
+        // BetterDateUtils.parseDate(BetterDateUtils.getNumDate()).getTime()-BetterDateUtils.parseDate(anPayDate).getTime();
+        // BTAssert.isTrue(time>=0, "当前时间要小于对账月份时间");
+
+        Map<String, Object> resultMp = new HashMap<String, Object>();
+        resultMp = getConfigData(anOwnCustNo);
+        final CustOperatorInfo custOperator = (CustOperatorInfo) UserUtils.getPrincipal().getUser();
+        resultMp.put("refNo", SequenceFactory.generate("PLAT_COMMISSION_DAILY_REFNO", custOperator.getOperOrg(),
+                "DB#{Date:yyyyMMdd}#{Seq:8}", "D"));
+        resultMp.put("totalBalance", payResult.getTotalBalance());
+        resultMp.put("payDate", anPayDate);
+        resultMp.put("ownCustNo", anOwnCustNo);
+        resultMp.put("ownCustName", custAccountService.queryCustName(anOwnCustNo));
+        resultMp.put("totalAmount", payResult.getTotalAmount());
+        resultMp.put("makeDateTime", BetterDateUtils.getDateTime());
+        resultMp.put("paySuccessBalance", payResult.getPaySuccessBalance());
+        resultMp.put("paySuccessAmount", payResult.getPaySuccessAmount());
+
+        return resultMp;
     }
-    
+
     /***
      * 获取参数表里面的信息
      * @return
      */
-    public Map<String,Object> getConfigData(Long anCoreCustNo){
-        Map<String, Object> map=new HashMap<String, Object>();
+    public Map<String, Object> getConfigData(Long anCoreCustNo) {
+        Map<String, Object> map = new HashMap<String, Object>();
         final CustOperatorInfo custOperator = (CustOperatorInfo) UserUtils.getPrincipal().getUser();
-        final String cusrName = domainAttributeDubboClientService.findString(custOperator.getOperOrg(), "PLAT_COMMISSION_MAKE_CUSTNAME");
-        final String operator = domainAttributeDubboClientService.findString(custOperator.getOperOrg(), "PLAT_COMMISSION_MAKE_OPERATOR");
-        CommissionParam param = paramService.findParamByCustNo(Collections3.getFirst(getCurrentUserCustNos()), anCoreCustNo);
+        final String cusrName = domainAttributeDubboClientService.findString(custOperator.getOperOrg(),
+                "PLAT_COMMISSION_MAKE_CUSTNAME");
+        final String operator = domainAttributeDubboClientService.findString(custOperator.getOperOrg(),
+                "PLAT_COMMISSION_MAKE_OPERATOR");
+        CommissionParam param = paramService.findParamByCustNo(Collections3.getFirst(getCurrentUserCustNos()),
+                anCoreCustNo);
         BTAssert.notNull(param, "请配置企业的默认利率，税率");
-        //final BigDecimal interestRate = domainAttributeDubboClientService.findMoney(custOperator.getOperOrg(), "PLAT_COMMISSION_INTEREST_RATE");
-        //final BigDecimal taxRate = domainAttributeDubboClientService.findMoney(custOperator.getOperOrg(), "PLAT_COMMISSION_TAX_RATE");
+        // final BigDecimal interestRate = domainAttributeDubboClientService.findMoney(custOperator.getOperOrg(),
+        // "PLAT_COMMISSION_INTEREST_RATE");
+        // final BigDecimal taxRate = domainAttributeDubboClientService.findMoney(custOperator.getOperOrg(),
+        // "PLAT_COMMISSION_TAX_RATE");
         final BigDecimal interestRate = param.getInterestRate();
         final BigDecimal taxRate = param.getTaxRate();
         final String dailyTemplate = domainAttributeDubboClientService.findString("GLOBAL_COMMISSION_DAILY_TEMPLATE");
@@ -384,116 +400,125 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
         map.put("interestRate", interestRate);
         map.put("taxRate", taxRate);
         map.put("dailyTemplate", dailyTemplate);
-        
+
         return map;
     }
 
-    public CommissionDailyStatement saveDailyStatement(String anDailyRefNo,String anPayDate,Long anOwnCustNo){
+    public CommissionDailyStatement saveDailyStatement(String anDailyRefNo, String anPayDate, Long anOwnCustNo) {
         BTAssert.isTrue(UserUtils.platformUser(), "操作失败！");
-        CommissionDailyStatement dailyStatement=new CommissionDailyStatement();
+        CommissionDailyStatement dailyStatement = new CommissionDailyStatement();
         dailyStatement.setRefNo(anDailyRefNo);
         dailyStatement.setPayDate(anPayDate);
         dailyStatement.setOwnCustNo(anOwnCustNo);
         dailyStatement.setOwnCustName(custAccountService.queryCustName(anOwnCustNo));
-        Map<String,Object> configMap=getConfigData(anOwnCustNo);
-        dailyStatement.setMakeCustName((String)configMap.get("makeCustName"));
-        dailyStatement.setOperName((String)configMap.get("makeOperName"));
-        
-        CalcPayResult payResult= payResultRecordService.calcPayResultRecord(anOwnCustNo, anPayDate);
-        logger.info("payResult:"+payResult);
-        
-        dailyStatement.setTotalBalance(payResult.getTotalBalance()==null?new BigDecimal(0):payResult.getTotalBalance());
+        Map<String, Object> configMap = getConfigData(anOwnCustNo);
+        dailyStatement.setMakeCustName((String) configMap.get("makeCustName"));
+        dailyStatement.setOperName((String) configMap.get("makeOperName"));
+
+        CalcPayResult payResult = payResultRecordService.calcPayResultRecord(anOwnCustNo, anPayDate);
+        logger.info("payResult:" + payResult);
+
+        dailyStatement
+                .setTotalBalance(payResult.getTotalBalance() == null ? new BigDecimal(0) : payResult.getTotalBalance());
         dailyStatement.setTotalAmount(new BigDecimal(payResult.getTotalAmount()));
-        dailyStatement.setPayTotalBalance(payResult.getPaySuccessBalance()==null?new BigDecimal(0):payResult.getPaySuccessBalance());
+        dailyStatement.setPayTotalBalance(
+                payResult.getPaySuccessBalance() == null ? new BigDecimal(0) : payResult.getPaySuccessBalance());
         dailyStatement.setPayTotalAmount(new BigDecimal(payResult.getPaySuccessAmount()));
         dailyStatement.setPaySuccessAmount(new BigDecimal(payResult.getPaySuccessAmount()));
-        dailyStatement.setPaySuccessBalance(payResult.getPaySuccessBalance()==null?new BigDecimal(0):payResult.getPaySuccessBalance());
-        dailyStatement.setPayFailureBalance(payResult.getPayFailureBalance()==null?new BigDecimal(0):payResult.getPayFailureBalance());
+        dailyStatement.setPaySuccessBalance(
+                payResult.getPaySuccessBalance() == null ? new BigDecimal(0) : payResult.getPaySuccessBalance());
+        dailyStatement.setPayFailureBalance(
+                payResult.getPayFailureBalance() == null ? new BigDecimal(0) : payResult.getPayFailureBalance());
         dailyStatement.setPayFailureAmount(new BigDecimal(payResult.getPayFailureAmount()));
         dailyStatement.initValue();
-        
+
         this.insert(dailyStatement);
-        
+
         // 添加日报表记录
         dailyStatementRecordService.addDailyStatementRecord(dailyStatement);
-        
-        String dailyTemplate=(String)configMap.get("dailyTemplate");
-        logger.info("dailyTemplate:"+dailyTemplate);
-        Long fileId=0l;
-        String fileType="";
-        if(dailyTemplate!=null){
+
+        String dailyTemplate = (String) configMap.get("dailyTemplate");
+        logger.info("dailyTemplate:" + dailyTemplate);
+        Long fileId = 0l;
+        String fileType = "";
+        if (dailyTemplate != null) {
             Map<String, Object> templateMp = JsonMapper.parserJson(dailyTemplate);
-            fileId=Long.parseLong(templateMp.get("id").toString());
-            fileType=(String)templateMp.get("fileType");
-            if(BetterStringUtils.isBlank(fileType)){
-                fileType=".xlsx";
+            fileId = Long.parseLong(templateMp.get("id").toString());
+            fileType = (String) templateMp.get("fileType");
+            if (StringUtils.isBlank(fileType)) {
+                fileType = ".xlsx";
             }
         }
-        
-        List<CommissionDailyStatementRecord> recordList=dailyStatementRecordService.findDailyStatementRecord(dailyStatement.getId());
-        CommissionDailyStatementRecord record=new CommissionDailyStatementRecord();
+
+        List<CommissionDailyStatementRecord> recordList = dailyStatementRecordService
+                .findDailyStatementRecord(dailyStatement.getId());
+        CommissionDailyStatementRecord record = new CommissionDailyStatementRecord();
         recordList.add(record);
-        
-        Map<String, Object> fileMap=new HashMap<String, Object>();
+
+        Map<String, Object> fileMap = new HashMap<String, Object>();
         fileMap.put("daily", dailyStatement);
-        
+
         try {
-            CustFileItem custFile =jxlsFileService.transformXLSFile(recordList, fileMap, fileId, 22, 24, BetterDateUtils.formatDispay(dailyStatement.getPayDate())+"-对账单"+fileType);
-            logger.info("生成后的文件，custFile:"+custFile);
+            CustFileItem custFile = jxlsFileService.transformXLSFile(recordList, fileMap, fileId, 22, 24,
+                    BetterDateUtils.formatDispay(dailyStatement.getPayDate()) + "-对账单" + fileType);
+            logger.info("生成后的文件，custFile:" + custFile);
             dailyStatement.setFileId(custFile.getId());
             dailyStatement.setBatchNo(custFile.getBatchNo());
             this.updateByPrimaryKey(dailyStatement);
         }
         catch (Exception e) {
-            logger.error("异常："+e);
+            logger.error("异常：" + e);
         }
-        
-        // 回写生成日报表的记录状态      
-        saveRecordStatus(anPayDate,anOwnCustNo,"3");
-        
+
+        // 回写生成日报表的记录状态
+        saveRecordStatus(anPayDate, anOwnCustNo, "3");
+
         return dailyStatement;
     }
-    
-    public void saveRecordStatus(String anPayDate,Long anOwnCustNo,String anBusinStatus){
-        // 回写生成日报表的记录状态        
-        Map<String,Object> anMap=new HashMap<String, Object>();
+
+    public void saveRecordStatus(String anPayDate, Long anOwnCustNo, String anBusinStatus) {
+        // 回写生成日报表的记录状态
+        Map<String, Object> anMap = new HashMap<String, Object>();
         anMap.put("businStatus", anBusinStatus);
         anMap.put("payDate", anPayDate);
         anMap.put("ownCustNo", anOwnCustNo);
-        BTAssert.isTrue(payResultRecordService.saveRecordStatus(anMap)>0, "回写佣金状态记录异常");
+        BTAssert.isTrue(payResultRecordService.saveRecordStatus(anMap) > 0, "回写佣金状态记录异常");
     }
-    
-    public CommissionDailyStatement findDailyStatementById(Long anDailyStatementId){
-        CommissionDailyStatement dailyStatement=this.selectByPrimaryKey(anDailyStatementId);
-        dailyStatement.setMakeDateTime(BetterDateUtils.formatDispDate(dailyStatement.getMakeDate()) +" "+BetterDateUtils.formatDispTime(dailyStatement.getMakeTime()));
+
+    public CommissionDailyStatement findDailyStatementById(Long anDailyStatementId) {
+        CommissionDailyStatement dailyStatement = this.selectByPrimaryKey(anDailyStatementId);
+        dailyStatement.setMakeDateTime(BetterDateUtils.formatDispDate(dailyStatement.getMakeDate()) + " "
+                + BetterDateUtils.formatDispTime(dailyStatement.getMakeTime()));
         return dailyStatement;
     }
-    
-    public Page<CommissionDailyStatementRecord> queryDailyStatementRecordByDailyId(Long anDailyStatementId, int anPageNum, int anPageSize,String anFlag){
-        return dailyStatementRecordService.queryCommissionDailyStatementRecordByRefNo(anDailyStatementId, anPageNum, anPageSize, anFlag);
+
+    public Page<CommissionDailyStatementRecord> queryDailyStatementRecordByDailyId(Long anDailyStatementId,
+            int anPageNum, int anPageSize, String anFlag) {
+        return dailyStatementRecordService.queryCommissionDailyStatementRecordByRefNo(anDailyStatementId, anPageNum,
+                anPageSize, anFlag);
     }
-    
+
     /***
      * 根据对账日期和对账企业查询日账单
      * @param anPayDate 对账日期
      * @param anOwnCustNo 对账企业客户号
      * @return 是否存在
      */
-    public boolean findDailyStatementByPayDate(String anPayDate,Long anOwnCustNo,String[] anBusinStatus){
-        Map<String,Object> anMap=new HashMap<String, Object>();
+    public boolean findDailyStatementByPayDate(String anPayDate, Long anOwnCustNo, String[] anBusinStatus) {
+        Map<String, Object> anMap = new HashMap<String, Object>();
         anMap.put("payDate", anPayDate);
         anMap.put("ownCustNo", anOwnCustNo);
-        if(anBusinStatus!=null && anBusinStatus.length>0){
+        if (anBusinStatus != null && anBusinStatus.length > 0) {
             anMap.put("businStatus", anBusinStatus);
         }
-        
-        List<CommissionDailyStatement> dailyList=this.selectByProperty(anMap);
-        if(dailyList!=null && dailyList.size()>0){
-           return true;
+
+        List<CommissionDailyStatement> dailyList = this.selectByProperty(anMap);
+        if (dailyList != null && dailyList.size() > 0) {
+            return true;
         }
         return false;
     }
-    
+
     /***
      * 计算利息
      * @param payTotalBalance 金额
@@ -501,11 +526,13 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
      * @param term 期限
      * @return
      */
-    public BigDecimal getInterset(BigDecimal payTotalBalance,BigDecimal rate,BigDecimal term){
-        BigDecimal interset=MathExtend.divide(MathExtend.divide(MathExtend.multiply(MathExtend.multiply(payTotalBalance,rate), term), new BigDecimal(100)),new BigDecimal(360));
+    public BigDecimal getInterset(BigDecimal payTotalBalance, BigDecimal rate, BigDecimal term) {
+        BigDecimal interset = MathExtend.divide(MathExtend
+                .divide(MathExtend.multiply(MathExtend.multiply(payTotalBalance, rate), term), new BigDecimal(100)),
+                new BigDecimal(360));
         return interset;
     }
-    
+
     /***
      * 计算税额
      * @param payTotalBalance
@@ -513,10 +540,10 @@ public class CommissionDailyStatementService  extends BaseService<CommissionDail
      * @param taxAmount
      * @return
      */
-    public BigDecimal getTaxBalance(BigDecimal payTotalBalance,BigDecimal interset,BigDecimal taxRate){
-        return MathExtend.divide(MathExtend.multiply(MathExtend.add(payTotalBalance, interset), taxRate), new BigDecimal(100));
-        
+    public BigDecimal getTaxBalance(BigDecimal payTotalBalance, BigDecimal interset, BigDecimal taxRate) {
+        return MathExtend.divide(MathExtend.multiply(MathExtend.add(payTotalBalance, interset), taxRate),
+                new BigDecimal(100));
+
     }
-    
-    
+
 }

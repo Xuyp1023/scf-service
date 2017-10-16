@@ -9,6 +9,7 @@ import com.betterjr.modules.supplychain.entity.CoreDataProcessDetail;
 
 import java.util.*;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -49,13 +50,12 @@ public class CoreDataDetailProcessService extends BaseService<CoreDataProcessDet
         termMap.put("btNo", anDetail.getBtCustId());
         CoreDataProcessDetail data = null;
         for (CoreDataProcessDetail tmpData : this.selectByProperty(termMap)) {
-            if (BetterStringUtils.isNotBlank(anDetail.getBankAcc())) {
+            if (StringUtils.isNotBlank(anDetail.getBankAcc())) {
                 if (anDetail.getBankAcc().equalsIgnoreCase(tmpData.getBankAccount())) {
                     data = tmpData;
                     break;
                 }
-            }
-            else {
+            } else {
                 data = tmpData;
                 break;
             }
@@ -63,8 +63,7 @@ public class CoreDataDetailProcessService extends BaseService<CoreDataProcessDet
         if (data == null) {
             data = new CoreDataProcessDetail(anOpenOrg, anWorkType, anDetail);
             this.insert(data);
-        }
-        else {
+        } else {
             data.putWorkStatus(anDetail);
             this.updateByPrimaryKey(data);
         }

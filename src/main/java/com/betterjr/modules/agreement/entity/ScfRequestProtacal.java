@@ -1,7 +1,5 @@
 package com.betterjr.modules.agreement.entity;
 
-import java.util.Map;
-
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.utils.BetterDateUtils;
 
@@ -12,91 +10,91 @@ import javax.persistence.*;
 @Table(name = "T_SCF_REQUEST_PROTACAL")
 public class ScfRequestProtacal implements BetterjrEntity {
     @Id
-    @Column(name = "C_REQUESTNO",  columnDefinition="VARCHAR" )
+    @Column(name = "C_REQUESTNO", columnDefinition = "VARCHAR")
     private String requestNo;
 
-    @Column(name = "D_BEGIN_DATE",  columnDefinition="VARCHAR" )
+    @Column(name = "D_BEGIN_DATE", columnDefinition = "VARCHAR")
     private String beginDate;
 
-    @Column(name = "D_END_DATE",  columnDefinition="VARCHAR" )
+    @Column(name = "D_END_DATE", columnDefinition = "VARCHAR")
     private String endDate;
 
-    @Column(name = "D_REGDATE",  columnDefinition="VARCHAR" )
+    @Column(name = "D_REGDATE", columnDefinition = "VARCHAR")
     private String regDate;
 
-    @Column(name = "C_PROTOCALNO",  columnDefinition="VARCHAR" )
+    @Column(name = "C_PROTOCALNO", columnDefinition = "VARCHAR")
     private String protocalNo;
 
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
+    @Column(name = "C_BUSIN_STATUS", columnDefinition = "VARCHAR")
     private String businStatus;
 
-    @Column(name = "C_PAYMENT",  columnDefinition="VARCHAR" )
+    @Column(name = "C_PAYMENT", columnDefinition = "VARCHAR")
     private String payment;
 
-    @Column(name = "C_FIRST_NAME",  columnDefinition="VARCHAR" )
+    @Column(name = "C_FIRST_NAME", columnDefinition = "VARCHAR")
     private String firstName;
 
-    @Column(name = "C_FIRST_ADDRESS",  columnDefinition="VARCHAR" )
+    @Column(name = "C_FIRST_ADDRESS", columnDefinition = "VARCHAR")
     private String firstAddress;
 
-    @Column(name = "C_FIRST_PHONE",  columnDefinition="VARCHAR" )
+    @Column(name = "C_FIRST_PHONE", columnDefinition = "VARCHAR")
     private String firstPhone;
 
-    @Column(name = "C_FIRST_FAX",  columnDefinition="VARCHAR" )
+    @Column(name = "C_FIRST_FAX", columnDefinition = "VARCHAR")
     private String firstFax;
 
-    @Column(name = "C_FIRST_JOB",  columnDefinition="VARCHAR" )
+    @Column(name = "C_FIRST_JOB", columnDefinition = "VARCHAR")
     private String firstJob;
 
-    @Column(name = "C_FIRST_LEGAL",  columnDefinition="VARCHAR" )
+    @Column(name = "C_FIRST_LEGAL", columnDefinition = "VARCHAR")
     private String firstLegal;
 
-    @Column(name = "C_SECOND_NAME",  columnDefinition="VARCHAR" )
+    @Column(name = "C_SECOND_NAME", columnDefinition = "VARCHAR")
     private String secondName;
 
-    @Column(name = "C_SECOND_ADDRESS",  columnDefinition="VARCHAR" )
+    @Column(name = "C_SECOND_ADDRESS", columnDefinition = "VARCHAR")
     private String secondAddress;
 
-    @Column(name = "C_SECOND_PHONE",  columnDefinition="VARCHAR" )
+    @Column(name = "C_SECOND_PHONE", columnDefinition = "VARCHAR")
     private String secondPhone;
 
-    @Column(name = "C_SECOND_FAX",  columnDefinition="VARCHAR" )
+    @Column(name = "C_SECOND_FAX", columnDefinition = "VARCHAR")
     private String secondFax;
 
-    @Column(name = "C_SECOND_JOB",  columnDefinition="VARCHAR" )
+    @Column(name = "C_SECOND_JOB", columnDefinition = "VARCHAR")
     private String secondJob;
 
-    @Column(name = "C_SECOND_LEGAL",  columnDefinition="VARCHAR" )
+    @Column(name = "C_SECOND_LEGAL", columnDefinition = "VARCHAR")
     private String secondLegal;
 
-    @Column(name = "C_THREE_NAME",  columnDefinition="VARCHAR" )
+    @Column(name = "C_THREE_NAME", columnDefinition = "VARCHAR")
     private String threeName;
 
-    @Column(name = "C_THREE_ADDRESS",  columnDefinition="VARCHAR" )
+    @Column(name = "C_THREE_ADDRESS", columnDefinition = "VARCHAR")
     private String threeAddress;
 
-    @Column(name = "C_THREE_PHONE",  columnDefinition="VARCHAR" )
+    @Column(name = "C_THREE_PHONE", columnDefinition = "VARCHAR")
     private String threePhone;
 
-    @Column(name = "C_THREE_FAX",  columnDefinition="VARCHAR" )
+    @Column(name = "C_THREE_FAX", columnDefinition = "VARCHAR")
     private String threeFax;
 
-    @Column(name = "C_THREE_JOB",  columnDefinition="VARCHAR" )
+    @Column(name = "C_THREE_JOB", columnDefinition = "VARCHAR")
     private String threeJob;
 
-    @Column(name = "C_THREE_LEGAL",  columnDefinition="VARCHAR" )
+    @Column(name = "C_THREE_LEGAL", columnDefinition = "VARCHAR")
     private String threeLegal;
 
-    @Column(name = "C_AGREENAME",  columnDefinition="VARCHAR" )
+    @Column(name = "C_AGREENAME", columnDefinition = "VARCHAR")
     private String agreeName;
-    
-    @Column(name = "L_FIRSTNO",  columnDefinition="VARCHAR" )
+
+    @Column(name = "L_FIRSTNO", columnDefinition = "VARCHAR")
     private String firstNo;
 
-    @Column(name = "L_SECONDNO",  columnDefinition="Long" )
+    @Column(name = "L_SECONDNO", columnDefinition = "Long")
     private Long secondNo;
 
-    @Column(name = "L_THREENO",  columnDefinition="Long" )
+    @Column(name = "L_THREENO", columnDefinition = "Long")
     private Long threeNo;
 
     private static final long serialVersionUID = 2746923015924615585L;
@@ -382,32 +380,58 @@ public class ScfRequestProtacal implements BetterjrEntity {
             return false;
         }
         ScfRequestProtacal other = (ScfRequestProtacal) that;
-        return (this.getRequestNo() == null ? other.getRequestNo() == null : this.getRequestNo().equals(other.getRequestNo()))
-            && (this.getBeginDate() == null ? other.getBeginDate() == null : this.getBeginDate().equals(other.getBeginDate()))
-            && (this.getEndDate() == null ? other.getEndDate() == null : this.getEndDate().equals(other.getEndDate()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-            && (this.getProtocalNo() == null ? other.getProtocalNo() == null : this.getProtocalNo().equals(other.getProtocalNo()))
-            && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
-            && (this.getPayment() == null ? other.getPayment() == null : this.getPayment().equals(other.getPayment()))
-            && (this.getFirstName() == null ? other.getFirstName() == null : this.getFirstName().equals(other.getFirstName()))
-            && (this.getFirstAddress() == null ? other.getFirstAddress() == null : this.getFirstAddress().equals(other.getFirstAddress()))
-            && (this.getFirstPhone() == null ? other.getFirstPhone() == null : this.getFirstPhone().equals(other.getFirstPhone()))
-            && (this.getFirstFax() == null ? other.getFirstFax() == null : this.getFirstFax().equals(other.getFirstFax()))
-            && (this.getFirstJob() == null ? other.getFirstJob() == null : this.getFirstJob().equals(other.getFirstJob()))
-            && (this.getFirstLegal() == null ? other.getFirstLegal() == null : this.getFirstLegal().equals(other.getFirstLegal()))
-            && (this.getSecondName() == null ? other.getSecondName() == null : this.getSecondName().equals(other.getSecondName()))
-            && (this.getSecondAddress() == null ? other.getSecondAddress() == null : this.getSecondAddress().equals(other.getSecondAddress()))
-            && (this.getSecondPhone() == null ? other.getSecondPhone() == null : this.getSecondPhone().equals(other.getSecondPhone()))
-            && (this.getSecondFax() == null ? other.getSecondFax() == null : this.getSecondFax().equals(other.getSecondFax()))
-            && (this.getSecondJob() == null ? other.getSecondJob() == null : this.getSecondJob().equals(other.getSecondJob()))
-            && (this.getSecondLegal() == null ? other.getSecondLegal() == null : this.getSecondLegal().equals(other.getSecondLegal()))
-            && (this.getThreeName() == null ? other.getThreeName() == null : this.getThreeName().equals(other.getThreeName()))
-            && (this.getThreeAddress() == null ? other.getThreeAddress() == null : this.getThreeAddress().equals(other.getThreeAddress()))
-            && (this.getThreePhone() == null ? other.getThreePhone() == null : this.getThreePhone().equals(other.getThreePhone()))
-            && (this.getThreeFax() == null ? other.getThreeFax() == null : this.getThreeFax().equals(other.getThreeFax()))
-            && (this.getThreeJob() == null ? other.getThreeJob() == null : this.getThreeJob().equals(other.getThreeJob()))
-            && (this.getAgreeName() == null ? other.getAgreeName() == null : this.getAgreeName().equals(other.getAgreeName()))
-            && (this.getThreeLegal() == null ? other.getThreeLegal() == null : this.getThreeLegal().equals(other.getThreeLegal()));
+        return (this.getRequestNo() == null ? other.getRequestNo() == null
+                : this.getRequestNo().equals(other.getRequestNo()))
+                && (this.getBeginDate() == null ? other.getBeginDate() == null
+                        : this.getBeginDate().equals(other.getBeginDate()))
+                && (this.getEndDate() == null ? other.getEndDate() == null
+                        : this.getEndDate().equals(other.getEndDate()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getProtocalNo() == null ? other.getProtocalNo() == null
+                        : this.getProtocalNo().equals(other.getProtocalNo()))
+                && (this.getBusinStatus() == null ? other.getBusinStatus() == null
+                        : this.getBusinStatus().equals(other.getBusinStatus()))
+                && (this.getPayment() == null ? other.getPayment() == null
+                        : this.getPayment().equals(other.getPayment()))
+                && (this.getFirstName() == null ? other.getFirstName() == null
+                        : this.getFirstName().equals(other.getFirstName()))
+                && (this.getFirstAddress() == null ? other.getFirstAddress() == null
+                        : this.getFirstAddress().equals(other.getFirstAddress()))
+                && (this.getFirstPhone() == null ? other.getFirstPhone() == null
+                        : this.getFirstPhone().equals(other.getFirstPhone()))
+                && (this.getFirstFax() == null ? other.getFirstFax() == null
+                        : this.getFirstFax().equals(other.getFirstFax()))
+                && (this.getFirstJob() == null ? other.getFirstJob() == null
+                        : this.getFirstJob().equals(other.getFirstJob()))
+                && (this.getFirstLegal() == null ? other.getFirstLegal() == null
+                        : this.getFirstLegal().equals(other.getFirstLegal()))
+                && (this.getSecondName() == null ? other.getSecondName() == null
+                        : this.getSecondName().equals(other.getSecondName()))
+                && (this.getSecondAddress() == null ? other.getSecondAddress() == null
+                        : this.getSecondAddress().equals(other.getSecondAddress()))
+                && (this.getSecondPhone() == null ? other.getSecondPhone() == null
+                        : this.getSecondPhone().equals(other.getSecondPhone()))
+                && (this.getSecondFax() == null ? other.getSecondFax() == null
+                        : this.getSecondFax().equals(other.getSecondFax()))
+                && (this.getSecondJob() == null ? other.getSecondJob() == null
+                        : this.getSecondJob().equals(other.getSecondJob()))
+                && (this.getSecondLegal() == null ? other.getSecondLegal() == null
+                        : this.getSecondLegal().equals(other.getSecondLegal()))
+                && (this.getThreeName() == null ? other.getThreeName() == null
+                        : this.getThreeName().equals(other.getThreeName()))
+                && (this.getThreeAddress() == null ? other.getThreeAddress() == null
+                        : this.getThreeAddress().equals(other.getThreeAddress()))
+                && (this.getThreePhone() == null ? other.getThreePhone() == null
+                        : this.getThreePhone().equals(other.getThreePhone()))
+                && (this.getThreeFax() == null ? other.getThreeFax() == null
+                        : this.getThreeFax().equals(other.getThreeFax()))
+                && (this.getThreeJob() == null ? other.getThreeJob() == null
+                        : this.getThreeJob().equals(other.getThreeJob()))
+                && (this.getAgreeName() == null ? other.getAgreeName() == null
+                        : this.getAgreeName().equals(other.getAgreeName()))
+                && (this.getThreeLegal() == null ? other.getThreeLegal() == null
+                        : this.getThreeLegal().equals(other.getThreeLegal()));
     }
 
     @Override
@@ -442,9 +466,9 @@ public class ScfRequestProtacal implements BetterjrEntity {
         result = prime * result + ((getAgreeName() == null) ? 0 : getAgreeName().hashCode());
         return result;
     }
-    
-    public void initProtacal(){
-        this.businStatus="0";
+
+    public void initProtacal() {
+        this.businStatus = "0";
         this.regDate = BetterDateUtils.getNumDate();
     }
 }

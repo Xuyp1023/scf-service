@@ -11,13 +11,12 @@ public class DataConverterService {
     public DataConverterService(Map<String, FaceConvertInfo> anConvert) {
         this.convertMap = anConvert;
     }
-    
-    public String convert(WorkFaceFieldInfo fieldInfo, String anFaceFieldName, String anValue){
+
+    public String convert(WorkFaceFieldInfo fieldInfo, String anFaceFieldName, String anValue) {
         FaceConvertInfo convert = convertMap.get(anFaceFieldName);
-        if (convert == null){
+        if (convert == null) {
             return anValue;
-        }
-        else{
+        } else {
             return convert.convert(fieldInfo, anFaceFieldName, anValue);
         }
     }

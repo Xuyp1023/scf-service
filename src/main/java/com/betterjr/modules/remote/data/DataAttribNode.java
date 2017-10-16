@@ -30,7 +30,7 @@ public class DataAttribNode implements java.io.Serializable {
     public void addAttrib(Element anEle) {
         if (anEle != null) {
             for (Map.Entry<String, RemoteFieldInfo> ent : this.attrib.entrySet()) {
-                anEle.addAttribute(ent.getKey(), (String)ent.getValue().getValue());
+                anEle.addAttribute(ent.getKey(), (String) ent.getValue().getValue());
             }
         }
     }

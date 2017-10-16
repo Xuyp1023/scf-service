@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,13 +55,15 @@ public class SupplyAccoRequestService extends BaseService<CustTempEnrollInfoMapp
     public CustTempEnrollInfo addSupplyAccount(final Map<String, String> anMap) {
         logger.info("Begin add supply account.");
 
-        final CustTempEnrollInfo request = businRuleService.buildRequest(new CustTempEnrollInfo(), anMap, "addSupplyAccount");
+        final CustTempEnrollInfo request = businRuleService.buildRequest(new CustTempEnrollInfo(), anMap,
+                "addSupplyAccount");
         request.initdefValue();
         /*  boolean accountExists = this.accountService.checkAccountExists(request.getCustType(), request.getIdentType(), request.getIdentNo());
         if (accountExists) {
             throw new BytterTradeException(40001, "抱歉，该证件号码已开户");
         }*/
-        final boolean tempAccountExists = checkTempAccountExists(request.getCustType(), request.getIdentType(), request.getIdentNo());
+        final boolean tempAccountExists = checkTempAccountExists(request.getCustType(), request.getIdentType(),
+                request.getIdentNo());
         if (tempAccountExists) {
             throw new BytterTradeException(40001, "抱歉，该证件号码已注册");
         }
@@ -69,15 +72,15 @@ public class SupplyAccoRequestService extends BaseService<CustTempEnrollInfoMapp
         if (bankExists) {
             throw new BytterTradeException(40001, "抱歉，该银行账户已存在");
         }
-         */        final boolean tempBankExists = checkTempAcooBankExists(request.getBankAccount());
-         if (tempBankExists) {
-             throw new BytterTradeException(40001, "抱歉，该银行账户已注册");
-         }
+         */ final boolean tempBankExists = checkTempAcooBankExists(request.getBankAccount());
+        if (tempBankExists) {
+            throw new BytterTradeException(40001, "抱歉，该银行账户已注册");
+        }
 
-         // 保存临时客户信息
-         this.insert(request);
+        // 保存临时客户信息
+        this.insert(request);
 
-         return request;
+        return request;
     }
 
     /**
@@ -89,7 +92,7 @@ public class SupplyAccoRequestService extends BaseService<CustTempEnrollInfoMapp
      * @return
      */
     private boolean checkTempAccountExists(final String anCustType, final String anIdentType, final String anIdentNo) {
-        if (BetterStringUtils.isNotBlank(anIdentType) && BetterStringUtils.isNotBlank(anIdentNo)) {
+        if (StringUtils.isNotBlank(anIdentType) && StringUtils.isNotBlank(anIdentNo)) {
             final Map<String, Object> map = new HashMap();
             map.put("custType", anCustType);
             map.put("identType", anIdentType);
@@ -107,7 +110,7 @@ public class SupplyAccoRequestService extends BaseService<CustTempEnrollInfoMapp
      * @return
      */
     private boolean checkTempAcooBankExists(final String anBankAccount) {
-        if (BetterStringUtils.isNotBlank(anBankAccount)) {
+        if (StringUtils.isNotBlank(anBankAccount)) {
             return Collections3.isEmpty(this.selectByProperty("bankAccount", anBankAccount)) == false;
         }
         return false;
@@ -149,7 +152,8 @@ public class SupplyAccoRequestService extends BaseService<CustTempEnrollInfoMapp
 
                 continue;
             }
-            scfRel.modifyStatus(coreSupp.getOperOrg(), coreSupp.getCoreCustNo(), coreSupp.getBtNo(), coreSupp.getCustNo());
+            scfRel.modifyStatus(coreSupp.getOperOrg(), coreSupp.getCoreCustNo(), coreSupp.getBtNo(),
+                    coreSupp.getCustNo());
             this.updateByPrimaryKey(scfRel);
         }
 
@@ -179,8 +183,9 @@ public class SupplyAccoRequestService extends BaseService<CustTempEnrollInfoMapp
      *            银行账户
      * @return
      */
-    protected CustTempEnrollInfo findUnRegisterAccount(final String anAccountName, final String anBankAccount, final boolean anCheck) {
-        if (BetterStringUtils.isBlank(anBankAccount) || BetterStringUtils.isBlank(anAccountName)) {
+    protected CustTempEnrollInfo findUnRegisterAccount(final String anAccountName, final String anBankAccount,
+            final boolean anCheck) {
+        if (StringUtils.isBlank(anBankAccount) || StringUtils.isBlank(anAccountName)) {
 
             return null;
         }
@@ -189,12 +194,12 @@ public class SupplyAccoRequestService extends BaseService<CustTempEnrollInfoMapp
         termMap.put("bankAccount", anBankAccount);
         for (final CustTempEnrollInfo custTemp : this.selectByProperty(termMap)) {
             if (anCheck) {
-                if (BetterStringUtils.defShortString(custTemp.getBtNo()) && MathExtend.smallValue(custTemp.getCoreCustNo())) {
+                if (BetterStringUtils.defShortString(custTemp.getBtNo())
+                        && MathExtend.smallValue(custTemp.getCoreCustNo())) {
 
                     return custTemp;
                 }
-            }
-            else {
+            } else {
                 return custTemp;
             }
         }
@@ -218,7 +223,8 @@ public class SupplyAccoRequestService extends BaseService<CustTempEnrollInfoMapp
      * @param anStatus
      *            状态，true表示成功，false表示失败
      */
-    public void saveCheckedStatus(final String anAccountName, final String anBankAccount, final String anOperOrg, final String anBtCustId, final boolean anStatus) {
+    public void saveCheckedStatus(final String anAccountName, final String anBankAccount, final String anOperOrg,
+            final String anBtCustId, final boolean anStatus) {
         final Map<String, Object> termMap = new HashMap();
         termMap.put("bankAcountName", anAccountName);
         termMap.put("bankAccount", anBankAccount);

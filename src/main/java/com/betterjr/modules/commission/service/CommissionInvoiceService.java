@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +52,8 @@ public class CommissionInvoiceService extends BaseService<CommissionInvoiceMappe
      *            发票类型 0 普通发票 1 专用发票
      * @return
      */
-    public CommissionInvoice saveDemandInvoice(Long anCustNo, Long anCoreCustNo, String anMonthlyIds, String anInvoiceType) {
+    public CommissionInvoice saveDemandInvoice(Long anCustNo, Long anCoreCustNo, String anMonthlyIds,
+            String anInvoiceType) {
 
         BTAssert.notNull(anCustNo, "索取发票失败！数据不全");
         BTAssert.notNull(anCoreCustNo, "索取发票失败！请选择对账企业");
@@ -61,7 +61,8 @@ public class CommissionInvoiceService extends BaseService<CommissionInvoiceMappe
         BTAssert.notNull(anInvoiceType, "索取发票失败！请选择发票类型");
         CommissionInvoice invoice = new CommissionInvoice();
         invoice.initAddValue(UserUtils.getOperatorInfo());
-        logger.info("Begin to add saveDemandInvoice 数据为：" + invoice + " 操作用户为：" + UserUtils.getOperatorInfo().getName());
+        logger.info(
+                "Begin to add saveDemandInvoice 数据为：" + invoice + " 操作用户为：" + UserUtils.getOperatorInfo().getName());
         // 封装发票抬头
         fillInvoiceByCustNoCoreCustNo(anCustNo, anCoreCustNo, invoice);
         invoice.setInvoiceType(anInvoiceType);
@@ -98,7 +99,8 @@ public class CommissionInvoiceService extends BaseService<CommissionInvoiceMappe
         if (!UserUtils.getOperOrg().equals(invoice.getOperOrg())) {
             BTAssert.notNull(null, "提交发票失败！你没有相应的权限");
         }
-        logger.info("begin to add saveInvoiceEffective 数据为：" + invoice + " 操作用户为：" + UserUtils.getOperatorInfo().getName());
+        logger.info(
+                "begin to add saveInvoiceEffective 数据为：" + invoice + " 操作用户为：" + UserUtils.getOperatorInfo().getName());
         // 更新月账单状态
         recordService.saveUpdateRecord(anInvoiceId, invoice.getInvoiceType());
 
@@ -107,7 +109,8 @@ public class CommissionInvoiceService extends BaseService<CommissionInvoiceMappe
         invoice.setBusinStatus("1");
         this.updateByPrimaryKeySelective(invoice);
 
-        logger.info("end to add saveInvoiceEffective 数据为：" + invoice + " 操作用户为：" + UserUtils.getOperatorInfo().getName());
+        logger.info(
+                "end to add saveInvoiceEffective 数据为：" + invoice + " 操作用户为：" + UserUtils.getOperatorInfo().getName());
         return invoice;
     }
 
@@ -210,8 +213,8 @@ public class CommissionInvoiceService extends BaseService<CommissionInvoiceMappe
      *            是否是用来确认页面的查询 true 是确认页面的查询 false 发票申请页面的查询
      * @return
      */
-    public Page<CommissionInvoice> queryCommissionInvoice(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize,
-            boolean anIsConfirm) {
+    public Page<CommissionInvoice> queryCommissionInvoice(Map<String, Object> anMap, String anFlag, int anPageNum,
+            int anPageSize, boolean anIsConfirm) {
 
         BTAssert.notNull(anMap, "查询发票失败！条件为空");
         // 去除空白字符串的查询条件
@@ -222,8 +225,7 @@ public class CommissionInvoiceService extends BaseService<CommissionInvoiceMappe
             if (anIsConfirm) {
                 // 确认查询，不查询已经作废的发票
                 anMap.put("businStatus", new String[] { "1", "2", "3" });
-            }
-            else {
+            } else {
                 anMap.put("businStatus", new String[] { "1", "2", "3", "4" });
 
             }
@@ -231,7 +233,8 @@ public class CommissionInvoiceService extends BaseService<CommissionInvoiceMappe
         }
 
         anMap.put("operOrg", UserUtils.getOperOrg());
-        Page<CommissionInvoice> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id Desc");
+        Page<CommissionInvoice> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag),
+                "id Desc");
 
         return page;
     }
@@ -299,10 +302,10 @@ public class CommissionInvoiceService extends BaseService<CommissionInvoiceMappe
         CommissionInvoiceCustInfo coreCustInfo = new CommissionInvoiceCustInfo();
         if (invoice.getCoreCustInvoiceId() == null) {
 
-            coreCustInfo = custInfoService.findInvoiceCustInfoEffectiveByCustNo(invoice.getCustNo(), invoice.getCoreCustNo());
+            coreCustInfo = custInfoService.findInvoiceCustInfoEffectiveByCustNo(invoice.getCustNo(),
+                    invoice.getCoreCustNo());
             BTAssert.notNull(coreCustInfo, "当前委托企业没有默认生效的发票抬头信息，请新建。");
-        }
-        else {
+        } else {
             coreCustInfo = custInfoService.selectByPrimaryKey(invoice.getCoreCustInvoiceId());
             BTAssert.notNull(coreCustInfo, "票据抬头缺失,请重新开票");
         }
@@ -314,8 +317,7 @@ public class CommissionInvoiceService extends BaseService<CommissionInvoiceMappe
 
             custInfo = custInfoService.findInvoiceCustInfoEffectiveByCustNo(invoice.getCustNo(), invoice.getCustNo());
             BTAssert.notNull(custInfo, "当前开票方没有默认生效的发票抬头信息，请新建。");
-        }
-        else {
+        } else {
             custInfo = custInfoService.selectByPrimaryKey(invoice.getCustInvoiceId());
             BTAssert.notNull(custInfo, "票据抬头缺失,请重新开票");
         }

@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "T_SCF_PRODUCT")
-public class ScfProduct extends BetterBaseEntity  implements BetterjrEntity,BaseRemoteEntity {
+public class ScfProduct extends BetterBaseEntity implements BetterjrEntity, BaseRemoteEntity {
     /**
      * 产品流水号
      */
@@ -286,8 +286,7 @@ public class ScfProduct extends BetterBaseEntity  implements BetterjrEntity,Base
 
     private static final long serialVersionUID = 1467703726398L;
 
-
-    //临时的远端给过来的核心企业信息
+    // 临时的远端给过来的核心企业信息
     @Transient
     private String scfId;
 
@@ -427,34 +426,42 @@ public class ScfProduct extends BetterBaseEntity  implements BetterjrEntity,Base
         this.businStatus = status == null ? null : status.trim();
     }
 
+    @Override
     public Long getRegOperId() {
         return regOperId;
     }
 
+    @Override
     public void setRegOperId(Long regOperId) {
         this.regOperId = regOperId;
     }
 
+    @Override
     public String getRegOperName() {
         return regOperName;
     }
 
+    @Override
     public void setRegOperName(String regOperName) {
         this.regOperName = regOperName;
     }
 
+    @Override
     public String getRegDate() {
         return regDate;
     }
 
+    @Override
     public void setRegDate(String regDate) {
         this.regDate = regDate == null ? null : regDate.trim();
     }
 
+    @Override
     public String getRegTime() {
         return regTime;
     }
 
+    @Override
     public void setRegTime(String regTime) {
         this.regTime = regTime == null ? null : regTime.trim();
     }
@@ -463,6 +470,7 @@ public class ScfProduct extends BetterBaseEntity  implements BetterjrEntity,Base
         return modiOperId;
     }
 
+    @Override
     public void setModiOperId(Long modiOperId) {
         this.modiOperId = modiOperId;
     }
@@ -471,6 +479,7 @@ public class ScfProduct extends BetterBaseEntity  implements BetterjrEntity,Base
         return modiOperName;
     }
 
+    @Override
     public void setModiOperName(String modiOperName) {
         this.modiOperName = modiOperName == null ? null : modiOperName.trim();
     }
@@ -479,6 +488,7 @@ public class ScfProduct extends BetterBaseEntity  implements BetterjrEntity,Base
         return modiDate;
     }
 
+    @Override
     public void setModiDate(String modiDate) {
         this.modiDate = modiDate == null ? null : modiDate.trim();
     }
@@ -487,6 +497,7 @@ public class ScfProduct extends BetterBaseEntity  implements BetterjrEntity,Base
         return modiTime;
     }
 
+    @Override
     public void setModiTime(String modiTime) {
         this.modiTime = modiTime == null ? null : modiTime.trim();
     }
@@ -638,44 +649,73 @@ public class ScfProduct extends BetterBaseEntity  implements BetterjrEntity,Base
         }
         ScfProduct other = (ScfProduct) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-                && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
-                && (this.getCoreName() == null ? other.getCoreName() == null : this.getCoreName().equals(other.getCoreName()))
-                && (this.getFactorName() == null ? other.getFactorName() == null : this.getFactorName().equals(other.getFactorName()))
-                && (this.getFactorNo() == null ? other.getFactorNo() == null : this.getFactorNo().equals(other.getFactorNo()))
-                && (this.getFactorCorp() == null ? other.getFactorCorp() == null : this.getFactorCorp().equals(other.getFactorCorp()))
-                && (this.getProductCode() == null ? other.getProductCode() == null : this.getProductCode().equals(other.getProductCode()))
-                && (this.getProductName() == null ? other.getProductName() == null : this.getProductName().equals(other.getProductName()))
-                && (this.getFeatures() == null ? other.getFeatures() == null : this.getFeatures().equals(other.getFeatures()))
-                && (this.getFitCrowd() == null ? other.getFitCrowd() == null : this.getFitCrowd().equals(other.getFitCrowd()))
+                && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null
+                        : this.getCoreCustNo().equals(other.getCoreCustNo()))
+                && (this.getCoreName() == null ? other.getCoreName() == null
+                        : this.getCoreName().equals(other.getCoreName()))
+                && (this.getFactorName() == null ? other.getFactorName() == null
+                        : this.getFactorName().equals(other.getFactorName()))
+                && (this.getFactorNo() == null ? other.getFactorNo() == null
+                        : this.getFactorNo().equals(other.getFactorNo()))
+                && (this.getFactorCorp() == null ? other.getFactorCorp() == null
+                        : this.getFactorCorp().equals(other.getFactorCorp()))
+                && (this.getProductCode() == null ? other.getProductCode() == null
+                        : this.getProductCode().equals(other.getProductCode()))
+                && (this.getProductName() == null ? other.getProductName() == null
+                        : this.getProductName().equals(other.getProductName()))
+                && (this.getFeatures() == null ? other.getFeatures() == null
+                        : this.getFeatures().equals(other.getFeatures()))
+                && (this.getFitCrowd() == null ? other.getFitCrowd() == null
+                        : this.getFitCrowd().equals(other.getFitCrowd()))
                 && (this.getMinFactorAmmount() == null ? other.getMinFactorAmmount() == null
                         : this.getMinFactorAmmount().equals(other.getMinFactorAmmount()))
                 && (this.getMaxFactorAmmount() == null ? other.getMaxFactorAmmount() == null
                         : this.getMaxFactorAmmount().equals(other.getMaxFactorAmmount()))
-                && (this.getFinanceType() == null ? other.getFinanceType() == null : this.getFinanceType().equals(other.getFinanceType()))
+                && (this.getFinanceType() == null ? other.getFinanceType() == null
+                        : this.getFinanceType().equals(other.getFinanceType()))
                 && (this.getRatio() == null ? other.getRatio() == null : this.getRatio().equals(other.getRatio()))
-                && (this.getMinLoanDays() == null ? other.getMinLoanDays() == null : this.getMinLoanDays().equals(other.getMinLoanDays()))
-                && (this.getMaxLoanDays() == null ? other.getMaxLoanDays() == null : this.getMaxLoanDays().equals(other.getMaxLoanDays()))
-                && (this.getFactorType() == null ? other.getFactorType() == null : this.getFactorType().equals(other.getFactorType()))
-                && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
-                && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
-                && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
-                && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-                && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
-                && (this.getModiOperId() == null ? other.getModiOperId() == null : this.getModiOperId().equals(other.getModiOperId()))
-                && (this.getModiOperName() == null ? other.getModiOperName() == null : this.getModiOperName().equals(other.getModiOperName()))
-                && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-                && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()))
-                && (this.getShelvesOperId() == null ? other.getShelvesOperId() == null : this.getShelvesOperId().equals(other.getShelvesOperId()))
+                && (this.getMinLoanDays() == null ? other.getMinLoanDays() == null
+                        : this.getMinLoanDays().equals(other.getMinLoanDays()))
+                && (this.getMaxLoanDays() == null ? other.getMaxLoanDays() == null
+                        : this.getMaxLoanDays().equals(other.getMaxLoanDays()))
+                && (this.getFactorType() == null ? other.getFactorType() == null
+                        : this.getFactorType().equals(other.getFactorType()))
+                && (this.getBusinStatus() == null ? other.getBusinStatus() == null
+                        : this.getBusinStatus().equals(other.getBusinStatus()))
+                && (this.getRegOperId() == null ? other.getRegOperId() == null
+                        : this.getRegOperId().equals(other.getRegOperId()))
+                && (this.getRegOperName() == null ? other.getRegOperName() == null
+                        : this.getRegOperName().equals(other.getRegOperName()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getRegTime() == null ? other.getRegTime() == null
+                        : this.getRegTime().equals(other.getRegTime()))
+                && (this.getModiOperId() == null ? other.getModiOperId() == null
+                        : this.getModiOperId().equals(other.getModiOperId()))
+                && (this.getModiOperName() == null ? other.getModiOperName() == null
+                        : this.getModiOperName().equals(other.getModiOperName()))
+                && (this.getModiDate() == null ? other.getModiDate() == null
+                        : this.getModiDate().equals(other.getModiDate()))
+                && (this.getModiTime() == null ? other.getModiTime() == null
+                        : this.getModiTime().equals(other.getModiTime()))
+                && (this.getShelvesOperId() == null ? other.getShelvesOperId() == null
+                        : this.getShelvesOperId().equals(other.getShelvesOperId()))
                 && (this.getShelvesOperName() == null ? other.getShelvesOperName() == null
                         : this.getShelvesOperName().equals(other.getShelvesOperName()))
-                && (this.getShelvesDate() == null ? other.getShelvesDate() == null : this.getShelvesDate().equals(other.getShelvesDate()))
-                && (this.getShelvesTime() == null ? other.getShelvesTime() == null : this.getShelvesTime().equals(other.getShelvesTime()))
-                && (this.getOffLineOperId() == null ? other.getOffLineOperId() == null : this.getOffLineOperId().equals(other.getOffLineOperId()))
+                && (this.getShelvesDate() == null ? other.getShelvesDate() == null
+                        : this.getShelvesDate().equals(other.getShelvesDate()))
+                && (this.getShelvesTime() == null ? other.getShelvesTime() == null
+                        : this.getShelvesTime().equals(other.getShelvesTime()))
+                && (this.getOffLineOperId() == null ? other.getOffLineOperId() == null
+                        : this.getOffLineOperId().equals(other.getOffLineOperId()))
                 && (this.getOffLineOperName() == null ? other.getOffLineOperName() == null
                         : this.getOffLineOperName().equals(other.getOffLineOperName()))
-                && (this.getOffLineDate() == null ? other.getOffLineDate() == null : this.getOffLineDate().equals(other.getOffLineDate()))
-                && (this.getOffLineTime() == null ? other.getOffLineTime() == null : this.getOffLineTime().equals(other.getOffLineTime()))
-                && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()));
+                && (this.getOffLineDate() == null ? other.getOffLineDate() == null
+                        : this.getOffLineDate().equals(other.getOffLineDate()))
+                && (this.getOffLineTime() == null ? other.getOffLineTime() == null
+                        : this.getOffLineTime().equals(other.getOffLineTime()))
+                && (this.getOperOrg() == null ? other.getOperOrg() == null
+                        : this.getOperOrg().equals(other.getOperOrg()));
     }
 
     @Override
@@ -768,6 +808,7 @@ public class ScfProduct extends BetterBaseEntity  implements BetterjrEntity,Base
         this.offLineDate = BetterDateUtils.getNumDate();
         this.offLineTime = BetterDateUtils.getNumTime();
     }
+
     public void modifyValue(ScfProduct anMyValue) {
         this.id = anMyValue.id;
         this.modiDate = BetterDateUtils.getNumDate();
@@ -776,7 +817,7 @@ public class ScfProduct extends BetterBaseEntity  implements BetterjrEntity,Base
         this.coreName = anMyValue.coreName;
         this.factorName = anMyValue.factorName;
         this.factorNo = anMyValue.factorNo;
-        this.minLoanDays =anMyValue.minLoanDays;
+        this.minLoanDays = anMyValue.minLoanDays;
         this.maxLoanDays = anMyValue.maxLoanDays;
         this.factorType = anMyValue.factorType;
         this.operOrg = anMyValue.getOperOrg();
@@ -784,9 +825,9 @@ public class ScfProduct extends BetterBaseEntity  implements BetterjrEntity,Base
 
     public void initDefValue() {
         this.businStatus = "1";
-        this.factorType="2";
-        this.minLoanDays =0;
-        this.maxLoanDays = 0; 
+        this.factorType = "2";
+        this.minLoanDays = 0;
+        this.maxLoanDays = 0;
         this.id = SerialGenerator.getLongValue("ScfProduct.id");
         this.regDate = BetterDateUtils.getNumDate();
         this.modiDate = BetterDateUtils.getNumDate();

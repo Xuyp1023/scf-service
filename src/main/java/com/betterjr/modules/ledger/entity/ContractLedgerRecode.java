@@ -15,29 +15,29 @@ import javax.persistence.*;
 @Table(name = "t_contract_ledger_recode")
 public class ContractLedgerRecode implements BetterjrEntity {
     @Id
-    @Column(name = "id",  columnDefinition="INTEGER" )
+    @Column(name = "id", columnDefinition = "INTEGER")
     private Long id;
 
-    @Column(name = "l_contractId",  columnDefinition="INTEGER" )
+    @Column(name = "l_contractId", columnDefinition = "INTEGER")
     private Long contractId;
 
-    @Column(name = "L_OPERID",  columnDefinition="INTEGER" )
+    @Column(name = "L_OPERID", columnDefinition = "INTEGER")
     private Long operId;
 
-    @Column(name = "C_OPERNAME",  columnDefinition="VARCHAR" )
+    @Column(name = "C_OPERNAME", columnDefinition = "VARCHAR")
     private String operName;
 
     @JsonSerialize(using = CustDateJsonSerializer.class)
-    @Column(name = "D_OPER_DATE",  columnDefinition="VARCHAR" )
+    @Column(name = "D_OPER_DATE", columnDefinition = "VARCHAR")
     private String operDate;
 
-    @Column(name = "D_OPER_TIME",  columnDefinition="VARCHAR" )
+    @Column(name = "D_OPER_TIME", columnDefinition = "VARCHAR")
     private String operTime;
 
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
+    @Column(name = "C_BUSIN_STATUS", columnDefinition = "VARCHAR")
     private String businStatus;
 
-    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
+    @Column(name = "C_OPERORG", columnDefinition = "VARCHAR")
     private String operOrg;
 
     private static final long serialVersionUID = 1482311479890L;
@@ -138,13 +138,18 @@ public class ContractLedgerRecode implements BetterjrEntity {
         }
         ContractLedgerRecode other = (ContractLedgerRecode) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getContractId() == null ? other.getContractId() == null : this.getContractId().equals(other.getContractId()))
-            && (this.getOperId() == null ? other.getOperId() == null : this.getOperId().equals(other.getOperId()))
-            && (this.getOperName() == null ? other.getOperName() == null : this.getOperName().equals(other.getOperName()))
-            && (this.getOperDate() == null ? other.getOperDate() == null : this.getOperDate().equals(other.getOperDate()))
-            && (this.getOperTime() == null ? other.getOperTime() == null : this.getOperTime().equals(other.getOperTime()))
-            && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
-            && (this.getOperOrg() == other.getOperOrg());
+                && (this.getContractId() == null ? other.getContractId() == null
+                        : this.getContractId().equals(other.getContractId()))
+                && (this.getOperId() == null ? other.getOperId() == null : this.getOperId().equals(other.getOperId()))
+                && (this.getOperName() == null ? other.getOperName() == null
+                        : this.getOperName().equals(other.getOperName()))
+                && (this.getOperDate() == null ? other.getOperDate() == null
+                        : this.getOperDate().equals(other.getOperDate()))
+                && (this.getOperTime() == null ? other.getOperTime() == null
+                        : this.getOperTime().equals(other.getOperTime()))
+                && (this.getBusinStatus() == null ? other.getBusinStatus() == null
+                        : this.getBusinStatus().equals(other.getBusinStatus()))
+                && (this.getOperOrg() == other.getOperOrg());
     }
 
     @Override
@@ -161,18 +166,18 @@ public class ContractLedgerRecode implements BetterjrEntity {
         result = prime * result + ((getOperOrg() == null) ? 0 : getOperOrg().hashCode());
         return result;
     }
-    
-    public void initValue(Long anContractId,String anBusinStatus){
-        this.id=SerialGenerator.getLongValue("ContractLedgerRecode.id");
-        this.contractId=anContractId;
+
+    public void initValue(Long anContractId, String anBusinStatus) {
+        this.id = SerialGenerator.getLongValue("ContractLedgerRecode.id");
+        this.contractId = anContractId;
         CustOperatorInfo operator = UserUtils.getOperatorInfo();
-        if (operator != null){
+        if (operator != null) {
             this.operId = operator.getId();
             this.operName = operator.getName();
             this.operOrg = operator.getOperOrg();
         }
-        this.operDate= BetterDateUtils.getNumDate();
-        this.operTime= BetterDateUtils.getNumTime();
-        this.businStatus=anBusinStatus;
+        this.operDate = BetterDateUtils.getNumDate();
+        this.operTime = BetterDateUtils.getNumTime();
+        this.businStatus = anBusinStatus;
     }
 }

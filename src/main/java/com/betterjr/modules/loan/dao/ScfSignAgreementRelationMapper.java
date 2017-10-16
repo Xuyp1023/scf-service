@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.loan.entity.ScfSignAgreementRelation;
 
 @BetterjrMapper
-public interface ScfSignAgreementRelationMapper extends Mapper<ScfSignAgreementRelation> {
-}
+public interface ScfSignAgreementRelationMapper extends Mapper<ScfSignAgreementRelation> {}

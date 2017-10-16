@@ -16,106 +16,106 @@ import javax.persistence.*;
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "T_SCF_REQUEST_CREDIT")
-public class ScfRequestCredit implements BetterjrEntity,BaseRemoteEntity {
+public class ScfRequestCredit implements BetterjrEntity, BaseRemoteEntity {
     /**
      * 编号
      */
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
-    @MetaData( value="编号", comments = "编号")
+    @Column(name = "ID", columnDefinition = "INTEGER")
+    @MetaData(value = "编号", comments = "编号")
     private Integer id;
 
     /**
      * 申请单号
      */
-    @Column(name = "C_REQUESTNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="申请单号", comments = "申请单号")
+    @Column(name = "C_REQUESTNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "申请单号", comments = "申请单号")
     private String requestNo;
 
     /**
      * 保理产品编号
      */
-    @Column(name = "C_PRODUCT_CODE",  columnDefinition="VARCHAR" )
-    @MetaData( value="保理产品编号", comments = "保理产品编号")
+    @Column(name = "C_PRODUCT_CODE", columnDefinition = "VARCHAR")
+    @MetaData(value = "保理产品编号", comments = "保理产品编号")
     private String productCode;
 
     /**
      * 买方客户号
      */
-    @Column(name = "L_BUYER_NO",  columnDefinition="INTEGER" )
-    @MetaData( value="买方客户号", comments = "买方客户号")
+    @Column(name = "L_BUYER_NO", columnDefinition = "INTEGER")
+    @MetaData(value = "买方客户号", comments = "买方客户号")
     private Long buyerNo;
 
     /**
      * 卖方客户号
      */
-    @Column(name = "L_SUPPLIER_NO",  columnDefinition="INTEGER" )
-    @MetaData( value="卖方客户号", comments = "卖方客户号")
+    @Column(name = "L_SUPPLIER_NO", columnDefinition = "INTEGER")
+    @MetaData(value = "卖方客户号", comments = "卖方客户号")
     private Long supplierNo;
 
     /**
      * 转让通知书编号
      */
-    @Column(name = "C_NOTICENO",  columnDefinition="VARCHAR" )
-    @MetaData( value="转让通知书编号", comments = "转让通知书编号")
+    @Column(name = "C_NOTICENO", columnDefinition = "VARCHAR")
+    @MetaData(value = "转让通知书编号", comments = "转让通知书编号")
     private String confirmNo;
 
     /**
      * 应收账款转让编号
      */
-    @Column(name = "C_TRANSNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="应收账款转让编号", comments = "应收账款转让编号")
+    @Column(name = "C_TRANSNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "应收账款转让编号", comments = "应收账款转让编号")
     private String transNo;
 
     /**
      * 融资金额
      */
-    @Column(name = "F_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="融资金额", comments = "融资金额")
+    @Column(name = "F_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "融资金额", comments = "融资金额")
     private BigDecimal balance;
 
     /**
      * 到期日期
      */
-    @Column(name = "D_END_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="到期日期", comments = "到期日期")
+    @Column(name = "D_END_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "到期日期", comments = "到期日期")
     private String endDate;
 
     /**
      * 合同编号
      */
-    @Column(name = "C_AGREENO",  columnDefinition="VARCHAR" )
-    @MetaData( value="合同编号", comments = "合同编号")
+    @Column(name = "C_AGREENO", columnDefinition = "VARCHAR")
+    @MetaData(value = "合同编号", comments = "合同编号")
     private String agreeNo;
 
     /**
      * 发票号
      */
-    @Column(name = "C_INVOICE_NO",  columnDefinition="VARCHAR" )
-    @MetaData( value="发票号", comments = "发票号")
+    @Column(name = "C_INVOICE_NO", columnDefinition = "VARCHAR")
+    @MetaData(value = "发票号", comments = "发票号")
     private String invoiceNo;
 
     /**
      * 发票金额
      */
-    @Column(name = "F_INVOICE_BALANCE",  columnDefinition="DOUBLE" )
-    @MetaData( value="发票金额", comments = "发票金额")
+    @Column(name = "F_INVOICE_BALANCE", columnDefinition = "DOUBLE")
+    @MetaData(value = "发票金额", comments = "发票金额")
     private BigDecimal invoiceBalance;
 
     /**
      * 保理公司业务单号
      */
-    @Column(name = "C_FACTOR_REQUESTNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="保理公司业务单号", comments = "保理公司业务单号")
+    @Column(name = "C_FACTOR_REQUESTNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "保理公司业务单号", comments = "保理公司业务单号")
     private String factorRequestNo;
 
     /**
      * 登记日期
      */
-    @Column(name = "D_REGDATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="登记日期", comments = "登记日期")
+    @Column(name = "D_REGDATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "登记日期", comments = "登记日期")
     private String regDate;
- 
+
     private static final long serialVersionUID = 1459952422046L;
 
     public Integer getId() {
@@ -165,9 +165,8 @@ public class ScfRequestCredit implements BetterjrEntity,BaseRemoteEntity {
     public void setConfirmNo(String confirmNo) {
         this.confirmNo = confirmNo == null ? null : confirmNo.trim();
     }
- 
 
-//    @JsonSerialize(using = CustDecimalJsonSerializer.class)
+    // @JsonSerialize(using = CustDecimalJsonSerializer.class)
     public BigDecimal getBalance() {
         return balance;
     }
@@ -201,7 +200,7 @@ public class ScfRequestCredit implements BetterjrEntity,BaseRemoteEntity {
         this.invoiceNo = invoiceNo == null ? null : invoiceNo.trim();
     }
 
-//    @JsonSerialize(using = CustDecimalJsonSerializer.class)
+    // @JsonSerialize(using = CustDecimalJsonSerializer.class)
     public BigDecimal getInvoiceBalance() {
         return invoiceBalance;
     }
@@ -227,13 +226,14 @@ public class ScfRequestCredit implements BetterjrEntity,BaseRemoteEntity {
     }
 
     public String getTransNo() {
-        
+
         return this.transNo;
     }
+
     public void setTransNo(String anTransNo) {
         this.transNo = anTransNo;
     }
-     
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -270,19 +270,32 @@ public class ScfRequestCredit implements BetterjrEntity,BaseRemoteEntity {
         }
         ScfRequestCredit other = (ScfRequestCredit) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getRequestNo() == null ? other.getRequestNo() == null : this.getRequestNo().equals(other.getRequestNo()))
-            && (this.getProductCode() == null ? other.getProductCode() == null : this.getProductCode().equals(other.getProductCode()))
-            && (this.getBuyerNo() == null ? other.getBuyerNo() == null : this.getBuyerNo().equals(other.getBuyerNo()))
-            && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
-            && (this.getConfirmNo() == null ? other.getConfirmNo() == null : this.getConfirmNo().equals(other.getConfirmNo()))
-            && (this.getBalance() == null ? other.getBalance() == null : this.getBalance().equals(other.getBalance()))
-            && (this.getEndDate() == null ? other.getEndDate() == null : this.getEndDate().equals(other.getEndDate()))
-            && (this.getAgreeNo() == null ? other.getAgreeNo() == null : this.getAgreeNo().equals(other.getAgreeNo()))
-            && (this.getInvoiceNo() == null ? other.getInvoiceNo() == null : this.getInvoiceNo().equals(other.getInvoiceNo()))
-            && (this.getInvoiceBalance() == null ? other.getInvoiceBalance() == null : this.getInvoiceBalance().equals(other.getInvoiceBalance()))
-            && (this.getFactorRequestNo() == null ? other.getFactorRequestNo() == null : this.getFactorRequestNo().equals(other.getFactorRequestNo()))
-            && (this.getTransNo() == null ? other.getTransNo() == null : this.getTransNo().equals(other.getTransNo()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()));
+                && (this.getRequestNo() == null ? other.getRequestNo() == null
+                        : this.getRequestNo().equals(other.getRequestNo()))
+                && (this.getProductCode() == null ? other.getProductCode() == null
+                        : this.getProductCode().equals(other.getProductCode()))
+                && (this.getBuyerNo() == null ? other.getBuyerNo() == null
+                        : this.getBuyerNo().equals(other.getBuyerNo()))
+                && (this.getSupplierNo() == null ? other.getSupplierNo() == null
+                        : this.getSupplierNo().equals(other.getSupplierNo()))
+                && (this.getConfirmNo() == null ? other.getConfirmNo() == null
+                        : this.getConfirmNo().equals(other.getConfirmNo()))
+                && (this.getBalance() == null ? other.getBalance() == null
+                        : this.getBalance().equals(other.getBalance()))
+                && (this.getEndDate() == null ? other.getEndDate() == null
+                        : this.getEndDate().equals(other.getEndDate()))
+                && (this.getAgreeNo() == null ? other.getAgreeNo() == null
+                        : this.getAgreeNo().equals(other.getAgreeNo()))
+                && (this.getInvoiceNo() == null ? other.getInvoiceNo() == null
+                        : this.getInvoiceNo().equals(other.getInvoiceNo()))
+                && (this.getInvoiceBalance() == null ? other.getInvoiceBalance() == null
+                        : this.getInvoiceBalance().equals(other.getInvoiceBalance()))
+                && (this.getFactorRequestNo() == null ? other.getFactorRequestNo() == null
+                        : this.getFactorRequestNo().equals(other.getFactorRequestNo()))
+                && (this.getTransNo() == null ? other.getTransNo() == null
+                        : this.getTransNo().equals(other.getTransNo()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()));
     }
 
     @Override
@@ -305,11 +318,11 @@ public class ScfRequestCredit implements BetterjrEntity,BaseRemoteEntity {
         result = prime * result + ((getTransNo() == null) ? 0 : getTransNo().hashCode());
         return result;
     }
-    
-    public void fillInfo(ScfRequest anRequest){
+
+    public void fillInfo(ScfRequest anRequest) {
         this.id = SerialGenerator.getIntValue("ScfRequestCredit.id");
         this.productCode = anRequest.getProductCode();
-        this.buyerNo = anRequest.getCoreCustNo()==null?0:anRequest.getCoreCustNo();
+        this.buyerNo = anRequest.getCoreCustNo() == null ? 0 : anRequest.getCoreCustNo();
         this.supplierNo = anRequest.getCustNo();
         this.regDate = BetterDateUtils.getNumDate();
     }

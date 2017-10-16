@@ -17,9 +17,10 @@ public class QueryProductInfoJob extends AbstractSimpleElasticJob {
 
     @Autowired
     private ScfFactorRemoteHelper remoteHelper;
+
     @Override
     public void process(JobExecutionMultipleShardingContext anParam) {
-        
+
         remoteHelper.queryProductInfo();
     }
 

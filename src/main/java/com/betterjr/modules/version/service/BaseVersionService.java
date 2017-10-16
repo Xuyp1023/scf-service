@@ -193,7 +193,8 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
      */
     public T selectOneWithVersion(String refNo, String version) {
 
-        Map<String, Object> paramMap = QueryTermBuilder.newInstance().put("refNo", refNo).put("version", version).build();
+        Map<String, Object> paramMap = QueryTermBuilder.newInstance().put("refNo", refNo).put("version", version)
+                .build();
         List<T> lists = selectByProperty(paramMap, "id desc");
         return Collections3.getFirst(lists);
     }
@@ -216,8 +217,7 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
             // t.setIsLatest(VersionConstantCollentions.IS_LATEST);
             return this.selectWithLatest(t);
         }
-        catch (Exception e) {
-        }
+        catch (Exception e) {}
         return null;
     }
 
@@ -232,7 +232,7 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
     }
 
     public List selectByClassPropertyWithVersion(Class arg0, Map<String, Object> arg1) {
-        return this.selectByClassPropertyWithVersion(arg0, (Map) arg1, (String) null);
+        return this.selectByClassPropertyWithVersion(arg0, arg1, (String) null);
     }
 
     /**
@@ -257,7 +257,8 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
 
     }
 
-    public Page<T> selectPropertyByPageWithVersion(Map<String, Object> paramMap, int anPageNum, int anPageSize, boolean arg3) {
+    public Page<T> selectPropertyByPageWithVersion(Map<String, Object> paramMap, int anPageNum, int anPageSize,
+            boolean arg3) {
         // PageHelper.startPage(arg1, arg2, arg3);
         return selectPropertyByPageWithVersion(paramMap, anPageNum, anPageSize, arg3, null);
     }
@@ -277,7 +278,8 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
      *            排序字段
      * @return
      */
-    public Page<T> selectPropertyByPageWithVersion(Map<String, Object> paramMap, int arg1, int arg2, boolean arg3, String arg4) {
+    public Page<T> selectPropertyByPageWithVersion(Map<String, Object> paramMap, int arg1, int arg2, boolean arg3,
+            String arg4) {
         paramMap.put("isLatest", VersionConstantCollentions.IS_LATEST);
         PageHelper.startPage(arg1, arg2, arg3);
         return (Page) this.selectByProperty(paramMap, arg4);
@@ -298,7 +300,8 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
      *            排序字段
      * @return
      */
-    public Page<T> selectPropertyIneffectiveByPageWithVersion(Map<String, Object> paramMap, int arg1, int arg2, boolean arg3, String arg4) {
+    public Page<T> selectPropertyIneffectiveByPageWithVersion(Map<String, Object> paramMap, int arg1, int arg2,
+            boolean arg3, String arg4) {
         paramMap.put("isLatest", VersionConstantCollentions.IS_LATEST);
         paramMap.put("businStatus", VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE);
         paramMap.put("lockedStatus", VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
@@ -322,21 +325,20 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
      *            排序字段
      * @return
      */
-    public Page<T> selectPropertyEffectiveByPageWithVersion(Map<String, Object> anParamMap, int arg1, int arg2, boolean arg3, String arg4) {
+    public Page<T> selectPropertyEffectiveByPageWithVersion(Map<String, Object> anParamMap, int arg1, int arg2,
+            boolean arg3, String arg4) {
 
         // anParamMap.put("isLatest", VersionConstantCollentions.IS_LATEST);
         if (!anParamMap.containsKey("NEbusinStatus") || anParamMap.get("NEbusinStatus") == null) {
             anParamMap.remove("NEbusinStatus");
             anParamMap.put("NEbusinStatus", VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE);
-        }
-        else {
+        } else {
             Object object = anParamMap.get("NEbusinStatus");
             if (object instanceof List) {
                 List paramObj = (List) object;
                 paramObj.add(VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE);
                 anParamMap.put("NEbusinStatus", paramObj);
-            }
-            else {
+            } else {
                 List paramObj = new ArrayList<>();
                 paramObj.add(object.toString().trim());
                 paramObj.add(VersionConstantCollentions.BUSIN_STATUS_INEFFECTIVE);
@@ -361,8 +363,8 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
      * @param lockedStatus
      * @return
      */
-    public Page<T> selectPropertyByPageWithStatus(Map<String, Object> anParamMap, int arg1, int arg2, boolean arg3, String arg4, String businStatus,
-            String docStatus, String lockedStatus) {
+    public Page<T> selectPropertyByPageWithStatus(Map<String, Object> anParamMap, int arg1, int arg2, boolean arg3,
+            String arg4, String businStatus, String docStatus, String lockedStatus) {
 
         anParamMap.put("isLatest", VersionConstantCollentions.IS_LATEST);
         anParamMap.put("businStatus", businStatus);
@@ -372,7 +374,8 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
         return (Page) this.selectByProperty(anParamMap, arg4);
     }
 
-    public Page<T> selectPropertyCanAunulByPageWithVersion(Map<String, Object> anParamMap, int arg1, int arg2, boolean arg3, String arg4) {
+    public Page<T> selectPropertyCanAunulByPageWithVersion(Map<String, Object> anParamMap, int arg1, int arg2,
+            boolean arg3, String arg4) {
 
         anParamMap.put("isLatest", VersionConstantCollentions.IS_LATEST);
         anParamMap.put("businStatus", VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE);
@@ -403,8 +406,7 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
 
         if (StringUtils.isNoneBlank(arg0.getVersion())) {
             arg0.setVersion(stringIncrOne(arg0.getVersion()));
-        }
-        else {
+        } else {
             String refno = assembleRefno(arg0);
             // String uuid = UUID.randomUUID().toString().replace("-", "");
             BTAssert.notNull(refno, "生成凭证编号失败");
@@ -438,10 +440,11 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
             String simpleName = arg0.getClass().getSimpleName();
             String prefix = "ScfOrderDO".equals(simpleName) ? "PO"
                     : "ScfInvoiceDO".equals(simpleName) ? "BI"
-                            : "ScfAcceptBillDO".equals(simpleName) ? "TA" : "ScfReceivableDO".equals(simpleName) ? "RP" : "FR";
+                            : "ScfAcceptBillDO".equals(simpleName) ? "TA"
+                                    : "ScfReceivableDO".equals(simpleName) ? "RP" : "FR";
             String pattern = prefix + "#{Date:yy}#{Seq:14}";
             String generateRefNo = SequenceFactory.generate("PLAT_" + arg0.getClass().getSimpleName(), pattern);
-            if (BetterStringUtils.isBlank(generateRefNo)) {
+            if (StringUtils.isBlank(generateRefNo)) {
                 BTAssert.notNull(null, "获取凭证编号失败!");
             }
             return generateRefNo;
@@ -458,7 +461,7 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
      * 检查状态信息
      */
     public void checkStatus(String anBusinStatus, String anTargetStatus, boolean anFlag, String anMessage) {
-        if (BetterStringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
+        if (StringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
             logger.warn(anMessage);
             throw new BytterTradeException(40001, anMessage);
         }
@@ -526,10 +529,13 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
 
         checkStatus(anAnOrder.getIsLatest(), VersionConstantCollentions.IS_NOT_LATEST, true, "当前单据已不是最新版本,不允许被编辑");
         checkStatus(anOperatorInfo.getId() + "", anAnOrder.getModiOperId() + "", false, "你没有操作权限!请联系创建人修改此单据");
-        checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true, "当前单据已经转让,不允许被编辑");
+        checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true,
+                "当前单据已经转让,不允许被编辑");
         checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_ANNUL, true, "当前单据已经废止,不允许被编辑");
-        checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EXPIRE, true, "当前单据已经过期,不允许被编辑");
-        checkStatus(anAnOrder.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true, "当前单据已经冻结,不允许被编辑");
+        checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EXPIRE, true,
+                "当前单据已经过期,不允许被编辑");
+        checkStatus(anAnOrder.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true,
+                "当前单据已经冻结,不允许被编辑");
         checkStatus(anAnOrder.getDocStatus(), VersionConstantCollentions.DOC_STATUS_ANNUL, true, "当前单据已经废止,不允许被编辑");
     }
 
@@ -575,7 +581,8 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
      *            排序字段
      * @return
      */
-    public Page<T> selectCanUsePageWithVersion(Map<String, Object> paramMap, int anPageNum, int anPageSize, boolean anFlag, String anOrderDesc) {
+    public Page<T> selectCanUsePageWithVersion(Map<String, Object> paramMap, int anPageNum, int anPageSize,
+            boolean anFlag, String anOrderDesc) {
         paramMap.put("isLatest", VersionConstantCollentions.IS_LATEST);
         paramMap.put("businStatus", VersionConstantCollentions.BUSIN_STATUS_EFFECTIVE);
         paramMap.put("lockedStatus", VersionConstantCollentions.LOCKED_STATUS_INlOCKED);
@@ -593,7 +600,8 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
      * @param anDocStatus
      * @return
      */
-    public T updateBaseAssetStatus(String anRefNo, String anVersion, String anBusinStatus, String anLockedStatus, String anDocStatus) {
+    public T updateBaseAssetStatus(String anRefNo, String anVersion, String anBusinStatus, String anLockedStatus,
+            String anDocStatus) {
 
         T base = this.selectOneWithVersion(anRefNo, anVersion);
 
@@ -661,8 +669,7 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
                  */
                 paramMap.put("id", asList);
 
-            }
-            else {
+            } else {
                 try {
                     Long.parseLong(anIds);
                     paramMap.put("id", anIds);
@@ -711,7 +718,8 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
         // long parseLong = Long.parseLong(numDate);
 
         Map<String, Object> paramMap = QueryTermBuilder.newInstance().put("businStatus", businStatusListParam)
-                .put("lockedStatus", VersionConstantCollentions.LOCKED_STATUS_INlOCKED).put("LTEendDate", numDate).build();
+                .put("lockedStatus", VersionConstantCollentions.LOCKED_STATUS_INlOCKED).put("LTEendDate", numDate)
+                .build();
 
         List<T> endedData = this.selectByProperty(paramMap);
 
@@ -733,8 +741,7 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
 
             t.setExpireFlagStatus(VersionConstantCollentions.EXPIRE_FLAG_STATUS_INEFFECTIVE);
 
-        }
-        else {
+        } else {
 
             t.setExpireFlagStatus(VersionConstantCollentions.EXPIRE_FLAG_STATUS_EFFECTIVE);
 
@@ -795,10 +802,13 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
 
     public void checkExpireStatus(T anAnOrder) {
 
-        checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true, "当前单据已经转让,不允许被编辑");
+        checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true,
+                "当前单据已经转让,不允许被编辑");
         checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_ANNUL, true, "当前单据已经废止,不允许被编辑");
-        checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EXPIRE, true, "当前单据已经过期,不允许被编辑");
-        checkStatus(anAnOrder.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true, "当前单据已经冻结,不允许被编辑");
+        checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EXPIRE, true,
+                "当前单据已经过期,不允许被编辑");
+        checkStatus(anAnOrder.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, true,
+                "当前单据已经冻结,不允许被编辑");
         checkStatus(anAnOrder.getDocStatus(), VersionConstantCollentions.DOC_STATUS_ANNUL, true, "当前单据已经废止,不允许被编辑");
     }
 
@@ -857,11 +867,15 @@ public class BaseVersionService<D extends Mapper<T>, T extends BaseVersionEntity
 
     public void checkRejectStatus(T anAnOrder) {
 
-        checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true, "当前单据已经转让,不允许被编辑");
+        checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_TRANSFER, true,
+                "当前单据已经转让,不允许被编辑");
         checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_ANNUL, true, "当前单据已经废止,不允许被编辑");
-        checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EXPIRE, true, "当前单据已经过期,不允许被编辑");
-        checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_USED, false, "当前单据未被用来融资,不允许被驳回");
-        checkStatus(anAnOrder.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, false, "当前单据未被用来融资,不允许被驳回");
+        checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_EXPIRE, true,
+                "当前单据已经过期,不允许被编辑");
+        checkStatus(anAnOrder.getBusinStatus(), VersionConstantCollentions.BUSIN_STATUS_USED, false,
+                "当前单据未被用来融资,不允许被驳回");
+        checkStatus(anAnOrder.getLockedStatus(), VersionConstantCollentions.LOCKED_STATUS_LOCKED, false,
+                "当前单据未被用来融资,不允许被驳回");
     }
 
 }

@@ -20,8 +20,12 @@ import com.betterjr.modules.remote.entity.WorkFarFunction;
 public interface RemoteSerializer extends Serializable {
 
     public Map<String, Object> readResult();
-    public void writeOutput(WorkFarFunction  anFun, WSInfo info,Object outObj, WebServiceErrorCode code);
+
+    public void writeOutput(WorkFarFunction anFun, WSInfo info, Object outObj, WebServiceErrorCode code);
+
     public void initParameter(Map anConfigInfo, CustKeyManager anKeyManager);
-    public void init(WorkFarFunction anFunc, Map<String, RemoteFieldInfo> anHeaderInfo, Map<String, RemoteFieldInfo> anSendParams,
-            Map<String, FarConfigInfo> anConfigInfo, CustKeyManager anKeyManager,RemoteConnection conn);
+
+    public void init(WorkFarFunction anFunc, Map<String, RemoteFieldInfo> anHeaderInfo,
+            Map<String, RemoteFieldInfo> anSendParams, Map<String, FarConfigInfo> anConfigInfo,
+            CustKeyManager anKeyManager, RemoteConnection conn);
 }

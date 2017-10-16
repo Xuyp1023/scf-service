@@ -5,6 +5,6 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.commission.entity.CommissionParam;
 
 @BetterjrMapper
-public interface CommissionParamMapper extends Mapper<CommissionParam>{
+public interface CommissionParamMapper extends Mapper<CommissionParam> {
 
 }

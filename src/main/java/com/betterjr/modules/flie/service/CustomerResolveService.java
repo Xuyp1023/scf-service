@@ -42,22 +42,22 @@ public class CustomerResolveService {
 
     @Reference(interfaceClass = ICustFileService.class)
     private ICustFileService custFileService;
-    
+
     @Autowired
     private DataStoreService dataStoreService;
-    
+
     @Autowired
     private ScfOrderDOService orderService;
-    
+
     @Autowired
     private ScfReceivableDOService receivableService;
-    
+
     @Autowired
     private ScfAcceptBillDOService billService;
-    
+
     @Autowired
     private ScfInvoiceDOService invoiceService;
-    
+
     @Autowired
     private CustFileCloumnService fileCloumnService;
 
@@ -68,7 +68,8 @@ public class CustomerResolveService {
         logger.debug("文件开始解析,解析日志记录id 为：" + message.getHead("id"));
         // 得到解析日志记录对象
         CustResolveFile resolveFile = (CustResolveFile) message.getObject();
-        String[] filterProperties = new String[] { "regDate", "regTime", "modiOperId", "modiOperName", "operOrg", "custNo", "coreCustNo", "batchNo" };
+        String[] filterProperties = new String[] { "regDate", "regTime", "modiOperId", "modiOperName", "operOrg",
+                "custNo", "coreCustNo", "batchNo" };
         Map<String, Object> resolveFileMap = transBean2Map(resolveFile, filterProperties);
         resolveFileMap.put("resolveFileId", resolveFile.getId());
         try {
@@ -79,7 +80,8 @@ public class CustomerResolveService {
             // 得到文件类型 1订单 2票据 3应收账款 4发票 5 合同
             String infoType = (String) message.getHead("infoType");
             // 根据类型查找对应的列
-            List<CustFileCloumn> fileCloumnList = fileCloumnService.queryFileCloumnByInfoType(infoType, FileResolveConstants.FILE_USED_UOLOAD);
+            List<CustFileCloumn> fileCloumnList = fileCloumnService.queryFileCloumnByInfoType(infoType,
+                    FileResolveConstants.FILE_USED_UOLOAD);
             CustFileItem fileItem = custFileService.findOne(resolveFile.getFileItemId());// 文件上次详情
             InputStream is = dataStoreService.loadFromStore(fileItem);
             // FileUtils.copyInputStreamToFile(is, new File("d:\\788945.xlsx"));
@@ -134,8 +136,8 @@ public class CustomerResolveService {
      * @return
      * @throws IOException
      */
-    private List<Map<String, Object>> convertListMap(InputStream anIs, List<CustFileCloumn> anFileCloumnList, Map<String, Object> appendMap,
-            String anFileType, int beginRow) throws IOException {
+    private List<Map<String, Object>> convertListMap(InputStream anIs, List<CustFileCloumn> anFileCloumnList,
+            Map<String, Object> appendMap, String anFileType, int beginRow) throws IOException {
 
         BTAssert.notNull(anIs, "文件读取失败");
         BTAssert.notNull(anFileCloumnList, "请预先配置模版参数");

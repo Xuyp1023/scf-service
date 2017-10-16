@@ -11,33 +11,33 @@ import javax.persistence.*;
 @Table(name = "t_scf_otherfile")
 public class ScfOtherFile implements BetterjrEntity {
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
+    @Column(name = "ID", columnDefinition = "INTEGER")
     private Long id;
-    
-    @Column(name = "C_REQUESTNO",  columnDefinition="VARCHAR" )
+
+    @Column(name = "C_REQUESTNO", columnDefinition = "VARCHAR")
     private String requestNo;
 
-    @Column(name = "c_node",  columnDefinition="VARCHAR" )
+    @Column(name = "c_node", columnDefinition = "VARCHAR")
     private String node;
 
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
+    @Column(name = "C_BUSIN_STATUS", columnDefinition = "VARCHAR")
     private String businStatus;
 
-    @Column(name = "C_FILEID",  columnDefinition="VARCHAR" )
+    @Column(name = "C_FILEID", columnDefinition = "VARCHAR")
     private Long fileId;
 
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
     private String regDate;
 
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
     private String regTime;
 
-    @Column(name = "D_MODIFY_DATE",  columnDefinition="VARCHAR" )
+    @Column(name = "D_MODIFY_DATE", columnDefinition = "VARCHAR")
     private String modifyDate;
 
-    @Column(name = "T_MODIFY_TIME",  columnDefinition="VARCHAR" )
+    @Column(name = "T_MODIFY_TIME", columnDefinition = "VARCHAR")
     private String modifyTime;
-    
+
     @Transient
     private String fileName;
 
@@ -156,14 +156,20 @@ public class ScfOtherFile implements BetterjrEntity {
         }
         ScfOtherFile other = (ScfOtherFile) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getNode() == null ? other.getNode() == null : this.getNode().equals(other.getNode()))
-            && (this.getRequestNo() == null ? other.getRequestNo() == null : this.getRequestNo().equals(other.getRequestNo()))
-            && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
-            && (this.getFileId() == null ? other.getFileId() == null : this.getFileId().equals(other.getFileId()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-            && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
-            && (this.getModifyDate() == null ? other.getModifyDate() == null : this.getModifyDate().equals(other.getModifyDate()))
-            && (this.getModifyTime() == null ? other.getModifyTime() == null : this.getModifyTime().equals(other.getModifyTime()));
+                && (this.getNode() == null ? other.getNode() == null : this.getNode().equals(other.getNode()))
+                && (this.getRequestNo() == null ? other.getRequestNo() == null
+                        : this.getRequestNo().equals(other.getRequestNo()))
+                && (this.getBusinStatus() == null ? other.getBusinStatus() == null
+                        : this.getBusinStatus().equals(other.getBusinStatus()))
+                && (this.getFileId() == null ? other.getFileId() == null : this.getFileId().equals(other.getFileId()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getRegTime() == null ? other.getRegTime() == null
+                        : this.getRegTime().equals(other.getRegTime()))
+                && (this.getModifyDate() == null ? other.getModifyDate() == null
+                        : this.getModifyDate().equals(other.getModifyDate()))
+                && (this.getModifyTime() == null ? other.getModifyTime() == null
+                        : this.getModifyTime().equals(other.getModifyTime()));
     }
 
     @Override
@@ -181,14 +187,14 @@ public class ScfOtherFile implements BetterjrEntity {
         result = prime * result + ((getModifyTime() == null) ? 0 : getModifyTime().hashCode());
         return result;
     }
-    
-    public void initDef(String requestNo,String node,Long fileId){
-        this.id=SerialGenerator.getLongValue("otherFile.id");
-        this.businStatus="1";
-        this.regDate=BetterDateUtils.getNumDate();
-        this.regTime=BetterDateUtils.getNumTime();
-        this.requestNo=requestNo;
-        this.node=node;
-        this.fileId=fileId;
+
+    public void initDef(String requestNo, String node, Long fileId) {
+        this.id = SerialGenerator.getLongValue("otherFile.id");
+        this.businStatus = "1";
+        this.regDate = BetterDateUtils.getNumDate();
+        this.regTime = BetterDateUtils.getNumTime();
+        this.requestNo = requestNo;
+        this.node = node;
+        this.fileId = fileId;
     }
 }

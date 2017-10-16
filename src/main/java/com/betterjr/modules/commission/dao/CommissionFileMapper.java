@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.commission.entity.CommissionFile;
 
 @BetterjrMapper
-public interface CommissionFileMapper extends Mapper<CommissionFile> {
-}
+public interface CommissionFileMapper extends Mapper<CommissionFile> {}

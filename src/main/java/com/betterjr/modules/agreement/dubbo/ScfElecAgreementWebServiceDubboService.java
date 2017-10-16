@@ -2,8 +2,6 @@ package com.betterjr.modules.agreement.dubbo;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.List;
-
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,24 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
-import com.betterjr.common.annotation.AnnotRuleService;
-import com.betterjr.common.config.ParamNames;
-import com.betterjr.common.data.KeyAndValueObject;
 import com.betterjr.common.mapper.JsonMapper;
-import com.betterjr.common.utils.BetterStringUtils;
-import com.betterjr.common.utils.FileUtils;
 import com.betterjr.modules.agreement.IScfElecAgreementService;
 import com.betterjr.modules.agreement.IScfElecAgreementWebService;
 import com.betterjr.modules.agreement.entity.ScfElecAgreement;
 import com.betterjr.modules.customer.ICustRelationService;
-import com.betterjr.modules.document.data.DownloadFileInfo;
 import com.betterjr.modules.document.entity.CustFileItem;
 import com.betterjr.modules.document.service.DataStoreService;
-import com.betterjr.modules.document.utils.CustFileUtils;
 import com.betterjr.modules.loan.IScfRequestService;
 import com.betterjr.modules.remote.entity.SignRequestInfo;
-import com.betterjr.modules.rule.annotation.AnnotRuleFunc;
-import com.betterjr.modules.rule.entity.RuleFuncType;
 
 /**
  * 电子合同webservice服务
@@ -60,6 +49,7 @@ public class ScfElecAgreementWebServiceDubboService implements IScfElecAgreement
      * 沃通推送文件接口
      */
 
+    @Override
     public String pushSignedDoc(SignRequestInfo input) {
         logger.warn("service input:" + JsonMapper.toNonNullJson(input));
         ScfElecAgreement elecAgreement = this.elecAgreementService.findOneElecAgreement(input.getRequestNo());
@@ -68,12 +58,12 @@ public class ScfElecAgreementWebServiceDubboService implements IScfElecAgreement
             workStatus = "1".equals(input.getStatus());
             if (workStatus) {
                 InputStream inData = new ByteArrayInputStream(Base64.decodeBase64(input.getSignedContent()));
-                CustFileItem fileItem = dataStoreService.saveStreamToStore(inData, WOSIGNED_FILE_TYPE, elecAgreement.getAgreeName().concat(".pdf"));
+                CustFileItem fileItem = dataStoreService.saveStreamToStore(inData, WOSIGNED_FILE_TYPE,
+                        elecAgreement.getAgreeName().concat(".pdf"));
                 if (fileItem != null) {
                     this.elecAgreementService.saveSignedFile(input.getRequestNo(), fileItem);
                 }
-            }
-            else {
+            } else {
                 this.elecAgreementService.saveElecAgreementStatus(input.getRequestNo(), "9");
             }
 
@@ -82,12 +72,11 @@ public class ScfElecAgreementWebServiceDubboService implements IScfElecAgreement
             if ("1".equals(elecAgreement.getAgreeType())) {
 
                 outStatus = workStatus ? "3" : "4";
-            }
-            else if ("0".equals(elecAgreement.getAgreeType())){
+            } else if ("0".equals(elecAgreement.getAgreeType())) {
 
                 outStatus = workStatus ? "5" : "6";
             }
-            //requestService.updateAndSendRequestStatus(elecAgreement.getRequestNo(), outStatus);
+            // requestService.updateAndSendRequestStatus(elecAgreement.getRequestNo(), outStatus);
             return "1";
         }
         return "0";
@@ -97,21 +86,21 @@ public class ScfElecAgreementWebServiceDubboService implements IScfElecAgreement
      * 沃通推送身份验证结果
      */
 
+    @Override
     public String pushValidation(SignRequestInfo anInput) {
         logger.debug("service input:" + JsonMapper.toNonNullJson(anInput));
         String tmpStatus = anInput.getStatus();
-        if ("1".equals(tmpStatus)){
-           tmpStatus = "3"; 
-        }
-        else{
+        if ("1".equals(tmpStatus)) {
+            tmpStatus = "3";
+        } else {
             tmpStatus = "4";
         }
-        if (this.factorRelService.saveFactorRelationStatus(Long.parseLong(anInput.getCustNo()), anInput.getCustNo(), tmpStatus, "wos")) {
+        if (this.factorRelService.saveFactorRelationStatus(Long.parseLong(anInput.getCustNo()), anInput.getCustNo(),
+                tmpStatus, "wos")) {
             return "1";
-        }
-        else {
+        } else {
             return "0";
         }
     }
- 
+
 }

@@ -16,8 +16,9 @@ public class RemoteMultiPartConnection extends RemoteConnection {
 
     private static final long serialVersionUID = 4963034736383808792L;
 
-    protected CloseableHttpResponse doPost(Map<String, Object> queryParams, Map<String, Object> formParams) throws URISyntaxException,
-            ClientProtocolException, IOException {
+    @Override
+    protected CloseableHttpResponse doPost(Map<String, Object> queryParams, Map<String, Object> formParams)
+            throws URISyntaxException, ClientProtocolException, IOException {
         URIBuilder builder = new URIBuilder(this.workUrl);
         // 填入查询参数
         if (queryParams != null && !queryParams.isEmpty()) {

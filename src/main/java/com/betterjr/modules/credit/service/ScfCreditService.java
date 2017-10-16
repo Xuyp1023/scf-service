@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +38,7 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
 
     @Autowired
     private CustAndOperatorRelaService custAndOperatorRelaService;
-    
+
     @Autowired
     private ScfSupplierPushService scfSupplierPushService;
 
@@ -53,7 +54,7 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
     public Page<ScfCredit> queryCredit(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
         // 入参检查
         checkCreditCondition(anMap);
-        anMap=Collections3.filterMapEmptyObject(anMap);
+        anMap = Collections3.filterMapEmptyObject(anMap);
         // 查询授信记录
         return this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "custNo,creditMode");
     }
@@ -66,11 +67,10 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
             // 授信对象(1:供应商;2:经销商;3:核心企业;)
             Object anCreditType = anMap.get("creditType");
             if (null == anCreditType || anCreditType.toString().isEmpty()) {
-                anMap.put("creditType",
-                        new String[] { CreditConstants.CREDIT_TYPE_SUPPLIER, CreditConstants.CREDIT_TYPE_SELLER, CreditConstants.CREDIT_TYPE_CORE });
+                anMap.put("creditType", new String[] { CreditConstants.CREDIT_TYPE_SUPPLIER,
+                        CreditConstants.CREDIT_TYPE_SELLER, CreditConstants.CREDIT_TYPE_CORE });
             }
-        }
-        else {
+        } else {
             BTAssert.notNull(anMap.get("custNo"), "客户编号不能为空");
             // 客户(核心企业、供应商、经销商)查询时,客户编号必填,核心企业和保理商为非比填项
             String[] sFilterKey = new String[] { "coreCustNo", "factorNo" };
@@ -119,7 +119,8 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
 
     private void initName(ScfCredit anCredit) {
         // 设置操作员所属保理公司客户号
-        Long anFactorNo = Collections3.getFirst(custAndOperatorRelaService.findCustNoList(anCredit.getRegOperId(), anCredit.getOperOrg()));
+        Long anFactorNo = Collections3
+                .getFirst(custAndOperatorRelaService.findCustNoList(anCredit.getRegOperId(), anCredit.getOperOrg()));
         anCredit.setFactorNo(anFactorNo);
         anCredit.setFactorName(custAccountService.queryCustName(anCredit.getFactorNo()));
         // 设置核心企业名称
@@ -135,12 +136,14 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         anMap.put("coreCustNo", anCredit.getCoreCustNo());
         anMap.put("creditMode", anCredit.getCreditMode());
         // 授信状态:0-未生效;1-已生效;2-已失效;
-        anMap.put("businStatus", new String[] { CreditConstants.CREDIT_STATUS_INEFFECTIVE, CreditConstants.CREDIT_STATUS_EFFECTIVE });
+        anMap.put("businStatus",
+                new String[] { CreditConstants.CREDIT_STATUS_INEFFECTIVE, CreditConstants.CREDIT_STATUS_EFFECTIVE });
         if (Collections3.isEmpty(this.selectByProperty(anMap)) == false) {
             logger.info("当前客户已存在该授信类型的记录,不允许重复授信");
             throw new BytterTradeException(40001, "当前客户已存在该授信类型的记录,不允许重复授信");
         }
     }
+
     private ScfCredit checkModifyCreditExists(ScfCredit anCredit) {
         Map<String, Object> anMap = new HashMap<String, Object>();
         anMap.put("custNo", anCredit.getCustNo());
@@ -148,11 +151,12 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         anMap.put("coreCustNo", anCredit.getCoreCustNo());
         anMap.put("creditMode", anCredit.getCreditMode());
         // 授信状态:0-未生效;1-已生效;2-已失效;
-        anMap.put("businStatus", new String[] { CreditConstants.CREDIT_STATUS_INEFFECTIVE, CreditConstants.CREDIT_STATUS_EFFECTIVE });
+        anMap.put("businStatus",
+                new String[] { CreditConstants.CREDIT_STATUS_INEFFECTIVE, CreditConstants.CREDIT_STATUS_EFFECTIVE });
         List<ScfCredit> list = this.selectByProperty(anMap);
-        if (list!=null && list.size()>0) {
+        if (list != null && list.size() > 0) {
             return list.get(0);
-        }else{
+        } else {
             return null;
         }
     }
@@ -173,17 +177,17 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
 
         // 检查当前操作员是否能修改该授信记录
         checkOperator(anCredit.getOperOrg(), "当前操作员不能修改该授信记录");
-        
+
         // 检查是否已授信
-        ScfCredit conditCredit = checkModifyCreditExists(anModiCredit);//通过核心企业，保理公司，授信模式获取对象
-        if(conditCredit !=null &&!conditCredit.getId().equals(anId) ){
+        ScfCredit conditCredit = checkModifyCreditExists(anModiCredit);// 通过核心企业，保理公司，授信模式获取对象
+        if (conditCredit != null && !conditCredit.getId().equals(anId)) {
             checkCreditExists(anModiCredit);
         }
         // 设置核心企业名称
         anModiCredit.setCoreName(custAccountService.queryCustName(anModiCredit.getCoreCustNo()));
         // 设置客户名称
         anModiCredit.setCustName(custAccountService.queryCustName(anModiCredit.getCustNo()));
-        
+
         // 检查授信状态,不允许修改已生效的授信记录
         checkStatus(anCredit.getBusinStatus(), CreditConstants.CREDIT_STATUS_EFFECTIVE, true, "授信记录已生效,不允许修改");
 
@@ -247,7 +251,7 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
 
         // 数据存盘
         this.updateByPrimaryKey(anCredit);
-        
+
         // 推送激活授信微信消息
         scfSupplierPushService.pushCreditInfo(anCredit);
 
@@ -299,7 +303,7 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
 
         return Collections3.getFirst(this.selectByProperty(anMap));
     }
-    
+
     public ScfCredit findCreditList(Long anCustNo, Long anCoreCustNo, Long anFactorNo) {
         BTAssert.notNull(anCustNo, "请选择客户!");
         BTAssert.notNull(anCoreCustNo, "请选择核心企业!");
@@ -312,7 +316,7 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
 
         return Collections3.getFirst(this.selectByProperty(anMap));
     }
-    
+
     public List<SimpleDataEntity> findCreditSimpleData(Long anCustNo, Long anCoreCustNo, Long anFactorNo) {
         BTAssert.notNull(anCustNo, "请选择客户!");
         BTAssert.notNull(anCoreCustNo, "请选择核心企业!");
@@ -322,24 +326,24 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         anMap.put("coreCustNo", anCoreCustNo);
         anMap.put("factorNo", anFactorNo);
         anMap.put("businStatus", CreditConstants.CREDIT_STATUS_EFFECTIVE);// 授信状态:0-未生效;1-已生效;2-已失效;
-        
+
         List<SimpleDataEntity> dataList = new ArrayList<SimpleDataEntity>();
         HashMap<String, String> creditType = new HashMap<String, String>();
         creditType.put("1", "信用授信(循环)");
         creditType.put("2", "信用授信(一次性)");
         creditType.put("3", "担保信用(循环)");
         creditType.put("4", "担保授信(循环)");
-        
-        for (Map.Entry<String, String> entry : creditType.entrySet()) { 
-        	anMap.put("creditMode", entry.getKey());
-        	List<ScfCredit> list = this.selectByProperty(anMap);
-        	String value = entry.getValue();
-        	if(!Collections3.isEmpty(list)){
-        		value = entry.getValue() + "/余额"+ list.get(0).getCreditBalance();
-        	}
-        	dataList.add(new SimpleDataEntity(value, entry.getKey()));
+
+        for (Map.Entry<String, String> entry : creditType.entrySet()) {
+            anMap.put("creditMode", entry.getKey());
+            List<ScfCredit> list = this.selectByProperty(anMap);
+            String value = entry.getValue();
+            if (!Collections3.isEmpty(list)) {
+                value = entry.getValue() + "/余额" + list.get(0).getCreditBalance();
+            }
+            dataList.add(new SimpleDataEntity(value, entry.getKey()));
         }
-        
+
         return dataList;
     }
 
@@ -352,9 +356,9 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
         String[] anSumFields = new String[] { "creditLimit", "creditUsed", "creditBalance", };
         return findCreditSum(anMap, anSumFields);
     }
-    
+
     public Map<String, Object> findCreditSumByCustNo(Long anCustNo, Long factorNo) {
-    	BTAssert.notNull(anCustNo, "客户编号不能为空");
+        BTAssert.notNull(anCustNo, "客户编号不能为空");
         BTAssert.notNull(factorNo, "保理公司编号不能为空");
         Map<String, Object> anMap = new HashMap<String, Object>();
         anMap.put("custNo", anCustNo);
@@ -374,14 +378,14 @@ public class ScfCreditService extends BaseService<ScfCreditMapper, ScfCredit> {
     }
 
     private void checkOperator(String anOperOrg, String anMessage) {
-        if (BetterStringUtils.equals(UserUtils.getOperatorInfo().getOperOrg(), anOperOrg) == false) {
+        if (StringUtils.equals(UserUtils.getOperatorInfo().getOperOrg(), anOperOrg) == false) {
             logger.warn(anMessage);
             throw new BytterTradeException(40001, anMessage);
         }
     }
 
     private void checkStatus(String anBusinStatus, String anTargetStatus, boolean anFlag, String anMessage) {
-        if (BetterStringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
+        if (StringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
             logger.warn(anMessage);
             throw new BytterTradeException(40001, anMessage);
         }

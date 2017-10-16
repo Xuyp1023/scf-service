@@ -14,85 +14,81 @@ import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.common.utils.BTAssert;
 import com.betterjr.common.utils.BetterDateUtils;
 import com.betterjr.modules.account.entity.CustOperatorInfo;
-import com.betterjr.modules.supplieroffer.data.OfferConstantCollentions;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "t_scf_receivable_request_log")
-public class ScfReceivableRequestLog implements BetterjrEntity{
+public class ScfReceivableRequestLog implements BetterjrEntity {
 
     /**
      * 
      */
     private static final long serialVersionUID = -4319952225167483544L;
 
-    
     /**
      * 流水号
      */
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
-    @MetaData( value="流水号", comments = "流水号")
+    @Column(name = "ID", columnDefinition = "INTEGER")
+    @MetaData(value = "流水号", comments = "流水号")
     private Long id;
-    
-    
+
     /**
      * 融资编号
      */
-    @Column(name = "C_EQUITYNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="融资编号", comments = "融资编号")
+    @Column(name = "C_EQUITYNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "融资编号", comments = "融资编号")
     private String equityNo;
-    
+
     /**
      * 操作日期
      */
-    @Column(name = "D_MODI_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="操作日期", comments = "操作日期")
+    @Column(name = "D_MODI_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "操作日期", comments = "操作日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String modiDate;
-    
+
     /**
      * 操作时间
      */
-    @Column(name = "T_MODI_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="操作时间", comments = "操作时间")
+    @Column(name = "T_MODI_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "操作时间", comments = "操作时间")
     private String modiTime;
-    
+
     /**
      * 操作员Id
      */
-    @Column(name = "L_MODI_OPERID",  columnDefinition="INTEGER" )
-    @MetaData( value="操作员Id", comments = "操作员Id")
-    private Long modiOperId ;
+    @Column(name = "L_MODI_OPERID", columnDefinition = "INTEGER")
+    @MetaData(value = "操作员Id", comments = "操作员Id")
+    private Long modiOperId;
 
     /**
      * 操作员名称
      */
-    @Column(name = "C_MODI_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="操作员名称", comments = "操作员名称")
+    @Column(name = "C_MODI_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "操作员名称", comments = "操作员名称")
     private String modiOperName;
-    
-    
+
     /**
      * 操作步骤信息
      */
-    @Column(name = "C_MODI_MESSAGE",  columnDefinition="VARCHAR" )
-    @MetaData( value="操作步骤信息", comments = "操作步骤信息")
+    @Column(name = "C_MODI_MESSAGE", columnDefinition = "VARCHAR")
+    @MetaData(value = "操作步骤信息", comments = "操作步骤信息")
     private String modiMessage;
-    
+
     /**
      * 操作员所属公司
      */
-    @Column(name = "L_CUSTNO",  columnDefinition="INTEGER" )
-    @MetaData( value="操作员所属公司", comments = "操作员所属公司")
+    @Column(name = "L_CUSTNO", columnDefinition = "INTEGER")
+    @MetaData(value = "操作员所属公司", comments = "操作员所属公司")
     private Long custNo;
-    
+
     /**
      * 所属公司名称
      */
-    @Column(name = "C_CUSTNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="所属公司名称", comments = "所属公司名称")
+    @Column(name = "C_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "所属公司名称", comments = "所属公司名称")
     private String custName;
 
     public Long getId() {
@@ -191,60 +187,51 @@ public class ScfReceivableRequestLog implements BetterjrEntity{
         ScfReceivableRequestLog other = (ScfReceivableRequestLog) obj;
         if (this.custName == null) {
             if (other.custName != null) return false;
-        }
-        else if (!this.custName.equals(other.custName)) return false;
+        } else if (!this.custName.equals(other.custName)) return false;
         if (this.custNo == null) {
             if (other.custNo != null) return false;
-        }
-        else if (!this.custNo.equals(other.custNo)) return false;
+        } else if (!this.custNo.equals(other.custNo)) return false;
         if (this.equityNo == null) {
             if (other.equityNo != null) return false;
-        }
-        else if (!this.equityNo.equals(other.equityNo)) return false;
+        } else if (!this.equityNo.equals(other.equityNo)) return false;
         if (this.id == null) {
             if (other.id != null) return false;
-        }
-        else if (!this.id.equals(other.id)) return false;
+        } else if (!this.id.equals(other.id)) return false;
         if (this.modiDate == null) {
             if (other.modiDate != null) return false;
-        }
-        else if (!this.modiDate.equals(other.modiDate)) return false;
+        } else if (!this.modiDate.equals(other.modiDate)) return false;
         if (this.modiMessage == null) {
             if (other.modiMessage != null) return false;
-        }
-        else if (!this.modiMessage.equals(other.modiMessage)) return false;
+        } else if (!this.modiMessage.equals(other.modiMessage)) return false;
         if (this.modiOperId == null) {
             if (other.modiOperId != null) return false;
-        }
-        else if (!this.modiOperId.equals(other.modiOperId)) return false;
+        } else if (!this.modiOperId.equals(other.modiOperId)) return false;
         if (this.modiOperName == null) {
             if (other.modiOperName != null) return false;
-        }
-        else if (!this.modiOperName.equals(other.modiOperName)) return false;
+        } else if (!this.modiOperName.equals(other.modiOperName)) return false;
         if (this.modiTime == null) {
             if (other.modiTime != null) return false;
-        }
-        else if (!this.modiTime.equals(other.modiTime)) return false;
+        } else if (!this.modiTime.equals(other.modiTime)) return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "ScfReceivableRequestLog [id=" + this.id + ", equityNo=" + this.equityNo + ", modiDate=" + this.modiDate + ", modiTime="
-                + this.modiTime + ", modiOperId=" + this.modiOperId + ", modiOperName=" + this.modiOperName + ", modiMessage=" + this.modiMessage
-                + ", custNo=" + this.custNo + ", custName=" + this.custName + "]";
+        return "ScfReceivableRequestLog [id=" + this.id + ", equityNo=" + this.equityNo + ", modiDate=" + this.modiDate
+                + ", modiTime=" + this.modiTime + ", modiOperId=" + this.modiOperId + ", modiOperName="
+                + this.modiOperName + ", modiMessage=" + this.modiMessage + ", custNo=" + this.custNo + ", custName="
+                + this.custName + "]";
     }
-    
-    public void initAddValue(CustOperatorInfo anOperatorInfo){
-        
-        BTAssert.notNull(anOperatorInfo,"无法获取登录信息,操作失败");
+
+    public void initAddValue(CustOperatorInfo anOperatorInfo) {
+
+        BTAssert.notNull(anOperatorInfo, "无法获取登录信息,操作失败");
         this.setId(SerialGenerator.getLongValue("ScfReceivableRequestLog.id"));
         this.modiDate = BetterDateUtils.getNumDate();
-        this.modiTime=BetterDateUtils.getNumTime();
-        this.modiOperId=anOperatorInfo.getId();
+        this.modiTime = BetterDateUtils.getNumTime();
+        this.modiOperId = anOperatorInfo.getId();
         this.modiOperName = anOperatorInfo.getName();
-        
+
     }
-    
-    
+
 }

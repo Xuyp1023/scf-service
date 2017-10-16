@@ -3,6 +3,7 @@ package com.betterjr.modules.supplieroffer.service;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -53,8 +54,8 @@ public class ScfAgreementTemplateService extends BaseService<ScfAgreementTemplat
         CustFileItem fileItem = custFileDubboService.findOne(anAgrement.getTemplateFileId());
         anAgrement.setTemplateFileName(fileItem.getFileName());
         if (fileItem.getBatchNo() == null || fileItem.getBatchNo().equals(0)) {
-            anAgrement.setTemplateBatchNo(
-                    custFileDubboService.updateCustFileItemInfo(anAgrement.getTemplateFileId() + "", anAgrement.getTemplateBatchNo()));
+            anAgrement.setTemplateBatchNo(custFileDubboService
+                    .updateCustFileItemInfo(anAgrement.getTemplateFileId() + "", anAgrement.getTemplateBatchNo()));
         }
         anAgrement.saveAddValue(UserUtils.getOperatorInfo());
         anAgrement.setCoreCustName(custAccountService.queryCustName(anAgrement.getCoreCustNo()));
@@ -105,7 +106,8 @@ public class ScfAgreementTemplateService extends BaseService<ScfAgreementTemplat
         BTAssert.notNull(template, "激活的模版为空,操作失败");
         logger.info("begin to add saveActiveAgreementTemplate" + UserUtils.getOperatorInfo().getName());
         checkStatus(template.getOperOrg(), UserUtils.getOperatorInfo().getOperOrg(), false, "你没有当前企业的操作权限！操作失败");
-        checkStatus(template.getBusinStatus(), AgreementConstantCollentions.AGREMENT_TEMPLATE_BUSIN_STATUS_EFFECTIVE, false, "当前模版尚未制作FTL！操作失败");
+        checkStatus(template.getBusinStatus(), AgreementConstantCollentions.AGREMENT_TEMPLATE_BUSIN_STATUS_EFFECTIVE,
+                false, "当前模版尚未制作FTL！操作失败");
         template.setBusinStatus(AgreementConstantCollentions.AGREMENT_TEMPLATE_BUSIN_STATUS_ACTIVATE);
         this.updateByPrimaryKeySelective(template);
         logger.info("end to add saveActiveAgreementTemplate" + UserUtils.getOperatorInfo().getName());
@@ -150,12 +152,14 @@ public class ScfAgreementTemplateService extends BaseService<ScfAgreementTemplat
         logger.info("begin to add saveUploadFtlAgreement" + UserUtils.getOperatorInfo().getName());
         ScfAgreementTemplate template = this.selectByPrimaryKey(anId);
         BTAssert.notNull(template, "未找到合同模版,操作失败");
-        checkStatus(template.getBusinStatus(), AgreementConstantCollentions.AGREMENT_TEMPLATE_BUSIN_STATUS_NOEFFECTIVE, false, "当前模版不符合上传ftl条件！操作失败");
+        checkStatus(template.getBusinStatus(), AgreementConstantCollentions.AGREMENT_TEMPLATE_BUSIN_STATUS_NOEFFECTIVE,
+                false, "当前模版不符合上传ftl条件！操作失败");
         template.saveFtlUpdateValue(UserUtils.getOperatorInfo());
         template.setFtlFileId(anFileId);
         CustFileItem fileItem = custFileDubboService.findOne(anFileId);
         if (fileItem.getBatchNo() == null || fileItem.getBatchNo().equals(0)) {
-            template.setTemplateBatchNo(custFileDubboService.updateCustFileItemInfo(anFileId + "", template.getFtlBatchNo()));
+            template.setTemplateBatchNo(
+                    custFileDubboService.updateCustFileItemInfo(anFileId + "", template.getFtlBatchNo()));
         }
 
         this.updateByPrimaryKeySelective(template);
@@ -177,7 +181,8 @@ public class ScfAgreementTemplateService extends BaseService<ScfAgreementTemplat
         logger.info("begin to add saveDeleteFtlAgreement" + UserUtils.getOperatorInfo().getName());
         ScfAgreementTemplate template = this.selectByPrimaryKey(anId);
         BTAssert.notNull(template, "未找到合同模版,操作失败");
-        checkStatus(template.getBusinStatus(), AgreementConstantCollentions.AGREMENT_TEMPLATE_BUSIN_STATUS_ACTIVATE, true, "当前模版已经激活！操作失败");
+        checkStatus(template.getBusinStatus(), AgreementConstantCollentions.AGREMENT_TEMPLATE_BUSIN_STATUS_ACTIVATE,
+                true, "当前模版已经激活！操作失败");
         template.saveDeleteFtlValue(UserUtils.getOperatorInfo());
         this.updateByPrimaryKeySelective(template);
         logger.info("end to saveDeleteFtlAgreement" + UserUtils.getOperatorInfo().getName());
@@ -202,8 +207,7 @@ public class ScfAgreementTemplateService extends BaseService<ScfAgreementTemplat
         if (!Collections3.isEmpty(list)) {
 
             return Collections3.getFirst(list);
-        }
-        else {
+        } else {
 
             return null;
         }
@@ -219,13 +223,15 @@ public class ScfAgreementTemplateService extends BaseService<ScfAgreementTemplat
      * @param anPageSize
      * @return
      */
-    public Page<ScfAgreementTemplate> queryAgreementTemplatePage(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public Page<ScfAgreementTemplate> queryAgreementTemplatePage(Map<String, Object> anMap, String anFlag,
+            int anPageNum, int anPageSize) {
 
         BTAssert.notNull(anMap, "查询条件为空,操作失败");
         anMap = Collections3.filterMapEmptyObject(anMap);
         anMap = Collections3.filterMap(anMap, new String[] { "coreCustName", "coreCustNo" });
         Collections3.fuzzyMap(anMap, new String[] { "coreCustName" });
-        Page<ScfAgreementTemplate> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag), "id desc");
+        Page<ScfAgreementTemplate> page = this.selectPropertyByPage(anMap, anPageNum, anPageSize, "1".equals(anFlag),
+                "id desc");
 
         return page;
     }
@@ -234,7 +240,7 @@ public class ScfAgreementTemplateService extends BaseService<ScfAgreementTemplat
      * 检查状态信息
      */
     public void checkStatus(String anBusinStatus, String anTargetStatus, boolean anFlag, String anMessage) {
-        if (BetterStringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
+        if (StringUtils.equals(anBusinStatus, anTargetStatus) == anFlag) {
             logger.warn(anMessage);
             throw new BytterTradeException(40001, anMessage);
         }

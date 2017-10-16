@@ -15,10 +15,10 @@ import com.betterjr.modules.loan.entity.ScfRequest;
  */
 @Service
 public class ScfRegistAssetService extends ScfBaseApprovalService {
-	
-	public void processHandle(Map<String, Object> anContext) {
-		ScfRequest request = this.getReqtuest(anContext.get("requestNo").toString());
-		//this.pushOrderInfo(request);
-	}
+
+    public void processHandle(Map<String, Object> anContext) {
+        ScfRequest request = this.getReqtuest(anContext.get("requestNo").toString());
+        // this.pushOrderInfo(request);
+    }
 
 }

@@ -64,17 +64,13 @@ public class ScfAssetCompanyService extends BaseService<ScfAssetCompanyMapper, S
             scfAssetCompany.setCustInfo(custInfo);
             if (scfAssetCompany.getAssetRole().equals(AssetConstantCollentions.SCF_ASSET_ROLE_SUPPLY)) {
                 anAsset.getCustMap().put(AssetConstantCollentions.CUST_INFO_KEY, custInfo);
-            }
-            else if (scfAssetCompany.getAssetRole().equals(AssetConstantCollentions.SCF_ASSET_ROLE_DEALER)) {
+            } else if (scfAssetCompany.getAssetRole().equals(AssetConstantCollentions.SCF_ASSET_ROLE_DEALER)) {
                 anAsset.getCustMap().put(AssetConstantCollentions.CUST_INFO_KEY, custInfo);
-            }
-            else if (scfAssetCompany.getAssetRole().equals(AssetConstantCollentions.SCF_ASSET_ROLE_CORE)) {
+            } else if (scfAssetCompany.getAssetRole().equals(AssetConstantCollentions.SCF_ASSET_ROLE_CORE)) {
                 anAsset.getCustMap().put(AssetConstantCollentions.CORE_CUST_INFO_KEY, custInfo);
-            }
-            else if (scfAssetCompany.getAssetRole().equals(AssetConstantCollentions.SCF_ASSET_ROLE_FACTORY)) {
+            } else if (scfAssetCompany.getAssetRole().equals(AssetConstantCollentions.SCF_ASSET_ROLE_FACTORY)) {
                 anAsset.getCustMap().put(AssetConstantCollentions.FACTORY_CUST_INFO_KEY, custInfo);
-            }
-            else {
+            } else {
 
             }
 
@@ -95,20 +91,23 @@ public class ScfAssetCompanyService extends BaseService<ScfAssetCompanyMapper, S
         Object custInfo = custMap.get(AssetConstantCollentions.CUST_INFO_KEY);
         if (custInfo instanceof ScfAssetCompany) {
             if (UserUtils.supplierUser()) {
-                saveAddCompanyByCustInfo((ScfAssetCompany) custInfo, anAsset.getId(), AssetConstantCollentions.SCF_ASSET_ROLE_SUPPLY);
-            }
-            else {
-                saveAddCompanyByCustInfo((ScfAssetCompany) custInfo, anAsset.getId(), AssetConstantCollentions.SCF_ASSET_ROLE_DEALER);
+                saveAddCompanyByCustInfo((ScfAssetCompany) custInfo, anAsset.getId(),
+                        AssetConstantCollentions.SCF_ASSET_ROLE_SUPPLY);
+            } else {
+                saveAddCompanyByCustInfo((ScfAssetCompany) custInfo, anAsset.getId(),
+                        AssetConstantCollentions.SCF_ASSET_ROLE_DEALER);
             }
         }
         Object coreCustInfo = custMap.get(AssetConstantCollentions.CORE_CUST_INFO_KEY);
         if (coreCustInfo instanceof ScfAssetCompany) {
 
-            saveAddCompanyByCustInfo((ScfAssetCompany) coreCustInfo, anAsset.getId(), AssetConstantCollentions.SCF_ASSET_ROLE_CORE);
+            saveAddCompanyByCustInfo((ScfAssetCompany) coreCustInfo, anAsset.getId(),
+                    AssetConstantCollentions.SCF_ASSET_ROLE_CORE);
         }
         Object factoryCustInfo = custMap.get(AssetConstantCollentions.FACTORY_CUST_INFO_KEY);
         if (factoryCustInfo instanceof ScfAssetCompany) {
-            saveAddCompanyByCustInfo((ScfAssetCompany) factoryCustInfo, anAsset.getId(), AssetConstantCollentions.SCF_ASSET_ROLE_FACTORY);
+            saveAddCompanyByCustInfo((ScfAssetCompany) factoryCustInfo, anAsset.getId(),
+                    AssetConstantCollentions.SCF_ASSET_ROLE_FACTORY);
         }
 
     }

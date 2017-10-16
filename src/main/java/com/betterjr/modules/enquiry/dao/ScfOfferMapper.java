@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.enquiry.entity.ScfOffer;
 
 @BetterjrMapper
-public interface ScfOfferMapper extends Mapper<ScfOffer> {
-}
+public interface ScfOfferMapper extends Mapper<ScfOffer> {}

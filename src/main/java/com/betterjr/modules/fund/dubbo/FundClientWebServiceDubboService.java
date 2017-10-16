@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -82,20 +83,26 @@ public class FundClientWebServiceDubboService implements IFundClientWebService {
                     final Map<String, Object> result = JsonMapper.parserJson(resultJson);
                     return result;
                 }
-            } finally {
+            }
+            finally {
                 response.close();
             }
-        } catch (final ClientProtocolException e) {
+        }
+        catch (final ClientProtocolException e) {
             logger.error("Client protocol exception", e);
-        } catch (final UnsupportedEncodingException e) {
+        }
+        catch (final UnsupportedEncodingException e) {
             logger.error("Client encoding exception", e);
-        } catch (final IOException e) {
+        }
+        catch (final IOException e) {
             logger.error("Client io exception", e);
-        } finally {
+        }
+        finally {
             // 关闭连接,释放资源
             try {
                 httpclient.close();
-            } catch (final IOException e) {
+            }
+            catch (final IOException e) {
                 logger.error("Client io exception", e);
             }
         }
@@ -120,8 +127,8 @@ public class FundClientWebServiceDubboService implements IFundClientWebService {
 
         final String data = this.custKeyManager.decrypt(anData);
 
-        final String operOrg = (String)anMap.get(ATTACH_DATA);
-        final CoreCustInfo  coreCustInfo = ScfClientService.findCoreCustInfoByOperOrg(operOrg);
+        final String operOrg = (String) anMap.get(ATTACH_DATA);
+        final CoreCustInfo coreCustInfo = ScfClientService.findCoreCustInfoByOperOrg(operOrg);
 
         if (coreCustInfo != null && SignHelper.verifySign(data, anSign, cert)) {
             final Map<String, Object> param = JsonMapper.parserJson(data);
@@ -133,11 +140,12 @@ public class FundClientWebServiceDubboService implements IFundClientWebService {
             anParam.put("token", SpringPropertyResourceReader.getProperty("fund.token", "12345678"));
             anParam.put("requestNo", requestNo);
             anParam.put("custNo", custNo);
-            final Map<String, Object> result = postForm(SpringPropertyResourceReader.getProperty("fund.url.noticeAccoCheck", null), anParam);
+            final Map<String, Object> result = postForm(
+                    SpringPropertyResourceReader.getProperty("fund.url.noticeAccoCheck", null), anParam);
 
             if (result != null) {
                 final String code = (String) result.get("code");
-                if (BetterStringUtils.equals(code, "200")) {
+                if (StringUtils.equals(code, "200")) {
                     final String resultData = JsonMapper.toJsonString(result.get("data"));
                     return SignHelper.encrypt(resultData, cert.getPublicKey());
                 }
@@ -163,8 +171,8 @@ public class FundClientWebServiceDubboService implements IFundClientWebService {
 
         final String data = this.custKeyManager.decrypt(anData);
 
-        final String operOrg = (String)anMap.get(ATTACH_DATA);
-        final CoreCustInfo  coreCustInfo = ScfClientService.findCoreCustInfoByOperOrg(operOrg);
+        final String operOrg = (String) anMap.get(ATTACH_DATA);
+        final CoreCustInfo coreCustInfo = ScfClientService.findCoreCustInfoByOperOrg(operOrg);
 
         if (coreCustInfo != null && SignHelper.verifySign(data, anSign, cert)) {
             final Map<String, Object> param = JsonMapper.parserJson(data);
@@ -176,11 +184,12 @@ public class FundClientWebServiceDubboService implements IFundClientWebService {
             anParam.put("token", SpringPropertyResourceReader.getProperty("fund.token", "12345678"));
             anParam.put("requestNo", requestNo);
             anParam.put("custNo", custNo);
-            final Map<String, Object> result = postForm(SpringPropertyResourceReader.getProperty("fund.url.noticeToPlatForm", null), anParam);
+            final Map<String, Object> result = postForm(
+                    SpringPropertyResourceReader.getProperty("fund.url.noticeToPlatForm", null), anParam);
 
             if (result != null) {
                 final String code = (String) result.get("code");
-                if (BetterStringUtils.equals(code, "200")) {
+                if (StringUtils.equals(code, "200")) {
                     return SignHelper.encrypt("success", cert.getPublicKey());
                 }
             }
@@ -205,8 +214,8 @@ public class FundClientWebServiceDubboService implements IFundClientWebService {
 
         final String data = this.custKeyManager.decrypt(anData);
 
-        final String operOrg = (String)anMap.get(ATTACH_DATA);
-        final CoreCustInfo  coreCustInfo = ScfClientService.findCoreCustInfoByOperOrg(operOrg);
+        final String operOrg = (String) anMap.get(ATTACH_DATA);
+        final CoreCustInfo coreCustInfo = ScfClientService.findCoreCustInfoByOperOrg(operOrg);
 
         if (coreCustInfo != null && SignHelper.verifySign(data, anSign, cert)) {
             final Map<String, Object> param = JsonMapper.parserJson(data);
@@ -224,11 +233,12 @@ public class FundClientWebServiceDubboService implements IFundClientWebService {
             anParam.put("aduitStatus", aduitStatus);
             anParam.put("businFlag", businFlag);
             anParam.put("custNo", custNo);
-            final Map<String, Object> result = postForm(SpringPropertyResourceReader.getProperty("fund.url.noticeToPlatForm", null), anParam);
+            final Map<String, Object> result = postForm(
+                    SpringPropertyResourceReader.getProperty("fund.url.noticeToPlatForm", null), anParam);
 
             if (result != null) {
                 final String code = (String) result.get("code");
-                if (BetterStringUtils.equals(code, "200")) {
+                if (StringUtils.equals(code, "200")) {
                     final String resultData = JsonMapper.toJsonString(result.get("data"));
                     return SignHelper.encrypt(resultData, cert.getPublicKey());
                 }
@@ -238,9 +248,6 @@ public class FundClientWebServiceDubboService implements IFundClientWebService {
         return SignHelper.encrypt("failure", cert.getPublicKey());
     }
 
-
-
-
     public static void main(final String[] args) {
         final FundClientWebServiceDubboService x = new FundClientWebServiceDubboService();
         final Map<String, String> anParam = new HashMap<String, String>();
@@ -249,7 +256,7 @@ public class FundClientWebServiceDubboService implements IFundClientWebService {
 
         final Map<String, String> anParam1 = new HashMap<String, String>();
         anParam1.put("requestNo", "2015120414416496010122");
-        //x.noticeTradeCheck(anParam1);
+        // x.noticeTradeCheck(anParam1);
 
         final Map<String, String> anParam2 = new HashMap<String, String>();
         anParam2.put("requestNo", "201512030000058801010811");
@@ -257,7 +264,7 @@ public class FundClientWebServiceDubboService implements IFundClientWebService {
         anParam2.put("noticeType", "01");
         anParam2.put("aduitStatus", "01");
         anParam2.put("businFlag", "01");
-        //x.noticeToPlatForm(anParam2);
+        // x.noticeToPlatForm(anParam2);
     }
 
 }

@@ -10,45 +10,50 @@ import com.betterjr.common.web.AjaxObject;
 import com.betterjr.modules.commission.ICommissionDailyStatementService;
 import com.betterjr.modules.commission.service.CommissionDailyStatementService;
 
-@Service(interfaceClass=ICommissionDailyStatementService.class)
-public class CommissionDailyStatementDubboService implements ICommissionDailyStatementService{
+@Service(interfaceClass = ICommissionDailyStatementService.class)
+public class CommissionDailyStatementDubboService implements ICommissionDailyStatementService {
 
     @Autowired
     private CommissionDailyStatementService dailyStatementService;
 
     @Override
     public String webQueryDailyStatement(Map<String, Object> anParam, int anPageNum, int anPageSize) {
-        return AjaxObject.newOkWithPage("分页查询日报表", dailyStatementService.queryDailyStatement(anParam, anPageNum, anPageSize)).toJson();
+        return AjaxObject
+                .newOkWithPage("分页查询日报表", dailyStatementService.queryDailyStatement(anParam, anPageNum, anPageSize))
+                .toJson();
     }
-    
+
     @Override
     public String webFindDailyStatementCount(String anMonth, Long anCustNo) {
         try {
-            return AjaxObject.newOk("查询月账单统计数据",dailyStatementService.findDailyStatementCount(anMonth, anCustNo)).toJson();   
+            return AjaxObject.newOk("查询月账单统计数据", dailyStatementService.findDailyStatementCount(anMonth, anCustNo))
+                    .toJson();
         }
         catch (Exception e) {
             BTAssert.notNull(null, e.getMessage());
         }
         return null;
     }
-    
+
     @Override
-    public String webFindDailyStatementInfoByMonth(String anMonth, Long anCustNo,String anBusinStatus) {
+    public String webFindDailyStatementInfoByMonth(String anMonth, Long anCustNo, String anBusinStatus) {
         try {
-            return AjaxObject.newOk("根据对账月份查询日账单列表",dailyStatementService.findCpsDailyStatementByMonth(anMonth, anCustNo,anBusinStatus)).toJson();   
+            return AjaxObject
+                    .newOk("根据对账月份查询日账单列表",
+                            dailyStatementService.findCpsDailyStatementByMonth(anMonth, anCustNo, anBusinStatus))
+                    .toJson();
         }
         catch (Exception e) {
             BTAssert.notNull(null, e.getMessage());
         }
         return null;
     }
-    
-    
 
     @Override
     public String webFindDailyStatementBasicsInfo(Map<String, Object> anParam) {
         try {
-            return AjaxObject.newOk("查询当月日账单基础信息",dailyStatementService.findDailyStatementBasicsInfo(anParam)).toJson();
+            return AjaxObject.newOk("查询当月日账单基础信息", dailyStatementService.findDailyStatementBasicsInfo(anParam))
+                    .toJson();
         }
         catch (Exception e) {
             BTAssert.notNull(null, e.getMessage());
@@ -58,54 +63,60 @@ public class CommissionDailyStatementDubboService implements ICommissionDailySta
 
     @Override
     public String webUpdateDailyStatement(Long anDailyStatementId, String anBusinStatus) {
-        if(dailyStatementService.saveDailyStatementById(anDailyStatementId, anBusinStatus)){
+        if (dailyStatementService.saveDailyStatementById(anDailyStatementId, anBusinStatus)) {
             return AjaxObject.newOk("更新成功").toJson();
-        }else{
+        } else {
             return AjaxObject.newError("更新失败").toJson();
         }
     }
 
     @Override
     public String webDelDailyStatement(Long anDailyStatementId) {
-        if(dailyStatementService.delDailyStatement(anDailyStatementId)){
+        if (dailyStatementService.delDailyStatement(anDailyStatementId)) {
             return AjaxObject.newOk("删除成功").toJson();
-        }else{
+        } else {
             return AjaxObject.newError("删除失败").toJson();
         }
     }
 
     @Override
     public String webFindPayResultCount(String anPayDate, Long anOwnCustNo) {
-        return AjaxObject.newOk("支付记录总数",dailyStatementService.findPayResultCount(anPayDate, anOwnCustNo)).toJson();
+        return AjaxObject.newOk("支付记录总数", dailyStatementService.findPayResultCount(anPayDate, anOwnCustNo)).toJson();
     }
 
     @Override
-    public String webQueryPayResultRecord(Long anOwnCustNo, String anPayDate,String anPayStatus, int anFlag, int anPageNum, int anPageSize) {
-        return AjaxObject.newOkWithPage("分页查询支付记录", dailyStatementService.queryPayResultRecord(anOwnCustNo, anPayDate,anPayStatus, anFlag, anPageNum, anPageSize)).toJson();
+    public String webQueryPayResultRecord(Long anOwnCustNo, String anPayDate, String anPayStatus, int anFlag,
+            int anPageNum, int anPageSize) {
+        return AjaxObject.newOkWithPage("分页查询支付记录", dailyStatementService.queryPayResultRecord(anOwnCustNo, anPayDate,
+                anPayStatus, anFlag, anPageNum, anPageSize)).toJson();
     }
-    
+
     @Override
-    public String webFindPayResultInfo(String anPayDate,Long anOwnCustNo){
-        return AjaxObject.newOk("查询支付信息",dailyStatementService.findPayResultInfo(anPayDate, anOwnCustNo)).toJson();
+    public String webFindPayResultInfo(String anPayDate, Long anOwnCustNo) {
+        return AjaxObject.newOk("查询支付信息", dailyStatementService.findPayResultInfo(anPayDate, anOwnCustNo)).toJson();
     }
-    
+
     @Override
-    public String webSaveDailyStatement(String anDailyRefNo,String anPayDate,Long anOwnCustNo){
-        return AjaxObject.newOk("添加记录",dailyStatementService.saveDailyStatement(anDailyRefNo, anPayDate, anOwnCustNo)).toJson();
+    public String webSaveDailyStatement(String anDailyRefNo, String anPayDate, Long anOwnCustNo) {
+        return AjaxObject.newOk("添加记录", dailyStatementService.saveDailyStatement(anDailyRefNo, anPayDate, anOwnCustNo))
+                .toJson();
     }
-    
+
     @Override
-    public String webFindDailyStatementById(Long anDailyStatementId){
+    public String webFindDailyStatementById(Long anDailyStatementId) {
         return AjaxObject.newOk("查询日账单详情", dailyStatementService.findDailyStatementById(anDailyStatementId)).toJson();
     }
-    
+
     @Override
-    public String webQueryDailyStatementRecordById(Long anDailyStatementId,int anPageNum,int anPageSize,String anFlag){
-        return AjaxObject.newOkWithPage("查询日账单详情", dailyStatementService.queryDailyStatementRecordByDailyId(anDailyStatementId, anPageNum, anPageSize, anFlag)).toJson();
+    public String webQueryDailyStatementRecordById(Long anDailyStatementId, int anPageNum, int anPageSize,
+            String anFlag) {
+        return AjaxObject.newOkWithPage("查询日账单详情", dailyStatementService
+                .queryDailyStatementRecordByDailyId(anDailyStatementId, anPageNum, anPageSize, anFlag)).toJson();
     }
-    
+
     @Override
-    public String webFindDailyStatementByPayDate(String anPayDate,Long anOwnCustNo){
-        return AjaxObject.newOk("根据对账日期和对账企业查询日账单",dailyStatementService.findDailyStatementByPayDate(anPayDate, anOwnCustNo,null)).toJson();
+    public String webFindDailyStatementByPayDate(String anPayDate, Long anOwnCustNo) {
+        return AjaxObject.newOk("根据对账日期和对账企业查询日账单",
+                dailyStatementService.findDailyStatementByPayDate(anPayDate, anOwnCustNo, null)).toJson();
     }
 }

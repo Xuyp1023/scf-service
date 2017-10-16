@@ -18,12 +18,12 @@ import com.betterjr.modules.loan.helper.RequestLastStatus;
  */
 @Service
 public class ScfAcceptService extends ScfBaseApprovalService {
-	
-	public void processHandle(Map<String, Object> anContext) {
-		ScfRequest request = this.getReqtuest(anContext.get("requestNo").toString());
-		this.updateRequestLastStatus(request.getRequestNo(), RequestLastStatus.APPROVE.getCode());
-		//this.forzenSource(request);
-		//this.pushOrderInfo(requestService.findRequestByRequestNo(request.getRequestNo()));
-	}
+
+    public void processHandle(Map<String, Object> anContext) {
+        ScfRequest request = this.getReqtuest(anContext.get("requestNo").toString());
+        this.updateRequestLastStatus(request.getRequestNo(), RequestLastStatus.APPROVE.getCode());
+        // this.forzenSource(request);
+        // this.pushOrderInfo(requestService.findRequestByRequestNo(request.getRequestNo()));
+    }
 
 }

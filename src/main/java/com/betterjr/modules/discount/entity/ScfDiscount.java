@@ -14,40 +14,40 @@ import javax.persistence.*;
 @Table(name = "t_scf_discount")
 public class ScfDiscount implements BetterjrEntity {
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
+    @Column(name = "ID", columnDefinition = "INTEGER")
     private Integer id;
 
-    @Column(name = "L_FACTORNO",  columnDefinition="INTEGER" )
+    @Column(name = "L_FACTORNO", columnDefinition = "INTEGER")
     private Integer factorNo;
 
-    @Column(name = "c_discountType",  columnDefinition="VARCHAR" )
+    @Column(name = "c_discountType", columnDefinition = "VARCHAR")
     private String discountType;
 
-    @Column(name = "c_interestType",  columnDefinition="VARCHAR" )
+    @Column(name = "c_interestType", columnDefinition = "VARCHAR")
     private String interestType;
 
-    @Column(name = "c_busin_status",  columnDefinition="VARCHAR" )
+    @Column(name = "c_busin_status", columnDefinition = "VARCHAR")
     private String businStatus;
 
-    @Column(name = "c_discountDay",  columnDefinition="DOUBLE" )
+    @Column(name = "c_discountDay", columnDefinition = "DOUBLE")
     private BigDecimal discountDay;
 
-    @Column(name = "c_discountRate",  columnDefinition="DOUBLE" )
+    @Column(name = "c_discountRate", columnDefinition = "DOUBLE")
     private BigDecimal discountRate;
 
-    @Column(name = "c_billCount",  columnDefinition="INTEGER" )
+    @Column(name = "c_billCount", columnDefinition = "INTEGER")
     private Long billCount;
 
-    @Column(name = "c_billMoneyCount",  columnDefinition="DOUBLE" )
+    @Column(name = "c_billMoneyCount", columnDefinition = "DOUBLE")
     private BigDecimal billMoneyCount;
 
-    @Column(name = "c_billsNo",  columnDefinition="VARCHAR" )
+    @Column(name = "c_billsNo", columnDefinition = "VARCHAR")
     private String billsNo;
 
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
     private String regDate;
 
-    @Column(name = "D_REG_TIME",  columnDefinition="VARCHAR" )
+    @Column(name = "D_REG_TIME", columnDefinition = "VARCHAR")
     private String regTime;
 
     private static final long serialVersionUID = 2554720553861111663L;
@@ -184,17 +184,28 @@ public class ScfDiscount implements BetterjrEntity {
         }
         ScfDiscount other = (ScfDiscount) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getFactorNo() == null ? other.getFactorNo() == null : this.getFactorNo().equals(other.getFactorNo()))
-            && (this.getDiscountType() == null ? other.getDiscountType() == null : this.getDiscountType().equals(other.getDiscountType()))
-            && (this.getInterestType() == null ? other.getInterestType() == null : this.getInterestType().equals(other.getInterestType()))
-            && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
-            && (this.getDiscountDay() == null ? other.getDiscountDay() == null : this.getDiscountDay().equals(other.getDiscountDay()))
-            && (this.getDiscountRate() == null ? other.getDiscountRate() == null : this.getDiscountRate().equals(other.getDiscountRate()))
-            && (this.getBillCount() == null ? other.getBillCount() == null : this.getBillCount().equals(other.getBillCount()))
-            && (this.getBillMoneyCount() == null ? other.getBillMoneyCount() == null : this.getBillMoneyCount().equals(other.getBillMoneyCount()))
-            && (this.getBillsNo() == null ? other.getBillsNo() == null : this.getBillsNo().equals(other.getBillsNo()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-            && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()));
+                && (this.getFactorNo() == null ? other.getFactorNo() == null
+                        : this.getFactorNo().equals(other.getFactorNo()))
+                && (this.getDiscountType() == null ? other.getDiscountType() == null
+                        : this.getDiscountType().equals(other.getDiscountType()))
+                && (this.getInterestType() == null ? other.getInterestType() == null
+                        : this.getInterestType().equals(other.getInterestType()))
+                && (this.getBusinStatus() == null ? other.getBusinStatus() == null
+                        : this.getBusinStatus().equals(other.getBusinStatus()))
+                && (this.getDiscountDay() == null ? other.getDiscountDay() == null
+                        : this.getDiscountDay().equals(other.getDiscountDay()))
+                && (this.getDiscountRate() == null ? other.getDiscountRate() == null
+                        : this.getDiscountRate().equals(other.getDiscountRate()))
+                && (this.getBillCount() == null ? other.getBillCount() == null
+                        : this.getBillCount().equals(other.getBillCount()))
+                && (this.getBillMoneyCount() == null ? other.getBillMoneyCount() == null
+                        : this.getBillMoneyCount().equals(other.getBillMoneyCount()))
+                && (this.getBillsNo() == null ? other.getBillsNo() == null
+                        : this.getBillsNo().equals(other.getBillsNo()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getRegTime() == null ? other.getRegTime() == null
+                        : this.getRegTime().equals(other.getRegTime()));
     }
 
     @Override
@@ -215,12 +226,12 @@ public class ScfDiscount implements BetterjrEntity {
         result = prime * result + ((getRegTime() == null) ? 0 : getRegTime().hashCode());
         return result;
     }
-    
-    public void initDefValue(ScfDiscount scfDiscount){
+
+    public void initDefValue(ScfDiscount scfDiscount) {
         BeanMapper.copy(scfDiscount, this);
-        this.id=SerialGenerator.getIntValue("discount.id");
-        this.businStatus="1";
-        this.regDate=BetterDateUtils.getNumDate();
-        this.regTime=BetterDateUtils.getNumTime();
+        this.id = SerialGenerator.getIntValue("discount.id");
+        this.businStatus = "1";
+        this.regDate = BetterDateUtils.getNumDate();
+        this.regTime = BetterDateUtils.getNumTime();
     }
 }

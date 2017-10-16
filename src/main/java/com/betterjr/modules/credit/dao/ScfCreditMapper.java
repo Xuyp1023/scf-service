@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.credit.entity.ScfCredit;
 
 @BetterjrMapper
-public interface ScfCreditMapper extends Mapper<ScfCredit> {
-}
+public interface ScfCreditMapper extends Mapper<ScfCredit> {}

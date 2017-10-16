@@ -35,7 +35,7 @@ public class RemoteProxyFactory implements Serializable {
 
     private static final long serialVersionUID = 236065580519259663L;
     private static final Logger logger = LoggerFactory.getLogger(RemoteProxyFactory.class);
-    
+
     private Map<String, WorkFarFaceInfo> farMapInfo = new ConcurrentHashMap<String, WorkFarFaceInfo>();
     private Map<String, RemoteConnectionFactory> remoteFactory = new ConcurrentHashMap<String, RemoteConnectionFactory>();
     private Map<String, Map<String, FaceReturnCode>> faceReturnMap = null;
@@ -78,16 +78,16 @@ public class RemoteProxyFactory implements Serializable {
 
     private static RemoteProxyFactory instance = null;
 
-    public static <T> T createService(String anFaceNo,Class<T> anClass) {
+    public static <T> T createService(String anFaceNo, Class<T> anClass) {
 
-        return instance.create(anFaceNo,anClass);
+        return instance.create(anFaceNo, anClass);
     }
- 
+
     public static String findFileName(String anAgencyNo, String anFileInfoType) {
         WorkFarFaceInfo faceInfo = instance.farMapInfo.get(anAgencyNo);
         return faceInfo.findFileName(anFileInfoType);
     }
- 
+
     public void setKeyManager(CustKeyManager keyManager) {
         this.keyManager = keyManager;
     }
@@ -96,8 +96,7 @@ public class RemoteProxyFactory implements Serializable {
         FaceReturnCode retCode = instance.findFaceReturnMap(anAgencyNo, anReturnCode);
         if (retCode.getStatus()) {
             return "1";
-        }
-        else {
+        } else {
             return "0";
         }
     }
@@ -143,28 +142,29 @@ public class RemoteProxyFactory implements Serializable {
     public RemoteConnectionFactory createConnFactory(String anFace) {
         RemoteConnectionFactory factory = this.remoteFactory.get(anFace);
         if (factory == null) {
-        	logger.info("createConnFactory doing, face:"+anFace);
+            logger.info("createConnFactory doing, face:" + anFace);
             factory = new RemoteConnectionFactory();
             WorkFarFaceInfo faceInfo = farMapInfo.get(anFace);
-            factory.init(faceInfo.getConfig(), faceInfo.getCharset(), faceInfo.getRespCharset(), faceInfo.getWorkFormat(), trustStore, faceInfo.getPrivKeyStore());
+            factory.init(faceInfo.getConfig(), faceInfo.getCharset(), faceInfo.getRespCharset(),
+                    faceInfo.getWorkFormat(), trustStore, faceInfo.getPrivKeyStore());
             this.remoteFactory.put(anFace, factory);
-            logger.info("createConnFactory finished, face:"+anFace);
+            logger.info("createConnFactory finished, face:" + anFace);
         }
 
         return factory;
     }
-    
-    
-    public static RemoteProxyService createProxyService(String anFace){
-    	
-    	 try {
+
+    public static RemoteProxyService createProxyService(String anFace) {
+
+        try {
             return instance.createProxy(anFace);
-         }
-         catch (InstantiationException | IllegalAccessException e) {
-             throw new BetterjrClientProtocolException(25201, "Create RemoteProxyService Class InstantiationException ", e);
-         }    
+        }
+        catch (InstantiationException | IllegalAccessException e) {
+            throw new BetterjrClientProtocolException(25201, "Create RemoteProxyService Class InstantiationException ",
+                    e);
+        }
     }
-    
+
     /**
      * 获取接口服务实现
      * 
@@ -172,16 +172,17 @@ public class RemoteProxyFactory implements Serializable {
      * @return 接口具体实现类
      * @throws 异常情况
      */
-    protected <T> T create(String anFace,Class<T> anClass){
+    protected <T> T create(String anFace, Class<T> anClass) {
 
         RemoteProxyService handler;
         try {
-        	handler = createProxy(anFace);
+            handler = createProxy(anFace);
             return (T) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[] { anClass }, handler);
         }
         catch (InstantiationException | IllegalAccessException e) {
-        	String className=anClass.getSimpleName();
-            throw new BetterjrClientProtocolException(25201, "Create "+className+" Class InstantiationException ", e);
+            String className = anClass.getSimpleName();
+            throw new BetterjrClientProtocolException(25201, "Create " + className + " Class InstantiationException ",
+                    e);
         }
     }
 
@@ -192,19 +193,19 @@ public class RemoteProxyFactory implements Serializable {
      * @throws IllegalAccessException 
      * @throws InstantiationException 
      */
-	private RemoteProxyService createProxy(String anFace) throws InstantiationException, IllegalAccessException {
-		RemoteProxyService handler;
-		WorkFarFaceInfo faceInfo = farMapInfo.get(anFace);
-		if (faceInfo == null){
-		    return null;
-		}
+    private RemoteProxyService createProxy(String anFace) throws InstantiationException, IllegalAccessException {
+        RemoteProxyService handler;
+        WorkFarFaceInfo faceInfo = farMapInfo.get(anFace);
+        if (faceInfo == null) {
+            return null;
+        }
 
-		handler = (RemoteProxyService) faceInfo.getProviderClass().newInstance();
-		handler.init(this, faceInfo);
-		
-		return handler;
-	}
-    
+        handler = (RemoteProxyService) faceInfo.getProviderClass().newInstance();
+        handler.init(this, faceInfo);
+
+        return handler;
+    }
+
     private void createTrustStore() {
         InputStream in = null;
         try {
@@ -243,24 +244,25 @@ public class RemoteProxyFactory implements Serializable {
      * 根据系统配置信息，初始化接口实现
      */
     public void init() {
-    	try{
-	        this.faceReturnMap = faceService.findAllReturnCode();
-	
-	        this.farMapInfo = faceService.findFarFaceList();
-	        createTrustStore();
-	
-	        // 初始化接口参数和连接工厂等信息
-	        for (Map.Entry<String, WorkFarFaceInfo> ent : this.farMapInfo.entrySet()) {
-	            ent.getValue().init(this);
-	            createConnFactory(ent.getValue().getFaceNo());
-	        }
-	
-	        if (instance == null) {
-	            instance = this;
-	        }
-    	}catch(Exception ex){
-    		logger.error("init remote invoke failed !", ex);
-    	}
+        try {
+            this.faceReturnMap = faceService.findAllReturnCode();
+
+            this.farMapInfo = faceService.findFarFaceList();
+            createTrustStore();
+
+            // 初始化接口参数和连接工厂等信息
+            for (Map.Entry<String, WorkFarFaceInfo> ent : this.farMapInfo.entrySet()) {
+                ent.getValue().init(this);
+                createConnFactory(ent.getValue().getFaceNo());
+            }
+
+            if (instance == null) {
+                instance = this;
+            }
+        }
+        catch (Exception ex) {
+            logger.error("init remote invoke failed !", ex);
+        }
     }
 
 }

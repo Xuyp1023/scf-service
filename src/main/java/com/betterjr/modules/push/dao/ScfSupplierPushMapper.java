@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.push.entity.ScfSupplierPush;
 
 @BetterjrMapper
-public interface ScfSupplierPushMapper extends Mapper<ScfSupplierPush> {
-}
+public interface ScfSupplierPushMapper extends Mapper<ScfSupplierPush> {}

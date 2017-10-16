@@ -22,192 +22,190 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "t_scf_receivable_request_agreement")
-public class ScfReceivableRequestAgreement implements BetterjrEntity{
+public class ScfReceivableRequestAgreement implements BetterjrEntity {
 
     /**
      * 
      */
     private static final long serialVersionUID = 4652996115478216508L;
-    
+
     /**
      * 编号
      */
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
-    @MetaData( value="编号", comments = "编号")
+    @Column(name = "ID", columnDefinition = "INTEGER")
+    @MetaData(value = "编号", comments = "编号")
     private Long id;
-    
+
     /**
      * 合同凭证编号
      */
-    @Column(name = "C_Ref_NO",  columnDefinition="VARCHAR" )
-    @MetaData( value="合同凭证编号", comments = "合同凭证编号")
+    @Column(name = "C_Ref_NO", columnDefinition = "VARCHAR")
+    @MetaData(value = "合同凭证编号", comments = "合同凭证编号")
     private String refNo;
-    
+
     /**
      * 合同编号
      */
-    @Column(name = "C_AGREEMENT_CODE",  columnDefinition="VARCHAR" )
-    @MetaData( value="合同编号", comments = "合同编号")
+    @Column(name = "C_AGREEMENT_CODE", columnDefinition = "VARCHAR")
+    @MetaData(value = "合同编号", comments = "合同编号")
     private String agreementCode;
-    
+
     /**
      * 供应商编号
      */
-    @Column(name = "L_CUSTNO",  columnDefinition="INTEGER" )
-    @MetaData( value="供应商编号", comments = "供应商编号")
+    @Column(name = "L_CUSTNO", columnDefinition = "INTEGER")
+    @MetaData(value = "供应商编号", comments = "供应商编号")
     private Long custNo;
-    
+
     /**
      * 供应商名称
      */
-    @Column(name = "C_CUSTNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="供应商名称", comments = "供应商名称")
+    @Column(name = "C_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "供应商名称", comments = "供应商名称")
     private String custName;
-    
+
     /**
      * 核心企业编号
      */
-    @Column(name = "L_CORE_CUSTNO",  columnDefinition="INTEGER" )
-    @MetaData( value="核心企业编号", comments = "核心企业编号")
+    @Column(name = "L_CORE_CUSTNO", columnDefinition = "INTEGER")
+    @MetaData(value = "核心企业编号", comments = "核心企业编号")
     private Long coreCustNo;
-    
+
     /**
      * 核心企业名称
      */
-    @Column(name = "C_CORE_CUSTNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="核心企业名称", comments = "核心企业名称")
+    @Column(name = "C_CORE_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "核心企业名称", comments = "核心企业名称")
     private String coreCustName;
-    
+
     /**
      * 合同名称
      */
-    @Column(name = "C_AGREEMENT_NAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="合同名称", comments = "合同名称")
+    @Column(name = "C_AGREEMENT_NAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "合同名称", comments = "合同名称")
     private String agreementName;
-    
-    
+
     /**
      * 状态 0 未签署  1供应商已签 2采购商已签 3 作废
      */
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
-    @MetaData( value="状态 0 未签署  1供应商已签 2采购商已签 3 作废", comments = "状态 0 未签署  1供应商已签 2采购商已签 3 作废")
+    @Column(name = "C_BUSIN_STATUS", columnDefinition = "VARCHAR")
+    @MetaData(value = "状态 0 未签署  1供应商已签 2采购商已签 3 作废", comments = "状态 0 未签署  1供应商已签 2采购商已签 3 作废")
     private String businStatus;
-    
+
     /**
      * 供应商签署日期
      */
-    @Column(name = "D_CUST_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="申请日期", comments = "申请日期")
+    @Column(name = "D_CUST_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "申请日期", comments = "申请日期")
     private String custDate;
-    
+
     /**
      * 供应商签署时间
      */
-    @Column(name = "T_CUST_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="供应商签署时间", comments = "供应商签署时间")
+    @Column(name = "T_CUST_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "供应商签署时间", comments = "供应商签署时间")
     private String custTime;
-    
-    /**
-     * 供应商签署人名称
-     */
-    @Column(name = "L_CUST_OPERID",  columnDefinition="INTEGER" )
-    @MetaData( value="供应商签署人名称", comments = "供应商签署人名称")
-    private Long custOperId ;
 
     /**
      * 供应商签署人名称
      */
-    @Column(name = "C_CUST_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="供应商签署人名称", comments = "供应商签署人名称")
+    @Column(name = "L_CUST_OPERID", columnDefinition = "INTEGER")
+    @MetaData(value = "供应商签署人名称", comments = "供应商签署人名称")
+    private Long custOperId;
+
+    /**
+     * 供应商签署人名称
+     */
+    @Column(name = "C_CUST_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "供应商签署人名称", comments = "供应商签署人名称")
     private String custOperName;
-    
+
     /**
      * 核心企业签署日期
      */
-    @Column(name = "D_CORE_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="核心企业申请日期", comments = "核心企业申请日期")
+    @Column(name = "D_CORE_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "核心企业申请日期", comments = "核心企业申请日期")
     private String coreDate;
-    
+
     /**
      * 核心企业签署时间
      */
-    @Column(name = "T_CORE_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="核心企业签署时间", comments = "核心企业签署时间")
+    @Column(name = "T_CORE_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "核心企业签署时间", comments = "核心企业签署时间")
     private String coreTime;
-    
-    /**
-     * 核心企业签署人名称
-     */
-    @Column(name = "L_CORE_OPERID",  columnDefinition="INTEGER" )
-    @MetaData( value="核心企业签署人名称", comments = "核心企业签署人名称")
-    private Long coreOperId ;
 
     /**
      * 核心企业签署人名称
      */
-    @Column(name = "C_CORE_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="核心企业签署人名称", comments = "核心企业签署人名称")
+    @Column(name = "L_CORE_OPERID", columnDefinition = "INTEGER")
+    @MetaData(value = "核心企业签署人名称", comments = "核心企业签署人名称")
+    private Long coreOperId;
+
+    /**
+     * 核心企业签署人名称
+     */
+    @Column(name = "C_CORE_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "核心企业签署人名称", comments = "核心企业签署人名称")
     private String coreOperName;
-    
+
     /**
      * 金额
      */
-    @Column(name = "F_BALANCE",  columnDefinition="DECIMAL" )
-    @MetaData( value="金额", comments = "金额")
+    @Column(name = "F_BALANCE", columnDefinition = "DECIMAL")
+    @MetaData(value = "金额", comments = "金额")
     private BigDecimal balance;
-    
+
     /**
      * 合同模版存放地址
      */
-    @Column(name = "L_AGREEMENT_TEMPLATE_ID",  columnDefinition="INTEGER" )
-    @MetaData( value="合同模版存放地址", comments = "合同模版存放地址")
-    private Long agreementTemplateId ;
-    
+    @Column(name = "L_AGREEMENT_TEMPLATE_ID", columnDefinition = "INTEGER")
+    @MetaData(value = "合同模版存放地址", comments = "合同模版存放地址")
+    private Long agreementTemplateId;
+
     /**
      * 融资申请编号
      */
-    @Column(name = "L_RECEIVABLEREQUEST_NO",  columnDefinition="VARCHAR" )
-    @MetaData( value="融资申请编号", comments = "融资申请编号")
+    @Column(name = "L_RECEIVABLEREQUEST_NO", columnDefinition = "VARCHAR")
+    @MetaData(value = "融资申请编号", comments = "融资申请编号")
     private String receivableRequestNo;
-    
+
     /**
      * 合同类型  0 企业金服平台  1 核心企业签订
      */
-    @Column(name = "C_AGREEMENT_TYPE",  columnDefinition="VARCHAR" )
-    @MetaData( value="合同类型  0 企业金服平台  1 核心企业签订", comments = "合同类型  0 企业金服平台  1 核心企业签订")
+    @Column(name = "C_AGREEMENT_TYPE", columnDefinition = "VARCHAR")
+    @MetaData(value = "合同类型  0 企业金服平台  1 核心企业签订", comments = "合同类型  0 企业金服平台  1 核心企业签订")
     private String agreementType;
-    
-    
+
     /**
      * 合同最后签署日期
      */
-    @Column(name = "D_SIGN_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="合同最后签署日期", comments = "合同最后签署日期")
+    @Column(name = "D_SIGN_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "合同最后签署日期", comments = "合同最后签署日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String signDate;
-    
+
     /**
      * 各方签署合同的文件上传到服务器存放id
      */
-    @Column(name = "L_AGREEMENT_CONFIRM_FILE_ID",  columnDefinition="INTEGER" )
-    @MetaData( value="各方签署合同的文件上传到服务器存放id", comments = "各方签署合同的文件上传到服务器存放id")
-    private Long agreementConfirmFileId ;
-    
+    @Column(name = "L_AGREEMENT_CONFIRM_FILE_ID", columnDefinition = "INTEGER")
+    @MetaData(value = "各方签署合同的文件上传到服务器存放id", comments = "各方签署合同的文件上传到服务器存放id")
+    private Long agreementConfirmFileId;
+
     /**
      * 保理公司名称
      */
-    @Column(name = "C_FACTORYNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="保理公司名称", comments = "保理公司名称")
+    @Column(name = "C_FACTORYNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "保理公司名称", comments = "保理公司名称")
     private String factoryName;
-    
+
     /**
      * 保理公司Id
      */
-    @Column(name = "L_FACTORYNO",  columnDefinition="INTEGER" )
-    @MetaData( value="保理公司Id", comments = "保理公司Id")
+    @Column(name = "L_FACTORYNO", columnDefinition = "INTEGER")
+    @MetaData(value = "保理公司Id", comments = "保理公司Id")
     private Long factoryNo;
-    
+
     public String getFactoryName() {
         return this.factoryName;
     }
@@ -410,19 +408,22 @@ public class ScfReceivableRequestAgreement implements BetterjrEntity{
 
     @Override
     public String toString() {
-        return "ScfReceivableRequestAgreement [id=" + this.id + ", refNo=" + this.refNo + ", agreementCode=" + this.agreementCode + ", custNo="
-                + this.custNo + ", custName=" + this.custName + ", coreCustNo=" + this.coreCustNo + ", coreCustName=" + this.coreCustName
-                + ", agreementName=" + this.agreementName + ", businStatus=" + this.businStatus + ", custDate=" + this.custDate + ", custTime="
-                + this.custTime + ", custOperId=" + this.custOperId + ", custOperName=" + this.custOperName + ", coreDate=" + this.coreDate
-                + ", coreTime=" + this.coreTime + ", coreOperId=" + this.coreOperId + ", coreOperName=" + this.coreOperName + ", balance="
-                + this.balance + ", agreementTemplateId=" + this.agreementTemplateId + ", receivableRequestNo=" + this.receivableRequestNo
-                + ", agreementConfirmFileId=" + this.agreementConfirmFileId + "]";
+        return "ScfReceivableRequestAgreement [id=" + this.id + ", refNo=" + this.refNo + ", agreementCode="
+                + this.agreementCode + ", custNo=" + this.custNo + ", custName=" + this.custName + ", coreCustNo="
+                + this.coreCustNo + ", coreCustName=" + this.coreCustName + ", agreementName=" + this.agreementName
+                + ", businStatus=" + this.businStatus + ", custDate=" + this.custDate + ", custTime=" + this.custTime
+                + ", custOperId=" + this.custOperId + ", custOperName=" + this.custOperName + ", coreDate="
+                + this.coreDate + ", coreTime=" + this.coreTime + ", coreOperId=" + this.coreOperId + ", coreOperName="
+                + this.coreOperName + ", balance=" + this.balance + ", agreementTemplateId=" + this.agreementTemplateId
+                + ", receivableRequestNo=" + this.receivableRequestNo + ", agreementConfirmFileId="
+                + this.agreementConfirmFileId + "]";
     }
 
     public void saveAddValue(CustOperatorInfo anOperatorInfo) {
-        
-        this.setAgreementCode(SequenceFactory.generate("PLAT_ReceivableRequestAgreementCode", "TZBL-ZR#{Date:yy}#{Seq:8}"));
-        
+
+        this.setAgreementCode(
+                SequenceFactory.generate("PLAT_ReceivableRequestAgreementCode", "TZBL-ZR#{Date:yy}#{Seq:8}"));
+
         this.setBusinStatus(AgreementConstantCollentions.AGREMENT_BUSIN_STATUS_NOEFFECTIVE);
         this.setCustDate(BetterDateUtils.getNumDate());
         this.setCustOperId(anOperatorInfo.getId());
@@ -430,42 +431,41 @@ public class ScfReceivableRequestAgreement implements BetterjrEntity{
         this.setCustTime(BetterDateUtils.getNumTime());
         this.setRefNo("");
         this.setId(SerialGenerator.getLongValue("ScfReceivableRequestAgreement.id"));
-        //this.setSignDate(BetterDateUtils.getNumDate());
-        
+        // this.setSignDate(BetterDateUtils.getNumDate());
+
     }
 
     public void saveSignValue(CustOperatorInfo anOperatorInfo) {
-       
+
         this.setBusinStatus(AgreementConstantCollentions.AGREMENT_BUSIN_STATUS_SUPPLIER_SIGNED);
         this.setCustDate(BetterDateUtils.getNumDate());
         this.setCustTime(BetterDateUtils.getNumTime());
         this.setCustOperId(anOperatorInfo.getId());
         this.setCustOperName(anOperatorInfo.getName());
         this.setSignDate(BetterDateUtils.getNumDate());
-        
+
     }
-    
+
     public void saveCoreSignValue(CustOperatorInfo anOperatorInfo) {
-        
+
         this.setBusinStatus(AgreementConstantCollentions.AGREMENT_BUSIN_STATUS_CORE_SIGNED);
         this.setCoreDate(BetterDateUtils.getNumDate());
         this.setCoreTime(BetterDateUtils.getNumTime());
         this.setCoreOperId(anOperatorInfo.getId());
         this.setCoreOperName(anOperatorInfo.getName());
         this.setSignDate(BetterDateUtils.getNumDate());
-        
+
     }
+
     public void saveFactorySignValue(CustOperatorInfo anOperatorInfo) {
-        
+
         this.setBusinStatus(AgreementConstantCollentions.AGREMENT_BUSIN_STATUS_CORE_SIGNED);
         this.setCoreDate(BetterDateUtils.getNumDate());
         this.setCoreTime(BetterDateUtils.getNumTime());
         this.setCoreOperId(anOperatorInfo.getId());
         this.setCoreOperName(anOperatorInfo.getName());
         this.setSignDate(BetterDateUtils.getNumDate());
-        
+
     }
-    
-    
 
 }

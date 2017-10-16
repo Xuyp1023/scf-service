@@ -25,7 +25,7 @@ public class ScfEnquiryOfferReplyService extends BaseService<ScfEnquiryOfferRepl
         this.insert(offerReply);
         return offerReply;
     }
-    
+
     /**
      * 分页查询
      * @param anMap
@@ -35,8 +35,8 @@ public class ScfEnquiryOfferReplyService extends BaseService<ScfEnquiryOfferRepl
      * @return
      */
     public Page<ScfEnquiryOfferReply> queryList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
-        return this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1==anFlag);
-     }
+        return this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
+    }
 
     /**
      * 修改
@@ -50,5 +50,4 @@ public class ScfEnquiryOfferReplyService extends BaseService<ScfEnquiryOfferRepl
         return offerReply;
     }
 
-   
 }

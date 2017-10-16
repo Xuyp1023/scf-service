@@ -23,18 +23,22 @@ public class ScfReceivableDubboService implements IScfReceivableService {
     private ScfReceivableDOService receivableService;
 
     @Override
-    public String webSaveModifyReceivable(Map<String, Object> anMap, Long anId, String anFileList, String anOtherFileList) {
+    public String webSaveModifyReceivable(Map<String, Object> anMap, Long anId, String anFileList,
+            String anOtherFileList) {
         ScfReceivable anReceivable = (ScfReceivable) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk("应收账款信息编辑成功", scfReceivableService.saveModifyReceivable(anReceivable, anId, anFileList, anOtherFileList)).toJson();
+        return AjaxObject
+                .newOk("应收账款信息编辑成功",
+                        scfReceivableService.saveModifyReceivable(anReceivable, anId, anFileList, anOtherFileList))
+                .toJson();
     }
 
     @Override
-    public String webQueryReceivable(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum, int anPageSize) {
+    public String webQueryReceivable(Map<String, Object> anMap, String anIsOnlyNormal, String anFlag, int anPageNum,
+            int anPageSize) {
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
 
-        return AjaxObject
-                .newOkWithPage("应收账款查询成功", scfReceivableService.queryReceivable(anQueryConditionMap, anIsOnlyNormal, anFlag, anPageNum, anPageSize))
-                .toJson();
+        return AjaxObject.newOkWithPage("应收账款查询成功", scfReceivableService.queryReceivable(anQueryConditionMap,
+                anIsOnlyNormal, anFlag, anPageNum, anPageSize)).toJson();
     }
 
     @Override
@@ -51,7 +55,9 @@ public class ScfReceivableDubboService implements IScfReceivableService {
     @Override
     public String webAddReceivable(Map<String, Object> anMap, String anFileList, String anOtherFileList) {
         ScfReceivable anReceivable = (ScfReceivable) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk("应收账款新增成功", scfReceivableService.addReceivable(anReceivable, anFileList, anOtherFileList)).toJson();
+        return AjaxObject
+                .newOk("应收账款新增成功", scfReceivableService.addReceivable(anReceivable, anFileList, anOtherFileList))
+                .toJson();
     }
 
     @Override
@@ -64,14 +70,17 @@ public class ScfReceivableDubboService implements IScfReceivableService {
     public String webAddReceivableDO(Map<String, Object> anAnMap, String anFileList, boolean anConfirmFlag) {
 
         ScfReceivableDO receivable = (ScfReceivableDO) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk("应收账款新增成功", receivableService.addReceivable(receivable, anFileList, anConfirmFlag)).toJson();
+        return AjaxObject.newOk("应收账款新增成功", receivableService.addReceivable(receivable, anFileList, anConfirmFlag))
+                .toJson();
     }
 
     @Override
     public String webSaveModifyReceivableDO(Map<String, Object> anAnMap, String anFileList, boolean anConfirmFlag) {
 
         ScfReceivableDO receivable = (ScfReceivableDO) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOk("应收账款修改成功", receivableService.saveModifyReceivable(receivable, anFileList, anConfirmFlag)).toJson();
+        return AjaxObject
+                .newOk("应收账款修改成功", receivableService.saveModifyReceivable(receivable, anFileList, anConfirmFlag))
+                .toJson();
 
     }
 
@@ -84,7 +93,8 @@ public class ScfReceivableDubboService implements IScfReceivableService {
     @Override
     public String webSaveAuditReceivableByRefNoVersion(String anRefNo, String anVersion, Map<String, Object> anAnMap) {
 
-        return AjaxObject.newOk("应收账款审核成功", receivableService.saveAuditReceivable(anRefNo, anVersion, anAnMap)).toJson();
+        return AjaxObject.newOk("应收账款审核成功", receivableService.saveAuditReceivable(anRefNo, anVersion, anAnMap))
+                .toJson();
     }
 
     @Override
@@ -94,21 +104,22 @@ public class ScfReceivableDubboService implements IScfReceivableService {
     }
 
     @Override
-    public String webQueryIneffectiveReceivable(Map<String, Object> anAnMap, String anFlag, int anPageNum, int anPageSize, boolean anIsAudit) {
+    public String webQueryIneffectiveReceivable(Map<String, Object> anAnMap, String anFlag, int anPageNum,
+            int anPageSize, boolean anIsAudit) {
 
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOkWithPage("应收账款查询成功",
-                receivableService.queryIneffectiveReceivable(anQueryConditionMap, anFlag, anPageNum, anPageSize, anIsAudit)).toJson();
+        return AjaxObject.newOkWithPage("应收账款查询成功", receivableService.queryIneffectiveReceivable(anQueryConditionMap,
+                anFlag, anPageNum, anPageSize, anIsAudit)).toJson();
 
     }
 
     @Override
-    public String webQueryEffectiveReceivable(Map<String, Object> anAnMap, String anFlag, int anPageNum, int anPageSize, boolean anIsCust) {
+    public String webQueryEffectiveReceivable(Map<String, Object> anAnMap, String anFlag, int anPageNum, int anPageSize,
+            boolean anIsCust) {
 
         Map<String, Object> anQueryConditionMap = (Map<String, Object>) RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject
-                .newOkWithPage("应收账款查询成功", receivableService.queryEffectiveReceivable(anQueryConditionMap, anFlag, anPageNum, anPageSize, anIsCust))
-                .toJson();
+        return AjaxObject.newOkWithPage("应收账款查询成功", receivableService.queryEffectiveReceivable(anQueryConditionMap,
+                anFlag, anPageNum, anPageSize, anIsCust)).toJson();
 
     }
 

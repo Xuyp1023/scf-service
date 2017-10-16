@@ -13,6 +13,5 @@ public class CustInfoRole extends CustInfo {
     public void setOperatorStatus(Integer anOperatorStatus) {
         this.operatorStatus = anOperatorStatus;
     }
-    
-    
+
 }

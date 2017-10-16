@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,15 +65,18 @@ public class ScfFactorClientHelperService {
 
     @PostConstruct
     public void initClassMapService() {
-        this.classMapService.put("CoreSupplierInfo", new ScfClientDataInfo("CoreSupplierInfo", "coreEnterpriseService", "btNo", "supplier", "btNo"));
-        this.classMapService.put("ScfAcceptBill",
-                new ScfClientDataInfo("ScfAcceptBill", "scfAcceptBillService", "billNo", "supplierBill", "suppBankAccount"));
-        this.classMapService.put("ScfBankPaymentFlow",
-                new ScfClientDataInfo("ScfBankPaymentFlow", "scfBankPaymentFlowService", "btInnerId", "supplierPay", "suppBankAccount"));
-        this.classMapService.put("ScfCapitalFlow",
-                new ScfClientDataInfo("ScfCapitalFlow", "scfCapitalFlowService", "btInnerId", "supplierCapital", "suppBankAccount"));
-        this.classMapService.put("ScfSupplierBank", new ScfClientDataInfo("ScfSupplierBank", "scfSupplierBankService", "btNo", "supplierBank", ""));
-        this.classMapService.put("ScfRelation", new ScfClientDataInfo("ScfRelation", "scfRelationService", "btNo", "supplierRela", "btNo"));
+        this.classMapService.put("CoreSupplierInfo",
+                new ScfClientDataInfo("CoreSupplierInfo", "coreEnterpriseService", "btNo", "supplier", "btNo"));
+        this.classMapService.put("ScfAcceptBill", new ScfClientDataInfo("ScfAcceptBill", "scfAcceptBillService",
+                "billNo", "supplierBill", "suppBankAccount"));
+        this.classMapService.put("ScfBankPaymentFlow", new ScfClientDataInfo("ScfBankPaymentFlow",
+                "scfBankPaymentFlowService", "btInnerId", "supplierPay", "suppBankAccount"));
+        this.classMapService.put("ScfCapitalFlow", new ScfClientDataInfo("ScfCapitalFlow", "scfCapitalFlowService",
+                "btInnerId", "supplierCapital", "suppBankAccount"));
+        this.classMapService.put("ScfSupplierBank",
+                new ScfClientDataInfo("ScfSupplierBank", "scfSupplierBankService", "btNo", "supplierBank", ""));
+        this.classMapService.put("ScfRelation",
+                new ScfClientDataInfo("ScfRelation", "scfRelationService", "btNo", "supplierRela", "btNo"));
         this.classMapService.put("CustTempEnrollInfo",
                 new ScfClientDataInfo("CustTempEnrollInfo", "supplyAccoRequestService", "btNo", "supplierReg", "btNo"));
 
@@ -94,7 +98,8 @@ public class ScfFactorClientHelperService {
         // 首先保存供应商银行账户信息，建立供应商银行账户信息和操作员所在机构的关系，客户银行账户信息中保存了资金系统的客户号和银行账户，兼顾的多方的处理。
         final Set<String> workBtNoList = new HashSet();
         final Set<String> workBankAccountList = new HashSet();
-        final Set<ScfSupplierBank> tmpBankSet = supplierBankService.saveCustOperOrg(anCoreCustNo, anBankAccount, anOperOrg);
+        final Set<ScfSupplierBank> tmpBankSet = supplierBankService.saveCustOperOrg(anCoreCustNo, anBankAccount,
+                anOperOrg);
         ScfSupplierBank tmpBankAccountInfo = null;
         for (final ScfSupplierBank suppBank : tmpBankSet) {
             workBtNoList.add(suppBank.getBtNo());
@@ -120,8 +125,7 @@ public class ScfFactorClientHelperService {
                 if (BetterStringUtils.defShortString(workFace.getOperOrg())) {
                     workFace.setOperOrg(anOperOrg);
                     workService.updateByPrimaryKey(workFace);
-                }
-                else {
+                } else {
                     logger.warn("更新数据的OperOrg已经存在，不能更新 ：存在的OperOrg:" + workFace.getOperOrg());
                 }
             }
@@ -137,14 +141,13 @@ public class ScfFactorClientHelperService {
         Map tmpMap = null;
         if (custTemp != null) {
             tmpMap = custTemp.converToTmpDataMap();
-        }
-        else if (tmpBankAccountInfo != null) {
+        } else if (tmpBankAccountInfo != null) {
             tmpMap = tmpBankAccountInfo.converToTmpDataMap();
-        }/*
-        if (tmpMap != null) {
-            String data = BTObjectUtils.fastSerializeStr(tmpMap);
-            this.tmpDataService.saveCustTempDataByOperOrg(data, anOperOrg);
-        }*/
+        } /*
+          if (tmpMap != null) {
+             String data = BTObjectUtils.fastSerializeStr(tmpMap);
+             this.tmpDataService.saveCustTempDataByOperOrg(data, anOperOrg);
+          }*/
 
     }
 
@@ -159,11 +162,11 @@ public class ScfFactorClientHelperService {
      *            客户操作员账户
      */
     public void saveCustomerCustNo(final Long anCustNo, final String anBankAccount, final String anOperOrg) {
-        final List<ScfSupplierBank> suppBankList = this.supplierBankService.findCustByBankAccount(anOperOrg, anBankAccount);
+        final List<ScfSupplierBank> suppBankList = this.supplierBankService.findCustByBankAccount(anOperOrg,
+                anBankAccount);
         if (Collections3.isEmpty(suppBankList)) {
             logger.warn("不是供应商的银行账户信息，不能更新客户号, anBankAccount =" + anBankAccount + ", anOperOrg = " + anOperOrg);
-        }
-        else {
+        } else {
             BaseService workService = null;
             List<ScfClientDataParentFace> workList;
             for (final ScfClientDataInfo serviceInfo : this.classMapService.values()) {
@@ -179,7 +182,8 @@ public class ScfFactorClientHelperService {
         }
     }
 
-    public void saveCoreCorpData(final String anWorkType, final ScfClientDataDetail anWorkTypeData, final List anDataList, final String anOperOrg) {
+    public void saveCoreCorpData(final String anWorkType, final ScfClientDataDetail anWorkTypeData,
+            final List anDataList, final String anOperOrg) {
         coreCorpService.saveCoreCorpList(anDataList, anOperOrg);
     }
 
@@ -191,7 +195,8 @@ public class ScfFactorClientHelperService {
      * @param anCoreCustNo
      *            核心企业客户号
      */
-    public void saveCustomerData(final String anWorkType, final ScfClientDataDetail anWorkTypeData, final List<ScfClientDataParentFace> anDataList, final String anCoreOperOrg) {
+    public void saveCustomerData(final String anWorkType, final ScfClientDataDetail anWorkTypeData,
+            final List<ScfClientDataParentFace> anDataList, final String anCoreOperOrg) {
         // 空就不处理了.
         if (Collections3.isEmpty(anDataList)) {
 
@@ -204,34 +209,38 @@ public class ScfFactorClientHelperService {
         ScfSupplierBank suppBank;
         final List<ScfClientDataParentFace> resultData = new ArrayList();
         for (final ScfClientDataParentFace clientData : anDataList) {
-            //clientData.setCoreCustNo(anCoreCustNo);
+            // clientData.setCoreCustNo(anCoreCustNo);
             clientData.fillDefaultValue();
             // 表示基础账户信息，可以通过供应商和核心企业关系来取数据
-            if (BetterStringUtils.isNotBlank(clientData.getBtNo()) || BetterStringUtils.isNotBlank(clientData.getBankAccount())) {
-                if (BetterStringUtils.isNotBlank(clientData.getBtNo())) {
+            if (StringUtils.isNotBlank(clientData.getBtNo())
+                    || StringUtils.isNotBlank(clientData.getBankAccount())) {
+                if (StringUtils.isNotBlank(clientData.getBtNo())) {
                     suppBank = this.supplierBankService.findCustNoByBtCustNo(anCoreOperOrg, clientData.getBtNo());
                 } // 表示可以通过银行信息获得客户编号
                 else {
-                    suppBank = this.supplierBankService.findScfBankByBankAccount(anCoreOperOrg, clientData.getBankAccount());
+                    suppBank = this.supplierBankService.findScfBankByBankAccount(anCoreOperOrg,
+                            clientData.getBankAccount());
                 }
                 if (suppBank != null) {
                     clientData.setCustNo(suppBank.getCustNo());
                     clientData.setOperOrg(suppBank.getOperOrg());
-                }//通过从注册的表中获取已经开户的客户信息
-                else{
+                } // 通过从注册的表中获取已经开户的客户信息
+                else {
                     String tmpAccoName = anWorkTypeData.getBankAccName();
                     String tmpAcco = anWorkTypeData.getBankAcc();
-                    CustTempEnrollInfo tempEnroll = supplyAccoService.findUnRegisterAccount(tmpAccoName, tmpAcco, false);
-                    if (tempEnroll == null){
+                    CustTempEnrollInfo tempEnroll = supplyAccoService.findUnRegisterAccount(tmpAccoName, tmpAcco,
+                            false);
+                    if (tempEnroll == null) {
                         tmpAcco = clientData.getBankAccount();
                         tmpAccoName = clientData.findBankAccountName();
                         tempEnroll = supplyAccoService.findUnRegisterAccount(tmpAccoName, tmpAcco, false);
                     }
-                    if (tempEnroll != null){
+                    if (tempEnroll != null) {
                         clientData.setCustNo(tempEnroll.getCustNo());
                         clientData.setOperOrg(tempEnroll.getOperOrg());
                     } else {
-                        final CustMechBankAccount bankAccount = supplyAccoService.findCustMechBankAccount(tmpAccoName, tmpAcco);
+                        final CustMechBankAccount bankAccount = supplyAccoService.findCustMechBankAccount(tmpAccoName,
+                                tmpAcco);
                         if (bankAccount != null) {
                             clientData.setCustNo(bankAccount.getCustNo());
                             clientData.setOperOrg(bankAccount.getOperOrg());
@@ -256,14 +265,14 @@ public class ScfFactorClientHelperService {
         }
     }
 
-    private void saveUploadSupplierRelation(final List anDataList, final String anCoreOperOrg){
-        //final String coreCustName = SupplyChainUtil.findCoreNameByCustNo(anCoreCustNo);
-        for (final Object data: anDataList){
+    private void saveUploadSupplierRelation(final List anDataList, final String anCoreOperOrg) {
+        // final String coreCustName = SupplyChainUtil.findCoreNameByCustNo(anCoreCustNo);
+        for (final Object data : anDataList) {
             final Map workValue = BeanMapper.map(data, HashMap.class);
 
             final String coreCorpId = (String) workValue.get("corpId");
 
-            if (BetterStringUtils.isBlank(coreCorpId)) {
+            if (StringUtils.isBlank(coreCorpId)) {
                 logger.info("资金系统 供应商信息 corpId 为空:" + workValue);
                 continue;
             }
@@ -274,7 +283,7 @@ public class ScfFactorClientHelperService {
                 continue;
             }
 
-            relationService.saveAndCheckCust(workValue, coreCorpInfo.getCustName() , coreCorpInfo.getCustNo());
+            relationService.saveAndCheckCust(workValue, coreCorpInfo.getCustName(), coreCorpInfo.getCustNo());
         }
     }
 
@@ -287,7 +296,8 @@ public class ScfFactorClientHelperService {
      *            数据列表
      * @return 处理成功返回true， 处理失败返回false
      */
-    protected boolean saveUploadSupplierData(final BaseService anService, final List anList, final ScfClientDataInfo anServiceInfo, final String anCoreOperOrg) {
+    protected boolean saveUploadSupplierData(final BaseService anService, final List anList,
+            final ScfClientDataInfo anServiceInfo, final String anCoreOperOrg) {
         // 没数据，直接返回
         if (Collections3.isEmpty(anList)) {
 
@@ -297,8 +307,7 @@ public class ScfFactorClientHelperService {
         if (anService instanceof ScfAcceptBillService) {
             final ScfAcceptBillService accetBillService = (ScfAcceptBillService) anService;
             return accetBillService.saveUploadSupplierData(anList, anCoreOperOrg);
-        }
-        else {
+        } else {
             final Set<String> distinctKey = ReflectionUtils.listToKeySet(anList, anServiceInfo.getKeyField());
             final Map<String, Object> termMap = new HashMap<String, Object>();
             for (final String btNo : distinctKey) {
@@ -320,8 +329,8 @@ public class ScfFactorClientHelperService {
      * 检查是否需要会写获取核心企业的上、下游客户信息
      * @param anMap 开户时提供的参数
      */
-    public void checkTempAcco(final Map anMap){
-        logger.info("checkTempAcco request value :"+anMap);
+    public void checkTempAcco(final Map anMap) {
+        logger.info("checkTempAcco request value :" + anMap);
         supplyAccoService.addSupplyAccountFromOpenAcco(anMap);
     }
 }

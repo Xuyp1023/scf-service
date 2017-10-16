@@ -20,7 +20,7 @@ public class ScfLoanService extends BaseService<ScfLoanMapper, ScfLoan> {
 
     @Autowired
     private CustAccountService custAccountService;
-    
+
     /**
      * 新增放款记录
      * @param anLoan
@@ -30,11 +30,11 @@ public class ScfLoanService extends BaseService<ScfLoanMapper, ScfLoan> {
         BTAssert.notNull(anLoan, "新增放款记录失败-anLoan不能为空");
         anLoan.init();
         this.insert(anLoan);
-        
+
         setCustName(anLoan);
         return anLoan;
     }
-    
+
     /**
      * 修改放款记录
      * 
@@ -47,7 +47,7 @@ public class ScfLoanService extends BaseService<ScfLoanMapper, ScfLoan> {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("factorNo", anLoan.getFactorNo());
         map.put("id", anId);
-        if(Collections3.isEmpty(selectByClassProperty(ScfLoan.class, map))){
+        if (Collections3.isEmpty(selectByClassProperty(ScfLoan.class, map))) {
             logger.error("修改放款记录失败,找不到原数据");
             throw new BytterTradeException(40001, "找不到原数据");
         }
@@ -55,7 +55,7 @@ public class ScfLoanService extends BaseService<ScfLoanMapper, ScfLoan> {
         anLoan.initModify();
         anLoan.setId(anId);
         this.updateByPrimaryKeySelective(anLoan);
-        
+
         setCustName(anLoan);
         return anLoan;
     }
@@ -85,12 +85,12 @@ public class ScfLoanService extends BaseService<ScfLoanMapper, ScfLoan> {
      */
     public ScfLoan findLoanDetail(Long anId) {
         BTAssert.notNull(anId, "查询放款记录详情失败-anId不能为空");
-        
+
         ScfLoan loan = this.selectByPrimaryKey(anId);
-        if(null == loan){
+        if (null == loan) {
             return new ScfLoan();
         }
-        
+
         setCustName(loan);
         return loan;
     }

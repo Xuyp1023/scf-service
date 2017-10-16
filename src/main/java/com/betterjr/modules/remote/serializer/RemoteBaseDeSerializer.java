@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +43,7 @@ public class RemoteBaseDeSerializer extends RemoteAlgorithmService implements Re
     public Map<String, Object> getOrignMap() {
         if (orignMap == null) {
             return new HashMap();
-        }
-        else {
+        } else {
             return orignMap;
         }
     }
@@ -57,8 +57,7 @@ public class RemoteBaseDeSerializer extends RemoteAlgorithmService implements Re
     public String getReturnMsg() {
         if (StringUtils.isNoneBlank(this.message)) {
             return this.message;
-        }
-        else {
+        } else {
             return this.func.getReturnMsg(state);
         }
     }
@@ -74,8 +73,7 @@ public class RemoteBaseDeSerializer extends RemoteAlgorithmService implements Re
         for (final Object obj : anData) {
             if (obj instanceof Map) {
                 mergeMap((Map) obj, anResult);
-            }
-            else if (obj instanceof Collection) {
+            } else if (obj instanceof Collection) {
                 mergeMap((Collection) obj, anResult);
             }
         }
@@ -93,11 +91,9 @@ public class RemoteBaseDeSerializer extends RemoteAlgorithmService implements Re
             if (obj instanceof Map) {
 
                 mergeMap((Map) obj, anResult);
-            }
-            else if (obj instanceof Collection) {
+            } else if (obj instanceof Collection) {
                 mergeMap((Collection) obj, anResult);
-            }
-            else {
+            } else {
                 anResult.put(ent.getKey(), ent.getValue());
             }
 
@@ -105,7 +101,8 @@ public class RemoteBaseDeSerializer extends RemoteAlgorithmService implements Re
     }
 
     @Override
-    public void init(final WorkFarFunction anFunc, final RemoteConnection anConn, final Map<String, FarConfigInfo> anConfigInfo, final CustKeyManager anKeyManager) {
+    public void init(final WorkFarFunction anFunc, final RemoteConnection anConn,
+            final Map<String, FarConfigInfo> anConfigInfo, final CustKeyManager anKeyManager) {
         initParameter(anConfigInfo, anKeyManager);
         this.func = anFunc;
         if (anFunc == null) {
@@ -146,8 +143,7 @@ public class RemoteBaseDeSerializer extends RemoteAlgorithmService implements Re
                     logger.error("decrypt data has error");
                     return WSInfo.buildErrOutput(WebServiceErrorCode.E1007, faceInfo);
                 }
-            }
-            else {
+            } else {
                 decodedData = reqData;
             }
             if (this.getBoolean("sign_Data", true)) {
@@ -177,10 +173,10 @@ public class RemoteBaseDeSerializer extends RemoteAlgorithmService implements Re
 
             if (data instanceof Map) {
                 final String attachData = this.getString(ATTACH_DATA, null);
-                if (BetterStringUtils.isNotBlank(attachData)){
+                if (StringUtils.isNotBlank(attachData)) {
                     ((Map) data).put(ATTACH_DATA, attachData);
                 }
-                if (BetterStringUtils.isNotBlank(cert)) {
+                if (StringUtils.isNotBlank(cert)) {
                     ((Map) data).put("cert", cert);
                 }
             }
@@ -194,12 +190,10 @@ public class RemoteBaseDeSerializer extends RemoteAlgorithmService implements Re
                         list.add(this.processInput(obj));
                     }
                     inputObj = list;
-                }
-                else {
+                } else {
                     inputObj = this.processInput(data);
                 }
-            }
-            else {
+            } else {
                 inputObj = data;
             }
 
@@ -226,7 +220,7 @@ public class RemoteBaseDeSerializer extends RemoteAlgorithmService implements Re
         final BetterjrBaseInputHelper inputHelper = new BetterjrBaseInputHelper((Map) input, converter);
 
         Class inputCls = func.getWorkReturnClass();
-        inputCls = BTObjectUtils.defaultIfNull(inputCls, Map.class);
+        inputCls = ObjectUtils.defaultIfNull(inputCls, Map.class);
 
         final Object obj = inputHelper.readObject(inputCls, func.getPropMap());
         logger.info("processInput " + obj);

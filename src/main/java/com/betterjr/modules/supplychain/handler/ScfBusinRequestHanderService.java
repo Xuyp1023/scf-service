@@ -10,9 +10,9 @@ import com.betterjr.modules.customer.constants.CustomerConstants;
 @Service
 public class ScfBusinRequestHanderService {
     private final static Logger logger = LoggerFactory.getLogger(ScfBusinRequestHanderService.class);
-    
-    @RocketMQListener(topic = CustomerConstants.CUSTOMER_SCF_REQUEST , consumer = "betterConsumer")
-    public void processBusinRequest(final Object anMessage){
-        
+
+    @RocketMQListener(topic = CustomerConstants.CUSTOMER_SCF_REQUEST, consumer = "betterConsumer")
+    public void processBusinRequest(final Object anMessage) {
+
     }
 }

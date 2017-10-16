@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.receivable.entity.ScfReceivable;
 
 @BetterjrMapper
-public interface ScfReceivableMapper extends Mapper<ScfReceivable> {
-}
+public interface ScfReceivableMapper extends Mapper<ScfReceivable> {}

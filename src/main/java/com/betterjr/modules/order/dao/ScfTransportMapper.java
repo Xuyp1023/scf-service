@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.order.entity.ScfTransport;
 
 @BetterjrMapper
-public interface ScfTransportMapper extends Mapper<ScfTransport> {
-}
+public interface ScfTransportMapper extends Mapper<ScfTransport> {}

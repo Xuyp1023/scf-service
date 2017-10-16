@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.supplychain.entity.CoreDataProcessInfo;
 
 @BetterjrMapper
-public interface CoreDataProcessInfoMapper extends Mapper<CoreDataProcessInfo> {
-}
+public interface CoreDataProcessInfoMapper extends Mapper<CoreDataProcessInfo> {}

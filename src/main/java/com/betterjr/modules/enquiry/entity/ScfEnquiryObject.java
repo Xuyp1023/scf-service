@@ -32,79 +32,79 @@ public class ScfEnquiryObject implements BetterjrEntity {
     /**
      * 询价编号
      */
-    @Column(name = "C_ENQUIRYNO",  columnDefinition="VARCHAR" )
-    @MetaData( value="询价编号", comments = "询价编号")
+    @Column(name = "C_ENQUIRYNO", columnDefinition = "VARCHAR")
+    @MetaData(value = "询价编号", comments = "询价编号")
     private String enquiryNo;
 
     /**
      * 询价企业
      */
-    @Column(name = "L_CUSTNO",  columnDefinition="BIGINT" )
-    @MetaData( value="询价企业", comments = "询价企业")
+    @Column(name = "L_CUSTNO", columnDefinition = "BIGINT")
+    @MetaData(value = "询价企业", comments = "询价企业")
     private Long custNo;
 
     /**
      * 意向企业（保理公司）
      */
-    @Column(name = "L_FACTORNO",  columnDefinition="BIGINT" )
-    @MetaData( value="意向企业（保理公司）", comments = "意向企业（保理公司）")
+    @Column(name = "L_FACTORNO", columnDefinition = "BIGINT")
+    @MetaData(value = "意向企业（保理公司）", comments = "意向企业（保理公司）")
     private Long factorNo;
 
     /**
      * 报价ID
      */
-    @Column(name = "L_OFFERID",  columnDefinition="BIGINT" )
-    @MetaData( value="报价ID", comments = "报价ID")
+    @Column(name = "L_OFFERID", columnDefinition = "BIGINT")
+    @MetaData(value = "报价ID", comments = "报价ID")
     private Long offerId;
 
     /**
      * 报价状态（0：未报价，1：已报价,2:放弃）
      */
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="CHAR" )
-    @MetaData( value="报价状态（0：未报价", comments = "状态：-3:取消,-2：已融资，-1：放弃，0：未报价，1：已报价")
+    @Column(name = "C_BUSIN_STATUS", columnDefinition = "CHAR")
+    @MetaData(value = "报价状态（0：未报价", comments = "状态：-3:取消,-2：已融资，-1：放弃，0：未报价，1：已报价")
     private String businStatus;
 
     /**
      * 操作机构
      */
-    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
-    @MetaData( value="操作机构", comments = "操作机构")
+    @Column(name = "C_OPERORG", columnDefinition = "VARCHAR")
+    @MetaData(value = "操作机构", comments = "操作机构")
     private String operOrg;
 
-    @Column(name = "L_REG_OPERID",  columnDefinition="BIGINT" )
-    @MetaData( value="", comments = "")
+    @Column(name = "L_REG_OPERID", columnDefinition = "BIGINT")
+    @MetaData(value = "", comments = "")
     private Long regOperId;
 
-    @Column(name = "C_REG_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "C_REG_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String regOperName;
 
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String regDate;
 
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String regTime;
 
-    @Column(name = "L_MODI_OPERID",  columnDefinition="BIGINT" )
-    @MetaData( value="", comments = "")
+    @Column(name = "L_MODI_OPERID", columnDefinition = "BIGINT")
+    @MetaData(value = "", comments = "")
     private Long modiOperId;
 
-    @Column(name = "C_MODI_OPERNAME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "C_MODI_OPERNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String modiOperName;
 
-    @Column(name = "D_MODI_DATE",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "D_MODI_DATE", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String modiDate;
 
-    @Column(name = "T_MODI_TIME",  columnDefinition="VARCHAR" )
-    @MetaData( value="", comments = "")
+    @Column(name = "T_MODI_TIME", columnDefinition = "VARCHAR")
+    @MetaData(value = "", comments = "")
     private String modiTime;
 
-    @Column(name = "N_VERSION",  columnDefinition="BIGINT" )
-    @MetaData( value="", comments = "")
+    @Column(name = "N_VERSION", columnDefinition = "BIGINT")
+    @MetaData(value = "", comments = "")
     private Long version;
 
     private static final long serialVersionUID = 1469590861140L;
@@ -279,21 +279,35 @@ public class ScfEnquiryObject implements BetterjrEntity {
         }
         ScfEnquiryObject other = (ScfEnquiryObject) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getEnquiryNo() == null ? other.getEnquiryNo() == null : this.getEnquiryNo().equals(other.getEnquiryNo()))
-            && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-            && (this.getFactorNo() == null ? other.getFactorNo() == null : this.getFactorNo().equals(other.getFactorNo()))
-            && (this.getOfferId() == null ? other.getOfferId() == null : this.getOfferId().equals(other.getOfferId()))
-            && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
-            && (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
-            && (this.getRegOperId() == null ? other.getRegOperId() == null : this.getRegOperId().equals(other.getRegOperId()))
-            && (this.getRegOperName() == null ? other.getRegOperName() == null : this.getRegOperName().equals(other.getRegOperName()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-            && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
-            && (this.getModiOperId() == null ? other.getModiOperId() == null : this.getModiOperId().equals(other.getModiOperId()))
-            && (this.getModiOperName() == null ? other.getModiOperName() == null : this.getModiOperName().equals(other.getModiOperName()))
-            && (this.getModiDate() == null ? other.getModiDate() == null : this.getModiDate().equals(other.getModiDate()))
-            && (this.getModiTime() == null ? other.getModiTime() == null : this.getModiTime().equals(other.getModiTime()))
-            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
+                && (this.getEnquiryNo() == null ? other.getEnquiryNo() == null
+                        : this.getEnquiryNo().equals(other.getEnquiryNo()))
+                && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
+                && (this.getFactorNo() == null ? other.getFactorNo() == null
+                        : this.getFactorNo().equals(other.getFactorNo()))
+                && (this.getOfferId() == null ? other.getOfferId() == null
+                        : this.getOfferId().equals(other.getOfferId()))
+                && (this.getBusinStatus() == null ? other.getBusinStatus() == null
+                        : this.getBusinStatus().equals(other.getBusinStatus()))
+                && (this.getOperOrg() == null ? other.getOperOrg() == null
+                        : this.getOperOrg().equals(other.getOperOrg()))
+                && (this.getRegOperId() == null ? other.getRegOperId() == null
+                        : this.getRegOperId().equals(other.getRegOperId()))
+                && (this.getRegOperName() == null ? other.getRegOperName() == null
+                        : this.getRegOperName().equals(other.getRegOperName()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getRegTime() == null ? other.getRegTime() == null
+                        : this.getRegTime().equals(other.getRegTime()))
+                && (this.getModiOperId() == null ? other.getModiOperId() == null
+                        : this.getModiOperId().equals(other.getModiOperId()))
+                && (this.getModiOperName() == null ? other.getModiOperName() == null
+                        : this.getModiOperName().equals(other.getModiOperName()))
+                && (this.getModiDate() == null ? other.getModiDate() == null
+                        : this.getModiDate().equals(other.getModiDate()))
+                && (this.getModiTime() == null ? other.getModiTime() == null
+                        : this.getModiTime().equals(other.getModiTime()))
+                && (this.getVersion() == null ? other.getVersion() == null
+                        : this.getVersion().equals(other.getVersion()));
     }
 
     @Override
@@ -318,7 +332,7 @@ public class ScfEnquiryObject implements BetterjrEntity {
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
         return result;
     }
-    
+
     @Transient
     private ScfOffer offer;
     @Transient
@@ -332,7 +346,6 @@ public class ScfEnquiryObject implements BetterjrEntity {
         this.offer = offer;
     }
 
-    
     public String getFactorName() {
         return factorName;
     }
@@ -340,30 +353,30 @@ public class ScfEnquiryObject implements BetterjrEntity {
     public void setFactorName(String factorName) {
         this.factorName = factorName;
     }
-    
+
     public void init() {
         this.id = SerialGenerator.getLongValue("ScfEnquiryObject.id");
         this.businStatus = "0";
         this.regOperName = UserUtils.getUserName();
         CustOperatorInfo operator = UserUtils.getOperatorInfo();
-        if (operator != null){
+        if (operator != null) {
             this.regOperId = operator.getId();
             this.operOrg = operator.getOperOrg();
-        } 
+        }
         this.regDate = BetterDateUtils.getNumDate();
         this.regTime = BetterDateUtils.getNumTime();
     }
 
     public void initModify() {
         CustOperatorInfo operator = UserUtils.getOperatorInfo();
-        if (operator != null){
+        if (operator != null) {
             this.modiOperId = operator.getId();
             this.operOrg = operator.getOperOrg();
-            
+
         }
         this.modiOperName = UserUtils.getUserName();
         this.modiDate = BetterDateUtils.getNumDate();
         this.modiTime = BetterDateUtils.getNumTime();
     }
-    
+
 }

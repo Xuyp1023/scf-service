@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.betterjr.common.service.BaseService;
@@ -32,7 +33,8 @@ import com.betterjr.modules.commission.entity.CommissionPayResultRecord;
  *
  */
 @Service
-public class CommissionPayResultRecordService extends BaseService<CommissionPayResultRecordMapper, CommissionPayResultRecord> {
+public class CommissionPayResultRecordService
+        extends BaseService<CommissionPayResultRecordMapper, CommissionPayResultRecord> {
 
     /**
      *
@@ -44,7 +46,8 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
      * @param anPayDate
      * @return
      */
-    protected int saveCreatePayResultRecord(final Long anCustNo, final String anCustName, final String anOperOrg, final Long anPayResultId, final String anImportDate, final String anPayDate) {
+    protected int saveCreatePayResultRecord(final Long anCustNo, final String anCustName, final String anOperOrg,
+            final Long anPayResultId, final String anImportDate, final String anPayDate) {
         final Map<String, Object> param = new HashMap<>();
 
         param.put("importDate", anImportDate);
@@ -67,7 +70,8 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
      * @param anPayResultId
      * @param anPayResultRecords
      */
-    protected Map<String, Object> saveConfirmSuccessPayResultRecords(final Long anPayResultId, final List<Long> anPayResultRecords) {
+    protected Map<String, Object> saveConfirmSuccessPayResultRecords(final Long anPayResultId,
+            final List<Long> anPayResultRecords) {
         final Map<String, Object> conditionMap = new HashMap<>();
         conditionMap.put("payResultId", anPayResultId);
         conditionMap.put("id", anPayResultRecords);
@@ -79,8 +83,10 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
         int amount = 0;
         BigDecimal balance = BigDecimal.ZERO;
 
-        for (final CommissionPayResultRecord payResultRecord: payResultRecords) {
-            BTAssert.isTrue(BetterStringUtils.equals(CommissionPayResultRecordStatus.NORMAL, payResultRecord.getBusinStatus()), "数据状态不正确:[" + payResultRecord.getRecordRefNo() + "]");
+        for (final CommissionPayResultRecord payResultRecord : payResultRecords) {
+            BTAssert.isTrue(
+                    StringUtils.equals(CommissionPayResultRecordStatus.NORMAL, payResultRecord.getBusinStatus()),
+                    "数据状态不正确:[" + payResultRecord.getRecordRefNo() + "]");
 
             payResultRecord.setBusinStatus(CommissionPayResultRecordStatus.CONFIRM);
             payResultRecord.setPayResult(CommissionPayResultRecordStatus.PAY_SUCCESS);
@@ -105,7 +111,8 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
      * @param anPayResultId
      * @param anPayResultRecords
      */
-    protected Map<String, Object> saveConfirmFailurePayResultRecords(final Long anPayResultId, final List<Long> anPayResultRecords) {
+    protected Map<String, Object> saveConfirmFailurePayResultRecords(final Long anPayResultId,
+            final List<Long> anPayResultRecords) {
         final Map<String, Object> conditionMap = new HashMap<>();
         conditionMap.put("payResultId", anPayResultId);
         conditionMap.put("id", anPayResultRecords);
@@ -117,8 +124,10 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
         int amount = 0;
         BigDecimal balance = BigDecimal.ZERO;
 
-        for (final CommissionPayResultRecord payResultRecord: payResultRecords) {
-            BTAssert.isTrue(BetterStringUtils.equals(CommissionPayResultRecordStatus.NORMAL, payResultRecord.getBusinStatus()), "数据状态不正确:[" + payResultRecord.getRecordRefNo() + "]");
+        for (final CommissionPayResultRecord payResultRecord : payResultRecords) {
+            BTAssert.isTrue(
+                    StringUtils.equals(CommissionPayResultRecordStatus.NORMAL, payResultRecord.getBusinStatus()),
+                    "数据状态不正确:[" + payResultRecord.getRecordRefNo() + "]");
 
             payResultRecord.setBusinStatus(CommissionPayResultRecordStatus.CONFIRM);
             payResultRecord.setPayResult(CommissionPayResultRecordStatus.PAY_FAILURE);
@@ -143,12 +152,17 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
      * @param anPayResultId
      * @param anPayResultRecordId
      */
-    protected CommissionPayResultRecord saveSuccessToFailurePayResultRecord(final Long anPayResultId, final Long anPayResultRecordId) {
+    protected CommissionPayResultRecord saveSuccessToFailurePayResultRecord(final Long anPayResultId,
+            final Long anPayResultRecordId) {
         final CommissionPayResultRecord payResultRecord = this.selectByPrimaryKey(anPayResultRecordId);
         BTAssert.notNull(payResultRecord, "数据未找到！");
 
-        BTAssert.isTrue(BetterStringUtils.equals(CommissionPayResultRecordStatus.CONFIRM, payResultRecord.getBusinStatus()), "数据状态不正确:[" + payResultRecord.getRecordRefNo() + "]");
-        BTAssert.isTrue(BetterStringUtils.equals(CommissionPayResultRecordStatus.PAY_SUCCESS, payResultRecord.getPayResult()), "数据支付状态不正确:[" + payResultRecord.getRecordRefNo() + "]");
+        BTAssert.isTrue(
+                StringUtils.equals(CommissionPayResultRecordStatus.CONFIRM, payResultRecord.getBusinStatus()),
+                "数据状态不正确:[" + payResultRecord.getRecordRefNo() + "]");
+        BTAssert.isTrue(
+                StringUtils.equals(CommissionPayResultRecordStatus.PAY_SUCCESS, payResultRecord.getPayResult()),
+                "数据支付状态不正确:[" + payResultRecord.getRecordRefNo() + "]");
 
         payResultRecord.setPayResult(CommissionPayResultRecordStatus.PAY_FAILURE);
         payResultRecord.setPayTime(BetterDateUtils.getNumTime());
@@ -163,12 +177,17 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
      * @param anPayResultId
      * @param anPayResultRecordId
      */
-    protected CommissionPayResultRecord saveFailureToSuccessPayResultRecord(final Long anPayResultId, final Long anPayResultRecordId) {
+    protected CommissionPayResultRecord saveFailureToSuccessPayResultRecord(final Long anPayResultId,
+            final Long anPayResultRecordId) {
         final CommissionPayResultRecord payResultRecord = this.selectByPrimaryKey(anPayResultRecordId);
         BTAssert.notNull(payResultRecord, "数据未找到！");
 
-        BTAssert.isTrue(BetterStringUtils.equals(CommissionPayResultRecordStatus.CONFIRM, payResultRecord.getBusinStatus()), "数据状态不正确:[" + payResultRecord.getRecordRefNo() + "]");
-        BTAssert.isTrue(BetterStringUtils.equals(CommissionPayResultRecordStatus.PAY_FAILURE, payResultRecord.getPayResult()), "数据支付状态不正确:[" + payResultRecord.getRecordRefNo() + "]");
+        BTAssert.isTrue(
+                StringUtils.equals(CommissionPayResultRecordStatus.CONFIRM, payResultRecord.getBusinStatus()),
+                "数据状态不正确:[" + payResultRecord.getRecordRefNo() + "]");
+        BTAssert.isTrue(
+                StringUtils.equals(CommissionPayResultRecordStatus.PAY_FAILURE, payResultRecord.getPayResult()),
+                "数据支付状态不正确:[" + payResultRecord.getRecordRefNo() + "]");
 
         payResultRecord.setPayResult(CommissionPayResultRecordStatus.PAY_SUCCESS);
         payResultRecord.setPayTime(BetterDateUtils.getNumTime());
@@ -186,7 +205,8 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
      * @param anPageSize
      * @return
      */
-    protected Page<CommissionPayResultRecord> queryAllPayResultRecords(final Long anPayResultId, final int anFlag, final int anPageNum, final int anPageSize) {
+    protected Page<CommissionPayResultRecord> queryAllPayResultRecords(final Long anPayResultId, final int anFlag,
+            final int anPageNum, final int anPageSize) {
 
         final Map<String, Object> conditionMap = new HashMap<>();
         conditionMap.put("payResultId", anPayResultId);
@@ -201,7 +221,8 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
      * @param anPageSize
      * @return
      */
-    protected Page<CommissionPayResultRecord> queryUncheckPayResultRecords(final Map<String, Object> anParam, final Long anPayResultId, final int anFlag, final int anPageNum, final int anPageSize) {
+    protected Page<CommissionPayResultRecord> queryUncheckPayResultRecords(final Map<String, Object> anParam,
+            final Long anPayResultId, final int anFlag, final int anPageNum, final int anPageSize) {
 
         final Map<String, Object> conditionMap = new HashMap<>();
         conditionMap.put("payResultId", anPayResultId);
@@ -210,11 +231,11 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
         final String payTargetBankAccountName = (String) anParam.get("payTargetBankAccountName");
         final String payTargetBankAccount = (String) anParam.get("payTargetBankAccount");
 
-        if (BetterStringUtils.isNotBlank(payTargetBankAccountName)) {
+        if (StringUtils.isNotBlank(payTargetBankAccountName)) {
             conditionMap.put("LIKEpayTargetBankAccountName", "%" + payTargetBankAccountName + "%");
         }
 
-        if (BetterStringUtils.isNotBlank(payTargetBankAccount)) {
+        if (StringUtils.isNotBlank(payTargetBankAccount)) {
             conditionMap.put("LIKEpayTargetBankAccount", "%" + payTargetBankAccount + "%");
         }
 
@@ -228,7 +249,8 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
      * @param anPageSize
      * @return
      */
-    protected Page<CommissionPayResultRecord> querySuccessPayResultRecords(final Long anPayResultId, final int anFlag, final int anPageNum, final int anPageSize) {
+    protected Page<CommissionPayResultRecord> querySuccessPayResultRecords(final Long anPayResultId, final int anFlag,
+            final int anPageNum, final int anPageSize) {
         final Map<String, Object> conditionMap = new HashMap<>();
         conditionMap.put("payResultId", anPayResultId);
         conditionMap.put("businStatus", CommissionPayResultRecordStatus.CONFIRM);
@@ -244,7 +266,8 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
      * @param anPageSize
      * @return
      */
-    protected Page<CommissionPayResultRecord> queryFailurePayResultRecords(final Long anPayResultId, final int anFlag, final int anPageNum, final int anPageSize) {
+    protected Page<CommissionPayResultRecord> queryFailurePayResultRecords(final Long anPayResultId, final int anFlag,
+            final int anPageNum, final int anPageSize) {
         final Map<String, Object> conditionMap = new HashMap<>();
         conditionMap.put("payResultId", anPayResultId);
         conditionMap.put("businStatus", CommissionPayResultRecordStatus.CONFIRM);
@@ -260,15 +283,16 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
      * @param anPageSize
      * @return
      */
-    protected Page<CommissionPayResultRecord> queryAllPayResultRecords(final Long anCustNo, final String anPayDate,final String anPayStatus,final int anFlag, final int anPageNum, final int anPageSize) {
+    protected Page<CommissionPayResultRecord> queryAllPayResultRecords(final Long anCustNo, final String anPayDate,
+            final String anPayStatus, final int anFlag, final int anPageNum, final int anPageSize) {
 
         final Map<String, Object> conditionMap = new HashMap<>();
         conditionMap.put("payDate", anPayDate);
         conditionMap.put("custNo", anCustNo);
-        if(BetterStringUtils.isNotBlank(anPayStatus)){
+        if (StringUtils.isNotBlank(anPayStatus)) {
             conditionMap.put("payResult", anPayStatus);
         }
-        conditionMap.put("businStatus", new String[]{"0","1","2"});
+        conditionMap.put("businStatus", new String[] { "0", "1", "2" });
 
         return this.selectPropertyByPage(conditionMap, anPageNum, anPageSize, anFlag == 1);
     }
@@ -280,7 +304,8 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
      * @param anPageSize
      * @return
      */
-    protected Page<CommissionPayResultRecord> queryUncheckPayResultRecords(final Long anCustNo, final String anPayDate, final int anFlag, final int anPageNum, final int anPageSize) {
+    protected Page<CommissionPayResultRecord> queryUncheckPayResultRecords(final Long anCustNo, final String anPayDate,
+            final int anFlag, final int anPageNum, final int anPageSize) {
 
         final Map<String, Object> conditionMap = new HashMap<>();
         conditionMap.put("payDate", anPayDate);
@@ -297,7 +322,8 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
      * @param anPageSize
      * @return
      */
-    protected Page<CommissionPayResultRecord> querySuccessPayResultRecords(final Long anCustNo, final String anPayDate, final int anFlag, final int anPageNum, final int anPageSize) {
+    protected Page<CommissionPayResultRecord> querySuccessPayResultRecords(final Long anCustNo, final String anPayDate,
+            final int anFlag, final int anPageNum, final int anPageSize) {
         final Map<String, Object> conditionMap = new HashMap<>();
         conditionMap.put("payDate", anPayDate);
         conditionMap.put("custNo", anCustNo);
@@ -314,7 +340,8 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
      * @param anPageSize
      * @return
      */
-    protected Page<CommissionPayResultRecord> queryFailurePayResultRecords(final Long anCustNo, final String anPayDate, final int anFlag, final int anPageNum, final int anPageSize) {
+    protected Page<CommissionPayResultRecord> queryFailurePayResultRecords(final Long anCustNo, final String anPayDate,
+            final int anFlag, final int anPageNum, final int anPageSize) {
         final Map<String, Object> conditionMap = new HashMap<>();
         conditionMap.put("payDate", anPayDate);
         conditionMap.put("custNo", anCustNo);
@@ -357,7 +384,7 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
         this.mapper.writebackRecordStatus(anPayResultId);
     }
 
-    public Long saveRecordStatus(final Map<String,Object> anParam){
+    public Long saveRecordStatus(final Map<String, Object> anParam) {
         return this.mapper.saveRecordStatus(anParam);
     }
 
@@ -372,8 +399,8 @@ public class CommissionPayResultRecordService extends BaseService<CommissionPayR
 
         return Collections3.getFirst(this.selectByProperty(conditionMap));
     }
-    
-    public String findAllAuditResult(final Long anCustNo,final String anPayDate){
+
+    public String findAllAuditResult(final Long anCustNo, final String anPayDate) {
         return this.mapper.findAllAuditResult(anCustNo, anPayDate);
     }
 }

@@ -22,6 +22,7 @@ public class ScfElecReceivableRequestService extends ScfElecAgreeLocalService {
     private ScfReceivableRequestService requestService = null;
     private ScfContractTemplateService contractTemplateService = null;
 
+    @Override
     protected void subInit() {
         this.requestService = SpringContextHolder.getBean(ScfReceivableRequestService.class);
         this.contractTemplateService = SpringContextHolder.getBean(ScfContractTemplateService.class);
@@ -41,7 +42,7 @@ public class ScfElecReceivableRequestService extends ScfElecAgreeLocalService {
             operator = new CustOperatorInfo();
         }
         result.put("factoryOperator", operator);
-        
+
         // 封装供应商默认操作人
         CustOperatorInfo custoperator = requestService.findDefaultOperatorInfo(request.getCustNo());
         if (custoperator == null) {

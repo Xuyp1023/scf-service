@@ -20,7 +20,8 @@ public class DeliveryStatementDubboService implements IDeliveryStatementService 
     public String webQueryStatementList(Map<String, Object> anAnMap, String anFlag, int anPageNum, int anPageSize) {
 
         Map<String, Object> queryMap = RuleServiceDubboFilterInvoker.getInputObj();
-        return AjaxObject.newOkWithPage("投递账单查询成功", statementService.queryDeliveryStatementList(queryMap, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject.newOkWithPage("投递账单查询成功",
+                statementService.queryDeliveryStatementList(queryMap, anFlag, anPageNum, anPageSize)).toJson();
     }
 
 }

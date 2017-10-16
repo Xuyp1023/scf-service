@@ -15,57 +15,57 @@ import javax.persistence.*;
 @Table(name = "T_SCF_SUPPLIER_PUSH_DETAIL")
 public class ScfSupplierPushDetail implements BetterjrEntity {
     @Id
-    @Column(name = "ID",  columnDefinition="INTEGER" )
+    @Column(name = "ID", columnDefinition = "INTEGER")
     private Long id;
 
-    @Column(name = "C_ORDERID",  columnDefinition="VARCHAR" )
+    @Column(name = "C_ORDERID", columnDefinition = "VARCHAR")
     private String orderId;
 
-    @Column(name = "C_BUSIN_TYPE",  columnDefinition="VARCHAR" )
+    @Column(name = "C_BUSIN_TYPE", columnDefinition = "VARCHAR")
     private String businType;
 
-    @Column(name = "D_BEGIN_DATE",  columnDefinition="VARCHAR" )
+    @Column(name = "D_BEGIN_DATE", columnDefinition = "VARCHAR")
     private String beginDate;
 
-    @Column(name = "D_END_DATE",  columnDefinition="VARCHAR" )
+    @Column(name = "D_END_DATE", columnDefinition = "VARCHAR")
     private String endDate;
 
-    @Column(name = "C_AGENCYNO",  columnDefinition="VARCHAR" )
+    @Column(name = "C_AGENCYNO", columnDefinition = "VARCHAR")
     private String agencyNo;
 
-    @Column(name = "F_MONEY",  columnDefinition="DOUBLE" )
+    @Column(name = "F_MONEY", columnDefinition = "DOUBLE")
     private BigDecimal money;
 
-    @Column(name = "F_COSTRATE",  columnDefinition="VARCHAR" )
+    @Column(name = "F_COSTRATE", columnDefinition = "VARCHAR")
     private String costRate;
 
-    @Column(name = "C_BUSIN_STATUS",  columnDefinition="VARCHAR" )
+    @Column(name = "C_BUSIN_STATUS", columnDefinition = "VARCHAR")
     private String businStatus;
 
-    @Column(name = "D_REG_DATE",  columnDefinition="VARCHAR" )
+    @Column(name = "D_REG_DATE", columnDefinition = "VARCHAR")
     private String regDate;
 
-    @Column(name = "T_REG_TIME",  columnDefinition="VARCHAR" )
+    @Column(name = "T_REG_TIME", columnDefinition = "VARCHAR")
     private String regTime;
 
-    @Column(name = "D_MODIFY_DATE",  columnDefinition="VARCHAR" )
+    @Column(name = "D_MODIFY_DATE", columnDefinition = "VARCHAR")
     private String modifyDate;
 
-    @Column(name = "T_MODIFY_TIME",  columnDefinition="VARCHAR" )
+    @Column(name = "T_MODIFY_TIME", columnDefinition = "VARCHAR")
     private String modifyTime;
-    
-    @Column(name = "C_SENDNO",  columnDefinition="VARCHAR" )
-    private String sendNo;
-    
-    @Column(name = "C_RECEIVENO",  columnDefinition="VARCHAR" )
-    private String receiveNo;
-    
-    @Column(name = "C_REMARK",  columnDefinition="VARCHAR" )
-    private String remark;    
 
-    @Column(name = "L_PUSHID",  columnDefinition="INTEGER" )
+    @Column(name = "C_SENDNO", columnDefinition = "VARCHAR")
+    private String sendNo;
+
+    @Column(name = "C_RECEIVENO", columnDefinition = "VARCHAR")
+    private String receiveNo;
+
+    @Column(name = "C_REMARK", columnDefinition = "VARCHAR")
+    private String remark;
+
+    @Column(name = "L_PUSHID", columnDefinition = "INTEGER")
     private Long pushId;
-    
+
     @Transient
     private String custName;
     @Transient
@@ -78,7 +78,7 @@ public class ScfSupplierPushDetail implements BetterjrEntity {
     private String disMoney;
     @Transient
     private String billNo;
-    
+
     private static final long serialVersionUID = 1473315525514L;
 
     public Long getId() {
@@ -210,7 +210,8 @@ public class ScfSupplierPushDetail implements BetterjrEntity {
     }
 
     public String getDisDate() {
-        return BetterDateUtils.formatDate(BetterDateUtils.parseDate(this.beginDate), "yyyy年MM月dd日")+"至"+BetterDateUtils.formatDate(BetterDateUtils.parseDate(this.endDate), "yyyy年MM月dd日");
+        return BetterDateUtils.formatDate(BetterDateUtils.parseDate(this.beginDate), "yyyy年MM月dd日") + "至"
+                + BetterDateUtils.formatDate(BetterDateUtils.parseDate(this.endDate), "yyyy年MM月dd日");
     }
 
     public void setDisDate(String anDisDate) {
@@ -218,7 +219,7 @@ public class ScfSupplierPushDetail implements BetterjrEntity {
     }
 
     public String getDisMoney() {
-        return "￥"+CustDecimalJsonSerializer.format(this.money);
+        return "￥" + CustDecimalJsonSerializer.format(this.money);
     }
 
     public void setDisMoney(String anDisMoney) {
@@ -302,18 +303,29 @@ public class ScfSupplierPushDetail implements BetterjrEntity {
         }
         ScfSupplierPushDetail other = (ScfSupplierPushDetail) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getOrderId() == null ? other.getOrderId() == null : this.getOrderId().equals(other.getOrderId()))
-            && (this.getBusinType() == null ? other.getBusinType() == null : this.getBusinType().equals(other.getBusinType()))
-            && (this.getBeginDate() == null ? other.getBeginDate() == null : this.getBeginDate().equals(other.getBeginDate()))
-            && (this.getEndDate() == null ? other.getEndDate() == null : this.getEndDate().equals(other.getEndDate()))
-            && (this.getAgencyNo() == null ? other.getAgencyNo() == null : this.getAgencyNo().equals(other.getAgencyNo()))
-            && (this.getMoney() == null ? other.getMoney() == null : this.getMoney().equals(other.getMoney()))
-            && (this.getCostRate() == null ? other.getCostRate() == null : this.getCostRate().equals(other.getCostRate()))
-            && (this.getBusinStatus() == null ? other.getBusinStatus() == null : this.getBusinStatus().equals(other.getBusinStatus()))
-            && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()))
-            && (this.getRegTime() == null ? other.getRegTime() == null : this.getRegTime().equals(other.getRegTime()))
-            && (this.getModifyDate() == null ? other.getModifyDate() == null : this.getModifyDate().equals(other.getModifyDate()))
-            && (this.getModifyTime() == null ? other.getModifyTime() == null : this.getModifyTime().equals(other.getModifyTime()));
+                && (this.getOrderId() == null ? other.getOrderId() == null
+                        : this.getOrderId().equals(other.getOrderId()))
+                && (this.getBusinType() == null ? other.getBusinType() == null
+                        : this.getBusinType().equals(other.getBusinType()))
+                && (this.getBeginDate() == null ? other.getBeginDate() == null
+                        : this.getBeginDate().equals(other.getBeginDate()))
+                && (this.getEndDate() == null ? other.getEndDate() == null
+                        : this.getEndDate().equals(other.getEndDate()))
+                && (this.getAgencyNo() == null ? other.getAgencyNo() == null
+                        : this.getAgencyNo().equals(other.getAgencyNo()))
+                && (this.getMoney() == null ? other.getMoney() == null : this.getMoney().equals(other.getMoney()))
+                && (this.getCostRate() == null ? other.getCostRate() == null
+                        : this.getCostRate().equals(other.getCostRate()))
+                && (this.getBusinStatus() == null ? other.getBusinStatus() == null
+                        : this.getBusinStatus().equals(other.getBusinStatus()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()))
+                && (this.getRegTime() == null ? other.getRegTime() == null
+                        : this.getRegTime().equals(other.getRegTime()))
+                && (this.getModifyDate() == null ? other.getModifyDate() == null
+                        : this.getModifyDate().equals(other.getModifyDate()))
+                && (this.getModifyTime() == null ? other.getModifyTime() == null
+                        : this.getModifyTime().equals(other.getModifyTime()));
     }
 
     @Override
@@ -335,33 +347,32 @@ public class ScfSupplierPushDetail implements BetterjrEntity {
         result = prime * result + ((getModifyTime() == null) ? 0 : getModifyTime().hashCode());
         return result;
     }
-    
 
-    public void initDefValue(ScfAcceptBill scfAcceptBill){
-        this.id=SerialGenerator.getLongValue("pushDetail.id");
-        this.orderId=scfAcceptBill.getId()+"";
-        this.businType="1";// 0:订单，1票据，2应收账款，3签约提醒
-        this.beginDate=scfAcceptBill.getInvoiceDate();
-        this.endDate=scfAcceptBill.getEndDate();
-        this.money=scfAcceptBill.getBalance();
-        this.costRate=scfAcceptBill.getRatio().toString();
-        this.businStatus="1";
-        this.regDate=BetterDateUtils.getNumDate();
-        this.regTime=BetterDateUtils.getNumTime();
-        this.modifyDate=BetterDateUtils.getNumDate();
-        this.modifyTime=BetterDateUtils.getNumTime();
-        this.acceptor=scfAcceptBill.getAcceptor();
-        this.billNo=scfAcceptBill.getBillNo();
+    public void initDefValue(ScfAcceptBill scfAcceptBill) {
+        this.id = SerialGenerator.getLongValue("pushDetail.id");
+        this.orderId = scfAcceptBill.getId() + "";
+        this.businType = "1";// 0:订单，1票据，2应收账款，3签约提醒
+        this.beginDate = scfAcceptBill.getInvoiceDate();
+        this.endDate = scfAcceptBill.getEndDate();
+        this.money = scfAcceptBill.getBalance();
+        this.costRate = scfAcceptBill.getRatio().toString();
+        this.businStatus = "1";
+        this.regDate = BetterDateUtils.getNumDate();
+        this.regTime = BetterDateUtils.getNumTime();
+        this.modifyDate = BetterDateUtils.getNumDate();
+        this.modifyTime = BetterDateUtils.getNumTime();
+        this.acceptor = scfAcceptBill.getAcceptor();
+        this.billNo = scfAcceptBill.getBillNo();
     }
-    
-    public void initValue(String anOrderId,String anBusinType){
-        this.id=SerialGenerator.getLongValue("pushDetail.id");
-        this.orderId=anOrderId;
-        this.businType=anBusinType;
-        this.businStatus="1";
-        this.regDate=BetterDateUtils.getNumDate();
-        this.regTime=BetterDateUtils.getNumTime();
-        this.modifyDate=BetterDateUtils.getNumDate();
-        this.modifyTime=BetterDateUtils.getNumTime();
+
+    public void initValue(String anOrderId, String anBusinType) {
+        this.id = SerialGenerator.getLongValue("pushDetail.id");
+        this.orderId = anOrderId;
+        this.businType = anBusinType;
+        this.businStatus = "1";
+        this.regDate = BetterDateUtils.getNumDate();
+        this.regTime = BetterDateUtils.getNumTime();
+        this.modifyDate = BetterDateUtils.getNumDate();
+        this.modifyTime = BetterDateUtils.getNumTime();
     }
 }

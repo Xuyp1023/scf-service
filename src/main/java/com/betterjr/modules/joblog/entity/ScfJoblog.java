@@ -167,40 +167,33 @@ public class ScfJoblog implements BetterjrEntity {
         ScfJoblog other = (ScfJoblog) obj;
         if (this.businStatus == null) {
             if (other.businStatus != null) return false;
-        }
-        else if (!this.businStatus.equals(other.businStatus)) return false;
+        } else if (!this.businStatus.equals(other.businStatus)) return false;
         if (this.dataType == null) {
             if (other.dataType != null) return false;
-        }
-        else if (!this.dataType.equals(other.dataType)) return false;
+        } else if (!this.dataType.equals(other.dataType)) return false;
         if (this.id == null) {
             if (other.id != null) return false;
-        }
-        else if (!this.id.equals(other.id)) return false;
+        } else if (!this.id.equals(other.id)) return false;
         if (this.orderBy == null) {
             if (other.orderBy != null) return false;
-        }
-        else if (!this.orderBy.equals(other.orderBy)) return false;
+        } else if (!this.orderBy.equals(other.orderBy)) return false;
         if (this.regDate == null) {
             if (other.regDate != null) return false;
-        }
-        else if (!this.regDate.equals(other.regDate)) return false;
+        } else if (!this.regDate.equals(other.regDate)) return false;
         if (this.regTime == null) {
             if (other.regTime != null) return false;
-        }
-        else if (!this.regTime.equals(other.regTime)) return false;
+        } else if (!this.regTime.equals(other.regTime)) return false;
         if (this.showMessage == null) {
             if (other.showMessage != null) return false;
-        }
-        else if (!this.showMessage.equals(other.showMessage)) return false;
+        } else if (!this.showMessage.equals(other.showMessage)) return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "ScfJoblog [regDate=" + this.regDate + ", regTime=" + this.regTime + ", showMessage=" + this.showMessage + ", businStatus="
-                + this.businStatus + ", orderBy=" + this.orderBy + ", dataType=" + this.dataType + ", businType=" + this.businType + ", id=" + this.id
-                + "]";
+        return "ScfJoblog [regDate=" + this.regDate + ", regTime=" + this.regTime + ", showMessage=" + this.showMessage
+                + ", businStatus=" + this.businStatus + ", orderBy=" + this.orderBy + ", dataType=" + this.dataType
+                + ", businType=" + this.businType + ", id=" + this.id + "]";
     }
 
     public void initAddValue() {

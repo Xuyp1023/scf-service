@@ -5,7 +5,8 @@ import java.util.List;
 public abstract class PayRemoteService extends RemoteService {
     private static final long serialVersionUID = 7362543651831413605L;
 
-    public String identifySend(String anIdentType, String anIdentNo, String anBankAcco, String anBankAccoName, String anCallbackUrl) {
+    public String identifySend(String anIdentType, String anIdentNo, String anBankAcco, String anBankAccoName,
+            String anCallbackUrl) {
 
         return null;
     }
@@ -15,7 +16,8 @@ public abstract class PayRemoteService extends RemoteService {
         return null;
     }
 
-    public String resetPasswordSend(String anIdentType, String anIdentNo, String anBankAcco, String anBankAccoName, String anCallbackUrl) {
+    public String resetPasswordSend(String anIdentType, String anIdentNo, String anBankAcco, String anBankAccoName,
+            String anCallbackUrl) {
 
         return null;
     }
@@ -25,7 +27,8 @@ public abstract class PayRemoteService extends RemoteService {
         return null;
     }
 
-    public String bindSend(String anIdentType, String anIdentNo, String anBankAcco, String anBankAccoName, String anCallbackUrl) {
+    public String bindSend(String anIdentType, String anIdentNo, String anBankAcco, String anBankAccoName,
+            String anCallbackUrl) {
 
         return null;
     }
@@ -55,26 +58,26 @@ public abstract class PayRemoteService extends RemoteService {
         return null;
     }
 
-    public String paySend(String anRequestNo, String anBusinFlag, String anIdentType, String anIdentNo, String anBankAcco, String anBankAccoName,
-            String anApplAmount, String anFundCode) {
+    public String paySend(String anRequestNo, String anBusinFlag, String anIdentType, String anIdentNo,
+            String anBankAcco, String anBankAccoName, String anApplAmount, String anFundCode) {
 
         return null;
     }
 
-    public String payReceive(String anRequestNo, String anBusinFlag, String anIdentType, String anIdentNo, String anBankAcco, String anBankAccoName,
-            String anApplAmount, String anFundCode) {
+    public String payReceive(String anRequestNo, String anBusinFlag, String anIdentType, String anIdentNo,
+            String anBankAcco, String anBankAccoName, String anApplAmount, String anFundCode) {
 
         return null;
     }
 
-    public String drawSend(String anRequestNo, String anBusinFlag, String anIdentType, String anIdentNo, String anBankAcco, String anBankAccoName,
-            String anApplAmount, String anFundCode) {
+    public String drawSend(String anRequestNo, String anBusinFlag, String anIdentType, String anIdentNo,
+            String anBankAcco, String anBankAccoName, String anApplAmount, String anFundCode) {
 
         return null;
     }
 
-    public String drawReceive(String anRequestNo, String anBusinFlag, String anIdentType, String anIdentNo, String anBankAcco, String anBankAccoName,
-            String anApplAmount, String anFundCode) {
+    public String drawReceive(String anRequestNo, String anBusinFlag, String anIdentType, String anIdentNo,
+            String anBankAcco, String anBankAccoName, String anApplAmount, String anFundCode) {
 
         return null;
     }
@@ -94,13 +97,14 @@ public abstract class PayRemoteService extends RemoteService {
         return null;
     }
 
-    public String payBackReceive(String anRequestNo, String anIdentType, String anIdentNo, String anBankAcco, String anBankAccoName,
-            String anApplAmount) {
+    public String payBackReceive(String anRequestNo, String anIdentType, String anIdentNo, String anBankAcco,
+            String anBankAccoName, String anApplAmount) {
 
         return null;
     }
 
-    public String signSend(String anIdentType, String anIdentNo, String anBankAcco, String anBankAccoName, String anCallbackUrl) {
+    public String signSend(String anIdentType, String anIdentNo, String anBankAcco, String anBankAccoName,
+            String anCallbackUrl) {
 
         return null;
     }

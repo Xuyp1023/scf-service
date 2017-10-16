@@ -9,37 +9,36 @@ import com.betterjr.modules.flie.annotation.ExcelImportTypeAnno;
  * @author lenovo
  *
  */
-public class ExcelImportType implements Serializable{
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3052194988428793027L;
-	private Integer excelBeginRow;
+public class ExcelImportType implements Serializable {
 
-	public Integer getExcelBeginRow() {
-		return excelBeginRow;
-	}
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3052194988428793027L;
+    private Integer excelBeginRow;
 
-	public void setExcelBeginRow(Integer excelBeginRow) {
-		this.excelBeginRow = excelBeginRow;
-	}
-	
-	
-	@SuppressWarnings("all")
-	public static ExcelImportType createImportType(Class clazz){
-		
-		ExcelImportType importType=new ExcelImportType();
-		
-		if(clazz.isAnnotationPresent(ExcelImportTypeAnno.class)){
-			
-			ExcelImportTypeAnno anno = (ExcelImportTypeAnno) clazz.getAnnotation(ExcelImportTypeAnno.class);
-			
-			importType.setExcelBeginRow(anno.excelBeginRow());
-			
-		}
-		return importType;
-		
-	}
+    public Integer getExcelBeginRow() {
+        return excelBeginRow;
+    }
+
+    public void setExcelBeginRow(Integer excelBeginRow) {
+        this.excelBeginRow = excelBeginRow;
+    }
+
+    @SuppressWarnings("all")
+    public static ExcelImportType createImportType(Class clazz) {
+
+        ExcelImportType importType = new ExcelImportType();
+
+        if (clazz.isAnnotationPresent(ExcelImportTypeAnno.class)) {
+
+            ExcelImportTypeAnno anno = (ExcelImportTypeAnno) clazz.getAnnotation(ExcelImportTypeAnno.class);
+
+            importType.setExcelBeginRow(anno.excelBeginRow());
+
+        }
+        return importType;
+
+    }
 
 }

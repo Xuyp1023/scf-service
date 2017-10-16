@@ -19,6 +19,7 @@ public class ScfEnquiryObjectService extends BaseService<ScfEnquiryObjectMapper,
 
     @Autowired
     private CustAccountService custAccountService;
+
     /**
      * 新增
      * @param id
@@ -41,7 +42,7 @@ public class ScfEnquiryObjectService extends BaseService<ScfEnquiryObjectMapper,
         this.updateByPrimaryKeySelective(object);
         return object;
     }
-    
+
     /**
      * 分页查询
      * @param anMap
@@ -51,7 +52,7 @@ public class ScfEnquiryObjectService extends BaseService<ScfEnquiryObjectMapper,
      * @return
      */
     public Page<ScfEnquiryObject> queryList(Map<String, Object> anMap, int anFlag, int anPageNum, int anPageSize) {
-       return this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1==anFlag);
+        return this.selectPropertyByPage(anMap, anPageNum, anPageSize, 1 == anFlag);
     }
 
     /**
@@ -62,7 +63,7 @@ public class ScfEnquiryObjectService extends BaseService<ScfEnquiryObjectMapper,
     public ScfEnquiryObject findDetail(Long id) {
         return this.selectByPrimaryKey(id);
     }
-    
+
     /**
      * 根据询价编号和意向企业获取关系信息
      * @param id
@@ -76,7 +77,7 @@ public class ScfEnquiryObjectService extends BaseService<ScfEnquiryObjectMapper,
         object.setFactorName(custAccountService.queryCustName(factorNo));
         return object;
     }
-    
+
     /**
      * 查询(无分页)
      * @param anMap
@@ -85,8 +86,8 @@ public class ScfEnquiryObjectService extends BaseService<ScfEnquiryObjectMapper,
     public List<ScfEnquiryObject> findList(Map<String, Object> anMap) {
         return this.selectByClassProperty(ScfEnquiryObject.class, anMap);
     }
-    
-    public ScfEnquiryObject find(Map<String, Object> anMap){
+
+    public ScfEnquiryObject find(Map<String, Object> anMap) {
         ScfEnquiryObject object = Collections3.getFirst(this.findList(anMap));
         object.setFactorName(custAccountService.queryCustName(object.getFactorNo()));
         return object;

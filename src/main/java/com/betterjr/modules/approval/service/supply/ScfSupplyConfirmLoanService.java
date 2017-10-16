@@ -11,18 +11,18 @@ import com.betterjr.modules.loan.helper.RequestLastStatus;
 import com.betterjr.modules.loan.helper.RequestTradeStatus;
 
 @Service
-public class ScfSupplyConfirmLoanService extends ScfBaseApprovalService{
-	
-	public void processPass(ScfLoan loan){
-		BTAssert.notNull(loan, "放款信息不能为空！");
-        //requestService.saveConfirmLoan(loan);
-        this.updateRequestStatus(loan.getRequestNo(), RequestTradeStatus.FINISH_LOAN.getCode(), RequestLastStatus.LOAN.getCode());
+public class ScfSupplyConfirmLoanService extends ScfBaseApprovalService {
+
+    public void processPass(ScfLoan loan) {
+        BTAssert.notNull(loan, "放款信息不能为空！");
+        // requestService.saveConfirmLoan(loan);
+        this.updateRequestStatus(loan.getRequestNo(), RequestTradeStatus.FINISH_LOAN.getCode(),
+                RequestLastStatus.LOAN.getCode());
         this.pushOrderInfo(requestService.findRequestByRequestNo(loan.getRequestNo()));
-	}
-	
-	public void processReject(Map<String, Object> anContext) {
-		//TODO 
-	}
-	
+    }
+
+    public void processReject(Map<String, Object> anContext) {
+        // TODO
+    }
 
 }

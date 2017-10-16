@@ -15,7 +15,7 @@ public interface RemoteFieldInfo extends java.io.Serializable {
     public Object getValue();
 
     public boolean custStyle();
-    
+
     public String getWorkStyle();
 
     public FaceDataStyle getDataStyle();

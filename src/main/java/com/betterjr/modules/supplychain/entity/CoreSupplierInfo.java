@@ -177,8 +177,8 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
     /**
      * 操作员所在机构，证书登录，则是证书的企业名称O字段
      */
-    @Column(name = "C_OPERORG",  columnDefinition="VARCHAR" )
-    @MetaData( value="操作员所在机构", comments = "操作员所在机构，证书登录，则是证书的企业名称O字段")
+    @Column(name = "C_OPERORG", columnDefinition = "VARCHAR")
+    @MetaData(value = "操作员所在机构", comments = "操作员所在机构，证书登录，则是证书的企业名称O字段")
     private String operOrg;
 
     @JsonIgnore
@@ -244,7 +244,6 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
     public void setCorpName(final String corpName) {
         this.corpName = corpName == null ? null : corpName.trim();
     }
-
 
     public String getProvinceName() {
         return provinceName;
@@ -408,7 +407,6 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         this.coreOperOrg = coreOperOrg == null ? null : coreOperOrg.trim();
     }
 
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
@@ -457,27 +455,44 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         }
         final CoreSupplierInfo other = (CoreSupplierInfo) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-                && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null : this.getCoreCustNo().equals(other.getCoreCustNo()))
+                && (this.getCoreCustNo() == null ? other.getCoreCustNo() == null
+                        : this.getCoreCustNo().equals(other.getCoreCustNo()))
                 && (this.getBtNo() == null ? other.getBtNo() == null : this.getBtNo().equals(other.getBtNo()))
                 && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-                && (this.getCustName() == null ? other.getCustName() == null : this.getCustName().equals(other.getCustName()))
+                && (this.getCustName() == null ? other.getCustName() == null
+                        : this.getCustName().equals(other.getCustName()))
                 && (this.getCorpNo() == null ? other.getCorpNo() == null : this.getCorpNo().equals(other.getCorpNo()))
-                && (this.getCorpName() == null ? other.getCorpName() == null : this.getCorpName().equals(other.getCorpName()))
-                && (this.getServiceClass() == null ? other.getServiceClass() == null : this.getServiceClass().equals(other.getServiceClass()))
-                && (this.getProvinceName() == null ? other.getProvinceName() == null : this.getProvinceName().equals(other.getProvinceName()))
-                && (this.getCityName() == null ? other.getCityName() == null : this.getCityName().equals(other.getCityName()))
-                && (this.getContName() == null ? other.getContName() == null : this.getContName().equals(other.getContName()))
-                && (this.getContIdentType() == null ? other.getContIdentType() == null : this.getContIdentType().equals(other.getContIdentType()))
-                && (this.getContIdentNo() == null ? other.getContIdentNo() == null : this.getContIdentNo().equals(other.getContIdentNo()))
-                && (this.getContPhone() == null ? other.getContPhone() == null : this.getContPhone().equals(other.getContPhone()))
+                && (this.getCorpName() == null ? other.getCorpName() == null
+                        : this.getCorpName().equals(other.getCorpName()))
+                && (this.getServiceClass() == null ? other.getServiceClass() == null
+                        : this.getServiceClass().equals(other.getServiceClass()))
+                && (this.getProvinceName() == null ? other.getProvinceName() == null
+                        : this.getProvinceName().equals(other.getProvinceName()))
+                && (this.getCityName() == null ? other.getCityName() == null
+                        : this.getCityName().equals(other.getCityName()))
+                && (this.getContName() == null ? other.getContName() == null
+                        : this.getContName().equals(other.getContName()))
+                && (this.getContIdentType() == null ? other.getContIdentType() == null
+                        : this.getContIdentType().equals(other.getContIdentType()))
+                && (this.getContIdentNo() == null ? other.getContIdentNo() == null
+                        : this.getContIdentNo().equals(other.getContIdentNo()))
+                && (this.getContPhone() == null ? other.getContPhone() == null
+                        : this.getContPhone().equals(other.getContPhone()))
                 && (this.getFaxNo() == null ? other.getFaxNo() == null : this.getFaxNo().equals(other.getFaxNo()))
-                && (this.getContMobileNo() == null ? other.getContMobileNo() == null : this.getContMobileNo().equals(other.getContMobileNo()))
-                && (this.getContEmail() == null ? other.getContEmail() == null : this.getContEmail().equals(other.getContEmail()))
-                && (this.getAddress() == null ? other.getAddress() == null : this.getAddress().equals(other.getAddress()))
-                && (this.getUserStatus() == null ? other.getUserStatus() == null : this.getUserStatus().equals(other.getUserStatus()))
-                && (this.getUserFlag() == null ? other.getUserFlag() == null : this.getUserFlag().equals(other.getUserFlag()))
-                && (this.getCoreOperOrg() == null ? other.getCoreOperOrg() == null : this.getCoreOperOrg().equals(other.getCoreOperOrg()))
-                && (this.getRegDate() == null ? other.getRegDate() == null : this.getRegDate().equals(other.getRegDate()));
+                && (this.getContMobileNo() == null ? other.getContMobileNo() == null
+                        : this.getContMobileNo().equals(other.getContMobileNo()))
+                && (this.getContEmail() == null ? other.getContEmail() == null
+                        : this.getContEmail().equals(other.getContEmail()))
+                && (this.getAddress() == null ? other.getAddress() == null
+                        : this.getAddress().equals(other.getAddress()))
+                && (this.getUserStatus() == null ? other.getUserStatus() == null
+                        : this.getUserStatus().equals(other.getUserStatus()))
+                && (this.getUserFlag() == null ? other.getUserFlag() == null
+                        : this.getUserFlag().equals(other.getUserFlag()))
+                && (this.getCoreOperOrg() == null ? other.getCoreOperOrg() == null
+                        : this.getCoreOperOrg().equals(other.getCoreOperOrg()))
+                && (this.getRegDate() == null ? other.getRegDate() == null
+                        : this.getRegDate().equals(other.getRegDate()));
     }
 
     @Override
@@ -520,7 +535,7 @@ public class CoreSupplierInfo implements ScfClientDataParentFace {
         this.regDate = BetterDateUtils.getNumDate();
         this.modiDate = BetterDateUtils.getNumDateTime();
         this.custNo = MathExtend.defaultLongZero(this.custNo);
-        this.userStatus="1";
+        this.userStatus = "1";
     }
 
     @Override

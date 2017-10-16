@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.agreement.entity.ScfRequestProtacal;
 
 @BetterjrMapper
-public interface ScfRequestProtacalMapper extends Mapper<ScfRequestProtacal> {
-}
+public interface ScfRequestProtacalMapper extends Mapper<ScfRequestProtacal> {}

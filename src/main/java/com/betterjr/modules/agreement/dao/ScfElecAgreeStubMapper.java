@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.agreement.entity.ScfElecAgreeStub;
 
 @BetterjrMapper
-public interface ScfElecAgreeStubMapper extends Mapper<ScfElecAgreeStub> {
-}
+public interface ScfElecAgreeStubMapper extends Mapper<ScfElecAgreeStub> {}

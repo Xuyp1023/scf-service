@@ -18,15 +18,18 @@ public interface RemoteDeSerializer {
 
     public String getReturnMsg();
 
-    public void init(WorkFarFunction anFunc, RemoteConnection anConn , Map<String, FarConfigInfo> anConfigInfo, CustKeyManager anKeyManager);
+    public void init(WorkFarFunction anFunc, RemoteConnection anConn, Map<String, FarConfigInfo> anConfigInfo,
+            CustKeyManager anKeyManager);
 
     public void initParameter(Map anConfigInfo, CustKeyManager anKeyManager);
+
     /**
      * 获取处理结果
      * 
      * @return
      */
     public List<Map<String, Object>> readResult();
-    public   WSInfo readInput(Map<String, String> formPara, WorkFarFaceInfo faceInfo);
+
+    public WSInfo readInput(Map<String, String> formPara, WorkFarFaceInfo faceInfo);
 
 }

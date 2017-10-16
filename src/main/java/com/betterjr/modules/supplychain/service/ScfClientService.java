@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,11 +77,12 @@ public class ScfClientService {
      */
     public List<ScfClientDataDetail> findUnCheckAccount(final Map anMap) {
         final List<ScfClientDataDetail> result = new ArrayList();
-        final String operOrg = (String)anMap.get(ATTACH_DATA);
-        final CoreCustInfo  coreCustInfo = findCoreCustInfoByOperOrg(operOrg);
+        final String operOrg = (String) anMap.get(ATTACH_DATA);
+        final CoreCustInfo coreCustInfo = findCoreCustInfoByOperOrg(operOrg);
 
         if (worked == Boolean.FALSE) {
-            for (final CustTempEnrollInfo tmpEnroll : this.supplyAccoService.findUncheckedAccount(coreCustInfo.getCustNo())) {
+            for (final CustTempEnrollInfo tmpEnroll : this.supplyAccoService
+                    .findUncheckedAccount(coreCustInfo.getCustNo())) {
 
                 result.add(createClientDetail(tmpEnroll));
             }
@@ -92,7 +94,7 @@ public class ScfClientService {
 
     public static CoreCustInfo findCoreCustInfoByOperOrg(final String anOperOrg) {
         final DictItemInfo itemInfo = DictUtils.getDictItem(FACTOR_CORE_CUSTINFO, anOperOrg);
-        logger.info("findCoreCustInfoByOperOrg-itemInfo:"+itemInfo);
+        logger.info("findCoreCustInfoByOperOrg-itemInfo:" + itemInfo);
         final CoreCustInfo custInfo = new CoreCustInfo();
         if (itemInfo != null) {
             custInfo.setOperOrg(anOperOrg);
@@ -100,29 +102,29 @@ public class ScfClientService {
             custInfo.setCustNo(Long.parseLong(itemInfo.getItemCode()));
             custInfo.setPartnerCode(itemInfo.getSubject());
         }
-        logger.info("findCoreCustInfoByOperOrg-custInfo:"+custInfo);
+        logger.info("findCoreCustInfoByOperOrg-custInfo:" + custInfo);
         return custInfo;
     }
 
     public static Map initConverter() {
         final Map<String, ClientDataConverter> ccMap = new LinkedHashMap();
-        ccMap.put("account", new ClientDataConverter<CoreSupplierInfo>(new TypeReference<List<SupplyInfo>>() {
-        }, CoreSupplierInfo.class));
+        ccMap.put("account", new ClientDataConverter<CoreSupplierInfo>(new TypeReference<List<SupplyInfo>>() {},
+                CoreSupplierInfo.class));
 
-        ccMap.put("accountBank", new ClientDataConverter<ScfSupplierBank>(new TypeReference<List<SupplyBankInfo>>() {
-        }, ScfSupplierBank.class));
+        ccMap.put("accountBank", new ClientDataConverter<ScfSupplierBank>(new TypeReference<List<SupplyBankInfo>>() {},
+                ScfSupplierBank.class));
 
-        ccMap.put("acceptBill", new ClientDataConverter<ScfAcceptBill>(new TypeReference<List<SupplyAcceptBill>>() {
-        }, ScfAcceptBill.class));
+        ccMap.put("acceptBill", new ClientDataConverter<ScfAcceptBill>(new TypeReference<List<SupplyAcceptBill>>() {},
+                ScfAcceptBill.class));
 
-        ccMap.put("accountBankFlow", new ClientDataConverter<ScfBankPaymentFlow>(new TypeReference<List<SupplyPaymentInfo>>() {
-        }, ScfBankPaymentFlow.class));
+        ccMap.put("accountBankFlow", new ClientDataConverter<ScfBankPaymentFlow>(
+                new TypeReference<List<SupplyPaymentInfo>>() {}, ScfBankPaymentFlow.class));
 
-        ccMap.put("processCoreCorp", new ClientDataConverter<CustCoreCorpInfo>(new TypeReference<List<CustCoreCorp>>() {
-        }, CustCoreCorpInfo.class));
+        ccMap.put("processCoreCorp", new ClientDataConverter<CustCoreCorpInfo>(
+                new TypeReference<List<CustCoreCorp>>() {}, CustCoreCorpInfo.class));
 
-        ccMap.put("accountPayStream", new ClientDataConverter<ScfCapitalFlow>(new TypeReference<List<ScfCapitalFlowInfo>>() {
-        }, ScfCapitalFlow.class));
+        ccMap.put("accountPayStream", new ClientDataConverter<ScfCapitalFlow>(
+                new TypeReference<List<ScfCapitalFlowInfo>>() {}, ScfCapitalFlow.class));
 
         return ccMap;
     }
@@ -153,9 +155,10 @@ public class ScfClientService {
     public List<ScfClientDataDetail> findWorkAccount(final Map anMap) {
         final List<ScfClientDataDetail> result = new ArrayList();
         final ScfClientDataProcess clientData = BeanMapper.map(anMap, ScfClientDataProcess.class);
-        final String operOrg = (String)anMap.get(ATTACH_DATA);
-        final CoreCustInfo  coreCustInfo = findCoreCustInfoByOperOrg(operOrg);
-        final List<CoreDataProcessDetail> tmpDetailList = dataDetailProcessService.findProcessDetailByProc(operOrg, clientData);
+        final String operOrg = (String) anMap.get(ATTACH_DATA);
+        final CoreCustInfo coreCustInfo = findCoreCustInfoByOperOrg(operOrg);
+        final List<CoreDataProcessDetail> tmpDetailList = dataDetailProcessService.findProcessDetailByProc(operOrg,
+                clientData);
         final Multimap<String, Collection> mutMap = ReflectionUtils.listConvertToMuiltMap(tmpDetailList, "btNo");
         Collection cc;
         for (final ScfSupplierBank bank : this.supplierBankService.findScfBankByCoreOperOrg(coreCustInfo.getCustNo())) {
@@ -169,14 +172,15 @@ public class ScfClientService {
         return result;
     }
 
-    private boolean checkProcessed(final Collection<CoreDataProcessDetail> anCc, final String anBankAccount, final String anWorkType) {
+    private boolean checkProcessed(final Collection<CoreDataProcessDetail> anCc, final String anBankAccount,
+            final String anWorkType) {
         if (Collections3.isEmpty(anCc) || (" 1".indexOf(anWorkType) > 0)) {
 
             return true;
         }
 
         for (final CoreDataProcessDetail processDetail : anCc) {
-            if (BetterStringUtils.isNotBlank(processDetail.getBankAccount())) {
+            if (StringUtils.isNotBlank(processDetail.getBankAccount())) {
 
                 return processDetail.getBankAccount().equalsIgnoreCase(anBankAccount) == false;
             }
@@ -201,7 +205,7 @@ public class ScfClientService {
      * @return
      */
     public boolean saveProcessPushData(final Map anMap) {
-        logger.info("saveProcessPushData data is :"+anMap);
+        logger.info("saveProcessPushData data is :" + anMap);
 
         return processData(anMap, false);
     }
@@ -213,10 +217,10 @@ public class ScfClientService {
      * @return
      */
     public boolean saveProcessCoreCorp(final Map anMap) {
-        logger.info("saveProcessPushData data is :"+anMap);
+        logger.info("saveProcessPushData data is :" + anMap);
 
         processData(anMap, false);
-        final String operOrg = (String)anMap.get(ATTACH_DATA);
+        final String operOrg = (String) anMap.get(ATTACH_DATA);
         final ScfClientDataProcess dataProcess = BeanMapper.map(anMap, ScfClientDataProcess.class);
         this.dataProcessLogService.processWorkStatus(operOrg, dataProcess.getWorkType(), dataProcess.getWorkStatus());
         return true;
@@ -238,48 +242,45 @@ public class ScfClientService {
         ScfClientDataDetail detail;
         int workCount = 0;
         final Map<String, Object> obj = (Map) anMap.get("data");
-        logger.info("processData-obj:"+obj);
+        logger.info("processData-obj:" + obj);
         String processType;
-        final String operOrg = (String)anMap.get(ATTACH_DATA);
-        logger.info("processData-operOrg:"+operOrg);
+        final String operOrg = (String) anMap.get(ATTACH_DATA);
+        logger.info("processData-operOrg:" + operOrg);
         for (final Map.Entry ent : obj.entrySet()) {
             final Collection tmpList = (Collection) ent.getValue();
-            logger.info("processData-tmpList:"+tmpList);
+            logger.info("processData-tmpList:" + tmpList);
             dataCover = coverterMap.get(ent.getKey());
             processType = (String) ent.getKey();
             for (final Object objx : tmpList) {
                 if (objx instanceof Map) {
                     detail = BeanMapper.map(objx, ScfClientDataDetail.class);
                     if ("1".equals(detail.getWorkStatus())) {
-                        try{
+                        try {
                             final String tmpData = (String) ((Map) objx).get("data");
                             final List tmpValues = dataCover.convert(tmpData);
-                            if ("processCoreCorp".equalsIgnoreCase(processType)){
+                            if ("processCoreCorp".equalsIgnoreCase(processType)) {
                                 clientHelpService.saveCoreCorpData(processType, detail, tmpValues, operOrg);
-                            }
-                            else{
+                            } else {
                                 clientHelpService.saveCustomerData(processType, detail, tmpValues, operOrg);
                             }
                             workCount = tmpValues.size();
-                        }catch(final Exception ex){
-                            logger.error("dataCover :" + ent.getKey(),ex);
                         }
-                    }
-                    else if ("2".equals(detail.getWorkStatus())) {
+                        catch (final Exception ex) {
+                            logger.error("dataCover :" + ent.getKey(), ex);
+                        }
+                    } else if ("2".equals(detail.getWorkStatus())) {
                         this.dataDetailProcessService.saveProcessDetail(operOrg, processType, detail);
                         continue;
-                    }
-                    else {
+                    } else {
                         workCount = 0;
                     }
                     if (anBatch) {
                         detail.setCount(workCount);
                         // detail.setWorkStatus("1");
                         this.dataDetailProcessService.saveProcessDetail(operOrg, processType, detail);
-                    }
-                    else if ("account".equals(ent.getKey())) {
-                        supplyAccoService.saveCheckedStatus(detail.getBankAccName(), detail.getBankAcc(), operOrg, detail.getBtCustId(),
-                                "1".equals(detail.getWorkStatus()));
+                    } else if ("account".equals(ent.getKey())) {
+                        supplyAccoService.saveCheckedStatus(detail.getBankAccName(), detail.getBankAcc(), operOrg,
+                                detail.getBtCustId(), "1".equals(detail.getWorkStatus()));
                     }
                 }
             }
@@ -296,7 +297,7 @@ public class ScfClientService {
      */
     public boolean saveBatchProcessData(final Map anMap) {
         processData(anMap, true);
-        final String operOrg = (String)anMap.get(ATTACH_DATA);
+        final String operOrg = (String) anMap.get(ATTACH_DATA);
         final ScfClientDataProcess dataProcess = BeanMapper.map(anMap, ScfClientDataProcess.class);
         this.dataProcessLogService.processWorkStatus(operOrg, dataProcess.getWorkType(), dataProcess.getWorkStatus());
 
@@ -328,7 +329,7 @@ public class ScfClientService {
 
     public List<ScfClientDataProcess> findDataProcess(final Map anMap) {
         final List<ScfClientDataProcess> result = new ArrayList();
-        final String operOrg = (String)anMap.get(ATTACH_DATA);
+        final String operOrg = (String) anMap.get(ATTACH_DATA);
         for (final CoreDataProcessInfo data : this.dataProcessLogService.findCoreDataProcess(operOrg)) {
 
             result.add(createDataProcess(data));

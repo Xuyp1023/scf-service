@@ -5,7 +5,7 @@ import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.BeanMapper;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.betterjr.modules.supplychain.data.ScfClientDataDetail;
- 
+
 import javax.persistence.*;
 
 @Access(AccessType.FIELD)
@@ -229,16 +229,24 @@ public class CoreDataProcessDetail implements BetterjrEntity {
         }
         CoreDataProcessDetail other = (CoreDataProcessDetail) that;
         return (this.getOperOrg() == null ? other.getOperOrg() == null : this.getOperOrg().equals(other.getOperOrg()))
-                && (this.getProcessType() == null ? other.getProcessType() == null : this.getProcessType().equals(other.getProcessType()))
+                && (this.getProcessType() == null ? other.getProcessType() == null
+                        : this.getProcessType().equals(other.getProcessType()))
                 && (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-                && (this.getWorkDate() == null ? other.getWorkDate() == null : this.getWorkDate().equals(other.getWorkDate()))
-                && (this.getWorkStatus() == null ? other.getWorkStatus() == null : this.getWorkStatus().equals(other.getWorkStatus()))
-                && (this.getBankAccount() == null ? other.getBankAccount() == null : this.getBankAccount().equals(other.getBankAccount()))
+                && (this.getWorkDate() == null ? other.getWorkDate() == null
+                        : this.getWorkDate().equals(other.getWorkDate()))
+                && (this.getWorkStatus() == null ? other.getWorkStatus() == null
+                        : this.getWorkStatus().equals(other.getWorkStatus()))
+                && (this.getBankAccount() == null ? other.getBankAccount() == null
+                        : this.getBankAccount().equals(other.getBankAccount()))
                 && (this.getCustNo() == null ? other.getCustNo() == null : this.getCustNo().equals(other.getCustNo()))
-                && (this.getStartDate() == null ? other.getStartDate() == null : this.getStartDate().equals(other.getStartDate()))
-                && (this.getEndDate() == null ? other.getEndDate() == null : this.getEndDate().equals(other.getEndDate()))
-                && (this.getDataCount() == null ? other.getDataCount() == null : this.getDataCount().equals(other.getDataCount()))
-                && (this.getDescription() == null ? other.getDescription() == null : this.getDescription().equals(other.getDescription()))
+                && (this.getStartDate() == null ? other.getStartDate() == null
+                        : this.getStartDate().equals(other.getStartDate()))
+                && (this.getEndDate() == null ? other.getEndDate() == null
+                        : this.getEndDate().equals(other.getEndDate()))
+                && (this.getDataCount() == null ? other.getDataCount() == null
+                        : this.getDataCount().equals(other.getDataCount()))
+                && (this.getDescription() == null ? other.getDescription() == null
+                        : this.getDescription().equals(other.getDescription()))
                 && (this.getBtNo() == null ? other.getBtNo() == null : this.getBtNo().equals(other.getBtNo()));
     }
 
@@ -261,8 +269,7 @@ public class CoreDataProcessDetail implements BetterjrEntity {
         return result;
     }
 
-    public CoreDataProcessDetail() {
-    }
+    public CoreDataProcessDetail() {}
 
     public void putWorkStatus(ScfClientDataDetail anDetail) {
         this.workStatus = anDetail.getWorkStatus();
@@ -277,10 +284,9 @@ public class CoreDataProcessDetail implements BetterjrEntity {
         this.bankAccount = anDetail.getBankAcc();
         this.btNo = anDetail.getBtCustId();
         this.dataCount = anDetail.getCount();
-        if ("1".equals(this.workStatus)){
-           this.description ="成功"; 
-        }
-        else{
+        if ("1".equals(this.workStatus)) {
+            this.description = "成功";
+        } else {
             this.description = anDetail.getData();
         }
     }

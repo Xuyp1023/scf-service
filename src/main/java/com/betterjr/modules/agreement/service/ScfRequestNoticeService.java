@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,8 @@ public class ScfRequestNoticeService extends BaseService<ScfRequestNoticeMapper,
      * @param anRequest
      * @return
      */
-    public String updateTransNotice(final ScfRequestNotice anRequest, final String anSuppiler, final BigDecimal anBalance) {
+    public String updateTransNotice(final ScfRequestNotice anRequest, final String anSuppiler,
+            final BigDecimal anBalance) {
         final ScfRequestNotice tmpNotice = this.selectByPrimaryKey(anRequest.getRequestNo());
         boolean result = true;
 
@@ -57,26 +59,26 @@ public class ScfRequestNoticeService extends BaseService<ScfRequestNoticeMapper,
             anRequest.setBuyer(custAccountService.queryCustName(anRequest.getBuyerNo()));
             anRequest.setFactorName(custAccountService.queryCustName(Long.parseLong(anRequest.getFactorNo())));
             this.insert(anRequest);
-        }
-        else if ("0".equals(tmpNotice.getTransStatus())) {
+        } else if ("0".equals(tmpNotice.getTransStatus())) {
             anRequest.setBuyer(custAccountService.queryCustName(anRequest.getBuyerNo()));
             anRequest.setFactorName(tmpNotice.getFactorName());
             this.updateByPrimaryKey(anRequest);
-        }
-        else {
+        } else {
             result = false;
             logger.warn("updateTransNotice  the request " + anRequest + ", has used!");
         }
 
         // 表示需要更新电子合同签署信息
         if (result) {
-            final ScfElecAgreement elecAgreement = ScfElecAgreement.createByNotice(anRequest.getAgreeName(), anRequest.getNoticeNo(), anBalance);
+            final ScfElecAgreement elecAgreement = ScfElecAgreement.createByNotice(anRequest.getAgreeName(),
+                    anRequest.getNoticeNo(), anBalance);
             elecAgreement.setSupplierNo(anRequest.getSupplierNo());
             elecAgreement.setRequestNo(anRequest.getRequestNo());
             elecAgreement.setBuyerNo(anRequest.getBuyerNo());
             elecAgreement.setFactorNo(anRequest.getFactorNo());
             elecAgreement.setSupplier(anSuppiler);
-            elecAgreeService.addElecAgreementInfo(elecAgreement, "billTransNotice", Arrays.asList(elecAgreement.getSupplierNo()));
+            elecAgreeService.addElecAgreementInfo(elecAgreement, "billTransNotice",
+                    Arrays.asList(elecAgreement.getSupplierNo()));
             // , Long.parseLong(elecAgreement.getFactorNo())
             return elecAgreement.getAgreeNo();
         }
@@ -116,14 +118,14 @@ public class ScfRequestNoticeService extends BaseService<ScfRequestNoticeMapper,
      * @return
      */
     public ScfRequestNotice findFactorAgreement(final ScfRequestNotice noticeInfo) {
-        final ScfElecAgreement elecAgreement = elecAgreeService.findFactorAgreementBySupplierNo(noticeInfo.getSupplierNo(),
-                Long.parseLong(noticeInfo.getFactorNo()), "3");
+        final ScfElecAgreement elecAgreement = elecAgreeService.findFactorAgreementBySupplierNo(
+                noticeInfo.getSupplierNo(), Long.parseLong(noticeInfo.getFactorNo()), "3");
         if (elecAgreement != null) {
             noticeInfo.setFactorAgreementNo(elecAgreement.getAgreeNo());
             noticeInfo.setFactorAgreementName(elecAgreement.getAgreeName());
         }
         noticeInfo.setSupplierName(custAccountService.queryCustName(noticeInfo.getSupplierNo()));
-        if (BetterStringUtils.isBlank(noticeInfo.getBuyer())) {
+        if (StringUtils.isBlank(noticeInfo.getBuyer())) {
             noticeInfo.setBuyer(custAccountService.queryCustName(noticeInfo.getBuyerNo()));
         }
         return noticeInfo;

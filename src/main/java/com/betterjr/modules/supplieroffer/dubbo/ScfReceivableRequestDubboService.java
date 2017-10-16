@@ -24,7 +24,9 @@ public class ScfReceivableRequestDubboService implements IScfReceivableRequestSe
     @Override
     public String webSaveSubmitRequest(String anRequestNo, String anRequestPayDate, String anDescription) {
 
-        return AjaxObject.newOk("融资请求申请成功", requestService.saveSubmitRequest(anRequestNo, anRequestPayDate, anDescription)).toJson();
+        return AjaxObject
+                .newOk("融资请求申请成功", requestService.saveSubmitRequest(anRequestNo, anRequestPayDate, anDescription))
+                .toJson();
     }
 
     @Override
@@ -34,9 +36,13 @@ public class ScfReceivableRequestDubboService implements IScfReceivableRequestSe
     }
 
     @Override
-    public String webSaveSupplierFinishConfirmRequest(String anRequestNo, String anRequestPayDate, String anDescription) {
+    public String webSaveSupplierFinishConfirmRequest(String anRequestNo, String anRequestPayDate,
+            String anDescription) {
 
-        return AjaxObject.newOk("供应商确认申请成功", requestService.saveSupplierFinishConfirmRequest(anRequestNo, anRequestPayDate, anDescription)).toJson();
+        return AjaxObject
+                .newOk("供应商确认申请成功",
+                        requestService.saveSupplierFinishConfirmRequest(anRequestNo, anRequestPayDate, anDescription))
+                .toJson();
     }
 
     @Override
@@ -54,7 +60,8 @@ public class ScfReceivableRequestDubboService implements IScfReceivableRequestSe
     @Override
     public String webSaveCoreFinishPayRequest(String anRequestNo, String anRequestPayDate, String anDescription) {
 
-        return AjaxObject.newOk("核心企业完成付款成功", requestService.saveCoreFinishPayRequest(anRequestNo, anRequestPayDate, anDescription)).toJson();
+        return AjaxObject.newOk("核心企业完成付款成功",
+                requestService.saveCoreFinishPayRequest(anRequestNo, anRequestPayDate, anDescription)).toJson();
     }
 
     @Override
@@ -64,28 +71,41 @@ public class ScfReceivableRequestDubboService implements IScfReceivableRequestSe
     }
 
     @Override
-    public String webQueryReceivableRequestWithSupplier(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public String webQueryReceivableRequestWithSupplier(Map<String, Object> anMap, String anFlag, int anPageNum,
+            int anPageSize) {
 
-        return AjaxObject.newOkWithPage("查询申请成功", requestService.queryReceivableRequestWithSupplier(anMap, anFlag, anPageNum, anPageSize)).toJson();
-    }
-
-    @Override
-    public String webQueryFinishReceivableRequestWithSupplier(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
-
-        return AjaxObject.newOkWithPage("查询申请成功", requestService.queryFinishReceivableRequestWithSupplier(anMap, anFlag, anPageNum, anPageSize))
+        return AjaxObject
+                .newOkWithPage("查询申请成功",
+                        requestService.queryReceivableRequestWithSupplier(anMap, anFlag, anPageNum, anPageSize))
                 .toJson();
     }
 
     @Override
-    public String webQueryReceivableRequestWithCore(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public String webQueryFinishReceivableRequestWithSupplier(Map<String, Object> anMap, String anFlag, int anPageNum,
+            int anPageSize) {
 
-        return AjaxObject.newOkWithPage("查询申请成功", requestService.queryReceivableRequestWithCore(anMap, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject
+                .newOkWithPage("查询申请成功",
+                        requestService.queryFinishReceivableRequestWithSupplier(anMap, anFlag, anPageNum, anPageSize))
+                .toJson();
     }
 
     @Override
-    public String webQueryFinishReceivableRequestWithCore(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public String webQueryReceivableRequestWithCore(Map<String, Object> anMap, String anFlag, int anPageNum,
+            int anPageSize) {
 
-        return AjaxObject.newOkWithPage("查询申请成功", requestService.queryFinishReceivableRequestWithCore(anMap, anFlag, anPageNum, anPageSize)).toJson();
+        return AjaxObject.newOkWithPage("查询申请成功",
+                requestService.queryReceivableRequestWithCore(anMap, anFlag, anPageNum, anPageSize)).toJson();
+    }
+
+    @Override
+    public String webQueryFinishReceivableRequestWithCore(Map<String, Object> anMap, String anFlag, int anPageNum,
+            int anPageSize) {
+
+        return AjaxObject
+                .newOkWithPage("查询申请成功",
+                        requestService.queryFinishReceivableRequestWithCore(anMap, anFlag, anPageNum, anPageSize))
+                .toJson();
     }
 
     @Override
@@ -95,9 +115,13 @@ public class ScfReceivableRequestDubboService implements IScfReceivableRequestSe
     }
 
     @Override
-    public String webQueryReceivableRequestFour(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize, boolean anIsCust) {
+    public String webQueryReceivableRequestFour(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize,
+            boolean anIsCust) {
 
-        return AjaxObject.newOkWithPage("查询申请成功", requestService.queryReceivableRequestFour(anMap, anFlag, anPageNum, anPageSize, anIsCust)).toJson();
+        return AjaxObject
+                .newOkWithPage("查询申请成功",
+                        requestService.queryReceivableRequestFour(anMap, anFlag, anPageNum, anPageSize, anIsCust))
+                .toJson();
     }
 
     @Override
@@ -127,7 +151,9 @@ public class ScfReceivableRequestDubboService implements IScfReceivableRequestSe
     @Override
     public String webSaveCoreConfrimPayRequest(String anRequestNo, String anRequestPayDate, String anDescription) {
 
-        return AjaxObject.newOk("确认成功", requestService.saveCoreConfrimPayRequest(anRequestNo, anRequestPayDate, anDescription)).toJson();
+        return AjaxObject
+                .newOk("确认成功", requestService.saveCoreConfrimPayRequest(anRequestNo, anRequestPayDate, anDescription))
+                .toJson();
     }
 
     @Override
@@ -139,53 +165,79 @@ public class ScfReceivableRequestDubboService implements IScfReceivableRequestSe
     @Override
     public String webSaveFactoryConfrimPayRequest(String anRequestNo, String anRequestPayDate, String anDescription) {
 
-        return AjaxObject.newOk("确认成功", requestService.saveFactoryConfrimPayRequest(anRequestNo, anRequestPayDate, anDescription)).toJson();
-    }
-
-    @Override
-    public String webQueryReceivableRequestTwoWithSupplier(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
-
-        return AjaxObject.newOkWithPage("查询申请成功", requestService.queryReceivableRequestTwoWithSupplier(anMap, anFlag, anPageNum, anPageSize))
+        return AjaxObject
+                .newOk("确认成功",
+                        requestService.saveFactoryConfrimPayRequest(anRequestNo, anRequestPayDate, anDescription))
                 .toJson();
     }
 
     @Override
-    public String webQueryTwoFinishReceivableRequestWithSupplier(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public String webQueryReceivableRequestTwoWithSupplier(Map<String, Object> anMap, String anFlag, int anPageNum,
+            int anPageSize) {
 
-        return AjaxObject.newOkWithPage("查询申请成功", requestService.queryTwoFinishReceivableRequestWithSupplier(anMap, anFlag, anPageNum, anPageSize))
+        return AjaxObject
+                .newOkWithPage("查询申请成功",
+                        requestService.queryReceivableRequestTwoWithSupplier(anMap, anFlag, anPageNum, anPageSize))
                 .toJson();
     }
 
     @Override
-    public String webQueryTwoReceivableRequestWithCore(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public String webQueryTwoFinishReceivableRequestWithSupplier(Map<String, Object> anMap, String anFlag,
+            int anPageNum, int anPageSize) {
 
-        return AjaxObject.newOkWithPage("查询申请成功", requestService.queryTwoReceivableRequestWithCore(anMap, anFlag, anPageNum, anPageSize)).toJson();
-    }
-
-    @Override
-    public String webQueryTwoFinishReceivableRequestWithCore(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
-
-        return AjaxObject.newOkWithPage("查询申请成功", requestService.queryTwoFinishReceivableRequestWithCore(anMap, anFlag, anPageNum, anPageSize))
+        return AjaxObject.newOkWithPage("查询申请成功",
+                requestService.queryTwoFinishReceivableRequestWithSupplier(anMap, anFlag, anPageNum, anPageSize))
                 .toJson();
     }
 
     @Override
-    public String webQueryTwoReceivableRequestWithFactory(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
+    public String webQueryTwoReceivableRequestWithCore(Map<String, Object> anMap, String anFlag, int anPageNum,
+            int anPageSize) {
 
-        return AjaxObject.newOkWithPage("查询申请成功", requestService.queryTwoReceivableRequestWithFactory(anMap, anFlag, anPageNum, anPageSize)).toJson();
-    }
-
-    @Override
-    public String webQueryTwoFinishReceivableRequestWithFactory(Map<String, Object> anMap, String anFlag, int anPageNum, int anPageSize) {
-
-        return AjaxObject.newOkWithPage("查询申请成功", requestService.queryTwoFinishReceivableRequestWithFactory(anMap, anFlag, anPageNum, anPageSize))
+        return AjaxObject
+                .newOkWithPage("查询申请成功",
+                        requestService.queryTwoReceivableRequestWithCore(anMap, anFlag, anPageNum, anPageSize))
                 .toJson();
     }
 
     @Override
-    public String webSaveSubmitRequestTwo(String anRequestNo, String anRequestPayDate, String anDescription, Long anFactoryNo) {
+    public String webQueryTwoFinishReceivableRequestWithCore(Map<String, Object> anMap, String anFlag, int anPageNum,
+            int anPageSize) {
 
-        return AjaxObject.newOk("融资请求申请成功", requestService.saveSubmitRequestTwo(anRequestNo, anRequestPayDate, anDescription, anFactoryNo)).toJson();
+        return AjaxObject
+                .newOkWithPage("查询申请成功",
+                        requestService.queryTwoFinishReceivableRequestWithCore(anMap, anFlag, anPageNum, anPageSize))
+                .toJson();
+    }
+
+    @Override
+    public String webQueryTwoReceivableRequestWithFactory(Map<String, Object> anMap, String anFlag, int anPageNum,
+            int anPageSize) {
+
+        return AjaxObject
+                .newOkWithPage("查询申请成功",
+                        requestService.queryTwoReceivableRequestWithFactory(anMap, anFlag, anPageNum, anPageSize))
+                .toJson();
+    }
+
+    @Override
+    public String webQueryTwoFinishReceivableRequestWithFactory(Map<String, Object> anMap, String anFlag, int anPageNum,
+            int anPageSize) {
+
+        return AjaxObject
+                .newOkWithPage("查询申请成功",
+                        requestService.queryTwoFinishReceivableRequestWithFactory(anMap, anFlag, anPageNum, anPageSize))
+                .toJson();
+    }
+
+    @Override
+    public String webSaveSubmitRequestTwo(String anRequestNo, String anRequestPayDate, String anDescription,
+            Long anFactoryNo) {
+
+        return AjaxObject
+                .newOk("融资请求申请成功",
+                        requestService.saveSubmitRequestTwo(anRequestNo, anRequestPayDate, anDescription, anFactoryNo))
+                .toJson();
     }
 
     @Override
@@ -195,9 +247,13 @@ public class ScfReceivableRequestDubboService implements IScfReceivableRequestSe
     }
 
     @Override
-    public String webSaveSubmitRequestTotal(Map<String, Object> anMap, String anRequestNo, String anRequestPayDate, String anDescription) {
+    public String webSaveSubmitRequestTotal(Map<String, Object> anMap, String anRequestNo, String anRequestPayDate,
+            String anDescription) {
 
-        return AjaxObject.newOk("提交成功", requestService.saveSubmitRequestTotal(anMap, anRequestNo, anRequestPayDate, anDescription)).toJson();
+        return AjaxObject
+                .newOk("提交成功",
+                        requestService.saveSubmitRequestTotal(anMap, anRequestNo, anRequestPayDate, anDescription))
+                .toJson();
     }
 
     @Override

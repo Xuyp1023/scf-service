@@ -3,6 +3,7 @@ package com.betterjr.modules.agreement.service;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,14 +47,13 @@ public class ScfRequestProtacalService extends BaseService<ScfRequestProtacalMap
             protacal.setSecondName(initCustName(protacal.getSecondName(), protacal.getSecondNo()));
             protacal.setThreeName(initCustName(protacal.getThreeName(), protacal.getThreeNo()));
             this.insert(protacal);
-        }
-        else if ("0".equals(tmpProtacal.getBusinStatus())) {
+        } else if ("0".equals(tmpProtacal.getBusinStatus())) {
             this.updateByPrimaryKey(protacal);
-        }
-        else {
+        } else {
             throw new BytterTradeException("此申请单协议已签署");
         }
-        final ScfElecAgreement elecAgreement = ScfElecAgreement.createByProtacal(protacal.getAgreeName(), protacal.getProtocalNo(), anBalance);
+        final ScfElecAgreement elecAgreement = ScfElecAgreement.createByProtacal(protacal.getAgreeName(),
+                protacal.getProtocalNo(), anBalance);
         elecAgreement.setRequestNo(protacal.getRequestNo());
         elecAgreement.setSupplierNo(protacal.getThreeNo());
         elecAgreement.setRequestNo(protacal.getRequestNo());
@@ -67,7 +67,7 @@ public class ScfRequestProtacalService extends BaseService<ScfRequestProtacalMap
 
     public String initCustName(String anCustName, final Long anCustNo) {
         try {
-            if (BetterStringUtils.isBlank(anCustName)) {
+            if (StringUtils.isBlank(anCustName)) {
                 anCustName = custAccoService.queryCustName(anCustNo);
             }
         }

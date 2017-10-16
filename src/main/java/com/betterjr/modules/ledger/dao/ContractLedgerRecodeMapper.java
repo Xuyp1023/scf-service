@@ -5,5 +5,4 @@ import com.betterjr.mapper.common.Mapper;
 import com.betterjr.modules.ledger.entity.ContractLedgerRecode;
 
 @BetterjrMapper
-public interface ContractLedgerRecodeMapper extends Mapper<ContractLedgerRecode> {
-}
+public interface ContractLedgerRecodeMapper extends Mapper<ContractLedgerRecode> {}

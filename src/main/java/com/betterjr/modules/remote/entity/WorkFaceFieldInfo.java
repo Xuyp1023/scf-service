@@ -24,11 +24,13 @@ public class WorkFaceFieldInfo extends FarFieldMapInfo {
     public FaceFieldDictInfo getFieldDictInfo() {
         return this.fieldDictInfo;
     }
+
     public void setFieldDictInfo(FaceFieldDictInfo anFieldDictInfo) {
         this.fieldDictInfo = anFieldDictInfo;
     }
+
     private Class fieldType;
-    
+
     public void setFieldType(Class anFieldType) {
         fieldType = anFieldType;
     }
@@ -50,7 +52,8 @@ public class WorkFaceFieldInfo extends FarFieldMapInfo {
     }
 
     public RemoteDataFieldInfo createDataField(Object anValue) {
-        RemoteDataFieldInfo fieldInfo = new RemoteDataFieldInfo(this.getFaceField(), anValue, this.getWorkLevel(), this.dataStyle);
+        RemoteDataFieldInfo fieldInfo = new RemoteDataFieldInfo(this.getFaceField(), anValue, this.getWorkLevel(),
+                this.dataStyle);
 
         return fieldInfo;
     }
@@ -67,8 +70,8 @@ public class WorkFaceFieldInfo extends FarFieldMapInfo {
         // 初始化 字段 类型，如果找不到，抛出异常
         typeInfo = DataTypeInfo.checking(this.fieldDictInfo.getDataType());
         if (typeInfo == null) {
-            throw new BytterValidException(25060, "remote invoke field type not find please checking:" + anFunction.getFunBeanName() + "."
-                    + this.fieldDictInfo.getColumnName());
+            throw new BytterValidException(25060, "remote invoke field type not find please checking:"
+                    + anFunction.getFunBeanName() + "." + this.fieldDictInfo.getColumnName());
         }
 
     }
@@ -85,7 +88,8 @@ public class WorkFaceFieldInfo extends FarFieldMapInfo {
     public boolean verify(Object anObj, WorkFarFunction anFunction) {
         if (anObj == null) {
             if (this.getMustItem() != null && this.getMustItem()) {
-                logger.warn("remote invoke field must not null :" + anFunction.getFunBeanName() + "." + this.getBeanField());
+                logger.warn("remote invoke field must not null :" + anFunction.getFunBeanName() + "."
+                        + this.getBeanField());
             }
 
             return true;
@@ -99,19 +103,19 @@ public class WorkFaceFieldInfo extends FarFieldMapInfo {
         int x;
         if (ddx == null) {
             x = 0;
-        }
-        else {
+        } else {
             x = ddx.intValue();
         }
-        
+
         return DataTypeInfo.formatData(anObj, x);
     }
 
-    public WorkFaceFieldInfo() {
-    }
+    public WorkFaceFieldInfo() {}
+
     public WorkFaceFieldInfo(WorkFaceFieldInfo anOther) {
         BeanMapper.copy(anOther, this);
     }
+
     public WorkFaceFieldInfo(int anIndex, Field anField, WorkFarFunction anFunc) {
         this.setFieldOrder(anIndex);
         this.setFaceNo(anFunc.getFaceNo());
@@ -125,10 +129,12 @@ public class WorkFaceFieldInfo extends FarFieldMapInfo {
         this.dataStyle = FaceDataStyle.checking(this.getWorkLevel(), this.workFun.getWorkFace().getDefStyle());
         typeInfo = DataTypeInfo.findDataType(anField.getDeclaringClass());
         if (typeInfo == null) {
-            throw new BytterValidException(25061, "remote invoke field type not find please checking:" + anFunc.getFunBeanName() + "."
-                    + anField.getName());
+            throw new BytterValidException(25061, "remote invoke field type not find please checking:"
+                    + anFunc.getFunBeanName() + "." + anField.getName());
         }
     }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(super.toString()).append("  ").append(fieldDictInfo);
