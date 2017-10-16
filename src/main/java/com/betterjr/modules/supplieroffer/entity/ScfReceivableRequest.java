@@ -196,6 +196,13 @@ public class ScfReceivableRequest implements BetterjrEntity{
     private String description;
     
     /**
+     * 付款状态  0 初始状态    3付款失败 4 付款成功
+     */
+    @Column(name = "C_PAY_STATUS",  columnDefinition="VARCHAR" )
+    @MetaData( value="付款状态  0 初始状态    3付款失败 4 付款成功", comments = "付款状态  0 初始状态    3付款失败 4 付款成功")
+    private String payStatus;
+    
+    /**
      * 状态 0 未生效 1供应商提交申请 2供应商签署合同 3 供应商转让合同给核心企业签署 4核心企业确认并签署合同 5资金方付款 6完结
      */
     @Column(name = "C_BUSINSTATUS",  columnDefinition="VARCHAR" )
@@ -622,6 +629,14 @@ public class ScfReceivableRequest implements BetterjrEntity{
     }
 
 
+    public String getPayStatus() {
+        return this.payStatus;
+    }
+
+    public void setPayStatus(String anPayStatus) {
+        this.payStatus = anPayStatus;
+    }
+
     @Override
     public String toString() {
         return "ScfReceivableRequest [requestNo=" + this.requestNo + ", equityNo=" + this.equityNo + ", custNo=" + this.custNo + ", custName="
@@ -647,6 +662,7 @@ public class ScfReceivableRequest implements BetterjrEntity{
         this.setSupplierSignFlag(ReceivableRequestConstantCollentions.SIGN_AGREEMENT_FLAG_NO);
         this.setFactorySignFlag(ReceivableRequestConstantCollentions.SIGN_AGREEMENT_FLAG_NO);
         this.setCoreSignFlag(ReceivableRequestConstantCollentions.SIGN_AGREEMENT_FLAG_NO);
+        this.setPayStatus(ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_PAY_STATUS_INIT);
     }
     
     

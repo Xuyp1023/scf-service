@@ -27,6 +27,7 @@
 		com.betterjr.modules.enquiry;
 		com.betterjr.modules.template;
 		com.betterjr.modules.order;
+        com.betterjr.modules.payorder;
 		com.betterjr.modules.receivable;
 		com.betterjr.modules.acceptbill;
 		com.betterjr.modules.cert.service;

@@ -18,6 +18,13 @@ public class ReceivableRequestConstantCollentions {
     
     public static final String RECEIVABLE_REQUEST_BUSIN_STATUS_EXPIRED = "8"; //  8 过期
     
+    //付款状态付款状态  0 初始状态    3付款失败 4 付款成功
+    public static final String RECEIVABLE_REQUEST_PAY_STATUS_INIT = "0"; //  0 初始状态
+    
+    public static final String RECEIVABLE_REQUEST_PAY_STATUS_PAYFAILURE = "3"; //  3付款失败
+    
+    public static final String RECEIVABLE_REQUEST_PAY_STATUS_PAYSUCCESS = "4"; //  4 付款成功
+    
     
     // 模式一状态 0 未生效 1供应商提交申请 2供应商签署合同 3 供应商转让合同给核心企业签署 4核心企业确认并签署合同 5资金方付款 6完结 7废止
     public static final String OFFER_BUSIN_STATUS_NOEFFECTIVE = "0"; // 0： 不可用
