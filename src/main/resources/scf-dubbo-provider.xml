@@ -24,6 +24,7 @@
 		com.betterjr.modules.param,
 		com.betterjr.modules.enquiry,
 		com.betterjr.modules.order,
+        com.betterjr.modules.payorder,
 		com.betterjr.modules.asset,
         com.betterjr.modules.busintype,
 		com.betterjr.modules.receivable,
