@@ -54,6 +54,6 @@ public class ScfReceivableRequestLogService
 
         log.setEquityNo(anRequest.getRequestNo());
 
-        log.setModiMessage(anRequest.getBusinStatus());
+        log.setModiMessage("businstatus:" + anRequest.getBusinStatus() + "  payStatus:" + anRequest.getPayStatus());
     }
 }

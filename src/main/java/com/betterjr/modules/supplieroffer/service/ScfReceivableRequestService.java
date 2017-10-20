@@ -46,6 +46,8 @@ import com.betterjr.modules.ledger.entity.ContractLedger;
 import com.betterjr.modules.ledger.service.ContractLedgerService;
 import com.betterjr.modules.order.entity.ScfInvoiceDO;
 import com.betterjr.modules.order.service.ScfInvoiceDOService;
+import com.betterjr.modules.payorder.entity.PayOrderPoolRecord;
+import com.betterjr.modules.payorder.service.PayOrderPoolService;
 import com.betterjr.modules.productconfig.entity.ScfAssetDict;
 import com.betterjr.modules.productconfig.entity.ScfProductConfig;
 import com.betterjr.modules.productconfig.sevice.ScfProductConfigService;
@@ -114,6 +116,9 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
 
     @Autowired
     private ScfReceivableRequestLogService logService;
+    
+    @Autowired
+    private PayOrderPoolService poolService;
 
     /**
      * 整合模式申请总的入口
@@ -431,6 +436,9 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         logService.saveAddRequestLog(request);
 
         this.updateByPrimaryKeySelective(request);
+        
+        //生成指令列表
+        poolService.saveAddPayRecord(request.getRequestNo());
         return request;
 
     }
@@ -1033,6 +1041,8 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         logService.saveAddRequestLog(request);
 
         this.updateByPrimaryKeySelective(request);
+        //生成指令列表
+        poolService.saveAddPayRecord(request.getRequestNo());
         return request;
 
     }
@@ -1739,6 +1749,92 @@ public class ScfReceivableRequestService extends BaseService<ScfReceivableReques
         anRequest.setBusinStatus(ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_EXPIRED);
         this.updateByPrimaryKeySelective(anRequest);
         return anRequest;
+    }
+    
+    /**
+     * 更新付款状态
+     * @Title: saveUpdatePayStatusByRecordList 
+     * @Description: TODO(这里用一句话描述这个方法的作用) 
+     * @param @param anPayFailureList
+     * @param @param anPayRecordBusinStatusPayfailure 参数说明  3 付款失败   4付款成功
+     * @return void 返回类型 
+     * @throws 
+     * @author xuyp
+     * @date 2017年10月18日 下午1:41:38
+     */
+    public List<ScfReceivableRequest> saveUpdatePayStatusByRecordList(List<PayOrderPoolRecord> anPayList,
+            String anPayStatus) {
+        
+        //BTAssert.isTrue(!Collections3.isEmpty(anPayList), "对象为空,操作失败");
+        if(Collections3.isEmpty(anPayList)){
+            return new ArrayList<>();
+        }
+        List<ScfReceivableRequest> requestList=new ArrayList<>(anPayList.size());
+        for (PayOrderPoolRecord record : anPayList) {
+            ScfReceivableRequest request = this.selectByPrimaryKey(record.getRequestNo());
+            BTAssert.notNull(request, "对象为空,操作失败");
+            BTAssert.isTrue(!ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_PAY_STATUS_PAYFAILURE
+                    .equals(request.getPayStatus()), "已经付款失败的单据不允许重复设置,操作失败");
+            BTAssert.isTrue(!ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_PAY_STATUS_PAYSUCCESS
+                    .equals(request.getPayStatus()), "已经付款成功的单据不允许重复设置,操作失败");
+            
+            BTAssert.isTrue(ReceivableRequestConstantCollentions.RECEIVABLE_REQUEST_BUSIN_STATUS_FINISHED
+                    .equals(request.getBusinStatus()), "申请尚未到付款操作,操作失败");
+            
+            //校验 申请对象和付款对象是否一致
+            checkRequestWithRecord(request, record, anPayStatus);
+            
+            request.setPayStatus(anPayStatus);
+            this.updateByPrimaryKeySelective(request);
+            logService.saveAddRequestLog(request);
+            requestList.add(request);
+            
+        }
+        
+        return requestList;
+    }
+
+    /**
+     * 校验 申请对象和付款对象是否一致
+     * @Title: checkRequestWithRecord 
+     * @Description: TODO(这里用一句话描述这个方法的作用) 
+     * @param @param anRequest
+     * @param @param anRecord
+     * @param @param anPayStatus 参数说明   是否付款成功或者失败的标记
+     * @return void 返回类型 
+     * @throws 
+     * @author xuyp
+     * @date 2017年10月18日 下午1:52:54
+     */
+    private void checkRequestWithRecord(ScfReceivableRequest anRequest, PayOrderPoolRecord anRecord,
+            String anPayStatus) {
+        
+        if(!anRequest.getRequestNo().equals(anRecord.getRequestNo())){
+            BTAssert.notNull(null, "对账申请单号失败,操作失败");
+        }
+        
+        if(!anRequest.getCustBankAccount().equals(anRecord.getCustBankAccount())){
+            BTAssert.notNull(null, "对账银行账户失败,操作失败");
+        }
+        
+        if(!anRequest.getCustBankAccountName().equals(anRecord.getCustBankAccountName())){
+            BTAssert.notNull(null, "对账收款开户名称失败,操作失败");
+        }
+        
+        if(!anRequest.getCustBankName().equals(anRecord.getCustBankName())){
+            BTAssert.notNull(null, "对账收款银行失败,操作失败");
+        }
+        
+        if(!anRequest.getRequestPayBalance().equals(anRecord.getBalance())){
+            BTAssert.notNull(null, "对账金额失败,操作失败");
+        }
+        
+        if(StringUtils.isNoneBlank(anPayStatus)){
+            if(!anPayStatus.equals(anRecord.getBusinStatus())){
+                BTAssert.notNull(null, "接口调用出错,操作失败");
+            }
+        }
+        
     }
 
 }
