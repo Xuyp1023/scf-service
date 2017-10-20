@@ -15,6 +15,14 @@ import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+/**
+ * 
+ * @ClassName: PayOrderPool 
+ * @Description: TODO(这里用一句话描述这个类的作用) 
+ * @author xuyp
+ * @date 2017年10月20日 下午3:06:56 
+ *
+ */
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "t_pos_source_pay_pool")
@@ -111,7 +119,7 @@ public class PayOrderPool implements BetterjrEntity {
         return this.id;
     }
 
-    public void setId(Long anId) {
+    public void setId(final Long anId) {
         this.id = anId;
     }
 
@@ -119,7 +127,7 @@ public class PayOrderPool implements BetterjrEntity {
         return this.requestPayDate;
     }
 
-    public void setRequestPayDate(String anRequestPayDate) {
+    public void setRequestPayDate(final String anRequestPayDate) {
         this.requestPayDate = anRequestPayDate;
     }
 
@@ -127,7 +135,7 @@ public class PayOrderPool implements BetterjrEntity {
         return this.factoryNo;
     }
 
-    public void setFactoryNo(Long anFactoryNo) {
+    public void setFactoryNo(final Long anFactoryNo) {
         this.factoryNo = anFactoryNo;
     }
 
@@ -135,7 +143,7 @@ public class PayOrderPool implements BetterjrEntity {
         return this.factoryName;
     }
 
-    public void setFactoryName(String anFactoryName) {
+    public void setFactoryName(final String anFactoryName) {
         this.factoryName = anFactoryName;
     }
 
@@ -143,7 +151,7 @@ public class PayOrderPool implements BetterjrEntity {
         return this.operOrg;
     }
 
-    public void setOperOrg(String anOperOrg) {
+    public void setOperOrg(final String anOperOrg) {
         this.operOrg = anOperOrg;
     }
 
@@ -151,7 +159,7 @@ public class PayOrderPool implements BetterjrEntity {
         return this.balance;
     }
 
-    public void setBalance(BigDecimal anBalance) {
+    public void setBalance(final BigDecimal anBalance) {
         this.balance = anBalance;
     }
 
@@ -159,7 +167,7 @@ public class PayOrderPool implements BetterjrEntity {
         return this.payAmount;
     }
 
-    public void setPayAmount(Long anPayAmount) {
+    public void setPayAmount(final Long anPayAmount) {
         this.payAmount = anPayAmount;
     }
 
@@ -167,7 +175,7 @@ public class PayOrderPool implements BetterjrEntity {
         return this.noPayAmount;
     }
 
-    public void setNoPayAmount(Long anNoPayAmount) {
+    public void setNoPayAmount(final Long anNoPayAmount) {
         this.noPayAmount = anNoPayAmount;
     }
 
@@ -175,7 +183,7 @@ public class PayOrderPool implements BetterjrEntity {
         return this.payingAmount;
     }
 
-    public void setPayingAmount(Long anPayingAmount) {
+    public void setPayingAmount(final Long anPayingAmount) {
         this.payingAmount = anPayingAmount;
     }
 
@@ -183,7 +191,7 @@ public class PayOrderPool implements BetterjrEntity {
         return this.auditAmount;
     }
 
-    public void setAuditAmount(Long anAuditAmount) {
+    public void setAuditAmount(final Long anAuditAmount) {
         this.auditAmount = anAuditAmount;
     }
 
@@ -191,7 +199,7 @@ public class PayOrderPool implements BetterjrEntity {
         return this.payFailureAmount;
     }
 
-    public void setPayFailureAmount(Long anPayFailureAmount) {
+    public void setPayFailureAmount(final Long anPayFailureAmount) {
         this.payFailureAmount = anPayFailureAmount;
     }
 
@@ -199,8 +207,39 @@ public class PayOrderPool implements BetterjrEntity {
         return this.paySuccessAmount;
     }
 
-    public void setPaySuccessAmount(Long anPaySuccessAmount) {
+    public void setPaySuccessAmount(final Long anPaySuccessAmount) {
         this.paySuccessAmount = anPaySuccessAmount;
+    }
+
+    @Override
+    public String toString() {
+        return "PayOrderPool [id=" + this.id + ", requestPayDate=" + this.requestPayDate + ", factoryNo="
+                + this.factoryNo + ", factoryName=" + this.factoryName + ", operOrg=" + this.operOrg + ", balance="
+                + this.balance + ", payAmount=" + this.payAmount + ", noPayAmount=" + this.noPayAmount
+                + ", payingAmount=" + this.payingAmount + ", auditAmount=" + this.auditAmount + ", payFailureAmount="
+                + this.payFailureAmount + ", paySuccessAmount=" + this.paySuccessAmount + "]";
+    }
+
+    /**
+     * 对象新增初始化对象
+     * @Title: saveAddInitValue 
+     * @Description: TODO(这里用一句话描述这个方法的作用) 
+     * @param @return 参数说明 
+     * @return PayOrderPool 返回类型 
+     * @throws 
+     * @author xuyp
+     * @date 2017年10月20日 下午3:05:56
+     */
+    public PayOrderPool saveAddInitValue() {
+
+        this.setId(SerialGenerator.getLongValue("PayOrderPool.id"));
+        this.setAuditAmount(0L);
+        this.setPayAmount(1L);
+        this.setNoPayAmount(1L);
+        this.setPayFailureAmount(0L);
+        this.setPayingAmount(0L);
+        this.setPaySuccessAmount(0L);
+        return this;
     }
 
     @Override
@@ -224,79 +263,102 @@ public class PayOrderPool implements BetterjrEntity {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
         PayOrderPool other = (PayOrderPool) obj;
         if (this.auditAmount == null) {
-            if (other.auditAmount != null) return false;
+            if (other.auditAmount != null) {
+                return false;
+            }
+        } else if (!this.auditAmount.equals(other.auditAmount)) {
+            return false;
         }
-        else if (!this.auditAmount.equals(other.auditAmount)) return false;
         if (this.balance == null) {
-            if (other.balance != null) return false;
+            if (other.balance != null) {
+                return false;
+            }
+        } else if (!this.balance.equals(other.balance)) {
+            return false;
         }
-        else if (!this.balance.equals(other.balance)) return false;
         if (this.factoryName == null) {
-            if (other.factoryName != null) return false;
+            if (other.factoryName != null) {
+                return false;
+            }
+        } else if (!this.factoryName.equals(other.factoryName)) {
+            return false;
         }
-        else if (!this.factoryName.equals(other.factoryName)) return false;
         if (this.factoryNo == null) {
-            if (other.factoryNo != null) return false;
+            if (other.factoryNo != null) {
+                return false;
+            }
+        } else if (!this.factoryNo.equals(other.factoryNo)) {
+            return false;
         }
-        else if (!this.factoryNo.equals(other.factoryNo)) return false;
         if (this.id == null) {
-            if (other.id != null) return false;
+            if (other.id != null) {
+                return false;
+            }
+        } else if (!this.id.equals(other.id)) {
+            return false;
         }
-        else if (!this.id.equals(other.id)) return false;
         if (this.noPayAmount == null) {
-            if (other.noPayAmount != null) return false;
+            if (other.noPayAmount != null) {
+                return false;
+            }
+        } else if (!this.noPayAmount.equals(other.noPayAmount)) {
+            return false;
         }
-        else if (!this.noPayAmount.equals(other.noPayAmount)) return false;
         if (this.operOrg == null) {
-            if (other.operOrg != null) return false;
+            if (other.operOrg != null) {
+                return false;
+            }
+        } else if (!this.operOrg.equals(other.operOrg)) {
+            return false;
         }
-        else if (!this.operOrg.equals(other.operOrg)) return false;
         if (this.payAmount == null) {
-            if (other.payAmount != null) return false;
+            if (other.payAmount != null) {
+                return false;
+            }
+        } else if (!this.payAmount.equals(other.payAmount)) {
+            return false;
         }
-        else if (!this.payAmount.equals(other.payAmount)) return false;
         if (this.payFailureAmount == null) {
-            if (other.payFailureAmount != null) return false;
+            if (other.payFailureAmount != null) {
+                return false;
+            }
+        } else if (!this.payFailureAmount.equals(other.payFailureAmount)) {
+            return false;
         }
-        else if (!this.payFailureAmount.equals(other.payFailureAmount)) return false;
         if (this.paySuccessAmount == null) {
-            if (other.paySuccessAmount != null) return false;
+            if (other.paySuccessAmount != null) {
+                return false;
+            }
+        } else if (!this.paySuccessAmount.equals(other.paySuccessAmount)) {
+            return false;
         }
-        else if (!this.paySuccessAmount.equals(other.paySuccessAmount)) return false;
         if (this.payingAmount == null) {
-            if (other.payingAmount != null) return false;
+            if (other.payingAmount != null) {
+                return false;
+            }
+        } else if (!this.payingAmount.equals(other.payingAmount)) {
+            return false;
         }
-        else if (!this.payingAmount.equals(other.payingAmount)) return false;
         if (this.requestPayDate == null) {
-            if (other.requestPayDate != null) return false;
+            if (other.requestPayDate != null) {
+                return false;
+            }
+        } else if (!this.requestPayDate.equals(other.requestPayDate)) {
+            return false;
         }
-        else if (!this.requestPayDate.equals(other.requestPayDate)) return false;
         return true;
     }
 
-    @Override
-    public String toString() {
-        return "PayOrderPool [id=" + this.id + ", requestPayDate=" + this.requestPayDate + ", factoryNo=" + this.factoryNo + ", factoryName="
-                + this.factoryName + ", operOrg=" + this.operOrg + ", balance=" + this.balance + ", payAmount=" + this.payAmount + ", noPayAmount="
-                + this.noPayAmount + ", payingAmount=" + this.payingAmount + ", auditAmount=" + this.auditAmount + ", payFailureAmount="
-                + this.payFailureAmount + ", paySuccessAmount=" + this.paySuccessAmount + "]";
-    }
-
-    public PayOrderPool saveAddInitValue() {
-        
-        this.setId(SerialGenerator.getLongValue("PayOrderPool.id"));
-        this.setAuditAmount(0L);
-        this.setPayAmount(1L);
-        this.setNoPayAmount(1L);
-        this.setPayFailureAmount(0L);
-        this.setPayingAmount(0L);
-        this.setPaySuccessAmount(0L);
-        return this;
-    }
 
 }

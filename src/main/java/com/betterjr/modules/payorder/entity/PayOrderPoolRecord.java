@@ -13,12 +13,24 @@ import com.betterjr.common.annotation.MetaData;
 import com.betterjr.common.entity.BetterjrEntity;
 import com.betterjr.common.mapper.CustDateJsonSerializer;
 import com.betterjr.common.selectkey.SerialGenerator;
+import com.betterjr.modules.flie.annotation.ExcelImportAnno;
+import com.betterjr.modules.flie.annotation.ExcelImportTypeAnno;
 import com.betterjr.modules.payorder.data.PayOrderPoolRecordConstantCollentions;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+/**
+ * t_pos_source_pay_pool_record
+ * @ClassName: PayOrderPoolRecord 
+ * @Description: TODO(这里用一句话描述这个类的作用) 
+ * @author xuyp
+ * @date 2017年10月20日 下午3:11:27 
+ *
+ */
 
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "t_pos_source_pay_pool_record")
+@ExcelImportTypeAnno(excelBeginRow = 5)
 public class PayOrderPoolRecord implements BetterjrEntity{
 
     /**
@@ -36,6 +48,7 @@ public class PayOrderPoolRecord implements BetterjrEntity{
     @Id
     @Column(name = "C_REQUESTNO",  columnDefinition="VARCHAR" )
     @MetaData( value="申请编号", comments = "申请编号")
+    @ExcelImportAnno(isMust = "1", cloumnChineseName = "账款编号", cloumnOrder = 0, cloumnType = "0", vailedRegular = "")
     private String requestNo;
     
     /**
@@ -43,6 +56,7 @@ public class PayOrderPoolRecord implements BetterjrEntity{
      */
     @Column(name = "c_cust_bankName", columnDefinition = "VARCHAR")
     @MetaData(value = "收款银行", comments = "收款银行")
+    @ExcelImportAnno(isMust = "1", cloumnChineseName = "收款人开户银行", cloumnOrder = 2, cloumnType = "0", vailedRegular = "")
     private String custBankName;
     
     /**
@@ -50,6 +64,7 @@ public class PayOrderPoolRecord implements BetterjrEntity{
      */
     @Column(name = "c_cust_bankAccount", columnDefinition = "VARCHAR")
     @MetaData(value = "收款帐号", comments = "收款帐号")
+    @ExcelImportAnno(isMust = "1", cloumnChineseName = "收款人开户银行", cloumnOrder = 3, cloumnType = "0", vailedRegular = "^\\d+$")
     private String custBankAccount;
     
     /**
@@ -57,6 +72,7 @@ public class PayOrderPoolRecord implements BetterjrEntity{
      */
     @Column(name = "c_cust_bankAccountName", columnDefinition = "VARCHAR")
     @MetaData(value = "收款开户名称", comments = "收款开户名称")
+    @ExcelImportAnno(isMust = "1", cloumnChineseName = "收款人名称", cloumnOrder = 1, cloumnType = "0", vailedRegular = "")
     private String custBankAccountName;
     
     /**
@@ -64,6 +80,7 @@ public class PayOrderPoolRecord implements BetterjrEntity{
      */
     @Column(name = "F_BALANCE",  columnDefinition="DECIMAL" )
     @MetaData( value="申请总金额", comments = "申请总金额")
+    @ExcelImportAnno(isMust = "1", cloumnChineseName = "金额", cloumnOrder = 4, cloumnType = "1", vailedRegular = "")
     private BigDecimal balance;
     
     /**
@@ -88,6 +105,13 @@ public class PayOrderPoolRecord implements BetterjrEntity{
     private String businStatus;
     
     /**
+     * 付款成功|付款失败
+     */
+    @Column(name = "C_BUSIN_STATUS_CHINESE",  columnDefinition="VARCHAR" )
+    @ExcelImportAnno(isMust = "1", cloumnChineseName = "付款状态", cloumnOrder = 5, cloumnType = "0", vailedRegular = "", requireContainsValues="付款成功|付款失败")
+    private String businStatusChinese;
+    
+    /**
      * 数据来源 0 融资申请  1上传解析
      */
     @Column(name = "C_INFO_TYPE",  columnDefinition="VARCHAR" )
@@ -99,6 +123,7 @@ public class PayOrderPoolRecord implements BetterjrEntity{
      */
     @Column(name = "C_DESCRIPTION",  columnDefinition="VARCHAR" )
     @MetaData( value="付款结果信息", comments = "付款结果信息")
+    @ExcelImportAnno(isMust = "0", cloumnChineseName = "处理结果", cloumnOrder = 6, cloumnType = "0", vailedRegular = "")
     private String description;
     
     /**
@@ -108,12 +133,26 @@ public class PayOrderPoolRecord implements BetterjrEntity{
     @MetaData(value = "付款日期", comments = "付款日期")
     @JsonSerialize(using = CustDateJsonSerializer.class)
     private String requestPayDate;
+    
+    /**
+     * 资金方企业编号
+     */
+    @Column(name = "L_FACTORY_CUSTNO", columnDefinition = "INTEGER")
+    @MetaData(value = "资金方企业编号", comments = "资金方企业编号")
+    private Long factoryNo;
+
+    /**
+     * 资金方企业名称
+     */
+    @Column(name = "C_FACTORY_CUSTNAME", columnDefinition = "VARCHAR")
+    @MetaData(value = "资金方企业名称", comments = "资金方企业名称")
+    private String factoryName;
 
     public Long getId() {
         return this.id;
     }
 
-    public void setId(Long anId) {
+    public void setId(final Long anId) {
         this.id = anId;
     }
 
@@ -121,7 +160,7 @@ public class PayOrderPoolRecord implements BetterjrEntity{
         return this.requestNo;
     }
 
-    public void setRequestNo(String anRequestNo) {
+    public void setRequestNo(final String anRequestNo) {
         this.requestNo = anRequestNo;
     }
 
@@ -129,7 +168,7 @@ public class PayOrderPoolRecord implements BetterjrEntity{
         return this.custBankName;
     }
 
-    public void setCustBankName(String anCustBankName) {
+    public void setCustBankName(final String anCustBankName) {
         this.custBankName = anCustBankName;
     }
 
@@ -137,7 +176,7 @@ public class PayOrderPoolRecord implements BetterjrEntity{
         return this.custBankAccount;
     }
 
-    public void setCustBankAccount(String anCustBankAccount) {
+    public void setCustBankAccount(final String anCustBankAccount) {
         this.custBankAccount = anCustBankAccount;
     }
 
@@ -145,7 +184,7 @@ public class PayOrderPoolRecord implements BetterjrEntity{
         return this.custBankAccountName;
     }
 
-    public void setCustBankAccountName(String anCustBankAccountName) {
+    public void setCustBankAccountName(final String anCustBankAccountName) {
         this.custBankAccountName = anCustBankAccountName;
     }
 
@@ -153,7 +192,7 @@ public class PayOrderPoolRecord implements BetterjrEntity{
         return this.balance;
     }
 
-    public void setBalance(BigDecimal anBalance) {
+    public void setBalance(final BigDecimal anBalance) {
         this.balance = anBalance;
     }
 
@@ -161,7 +200,7 @@ public class PayOrderPoolRecord implements BetterjrEntity{
         return this.poolId;
     }
 
-    public void setPoolId(Long anPoolId) {
+    public void setPoolId(final Long anPoolId) {
         this.poolId = anPoolId;
     }
 
@@ -169,7 +208,7 @@ public class PayOrderPoolRecord implements BetterjrEntity{
         return this.payFileId;
     }
 
-    public void setPayFileId(Long anPayFileId) {
+    public void setPayFileId(final Long anPayFileId) {
         this.payFileId = anPayFileId;
     }
 
@@ -177,7 +216,7 @@ public class PayOrderPoolRecord implements BetterjrEntity{
         return this.businStatus;
     }
 
-    public void setBusinStatus(String anBusinStatus) {
+    public void setBusinStatus(final String anBusinStatus) {
         this.businStatus = anBusinStatus;
     }
 
@@ -185,7 +224,7 @@ public class PayOrderPoolRecord implements BetterjrEntity{
         return this.infoType;
     }
 
-    public void setInfoType(String anInfoType) {
+    public void setInfoType(final String anInfoType) {
         this.infoType = anInfoType;
     }
 
@@ -193,7 +232,7 @@ public class PayOrderPoolRecord implements BetterjrEntity{
         return this.description;
     }
 
-    public void setDescription(String anDescription) {
+    public void setDescription(final String anDescription) {
         this.description = anDescription;
     }
     
@@ -201,8 +240,32 @@ public class PayOrderPoolRecord implements BetterjrEntity{
         return this.requestPayDate;
     }
 
-    public void setRequestPayDate(String anRequestPayDate) {
+    public void setRequestPayDate(final String anRequestPayDate) {
         this.requestPayDate = anRequestPayDate;
+    }
+    
+    public Long getFactoryNo() {
+        return this.factoryNo;
+    }
+
+    public void setFactoryNo(final Long anFactoryNo) {
+        this.factoryNo = anFactoryNo;
+    }
+
+    public String getFactoryName() {
+        return this.factoryName;
+    }
+
+    public void setFactoryName(final String anFactoryName) {
+        this.factoryName = anFactoryName;
+    }
+
+    public String getBusinStatusChinese() {
+        return this.businStatusChinese;
+    }
+
+    public void setBusinStatusChinese(final String anBusinStatusChinese) {
+        this.businStatusChinese = anBusinStatusChinese;
     }
 
     @Override
@@ -224,68 +287,120 @@ public class PayOrderPoolRecord implements BetterjrEntity{
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
-        PayOrderPoolRecord other = (PayOrderPoolRecord) obj;
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final PayOrderPoolRecord other = (PayOrderPoolRecord) obj;
         if (this.balance == null) {
-            if (other.balance != null) return false;
+            if (other.balance != null) {
+                return false;
+            }
         }
-        else if (!this.balance.equals(other.balance)) return false;
+        else if (!this.balance.equals(other.balance)) {
+            return false;
+        }
         if (this.businStatus == null) {
-            if (other.businStatus != null) return false;
+            if (other.businStatus != null) {
+                return false;
+            }
         }
-        else if (!this.businStatus.equals(other.businStatus)) return false;
+        else if (!this.businStatus.equals(other.businStatus)) {
+            return false;
+        }
         if (this.custBankAccount == null) {
-            if (other.custBankAccount != null) return false;
+            if (other.custBankAccount != null) {
+                return false;
+            }
         }
-        else if (!this.custBankAccount.equals(other.custBankAccount)) return false;
+        else if (!this.custBankAccount.equals(other.custBankAccount)) {
+            return false;
+        }
         if (this.custBankAccountName == null) {
-            if (other.custBankAccountName != null) return false;
+            if (other.custBankAccountName != null) {
+                return false;
+            }
         }
-        else if (!this.custBankAccountName.equals(other.custBankAccountName)) return false;
+        else if (!this.custBankAccountName.equals(other.custBankAccountName)) {
+            return false;
+        }
         if (this.custBankName == null) {
-            if (other.custBankName != null) return false;
+            if (other.custBankName != null) {
+                return false;
+            }
         }
-        else if (!this.custBankName.equals(other.custBankName)) return false;
+        else if (!this.custBankName.equals(other.custBankName)) {
+            return false;
+        }
         if (this.description == null) {
-            if (other.description != null) return false;
+            if (other.description != null) {
+                return false;
+            }
         }
-        else if (!this.description.equals(other.description)) return false;
+        else if (!this.description.equals(other.description)) {
+            return false;
+        }
         if (this.id == null) {
-            if (other.id != null) return false;
+            if (other.id != null) {
+                return false;
+            }
         }
-        else if (!this.id.equals(other.id)) return false;
+        else if (!this.id.equals(other.id)) {
+            return false;
+        }
         if (this.infoType == null) {
-            if (other.infoType != null) return false;
+            if (other.infoType != null) {
+                return false;
+            }
         }
-        else if (!this.infoType.equals(other.infoType)) return false;
+        else if (!this.infoType.equals(other.infoType)) {
+            return false;
+        }
         if (this.payFileId == null) {
-            if (other.payFileId != null) return false;
+            if (other.payFileId != null) {
+                return false;
+            }
         }
-        else if (!this.payFileId.equals(other.payFileId)) return false;
+        else if (!this.payFileId.equals(other.payFileId)) {
+            return false;
+        }
         if (this.poolId == null) {
-            if (other.poolId != null) return false;
+            if (other.poolId != null) {
+                return false;
+            }
         }
-        else if (!this.poolId.equals(other.poolId)) return false;
+        else if (!this.poolId.equals(other.poolId)) {
+            return false;
+        }
         if (this.requestNo == null) {
-            if (other.requestNo != null) return false;
+            if (other.requestNo != null) {
+                return false;
+            }
         }
-        else if (!this.requestNo.equals(other.requestNo)) return false;
+        else if (!this.requestNo.equals(other.requestNo)) {
+            return false;
+        }
         return true;
     }
 
 
     @Override
     public String toString() {
-        return "PayOrderPoolRecord [id=" + this.id + ", requestNo=" + this.requestNo + ", custBankName=" + this.custBankName + ", custBankAccount="
-                + this.custBankAccount + ", custBankAccountName=" + this.custBankAccountName + ", balance=" + this.balance + ", poolId=" + this.poolId
-                + ", payFileId=" + this.payFileId + ", businStatus=" + this.businStatus + ", infoType=" + this.infoType + ", description="
-                + this.description + ", requestPayDate=" + this.requestPayDate + "]";
+        return "PayOrderPoolRecord [id=" + this.id + ", requestNo=" + this.requestNo + ", custBankName="
+                + this.custBankName + ", custBankAccount=" + this.custBankAccount + ", custBankAccountName="
+                + this.custBankAccountName + ", balance=" + this.balance + ", poolId=" + this.poolId + ", payFileId="
+                + this.payFileId + ", businStatus=" + this.businStatus + ", infoType=" + this.infoType
+                + ", description=" + this.description + ", requestPayDate=" + this.requestPayDate + ", factoryNo="
+                + this.factoryNo + ", factoryName=" + this.factoryName + "]";
     }
 
-    public  PayOrderPoolRecord saveAddInitValue(String anInfoType) {
+    public  PayOrderPoolRecord saveAddInitValue(final String anInfoType) {
         
         this.setId(SerialGenerator.getLongValue("PayOrderPoolRecord.id"));
         this.setBusinStatus(PayOrderPoolRecordConstantCollentions.PAY_RECORD_BUSIN_STATUS_NOHANDLE);

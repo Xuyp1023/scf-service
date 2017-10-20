@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -124,6 +126,7 @@ public class ExcelImportUtils {
                 String type = cell.getCloumnType();// 属性的类型 0 字符串 1 数字
                 String isMust = cell.getIsMust();// 是否必须 1 必须 0 不必须
                 String regular = cell.getVailedRegular();// 正则表达式
+                String requireContainsValues = cell.getRequireContainsValues();//  值只能是当前值 以"|"分割
                 String cellValue = ExcelUtils.getStringCellValue(row.getCell(order));
 
                 // 当前值是必须的，如果为空，或者当前校验规则不为空需要通过校验规则，如果是数字类型，还需要通过数字校验
@@ -142,6 +145,16 @@ public class ExcelImportUtils {
                         if (!isNumber(cellValue)) {
                             throw new ImportExcelException(chineseName + " 的值只能为数字,请注意");
                         }
+                    }
+                    
+                    //判断是否有默认值
+                    if (StringUtils.isNoneBlank(requireContainsValues)){
+                        
+                        List<String> list = Arrays.asList(requireContainsValues.split("|"));
+                        if(!list.contains(cellValue)){
+                            throw new ImportExcelException(chineseName + " 的值只能为"+requireContainsValues+",请注意");
+                        }
+                        
                     }
 
                 } else {
