@@ -20,6 +20,8 @@ public class ExcelColumnCell implements Serializable {
     private String vailedRegular; // 校验字符串正则表达式
 
     private String cloumnProperties; // 列的属性pojo对应的属性
+    
+    private String requireContainsValues; // 值只能是当前值 以"|"分割
 
     public String getIsMust() {
         return isMust;
@@ -69,11 +71,20 @@ public class ExcelColumnCell implements Serializable {
         this.cloumnProperties = cloumnProperties;
     }
 
+    public String getRequireContainsValues() {
+        return this.requireContainsValues;
+    }
+
+    public void setRequireContainsValues(String anRequireContainsValues) {
+        this.requireContainsValues = anRequireContainsValues;
+    }
+
     @Override
     public String toString() {
-        return "ExcelColumnCell [isMust=" + isMust + ", cloumnType=" + cloumnType + ", cloumnChineseName="
-                + cloumnChineseName + ", cloumnOrder=" + cloumnOrder + ", vailedRegular=" + vailedRegular
-                + ", cloumnProperties=" + cloumnProperties + "]";
+        return "ExcelColumnCell [isMust=" + this.isMust + ", cloumnType=" + this.cloumnType + ", cloumnChineseName="
+                + this.cloumnChineseName + ", cloumnOrder=" + this.cloumnOrder + ", vailedRegular=" + this.vailedRegular
+                + ", cloumnProperties=" + this.cloumnProperties + ", requireContainsValues="
+                + this.requireContainsValues + "]";
     }
 
     @Override

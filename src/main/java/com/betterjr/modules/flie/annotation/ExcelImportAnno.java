@@ -18,5 +18,7 @@ public @interface ExcelImportAnno {
     int cloumnOrder();// 当前属性在excel中排序的位置
 
     String vailedRegular() default "";// 校验字符串正则表达式
+    
+    String requireContainsValues() default ""; //值只能是当前值 以"|"分割
 
 }
